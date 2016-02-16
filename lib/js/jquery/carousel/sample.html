@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Slick Carousel (jQuery)</title>
+	<script type="text/javascript" src="../jquery.js"></script>
+	<script type="text/javascript" src="../jquery.smart.compat.js"></script>
+	<link rel="stylesheet" href="slick.css">
+	<link rel="stylesheet" href="slick-theme.css">
+	<script type="text/javascript" src="slick.js"></script>
+</head>
+<body>
+<div style="background: #ECECEC;">
+	<div id="carousel">
+		<div>Div 1</div>
+		<div>Div 2</div>
+		<div>Div 3</div>
+		<div>Div 4</div>
+		<div>Div 5</div>
+		<div>Div 6</div>
+		<div>Div 7</div>
+		<div>Div 8</div>
+		<div>Div 9</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$('#carousel').css({ 'margin-left' : '25px', 'width': ($(window).width()-70) + 'px' }).slick({
+		dots: true,
+		arrows: true,
+		infinite: true,
+		slidesToShow: 3,
+		slidesToScroll: 3,
+		responsive: [
+		{
+			breakpoint: 768,
+			settings: {
+				slidesToShow: 2,
+				slidesToScroll: 2
+			}
+		},
+		{
+			breakpoint: 480,
+			settings: {
+				slidesToShow: 1,
+				slidesToScroll: 1
+			}
+		}
+		]
+	});
+});
+</script>
+</body>
+</html>

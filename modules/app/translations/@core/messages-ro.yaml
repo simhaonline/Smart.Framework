@@ -1,0 +1,12 @@
+# Language File: RO / CORE / Messages
+TRANSLATIONS:
+  @language: RO
+  @area: core
+  @version: 2016-02-15
+  messages:
+    yes: 'Da'
+    no: 'Nu'
+    ok: 'OK'
+    cancel: 'Anulare'
+    warn_undone: 'ATENȚIE: Nu se mai poate reveni asupra acestei acțiuni !'
+#END

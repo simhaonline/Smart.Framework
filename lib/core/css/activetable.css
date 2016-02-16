@@ -1,0 +1,32 @@
+
+/* -- CSS Start :: SmartFramework / Components / ActiveTable -- */
+
+/* ----------------------------- */
+
+/* Active Table */
+#smart_active_table_background {
+	background-color: #FFFFFF;
+}
+#smart_active_table_heading {
+	background-color: #FFFFFF;
+}
+#smart_active_table_subheading {
+	background-color: #F9F9F9;
+}
+#smart_active_table_row_alt1 {
+	background-color: #FAFAFA;
+}
+#smart_active_table_row_alt2 {
+	background-color: #FFFFFF;
+}
+#smart_active_table_row_hilite {
+	background-color: #DDEEFF;
+}
+#smart_active_table_row_click {
+	background-color: #FFFFCC;
+}
+/* -- */
+
+/* ----------------------------- */
+
+/* -- CSS End -- */

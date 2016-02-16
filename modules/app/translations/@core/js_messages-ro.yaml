@@ -1,0 +1,10 @@
+# Language File: RO / CORE / Js_Messages
+TRANSLATIONS:
+  @language: RO
+  @area: core
+  @version: 2016-02-15
+  js_messages:
+    btn_reset: 'Resetare'
+    btn_select: 'Selecție'
+    page_away: 'Confirmați că doriți să părăsiți aceată pagină ?'
+#END

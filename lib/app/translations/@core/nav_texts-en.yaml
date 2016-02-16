@@ -1,0 +1,17 @@
+# Language File: EN / CORE / Nav_Texts
+TRANSLATIONS:
+  @language: EN
+  @area: core
+  @version: 2016-02-15
+  nav_texts:
+    asort: 'Sort Ascending [^]'
+    dsort: 'Sort Descending [v]'
+    xsort: 'Clear Sorting [*]'
+    listed: 'Page'
+    empty: 'No results'
+    of: 'of'
+    start: '&laquo; Start'
+    prev: '&lsaquo; Previous Page'
+    next: 'Next Page &rsaquo;'
+    end: 'End &raquo;'
+#END

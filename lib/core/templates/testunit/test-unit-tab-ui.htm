@@ -1,0 +1,30 @@
+<!-- Partial Sub-Template: TestUnit.Main.UI -->
+			Play with the form controls below (if Limited TextArea is not null a REDIRECTION on Success/Error is reversed !):
+			<br><br>
+			<div id="answer_ajax" style="background: #FF3300; z-index: 999999"><font color="#FFFFFF"><b>[Selecting Date is mandatory. This area will be replaced after sending the form if the below TextArea is not empty. If the below TextArea is empty, the page will refresh after post !]</b></font></div>
+			<form class="ux-form" id="test_form_ajax" name="test_form_ajax" method="post" action="#">
+			<input type="hidden" name="test_ajax_var" value="Testing by Ajax (hidden) ...">
+			<table width="900" cellspacing="20">
+				<tr>
+					<td align="left" width="450">[####TEST-ELEMENTS.CALENDAR####]</td>
+					<td align="right">[####TEST-ELEMENTS.TIMEPICKER####]</td>
+				</tr>
+				<tr>
+					<td align="left">[####TEST-ELEMENTS.SINGLE-SELECT####]</td>
+					<td align="right">[####TEST-ELEMENTS.SINGLE-BLANK-SELECT####]</td>
+				</tr>
+				<tr>
+					<td align="left">[####TEST-ELEMENTS.SINGLE-SEARCH-SELECT####]</td>
+					<td align="right">[####TEST-ELEMENTS.MULTI-SELECT####]</td>
+				</tr>
+				<tr>
+					<td align="left">[####TEST-ELEMENTS.MULTIBOX-SELECT####]</td>
+					<td align="right">[####TEST-ELEMENTS.LIMITED-AREA####]</td>
+				</tr>
+				<tr valign="top">
+					<td align="right">[####TEST-ELEMENTS.CAPTCHA####]</td>
+					<td align="left">[####TEST-BUTTONS.AJAX-POST####]</td>
+				</tr>
+			</table>
+			</form>
+<!-- #END :: Partial Sub-Template: TestUnit.Main.UI -->

@@ -1,0 +1,28 @@
+/* Customizations // NetVision */
+
+.CodeMirror {
+	text-align: left;
+/*	height: auto; */
+	border: 1px solid #DDDDDD;
+/*	font-family: 'Courier New', monospace !important; */
+	font-size: 13px !important;
+}
+
+.CodeMirror-scroll {
+/*	max-height: 200px; */
+}
+
+.CodeMirror pre {
+	padding-left: 5px;
+	padding-right: 7px;
+	line-height: 1.25;
+/*	font-family: 'Courier New', monospace !important; */
+	font-size: 13px !important;
+}
+
+.CodeMirror-selected {
+	background: #FEFB8A;
+}
+.CodeMirror-focused .CodeMirror-selected {
+	background: #FEFF99;
+}

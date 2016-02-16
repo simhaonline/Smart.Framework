@@ -1,0 +1,35 @@
+
+/* -- CSS Start :: SmartFramework / Media Gallery :: v.2015.01.15 -- */
+
+/* ----------------------------- */
+
+/* Media Gallery */
+#mediagallery_box {
+	padding:2px;
+	border: 1px solid #ECECEC;
+	background-color: #FFFFFF;
+}
+#mediagallery_box th {
+	font-size: 19px;
+	font-weight: bold;
+	background-color: #ECECEC;
+	color: #000000;
+}
+#mediagallery_box td {
+	font-size: 13px;
+	color: #000000;
+}
+#mediagallery_box_item {
+	padding: 0px;
+	border: 1px solid #FCFCFC;
+	background-color: #FFFFFF;
+}
+#mediagallery_box_item img {
+	border: 1px solid #F0F0F0;
+	box-shadow: 2px 2px 3px #BBBBBB;
+}
+/* -- */
+
+/* ----------------------------- */
+
+/* -- CSS End -- */

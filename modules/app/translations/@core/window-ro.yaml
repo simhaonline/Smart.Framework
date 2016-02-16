@@ -1,0 +1,15 @@
+# Language File: RO / CORE / Window
+TRANSLATIONS:
+  @language: RO
+  @area: core
+  @version: 2016-02-15
+  window:
+    action_back: 'Înapoi (la pagina anterioară)'
+    button_back: '[ Înapoi ]'
+    button_close: '[ Închide ]'
+    button_modal_close: '[ Înapoi la Fereastra Principală ]'
+    button_print: '[ Printează ]'
+    confirm_action: 'Apasaţi [OK] pentru a CONFIRMA această Acţiune. Nu se poate Reveni.'
+    pdf: '[ PDF ]'
+    form_submit_wait: '... în curs de expediere, aşteptaţi'
+#END

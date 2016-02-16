@@ -1,0 +1,2390 @@
+<?php
+// [LIB - SmartFramework / PostgreSQL Database Client]
+// (c) 2006-2016 unix-world.org - all rights reserved
+
+//----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.2')) {
+	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
+} //end if
+//-----------------------------------------------------
+
+// NOTES ABOUT REUSING CONNECTIONS:
+//		* BY DEFAULT the PHP PgSQL driver reuses connections if the same host:port@dbname#username are used
+//		* this is not enough since Smart.Framework uses also the concept of settings like UTF8 and transaction mode
+//		* thus the Smart.Framework implements a separate mechanism to control the connections re-use, to avoid break transactions while mixing (re)connections
+
+//======================================================
+// Smart-Framework - PostgreSQL Database Client
+// DEPENDS:
+//	* Smart::
+//	* SmartUnicode::
+//	* SmartUtils::
+// DEPENDS-EXT: PHP PgSQL Extension
+//======================================================
+// Tested and Stable on PgSQL versions:
+// 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x
+// Tested and Stable with PgPool-II versions:
+// 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x
+//======================================================
+
+// [REGEX-SAFE-OK]
+
+//=====================================================================================
+//===================================================================================== CLASS START
+//=====================================================================================
+
+
+/**
+ * Class: SmartPgsqlDb - provides a Static PostgreSQL DB Server Client that can be used just with the DEFAULT connection from configs.
+ *
+ * This class provides an easy and convenient way to work with the PostgreSQL DEFAULT connection, as all methods are static.
+ * It can be used just with the DEFAULT connection which must be set in etc/config.php: $configs['pgsql'].
+ * It connects automatically, when needed (the connection is lazy, and is made just when is needed to avoid permanent connections to PgSQL which slower down the app and takes busy the slots).
+ * NOTICE: You should never modify the (optional) connection parameter which should always have the value of (string) 'DEFAULT' for this static class to work.
+ * Actually you should not use this parameter at all as it is optional ... This parameter is reserved for advanced usage to implement derived classes like SmartPgsqlExtDb !
+ *
+ * <code>
+ *
+ * // The connection to the DEFAULT PostgreSQL Server will be done automatically, when needed, using the config parameters ; but if you want to pre-connect, use SmartPgsqlDb::default_connect() ...
+ * $count = (int) SmartPgsqlDb::count_data('SELECT COUNT("id") FROM "table" WHERE ("active" = \''.SmartPgsqlDb::escape_str('some-id').'\')');
+ * $non_associative_read_multi_records = (array) SmartPgsqlDb::read_data('SELECT * FROM "table" WHERE "id" = '.SmartPgsqlDb::escape_literal(3));
+ * $associative_read_multi_records = (array) SmartPgsqlDb::read_adata('SELECT * FROM "table" WHERE "id" = $1', array('other-id'));
+ * $associative_read_for_just_one_record = (array) SmartPgsqlDb::read_asdata('SELECT * FROM "table" WHERE "id" = $1 LIMIT 1 OFFSET 0', array(99)); // NOTICE: this function will return just one record, so always use LIMIT 1 OFFSET 0 (or LIMIT 0,1) ; if the query will return more records will raise an error
+ * $update = (array) SmartPgsqlDb::write_data('UPDATE "table" SET "active" = 1 WHERE "id" = $1', array(55)); // will return an array[ 0 => message, 1 => (integer) affected rows ]
+ * $arr_insert = array(
+ * 		'id' => 100,
+ * 		'active' => 1,
+ * 		'name' => 'Test Record'
+ * );
+ * $insert = (array) SmartPgsqlDb::write_data('INSERT INTO "table" '.SmartPgsqlDb::prepare_write_statement($arr_insert, 'insert'));
+ *
+ * </code>
+ *
+ * @usage  		static object: Class::method() - This class provides only STATIC methods
+ * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
+ *
+ * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
+ * @version 	v.160215
+ * @package 	Database:PostgreSQL
+ *
+ */
+final class SmartPgsqlDb {
+
+	// ::
+
+	private static $slow_time = 0.0050;
+
+
+//======================================================
+/**
+ * Pre-connects manually to the Default PostgreSQL Server.
+ * This function is OPTIONAL as the connection on the DEFAULT PostgreSQL Server will be done automatically when needed.
+ * Anyway, if there is a need to create an explicit connection to the DEFAULT PostgreSQL server earlier, this function can be used by example in App Bootstrap.
+ *
+ */
+public static function default_connect() {
+	//--
+	return self::check_connection('DEFAULT', 'DEFAULT-CONNECT');
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Create a PostgreSQL Server Custom Connection.
+ * This MUST NOT be used with the default connection ... as that is handled automatically.
+ *
+ * @param STRING $yhost 						:: db host
+ * @param STRING $yport 						:: db port
+ * @param STRING $ydb 							:: db name
+ * @param STRING $yuser							:: db user
+ * @param STRING $ypass							:: db pass
+ * @param INTEGER $ytimeout 					:: connection timeout
+ * @param ENUM $y_transact_mode					:: transactional mode ('READ COMMITTED' | 'REPEATABLE READ' | 'SERIALIZABLE' | '' to leave it as default)
+ * @param FLOAT $y_debug_sql_slowtime			:: debug query slow time
+ * @param ENUM $y_type							:: server type: postgresql or pgpool2
+ *
+ * @return RESOURCE								:: the postgresql connection resource ID
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function server_connect($yhost, $yport, $ydb, $yuser, $ypass, $ytimeout, $y_transact_mode='', $y_debug_sql_slowtime=0, $y_type='postgresql') {
+
+	//--
+	if(defined('SMART_FRAMEWORK_DBSQL_CHARSET')) {
+		if((string)SMART_FRAMEWORK_DBSQL_CHARSET != 'UTF8') {
+			die('The SMART_FRAMEWORK_DBSQL_CHARSET must be set as: UTF8');
+		} //end if
+	} else {
+		die('The SMART_FRAMEWORK_DBSQL_CHARSET must be set ...');
+	} //end if else
+	//--
+
+	//--
+	if(!function_exists('pg_connect')) {
+		self::error('[PRE-CONNECT]', 'PHP-PgSQL', 'Check PgSQL PHP Extension', 'PHP Extension is required to run this software !', 'Cannot find PgSQL PHP Extension');
+		return;
+	} //end if
+	//--
+	if((string)ini_get('pgsql.ignore_notice') != '0') {
+		self::error('[PRE-CONNECT]', 'PHP-Inits-PgSQL', 'Check PgSQL PHP.INI Settings', 'SETTINGS: PostgreSQL Notifications need to be ENABLED in PHP.INI !', 'SET in PHP.INI this: pgsql.ignore_notice = 0');
+		return array($message, 0);
+	} //end if
+	//--
+
+	//-- connection timeout
+	$timeout = (int) $ytimeout;
+	//--
+	if($timeout < 1) {
+		$timeout = 1;
+	} //end if
+	if($timeout > 60) {
+		$timeout = 60;
+	} //end if
+	//--
+
+	//-- debug settings
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		$y_debug_sql_slowtime = (float) $y_debug_sql_slowtime;
+		if($y_debug_sql_slowtime <= 0) {
+			$y_debug_sql_slowtime = (float) self::$slow_time;
+		} //end if
+		//--
+		if($y_debug_sql_slowtime < 0.0000001) {
+			$y_debug_sql_slowtime = 0.0000001;
+		} elseif($y_debug_sql_slowtime > 0.9999999) {
+			$y_debug_sql_slowtime = 0.9999999;
+		} //end if
+		//--
+		self::$slow_time = (float) $y_debug_sql_slowtime; // update
+		//--
+	} //end if
+	//--
+
+	//-- debug inits
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|slow-time', number_format(self::$slow_time, 7, '.', ''), '=');
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'metainfo',
+			'data' => 'Database Server: PgSQL ('.$y_type.') / App Connector Version: '.SMART_FRAMEWORK_VERSION.' / Connection Charset: '.SMART_FRAMEWORK_DBSQL_CHARSET
+		]);
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'metainfo',
+			'data' => 'Connection Timeout: '.$timeout.' seconds / Fast Query Reference Time < '.self::$slow_time.' seconds'
+		]);
+	} //end if
+	//--
+
+	//--
+	if((string)$ypass != '') {
+		$password = (string) base64_decode((string)$ypass);
+	} else {
+		$password = '';
+	} //end if else
+	//--
+
+	//-- {{{SYNC-CONNECTIONS-IDS}}}
+	$the_conn_key = (string) $yhost.':'.$yport.'@'.$ydb.'#'.$yuser.'>'.trim(strtoupper(str_replace(' ','',(string)$y_transact_mode))).'.';
+	//--
+	$connection = @pg_connect('host='.$yhost.' port='.$yport.' dbname='.$ydb.' user='.$yuser.' password='.$password.' connect_timeout='.$timeout);
+	// @pg_close($connection) (if is resource) ; but reusing connections policy dissalow disconnects
+	//--
+	if(!is_resource($connection)) {
+		self::error($yhost.':'.$yport.'@'.$ydb.'#'.$yuser, 'Connection', 'Connect to PgSQL Server', 'NO CONNECTION !!!', 'Connection Failed to PgSQL Server !');
+		return;
+	} //end if
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'open-close',
+			'data' => 'Connected to PgSQL Server: '.$the_conn_key,
+			'connection' => (string) $connection
+		]);
+	} //end if
+	//--
+
+	//--
+	@pg_set_error_verbosity($connection, PGSQL_ERRORS_DEFAULT); // this must be reset to PGSQL_ERRORS_DEFAULT and must NOT use PGSQL_ERRORS_VERBOSE because will affect write-igdata notice messages
+	//--
+	$tmp_pg_tracefile = 'tmp/logs/pgsql-trace.log';
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		if(defined('SMART_FRAMEWORK_DEBUG_SQL_TRACE')) {
+			if(function_exists('pg_trace')) {
+				@pg_trace($tmp_pg_tracefile, 'w', $connection); // pg_trace can cause some PHP versions to crash (Ex: Debian 6.0.6 with PHP 5.3 / Apache 2.0.x)
+			} //end if
+		} //end if
+		//--
+	} //end if else
+	//--
+
+	//--
+	$result = @pg_query_params($connection, 'SELECT pg_encoding_to_char("encoding") FROM "pg_database" WHERE "datname" = $1', array($ydb));
+	if(!$result) {
+		self::error($connection, 'Encoding-Charset', 'Check Query Failed', 'Error='.@pg_last_error($connection), 'DB='.$ydb);
+		return;
+	} //end if
+	$server_encoding = @pg_fetch_row($result);
+	if(trim($server_encoding[0]) != trim(SMART_FRAMEWORK_DBSQL_CHARSET)) {
+		self::error($connection, 'Encoding-Get-Charset', 'Wrong Server Encoding on PgSQL Server', 'Server='.$server_encoding[0], 'Client='.SMART_FRAMEWORK_DBSQL_CHARSET);
+		return;
+	} //end if
+	@pg_free_result($result);
+	//--
+
+	//--
+	$encoding = @pg_set_client_encoding($connection, SMART_FRAMEWORK_DBSQL_CHARSET);
+	//--
+	if(($encoding < 0) OR ((string)@pg_client_encoding() != (string)SMART_FRAMEWORK_DBSQL_CHARSET)) {
+		self::error($connection, 'Encoding-Check-Charset', 'Failed to set Client Encoding on PgSQL Server', 'Server='.SMART_FRAMEWORK_DBSQL_CHARSET, 'Client='.@pg_client_encoding());
+		return;
+	} //end if
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'set',
+			'data' => 'SET Client Encoding [+check] to: '.@pg_client_encoding(),
+			'connection' => (string) $connection,
+			'skip-count' => 'yes'
+		]);
+	} //end if
+	//--
+
+	//--
+	$transact = strtoupper((string)$y_transact_mode);
+	switch((string)$transact) {
+		case 'SERIALIZABLE':
+		case 'REPEATABLE READ':
+		case 'READ COMMITTED':
+			//--
+			$result = @pg_query($connection, 'SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL '.$transact);
+			if(!$result) {
+				self::error($connection, 'Set-Session-Transaction-Level', 'Failed to Set Session Transaction Level as '.$transact, 'Error='.@pg_last_error($connection), 'DB='.$ydb);
+				return;
+			} //end if
+			@pg_free_result($result);
+			//--
+			$result = @pg_query('SHOW transaction_isolation');
+			$chk = @pg_fetch_row($result);
+			if(((string)trim($chk[0]) == '') OR ((string)$transact != (string)strtoupper(trim($chk[0])))) {
+				self::error($connection, 'Check-Session-Transaction-Level', 'Failed to Set Session Transaction Level as '.$transact, 'Error='.@pg_last_error($connection), 'DB='.$ydb);
+				return;
+			} //end if
+			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+					'type' => 'set',
+					'data' => 'SET Session Transaction Isolation Level [+check] to: '.strtoupper($chk[0]),
+					'connection' => (string) $connection,
+					'skip-count' => 'yes'
+				]);
+			} //end if
+			@pg_free_result($result);
+			//--
+			break;
+		default:
+			// LEAVE THE SESSION TRANSACTION AS SET IN CFG
+	} //end switch
+	//--
+
+	//-- export only at the end (after all settings)
+	SmartFrameworkRegistry::$Connections['pgsql'][(string)$the_conn_key] = $connection; // export connection
+	//--
+
+	//-- OUTPUT
+	return $connection;
+	//-- OUTPUT
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Escape a string to be compliant and Safe (against SQL Injection) with PgSQL standards.
+ * This function WILL NOT ADD the SINGLE QUOTES (') arround the string, but just will just escape it to be safe.
+ *
+ * @param STRING $y_string						:: A String or a Number to be Escaped
+ * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @param RESOURCE $y_connection				:: the connection
+ * @return STRING 								:: The Escaped String / Number
+ *
+ */
+public static function escape_str($y_string, $y_escape_likes='no', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'ESCAPE-STR');
+	//==
+
+	//-- Fix
+	$y_string = (string) SmartUnicode::utf8_fix_charset((string)$y_string);
+	//--
+
+	//--
+	if((string)$y_escape_likes == 'yes') { // extra special escape: _ = \_ ; % = \%
+		$y_string = @str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
+	} //end if else
+	//--
+	$y_string = (string) @pg_escape_string($y_connection, (string)$y_string); // [CONN]
+	//--
+
+	//--
+	return (string) $y_string;
+	//--
+
+} // END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Escape a variable in the literal way to be compliant and Safe (against SQL Injection) with PgSQL standards.
+ * This function WILL ADD the SINGLE QUOTES (') arround the string as needed and will escape expressions containing backslashes \ in the postgresql way using E'' escapes.
+ * This is the preferred way to escape variables inside PostgreSQL SQL Statements, and is better than escape_str().
+ *
+ * @param STRING $y_string						:: A String or a Number to be Escaped
+ * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @param RESOURCE $y_connection				:: the connection
+ * @return STRING 								:: The Escaped String / Number
+ *
+ */
+public static function escape_literal($y_string, $y_escape_likes='no', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'ESCAPE-LITERAL');
+	//==
+
+	//-- Fix
+	$y_string = (string) SmartUnicode::utf8_fix_charset((string)$y_string);
+	//--
+
+	//--
+	if((string)$y_escape_likes == 'yes') { // extra special escape: _ = \_ ; % = \%
+		$y_string = @str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
+	} //end if else
+	//--
+	$y_string = (string) @pg_escape_literal($y_connection, (string)$y_string); // [CONN]
+	//--
+
+	//--
+	return (string) $y_string;
+	//--
+
+} // END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Escape an identifier to be compliant and Safe (against SQL Injection) with PgSQL standards.
+ * This function WILL ADD the DOUBLE QUOTES (") arround the identifiers (fields / table names) as needed.
+ *
+ * @param STRING $y_identifier					:: The Identifier to be Escaped: field / table
+ * @param RESOURCE $y_connection				:: the connection
+ * @return STRING 								:: The Escaped Identifier as: "field" / "table"
+ *
+ */
+public static function escape_identifier($y_identifier, $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'ESCAPE-IDENTIFIER');
+	//==
+
+	//-- Fix
+	$y_identifier = (string) SmartUnicode::utf8_to_iso((string)$y_identifier); // this is in sync with validate table and field names to make them all ISO
+	$y_identifier = (string) SmartUnicode::utf8_fix_charset((string)$y_identifier); // fix in the case that something went wrong
+	$y_identifier = (string) str_replace('?', '', (string)$y_identifier); // remove ? after conversion
+	//--
+
+	//--
+	$y_identifier = (string) @pg_escape_identifier($y_connection, (string)$y_identifier); // [CONN]
+	//--
+
+	//--
+	return (string) $y_identifier;
+	//--
+
+} // END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * PostgreSQL compliant and Safe Json Encode.
+ * This should be used with PostgreSQL json / jsonb fields.
+ *
+ * @param STRING $y_mixed_content				:: A mixed variable
+ * @return STRING 								:: JSON string
+ *
+ */
+public static function json_encode($y_mixed_content) {
+	//--
+	return @json_encode($y_mixed_content, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Check if a Schema Exists in the current Database.
+ *
+ * @param STRING $y_schema 						:: The Schema Name
+ * @param RESOURCE $y_connection				:: The connection to PgSQL server
+ * @return 0/1									:: 1 if exists ; 0 if not
+ *
+ */
+public static function check_if_schema_exists($y_schema, $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'SCHEMA-CHECK-IF-EXISTS');
+	//==
+
+	//--
+	$arr_data = self::read_data('SELECT "nspname" FROM "pg_namespace" WHERE ("nspname" = \''.self::escape_str($y_schema, 'no', $y_connection).'\')', 'Check if Schema Exists', $y_connection);
+	//--
+	if((string)$arr_data[0] == (string)$y_schema) {
+		$out = 1;
+	} else {
+		$out = 0;
+	} //end if else
+	//--
+
+	//--
+	return $out;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Check if a Table Exists in the current Database.
+ *
+ * @param STRING $y_table 						:: The Table Name
+ * @param STRING $y_schema						:: The Schema Name
+ * @param RESOURCE $y_connection				:: The connection to PgSQL server
+ * @return 0/1									:: 1 if exists ; 0 if not
+ *
+ */
+public static function check_if_table_exists($y_table, $y_schema='public', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'TABLE-CHECK-IF-EXISTS');
+	//==
+
+	//--
+	$y_table = @str_replace('"', '', $y_table);
+	//--
+
+	//--
+	$arr_data = self::read_data('SELECT "tablename", "schemaname" FROM "pg_tables" WHERE (("schemaname" = \''.self::escape_str($y_schema, 'no', $y_connection).'\') AND ("tablename" = \''.self::escape_str($y_table, 'no', $y_connection).'\'))', 'Check if Table Exists', $y_connection);
+	//--
+	if((string)$arr_data[0] == (string)$y_table) {
+		$out = 1;
+	} else {
+		$out = 0;
+	} //end if else
+	//--
+
+	//--
+	return $out;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * PgSQL Query :: Count
+ * This function is intended to be used for count type queries: SELECT COUNT().
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @param RESOURCE $y_connection				:: the connection
+ * @return INTEGER								:: the result of COUNT()
+ */
+public static function count_data($queryval, $params_or_title='', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'COUNT-DATA');
+	//==
+
+	//-- samples
+	// $queryval = 'SELECT COUNT(*) FROM "tablename" WHERE ("field" = \'x\')';
+	//--
+
+	//--
+	$time_start = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_start = microtime(true);
+	} //end if
+	//--
+
+	//--
+	$use_param_query = false;
+	if(is_array($params_or_title)) {
+		if(Smart::array_size($params_or_title) > 0) {
+			$use_param_query = true;
+		} //end if
+	} //end if
+	//--
+	if($use_param_query === true) {
+		$the_query_title = '';
+		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
+	} else {
+		$the_query_title = (string) $params_or_title;
+		$result = @pg_query($y_connection, $queryval);
+	} //end if else
+	//--
+
+	//--
+	$error = '';
+	if(!$result) {
+		$error = 'Query FAILED: '.@pg_last_error($y_connection);
+	} //end if else
+	//--
+
+	//--
+	$time_end = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_end = (float) (microtime(true) - (float)$time_start);
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-time', $time_end, '+');
+		//--
+		if(is_array($params_or_title)) {
+			$dbg_query_params = (array) $params_or_title;
+		} else {
+			$dbg_query_params = '';
+		} //end if else
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'count',
+			'data' => 'COUNT :: '.$the_query_title,
+			'query' => $queryval,
+			'params' => $dbg_query_params,
+			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+			'connection' => (string) $y_connection
+		]);
+		//--
+	} //end if
+	//--
+
+	//-- init vars
+	$pgsql_result_count = 0; // store COUNT data
+	//--
+	if(strlen($error) > 0) {
+		//--
+		self::error($y_connection, 'COUNT', $error, $queryval, $params_or_title);
+		return 0;
+		//--
+	} else {
+		//--
+		$record = @pg_fetch_row($result);
+		//--
+		$pgsql_result_count = Smart::format_number_int($record[0]);
+		//--
+	} //end else
+	//--
+
+	//--
+	@pg_free_result($result);
+	//--
+
+	//--
+	return Smart::format_number_int($pgsql_result_count, '+'); // be sure is 0 or greater
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * PgSQL Query :: Read (Non-Associative) one or multiple rows.
+ * This function is intended to be used for read type queries: SELECT.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @param RESOURCE $y_connection				:: the connection
+ * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
+ */
+public static function read_data($queryval, $params_or_title='', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'READ-DATA');
+	//==
+
+	//-- samples
+	// $queryval = 'SELECT * FROM "tablename" WHERE ("field" = \'x\') ORDER BY "field" ASC LIMIT '.$limit.' OFFSET '.$offset; // [LIMIT-OFFSET]
+	//--
+
+	//--
+	$time_start = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_start = microtime(true);
+	} //end if
+	//--
+
+	//--
+	$use_param_query = false;
+	if(is_array($params_or_title)) {
+		if(Smart::array_size($params_or_title) > 0) {
+			$use_param_query = true;
+		} //end if
+	} //end if
+	//--
+	if($use_param_query === true) {
+		$the_query_title = '';
+		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
+	} else {
+		$the_query_title = (string) $params_or_title;
+		$result = @pg_query($y_connection, $queryval);
+	} //end if else
+	//--
+
+	//--
+	$error = '';
+	if(!$result) {
+		$error = 'Query FAILED:'."\n".@pg_last_error($y_connection);
+	} //end if else
+	//--
+
+	//--
+	$time_end = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_end = (float) (microtime(true) - (float)$time_start);
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-time', $time_end, '+');
+		//--
+		if(is_array($params_or_title)) {
+			$dbg_query_params = (array) $params_or_title;
+		} else {
+			$dbg_query_params = '';
+		} //end if else
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'read',
+			'data' => 'READ [NON-ASSOCIATIVE] :: '.$the_query_title,
+			'query' => $queryval,
+			'params' => $dbg_query_params,
+			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+			'connection' => (string) $y_connection
+		]);
+		//--
+	} //end if
+	//--
+
+	//-- init vars
+	$pgsql_result_arr = array(); // store SELECT data
+	//--
+	if(strlen($error) > 0) {
+		//--
+		self::error($y_connection, 'READ-DATA', $error, $queryval, $params_or_title);
+		return array();
+		//--
+	} else {
+		//--
+		$number_of_rows = @pg_num_rows($result);
+		$number_of_fields = @pg_num_fields($result);
+		//--
+		for($i=0; $i<$number_of_rows; $i++) {
+			//--
+			$record = @pg_fetch_row($result);
+			//--
+			for($ii=0; $ii<$number_of_fields; $ii++) {
+				$pgsql_result_arr[] = (string) $record[$ii]; // force string
+			} // end for
+			//--
+		} //end for
+		//--
+	} //end else
+	//--
+
+	//--
+	@pg_free_result($result);
+	//--
+
+	//--
+	return (array) $pgsql_result_arr;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * PgSQL Query :: Read (Associative) one or multiple rows.
+ * This function is intended to be used for read type queries: SELECT.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @param RESOURCE $y_connection				:: the connection
+ * @return ARRAY (asociative) of results		:: array(0 => array('column1', 'column2', ... 'column-n'), 1 => array('column1', 'column2', ... 'column-n'), ..., m => array('column1', 'column2', ... 'column-n'))
+ */
+public static function read_adata($queryval, $params_or_title='', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'READ-aDATA');
+	//==
+
+	//-- samples
+	// $queryval = 'SELECT * FROM "tablename" WHERE ("field" = \'x\') ORDER BY "field" ASC; // [LIMIT-OFFSET]
+	//--
+
+	//--
+	$time_start = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_start = microtime(true);
+	} //end if
+	//--
+
+	//--
+	$use_param_query = false;
+	if(is_array($params_or_title)) {
+		if(Smart::array_size($params_or_title) > 0) {
+			$use_param_query = true;
+		} //end if
+	} //end if
+	//--
+	if($use_param_query === true) {
+		$the_query_title = '';
+		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
+	} else {
+		$the_query_title = (string) $params_or_title;
+		$result = @pg_query($y_connection, $queryval);
+	} //end if else
+	//--
+
+	//--
+	$error = '';
+	if(!$result) {
+		$error = 'Query FAILED:'."\n".@pg_last_error($y_connection);
+	} //end if else
+	//--
+
+	//--
+	$time_end = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_end = (float) (microtime(true) - (float)$time_start);
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-time', $time_end, '+');
+		//--
+		if(is_array($params_or_title)) {
+			$dbg_query_params = (array) $params_or_title;
+		} else {
+			$dbg_query_params = '';
+		} //end if else
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'read',
+			'data' => 'aREAD [ASSOCIATIVE] :: '.$the_query_title,
+			'query' => $queryval,
+			'params' => $dbg_query_params,
+			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+			'connection' => (string) $y_connection
+		]);
+		//--
+	} //end if
+	//--
+
+	//-- init vars
+	$pgsql_result_arr = array(); // store SELECT data
+	//--
+	if(strlen($error) > 0) {
+		//--
+		self::error($y_connection, 'READ-aDATA', $error, $queryval, $params_or_title);
+		return array();
+		//--
+	} else {
+		//--
+		$number_of_rows = @pg_num_rows($result);
+		$number_of_fields = @pg_num_fields($result);
+		//--
+		if($number_of_rows > 0) {
+			//--
+			for($i=0; $i<$number_of_rows; $i++) {
+				//--
+				$record = @pg_fetch_array($result, $i, PGSQL_ASSOC);
+				//--
+				if(is_array($record)) {
+					//--
+					$tmp_datarow = array();
+					//--
+					foreach($record as $key => $val) {
+						$tmp_datarow[$key] = (string) $val; // force string
+					} //end foreach
+					//--
+					$pgsql_result_arr[] = (array) $tmp_datarow;
+					//--
+					$tmp_datarow = array();
+					//--
+				} //end if
+				//--
+			} //end for
+			//--
+		} //end if else
+		//--
+	} //end else
+	//--
+
+	//--
+	@pg_free_result($result);
+	//--
+
+	//--
+	return (array) $pgsql_result_arr;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * PgSQL Query :: Read (Associative) - Single Row (just for 1 row, to easy the use of data from queries).
+ * !!! This will raise an error if more than one row(s) are returned !!!
+ * This function does not support multiple rows because the associative data is structured without row iterator.
+ * For queries that return more than one row use: read_adata() or read_data().
+ * This function is intended to be used for read type queries: SELECT.
+ *
+ * @hints	ALWAYS use a LIMIT 1 OFFSET 0 with all queries using this function to avoid situations that will return more than 1 rows and will raise ERROR with this function.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @param RESOURCE $y_connection				:: the connection
+ * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')
+ */
+public static function read_asdata($queryval, $params_or_title='', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'READ-asDATA');
+	//==
+
+	//-- samples
+	// $queryval = 'SELECT * FROM "tablename" WHERE ("field" = \'x\') ORDER BY "field" ASC LIMIT '.$limit.' OFFSET '.$offset; // [LIMIT-OFFSET]
+	//--
+
+	//--
+	$time_start = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_start = microtime(true);
+	} //end if
+	//--
+
+	//--
+	$use_param_query = false;
+	if(is_array($params_or_title)) {
+		if(Smart::array_size($params_or_title) > 0) {
+			$use_param_query = true;
+		} //end if
+	} //end if
+	//--
+	if($use_param_query === true) {
+		$the_query_title = '';
+		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
+	} else {
+		$the_query_title = (string) $params_or_title;
+		$result = @pg_query($y_connection, $queryval);
+	} //end if else
+	//--
+
+	//--
+	$error = '';
+	if(!$result) {
+		$error = 'Query FAILED:'."\n".@pg_last_error($y_connection);
+	} //end if else
+	//--
+
+	//--
+	$time_end = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_end = (float) (microtime(true) - (float)$time_start);
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-time', $time_end, '+');
+		//--
+		if(is_array($params_or_title)) {
+			$dbg_query_params = (array) $params_or_title;
+		} else {
+			$dbg_query_params = '';
+		} //end if else
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'read',
+			'data' => 'asREAD [SINGLE-ROW-ASSOCIATIVE] :: '.$the_query_title,
+			'query' => $queryval,
+			'params' => $dbg_query_params,
+			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+			'connection' => (string) $y_connection
+		]);
+		//--
+	} //end if
+	//--
+
+	//-- init vars
+	$pgsql_result_arr = array(); // store SELECT data
+	//--
+	if(strlen($error) > 0) {
+		//--
+		self::error($y_connection, 'READ-asDATA', $error, $queryval, $params_or_title);
+		return array();
+		//--
+	} else {
+		//--
+		$number_of_rows = @pg_num_rows($result);
+		$number_of_fields = @pg_num_fields($result);
+		//--
+		if($number_of_rows == 1) {
+			//--
+			$record = @pg_fetch_array($result, 0, PGSQL_ASSOC);
+			//--
+			if(is_array($record)) {
+				foreach($record as $key => $val) {
+					$pgsql_result_arr[$key] = (string) $val; // force string
+				} //end foreach
+			} //end if
+			//--
+		} else {
+			//--
+			if($number_of_rows > 1) {
+				self::error($y_connection, 'READ-asDATA', 'The Result contains more than one row ...', $queryval, $params_or_title);
+				return array();
+			} //end if
+			//--
+		} //end if else
+		//--
+	} //end else
+	//--
+
+	//--
+	@pg_free_result($result);
+	//--
+
+	//--
+	return (array) $pgsql_result_arr;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * PgSQL Query :: Write.
+ * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ; CREATE SCHEMAS ; CALLING STORED PROCEDURES ...
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @param RESOURCE $y_connection				:: the connection
+ * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ */
+public static function write_data($queryval, $params_or_title='', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'WRITE-DATA');
+	//==
+
+	//-- samples
+	// $queryval = 'BEGIN'; // start transaction
+	// $queryval = 'UPDATE "tablename" SET "field" = \'value\' WHERE ("id_field" = \'val1\')';
+	// $queryval = 'INSERT INTO "tablename" ("desiredfield1", "desiredfield2") VALUES (\'val1\', \'val2\')';
+	// $queryval = 'DELETE FROM "tablename" WHERE ("id_field" = \'val1\')';
+	// $queryval = 'COMMIT'; // commit transaction (on success)
+	// $queryval = 'ROLLBACK'; // rollback transaction (on error)
+	//--
+
+	//--
+	$time_start = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_start = microtime(true);
+	} //end if
+	//--
+
+	//--
+	$use_param_query = false;
+	if(is_array($params_or_title)) {
+		if(Smart::array_size($params_or_title) > 0) {
+			$use_param_query = true;
+		} //end if
+	} //end if
+	//--
+	if($use_param_query === true) {
+		$the_query_title = '';
+		$result = @pg_query_params($y_connection, $queryval, $params_or_title); // NOTICE: parameters are only allowed in ONE command not combined statements
+	} else {
+		$the_query_title = (string) $params_or_title;
+		$result = @pg_query($y_connection, $queryval);
+	} //end if else
+	//--
+
+	//--
+	$error = '';
+	$affected = 0;
+	if(!$result) {
+		$error = 'Query FAILED:'."\n".@pg_last_error($y_connection);
+	} else {
+		$affected = @pg_affected_rows($result);
+	} //end if else
+	//--
+
+	//--
+	$time_end = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_end = (float) (microtime(true) - (float)$time_start);
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-time', $time_end, '+');
+		//--
+		if(is_array($params_or_title)) {
+			$dbg_query_params = (array) $params_or_title;
+		} else {
+			$dbg_query_params = '';
+		} //end if else
+		//--
+		if((strtoupper(substr(trim($queryval), 0, 5)) == 'BEGIN') OR (strtoupper(substr(trim($queryval), 0, 17)) == 'START TRANSACTION') OR (strtoupper(substr(trim($queryval), 0, 6)) == 'COMMIT') OR (strtoupper(substr(trim($queryval), 0, 8)) == 'ROLLBACK')) {
+			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+				'type' => 'transaction',
+				'data' => 'TRANSACTION :: '.$the_query_title,
+				'query' => $queryval,
+				'params' => '',
+				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+				'connection' => (string) $y_connection
+			]);
+		} elseif(strtoupper(substr(trim($queryval), 0, 4)) == 'SET ') {
+			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+				'type' => 'set',
+				'data' => 'SET :: '.$the_query_title,
+				'query' => $queryval,
+				'params' => $dbg_query_params,
+				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+				'connection' => (string) $y_connection
+			]);
+		} else {
+			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+				'type' => 'write',
+				'data' => 'WRITE :: '.$the_query_title,
+				'query' => $queryval,
+				'params' => $dbg_query_params,
+				'rows' => $affected,
+				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+				'connection' => (string) $y_connection
+			]);
+		} //end if else
+		//--
+	} //end if
+	//--
+
+	//--
+	if(strlen($error) > 0) {
+		//--
+		$message = 'errorsqlwriteoperation: '.$error;
+		//--
+		self::error($y_connection, 'WRITE-DATA', $error, $queryval, $params_or_title);
+		return array($message, 0);
+		//--
+	} else {
+		//--
+		$record = @pg_fetch_row($result);
+		//--
+		$message = 'oksqlwriteoperation'; // this can be extended to detect extra notices
+		//--
+	} //end else
+	//--
+
+	//--
+	@pg_free_result($result);
+	//--
+
+	//--
+	return array($message, Smart::format_number_int($affected, '+'));
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
+ * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ...
+ * This function cannot be used with params: $1, ... $n as they are not supported by PostgreSQL syntax inside a stored procedure.
+ *
+ * IMPORTANT: this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
+ * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a block.
+ * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $querytitle 					:: *optional* query title for easy debugging (no parameters are allowed in this case)
+ * @param RESOURCE $y_connection				:: the connection
+ * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ */
+public static function write_igdata($queryval, $querytitle='', $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'WRITE-IG-DATA');
+	//==
+
+	//-- samples
+	// $queryval = 'UPDATE "tablename" SET "field" = \'value\' WHERE ("id_field" = \'val1\')';
+	// $queryval = 'INSERT INTO "tablename" ("desiredfield1", "desiredfield2") VALUES (\'val1\', \'val2\')';
+	//--
+
+	// ##### 'pgsql.ignore_notice' must be set to 0 in PHP.INI (checked via connect) #####
+
+	//--
+	/* PRE-CHECK (DO NOT ALLOW IN TRANSACTION BLOCKS) - No More Necessary !!, now can be safe used also in transactions as the exceptions are catch in the DO block
+	$transact_status = @pg_transaction_status($y_connection);
+	if(($transact_status === PGSQL_TRANSACTION_INTRANS) OR ($transact_status === PGSQL_TRANSACTION_INERROR)) {
+		self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: Write Ignore cannot be used inside Transaction Blocks ...', $queryval, $querytitle);
+		return array($message, 0);
+	} //end if
+	*/
+	//--
+
+	//--
+	$time_start = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_start = microtime(true);
+	} //end if
+	//--
+
+	//--
+	if(is_array($querytitle)) {
+		$querytitle = '';
+	} //end if
+	//--
+
+	//--
+	$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
+	//--
+	$prep_query = '
+	DO LANGUAGE plpgsql
+	$'.$unique_id.'$
+	DECLARE affected_rows INTEGER;
+	BEGIN
+		-- do the query an safe catch exceptions (unique key, foreign key)
+			affected_rows := 0;
+	'."\t\t".trim(rtrim($queryval, ';')).';'.'
+			GET DIAGNOSTICS affected_rows = ROW_COUNT;
+			RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #%\', affected_rows;
+			RETURN;
+		EXCEPTION
+			WHEN unique_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
+			WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
+	END
+	$'.$unique_id.'$;
+	';
+	//--
+
+	//--
+	$the_query_title = (string) $querytitle;
+	$result = @pg_query($y_connection, $prep_query);
+	//--
+
+	//--
+	$error = '';
+	$affected = 0;
+	if(!$result) {
+		$error = 'Query FAILED:'."\n".@pg_last_error($y_connection);
+	} else {
+		//$affected = @pg_affected_rows($result); // this can't handle complex query blocks ; will be handled via custom notices
+		$affected = (int) self::get_notice_smart_affected_rows(@pg_last_notice($y_connection)); // in this case we can only monitor affected rows via a custom notice
+	} //end if else
+	//--
+
+	//--
+	$time_end = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$time_end = (float) (microtime(true) - (float)$time_start);
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-time', $time_end, '+');
+		//--
+		$dbg_query_params = '';
+		//--
+		if((strtoupper(substr(trim($queryval), 0, 5)) == 'BEGIN') OR (strtoupper(substr(trim($queryval), 0, 17)) == 'START TRANSACTION') OR (strtoupper(substr(trim($queryval), 0, 6)) == 'COMMIT') OR (strtoupper(substr(trim($queryval), 0, 8)) == 'ROLLBACK')) {
+			// ERROR
+			self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: This function cannot handle TRANSACTION Specific Statements ...', $queryval, $querytitle);
+			return array($message, 0);
+		} elseif(strtoupper(substr(trim($queryval), 0, 4)) == 'SET ') {
+			// ERROR
+			self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: This function cannot handle SET Statements ...', $queryval, $querytitle);
+			return array($message, 0);
+		} else {
+			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+				'type' => 'write',
+				'data' => 'WRITE / IGNORE ERRORS :: '.$the_query_title,
+				'query' => $queryval,
+				'params' => $dbg_query_params,
+				'rows' => $affected,
+				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+				'connection' => (string) $y_connection
+			]);
+		} //end if else
+		//--
+	} //end if
+	//--
+
+	//--
+	if(strlen($error) > 0) {
+		//--
+		$message = 'errorsqlwriteoperation: '.$error;
+		//--
+		self::error($y_connection, 'WRITE-IG-DATA', $error, $queryval, $querytitle);
+		return array($message, 0);
+		//--
+	} else {
+		//--
+		$record = @pg_fetch_row($result);
+		//--
+		$message = 'oksqlwriteoperation'; // this can be extended to detect extra notices
+		//--
+	} //end else
+	//--
+
+	//--
+	if(is_resource($result)) { // check in case of error
+		@pg_free_result($result);
+	} //end if
+	//--
+
+	//--
+	return array($message, Smart::format_number_int($affected, '+'));
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Create Escaped Write SQL Statements from Data - to be used with PgSQL for: INSERT ; INSERT-SUBSELECT ; UPDATE ; IN-SELECT
+ * To be used with: write_data() or write_igdata() to build an INSERT / INSERT (SELECT) / UPDATE / SELECT IN query from an associative array
+ *
+ * @param ARRAY-associative $arrdata			:: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
+ * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select'
+ * @param TRUE/FALSE $escape_data				:: escape data or not (default is TRUE, will escape the data)
+ * @param RESOURCE $y_connection 				:: the connection to pgsql server
+ * @return STRING								:: The SQL partial Statement
+ *
+ */
+public static function prepare_write_statement($arrdata, $mode, $escape_data=true, $y_connection='DEFAULT') {
+
+	// version: 151026
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'PREPARE-WRITE-STATEMENT');
+	//==
+
+	//--
+	$mode = strtolower((string)$mode);
+	//--
+	switch((string)$mode) {
+		case 'insert':
+		case 'new':
+			$mode = 'insert';
+			break;
+		case 'insert-subselect':
+		case 'new-subselect':
+			$mode = 'insert-subselect';
+			break;
+		case 'update':
+		case 'edit':
+			$mode = 'update';
+			break;
+		case 'in-select':
+			$mode = 'in-select';
+			break;
+		default:
+			self::error($y_connection, 'PREPARE-WRITE-STATEMENT', 'Invalid Mode', '', $mode);
+			return '';
+	} //end switch
+	//--
+
+	//--
+	$tmp_query = '';
+	//--
+	$tmp_query_x = '';
+	$tmp_query_y = '';
+	$tmp_query_z = '';
+	$tmp_query_w = '';
+	//--
+
+	//--
+	if(is_array($arrdata)) {
+		//--
+		foreach($arrdata as $key => $val) {
+			//-- check for SQL INJECTION
+			$key = trim(@str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
+			//-- Except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
+			if((string)$mode == 'in-select') { // in-select
+				$key = (int) $key; // force int keys
+			} else {
+				if(!self::validate_table_and_fields_names($key)) { // no unicode modifier
+					self::error($y_connection, 'PREPARE-WRITE-STATEMENT', 'Invalid KEY', '', $key);
+					return '';
+				} //end if
+			} //end if
+			//--
+			$val_x = ''; // reset
+			//--
+			if(is_array($val)) { // array (this is a special case, and always escape data)
+				//--
+				$val_x = (string) self::escape_str(Smart::array_to_list($val), 'no', $y_connection); // array values will be converted to: <val1>, <val2>, ...
+				//--
+			} elseif($val === false) { // emulate the null character through false === (this cannot be set outside PHP)
+				//--
+				$val_x = false;
+				//--
+			} else { // string or number
+				//--
+				if($escape_data !== false) {
+					//--
+					$val_x = self::escape_str($val, 'no', $y_connection);
+					//--
+				} else {
+					//--
+					$val_x = $val; // expect data that is already escaped !!!
+					//--
+				} //end if else
+				//--
+			} //end if else
+			//--
+			if($val_x === false) { // the case of NULL
+				if((string)$mode == 'in-select') { // in-select
+					$tmp_query_w .= 'NULL,';
+				} elseif((string)$mode == 'update') { // update
+					$tmp_query_x .= (string) self::escape_identifier($key, $y_connection).'='.'NULL,';
+				} else { // insert, insert-subselect
+					$tmp_query_y .= (string) self::escape_identifier($key, $y_connection).',';
+					$tmp_query_z .= 'NULL,';
+				} //end if else
+			} else { // the case of string or number
+				if((string)$mode == 'in-select') { // in-select
+					$tmp_query_w .= "'".$val_x."'".',';
+				} elseif((string)$mode == 'update') { // update
+					$tmp_query_x .= (string) self::escape_identifier($key, $y_connection).'='."'".$val_x."'".',';
+				} else { // insert, insert-subselect
+					$tmp_query_y .= (string) self::escape_identifier($key, $y_connection).',';
+					$tmp_query_z .= "'".$val_x."'".',';
+				} //end if else
+			} //end if else
+			//--
+		} //end while
+		//--
+	} else {
+		//--
+		self::error($y_connection, 'PREPARE-WRITE-STATEMENT', 'The first argument must be array !', '', '');
+		return '';
+		//--
+	} //end if else
+	//--
+
+	//-- eliminate last comma
+	if((string)$mode == 'in-select') { // in-select
+		$tmp_query_w = rtrim($tmp_query_w, ' ,');
+	} elseif((string)$mode == 'update') { // update
+		$tmp_query_x = rtrim($tmp_query_x, ' ,');
+	} else { // insert, insert-subselect
+		$tmp_query_y = rtrim($tmp_query_y, ' ,');
+		$tmp_query_z = rtrim($tmp_query_z, ' ,');
+	} //end if else
+	//--
+
+	//--
+	if((string)$mode == 'in-select') { // in-select
+		$tmp_query = ' IN ('.$tmp_query_w.') ';
+	} elseif((string)$mode == 'update') { // update
+		$tmp_query = ' SET '.$tmp_query_x.' ';
+	} elseif((string)$mode == 'insert-subselect') { // (upsert) insert-subselect
+		$tmp_query = ' ('.$tmp_query_y.') SELECT '.$tmp_query_z.' ';
+	} else { // (new) insert
+		$tmp_query = ' ('.$tmp_query_y.') VALUES ('.$tmp_query_z.') ';
+	} //end if else
+	//--
+
+	//--
+	return (string) $tmp_query;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Get A UNIQUE (SAFE) ID for DB Tables / Schema
+ *
+ * @param ENUM 		$y_mode 					:: mode: uid10str | uid10num | uid10seq | uid36 | uid45
+ * @param STRING 	$y_field_name 				:: the field name
+ * @param STRING 	$y_table_name 				:: the table name
+ * @param STRING 	$y_schema 					:: the schema
+ * @param RESOURCE 	$y_connection 				:: pgsql connection
+ * @return STRING 								:: the generated Unique ID
+ *
+ */
+public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schema='public', $y_connection='DEFAULT') {
+
+	//--
+	if(!self::validate_table_and_fields_names($y_id_field)) {
+		self::error($y_connection, 'NEW-SAFE-ID', 'Get New Safe ID', 'Invalid Field Name', $y_id_field.' / [Schema='.$y_schema.';Table='.$y_table_name.']');
+		return '';
+	} //end if
+	if(!self::validate_table_and_fields_names($y_table_name)) {
+		self::error($y_connection, 'NEW-SAFE-ID', 'Get New Safe ID', 'Invalid Table Name', $y_table_name);
+		return '';
+	} //end if
+	if(!self::validate_table_and_fields_names($y_schema)) {
+		self::error($y_connection, 'NEW-SAFE-ID', 'Get New Safe ID', 'Invalid Schema Name', $y_schema);
+		return '';
+	} //end if
+	//--
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'NEW-SAFE-ID');
+	//==
+
+	//--
+	$use_safe_id_record = true;
+	if(defined('SMART_SOFTWARE_DB_DISABLE_SAFE_IDS')) {
+		if(SMART_SOFTWARE_DB_DISABLE_SAFE_IDS === true) {
+			$use_safe_id_record = false;
+		} //end if
+	} //end if
+	//--
+	if($use_safe_id_record === true) {
+		//--
+		if(self::check_if_table_exists('_safe_id_records', 'smart_runtime', $y_connection) !== 1) {
+			if(self::check_if_schema_exists('smart_runtime', $y_connection) !== 1) {
+				self::write_data('CREATE SCHEMA "smart_runtime"');
+			} //end if
+			self::write_data((string)self::schema_safe_id_records_table());
+		} //end if
+		//--
+		if((int)Smart::random_number(0,99) == 1) { // 1% chance to run it for cleanup records older than 24 hours
+			self::write_data('DELETE FROM "smart_runtime"."_safe_id_records" WHERE ("date_time" < \''.self::escape_str(date('Y-m-d H:i:s', @strtotime('-1 day')), 'no', $y_connection).'\')', 'Safe ID Records Cleanup (OLDs)'); // cleanup olds
+		} //end if
+		//--
+	} //end if
+	//--
+	$tmp_result = 'NO-ID-INIT'; //init (must be not empty)
+	$counter = 0;
+	$id_is_ok = false;
+	//--
+	while($id_is_ok !== true) { // while we cannot find an unused ID
+		//--
+		$counter += 1;
+		//--
+		if($counter > 7500) { // loop to max 7500
+			self::error($y_connection, 'NEW-SAFE-ID', 'Get New Safe ID', 'Could Not Assign a Unique ID', '(timeout / 7500) ... try again !');
+			return '';
+		} //end if
+		//--
+		if(($counter % 500) == 0) {
+			sleep(1);
+		} //end if
+		//--
+		$new_id = 'NO-ID-ALGO';
+		switch((string)$y_mode) {
+			case 'uid45':
+				$new_id = (string) Smart::uuid_45(SMART_FRAMEWORK_NETSERVER_ID.SmartUtils::get_server_current_url()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
+				break;
+			case 'uid36':
+				$new_id = (string) Smart::uuid_36(SMART_FRAMEWORK_NETSERVER_ID.SmartUtils::get_server_current_url()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
+				break;
+			case 'uid10seq':
+				if($use_safe_id_record === true) { // sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
+					$new_id = (string) Smart::uuid_10_seq();
+				} else {
+					$new_id = (string) Smart::uuid_10_str();
+				} //end if else
+				break;
+			case 'uid10num':
+				$new_id = (string) Smart::uuid_10_num();
+				break;
+			case 'uid10str':
+			default:
+				$new_id = (string) Smart::uuid_10_str();
+		} //end switch
+		//--
+		$result_arr = array();
+		$chk_uniqueness = 'SELECT '.self::escape_identifier($y_id_field, $y_connection).' FROM '.self::escape_identifier($y_schema, $y_connection).'.'.self::escape_identifier($y_table_name, $y_connection).' WHERE ('.self::escape_identifier($y_id_field, $y_connection).' = '.self::escape_literal($new_id, 'no', $y_connection).') LIMIT 1 OFFSET 0';
+		$result_arr = self::read_data($chk_uniqueness, 'Safe Check if NEW ID Exists into Table', $y_connection);
+		$tmp_result = (string) trim((string)$result_arr[0]);
+		$result_arr = array();
+		//--
+		if((string)$tmp_result == '') {
+			//--
+			if($use_safe_id_record === true) { // with safety check against safe ID records table
+				//-- reserve this ID to bse sure will not be assigned to another instance
+				$uniqueness_mark = (string) $y_schema.'.'.$y_table_name.':'.$y_id_field;
+				$write_res = self::write_igdata('
+					INSERT INTO "smart_runtime"."_safe_id_records" ("id", "table_space", "date_time")
+					( SELECT \''.self::escape_str($new_id, 'no', $y_connection).'\', \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\', \''.self::escape_str(date('Y-m-d H:i:s'), 'no', $y_connection).'\' WHERE (NOT EXISTS ( SELECT 1 FROM "smart_runtime"."_safe_id_records" WHERE (("id" = \''.self::escape_str($new_id, 'no', $y_connection).'\') AND ("table_space" = \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\')) LIMIT 1 OFFSET 0 ) AND NOT EXISTS ('.$chk_uniqueness.') ) )',
+					'Safe Record of NEW ID of Table into Zone Control'
+				);
+				//--
+				if($write_res[1] === 1) {
+					$id_is_ok = true;
+				} //end if
+				//--
+			} else { // default (not safe in very high load environments ...
+				//--
+				$id_is_ok = true;
+				//--
+			} //end if else
+			//--
+		} //end if
+		//--
+	} //end while
+	//--
+
+	//--
+	return (string) $new_id;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * List All Tables in the current Database.
+ *
+ * @param STRING $y_schema 						:: PgSQL Schema Name (public | *other)
+ * @param RESOURCE $y_connection				:: The connection to PgSQL server
+ * @return ARRAY
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function list_db_tables($y_schema, $y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'LIST-DB-TABLES');
+	//==
+
+	//--
+	$arr_data = self::read_data('SELECT "schemaname", "tablename" FROM "pg_tables" WHERE ("schemaname" = \''.self::escape_str($y_schema, 'no', $y_connection).'\') ORDER BY "tablename" ASC', 'List DB Tables', $y_connection);
+	//--
+
+	//--
+	return $arr_data;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Check and Return the PostgreSQL Server Version
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function check_server_version($y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'CHECK-SERVER-VERSION');
+	//==
+
+	//--
+	$minimum_pgsql_version_for_smartframework = '9.0.x'; // PostgreSQL minimum version required [9.0.x] or later (DO NOT RUN THIS SOFTWARE ON OLDER PostgreSQL Versions !!!
+	//--
+
+	//--
+	$queryval = 'SELECT VERSION()';
+	$result = @pg_query($y_connection, $queryval);
+	//--
+	$error = '';
+	if(!$result) {
+		$error = 'CHECK PgSQL Version FAILED:'."\n".@pg_last_error($y_connection);
+	} //end if else
+	//--
+	if((string)$error != '') {
+		//--
+		self::error($y_connection, 'CHECK-SERVER-VERSION', $error, $queryval, '');
+		return array();
+		//--
+	} else {
+		//--
+		$record = @pg_fetch_row($result);
+		//--
+	} //end if else
+	//--
+	@pg_free_result($result);
+	//--
+
+	//--
+	$pgsql_version = trim((string)$record[0]);
+	$tmp_arr = @explode(' ', $pgsql_version);
+	$pgsql_txt_version = strtoupper(trim($tmp_arr[0]));
+	$pgsql_num_version = strtolower(trim($tmp_arr[1]));
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+			'type' => 'set',
+			'data' => 'Validate PostgreSQL Server Version: '.$pgsql_version,
+			'connection' => (string) $y_connection,
+			'skip-count' => 'yes'
+		]);
+	} //end if
+	//--
+
+	//--
+	if(((string)$pgsql_txt_version != 'POSTGRESQL') OR (version_compare(self::major_version($minimum_pgsql_version_for_smartframework), self::major_version($pgsql_num_version)) > 0)) {
+		self::error($y_connection, 'Server-Version', 'PgSQL Server Version not supported', $pgsql_txt_version.' '.$pgsql_num_version, 'PgSQL.version='.self::major_version($minimum_pgsql_version_for_smartframework).' or later is required to run this software !');
+		return '';
+	} //end if
+	//--
+
+	//--
+	return (string) $pgsql_num_version;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * List All Runtime Info from the current PostgreSQL server.
+ *
+ * @param RESOURCE $y_connection				:: The connection to PgSQL server
+ * @return ARRAY
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function runtime_info($y_connection='DEFAULT') {
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'RUNTIME-INFO');
+	//==
+
+	//--
+	$arr_data = self::read_data('SHOW ALL', 'Show Runtime Info', $y_connection);
+	//--
+
+	//--
+	return $arr_data;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================================
+// # PRIVATES
+//======================================================================
+
+
+//======================================================
+private static function get_notice_smart_affected_rows($y_pgsql_notice) {
+	//--
+	$y_pgsql_notice = (string) trim((string)$y_pgsql_notice);
+	$arr = explode('SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #', (string)$y_pgsql_notice);
+	$msg = trim((string)$arr[1]);
+	//--
+	return (int) $msg;
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Check the connection to PgSQL if Active and Not Busy
+ * If not connected will connect
+ * PRIVATE
+ *
+ * @param RESOURCE 	$y_connection 				:: The Connection to PgSQL Server
+ * @param STRING 	$y_description				:: The Description of Where it is Checked (for having a clue where it fails)
+ * @return Connection Resource
+ *
+ */
+private static function check_connection($y_connection, $y_description) {
+	//--
+	global $configs;
+	//--
+	if($y_connection === 'DEFAULT') { // just for the default connection !!!
+		//--
+		if(!defined('SMART_FRAMEWORK_DB_LINK_PostgreSQL')) { // PostgreSQL default connection is exported as constant to avoid re-connection which can break transactions
+			//--
+			if(!is_array($configs['pgsql'])) {
+				self::error('', 'CHECK-DEFAULT-PGSQL-CONFIGS', 'The Default PostgreSQL Configs not detected !', 'The configs[pgsql] is not an array !', $y_description);
+				return null;
+			} //end if
+			if(((string)$configs['pgsql']['server-host'] == '') OR ((string)$configs['pgsql']['server-port'] == '') OR ((string)$configs['pgsql']['dbname'] == '') OR ((string)$configs['pgsql']['username'] == '')) {
+				self::error('', 'CHECK-DEFAULT-PGSQL-CONFIGS', 'The Default PostgreSQL Configs are not complete !', 'Some of the configs[pgsql] parameters are missing !', $y_description);
+				return null;
+			} //end if
+			//-- {{{SYNC-CONNECTIONS-IDS}}}
+			$the_conn_key = (string) $configs['pgsql']['server-host'].':'.$configs['pgsql']['server-port'].'@'.$configs['pgsql']['dbname'].'#'.$configs['pgsql']['username'].'>'.trim(strtoupper(str_replace(' ','',(string)$configs['pgsql']['transact']))).'.';
+			if(array_key_exists((string)$the_conn_key, (array)SmartFrameworkRegistry::$Connections['pgsql'])) { // if the connection was made before using the SmartPgsqlExtDb
+				//--
+				$y_connection = SmartFrameworkRegistry::$Connections['pgsql'][(string)$the_conn_key];
+				//--
+				define('SMART_FRAMEWORK_DB_LINK_PostgreSQL', $y_connection);
+				//--
+				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+						'type' => 'open-close',
+						'data' => 'Re-Using Connection to PgSQL Server as DEFAULT: '.$the_conn_key,
+						'connection' => (string) $y_connection
+					]);
+				} //end if
+				//--
+			} else {
+				//--
+				$y_connection = self::server_connect( // create a DEFAULT connection using default postgresql connection params from config
+					(string)$configs['pgsql']['server-host'],
+					(int)$configs['pgsql']['server-port'],
+					(string)$configs['pgsql']['dbname'],
+					(string)$configs['pgsql']['username'],
+					(string)$configs['pgsql']['password'],
+					(int)$configs['pgsql']['timeout'],
+					(string)$configs['pgsql']['transact'],
+					(float)$configs['pgsql']['slowtime'],
+					(string)$configs['pgsql']['type']
+				);
+				//--
+				define('SMART_FRAMEWORK_DB_LINK_PostgreSQL', $y_connection);
+				//--
+				if(is_resource($y_connection)) {
+					//--
+					define('SMART_FRAMEWORK_DB_VERSION_PostgreSQL', self::check_server_version($y_connection));
+					//--
+				} //end if
+				//--
+			} //end if else
+			//--
+		} else {
+			//-- re-use the default connection
+			$y_connection = SMART_FRAMEWORK_DB_LINK_PostgreSQL;
+			//--
+		} //end if
+		//--
+	} //end if
+	//--
+	if(!is_resource($y_connection)) { // if no connection
+		//--
+		self::error($y_connection, 'CHECK-CONNECTION', 'Connection is BROKEN !', 'Connection-ID: '.$y_connection, $y_description);
+		return null;
+		//--
+	} //end if
+	//--
+	if(@pg_connection_status($y_connection) != PGSQL_CONNECTION_OK) {
+		//--
+		$re_connect = @pg_ping($y_connection);
+		//--
+		if(!$re_connect) {
+			self::error($y_connection, 'CHECK-CONNECTION', 'Connection LOST !', 'Connection-ID: '.$y_connection, $y_description);
+			return null;
+		} //end if
+		//--
+	} //end if else
+	//--
+	return $y_connection;
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+private static function validate_table_and_fields_names($y_table_or_field) {
+	//--
+	if(preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', (string)$y_table_or_field)) {
+		$is_ok = true;
+	} else {
+		$is_ok = false;
+	} //end if else
+	//--
+	return $is_ok;
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+// returns major version for pgsql versions
+private static function major_version($y_version) {
+	//--
+	$y_version = (string) $y_version;
+	//--
+	$arr = @explode('.', trim($y_version));
+	//--
+	return trim($arr[0]).'.'.trim($arr[1]).'.x';
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Displays the PgSQL Errors and HALT EXECUTION (This have to be a FATAL ERROR as it occur when a FATAL PgSQL ERROR happens or when a Query Syntax is malformed)
+ * PRIVATE
+ *
+ * @param STRING $y_error_message 				:: The Error Message to Display
+ * @return 										:: HALT EXECUTION WITH ERROR MESSAGE
+ *
+ */
+private static function error($y_connection, $y_area, $y_error_message, $y_query, $y_title_query, $y_warning='Execution Halted !') {
+//--
+$the_area = Smart::escape_html($y_area);
+$the_params = '';
+if(is_array($y_title_query)) {
+	$the_params = '<pre>'.Smart::escape_html('[Params]'."\n".print_r($y_title_query, 1)).'</pre>';
+	$the_title_query = '+Untitled+';
+} elseif((string)$y_title_query == '') {
+	$the_title_query = '-Untitled-';
+} else {
+	$the_title_query = Smart::escape_html($y_title_query);
+} //end if else
+if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	$the_error_message = Smart::escape_html($y_error_message);
+	$the_query_info = Smart::escape_html($y_query).$the_params;
+	$width = 750;
+} else {
+	$width = 550;
+	$the_title_query = '!';
+	$the_error_message = 'An operation failed. '.Smart::escape_html($y_warning).'...';
+	$the_query_info = 'View the App ERROR Log for more details about this Error !'; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
+} //end if else
+//--
+$out = <<<HTML_CODE
+<style type="text/css">
+	* {
+		font-family: verdana,tahoma,arial,sans-serif;
+		font-smooth: always;
+	}
+</style>
+<div align="center">
+	<table width="{$width}" cellspacing="0" cellpadding="8" bordercolor="#CCCCCC" border="1" style="border-style: solid; border-color: #CCCCCC; border-collapse: collapse;">
+		<tr valign="middle" bgcolor="#FFFFFF">
+			<td width="64" align="center">
+				<img src="lib/framework/img/sign_warn.png">
+			</td>
+			<td align="center">
+				<div align="center"><font size="5" color="#DD0000"><b>PgSQL :: ERROR</b><br>{$the_area}</font></div>
+			</td>
+		</tr>
+		<tr valign="top" bgcolor="#FFFFFF">
+			<td width="64" align="center">
+				<img src="lib/core/img/db/postgresql_logo.png">
+				<br>
+				<br>
+				<font size="1" color="#778899"><sub><b>PostgreSQL</b><br><b><i>DB&nbsp;Server</i></b></sub></font>
+			</td>
+			<td>
+				<div align="center">
+					<font size="4" color="#778899"><b>[ {$the_title_query} ]</b></font>
+				</div>
+				<br>
+				<div align="left">
+					<font size="3" color="#DD0000"><b>{$the_error_message}</b></font>
+					<br>
+					<font size="3" color="#DD0000">{$the_query_info}</font>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+HTML_CODE;
+//--
+Smart::raise_error(
+	'#POSTGRESQL-DB@'.$y_connection.'# :: Q# // PgSQL :: ERROR :: '.$y_area.' // '.print_r($y_title_query,1)."\n".$y_query."\n".'Error-Message: '.$y_error_message,
+	$out // msg to display
+);
+die(''); // just in case
+//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+private static function schema_safe_id_records_table() {
+//--
+$sql = <<<'SQL'
+-- Table smart_runtime._safe_id_records #####
+CREATE TABLE smart_runtime._safe_id_records (
+    id character varying(45) NOT NULL,
+    table_space character varying(512) NOT NULL,
+    date_time character varying(22) NOT NULL,
+    CONSTRAINT _safe_id_records__check__id CHECK ((char_length((id)::text) >= 10)),
+    CONSTRAINT _safe_id_records__check__table_space CHECK ((char_length((table_space)::text) >= 1)),
+    CONSTRAINT _safe_id_records__check__date_time CHECK ((char_length((date_time)::text) >= 19))
+);
+ALTER TABLE ONLY smart_runtime._safe_id_records ADD CONSTRAINT _safe_id_records__id PRIMARY KEY (id);
+CREATE INDEX _safe_id_records__table_space 	ON smart_runtime._safe_id_records USING btree (table_space);
+CREATE INDEX _safe_id_records__date_time 	ON smart_runtime._safe_id_records USING btree (date_time);
+COMMENT ON TABLE smart_runtime._safe_id_records IS 'Smart.Framework Safe-ID Records v.2015.03.25';
+COMMENT ON COLUMN smart_runtime._safe_id_records.id IS 'ID';
+COMMENT ON COLUMN smart_runtime._safe_id_records.table_space IS 'Table Space as: schema.table:field';
+COMMENT ON COLUMN smart_runtime._safe_id_records.date_time IS 'Date and Time ( yyyy-mm-dd hh:ii:ss)';
+SQL;
+//--
+return (string) $sql;
+//--
+} //END FUNCTION
+//======================================================
+
+
+} //END CLASS
+
+//=====================================================================================
+//===================================================================================== CLASS END
+//=====================================================================================
+
+
+
+//=====================================================================================
+//===================================================================================== CLASS START
+//=====================================================================================
+
+
+/**
+ * Class: SmartPgsqlExtDb - provides a Dynamic (Extended) PostgreSQL DB Server Client that can be used with custom made connections.
+ *
+ * This class is made to be used with custom made PostgreSQL connections (other servers than default).
+ *
+ * <code>
+ * // Sample config array for this class constructor:
+ * $custom_pgsql = array();
+ * $custom_pgsql['type']         = 'postgresql';            // postgresql / pgpool2
+ * $custom_pgsql['server-host']  = '127.0.0.1';             // database host (default is 127.0.0.1)
+ * $custom_pgsql['server-port']  = '5432';                  // database port (default is 5432)
+ * $custom_pgsql['dbname']       = 'smart_framework';       // database name
+ * $custom_pgsql['username']     = 'pgsql';                 // sql server user name
+ * $custom_pgsql['password']     = base64_encode('pgsql');  // sql server Base64-Encoded password for that user name B64
+ * $custom_pgsql['timeout']      = 30;                      // connection timeout (how many seconds to wait for a valid PgSQL Connection)
+ * $custom_pgsql['slowtime']     = 0.0050;                  // 0.0025 .. 0.0090 slow query time (for debugging)
+ * $custom_pgsql['transact']     = 'READ COMMITTED';        // Default Transaction Level: 'READ COMMITTED' | 'REPEATABLE READ' | 'SERIALIZABLE' | '' to leave it as default
+ * // sample usage:
+ * $pgsql = new SmartPgsqlExtDb($custom_pgsql);
+ * $pgsql->read_adata('SELECT * FROM "my_table" LIMIT 100 OFFSET 0');
+ * //... for other hints look to the samples of the class: SmartPgsqlDb::*
+ * </code>
+ *
+ * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
+ * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
+ *
+ * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
+ * @version 	v.160215
+ * @package 	Database:PostgreSQL
+ *
+ */
+final class SmartPgsqlExtDb {
+
+	// ->
+
+
+private $connection;
+
+
+//==================================================
+
+
+/**
+ * Class Constructor
+ * It will initiate also the custom connection
+ * or will re-use an existing connection (if the same connection parameters are provided)
+ * for a PostgreSQL Server.
+ *
+ * @param ARRAY $y_configs_arr 					:: The Array of Configuration parameters for the connection - the ARRAY STRUCTURE should be identical with the default config.php: $configs['pgsql'].
+ *
+ */
+public function __construct($y_configs_arr) {
+	//--
+	$y_configs_arr = (array) $y_configs_arr;
+	//-- {{{SYNC-CONNECTIONS-IDS}}}
+	$the_conn_key = (string) $y_configs_arr['server-host'].':'.$y_configs_arr['server-port'].'@'.$y_configs_arr['dbname'].'#'.$y_configs_arr['username'].'>'.trim(strtoupper(str_replace(' ','',(string)$y_configs_arr['transact']))).'.';
+	if(array_key_exists((string)$the_conn_key, (array)SmartFrameworkRegistry::$Connections['pgsql'])) {
+		//-- try to reuse the connection :: only check if array key exists, not if it is a valid resource ; this should be as so to avoid mismatching connection mixings (if by example will re-use the connection of another server, and connection is broken in the middle of a transaction, it will fail ugly ;) and out of any control !
+		$this->connection = SmartFrameworkRegistry::$Connections['pgsql'][(string)$the_conn_key];
+		//--
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
+				'type' => 'open-close',
+				'data' => 'Re-Using Connection to PgSQL Server: '.$the_conn_key,
+				'connection' => (string)$this->connection
+			]);
+		} //end if
+		//--
+	} else {
+		//-- connect
+		$this->connection = SmartPgsqlDb::server_connect(
+			(string)$y_configs_arr['server-host'],
+			(int)$y_configs_arr['server-port'],
+			(string)$y_configs_arr['dbname'],
+			(string)$y_configs_arr['username'],
+			(string)$y_configs_arr['password'],
+			(int)$y_configs_arr['timeout'],
+			(string)$y_configs_arr['transact'],
+			(float)$y_configs_arr['slowtime'],
+			(string)$y_configs_arr['type']
+		);
+		//--
+		$this->check_server_version();
+		//--
+	} //end if else
+	//--
+} //END FUNCTION
+
+
+//==================================================
+
+
+/**
+ * Returns the connection resource of the current PostgreSQL Server.
+ */
+public function getConnection() {
+	//--
+	return $this->connection;
+	//--
+} //END FUNCTION
+
+
+//==================================================
+
+
+/**
+ * Escape a string to be compliant and Safe (against SQL Injection) with PgSQL standards.
+ * This function will not add the (single) quotes arround the string, but just will just escape it to be safe.
+ *
+ * @param STRING $y_string						:: A String or a Number to be Escaped
+ * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @return STRING 								:: The Escaped String / Number
+ *
+ */
+public function escape_str($y_string, $y_escape_likes='no') {
+	//--
+	return SmartPgsqlDb::escape_str($y_string, $y_escape_likes, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Escape a variable in the literal way to be compliant and Safe (against SQL Injection) with PgSQL standards.
+ * This function will add the (single) quotes arround the string as needed and will escape expressions containing backslashes \ in the postgresql way using E'' escapes.
+ * This is the preferred way to escape variables inside PostgreSQL SQL Statements, and is better than escape_str().
+ *
+ * @param STRING $y_string						:: A String or a Number to be Escaped
+ * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @return STRING 								:: The Escaped String / Number
+ *
+ */
+public function escape_literal($y_string, $y_escape_likes='no') {
+	//--
+	return SmartPgsqlDb::escape_literal($y_string, $y_escape_likes, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Escape an identifier to be compliant and Safe (against SQL Injection) with PgSQL standards.
+ * This function will add the (double) quotes arround the identifiers (fields / table names) as needed.
+ *
+ * @param STRING $y_identifier					:: The Identifier to be Escaped: field / table
+ * @return STRING 								:: The Escaped Identifier as: "field" / "table"
+ *
+ */
+public function escape_identifier($y_identifier) {
+	//--
+	return SmartPgsqlDb::escape_identifier($y_identifier, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * PostgreSQL compliant and Safe Json Encode.
+ * This should be used with PostgreSQL json / jsonb fields.
+ *
+ * @param STRING $y_mixed_content				:: A mixed variable
+ * @return STRING 								:: JSON string
+ *
+ */
+public function json_encode($y_mixed_content) {
+	//--
+	return SmartPgsqlDb::json_encode($y_mixed_content);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Check if a Schema Exists in the current Database.
+ *
+ * @param STRING $y_schema 						:: The Schema Name
+ * @return 0/1									:: 1 if exists ; 0 if not
+ *
+ */
+public function check_if_schema_exists($y_schema) {
+	//--
+	return SmartPgsqlDb::check_if_schema_exists($y_schema, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Check if a Table Exists in the current Database.
+ *
+ * @param STRING $y_table 						:: The Table Name
+ * @param STRING $y_schema						:: The Schema Name
+ * @return 0/1									:: 1 if exists ; 0 if not
+ *
+ */
+public function check_if_table_exists($y_table, $y_schema='public') {
+	//--
+	return SmartPgsqlDb::check_if_table_exists($y_table, $y_schema, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * PgSQL Query -> Count
+ * This function is intended to be used for count type queries: SELECT COUNT().
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @return INTEGER								:: the result of COUNT()
+ */
+public function count_data($queryval, $params_or_title='') {
+	//--
+	return SmartPgsqlDb::count_data($queryval, $params_or_title, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * PgSQL Query -> Read (Non-Associative) one or multiple rows.
+ * This function is intended to be used for read type queries: SELECT.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
+ */
+public function read_data($queryval, $params_or_title='') {
+	//--
+	return SmartPgsqlDb::read_data($queryval, $params_or_title, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * PgSQL Query -> Read (Associative) one or multiple rows.
+ * This function is intended to be used for read type queries: SELECT.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @return ARRAY (asociative) of results		:: array(0 => array('column1', 'column2', ... 'column-n'), 1 => array('column1', 'column2', ... 'column-n'), ..., m => array('column1', 'column2', ... 'column-n'))
+ */
+public function read_adata($queryval, $params_or_title='') {
+	//--
+	return SmartPgsqlDb::read_adata($queryval, $params_or_title, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * PgSQL Query -> Read (Associative) - Single Row (just for 1 row, to easy the use of data from queries).
+ * !!! This will raise an error if more than one row(s) are returned !!!
+ * This function does not support multiple rows because the associative data is structured without row iterator.
+ * For queries that return more than one row use: read_adata() or read_data().
+ * This function is intended to be used for read type queries: SELECT.
+ *
+ * @hints	ALWAYS use a LIMIT 1 OFFSET 0 with all queries using this function to avoid situations that will return more than 1 rows and will raise ERROR with this function.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')
+ */
+public function read_asdata($queryval, $params_or_title='') {
+	//--
+	return SmartPgsqlDb::read_asdata($queryval, $params_or_title, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * PgSQL Query -> Write.
+ * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ; CREATE SCHEMAS ; CALLING STORED PROCEDURES ...
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
+ * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ */
+public function write_data($queryval, $params_or_title='') {
+	//--
+	return SmartPgsqlDb::write_data($queryval, $params_or_title, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * PgSQL Query -> Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
+ * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ...
+ * This function cannot be used with params: $1, ... $n as they are not supported by PostgreSQL syntax inside a stored procedure.
+ *
+ * IMPORTANT: this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
+ * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a block.
+ * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
+ *
+ * @param STRING $queryval						:: the query
+ * @param STRING $querytitle 					:: *optional* query title for easy debugging (no parameters are allowed in this case)
+ * @param RESOURCE $y_connection				:: the connection
+ * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ */
+public function write_igdata($queryval, $querytitle='') {
+	//--
+	return SmartPgsqlDb::write_igdata($queryval, $querytitle, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Create Escaped Write SQL Statements from Data - to be used with PgSQL for: INSERT ; INSERT-SUBSELECT ; UPDATE ; IN-SELECT
+ * To be used with: write_data() or write_igdata() to build an INSERT / INSERT (SELECT) / UPDATE / SELECT IN query from an associative array
+ *
+ * @param ARRAY-associative $arrdata			:: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
+ * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select'
+ * @param TRUE/FALSE $escape_data				:: escape data or not (default is TRUE, will escape the data)
+ * @return STRING								:: The SQL partial Statement
+ *
+ */
+public function prepare_write_statement($arrdata, $mode, $escape_data=true) {
+	//--
+	return SmartPgsqlDb::prepare_write_statement($arrdata, $mode, $escape_data, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Get A UNIQUE (SAFE) ID for DB Tables / Schema
+ *
+ * @param ENUM 		$y_mode 					:: mode: uid10str | uid10num | uid10seq | uid36 | uid45
+ * @param STRING 	$y_field_name 				:: the field name
+ * @param STRING 	$y_table_name 				:: the table name
+ * @param STRING 	$y_schema 					:: the schema (default is: public)
+ * @return STRING 								:: the generated Unique ID
+ *
+ */
+public function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schema='public') {
+	//--
+	return SmartPgsqlDb::new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schema, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * List All Tables in the current Database.
+ *
+ * @param STRING $y_schema 						:: PgSQL Schema Name (public | *other)
+ * @return ARRAY
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public function list_db_tables($y_schema) {
+	//--
+	return SmartPgsqlDb::list_db_tables($y_schema, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Check and Return the PostgreSQL Server Version
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public function check_server_version() {
+	//--
+	return SmartPgsqlDb::check_server_version($this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * List All Runtime Info from the current PostgreSQL server.
+ *
+ * @return ARRAY
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public function runtime_info() {
+	//--
+	return SmartPgsqlDb::runtime_info($this->connection);
+	//--
+} //END FUNCTION
+
+
+//==================================================
+
+
+} //END CLASS
+
+
+//=====================================================================================
+//===================================================================================== CLASS END
+//=====================================================================================
+
+
+//end of php code
+?>

@@ -1,0 +1,96 @@
+
+/* ------------------------------------------------ CSS3, Base Styles START */
+
+* {
+	font-family: 'Open Sans',tahoma,arial,sans-serif;
+	font-smooth: always;
+}
+html, body{
+	width: 96% auto;
+	/*height: 96% auto;*/
+	margin: 1px;
+	padding: 0px;
+}
+body {
+	background: #FFFFFF;
+	font-size: 13px;
+}
+div, p, pre, code, ul, li {
+	font-size: 13px;
+}
+img {
+	border: 0px;
+}
+img#shaddow {
+	border: 0px;
+	box-shadow: 2px 2px 3px #BBB; /* Opera and other CSS3 supporting browsers */
+}
+hr {
+	border: none 0;
+	border-top: 1px solid #CCCCCC;
+	height: 1px;
+}
+/* ----- tables ----- */
+table {
+	font-size: 12px;
+	font-weight: normal;
+	text-align:left;
+}
+td {
+	font-size: 12px;
+	font-weight: normal;
+}
+th {
+	font-size: 14px;
+	font-weight: bold;
+}
+/* ----- links ----- */
+a, a:link, a:visited, a:hover {
+	color: #000000;
+}
+/* ----- forms ----- */
+input[type="text"]:disabled {
+	background-color: #FFFFFF;
+}
+/*
+label {
+	font-size: 12px;
+	font-weight: normal;
+}
+textarea {
+	font-size:12px;
+	background-color: #FEFEFE;
+	color: #000000;
+	border: 1px;
+	border-style: solid;
+	border-color: #CCCCCC;
+}
+select {
+	font-size:12px;
+	background-color: #FEFEFE;
+	color: #666666;
+	border: 1px;
+	border-style: solid;
+	border-color: #CCCCCC;
+}
+input {
+	font-size:11px;
+	background-color: #FFFFFF;
+	color: #000000;
+	border: 1px;
+	border-style: solid;
+	border-color: #CCCCCC;
+}
+input[type=submit], input[type=button] {
+	font-size:11px;
+	font-weight: bold;
+	background-color: #FFFFFF;
+	color: #778899;
+	border: 1px;
+	border-style: outset;
+	border-color: #333333;
+	cursor: pointer;
+}
+*/
+
+/* ------------------------------------------------ Base Styles END */

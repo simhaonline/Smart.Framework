@@ -1,0 +1,34 @@
+<!-- Partial Template: Core.DrawEditArea -->
+<script type="text/javascript">
+var the_readonly_editor__[####TXT-AREA-ID####] = [####READ-ONLY####];
+var the_code_editor__[####TXT-AREA-ID####] = CodeMirror.fromTextArea(document.getElementById('[####TXT-AREA-ID####]'), {
+	readOnly: [####READ-ONLY####],
+	lineNumbers: [####SHOW-LINE-NUM####],
+	cursorBlinkRate: [####BLINK-CURSOR####],
+	mode: '[####CODE-TYPE####]',
+	theme: 'eclipse',
+	matchBrackets: true,
+	matchTags: true,
+	highlightSelectionMatches: {showToken: /\w/},
+	styleActiveLine: true,
+	extraKeys: {
+		"F11": function(cm) {
+			//if(the_readonly_editor__[####TXT-AREA-ID####] !== true) {
+				cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+			//} //end if
+		},
+		"Esc": function(cm) {
+			if(cm.getOption("fullScreen")) {
+				cm.setOption("fullScreen", false);
+			}
+		}
+	}
+});
+the_code_editor__[####TXT-AREA-ID####].setSize([####WIDTH####], [####HEIGHT####]);
+if(the_readonly_editor__[####TXT-AREA-ID####] === false) {
+	the_code_editor__[####TXT-AREA-ID####].on('blur', function(){
+		the_code_editor__[####TXT-AREA-ID####].save();
+	});
+} //end if
+</script>
+<!-- #END :: Partial Template: Core.DrawEditArea -->

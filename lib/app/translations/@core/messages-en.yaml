@@ -1,0 +1,12 @@
+# Language File: EN / CORE / Messages
+TRANSLATIONS:
+  @language: EN
+  @area: core
+  @version: 2016-02-15
+  messages:
+    yes: 'Yes'
+    no: 'No'
+    ok: 'OK'
+    cancel: 'Cancel'
+    warn_undone: 'WARNING: This Action Cannot Be Undone !'
+#END

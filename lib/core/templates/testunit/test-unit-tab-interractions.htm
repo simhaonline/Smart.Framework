@@ -1,0 +1,36 @@
+<!-- Partial Sub-Template: TestUnit.Main.Interractions -->
+			Click on the links below / Press the Submit button
+			<br><br>
+			[####TEST-ELEMENTS.DIALOG####]
+			<br><br>
+			[####TEST-ELEMENTS.ALERT####]
+			<br><br>
+			[####TEST-ELEMENTS.SEND-CONFIRM-MODAL####]
+			<br>
+			[####TEST-ELEMENTS.SEND-CONFIRM-POPUP####]
+			<br>
+			<br>
+			<div id="dialog" title="Basic dialog">
+			<p>This is the dialog. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+			</div>
+			<button id="btn_dlg_openr">Open Dialog</button>
+			<script type="text/javascript">
+			$(function() {
+				$('#dialog').dialog({
+					autoOpen: false,
+					show: {
+						effect: 'blind',
+						duration: 1000
+					},
+					hide: {
+						effect: 'explode',
+						duration: 1000
+					}
+				});
+				$('#btn_dlg_openr').button();
+				$('#btn_dlg_openr').click(function() {
+					$('#dialog').dialog('open');
+				});
+			});
+			</script>
+<!-- #END :: Partial Sub-Template: TestUnit.Main.Interractions -->

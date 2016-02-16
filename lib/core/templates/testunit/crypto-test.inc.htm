@@ -1,0 +1,164 @@
+<!-- Partial Template: TestUnit.Encryption :: v.150114 -->
+<h2>PHP Unicode Crypto Tests [ [####EXE-TIME####] ] :</h2><br>
+Unicode@String:&nbsp;<span id="unicode-string" style="color:#FF5500;">[####UNICODE-TEXT####]</span><br>
+Escaped@JS:&nbsp;<span id="jsescaped-string" style="color:#778899;">[####JS-ESCAPED|js|html####]</span><br>
+SHA512:&nbsp;<span id="sha512-hash" style="color:#888888;">[####HASH-SHA512####]</span><br>
+SHA1:&nbsp;<span id="sha1-hash" style="color:#999999;">[####HASH-SHA1####]</span><br>
+MD5:&nbsp;<span id="md5-hash" style="color:#AAAAAA;">[####HASH-MD5####]</span><br>
+Base64@Encoded:&nbsp;<span id="base64enc-string" style="color:#666699;">[####BASE64-ENCODED####]</span><br>
+Base64@Decoded:&nbsp;<span id="base64dec-string" style="color:#FF5500;">[####BASE64-DECODED####]</span><br>
+Bin2Hex@Encoded:&nbsp;<span id="bin2hex-encoded" style="color:#444477;">[####BIN2HEX-ENCODED####]</span><br>
+Hex2Bin@Decoded:&nbsp;<span id="hex2bin-decoded" style="color:#FF5500;">[####HEX2BIN-DECODED####]</span><br>
+LZS@Archived:&nbsp;<span id="lzs-archived" style="color:#003399;">[####LZS-ARCHIVED####]</span><br>
+LZS@Unarchived:&nbsp;<span id="lzs-unarchived" style="color:#FF5500;">[####LZS-UNARCHIVED####]</span><br>
+<input type="hidden" id="blowfisk-key" value="[####BLOWFISH-KEY####]">
+Blowfish@Encrypted:&nbsp;<span id="blowfish-encrypted" style="color:#66AA00;">[####BLOWFISH-ENCRYPTED####]</span><br>
+Blowfish@Encrypted/LZS:&nbsp;<span id="blowfish-lzs-encrypted" style="color:#8CB23F;">[####BLOWFISH-LZS-ENCRYPTED####]</span><br>
+Blowfish@Decrypted:&nbsp;<span id="blowfish-decrypted" style="color:#FF5500;">[####BLOWFISH-DECRYPTED####]</span><br>
+Blowfish@Method:&nbsp;<span style="color:#CCCCCC;">PHP/[####BLOWFISH-METHOD####]</span><br>
+HashCrypt@Encrypted:&nbsp;<span id="hash-encrypted" style="color:#626831;">[####HASH-CRYPT####]</span><br>
+HashCrypt@Decrypted:&nbsp;<span id="hash-decrypted" style="color:#FF5500;">[####HASH-DECRYPT####]</span><br>
+<hr>
+<h2>Javascript Unicode Crypto Tests:</h2>
+<div id="testunit-partial-crypto"></div>
+<script type="text/javascript">
+(function() {
+	//--
+	var the_error = 0;
+	//--
+	var unicodeText = $('#unicode-string').text();
+	var the_sha512 = SmartJS_CryptoHash.sha512(unicodeText);
+	var the_sha1 = SmartJS_CryptoHash.sha1(unicodeText);
+	var the_md5 = SmartJS_CryptoHash.md5(unicodeText);
+	//--
+	var b64enc = SmartJS_Base64.encode(unicodeText);
+	var b64dec = SmartJS_Base64.decode(b64enc);
+	//--
+	var bin2hex = SmartJS_CoreUtils.bin2hex(unicodeText).toUpperCase();
+	var hex2bin = SmartJS_CoreUtils.hex2bin(SmartJS_CoreUtils.stringTrim(bin2hex).toLowerCase());
+	//--
+	var bf_key = $('#blowfisk-key').val();
+	var bf_enc = SmartJS_CryptoBlowfish.encrypt(unicodeText, bf_key);
+	var bf_dec = SmartJS_CryptoBlowfish.decrypt(bf_enc, bf_key);
+	//--
+	var arch_lzs = SmartJS_Archiver_LZS.compressToBase64(unicodeText);
+	var unarch_lzs = SmartJS_Archiver_LZS.decompressFromBase64(arch_lzs);
+	//--
+	var arch_bf_lzs = SmartJS_Archiver_LZS.compressToBase64(bf_enc);
+	var unarch_bf_lzs = SmartJS_Archiver_LZS.decompressFromBase64(arch_bf_lzs);
+	//--
+	var jsescTxt = SmartJS_CoreUtils.escape_js(unicodeText);
+	var htmlcode = 'Unicode@String:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(unicodeText) + '</span><br>';
+	htmlcode += SmartJS_CoreUtils.nl2br('Escaped@JS:&nbsp;<span style="color:#778899;">' + SmartJS_CoreUtils.escape_html(jsescTxt) + '</span>' + "\n");
+	htmlcode += 'SHA512:&nbsp;<span style="color:#888888;">' + SmartJS_CoreUtils.escape_html(the_sha512) + '</span><br>';
+	htmlcode += 'SHA1:&nbsp;<span style="color:#999999;">' + SmartJS_CoreUtils.escape_html(the_sha1) + '</span><br>';
+	htmlcode += 'MD5:&nbsp;<span style="color:#AAAAAA;">' + SmartJS_CoreUtils.escape_html(the_md5) + '</span><br>';
+	htmlcode += 'Base64@Encoded:&nbsp;<span style="color:#666699;">' + SmartJS_CoreUtils.escape_html(b64enc) + '</span><br>';
+	htmlcode += 'Base64@Decoded:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(b64dec) + '</span><br>';
+	htmlcode += 'Bin2Hex@Encoded:&nbsp;<span style="color:#444477;">' + SmartJS_CoreUtils.escape_html(bin2hex) + '</span><br>';
+	htmlcode += 'Hex2Bin@Decoded:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(hex2bin) + '</span><br>';
+	htmlcode += 'LZS@Archived:&nbsp;<span style="color:#003399;">' + SmartJS_CoreUtils.escape_html(arch_lzs) + '</span><br>';
+	htmlcode += 'LZS@Unarchived:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(unarch_lzs) + '</span><br>';
+	htmlcode += 'Blowfish@Encrypted:&nbsp;<span style="color:#66AA00;">' + SmartJS_CoreUtils.escape_html(bf_enc) + '</span><br>';
+	htmlcode += 'Blowfish@Encrypted/LZS:&nbsp;<span style="color:#8CB23F;">' + SmartJS_CoreUtils.escape_html(arch_bf_lzs) + '</span><br>';
+	htmlcode += 'Blowfish@Decrypted:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(bf_dec) + '</span><br>';
+	htmlcode += 'Blowfish@Method:&nbsp;<span style="color:#CCCCCC;">JS/blowfish</span>' + '<br>';
+	$('#testunit-partial-crypto').html(htmlcode);
+	//-- JS Tests
+	if((b64dec !== unicodeText) || (SmartJS_CryptoHash.sha1(b64dec) !== the_sha1)) {
+		alert('ERROR: Base64 Encode/Decode Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + b64dec + '` / ' + SmartJS_CryptoHash.sha1(b64dec));
+		the_error++;
+	} //end if
+	if((hex2bin !== unicodeText) || (SmartJS_CryptoHash.sha1(hex2bin) !== the_sha1)) {
+		alert('ERROR: Bin2Hex / Hex2Bin Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + hex2bin + '` / ' + SmartJS_CryptoHash.sha1(hex2bin));
+		the_error++;
+	} //end if
+	if((bf_dec !== unicodeText) || (SmartJS_CryptoHash.sha1(bf_dec) !== the_sha1)) {
+		alert('ERROR: BlowFish Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + bf_dec + '` / ' + SmartJS_CryptoHash.sha1(bf_dec));
+		the_error++;
+	} //end if
+	if((unarch_bf_lzs !== bf_enc) || (SmartJS_CryptoHash.sha1(unarch_bf_lzs) !== SmartJS_CryptoHash.sha1(bf_enc))) {
+		alert('ERROR: Blowfish-Arch-LZS Test Failed:\n' + 'Before: `' + unarch_bf_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_bf_lzs) + '\n' + 'After: `' + bf_enc + '` / ' + SmartJS_CryptoHash.sha1(bf_enc));
+		the_error++;
+	} //end if
+	if((unarch_lzs !== unicodeText) || (SmartJS_CryptoHash.sha1(unarch_lzs) !== the_sha1)) {
+		alert('ERROR: Arch-LZS Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + unarch_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_lzs));
+		the_error++;
+	} //end if
+	//-- compare with PHP
+	if($('#unicode-string').text() !== unicodeText) {
+		alert('ERROR: Text comparison with PHP failed ...');
+		the_error++;
+	} //end if
+	if($('#jsescaped-string').text() != jsescTxt) {
+		alert('ERROR: JS-Escaped comparison with PHP failed ...');
+		the_error++;
+	} //end if
+	if($('#sha512-hash').text() !== the_sha512) {
+		alert('ERROR: SHA512 comparison with PHP Failed ...');
+		the_error++;
+	} //end if
+	if($('#sha1-hash').text() !== the_sha1) {
+		alert('ERROR: SHA1 comparison with PHP Failed ...');
+		the_error++;
+	} //end if
+	if($('#md5-hash').text() !== the_md5) {
+		alert('ERROR: MD5 comparison with PHP Failed ...');
+		the_error++;
+	} //end if
+	if($('#base64enc-string').text() != b64enc) {
+		alert('ERROR: B64-Encoded comparison with PHP failed ...');
+		the_error++;
+	} //end if
+	if($('#base64dec-string').text() != b64dec) {
+		alert('ERROR: B64-Decoded comparison with PHP failed ...');
+		the_error++;
+	} //end if
+	if($('#bin2hex-encoded').text() != bin2hex) {
+		alert('ERROR: Bin2Hex comparison with PHP failed ...');
+		the_error++;
+	} //end if
+	if($('#hex2bin-decoded').text() != hex2bin) {
+		alert('ERROR: Hex2Bin comparison with PHP failed ...');
+		the_error++;
+	} //end if
+	if((bf_enc != $('#blowfish-encrypted').text()) || (SmartJS_CryptoHash.sha1(bf_enc) != SmartJS_CryptoHash.sha1($('#blowfish-encrypted').text()))) {
+		alert('ERROR: PHP Blowfish encrypted is different than Javascript one ...');
+		the_error++;
+	} //end if
+	var decode_php_blowfish = SmartJS_CryptoBlowfish.decrypt($('#blowfish-encrypted').text(), bf_key);
+	if((decode_php_blowfish != unicodeText) || (SmartJS_CryptoHash.sha1(decode_php_blowfish) != SmartJS_CryptoHash.sha1(unicodeText))) {
+		alert('ERROR: Javascript decrypted Blowfish is different than PHP one ...' + decode_php_blowfish);
+		the_error++;
+	} //end if
+	if($('#unicode-string').text() !== $('#blowfish-decrypted').text()) {
+		alert('ERROR: PHP Blowfish decrypted is different than original PHP string ...');
+		the_error++;
+	} //end if
+	if((arch_lzs != $('#lzs-archived').text()) || (SmartJS_CryptoHash.sha1(arch_lzs) != SmartJS_CryptoHash.sha1($('#lzs-archived').text()))) {
+		alert('ERROR: PHP Arch-LZS Archive is different than Javascript one ...');
+		the_error++;
+	} //end if
+	if((arch_bf_lzs != $('#blowfish-lzs-encrypted').text()) || (SmartJS_CryptoHash.sha1(arch_bf_lzs) != SmartJS_CryptoHash.sha1($('#blowfish-lzs-encrypted').text()))) {
+		alert('ERROR: PHP Blowfish-Arch-LZS Archive is different than Javascript one ...');
+		the_error++;
+	} //end if
+	//--
+	if(($('#unicode-string').text() != $('#hash-decrypted').text()) || (SmartJS_CryptoHash.sha1($('#unicode-string').text()) != SmartJS_CryptoHash.sha1($('#hash-decrypted').text()))) {
+		alert('ERROR: PHP Hash Decrypted is different than than original PHP string ...');
+		the_error++;
+	} //end if
+	//--
+	if(the_error === 0) {
+		SmartJS_BrowserUtils.alert_Dialog(
+			'<img src="lib/core/img/sign_info.png" align="right"><h1><span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span></h1><hr><h2><span style="color:#333333;"><span style="color:#83B953;">All</span> the SmartFramework Unicode <span style="color:#83B953;">Tests PASSED</span> on both <span style="color:#83B953;">PHP / Javascript</span>:</span></h2><br><img src="lib/core/img/q_completed.png" align="right"><span style="font-size:14px;">' + SmartJS_CoreUtils.nl2br('* Unicode support / UTF-8 \n * JS-Escape \n * SHA512 \n * SHA1 \n * MD5 \n * Base64: Encode / Decode \n * Bin2Hex / Hex2Bin \n * LZS-Arch: Archive / Unarchive \n * Blowfish (CBC): Encrypt / Decrypt \n * Hash: Encrypt / Decrypt (** Only for PHP)') + '</span>',
+			'',
+			'Crypto Test Suite for SmartFramework: PHP + Javascript',
+			'750',
+			'400'
+		);
+	} //end if
+	//--
+})();
+</script>
+<!-- #END :: Partial Template: TestUnit.Encryption -->

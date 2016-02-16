@@ -1,0 +1,272 @@
+<!-- #START :: SMART.FRAMEWORK / DEBUG HEAD :: v.151215 -->
+<link rel="stylesheet" type="text/css" href="lib/framework/css/fonts/font-awesome.css">
+<style type="text/css">
+.smartframework_debugbar_bar {
+	z-index: 2147483008;
+	position: fixed;
+	bottom: 0px;
+	right: 0px;
+	width: 100%;
+	height: 35px;
+	padding: 1px;
+	background: #ECECEC;
+	border: 1px solid #A3AC99;
+	font-family: tahoma,verdana,arial,sans-serif;
+	font-size: 13px;
+}
+.smartframework_debugbar_bar hr {
+	border: none 0;
+	border-top: 5px solid #FFCC00;
+	height: 0px;
+}
+.smartframework_debugbar_switcher {
+	color: #955251;
+	cursor: pointer;
+	width: 50px;
+	height: 35px;
+	padding-top: 5px;
+	text-align: center;
+	position: absolute;
+	top: 0px;
+}
+.smartframework_debugbar_switcher:hover {
+	color: #F5926C;
+}
+.smartframework_debugbar_refresher {
+	color: #D09D5D;
+	cursor: pointer;
+	width: 50px;
+	height: 35px;
+	padding-top: 5px;
+	text-align: center;
+	position: absolute;
+	top: 0px;
+}
+.smartframework_debugbar_refresher:hover {
+	color: #007784;
+}
+.smartframework_debugbar_element {
+	color: #302E32;
+	background: #F2F2F2;
+	cursor: pointer;
+	width: 50px;
+	height: 30px;
+	padding-top: 5px;
+	text-align: center;
+	border: 1px solid #ECECEC;
+	position: absolute;
+	top: 0px;
+}
+.smartframework_debugbar_element:hover {
+	color: #222222;
+	background: #A3AC99;
+}
+.smartframework_debugbar_panel {
+	z-index: 2147483007;
+	visibility: hidden;
+	border: 3px solid #A3AC99;
+	border-bottom: 1px solid #A3AC99;
+	border-top-left-radius: 7px;
+	border-top-right-radius: 7px;
+	background: #ECECEC;
+/*	width: 98%;
+	min-height: 50px;
+	max-height: 750px; */
+	position: fixed;
+/*	bottom: 38px;
+	left: 7px; */
+	left: 5px;
+	right: 5px;
+	top: 3px;
+	bottom: 38px;
+	padding: 5px;
+	overflow: auto;
+}
+.smartframework_debugbar_status {
+	padding: 7px;
+	border-radius: 12px 0 12px 0;
+	margin-bottom: 5px;
+}
+.smartframework_debugbar_status_title {
+	color: #FFFFFF;
+	background: #403F6F;
+}
+.smartframework_debugbar_status_nodata {
+	color: #FFFFFF;
+	background: #58646D;
+}
+.smartframework_debugbar_status_url {
+	color: #FFFFFF;
+	background: #007784;
+}
+.smartframework_debugbar_status_token {
+	color: #FFFFFF;
+	background: #847F5D;
+}
+.smartframework_debugbar_status_head {
+	color: #FFFFFF;
+	background: #A3AC99;
+}
+.smartframework_debugbar_status_highlight {
+	color: #222222;
+	background: #C6CBCC;
+}
+.smartframework_debugbar_status_warn {
+	color: #FFFFFF;
+	background: #F5926C;
+}
+.smartframework_debugbar_inforow {
+	font-size: 12px;
+	background: #FFFFFF;
+	padding: 5px;
+	border-radius: 0 12px 0 12px;
+	margin-bottom: 5px;
+}
+.smartframework_debugbar_txt {
+	font-size: 24px;
+	color: #A3AC99;
+}
+</style>
+<script type="text/javascript">
+var smart_debug_bar_panel_visible = '';
+function SmartDebugProfilerRefreshPanel() {
+	SmartDebugAjaxLoadDivContent('SmartFramework__Debug__Profiler', '[####DEBUG-PROFILER-URL####]', 'GET', true);
+} //END FUNCTION
+function SmartDebugProfilerDisableActivePanel(el) {
+	//--
+	if(smart_debug_bar_panel_visible !== '') {
+		if(smart_debug_bar_panel_visible === el) {
+			return;
+		} else {
+			SmartDebugProfilerEnablePanel(smart_debug_bar_panel_visible);
+		} //end if
+	} //end if
+	//--
+} //END FUNCTION
+function SmartDebugProfilerEnablePanel(el) {
+	//--
+	try {
+		var panel = document.getElementById(el.id + '_Panel');
+		if(panel.style.visibility != 'visible') {
+			if(smart_debug_bar_panel_visible === '') {
+				smart_debug_bar_panel_visible = el;
+				panel.style.visibility = 'visible';
+				el.style.background = '#32334A';
+				el.style.color = '#FFFFFF';
+			} //end if
+		} else {
+			smart_debug_bar_panel_visible = '';
+			panel.style.visibility = 'hidden';
+			el.style.background = '';
+			el.style.color = '';
+		} //end if else
+	} catch(err) {
+		alert('Cannot Find the Debug Panel for this element ...');
+		return;
+	} //end if else
+	//--
+} //END FUNCTION
+function SmartDebugToggleDebugBar() {
+	//--
+	SmartDebugProfilerDisableActivePanel();
+	//--
+	var parent_div = document.getElementById('SmartFramework___Debug_InfoBar');
+	var toggle_button = document.getElementById('SmartFramework___Debug_BtnClose');
+	//--
+	if(parent_div.style.width == '45px') {
+		toggle_button.style.color = '';
+		parent_div.style.borderBottomLeftRadius = '';
+		parent_div.style.borderTopLeftRadius = '';
+		parent_div.style.bottom = '';
+		parent_div.style.width = '';
+	} else {
+		parent_div.style.width = '45px';
+		parent_div.style.bottom = '350px';
+		parent_div.style.borderTopLeftRadius = '10px';
+		parent_div.style.borderBottomLeftRadius = '10px';
+		toggle_button.style.color = '#007784';
+	} //end if else
+	//--
+} //END FUNCTION
+function SmartDebugHTMLSpecialChars(str) {
+	//-- format string
+	if((typeof str == 'undefined') || (str == undefined) || (str == null)) {
+		str = '';
+	} else {
+		str = '' + str; // force string
+	} //end if else
+	//--
+	return str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	//--
+} //END FUNCTION
+function SmartDebugAjaxLoadDivContent(y_div, y_url, y_method, y_exec_jscripts) {
+	try {
+		var ss = document.getElementById(y_div);
+	} catch(err) {
+		alert('The DIV: [' + y_div + '] could not be found ...');
+		return false;
+	} //end try catch
+	var ajx = new XMLHttpRequest();
+	ajx.timeout = 15000;
+	if(ajx.readyState == 4 || ajx.readyState == 0) {
+		ajx.open(y_method, y_url, true);
+		ajx.onreadystatechange = function() {
+			if(ajx.readyState == 4) {
+				if(ajx.status == 200) {
+					ss.innerHTML = '' + ajx.responseText;
+					if(y_exec_jscripts != false) {
+						var xscripts = ss.getElementsByTagName('script');
+						for(var i=0; i<xscripts.length; i++) {
+							try {
+								//console.log('Evaluating Js: ' + xscripts[i].text);
+								eval('(function(){ ' + xscripts[i].text + ' })();'); // sandbox
+							} catch(err) {
+								alert('Failed to evaluate some javascripts from Ajax call ...');
+								break;
+							} //end try catch
+						} //end for
+					} //end if
+				} else {
+					alert('Ajax Request Failed with code: ' + ajx.status);
+				} //end if else
+			} //end if
+		} //END FUNCTION
+	} //end if
+	ajx.send(null);
+	return true;
+} //END FUNCTION
+var SmartDebugAjaxCalls = [];
+function SmartDebugAjaxCatchCalls(open) {
+	XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+		var start = new Date().getTime();
+		this.addEventListener("readystatechange", function() {
+			if(this.readyState == 4) {
+				var end = new Date().getTime();
+				var time = end - start;
+				console.log('Smart.Framework.Debug :: Ajax.' + method + ' [' + time + ' ms] {' + this.status + '}' + ' :: ' + url); // this one I changed
+				if(url != '[####DEBUG-PROFILER-URL####]') {
+					var tmp_ajax_call = {
+						'url': url,
+						'method': method,
+						'time': time,
+						'status': this.status
+					};
+					SmartDebugAjaxCalls.push(tmp_ajax_call);
+					SmartDebugProfilerRefreshPanel();
+				} //end if
+			} //end if
+		}, false);
+		open.call(this, method, url, async, user, pass);
+	};
+} //END FUNCTION
+SmartDebugAjaxCatchCalls(XMLHttpRequest.prototype.open);
+document.onreadystatechange = function() {
+	if(document.readyState === 'complete') {
+		console.log('Smart.Framework.Debug :: Document ReadyState: Completed');
+		SmartDebugProfilerRefreshPanel();
+	} else if(document.readyState === 'interactive') {
+		console.log('Smart.Framework.Debug :: Document ReadyState: Interactive');
+	} //end if
+} //END FUNCTION
+</script>
+<!-- #END :: SMART.FRAMEWORK / DEBUG HEAD -->

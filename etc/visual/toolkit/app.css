@@ -1,0 +1,21 @@
+
+/* -- CSS Start :: SmartFramework / App :: r.150507 -- */
+
+/* ----------------------------- */
+
+/* framework */
+
+@import url("fluid-responsive-grid.css");
+@import url("ux-toolkit.css");
+
+@import url("../../../lib/framework/css/fonts/font-awesome.css");
+
+/* components */
+
+@import url("../../../lib/core/css/notifications.css");
+@import url("../../../lib/core/css/navbox.css");
+@import url("../../../lib/core/css/activetable.css");
+
+/* ----------------------------- */
+
+/* -- CSS End -- */

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>CLEditor WYSIWYG HTML Editor</title>
+	<script type="text/javascript" src="../jquery.js"></script>
+	<script type="text/javascript" src="../jquery.smart.compat.js"></script>
+	<link rel="stylesheet" type="text/css" href="./jquery.cleditor.css">
+	<script type="text/javascript" src="./jquery.cleditor.js"></script>
+	<script type="text/javascript" src="./jquery.cleditor.tableadvanced.js"></script>
+	<script type="text/javascript">
+	  $(document).ready(function() {
+		$("#input").cleditor()[0].focus();
+	  });
+	</script>
+  </head>
+  <body>
+	<textarea id="input" name="input">
+	  The advanced table plug-in adds a button to the toolbar allowing you to insert a
+	  table into your document and specify not only the columns and rows, but also
+	  the cell spacing, cell padding, border and CSS style. Just click the
+	  <img src="images/table.gif"> button to give it a try.
+	</textarea>
+  </body>
+</html>

@@ -1,0 +1,98 @@
+/*
+ * Simple Dialog r.150527
+ *
+ * (c) 2015 unix-world.org
+ *
+ */
+
+/* Overlay */
+#simpledialog-overlay {
+	display: none;
+	position: fixed;
+	top: -50px;
+	left: -50px;
+	width: 1px;
+	height: 1px;
+	z-index: 1;
+	background-color: #EEEEEE;
+	opacity: 0.5;
+}
+
+/* Container */
+#simpledialog-container {
+	display: none;
+	position: fixed;
+	top: -50px;
+	left: -50px;
+	width: 1px;
+	height: 1px;
+	z-index: 1;
+	font-size: 16px;
+	text-align:left;
+	background: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+#simpledialog-container .header {
+	height: 40px;
+	line-height: 40px;
+	background: #FFFFFF;
+	color: #333333;
+	font-weight: bold;
+	padding-left: 10px;
+	padding-right: 10px;
+	border: 1px solid #ECECEC;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+#simpledialog-container .message {
+	color: #333333;
+	font-size: 14px;
+	margin: 0;
+	padding: 12px 4px 12px 8px;
+	width: 90%;
+	height: 40%;
+	overflow: auto;
+}
+#simpledialog-container hr {
+	border: 0;
+	height: 0;
+	border-bottom: 1px solid #ECECEC;
+}
+#simpledialog-container .buttons {
+	line-height: 26px;
+	width: 200px;
+	float: right;
+	padding: 5px 8px 0;
+	margin-bottom: 10px
+}
+#simpledialog-container .buttons div {
+	float: right;
+	margin-left: 8px;
+	width: 70px;
+	height: 26px;
+	color: #666666;
+	font-weight: bold;
+	text-align: center;
+	background: #FAFAFA;
+	border: 1px solid #BBBBBB;
+	border-radius: 3px;
+	cursor: pointer;
+}
+#simpledialog-container a.modal-close,
+#simpledialog-container a.modal-close:link,
+#simpledialog-container a.modal-close:active,
+#simpledialog-container a.modal-close:visited {
+	text-decoration: none;
+	font-weight: bold;
+	position: absolute;
+	right: 10px;
+	top: 2px;
+	color: #FFFFFF;
+}
+#simpledialog-container a.modal-close:hover {
+	color: #CCCCCC;
+}
+
+/* END */

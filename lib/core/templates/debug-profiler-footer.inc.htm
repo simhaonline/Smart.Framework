@@ -1,0 +1,63 @@
+<!-- #START :: SMART.FRAMEWORK / DEBUG FOOTER :: v.151215 -->
+<script type="text/javascript">
+	smart_debug_bar_panel_visible = '';
+</script>
+<div id="SmartFramework___Debug_InfoBar" align="left" class="smartframework_debugbar_bar">
+	<!-- Toggle and Refresh Buttons -->
+	<div id="SmartFramework___Debug_BtnClose" title="Toggle :: Debug Bar" class="smartframework_debugbar_switcher" style="left: 0px;" onClick="SmartDebugToggleDebugBar();"><i class="fa fa-2x fa-eye"></i></div>
+	<div id="SmartFramework___Debug_BtnRefresh" title="Refresh :: Debug Bar (Loaded @ [####DEBUG-TIME####])" class="smartframework_debugbar_refresher" style="left: 50px;" onClick="document.getElementById('SmartFramework__Debug__Profiler').innerHTML = ''; setTimeout(function(){ SmartDebugProfilerRefreshPanel(); }, 250);"><i class="fa fa-2x fa-refresh"></i></div>
+	<!-- Active Buttons -->
+	<div id="SmartFramework___Debug_AreaRuntime" title="Debug :: Client / Server RUNTIME" class="smartframework_debugbar_element" style="left: 100px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-tasks"></i></div>
+	<div id="SmartFramework___Debug_AreaAjx" title="Debug :: Ajax Sub-Requests" class="smartframework_debugbar_element" style="left: 150px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-retweet"></i></div>
+	<div id="SmartFramework___Debug_AreaRes" title="Debug :: Script Execution / Resources" class="smartframework_debugbar_element" style="left: 200px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-pie-chart"></i></div>
+	<div id="SmartFramework___Debug_AreaHeads" title="Debug :: Request / Response Headers" class="smartframework_debugbar_element" style="left: 250px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-umbrella"></i></div>
+	<div id="SmartFramework___Debug_AreaEnv" title="Debug :: Request / Environment Variables" class="smartframework_debugbar_element" style="left: 300px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-sliders"></i></div>
+	<div id="SmartFramework___Debug_AreaSess" title="Debug :: Session Variables" class="smartframework_debugbar_element" style="left: 350px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-cogs"></i></div>
+	<div id="SmartFramework___Debug_AreaAuth" title="Debug :: Authentication Metadata" class="smartframework_debugbar_element" style="left: 400px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-street-view"></i></div>
+	<div id="SmartFramework___Debug_AreaExtra" title="Debug :: App Extra Log" class="smartframework_debugbar_element" style="left: 450px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-leaf"></i></div>
+	<div id="SmartFramework___Debug_AreaDBs" title="Debug :: Database Log" class="smartframework_debugbar_element" style="left: 500px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-database"></i></div>
+	<div id="SmartFramework___Debug_AreaMail" title="Debug :: Mailer Log" class="smartframework_debugbar_element" style="left: 550px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-envelope"></i></div>
+	<div id="SmartFramework___Debug_AreaMods" title="Debug :: Modules Log" class="smartframework_debugbar_element" style="left: 600px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-share-alt-square"></i></div>
+	<!-- Signature -->
+	<div class="smartframework_debugbar_txt" style="position: absolute; top: 0px; left: 700px; height: 35px; width: 395px; text-align:center;"><b>Smart.Framework :: Profiler</b></div>
+	<!-- Panels -->
+	<div id="SmartFramework___Debug_AreaRuntime_Panel" class="smartframework_debugbar_panel">[####DEBUG-RUNTIME####]</div>
+	<div id="SmartFramework___Debug_AreaRes_Panel" class="smartframework_debugbar_panel">[####DEBUG-RESOURCES####]</div>
+	<div id="SmartFramework___Debug_AreaHeads_Panel" class="smartframework_debugbar_panel">[####DEBUG-HEADERS####]</div>
+	<div id="SmartFramework___Debug_AreaEnv_Panel" class="smartframework_debugbar_panel">[####DEBUG-ENVIRONMENT####]</div>
+	<div id="SmartFramework___Debug_AreaSess_Panel" class="smartframework_debugbar_panel">[####DEBUG-SESSION####]</div>
+	<div id="SmartFramework___Debug_AreaAuth_Panel" class="smartframework_debugbar_panel">[####DEBUG-AUTH####]</div>
+	<div id="SmartFramework___Debug_AreaExtra_Panel" class="smartframework_debugbar_panel">[####DEBUG-EXTRA####]</div>
+	<div id="SmartFramework___Debug_AreaDBs_Panel" class="smartframework_debugbar_panel">[####DEBUG-DATABASE####]</div>
+	<div id="SmartFramework___Debug_AreaMail_Panel" class="smartframework_debugbar_panel">[####DEBUG-MAIL####]</div>
+	<div id="SmartFramework___Debug_AreaMods_Panel" class="smartframework_debugbar_panel">[####DEBUG-MODULES####]</div>
+	<div id="SmartFramework___Debug_AreaAjx_Panel" class="smartframework_debugbar_panel">
+		<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="5"><b># DEBUG Data :: AJAX SUB-REQUESTS #</b></font></div>
+		<div id="SmartFramework___Debug_AreaAjx_InfoArea"></div>
+		<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="3"><b># DEBUG # END #</b></font></div>
+	</div>
+	<!-- #END -->
+</div>
+<script type="text/javascript">
+	var SmartDebugAjaxDebugDiv = document.getElementById('SmartFramework___Debug_AreaAjx_InfoArea');
+	var SmartDebugAjaxDebugStatus = '';
+	if(SmartDebugAjaxCalls.length > 0) {
+		SmartDebugAjaxDebugDiv.innerHTML = '';
+		for(var i=0; i<SmartDebugAjaxCalls.length; i++) {
+			if(SmartDebugAjaxCalls[i].status == '200') {
+				SmartDebugAjaxDebugStatus = 'smartframework_debugbar_status_head';
+			} else {
+				SmartDebugAjaxDebugStatus = 'smartframework_debugbar_status_warn';
+			} //end if else
+			SmartDebugAjaxDebugDiv.innerHTML += '<div class="smartframework_debugbar_inforow">' + ' &nbsp;&nbsp; ' + '<span class="' + SmartDebugAjaxDebugStatus + '" style="padding: 3px; font-weight:bold;">' + SmartDebugHTMLSpecialChars(SmartDebugAjaxCalls[i].status) + '</span>' + ' ' + '<span class="smartframework_debugbar_status_title" style="padding: 3px;">' + SmartDebugHTMLSpecialChars(SmartDebugAjaxCalls[i].method) + '</span>' + ' ' + '<span class="smartframework_debugbar_status_highlight" style="padding: 3px; font-weight:bold;">' + SmartDebugHTMLSpecialChars(SmartDebugAjaxCalls[i].time) + '&nbsp;ms.' + '</span>' + ' &nbsp;&nbsp; ' + SmartDebugHTMLSpecialChars(SmartDebugAjaxCalls[i].url) + '</div>';
+		} //end for
+	} else {
+		SmartDebugAjaxDebugDiv.innerHTML = '<div class="smartframework_debugbar_status smartframework_debugbar_status_warn" style="width: 100px; text-align: center;"><font size="2"><b>N/A</b></font></div>';
+	} //end if else
+	try { // clear debug bar in iframes or in small windows
+		if(self.innerWidth < 650) {
+			document.getElementById('SmartFramework__Debug__Profiler').innerHTML = '';
+		} //end if
+	} catch(err){}
+</script>
+<!-- #END :: SMART.FRAMEWORK / DEBUG FOOTER -->

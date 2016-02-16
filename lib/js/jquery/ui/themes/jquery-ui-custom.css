@@ -1,0 +1,29 @@
+/* jQueryUI Fixes Fix */
+
+.ui-dialog {
+	z-index: 2137483009;
+}
+.ui-widget-overlay {
+	z-index: 2137483001;
+}
+
+.ui-datepicker {
+	font-size: 14px !important;
+	margin-top: 25px;
+	margin-bottom: 25px;
+}
+.ui-datepicker select {
+	font-size: 1em !important;
+	background-color: #FFFFFF;
+	color: #000000;
+	border: 0px none;
+	border-radius: 3px;
+	padding: 0px;
+}
+.ui-datepicker-trigger {
+	margin-left: 3px;
+	margin-top: 3px;
+	margin-bottom: -3px;
+}
+
+/* END */

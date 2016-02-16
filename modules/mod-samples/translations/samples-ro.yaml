@@ -1,0 +1,9 @@
+# Language File: RO / Mod-Samples / Test
+TRANSLATIONS:
+  @language: RO
+  @area: mod-samples
+  @version: 2016-02-13
+  samples:
+    hello-world: 'Hello World'
+    this-is-smart-framework: 'acest framework este Smart.Framework'
+#END

@@ -1,0 +1,83 @@
+
+/* -- CSS Start :: SmartFramework / Plugins / Markdown -- */
+
+/* ----------------------------- */
+
+/* Headings */
+
+#markdown h1,
+#markdown h2,
+#markdown h3,
+#markdown h4,
+#markdown h5,
+#markdown h6 {
+	display: block;
+}
+
+/* Table */
+#markdown table {
+	width: 100%;
+	margin-bottom: 20px;
+	background: #ECECEC;
+	border-spacing: 1px;
+	table-layout: fixed;
+}
+#markdown table th {
+	padding: 4px;
+	font-size: 15px;
+	font-weight: bold;
+	background: #FFFFFF;
+}
+#markdown table > tbody > tr > td {
+	padding: 2px;
+	font-size: 13px;
+}
+#markdown table > tbody > tr:nth-child(odd) > td {
+	background: #F9FCF7;
+}
+#markdown table > tbody > tr:nth-child(even) > td {
+	background: #FEFEFE;
+}
+#markdown table > tbody > tr:hover > td {
+	background: #F5F5F5;
+}
+/* -- */
+
+/* Quote, BlockQuote */
+#markdown blockquote {
+  background: #F9F9F9;
+  border-left: 10px solid #CCCCCC;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+#markdown blockquote:before {
+  color: #CCCCCC;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+#markdown blockquote p {
+  display: inline;
+}
+/* -- */
+
+/* Pre, Code */
+#markdown pre {
+	background: #F8F8FF;
+	padding: 4px;
+	white-space: pre-line;
+	overflow: auto;
+}
+#markdown code {
+	background: #F8F8FF;
+	padding: 1px;
+	white-space: pre;
+}​
+/* -- */
+
+/* ----------------------------- */
+
+/* -- CSS End -- */

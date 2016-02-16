@@ -1,0 +1,39 @@
+<!-- Partial Template: TestUnit.Main -->
+<script type="text/javascript">
+	var TESTUNIT_BASE_URL = '[####TESTUNIT_BASE_URL####]';
+</script>
+<div align="left" style="width: 100%;">
+	[####TEST-VAR####]
+	<!-- start tabs -->
+	<div id="tabs_draw">
+		<div id="tabs_nav">
+			<ul>
+				<li><a id="nolink" href="#tabs_tests_core">Core Tests</a></li>
+				<li><a id="nolink" href="#tabs_tests_interractions">Interraction Tests</a></li>
+				<li><a id="nolink" href="#tabs_tests_ui">UI Tests</a></li>
+				<li><a id="nolink" href="#tabs_tests_misc">Misc Tests</a></li>
+				<li><a id="nolink" href="lib/core/templates/testunit/barcodes-test.partial.htm">Barcodes</a></li>
+				<li><a id="nolink" href="lib/core/templates/testunit/charts-test.partial.htm">Charts</a></li>
+				<li><a id="nolink" href="lib/core/templates/testunit/flexigrid-test.partial.htm">FlexiGrid</a></li>
+				<li><a id="nolink" href="lib/core/templates/testunit/slickgrid-test.partial.htm">SlickGrid</a></li>
+				<li><a id="nolink" href="lib/core/templates/testunit/smartmaps-test.partial.htm">SmartMaps</a></li>
+				<li><a id="nolink" href="broken-link.html">Broken Link</a></li><!-- this is just for testing, does not exists -->
+			</ul>
+		</div>
+		<div id="tabs_tests_core">
+			[@@@@SUB-TEMPLATE:test-unit-tab-tests.htm@@@@]
+		</div>
+		<div id="tabs_tests_interractions">
+			[@@@@SUB-TEMPLATE:test-unit-tab-interractions.htm@@@@]
+		</div>
+		<div id="tabs_tests_ui">
+			[@@@@SUB-TEMPLATE:test-unit-tab-ui.htm@@@@]
+		</div>
+		<div id="tabs_tests_misc">
+			[@@@@SUB-TEMPLATE:%test-unit-tab-misc%@@@@]
+		</div>
+	</div>
+	[####TEST-JS_SCRIPTS.INIT-TABS####]
+	<!-- end tabs -->
+</div>
+<!-- #END :: Partial Template: TestUnit.Main -->

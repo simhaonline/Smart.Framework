@@ -1,0 +1,10 @@
+# Language File: EN / CORE / Js_Messages
+TRANSLATIONS:
+  @language: EN
+  @area: core
+  @version: 2016-02-15
+  js_messages:
+    btn_reset: 'Reset'
+    btn_select: 'Select'
+    page_away: 'Are you sure you want to leave this page ?'
+#END

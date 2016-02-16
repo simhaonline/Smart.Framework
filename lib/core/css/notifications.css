@@ -1,0 +1,126 @@
+
+/* -- CSS Start :: SmartFramework / Components / Notifications -- */
+
+/* ----------------------------- */
+
+/* Notifications */
+div#operation_question {
+	background-color: #FFEE11;
+	color: #000000;
+	text-align: left;
+	font-size: 17px;
+	font-weight: bold;
+	font-style: normal;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin: 8px;
+	min-height: 40px;
+	height: auto !important;
+	height: 40px;
+	border-radius: 6px;
+	opacity:0.85;
+	box-shadow: 1px 1px 2px 2px #ECECEC;
+}
+div#operation_question * {
+	background-color: #FFEE11;
+	color: #000000;
+}
+div#operation_notice {
+	background-color: #009ACE;
+	color: #FFFFFF;
+	text-align: left;
+	font-size: 17px;
+	font-weight: bold;
+	font-style: normal;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin: 8px;
+	min-height: 40px;
+	height: auto !important;
+	height: 40px;
+	border-radius: 6px;
+	opacity:0.85;
+	box-shadow: 1px 1px 2px 2px #ECECEC;
+}
+div#operation_notice * {
+	background-color: #009ACE;
+	color: #FFFFFF;
+}
+div#operation_info {
+	background-color: #FEFF99;
+	color: #000000;
+	text-align: left;
+	font-size: 17px;
+	font-weight: bold;
+	font-style: normal;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin: 8px;
+	min-height: 40px;
+	height: auto !important;
+	height: 40px;
+	border-radius: 6px;
+	opacity:0.85;
+	box-shadow: 1px 1px 2px 2px #ECECEC;
+}
+div#operation_info * {
+	background-color: #FEFF99;
+	color: #000000;
+}
+div#operation_warn {
+	background-color: #FF9900;
+	color: #000000;
+	text-align: left;
+	font-size: 17px;
+	font-weight: bold;
+	font-style: normal;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin: 8px;
+	min-height: 40px;
+	height: auto !important;
+	height: 40px;
+	border-radius: 6px;
+	opacity:0.85;
+	box-shadow: 1px 1px 2px 2px #ECECEC;
+}
+div#operation_warn * {
+	background-color: #FF9900;
+	color: #000000;
+}
+div#operation_error {
+	background-color: #EF0000;
+	color: #FFFFFF;
+	text-align: left;
+	font-size: 17px;
+	font-weight: bold;
+	font-style: normal;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin: 8px;
+	min-height: 40px;
+	height: auto !important;
+	height: 40px;
+	border-radius: 6px;
+	opacity:0.85;
+	box-shadow: 1px 1px 2px 2px #ECECEC;
+}
+div#operation_error * {
+	background-color: #EF0000;
+	color: #FFFFFF;
+}
+/* -- */
+
+/* ----------------------------- */
+
+/* -- CSS End -- */

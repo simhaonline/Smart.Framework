@@ -1,0 +1,565 @@
+<?php
+// [LIB - SmartFramework / Smart Validators and Parsers]
+// (c) 2006-2016 unix-world.org - all rights reserved
+
+//----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.2')) {
+	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
+} //end if
+//-----------------------------------------------------
+
+
+//======================================================
+// Smart-Framework - Validators and Parsers
+// DEPENDS:
+//	* Smart::
+//  * SmartUnicode::
+//======================================================
+
+
+//=================================================================================
+//================================================================================= CLASS START
+//=================================================================================
+
+
+/**
+ * Class: SmartParser - Provides misc parsing methods.
+ *
+ * <code>
+ * // Usage example:
+ * SmartParser::some_method_of_this_class(...);
+ * </code>
+ *
+ * @usage       static object: Class::method() - This class provides only STATIC methods
+ *
+ * @access      PUBLIC
+ * @depends     classes: Smart, SmartUnicode
+ * @version     v.160202
+ * @package     Core
+ *
+ */
+final class SmartParser {
+
+	// ::
+
+
+//================================================================
+/**
+ * Provides a fixed length string text ; if longer than allowed length will add trailing dots (...)
+ *
+ * @param 	STRING 	$ystr 				:: The text string to be processed
+ * @param 	STRING 	$ylen 				:: The fixed length of the string
+ * @param 	BOOLEAN	$y_cut_words		:: if TRUE, will CUT last word to provide a fixed length ; if FALSE will eliminate unterminate last word ; default is TRUE
+ *
+ * @return 	STRING						:: The processed string (text)
+ */
+public static function text_endpoints($ystr, $ylen, $y_cut_words=true, $y_dots='...') {
+	//--
+	$ystr = (string) trim((string)$ystr);
+	$ylen = Smart::format_number_int($ylen, '+');
+	//--
+	if(($ylen > 0) AND (SmartUnicode::str_len($ystr) > $ylen)) {
+		$ystr = (string) SmartUnicode::sub_str($ystr, 0, ($ylen-3));
+		if(!$y_cut_words) {
+			$ystr = (string) preg_replace('/\s+?(\S+)?$/', '', (string)$ystr);
+		} //end if
+		$ystr .= (string) $y_dots;
+	} //end if
+	//--
+	return (string) $ystr;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Detect URL links in a text string
+ *
+ * @param 	STRING 	$string 			:: The text string to be processed
+ *
+ * @return 	ARRAY						:: A non-associative array with the URL links detected in the string
+ */
+public static function get_arr_urls($string) {
+	$string = (string) $string;
+	$expr = SmartValidator::regex_textrecognition_expression('url');
+	if((string)$expr != '') {
+		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
+		$arr = array();
+		preg_match_all($regex, $string, $arr);
+		return (array) $arr[0];
+	} else {
+		return array();
+	} //end if else
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Replace URL in a text string with HTML links <a href="(DetectedURL)" target="{target}">[DetectedURL]</a>
+ *
+ * @param 	STRING 	$string 			:: The text string to be processed
+ * @param 	STRING	$ytarget			:: URL target ; default is '_blank' ; can be: '_self' or a specific window name: 'myWindow' ...
+ * @param 	STRING	$ypict				:: The image path to display as link ; default is blank: ''
+ * @param	INTEGER $y_lentrim			:: The length of the URL to be displayed into [DetectedURL] (used only if no image has been provided)
+ *
+ * @return 	STRING						:: The HTML processed text with URLs replaced with real tags
+ */
+public static function text_urls($string, $ytarget='_blank', $ypict='', $y_lentrim='100') {
+	$string = (string) $string;
+	$expr = SmartValidator::regex_textrecognition_expression('url');
+	if((string)$expr != '') {
+		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
+		if((string)$ypict == '') {
+			$string = preg_replace_callback($regex, function($matches) use ($ytarget, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'</a>'; }, $string);
+		} else {
+			$string = preg_replace_callback($regex, function($matches) use ($ytarget, $ypict, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'"><img border="0" src="'.$ypict.'" width="32" height="32" align="absmiddle" alt="'.Smart::escape_html($matches[0]).'" title="'.Smart::escape_html($matches[0]).'"></a>&nbsp;'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'<br>'; }, $string);
+		} //end if else
+	} //end if
+	return (string) $string;
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Detect EMAIL addresses in a text string
+ *
+ * @param 	STRING 	$string 			:: The text string to be processed
+ *
+ * @return 	ARRAY						:: A non-associative array with the EMAIL addresses detected in the string
+ */
+public static function get_arr_emails($string) {
+	$string = (string) $string;
+	$expr = SmartValidator::regex_textrecognition_expression('email');
+	if((string)$expr != '') {
+		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
+		$arr = array();
+		preg_match_all($regex, $string, $arr);
+		return (array) $arr[0];
+	} else {
+		return array();
+	} //end if else
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Replace EMAIL addresses in a text string with HTML links <a href="(emailAddr)" target="{target}">[emailAddr]</a>
+ *
+ * @param 	STRING 	$string 			:: The text string to be processed
+ * @param 	STRING 	$yaction			:: Action to append the email link to ; Default is: 'mailto:' but can be for example: 'script.php?action=email&addr='
+ * @param 	STRING	$ytarget			:: URL target ; default is '_blank' ; can be: '_self' or a specific window name: 'myWindow' ...
+ *
+ * @return 	STRING						:: The HTML processed text with EMAIL addresses replaced with real tags as links
+ */
+public static function text_emails($string, $yaction='mailto:', $ytarget='') {
+	$string = (string) $string;
+	$expr = SmartValidator::regex_textrecognition_expression('email');
+	if((string)$expr != '') {
+		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
+		$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eMail@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[0]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], 100)).'</a>'; }, $string);
+	} //end if
+	return $string;
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Detect FAX numbers in a text string
+ *
+ * @param 	STRING 	$string 			:: The text string to be processed
+ *
+ * @return 	ARRAY						:: A non-associative array with the FAX numbers detected in the string
+ */
+public static function get_arr_faxnums($string) {
+	$string = (string) $string;
+	$expr = SmartValidator::regex_textrecognition_expression('fax');
+	if((string)$expr != '') {
+		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
+		$arr = array();
+		preg_match_all($regex, $string, $arr);
+		return (array) $arr[0];
+	} else {
+		return array();
+	} //end if
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Replace FAX numbers in a text string with HTML links <a href="(faxNum)" target="{target}">[faxNum]</a>
+ *
+ * @param 	STRING 	$string 			:: The text string to be processed
+ * @param 	STRING 	$yaction			:: Action to append the fax-num link to ; Default is: 'efax:' but can be for example: 'script.php?action=fax&number='
+ * @param 	STRING	$ytarget			:: URL target ; default is '_blank' ; can be: '_self' or a specific window name: 'myWindow' ...
+ *
+ * @return 	STRING						:: The HTML processed text with FAX numbers replaced with real tags as links
+ */
+public static function text_faxnums($string, $yaction='efax:', $ytarget='_blank') {
+	$string = (string) $string;
+	$expr = SmartValidator::regex_textrecognition_expression('fax');
+	if((string)$expr != '') {
+		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
+		$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eFax@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[2]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[2], 75)).'</a>'; }, $string);
+	} //end if
+	return $string;
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Parse Simple Notes :: '-----< yyyy-mm-dd hh:ii:ss >----- some note\nsome other line'
+ *
+ * @param STRING $ynotes			:: The Text or HTML to be processed
+ * @param YES/NO $y_hide_times 		:: Show / Hide the time stamps
+ * @param #SIZE $y_tblsize			:: HTML Table Size
+ * @param #COLOR $ytxtcolor			:: HTML Table Color for Text
+ * @param #COLOR $ycolor			:: HTML Table Row Color
+ * @param #COLOR $ycolor_alt		:: HTML Table Row Alternate Color
+ * @param #COLOR $ybrdcolor			:: HTML Table Border Color
+ * @param #STYLE $y_style			:: HTML Extra Style
+ *
+ * @access 		private
+ * @internal
+ *
+ * @return 	STRING					:: The HTML processed code
+ */
+public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $ytxtcolor='#000000', $ycolor='#FFFFFF', $ycolor_alt='#FFFFFF', $ybrdcolor='#CCCCCC', $y_style=' style="overflow: auto; height:200px;"') {
+	//--
+	if(strpos($ynotes, '-----<') === false) {
+		return $tbl_start.'<tr><td bgcolor="'.$ycolor.'" valign="top"><font size="1">'.Smart::nl_2_br(Smart::escape_html($ynotes)).'</font></td></tr>'.$tbl_end ; // not compatible notes, so we not parse them
+	} //end if
+	//--
+	$out = '';
+	//--
+	$tbl_start = '<table width="'.$y_tblsize.'" cellspacing="0" cellpadding="2" border="1" bordercolor="'.$ybrdcolor.'" style="border-style: solid; border-collapse: collapse;">'."\n";
+	$tbl_end = '</table>';
+	//--
+	$tmp_shnotes_arr = array();
+	$tmp_shnotes_arr = @explode('-----<', $ynotes);
+	//--
+	$i_alt=0;
+	//--
+	if(Smart::array_size($tmp_shnotes_arr) > 0) {
+		//--
+		$out .= '<!-- OVERFLOW START (S.NOTES) -->'.'<div title="#S.NOTES#"'.$y_style.'>'."\n";
+		$out .= $tbl_start;
+		//--
+		for($i=0; $i<Smart::array_size($tmp_shnotes_arr); $i++) {
+			//--
+			$tmp_shnotes_arr[$i] = trim($tmp_shnotes_arr[$i]);
+			//--
+			if(Smart::striptags(@str_replace('-----<', '', $tmp_shnotes_arr[$i])) != '') {
+				//--
+				$tmp_expld = @explode('>-----', $tmp_shnotes_arr[$i]);
+				//--
+				$tmp_meta_expl = @explode('|', $tmp_expld[0]);
+				$tmp_meta_date = trim($tmp_meta_expl[0]);
+				if(strlen(trim($tmp_meta_expl[1])) > 0) {
+					$tmp_metainfo = ' :: '.trim($tmp_meta_expl[1]);
+				} else {
+					$tmp_metainfo = '';
+				} //end if else
+				//--
+				if(strlen(trim($tmp_expld[1])) > 0) {
+					//--
+					$i_alt += 1;
+					//-- alternate
+					if($i_alt % 2) {
+						$alt_color = $ycolor;
+					} else {
+						$alt_color = $ycolor_alt;
+					} //end if else
+					//--
+					$out .= '<tr>'."\n";
+					$out .= '<td bgcolor="'.$alt_color.'" valign="top">'."\n";
+					//--
+					if((string)$y_hide_times != 'yes') {
+						$out .= '<div align="right" title="'.Smart::escape_html('#'.$i_alt.'.'.$tmp_metainfo).'"><font size="1" color="'.$ytxtcolor.'"><b>'.Smart::escape_html($tmp_meta_date).'</b></font></div><font size="1" color="'.$ytxtcolor.'">'.Smart::nl_2_br(Smart::escape_html(trim($tmp_expld[1]))).'</font>';
+					} else {
+						$out .= '<div title="'.Smart::escape_html('#'.$i_alt.'. '.$tmp_meta_date.$tmp_metainfo).'"><font size="1" color="'.$ytxtcolor.'">'.Smart::nl_2_br(Smart::escape_html(trim($tmp_expld[1]))).'</font></div>';
+					} //end if else
+					//--
+					$out .= '</td>'."\n";
+					$out .= '</tr>'."\n";
+					//--
+				} //end if
+				//--
+			} //end if
+			//--
+		} //end for
+		//--
+		$out .= $tbl_end;
+		$out .= '</div>'.'<!-- OVERFLOW END (S.NOTES) -->'."\n";
+		//--
+	} //end if
+	//--
+	if($i_alt <= 0) {
+		$out = '';
+	} //end if
+	//--
+	return $out ;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+} //END CLASS
+
+
+//=================================================================================
+//================================================================================= CLASS END
+//=================================================================================
+
+
+//=================================================================================
+//================================================================================= CLASS START
+//=================================================================================
+
+
+/**
+ * Class: SmartValidator - provides misc validating methods.
+ *
+ * <code>
+ * // Usage example:
+ * SmartValidator::some_method_of_this_class(...);
+ * </code>
+ *
+ * @usage       static object: Class::method() - This class provides only STATIC methods
+ *
+ * @access      PUBLIC
+ * @depends     classes: Smart, SmartUnicode
+ * @version     v.160202
+ * @package     Core
+ *
+ */
+final class SmartValidator {
+
+	// ::
+
+
+//=================================================================
+/**
+ * Regex Expressions for Text Parsing of: URLs, eMail addresses and eFax Numbers
+ *
+ * @param 	STRING 	$y_mode 			:: The Regex mode to be returned ; valid modes: url, email, fax
+ *
+ * @return 	STRING						:: The Regex expression or empty if invalid mode is provided
+ */
+public static function regex_textrecognition_expression($y_mode) {
+	//--
+	switch(strtolower($y_mode)) {
+		//--
+		case 'url':
+			$regex = '(http|https)(://)([^\s<>\(\)\|]*)'; 		// url recognition in a text / html code :: fixed in html <>
+			break;
+		case 'email':
+			$regex = '[_a-z0-9\-\.]*+@+[_a-z0-9\-\.]*'; 		// email recognition in a text / html code
+			break;
+		case 'fax':
+			$regex = '(~)([0-9\-\+\.\(\)][^~]*)(~)'; 			// fax number recognition in a text / html code (must stay between ~)
+			break;
+		//--
+		default:
+			$regex = '';
+		//--
+	} //end switch
+	//--
+	return (string) $regex;
+	//--
+} //END FUNCTION
+//=================================================================
+
+
+//=================================================================
+/**
+ * Regex Expressions for Text Parsing of: Numbers, IP addresses, Valid eMail Address with TLD domain, Phone (US), Unicode Text (UTF-8)
+ *
+ * @param 	ENUM 	$y_mode 		:: The Regex mode to be returned ; valid modes:
+ * 											number-integer			:: number integer: as -10 or 10
+ * 											number-decimal			:: number decimal: as -0.05 or 0.05
+ * 											number-list-integer 	:: number, list integer: as 1;2;30 (numbers separed by semicolon=;)
+ * 											number-list-decimal 	:: number, list decimal: as 1.0;2;30.44 (numbers separed by semicolon=;)
+ *											ipv4 					:: IP (v4): 0.0.0.0 .. 255.255.255.255
+ *											ipv6 					:: IP (v4): ::1 .. 2a00:1450:400c:c01::68 ...
+ * 											email					:: eMail@address.tld ; MUST contain a TLD ; TLD can be 2 letters long as well as 3 or more
+ * 											phone-us 				:: US phone numbers
+ * 											utf8-text 				:: Unicode (UTF-8) Text
+ *
+ * @return 	STRING						:: The Regex expression or empty if invalid mode is provided
+ */
+public static function regex_stringvalidation_expression($y_mode) {
+	//-- WARNING: Never use class modifiers like [:print:] with /u modifier as it fails with some versions of PHP / Regex / PCRE
+	switch(strtolower($y_mode)) {
+		//--
+		case 'number-integer':
+			$regex = '/^([0-9\-])+$/';
+			break;
+		case 'number-decimal':
+			$regex = '/^([0-9\-\.])+$/';
+			break;
+		//--
+		case 'number-list-integer':
+			$regex = '/^([0-9\-\;])+$/';
+			break;
+		case 'number-list-decimal':
+			$regex = '/^([0-9\-\.\;])+$/';
+			break;
+		//--
+		case 'ipv4':
+			$regex = '/^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'.'(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$/';
+			break;
+		case 'ipv6':
+			$regex = '/^(((?=(?>.*?(::))(?!.+3)))3?|([dA-F]{1,4}(3|:(?!$)|$)|2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1d|[1-9])?d)(.(?7)){3})z/i';
+			break;
+		//--
+		case 'email':
+			$regex = '/^([a-z0-9])(([-a-z0-9._])*([a-z0-9]))*\@([a-z0-9])'.'(([a-z0-9-])*([a-z0-9]))+' . '(\.([a-z0-9])([-a-z0-9_-])?([a-z0-9])+)+$/i';
+			break;
+		case 'phone-us':
+			$regex = '/^(?:1(?:[. -])?)?(?:\((?=\d{3}\)))?([2-9]\d{2})(?:(?<=\(\d{3})\))? ?(?:(?<=\d{3})[.-])?([2-9]\d{2})[. -]?(\d{4})(?: (?i:ext)\.? ?(\d{1,5}))?$/'; // Note: Only matches U.S. phone numbers
+			break;
+		//--
+		case 'lower-unsafe-characters':
+			$regex = '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/'; // all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
+			break;
+		//--
+		default:
+			Smart::log_warning('INVALID mode for regex_stringvalidation_expression(): '.$y_mode);
+			$regex = '';
+		//--
+	} //end switch
+	//--
+	return (string) $regex;
+	//--
+} //END FUNCTION
+//=================================================================
+
+
+//=================================================================
+/**
+ * Validate a string using SmartValidator::regex_stringvalidation_expression()
+ *
+ * @param 	STRING		$y_string			:: The String to be validated
+ * @param 	ENUM 		$y_mode 			:: The Regex mode to use for validation ; see reference for SmartValidator::regex_stringvalidation_expression()
+ * @param 	BOOL		$y_default			:: TRUE to validate by default or FALSE to invalidate by default (in the case the mode is not valid)
+ *
+ * @return 	BOOLEAN							:: TRUE if validated ; FALSE if not validated
+ */
+public static function validate_string($y_string, $y_mode, $y_default=false) {
+	//--
+	$regex = self::regex_stringvalidation_expression($y_mode);
+	//--
+	$out = (bool) $y_default; // default in the case the MODE is invalid
+	//--
+	if(strlen($regex) > 0) {
+		//--
+		if(@preg_match((string)$regex, (string)$y_string)) {
+			$out = true;
+		} else {
+			$out = false;
+		} //end if else
+		//--
+	} else {
+		//--
+		Smart::log_warning('INVALID mode for validate_string(): '.$y_mode);
+		//--
+	} //end if
+	//--
+	return (bool) $out;
+	//--
+} //END FUNCTION
+//=================================================================
+
+
+//================================================================ Validate an IP Address
+/**
+ * Validate and Filter an IP Address
+ *
+ * @param 	STRING		$ip					:: The IP Address to be validated
+ *
+ * @return 	STRING							:: The IP address if valid (as string) or an empty string if Invalid
+ */
+public static function validate_filter_ip_address($ip) {
+	//--
+	$ip = @filter_var((string)$ip, FILTER_VALIDATE_IP);
+	//--
+	if($ip === false) {
+		$ip = '';
+	} //end if
+	//--
+	return (string) $ip;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Validate The Mime Disposition
+ *
+ * @param 	STRING		$y_disp				:: The Mime Disposition ; can be: inline / attachment / attachment; filename="somefile.pdf"
+ * @return 	STRING							:: The validated Mime Disposition
+ */
+public static function validate_mime_disposition($y_disp) {
+	//--
+	$y_disp = (string) trim((string)$y_disp);
+	//--
+	if((string)$y_disp == '') {
+		return '';
+	} //end if
+	//--
+	if(preg_match('/^[[:print:]]+$/', $y_disp)) { // mime types are only ISO-8859-1
+		$disp = $y_disp;
+	} else {
+		$disp = '';
+	} //end if
+	//--
+	return (string) $disp;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Validate The Mime Type
+ *
+ * @param 	STRING		$y_type				:: The Mime Type ; Ex: image/png
+ * @return 	STRING							:: The validated Mime Type
+ */
+public static function validate_mime_type($y_type) {
+	//--
+	$y_type = (string) strtolower(trim((string)$y_type));
+	//--
+	if((string)$y_type == '') {
+		return '';
+	} //end if
+	//--
+	if(@preg_match('/^[[:graph:]]+$/', $y_type)) { // mime types are only ISO-8859-1
+		$type = $y_type;
+	} else {
+		$type = '';
+	} //end if
+	//--
+	return (string) $type;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+} //END CLASS
+
+//=================================================================================
+//================================================================================= CLASS END
+//=================================================================================
+
+
+//end of php code
+?>

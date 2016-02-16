@@ -1,0 +1,17 @@
+# Language File: RO / CORE / Nav_Texts
+TRANSLATIONS:
+  @language: RO
+  @area: core
+  @version: 2016-02-15
+  nav_texts:
+    asort: 'Sortează Crescător [^]'
+    dsort: 'Sortează Descrescător [v]'
+    xsort: 'Anulează Sortarea [*]'
+    listed: 'Pagina'
+    empty: 'Nu există \'rezultate\''
+    of: 'din'
+    start: '&laquo; Început'
+    prev: '&lsaquo; Pagina Precedentă'
+    next: 'Pagina Următoare &rsaquo;'
+    end: 'Sfârșit &raquo;'
+#END
