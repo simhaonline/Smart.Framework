@@ -1,4 +1,5 @@
-/* ----- */
+/* Gritter for jQuery Version: 1.7.4 :: with fixes by unixman */
+
 #gritter-notice-wrapper {
 	z-index: 2147483000;
 	position: fixed;
@@ -27,7 +28,9 @@
 	bottom: 20px;
 	left: 20px;
 }
+
 /* -- */
+
 .gritter-item-wrapper {
 	position: relative;
 	margin: 0 0 10px 0;
@@ -92,7 +95,9 @@
 	width: 220px;
 	float: right;
 }
+
 /* ----- */
+
 /* light */
 .gritter-light .gritter-item,
 .gritter-light .gritter-bottom,
@@ -100,6 +105,7 @@
 	background-color: #FEFF99;
 	color: #111111;
 }
+
 /* yellow */
 .gritter-yellow .gritter-item,
 .gritter-yellow .gritter-bottom,
@@ -107,6 +113,7 @@
 	background-color: #FFCC00;
 	color: #111111;
 }
+
 /* red */
 .gritter-red .gritter-item,
 .gritter-red .gritter-bottom,
@@ -114,6 +121,7 @@
 	background-color: #FF4400;
 	color: #FFFFFF;
 }
+
 /* pink */
 .gritter-pink .gritter-item,
 .gritter-pink .gritter-bottom,
@@ -121,6 +129,7 @@
 	background-color: #FF4073;
 	color: #111111;
 }
+
 /* green */
 .gritter-green .gritter-item,
 .gritter-green .gritter-bottom,
@@ -128,6 +137,7 @@
 	background-color: #86BD00;
 	color: #FFFFFF;
 }
+
 /* blue */
 .gritter-blue .gritter-item,
 .gritter-blue .gritter-bottom,
@@ -135,4 +145,5 @@
 	background-color: #344A78;
 	color: #FFFFFF;
 }
+
 /* END */

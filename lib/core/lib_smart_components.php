@@ -2790,10 +2790,10 @@ if(strlen($y_field_id) > 0) {
 //--
 $counter = '__Fld_COUNTER__'.sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'__NO_Var__';
 //--
-$table_override_w = '';
+$style_override_w = '';
 if(($y_percent_w > 0) AND ($y_percent_w <= 100)) {
 	$css_w = ((int) $y_percent_w).'%';
-	$table_override_w = 'width:'.$css_w;
+	$style_override_w = 'width:'.$css_w;
 } else {
 	$css_w = ((int) $y_cols * 8).'px';
 } //end if
@@ -2806,12 +2806,10 @@ if((string)$y_placeholder != '') {
 //--
 $html = <<<HTML_CODE
 <!-- Limited Text Area -->
-<table border="0" cellpadding="1" cellspacing="0" style="{$table_override_w}">
-<tr valign="bottom">
-<td align="left" style="{$table_override_w}"><textarea id="{$field}" name="{$y_var_name}" wrap="{$y_wrap}" maxlength="{$y_limit}" onClick="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onBlur="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onKeyDown="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onKeyUp="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" style="width:{$css_w}; height:{$css_h};"{$placeholder}>{$y_var_value}</textarea></td>
-<td align="left"><input title="Chars Counter: {$y_limit}" type="text" readonly disabled id="{$counter}" size="5" maxlength="4" value="{$y_limit}" style="padding: 2px !important; font-size: 11px !important; text-align: center !important;"></td>
-</tr>
-</table>
+<div style="position:relative;{$style_override_w}">
+	<textarea id="{$field}" name="{$y_var_name}" wrap="{$y_wrap}" maxlength="{$y_limit}" onClick="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onBlur="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onKeyDown="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onKeyUp="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" style="width:{$css_w}; height:{$css_h};"{$placeholder}>{$y_var_value}</textarea>
+	<input title="Max Chars Limit: {$y_limit}" type="text" readonly disabled id="{$counter}" size="5" maxlength="4" value="{$y_limit}" style="padding:1px!important; font-size:10px!important; text-align:center!important; position:absolute; left:5px; bottom:5px; opacity:0.5;">
+</div>
 HTML_CODE;
 //--
 return $html;

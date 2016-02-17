@@ -101,19 +101,17 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				$main = SmartTestSuite::test_redisserver();
 				//--
 				break;
-			case 'testunit.json-sqlite3-flexi':
+			case 'testunit.json-sqlite3-smartgrid':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_sqlite3_json_flexigrid(
-					$this->RequestVarGet('flexigrid_page'),
-					$this->RequestVarGet('flexigrid_resperpage'),
-					$this->RequestVarGet('flexigrid_sortfld'),
-					$this->RequestVarGet('flexigrid_sortdir'),
-					$this->RequestVarGet('flexigrid_srcby'),
-					$this->RequestVarGet('flexigrid_search'),
-					$this->RequestVarGet('flexigrid_xsrcby'),
-					$this->RequestVarGet('flexigrid_xsearch')
-				);
+				//--
+				$ofs = $this->RequestVarGet('ofs', 0, 'integer+');
+				$sortby = $this->RequestVarGet('sortby', 'id', 'string');
+				$sortdir = $this->RequestVarGet('sortdir', 'ASC', 'string');
+				$sorttype = $this->RequestVarGet('sorttype', 'string', 'string');
+				$src = $this->RequestVarGet('src', '', 'string'); // filter var
+				//--
+				$main = SmartTestSuite::test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sorttype, $src);
 				//--
 				break;
 			case 'testunit.html-editor':

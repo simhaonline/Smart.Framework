@@ -1,5 +1,5 @@
 <!-- Partial Template: TestUnit.SlickGrid -->
-<b>Extreme DataGrid holding <font color="#FF5500">1 Million Rows</font> at once using Virtual &amp; Async Post Rendering</b> (based on SlickGrid, with some fixes and improvements)
+<b>Big Data Grid holding <font color="#FF5500">1 Million Rows</font> at once using Virtual &amp; Async Post Rendering</b> (based on SlickGrid, with some fixes and improvements)
 <br>
 <script type="text/javascript" src="lib/js/jquery/jquery.event.drag.js"></script>
 <script type="text/javascript" src="lib/js/jquery/jquery.event.drop.js"></script>
@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="lib/js/jquery/slickgrid/slick.grid-fixes.css">
 <script type="text/javascript" src="lib/js/jquery/slickgrid/slick.grid.js"></script>
 <script type="text/javascript" src="lib/js/jquery/jquery.sparkline.js"></script>
+<br>
 <div id="SampleSlickGrid" class="slickgrid-table" style="font-size:10px;width:810px;height:400px;"></div>
 <style>
 	.myGrid_AlignCenter {
@@ -145,6 +146,20 @@ $(function() {
 		grid.render();
 		//--
 	};
+
+	// Grid sizing
+	var winW = $(window).width();
+	var winH = $(window).height();
+	$('#SampleSlickGrid').css({ 'width': parseInt(winW - 75), 'height': parseInt(winH - 175) });
+	grid.resizeCanvas();
+	grid.autosizeColumns();
+	$(window).resize(function() {
+		winW = $(window).width();
+		winH = $(window).height();
+		$('#SampleSlickGrid').css({ 'width': parseInt(winW - 75), 'height': parseInt(winH - 175) });
+		grid.resizeCanvas();
+		grid.autosizeColumns();
+	});
 
 });
 //#END

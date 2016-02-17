@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160215
+	// v.160217
 
 
 //==================================================================
@@ -723,80 +723,7 @@ HTML;
 //==================================================================
 
 
-//==================================================================
-public static function test_sqlite3_json_flexigrid($flexigrid_page, $flexigrid_resperpage, $flexigrid_sortfld, $flexigrid_sortdir, $flexigrid_srcby, $flexigrid_search, $flexigrid_xsrcby, $flexigrid_xsearch) {
 
-	//-- ensure the correct types
-	$flexigrid_page = (int) $flexigrid_page;
-	$flexigrid_resperpage = (int) $flexigrid_resperpage;
-	$flexigrid_srcby = (string) $flexigrid_srcby;
-	$flexigrid_search = (string) $flexigrid_search;
-	$flexigrid_xsrcby = (string) $flexigrid_xsrcby;
-	$flexigrid_xsearch = (string) $flexigrid_xsearch;
-	$flexigrid_sortfld = (string) $flexigrid_sortfld;
-	$flexigrid_sortdir = (string) $flexigrid_sortdir;
-	//--
-
-	//-- db init
-	$model = new SmartTestSQLite3Model();
-	if(!is_object($model)) {
-		return Smart::json_encode(array('error' => 'Flexigrid JSON DB Object Failed to initialize'));
-	} //end if
-	//--
-
-	//-- where management (we have 2 situations: 1st is normal search ; 2nd is search by starting letter)
-	if(((string)$flexigrid_srcby != '') AND ((string)$flexigrid_search != '')) {
-		//-- normal search (by field and value)
-		$where_field = $flexigrid_srcby;
-		$where_value = $flexigrid_search;
-		$where_mode = '';
-		//--
-	} else {
-		//-- search by starting letters
-		$where_field = $flexigrid_xsrcby;
-		$where_value = $flexigrid_xsearch;
-		$where_mode = 'letters';
-		//--
-	} //end if else
-	//--
-
-	//-- output data init
-	$jsonData = array(
-		'page' => $flexigrid_page,
-		'total' => $model->table_flexigrid_count($where_field, $where_value, $where_mode), // count total result (can be different if no search)
-		'rows' => array()
-	);
-	//--
-
-	//-- read data
-	$rows = $model->table_flexigrid_read($where_field, $where_value, $where_mode, $flexigrid_sortfld, $flexigrid_sortdir, $flexigrid_resperpage, $flexigrid_page);
-	//--
-	if(is_array($rows)) {
-		foreach($rows AS $row) {
-			//--
-			$entry = array(
-					'id' => 'ID_'.$row['iso'],
-					'cell' => array(
-						'iso' => $row['iso'],
-						'name' => $row['name'],
-						'printable_name' => $row['printable_name'],
-						'iso3' => $row['iso3'],
-						'numcode' => $row['numcode']
-					),
-			);
-			//--
-			$jsonData['rows'][] = $entry;
-			//--
-		} //end foreach
-	} //end if
-	//--
-
-	//--
-	return Smart::json_encode($jsonData);
-	//--
-
-} //END FUNCTION
-//==================================================================
 
 
 //==================================================================
@@ -1251,6 +1178,52 @@ HTML;
 
 } //END FUNCTION
 //==================================================================
+
+
+//============================================================
+public static function test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sorttype, $src='') {
+
+	//--
+	$db = new SmartTestSQLite3Model();
+	$model = $db->getConnection();
+	//--
+
+	//--
+	$data = array();
+	$data['status'] = 'OK';
+	$data['crrOffset'] = (int) $ofs;
+	$data['itemsPerPage'] = 25;
+	$data['sortBy'] = (string) $sortby;
+	$data['sortDir'] = (string) $sortdir;
+	$data['sortType'] = (string) $sorttype;
+	$data['filter'] = array(
+		'src' => (string) $src
+	);
+	//--
+	$where = '';
+	if((string)$src != '') {
+		if(is_numeric($src)) {
+			$where = $model->prepare_param_query('WHERE numcode = ?', array((int)$src));
+		} elseif(strlen((string)$src) == 2) {
+			$where = $model->prepare_param_query('WHERE iso = ?', array(SmartUnicode::str_toupper($src)));
+		} elseif(strlen((string)$src) == 3) {
+			$where = $model->prepare_param_query('WHERE iso3 = ?', array(SmartUnicode::str_toupper($src)));
+		} else {
+			$where = $model->prepare_param_query('WHERE name LIKE ?', array($src.'%'));
+		} //end if else
+	} //end if
+	$data['totalRows'] = $model->count_data('SELECT COUNT(1) FROM sample_countries '.$where);
+	$data['rowsList'] = $model->read_adata('SELECT iso, name, iso3, numcode FROM sample_countries '.$where.' LIMIT '.(int)$data['itemsPerPage'].' OFFSET '.(int)$data['crrOffset']);
+	//--
+	unset($db); // close
+	//--
+
+	//--
+	return Smart::json_encode((array)$data);
+	//--
+
+} //END FUNCTION
+//============================================================
 
 
 //==================================================================
@@ -1863,7 +1836,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160215
+	// v.160217
 
 private $db;
 
@@ -1878,7 +1851,7 @@ public function __construct() {
 
 	//-- init (create) the sample tables if they do not exist
 	$this->init_table_main_samples();
-	$this->init_table_flexigrid_samples();
+	$this->init_table_samples_countries();
 	//--
 
 } //END FUNCTION
@@ -1888,28 +1861,10 @@ public function __construct() {
 //============================================================
 public function __destruct() {
 
+	//--
 	if(is_object($this->db)) {
 		$this->db->close(); // clean shutdown
 	} //end if
-
-} //END FUNCTION
-//============================================================
-
-
-//============================================================
-public function table_flexigrid_count($where_field, $where_value, $where_mode) {
-
-	//--
-	$query = 'SELECT COUNT(1) FROM "table_flexigrid_sample"';
-	//-- where
-	$where = $this->table_flexigrid_build_where($where_field, $where_value, $where_mode);
-	if((string)$where != '') {
-		$query .= ' '.$where;
-	} //end if
-	//--
-
-	//--
-	return (int) $this->db->count_data($query);
 	//--
 
 } //END FUNCTION
@@ -1917,95 +1872,10 @@ public function table_flexigrid_count($where_field, $where_value, $where_mode) {
 
 
 //============================================================
-public function table_flexigrid_read($where_field, $where_value, $where_mode, $sort_field, $sort_direction, $results_per_page, $offset_page) {
-
+public function getConnection() {
 	//--
-	$query = 'SELECT * FROM "table_flexigrid_sample"';
-	//-- where
-	$where = $this->table_flexigrid_build_where($where_field, $where_value, $where_mode);
-	if((string)$where != '') {
-		$query .= ' '.$where;
-	} //end if
-	//-- sort
-	$sort = 'ORDER BY "iso" ASC'; // default sort
-	switch((string)$sort_field) {
-		case 'name':
-		case 'iso':
-		case 'iso3':
-		case 'numcode':
-			if((string)$sort_direction == 'desc') {
-				$sort = 'ORDER BY "'.$sort_field.'" DESC';
-			} else {
-				$sort = 'ORDER BY "'.$sort_field.'" ASC';
-			} //end if
-			break;
-		default:
-			// nothing (invalid field)
-	} //end switch
-	$query .= ' '.$sort;
-	//-- limit offset
-	if($results_per_page <= 0) {
-		$results_per_page = 10; // default
-	} //end if
-	if($offset_page <= 0) {
-		$offset_page = 1;
-	} //end if
-	$query .= ' LIMIT '.((int)$results_per_page).' OFFSET '.((int) $results_per_page * ($offset_page - 1));
+	return $this->db;
 	//--
-
-	//--
-	$this->db->read_asdata('SELECT * FROM "table_flexigrid_sample" LIMIT 1 OFFSET 0'); // just for test
-	//--
-	return (array) $this->db->read_adata($query);
-	//--
-
-} //END FUNCTION
-//============================================================
-
-
-//============================================================
-private function table_flexigrid_build_where($where_field, $where_value, $where_mode) {
-
-	//--
-	$where = '';
-	//--
-	if($where_mode == 'letters') { // search by starting letter
-		switch((string)$where_field) {
-			case 'name': // for letters
-			case 'iso':
-			case 'iso3':
-			case 'numcode':
-				if((strlen($where_value) > 0) AND ((string)$where_value != '#')) {
-					$where = 'WHERE "'.$where_field.'" LIKE \''.$this->db->escape_str($where_value).'%\'';
-				} //end if
-				break;
-			default:
-				// nothing
-		} //end switch
-	} else { // normal search by field and value
-		switch((string)$where_field) {
-			case 'name':
-				if((strlen($where_value) > 0) AND ((string)$where_value != '#')) {
-					$where = 'WHERE "'.$where_field.'" LIKE \'%'.$this->db->escape_str($where_value).'%\'';
-				} //end if
-				break;
-			case 'iso':
-			case 'iso3':
-			case 'numcode':
-				if(strlen($where_value) > 0) {
-					$where = 'WHERE "'.$where_field.'" LIKE \''.$this->db->escape_str($where_value).'\'';
-				} //end if
-				break;
-			default:
-				// nothing
-		} //end switch
-	} //end if
-	//--
-
-	//--
-	return (string) $where;
-	//--
-
 } //END FUNCTION
 //============================================================
 
@@ -2022,10 +1892,10 @@ private function init_table_main_samples() {
 
 
 //============================================================
-private function init_table_flexigrid_samples() {
+private function init_table_samples_countries() {
 
 	//--
-	if($this->db->check_if_table_exists('table_flexigrid_sample') == 1) {
+	if($this->db->check_if_table_exists('sample_countries') == 1) {
 		return; // prevent execution if the table has been already created
 	} //end if
 	//--
@@ -3158,7 +3028,7 @@ private function init_table_flexigrid_samples() {
 		'numcode'=>'826',
 		),
 		array('iso'=>'US',
-		'name'=>'United States <b>USA</b>',
+		'name'=>'United States',
 		'iso3'=>'USA',
 		'numcode'=>'840',
 		),
@@ -3232,12 +3102,12 @@ private function init_table_flexigrid_samples() {
 
 	//--
 	$this->db->write_data('BEGIN'); // start transaction
-	$this->db->create_table('table_flexigrid_sample', "iso character varying(2) PRIMARY KEY NOT NULL, name character varying(100) NOT NULL, iso3 character varying(3) NOT NULL, numcode integer NOT NULL");
+	$this->db->create_table('sample_countries', "iso character varying(2) PRIMARY KEY NOT NULL, name character varying(100) NOT NULL, iso3 character varying(3) NOT NULL, numcode integer NOT NULL");
 	foreach($rows AS $key => $row) {
-		$this->db->write_data('INSERT INTO table_flexigrid_sample '.$this->db->prepare_write_statement($row, 'insert'));
+		$this->db->write_data('INSERT INTO sample_countries '.$this->db->prepare_write_statement($row, 'insert'));
 	} //end foreach
-	$this->db->write_data('UPDATE table_flexigrid_sample '.$this->db->prepare_write_statement($rows[0], 'update').' WHERE (iso = NULL)'); // test
-	$this->db->read_data('SELECT * FROM table_flexigrid_sample WHERE (iso '.$this->db->prepare_write_statement(array('a', 7, 'US'), 'in-select').')');
+	$this->db->write_data('UPDATE sample_countries '.$this->db->prepare_write_statement($rows[0], 'update').' WHERE (iso = NULL)'); // test
+	$this->db->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->db->prepare_write_statement(array('a', 7, 'US'), 'in-select').')');
 	$this->db->write_data('COMMIT');
 	//--
 
