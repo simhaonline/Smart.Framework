@@ -91,10 +91,6 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartExportToOpenOffice':
 			require_once('lib/core/plugins/lib_export_ooffice.php'); 	// ooffice export
 			break;
-		//-- pdf export
-		case 'SmartPdfExport':
-			require_once('lib/core/plugins/lib_export_pdf.php');		// pdf export
-			break;
 		//-- calendar
 		case 'SmartCalendarComponent':
 		case 'SmartHTMLCalendar':

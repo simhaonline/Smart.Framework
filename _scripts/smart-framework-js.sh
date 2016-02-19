@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Combine lib/js/framework/*.js into one file
+# Combine all JS in lib/js/framework/*.js into one JS file: smart-framework.js
 
 THE_DTIME=`date +%Y%m%d.%H%M%S`
 

@@ -31,7 +31,6 @@ require_once('lib/core/plugins/lib_archlzs.php');			// lzs archiver
 //--
 require_once('lib/core/plugins/lib_export_zip.php');		// export zip archive
 require_once('lib/core/plugins/lib_export_ooffice.php');	// export ooffice (opendocument)
-require_once('lib/core/plugins/lib_export_pdf.php');		// export pdf (htmldoc)
 //--
 require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
 require_once('lib/core/plugins/lib_mediagallery.php'); 		// mediagallery (req. by CMS)

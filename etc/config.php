@@ -98,10 +98,6 @@ define('SMART_FRAMEWORK_MEDIAGALLERY_PDF_EXTRACTOR', 	''); 					// path to PDF E
 define('SMART_FRAMEWORK_BARCODE_1D_MODE', '128');								// 1D barcode system :: `128` = Code128 B (Extended) (ISO-8859-1) ; `93` = Code93 Extended+Checksum ; `39` = Code39 Extended (ISO-8859-1)
 define('SMART_FRAMEWORK_BARCODE_2D_MODE', 'qrcode');							// 2D matrix barcode system :: `qrcode` = QRCode (UTF-8) ; `semacode` = DataMatrix (UTF-8)
 define('SMART_FRAMEWORK_BARCODE_2D_OPTS', 'L');									// 2D matrix barcode options :: QRCode[L,M,Q,H] ; DataMatrix[] ; PDF417[1,2,3]
-//--------------------------------------- PDF GENERATOR
-define('SMART_FRAMEWORK_PDF_GENERATOR_APP', 	'/usr/bin/htmldoc'); 			// path to HtmlDoc Utility (change to match your system) ; can be `/usr/bin/htmldoc` or `/usr/local/bin/htmldoc` or `c:/open_runtime/htmldoc/htmldoc.exe` or any custom path
-define('SMART_FRAMEWORK_PDF_GENERATOR_FORMAT', 	'pdf13'); 						// PDF format: `pdf14` | `pdf13` | `pdf12`
-define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `color` | `gray`
 //---------------------------------------
 
 //--------------------------------------- OTHER SPECIAL SETTINGS :: DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU ARE DOING, really ...
