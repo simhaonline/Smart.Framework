@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 
-//-- smart.framework.v.2.2 :: r.160215
+//-- smart.framework.v.2.3 :: r.160219
 // #PLUGINS# :: they are loaded via Dependency Injection
 //--
 /**

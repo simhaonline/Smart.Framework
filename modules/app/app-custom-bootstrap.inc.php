@@ -31,7 +31,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // 		... other purposes ...
 //-------------------------------------------
 
-define('APP_MODULES_RELEASE', 'r.2016.02.15'); // this must be used for tracking changes to custom app modules
+define('APP_MODULES_RELEASE', 'r.2016.02.19'); // this must be used for tracking changes to custom app modules
 
 // # Here can be loaded the Smart.Framework extra libs package from: https://github.com/unix-world/Smart.Framework.Modules
 //require_once('modules/smart-extra-libs/autoload.php'); // autoload for Smart.Framework.Modules / (Smart) Extra Libs

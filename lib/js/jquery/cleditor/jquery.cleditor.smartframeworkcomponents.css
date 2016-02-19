@@ -1,4 +1,4 @@
-/* CLEditor / SmartComponents v.2015.02.15 */
+/* CLEditor / SmartComponents v.2016.02.18 */
 * {
 	font-family: tahoma,arial,sans-serif;
 }
@@ -31,6 +31,8 @@ div {
 	background-image: url(images/css-div.png);
 	background-repeat: no-repeat;
 	background-position: right top;
+	min-height:10px;
+	min-width: 10px;
 }
 p {
 	padding-right:10px;
@@ -48,6 +50,9 @@ section {
 	border: 1px dashed #FF5500;
 	min-height: 15px;
 	min-width: 15px;
+	background-image: url(images/css-section.png);
+	background-repeat: no-repeat;
+	background-position: right top;
 }
 
 /* Fix for Firefox Missing Images PlaceHolder */

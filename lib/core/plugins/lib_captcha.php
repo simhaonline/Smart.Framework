@@ -3,7 +3,7 @@
 // (c) 2006-2016 unix-world.org - all rights reserved
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -107,7 +107,7 @@ public static function captcha_form($y_captcha_image_url, $y_form_name, $y_width
 	$ptmp_out .= '<td width="50%" align="left">'.'<img id="smart__CaptchaFrm__img" style="cursor: pointer; cursor: hand;" border="0" src="'.Smart::escape_html($captcha_url).'" onClick="javascript: var captcha_date = new Date(); this.src=\''.Smart::escape_js($y_captcha_image_url.'&captcha_form='.rawurlencode($y_form_name).'&captcha_mode=image&new=').'\'+captcha_date.getTime()+\'\'+captcha_date.getMilliseconds();" alt="'.$y_refresh.'" title="'.$y_refresh.'">'.'</td>';
 	$ptmp_out .= '<td width="50%" align="center">';
 	$ptmp_out .= '<font face="tahoma,arial,sans-serif" size="1" color="'.$y_textcolor.'"><b>'.$y_text.'</b></font>:<br>';
-	$ptmp_out .= '<span class="ux-form"><input type="text" size="8" maxlength="255" value="" onBlur="try { eval( \'\' + SmartJS_Base64.decode(\''.base64_encode("try { var SmartCaptchaChecksum = SmartJS_BrowserUtils.getCookie('".Smart::escape_js(self::chkcookiename($y_form_name))."'); if(SmartCaptchaChecksum === null) { SmartCaptchaChecksum = 'invalid-captcha'; alert('The Captcha session expired ...".'\n'."Click on Captcha image to get a new one and try to re-enter the new code.".'\n'."If the problem persist please contact the admin !'); } var smartCaptchaTimerCookie = new Date(); var smartCaptchaCookie = SmartJS_Archiver_LZS.compressToBase64(SmartJS_CryptoBlowfish.encrypt(SmartJS_Base64.encode(smartCaptchaTimerCookie.getTime() + '!' + this.value.toUpperCase() + '!SmartFramework'), SmartJS_CoreUtils.stringTrim(SmartCaptchaChecksum))); SmartJS_BrowserUtils.setCookie('".Smart::escape_js($js_cookie_name)."', smartCaptchaCookie, false, '/'); } catch(err) { alert('Captcha ERROR: (2) ' + err); } this.value = '';").'\')); } catch(error){ alert(\'Captcha ERROR: (2) :: Invalid Captcha Script \'); }"></span>';
+	$ptmp_out .= '<span class="ux-form"><input type="text" size="8" maxlength="255" value="" onBlur="try { eval( \'\' + SmartJS_Base64.decode(\''.base64_encode("try { var SmartCaptchaChecksum = SmartJS_BrowserUtils.getCookie('".Smart::escape_js(self::chkcookiename($y_form_name))."'); if(SmartCaptchaChecksum == '') { SmartCaptchaChecksum = 'invalid-captcha'; alert('The Captcha session expired ...".'\n'."Click on Captcha image to get a new one and try to re-enter the new code.".'\n'."If the problem persist please contact the admin !'); } var smartCaptchaTimerCookie = new Date(); var smartCaptchaCookie = SmartJS_Archiver_LZS.compressToBase64(SmartJS_CryptoBlowfish.encrypt(SmartJS_Base64.encode(smartCaptchaTimerCookie.getTime() + '!' + this.value.toUpperCase() + '!SmartFramework'), SmartJS_CoreUtils.stringTrim(SmartCaptchaChecksum))); SmartJS_BrowserUtils.setCookie('".Smart::escape_js($js_cookie_name)."', smartCaptchaCookie, false, '/'); } catch(err) { alert('Captcha ERROR: (2) ' + err); } this.value = '';").'\')); } catch(error){ alert(\'Captcha ERROR: (2) :: Invalid Captcha Script \'); }"></span>';
 	$ptmp_out .= '</td>' ;
 	$ptmp_out .= '</tr>';
 	$ptmp_out .= '</table>';

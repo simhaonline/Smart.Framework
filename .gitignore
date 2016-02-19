@@ -1,6 +1,6 @@
 tmp
 wpub
-modules/smart-extra-js
+modules/mod-js-components
 modules/smart-extra-libs
 modules/mod-tpl-twig
 !.gitignore

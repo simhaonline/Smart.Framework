@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 
-//-- smart.framework.v.2.2 :: r.160215
+//-- smart.framework.v.2.3 :: r.160219
 // #PLUGINS# :: they can be loaded always (require) or as dependency injection (require_once)
 //--
 require_once('lib/core/plugins/lib_mail_send.php');			// mail send client (sendmail, smtp)

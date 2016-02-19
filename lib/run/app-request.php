@@ -8,7 +8,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// v.160215
+// v.2016.02.19 / smart.framework.v.2.3
 
 //======================================================
 // Smart-Framework - App Request Handler

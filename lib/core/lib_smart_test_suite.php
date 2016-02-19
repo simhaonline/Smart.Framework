@@ -7,7 +7,7 @@ if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the f
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -1203,7 +1203,7 @@ public static function test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sor
 	$where = '';
 	if((string)$src != '') {
 		if(is_numeric($src)) {
-			$where = $model->prepare_param_query('WHERE numcode = ?', array((int)$src));
+			$where = $model->prepare_param_query('WHERE numcode LIKE ?', array('%'.(int)$src.'%'));
 		} elseif(strlen((string)$src) == 2) {
 			$where = $model->prepare_param_query('WHERE iso = ?', array(SmartUnicode::str_toupper($src)));
 		} elseif(strlen((string)$src) == 3) {

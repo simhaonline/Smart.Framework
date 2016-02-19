@@ -31,8 +31,8 @@ if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need 
 //--
 
 //--
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.02.17'); // this is the real release version
-define('SMART_FRAMEWORK_RUNTIME_HEAD_VERSION', 'v.2.2.3.5'); // this is the real release version tag
+define('SMART_FRAMEWORK_RUNTIME_HEAD_VERSION', 'v.2.3.1.1'); // this is the real release version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.02.19'); // this is the real release version
 //--
 define('SMART_FRAMEWORK_DOWNLOAD_URL', 'http://www.'.'unix-world.org');
 //--
@@ -222,7 +222,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 	require('lib/core/lib_debug_profiler.php');
 } //end if
 //---------------------------------------
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //---------------------------------------

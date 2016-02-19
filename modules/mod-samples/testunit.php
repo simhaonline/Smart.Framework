@@ -120,6 +120,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				$main = SmartComponents::js_init_away_page();
 				$main .= SmartComponents::js_init_html_area();
 				$main .= SmartComponents::js_draw_html_area('test_html_area', 'test_html_area', 128, 30, '');
+				$main .= '<button class="ux-button" onClick="alert($(\'#test_html_area\').val());">Get HTML Source</button>';
 				//--
 				break;
 			case 'testunit.code-editor':

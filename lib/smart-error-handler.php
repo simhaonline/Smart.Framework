@@ -1,6 +1,6 @@
 <?php
 // [SmartFramework / ERRORS MANAGEMENT]
-// v.2016.01.25
+// v.2016.02.19
 // this should be loaded from app web root only
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY

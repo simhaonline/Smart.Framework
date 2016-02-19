@@ -13,7 +13,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SmartApp_Runtime_Script_VERSION', '[I]@v.2.2.3.5');
+define('SmartApp_Runtime_Script_VERSION', '[I]@v.2.3.1.1');
 
 
 //==================================================================================
@@ -28,7 +28,7 @@ define('SmartApp_Runtime_Script_VERSION', '[I]@v.2.2.3.5');
  * @access 		private
  * @internal
  *
- * @version		160215
+ * @version		160219
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {

@@ -35,11 +35,11 @@ Software:
 * Apps: Apache 2.4.17, PHP 5.5.30 with Zend Opcache 7.0.5
 
 #### Benchmark Results of PHP Frameworks:
-* Smart.Framework r.151117: ~ 2697 requests / second
-* Zend Framework 2.4.6: ~ 271 requests / second ( 9x slower than Smart.Framework )
-* Symfony 2.7.3: ~ 398 requests / second ( 7x slower than Smart.Framework )
-* Silex 1.2.4: ~ 863 requests / second ( 2x slower than Smart.Framework )
-* Laravel 5.0 ~ 462 requests / second ( 5x slower than Smart.Framework )
-* CodeIgniter 3.0 ~ 1803 requests / second ( 1.2x slower than Smart.Framework )
-* Yii 2 ~ 717 requests / second ( 3x slower than Smart.Framework )
+* Smart.Framework r.160219: ~ 2697 requests / second
+* Zend Framework 2.4.7: ~ 272 requests / second ( 9x slower than Smart.Framework )
+* Symfony 2.7.3: ~ 397 requests / second ( 7x slower than Smart.Framework )
+* Silex 1.2.4: ~ 864 requests / second ( 2x slower than Smart.Framework )
+* Laravel 5.0 ~ 461 requests / second ( 5x slower than Smart.Framework )
+* CodeIgniter 3.0 ~ 1802 requests / second ( 1.2x slower than Smart.Framework )
+* Yii 2 ~ 613 requests / second ( 3x slower than Smart.Framework )
 Notice: Phalcon Framework was excluded from tests as it is made in C not in PHP ...

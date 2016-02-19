@@ -11,7 +11,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 
 //======================================================
-// Smart-Framework v.2.2
+// Smart-Framework v.2.3
 //======================================================
 // Requires PHP 5.4.20 or later
 //======================================================
@@ -19,7 +19,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // [REGEX-SAFE-OK]
 
 //--------------------------------------------------
-define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.2.2'); // required for framework to function
+define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.2.3'); // required for framework to function
 //--------------------------------------------------
 
 
