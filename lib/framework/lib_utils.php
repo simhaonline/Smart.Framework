@@ -909,66 +909,79 @@ public static function left_pad_str($y_string, $y_padnum, $y_padchar) {
 
 
 //================================================================
-// THIS MUST BE STATIC !!!
-public static function encrypt_key() {
-	//--
-	return (string) SMART_FRAMEWORK_SECURITY_KEY;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// NOTICE: Use only static keys otherwise you will can't decrypt !!!
+// This always provides a compatible layer with the JS Blowfish CBC
+// It must be used for safe exchanging data between PHP and Javascript
 public static function crypto_blowfish_encrypt($y_data, $y_key='') {
 	//--
 	if((string)$y_key == '') {
-		$key = self::encrypt_key();
+		$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
 	} else {
 		$key = (string) $y_key;
 	} //end if
 	//--
-	if((defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) AND (substr(SMART_FRAMEWORK_SECURITY_CRYPTO, 0, 15) == 'mcrypt/blowfish')) { // mcrypt
-		$crypt = new SmartCryptoMCrypt($key, SMART_FRAMEWORK_SECURITY_CRYPTO);
-	} else { // built-in blowfish
-		$crypt = new SmartCryptoBlowfishCBC($key);
-	} //end if else
-	//--
-	$data = $crypt->encrypt((string)$y_data);
-	//--
-	return $data;
+	return (string) SmartCipherCrypto::encrypt('blowfish.cbc', (string)$key, (string)$y_data);
 	//--
 } //END FUNCTION
 //================================================================
 
 
 //================================================================
-// NOTICE: Use only static keys otherwise you will can't decrypt !!!
+// This always provides a compatible layer with the JS Blowfish CBC
+// It must be used for safe exchanging data between PHP and Javascript
 public static function crypto_blowfish_decrypt($y_data, $y_key='') {
 	//--
 	if((string)$y_key == '') {
-		$key = self::encrypt_key();
+		$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
 	} else {
 		$key = (string) $y_key;
 	} //end if
 	//--
-	if((defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) AND (substr(SMART_FRAMEWORK_SECURITY_CRYPTO, 0, 15) == 'mcrypt/blowfish')) { // mcrypt
-		$crypt = new SmartCryptoMCrypt($key, SMART_FRAMEWORK_SECURITY_CRYPTO);
-	} else { // built-in blowfish
-		$crypt = new SmartCryptoBlowfishCBC($key);
-	} //end if else
-	//--
-	$data = $crypt->decrypt((string)$y_data);
-	//--
-	return $data;
+	return (string) SmartCipherCrypto::decrypt('blowfish.cbc', (string)$key, (string)$y_data);
 	//--
 } //END FUNCTION
 //================================================================
 
 
 //================================================================
-public static function datapacket_checksum($y_data_pack) {
-	return (string) SmartHashCrypto::sha1($y_data_pack.self::encrypt_key());
+// This is intended for general use of symetric crypto api in Smart.Framework
+// It can use any of the: hash or mcrypt algos: blowfish, twofish, serpent, ghost
+public static function crypto_encrypt($y_data, $y_key='') {
+	//--
+	if((string)$y_key == '') {
+		$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
+	} else {
+		$key = (string) $y_key;
+	} //end if
+	//--
+	$cipher = 'hash/sha256'; // default
+	if(defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
+		$cipher = (string) SMART_FRAMEWORK_SECURITY_CRYPTO;
+	} //end if
+	//--
+	return (string) SmartCipherCrypto::encrypt((string)$cipher, (string)$key, (string)$y_data);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// This is intended for general use of symetric crypto api in Smart.Framework
+// It can use any of the: hash or mcrypt algos: blowfish, twofish, serpent, ghost
+public static function crypto_decrypt($y_data, $y_key='') {
+	//--
+	if((string)$y_key == '') {
+		$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
+	} else {
+		$key = (string) $y_key;
+	} //end if
+	//--
+	$cipher = 'hash/sha256'; // default
+	if(defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
+		$cipher = (string) SMART_FRAMEWORK_SECURITY_CRYPTO;
+	} //end if
+	//--
+	return (string) SmartCipherCrypto::decrypt((string)$cipher, (string)$key, (string)$y_data);
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -1032,18 +1045,17 @@ public static function create_download_link($y_file, $y_ctrl_key) {
 	$crrtime = (int) time();
 	$access_key = SmartHashCrypto::sha1('DownloadLink:'.SMART_SOFTWARE_NAMESPACE.'-'.SMART_FRAMEWORK_SECURITY_KEY.'-'.SMART_APP_VISITOR_COOKIE.':'.$y_file.'^'.$y_ctrl_key);
 	$unique_key = SmartHashCrypto::sha1('Time='.$crrtime.'#'.SMART_SOFTWARE_NAMESPACE.'-'.SMART_FRAMEWORK_SECURITY_KEY.'-'.$access_key.'-'.self::unique_auth_client_private_key().':'.$y_file.'+'.$y_ctrl_key);
-	//--
-	$hash = new SmartCryptoEncryptionHash('SmartFramework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY);
 	//-- {{{SYNC-DOWNLOAD-ENCRYPT-ARR}}}
-	$safe_download_link = $hash->encrypt(
+	$safe_download_link = self::crypto_encrypt(
 		trim((string)$crrtime)."\n". 							// set the current time
 		trim((string)$y_file)."\n". 							// the file path
 		trim((string)$access_key)."\n". 						// access key based on UniqueID cookie
 		trim((string)$unique_key)."\n".							// unique key based on: User-Agent and IP
-		'-'."\n"												// self robot browser UserAgentName/ID key (does not apply here)
+		'-'."\n",												// self robot browser UserAgentName/ID key (does not apply here)
+		'SmartFramework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY
 	);
 	//--
-	return (string) Smart::escape_url($safe_download_link);
+	return (string) Smart::escape_url(trim((string)$safe_download_link));
 	//--
 } //END FUNCTION
 //================================================================
@@ -2124,6 +2136,10 @@ public static function get_os_browser_ip($y_mode='') {
 // 39 characters (32 + 7 separators) for IPv6
 private static function _iplist_get_first_address($ip) {
 	//--
+	if((string)$ip == '') {
+		return '';
+	} //end if
+	//--
 	if(strpos((string)$ip, ',') !== false) { // if we detect many IPs in a header
 		//--
 		$arr = @explode(',', (string)$ip);
@@ -2155,6 +2171,10 @@ private static function _iplist_get_first_address($ip) {
 
 //================================================================
 private static function _iplist_get_last_address($ip) {
+	//--
+	if((string)$ip == '') {
+		return '';
+	} //end if
 	//--
 	if(strpos((string)$ip, ',') !== false) { // if we detect many IPs in a header
 		//--

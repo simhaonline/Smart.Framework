@@ -25,7 +25,7 @@ http://sourceforge.net/projects/warp-cms/files/smart-framework/
 #### Benchmark scenario:
 Using a the same basic page for all tested frameworks, just a simple text: "Benchmark Test".
 Benchmark was running with Apache Benchmark suite with the command:
-ab -n 500 -c 100 http://{framework}/{web-root}
+ab -n 1200 -c 150 http://{localhost}/{framework}/{web-root}
 Using a regular server as hardware platform:
 * 2 x CPU AMD Opteron 2384 @ 2.7 GHz quad core 64-bit (Total: 8 cores / 8 threads)
 * 24 GB RAM, DDR2 @ 667 ECC
@@ -35,11 +35,8 @@ Software:
 * Apps: Apache 2.4.17, PHP 5.5.30 with Zend Opcache 7.0.5
 
 #### Benchmark Results of PHP Frameworks:
-* Smart.Framework r.160219: ~ 2697 requests / second
-* Zend Framework 2.4.7: ~ 272 requests / second ( 9x slower than Smart.Framework )
-* Symfony 2.7.3: ~ 397 requests / second ( 7x slower than Smart.Framework )
-* Silex 1.2.4: ~ 864 requests / second ( 2x slower than Smart.Framework )
-* Laravel 5.0 ~ 461 requests / second ( 5x slower than Smart.Framework )
-* CodeIgniter 3.0 ~ 1802 requests / second ( 1.2x slower than Smart.Framework )
-* Yii 2 ~ 613 requests / second ( 3x slower than Smart.Framework )
-Notice: Phalcon Framework was excluded from tests as it is made in C not in PHP ...
+* Smart.Framework r.160221: ~ 2677 requests / second
+* Zend Framework 2.4.7: ~ 391 requests / second ( 9x slower than Smart.Framework )
+* Symfony 2.7.3: ~ 799 requests / second ( 7x slower than Smart.Framework )
+* Silex 1.2.4: ~ 1981 requests / second ( 2x slower than Smart.Framework )
+* Laravel 5.0 ~ 568 requests / second ( 5x slower than Smart.Framework )

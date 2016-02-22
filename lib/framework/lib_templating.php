@@ -108,8 +108,6 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 	//--
 	if((string)$mtemplate == '') { // if not in cache, build it's sub-templates if any and cache it if set so
 		//--
-		$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
-		//--
 		$mtemplate = (string) SmartFileSystem::staticread($y_file_path);
 		if((string)$mtemplate == '') {
 			Smart::log_warning('Empty or Un-Readable Markers-Template File: '.$y_file_path);
@@ -118,7 +116,7 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
-				'title' => '[TPL-Render.START] :: Markers-Templating / File-Render: '.$y_file_path.' ; Sub-Templates Load Base Path: '.$tpl_basepath.' ; Caching: '.$y_use_caching,
+				'title' => '[TPL-Render.START] :: Markers-Templating / File-Render: '.$y_file_path.' ; Caching: '.$y_use_caching,
 				'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
 			]);
 		} //end if
@@ -130,6 +128,13 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 			$arr_sub_templates = (array) self::detect_subtemplates($mtemplate);
 		} //end if else
 		if(Smart::array_size($arr_sub_templates) > 0) {
+			$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
+			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
+					'title' => '[TPL-Render.LOAD-SUBTEMPLATES] :: Markers-Templating / File-Render: '.$y_file_path.' ; Sub-Templates Load Base Path: '.$tpl_basepath,
+					'data' => 'Sub-Templates: '."\n".print_r($arr_sub_templates,1)
+				]);
+			} //end if
 			$mtemplate = (string) self::load_subtemplates($tpl_basepath, $mtemplate, $arr_sub_templates); // load sub-templates before template processing and use caching also for sub-templates if set
 		} //end if
 		$arr_sub_templates = array();

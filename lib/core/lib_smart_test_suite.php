@@ -118,6 +118,13 @@ public static function main_screen($tab, $frm, $testformdata) {
 	//--
 
 	//--
+	$demo_mod_js_components = '<h1>JS Components are not Installed ...</h1>';
+	if(SmartAppInfo::TestIfModuleExists('mod-js-components')) {
+		$demo_mod_js_components = SmartFileSystem::staticread('modules/mod-js-components/views/testunit/tab-js-components.inc.htm');
+	} //end if
+	//--
+
+	//--
 	//$path_var = 'lib/core/templates/testunit/test-unit-tab-misc.htm';
 	$path_var = '@/test-unit-tab-misc.htm';
 	//--
@@ -182,7 +189,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 						'c2' => 'a',
 						'c3' => 'A'
 					]
-			]
+			],
+			'MOD-JS-COMPONENTS' => $demo_mod_js_components
 		),
 		'yes'
 	);
@@ -348,16 +356,13 @@ public static function test_crypto() {
 	//--
 
 	//--
-	$hkey = 'TestUnit // This is a test key for HashCrypt ...'.time().$unicode_text;
+	$hkey = 'TestUnit // This is a test key for Crypto Cipher ...'.time().$unicode_text;
 	//--
-	$he_obj = new SmartCryptoEncryptionHash($hkey);
-	$he_enc = $he_obj->encrypt($unicode_text);
-	//--
-	$he_obj = new SmartCryptoEncryptionHash($hkey);
-	$he_dec = $he_obj->decrypt($he_enc);
+	$he_enc = SmartUtils::crypto_encrypt($unicode_text, $hkey);
+	$he_dec = SmartUtils::crypto_decrypt($he_enc, $hkey);
 	//--
 	if(((string)$he_dec != (string)$unicode_text) OR (sha1($he_dec) != sha1($unicode_text))) {
-		throw new Exception('TestUnit: HashCrypt test failed ...');
+		throw new Exception('TestUnit: Crypto Cipher test failed ...');
 		return;
 	} //end if
 	//--
@@ -415,9 +420,10 @@ public static function test_crypto() {
 			'BLOWFISH-LZS-ENCRYPTED' => Smart::escape_html($arch_bf_lzs),
 			'BLOWFISH-DECRYPTED' => Smart::escape_html($bf_dec),
 			'BLOWFISH-KEY' => Smart::escape_html($bf_key),
-			'BLOWFISH-METHOD' => Smart::escape_html(SMART_FRAMEWORK_SECURITY_CRYPTO),
-			'HASH-CRYPT' => Smart::escape_html($he_enc),
-			'HASH-DECRYPT' => Smart::escape_html($he_dec)
+			'BLOWFISH-OPTIONS' => Smart::escape_html(SmartCipherCrypto::crypto_options('blowfish')),
+			'HASHCRYPT-ENC' => Smart::escape_html($he_enc),
+			'HASHCRYPT-DEC' => Smart::escape_html($he_dec),
+			'HASHCRYPT-OPTIONS' => Smart::escape_html(SmartCipherCrypto::crypto_options('custom')),
 			//--
 		)
 	);

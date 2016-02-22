@@ -22,11 +22,12 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartHTMLCalendar::
 //	* SmartTextTranslations::
 // REQUIRED JS LIBS:
-//	* js/framework
-//	* js/jquery
-//	* js/jseditcode
-//	* js/jscharts
-//	* js/jsmaps
+//	* js/framework [arch-utils, browser-check, browser-utils, core-utils, crypt-utils, ifmodalbox, validate-input, page-away-control.inc]
+//	* js/jquery [carousel, cleditor, dialog, growl, imgfx, listselect, pager, ratingstars, slickgrid, slimbox, timepicker, tree, ui, cookie, easing, event-drag, event-drop, idle, metadata, number, placeholder, simulate, smart.compat, smartframework.ui, sparkline, tinyscrollbar, qunit]
+//	* js/jscharts [core, bar, doughnut, line, polararea, radar, stackedbar, stem]
+//	* js/jseditcode [codemirror]
+//	* js/jskeyboard
+//	* js/jssuggest
 // REQUIRED CSS:
 //	* notifications.css
 //	* activetable.css
@@ -45,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160215
+ * @version 	v.160221
  * @package 	Components:Framework
  *
  */
@@ -155,7 +156,7 @@ public static function http_status_message($y_title, $y_message) {
 		array(
 			'CHARSET' => SmartUtils::get_encoding_charset(),
 			'TITLE' => Smart::escape_html($y_title),
-			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RUNTIME_HEAD_VERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
+			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
 			'MESSAGE' => $y_message
 		),
 		'no'
@@ -180,7 +181,7 @@ public static function http_error_message($y_title, $y_message, $y_extra_message
 		array(
 			'CHARSET' => SmartUtils::get_encoding_charset(),
 			'TITLE' => Smart::escape_html($y_title),
-			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RUNTIME_HEAD_VERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
+			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
 			'MESSAGE' => self::operation_error($y_message, '100%'),
 			'EXTMSG' => $y_extra_message
 		),
@@ -2814,6 +2815,63 @@ HTML_CODE;
 //--
 return $html;
 //--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: JS Init Ajax Suggest Selector
+ *
+ */
+public static function js_init_suggest_ajx_selector() {
+//--
+$js = <<<'JS'
+<!-- AjaxSuggest -->
+<link rel="stylesheet" type="text/css" href="lib/js/jsjssuggest/ajax_suggest.css">
+<script type="text/javascript" src="lib/js/jsjssuggest/ajax_suggest.js"></script>
+<!-- END AjaxSuggest -->
+JS;
+//--
+return (string) $js;
+//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: JS Draw Ajax Suggest Selector
+ *
+ */
+public static function js_draw_suggest_ajx_selector($y_width, $y_prefix, $y_suffix, $y_ajx_method, $y_ajx_url, $y_id_prefix, $y_form_hint, $y_form_var, $y_form_value='') {
+	//--
+	$ajx_div = $y_id_prefix.'_AJXSelector_DIV';
+	$ajx_txt = $y_id_prefix.'_AJXSelector_TXT';
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/js/jsjssuggest/ajax_suggest.inc.htm',
+		array(
+			//-- passed as html
+			'WIDTH' 		=> Smart::escape_html((string)$y_width),
+			'DIV-HTML-ID' 	=> Smart::escape_html((string)$ajx_div),
+			'TXT-HTML-ID' 	=> Smart::escape_html((string)$ajx_txt),
+			'TXT-TITLE' 	=> Smart::escape_html((string)$y_form_hint),
+			'TXT-FORM-VAR' 	=> Smart::escape_html((string)$y_form_var),
+			'TXT-VALUE' 	=> Smart::escape_html((string)$y_form_value),
+			//-- passed to js
+			'DIV-JS-ID' 	=> Smart::escape_js((string)$ajx_div),
+			'TXT-JS-ID' 	=> Smart::escape_js((string)$ajx_txt),
+			'AJAX-METHOD' 	=> Smart::escape_js((string)$y_ajx_method),
+			'AJAX-URL' 		=> Smart::escape_js((string)$y_ajx_url),
+			//-- passed raw
+			'PREFIX' 		=> (string) $y_prefix, // this is preformatted HTML
+			'SUFFIX' 		=> (string) $y_suffix // this is preformatted HTML
+			//--
+		),
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 

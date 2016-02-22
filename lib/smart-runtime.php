@@ -31,10 +31,13 @@ if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need 
 //--
 
 //--
-define('SMART_FRAMEWORK_RUNTIME_HEAD_VERSION', 'v.2.3.1.1'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.02.19'); // this is the real release version
+if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_RELEASE_VERSION') || defined('SMART_FRAMEWORK_RELEASE_URL') || defined('SMART_FRAMEWORK_RELEASE_MIDDLEWARE')) {
+	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
+} //end if
 //--
-define('SMART_FRAMEWORK_DOWNLOAD_URL', 'http://www.'.'unix-world.org');
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.2.3.1.2'); // this is the real release version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.02.22'); // this is the real release version
+define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
 //--
@@ -76,9 +79,6 @@ if(!defined('SMART_FRAMEWORK_TIMEZONE')) {
 //--
 if(!defined('SMART_FRAMEWORK_SECURITY_KEY')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SECURITY_KEY');
-} //end if
-if(!defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SECURITY_CRYPTO');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_SESSION_NAME')) {
@@ -215,9 +215,11 @@ SmartFrameworkRuntime::High_Load_Monitor();
 
 //--------------------------------------- LOAD SMART-FRAMEWORK
 require('lib/framework/lib__smart_framework.php');
+//--------------------------------------- REGISTER AUTO-LOAD OF PLUGINS (by dependency injection)
+require('lib/core/plugins/autoload.php');
 //--------------------------------------- LOAD SMART-COMPONENTS
 require('lib/core/lib_smart_components.php');
-//--------------------------------------- Debug Profiler
+//--------------------------------------- CONDITIONAL LOAD (IF DEBUG: PROFILER)
 if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 	require('lib/core/lib_debug_profiler.php');
 } //end if
@@ -879,6 +881,20 @@ public static function Create_Required_Dirs() {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 		SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n");
+	} else { // manage debug cleanup
+		if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+			if(is_file('tmp/SMART-FRAMEWORK__DEBUG-ON')) {
+				if(is_dir('tmp/logs/idx/')) {
+					SmartFileSystem::dir_delete('tmp/logs/idx/', true);
+				} //end if
+				if(is_dir('tmp/logs/adm/')) {
+					SmartFileSystem::dir_delete('tmp/logs/adm/', true);
+				} //end if
+				SmartFileSystem::delete('tmp/SMART-FRAMEWORK__DEBUG-ON');
+			} //end if
+		} else {
+			SmartFileSystem::write_if_not_exists('tmp/SMART-FRAMEWORK__DEBUG-ON', 'DEBUG:ON');
+		} //end if else
 	} // end if
 	if(!is_writable($dir)) {
 		Smart::log_warning('#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !');
@@ -1174,6 +1190,7 @@ final public static function HeadersNoCache() {
 final public static function HeadersCacheExpire($expiration, $modified=0) {
 	//--
 	if(!headers_sent()) {
+		//--
 		$expiration = (int) $expiration; // expire in seconds
 		if($expiration < 60) {
 			$expiration = 60;
@@ -1188,8 +1205,11 @@ final public static function HeadersCacheExpire($expiration, $modified=0) {
 		header('Pragma: cache'); // HTTP 1.0
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s', (int)$modified).' GMT');
 		header('Cache-Control: private, max-age='.(int)$expiration); // HTTP 1.1 (private will dissalow proxies to cache the content)
+		//--
 	} else {
+		//--
 		Smart::log_warning('WARNING: Smart App Runtime :: Could not set Expire Cache Headers, Headers Already Sent ...');
+		//--
 	} //end if else
 	//--
 } //END FUNCTION
@@ -1292,8 +1312,10 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 	//--
 	$downloaded_file = ''; // init
 	//--
-	$hash = new SmartCryptoEncryptionHash('SmartFramework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY);
-	$decoded_download_packet = trim($hash->decrypt((string)$encrypted_download_pack));
+	$decoded_download_packet = trim((string)SmartUtils::crypto_decrypt(
+		(string)$encrypted_download_pack,
+		'SmartFramework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY
+	));
 	//--
 	if((string)$decoded_download_packet != '') { // if data is corrupted, decrypt checksum does not match, will return an empty string
 		//--

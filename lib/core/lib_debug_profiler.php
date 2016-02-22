@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.160215
+ * @version 	v.160221
  *
  */
 final class SmartDebugProfiler {
@@ -153,9 +153,9 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 				$arr['php-session'] = base64_encode(Smart::seryalize(''));
 			} //end if else
 			if(SmartAuth::check_login() === true) {
-				$arr['auth-data'] = array('is_auth' => true, 'login_data' => SmartAuth::get_login_data());
+				$arr['auth-data'] = array('is_auth' => true, 'login_data' => (array)SmartAuth::get_login_data(), '#login-pass#', SmartAuth::get_login_password());
 			} else {
-				$arr['auth-data'] = array('is_auth' => false, 'auth_id' => array());
+				$arr['auth-data'] = array('is_auth' => false, 'login_data' => array());
 			} //end if else
 			foreach((array)SmartFrameworkRegistry::getDebugMsgs('extra') as $key => $val) {
 				$arr['log-extra'][(string)$key] = base64_encode(Smart::seryalize((array)$val));
@@ -311,6 +311,7 @@ public static function print_debug_info($y_area, $y_debug_token) {
 		array(
 			'DEBUG-TIME' => date('Y-m-d H:i:s O'),
 			'DEBUG-RUNTIME' => $start_marker.self::print_log_runtime().$end_marker, // ok
+			'DEBUG-CONFIGS' => $start_marker.self::print_log_configs().$end_marker, // ok
 			'DEBUG-RESOURCES' => $debug_resources.$end_marker, // ok
 			'DEBUG-HEADERS' => $debug_response.$end_marker, // ok
 			'DEBUG-ENVIRONMENT' => $debug_environment.$end_marker, // ok
@@ -370,7 +371,10 @@ private static function print_log_runtime() {
 	//--
 	$log = '';
 	//--
-	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>'.Smart::escape_html($title).' :: RUNTIME Log</b></font></div>';
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>Client / Server :: RUNTIME Log</b></font></div>';
+	//--
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>App Runtime - Powered by</b></div>';
+	$log .= '<div class="smartframework_debugbar_inforow">'.SmartComponents::draw_powered_info('yes').'</div>';
 	//--
 	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 		$the_area = 'admin';
@@ -378,41 +382,101 @@ private static function print_log_runtime() {
 		$the_area = 'index';
 	} //end if else
 	//--
-	$arr = array(
-		'Client Runtime' => array(
-			'Client Browser' => (string) $_SERVER['HTTP_USER_AGENT']
-		),
-		'Server Runtime: Smart.Framework' => array(
+	$arr = [
+		'Server Runtime: Smart.Framework' => [
 			'Smart.Framework Middleware Area' => $the_area,
-			'Smart.Framework Release / Head / Version' => SMART_FRAMEWORK_RELEASE_VERSION.' / '.SMART_FRAMEWORK_RUNTIME_HEAD_VERSION.' / '.SMART_FRAMEWORK_VERSION,
+			'Smart.Framework Release / Tag / Branch' => SMART_FRAMEWORK_RELEASE_VERSION.' / '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_VERSION,
 			'Smart.Framework Encoding: Internal / DB' => SMART_FRAMEWORK_CHARSET.' / '.SMART_FRAMEWORK_DBSQL_CHARSET
-		),
-		'Server Runtime: PHP' => array(
+		],
+		'Server Runtime: PHP' => [
+			'PHP OS' => PHP_OS,
 			'PHP Version' => 'PHP '.PHP_VERSION.' / '.@php_sapi_name(),
 			'PHP Encoding: Internal / MBString' => @ini_get('default_charset').' / '.@mb_internal_encoding(),
 			'PHP Memory' => @ini_get('memory_limit'),
 			'PHP Loaded Modules' => strtolower(implode(', ', (array)@get_loaded_extensions()))
-		)
-	);
+		],
+		'Server Domain Info' => [
+			'Server Full URL' => SmartUtils::get_server_current_url(),
+			'Server Script' => SmartUtils::get_server_current_script(),
+			'Server IP' => SmartUtils::get_server_current_ip(),
+			'Server Port' => SmartUtils::get_server_current_port(),
+			'Server Protocol' => SmartUtils::get_server_current_protocol(),
+			'Server Path' => SmartUtils::get_server_current_path(),
+			'Server Domain' => SmartUtils::get_server_current_domain_name(),
+			'Server Base Domain' => SmartUtils::get_server_current_basedomain_name()
+		],
+		'Client Runtime' => (string) $_SERVER['HTTP_USER_AGENT'].' # '.SmartUtils::get_ip_client().' # '.SmartUtils::get_ip_proxyclient()
+	];
 	//--
 	foreach($arr as $debug_key => $debug_val) {
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>'.Smart::escape_html($debug_key).'</b></div>';
 		if(is_array($debug_val)) {
 			$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
 			foreach($debug_val as $key => $val) {
-				$log .= '<tr valign="top"><td width="295"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.Smart::escape_html($val).'</div></td></tr>';
+				$log .= '<tr valign="top"><td width="295"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.Smart::escape_html(print_r($val,1)).'</div></td></tr>';
 			} //end foreach
 			$log .= '</table>';
 		} else {
-			$log .= '<div class="smartframework_debugbar_inforow">'.Smart::escape_html($val).'</div>';
+			$log .= '<div class="smartframework_debugbar_inforow">'.Smart::escape_html((string)$debug_val).'</div>';
 		} //end if else
 	} //end while
 	//--
-	if(class_exists('SmartComponents')) {
+	return $log;
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function print_log_configs() {
+	//--
+	global $configs;
+	//--
+	$log = '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>Application :: CONFIGURATION Log</b></font></div>';
+	//-- vars
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>App CONFIG VARIABLES</b></div>';
+	$arr = (array) $configs;
+	ksort($arr);
+	$i=0;
+	$j=0;
+	foreach((array)$arr as $key => $val) {
+		$i++;
 		$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
-		$log .= '<tr valign="top"><td width="295"><div class="smartframework_debugbar_inforow"><b>'.'Powered by'.'</b></div></td><td><div class="smartframework_debugbar_inforow">'.SmartComponents::draw_powered_info('yes').'</div></td></tr>';
+		$log .= '<tr valign="top" title="#'.$i.'"><td width="195"><div class="smartframework_debugbar_inforow">';
+		$log .= '<b>'.Smart::escape_html((string)$key).'</b>';
+		$log .= '</div></td><td><div class="smartframework_debugbar_inforow">';
+		if(is_array($val)) {
+			$log .= '<table width="100%" cellpadding="1" cellspacing="0" border="0">';
+			$j=0;
+			foreach($val as $k => $v) {
+				$j++;
+				if($j % 2) {
+					$color = '#FFFFFF';
+				} else {
+					$color = '#FAFAFA';
+				} //end if else
+				$log .= '<tr bgcolor="'.$color.'" valign="top" title="#'.$i.'.'.$j.'"><td width="290"><b>'.Smart::escape_html((string)$k).'</b></td><td>'.Smart::nl_2_br(Smart::escape_html(print_r($v,1))).'</td></tr>';
+			} //end foreach
+			$log .= '</table>';
+		} else {
+			$log .= '<pre>'.Smart::escape_html((string)$val).'</pre>';
+		} //end if else
+		$log .= '</div></td></tr>';
 		$log .= '</table>';
-	} //end if
+	} //end while
+	//-- constants
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>App SETTING CONSTANTS</b></div>';
+	$arr = (array) get_defined_constants(true);
+	$arr = (array) $arr['user'];
+	ksort($arr);
+	$i=0;
+	$j=0;
+	foreach((array)$arr as $key => $val) {
+		$i++;
+		$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
+		$log .= '<tr valign="top" title="#'.$i.'"><td width="375"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html((string)$key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.Smart::nl_2_br(Smart::escape_html(print_r($val,1))).'</div></td></tr>';
+		$log .= '</table>';
+	} //end while
 	//--
 	return $log;
 	//--
@@ -425,7 +489,7 @@ private static function print_log_resources($time_res, $mem_res) {
 	//--
 	$log = '';
 	//--
-	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>'.Smart::escape_html($title).' :: RESOURCES Log</b></font></div>';
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>Script Execution :: RESOURCES Log</b></font></div>';
 	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>Script Execution Resources</b></div>';
 	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_inforow" style="width:450px;">Execution Time: <b>'.Smart::format_number_dec($time_res, 13, '.', '').' sec.'.'</b></div>';
 	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_inforow" style="width:450px;">Execution Memory: <b>'.SmartUtils::pretty_print_bytes($mem_res, 2).'</b></div>';

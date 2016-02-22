@@ -13,7 +13,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SmartApp_Runtime_Script_VERSION', '[A]@v.2.3.1.1');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.1.2');
 
 
 //==================================================================================
@@ -28,7 +28,7 @@ define('SmartApp_Runtime_Script_VERSION', '[A]@v.2.3.1.1');
  * @access 		private
  * @internal
  *
- * @version		160219
+ * @version		160222
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -61,8 +61,8 @@ public static function Run() {
 		return;
 	} //end if
 	//--
-	if(!defined('SmartApp_Runtime_TemplatesDir')) {
-		self::Raise500Error('The SmartApp_Runtime_TemplatesDir not defined ...');
+	if(!defined('SMART_APP_TEMPLATES_DIR')) {
+		self::Raise500Error('The SMART_APP_TEMPLATES_DIR not defined ...');
 		return;
 	} //end if
 	//--
@@ -487,30 +487,30 @@ public static function Run() {
 		} //end if else
 	} //end if
 	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name(SmartApp_Runtime_TemplatesDir.$the_template_path)) {
-		Smart::log_warning('Invalid Page Template Path: '.SmartApp_Runtime_TemplatesDir.$the_template_path);
+	if(!SmartFileSysUtils::check_file_or_dir_name(SMART_APP_TEMPLATES_DIR.$the_template_path)) {
+		Smart::log_warning('Invalid Page Template Path: '.SMART_APP_TEMPLATES_DIR.$the_template_path);
 		self::Raise500Error('Invalid Page Template Path. See the error log !');
 		return;
 	} //end if
-	if(!is_dir(SmartApp_Runtime_TemplatesDir.$the_template_path)) {
-		Smart::log_warning('Page Template Path does not Exists: '.SmartApp_Runtime_TemplatesDir.$the_template_path);
+	if(!is_dir(SMART_APP_TEMPLATES_DIR.$the_template_path)) {
+		Smart::log_warning('Page Template Path does not Exists: '.SMART_APP_TEMPLATES_DIR.$the_template_path);
 		self::Raise500Error('Page Template Path does not Exists. See the error log !');
 		return;
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name(SmartApp_Runtime_TemplatesDir.$the_template_path.$the_template_file)) {
-		Smart::log_warning('Invalid Page Template File: '.SmartApp_Runtime_TemplatesDir.$the_template_path.$the_template_file);
+	if(!SmartFileSysUtils::check_file_or_dir_name(SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file)) {
+		Smart::log_warning('Invalid Page Template File: '.SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file);
 		self::Raise500Error('Invalid Page Template File. See the error log !');
 		return;
 	} //end if
-	if(!is_file(SmartApp_Runtime_TemplatesDir.$the_template_path.$the_template_file)) {
-		Smart::log_warning('Page Template File does not Exists: '.SmartApp_Runtime_TemplatesDir.$the_template_path.$the_template_file);
+	if(!is_file(SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file)) {
+		Smart::log_warning('Page Template File does not Exists: '.SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file);
 		self::Raise500Error('Page Template File does not Exists. See the error log !');
 		return;
 	} //end if
 	//--
-	$the_template_content = trim(SmartFileSystem::staticread(SmartApp_Runtime_TemplatesDir.$the_template_path.$the_template_file));
+	$the_template_content = trim(SmartFileSystem::staticread(SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file));
 	if((string)$the_template_content == '') {
-		Smart::log_warning('Page Template File is Empty or cannot be read: '.SmartApp_Runtime_TemplatesDir.$the_template_path.$the_template_file);
+		Smart::log_warning('Page Template File is Empty or cannot be read: '.SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file);
 		self::Raise500Error('Page Template File is Empty or cannot be read. See the error log !');
 		return;
 	} //end if
@@ -521,8 +521,8 @@ public static function Run() {
 	} //end if
 	//--
 	$appData['app-domain'] = (string) $configs['app']['admin-domain'];
-	$appData['template-file'] = SmartApp_Runtime_TemplatesDir.$the_template_path.$the_template_file;
-	$appData['template-path'] = SmartApp_Runtime_TemplatesDir.$the_template_path;
+	$appData['template-file'] = SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file;
+	$appData['template-path'] = SMART_APP_TEMPLATES_DIR.$the_template_path;
 	//--
 	if(strpos($the_template_content, '[####CSS.BASE####]') !== false) {
 		$appData['css.base'] = SmartComponents::css_inc_base();
@@ -571,7 +571,7 @@ public static function Run() {
 		//--
 	} //end if else
 	//--
-	echo "\n".'<!-- Smart.Framework スマート.フレームワーク :: '.SMART_FRAMEWORK_RUNTIME_HEAD_VERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.$the_midmark.' :: '.SMART_FRAMEWORK_DOWNLOAD_URL.' -->'."\n".'<!-- Resources リソース: ['.Smart::format_number_dec($res_time, 13, '.', '').' sec.] / ['.Smart::format_number_dec($res_memory, 0, '.', ' ').' by.]'.' -->'."\n";
+	echo "\n".'<!-- Smart.Framework スマート.フレームワーク :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.$the_midmark.' :: '.SMART_FRAMEWORK_RELEASE_URL.' -->'."\n".'<!-- Resources リソース: ['.Smart::format_number_dec($res_time, 13, '.', '').' sec.] / ['.Smart::format_number_dec($res_memory, 0, '.', ' ').' by.]'.' -->'."\n";
 	//--
 } //END FUNCTION
 //====================================================================

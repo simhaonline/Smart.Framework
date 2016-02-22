@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Runtime / Admin
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2016.02.19
+// v.2016.02.22
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
@@ -17,7 +17,7 @@ define('SMART_FRAMEWORK_ADMIN_AREA', 		true); 							// run app in private/admin
 define('SMART_FRAMEWORK_RUNTIME_READY', 	microtime(true)); 				// semaphore, runtime can execute scripts
 define('SMART_FRAMEWORK_APP_REQUEST', 		'lib/run/app-request.php'); 	// App Request Script
 define('SMART_FRAMEWORK_APP_BOOTSTRAP', 	'lib/run/app-bootstrap.php'); 	// App Boostrap Script
-define('SmartApp_Runtime_TemplatesDir', 	'etc/templates/'); 				// App Templates Dir
+define('SMART_APP_TEMPLATES_DIR', 			'etc/templates/'); 				// App Templates Dir
 //--
 require('etc/init.php'); 													// the PHP.INI local settings (they must be called first !!!)
 require('lib/smart-error-handler.php'); 									// Smart Error Handler
@@ -27,7 +27,7 @@ require('lib/run/middleware-admin.php'); 									// Admin Service Handler
 //--
 //==
 //--
-if((string)SmartApp_Runtime_Script_VERSION != '[A]@'.SMART_FRAMEWORK_RUNTIME_HEAD_VERSION) {
+if((string)SMART_FRAMEWORK_RELEASE_MIDDLEWARE != '[A]@'.SMART_FRAMEWORK_RELEASE_TAGVERSION) {
 	die('SmartFramework // App [A] Service: Middleware service validation Failed ... Invalid Version !');
 } //end if
 //--

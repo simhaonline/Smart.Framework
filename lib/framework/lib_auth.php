@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160213
+ * @version 	v.160221
  * @package 	Application
  *
  */
@@ -119,7 +119,7 @@ public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='
 	$the_key = '#'.Smart::random_number(10000,99999).'#';
 	$the_pass = '';
 	if((string)$y_pass != '') {
-		$the_pass = SmartUtils::crypto_blowfish_encrypt((string)$y_pass, (string)$the_key);
+		$the_pass = SmartCipherCrypto::encrypt('hash/sha1', (string)$the_key, (string)$y_pass);
 	} //end if
 	//--
 	if((string)$y_user_id != '') {
@@ -193,7 +193,7 @@ public static function get_login_password() {
 	if((string)self::$AuthData['USER_LOGIN_PASS'] == '') {
 		return ''; // empty pass
 	} else {
-		return (string) SmartUtils::crypto_blowfish_decrypt((string)self::$AuthData['USER_LOGIN_PASS'], (string)self::$AuthData['KEY']);
+		return (string) SmartCipherCrypto::decrypt('hash/sha1', (string)self::$AuthData['KEY'], (string)self::$AuthData['USER_LOGIN_PASS']);
 	} // end if else
 	//--
 } //END FUNCTION
@@ -218,7 +218,8 @@ public static function get_login_data() {
 		'login-quota' 		=> self::get_login_quota(),
 		'login-metadata' 	=> self::get_login_metadata(),
 		'login-realm' 		=> self::get_login_realm(),
-		'login-method' 		=> self::get_login_method()
+		'login-method' 		=> self::get_login_method(),
+		'login-password' 	=> self::get_login_password()
 	);
 	//--
 } //END FUNCTION

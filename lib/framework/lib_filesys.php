@@ -74,33 +74,32 @@ public static function max_upload_size() {
 
 
 //================================================================
+// returns 1 if valid ; 0 if not
 public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='yes') {
 	//--
-	$out = 1; // valid
-	//--
-	if(strlen($y_path) < 1) { // dissalow empty paths
-		$out = 0;
+	if((string)$y_path == '') { // dissalow empty paths
+		return 0;
 	} //end if else
 	//--
 	if(self::test_valid_path($y_path) !== 1) {
-		$out = 0;
+		return 0;
 	} //end if
 	//--
 	if(self::test_backward_path($y_path) !== 1) {
-		$out = 0;
+		return 0;
 	} //end if
 	//--
 	if((string)$y_deny_absolute_path != 'no') {
 		if(self::test_absolute_path($y_path) !== 1) {
-			$out = 0;
+			return 0;
 		} //end if
 	} //end if
 	//--
 	if(strlen($y_path) > 1024) {
-		$out = 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
+		return 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
 	} //end if
 	//--
-	return $out;
+	return 1; // valid
 	//--
 } //END FUNCTION
 //================================================================
@@ -163,17 +162,15 @@ private static function test_valid_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	$out = 1; // valid
-	//--
 	if((strpos($y_path, ' ') !== false) OR (strpos($y_path, '\\') !== false) OR ((string)trim($y_path) == '/') OR ((string)trim($y_path) == '.') OR ((string)trim($y_path) == '..')) {
-		$out = 0;
+		return 0;
 	} //end if else
 	//-- {{{SYNC-SAFE-PATH-CHARS}}}
 	if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) { // only ISO-8859-1 characters are allowed in paths (unicode paths are unsafe for the network environments !!!)
-		$out = 0;
+		return 0;
 	} //end if
 	//--
-	return $out;
+	return 1; // valid
 	//--
 } //END FUNCTION
 //================================================================
@@ -186,13 +183,11 @@ private static function test_backward_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	$out = 1; // valid
-	//--
 	if((strpos($y_path, '/../') !== false) OR (strpos($y_path, '/./') !== false) OR (strpos($y_path, '/..') !== false) OR (strpos($y_path, '../') !== false)) {
-		$out = 0;
+		return 0;
 	} //end if else
 	//--
-	return $out;
+	return 1; // valid
 	//--
 } //END FUNCTION
 //================================================================
@@ -208,13 +203,11 @@ private static function test_absolute_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	$out = 1; // valid
-	//--
 	if((substr($y_path, 0, 1) == '/') OR (substr($y_path, 0, 1) == '\\') OR (substr($y_path, 1, 1) == ':') OR (substr($y_path, 1, 2) == ':/') OR (strpos($y_path, '|') !== false)) {
-		$out = 0;
+		return 0;
 	} //end if
 	//--
-	return $out;
+	return 1; // valid
 	//--
 } //END FUNCTION
 //================================================================
@@ -226,7 +219,7 @@ public static function add_dir_last_slash($y_path) {
 	//--
 	$y_path = (string) Smart::fix_path_separator(trim((string)$y_path));
 	//--
-	if(strlen($y_path) <= 0) {
+	if((string)$y_path == '') {
 		Smart::log_warning('SmartFramework // FileSystemUtils // Add Last Dir Slash: Empty Path, Returned TMP/INVALID/');
 		return 'tmp/invalid/'; // Security Fix: avoid make the path as root: / (if the path is empty, adding a trailing slash is a huge security risk)
 	} //end if

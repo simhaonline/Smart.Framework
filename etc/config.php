@@ -83,10 +83,10 @@ $languages = array('en' => '[EN]', 'ro' => '[RO]');							// associative array o
 //---------------------------------------
 
 //----------------------------------------
-$configs['js']['ui-theme'] 						= 'default-blue-indigo'; 	// @default or choose a theme from cfg/visual/ui/themes
+$configs['js']['ui-theme'] 						= 'default-blue-indigo'; 	// @default or choose a theme from cfg/visual/ui/themes ; otherwise you can roll out your own there here: http://jqueryui.com/themeroller/#themeGallery
 $configs['js']['notifications']					= 'growl'; 					// 'growl' = Sticky Notifications (Jquery) ;  'dialog' = JQueryUI Dialog
 $configs['js']['popup-mode']					= 'modal';					// 'modal' | 'popup'
-$configs['js']['popup-override-mobiles'] 		= '<ios>,<and>,<mlx>,<mgo>,<nsy>,<bby>,<wce>,<plm>'; // Override PopUp mode for Mobile Operating Systems: ios = iPhone ; ipd = ios iPad ; and = Android ; mlx = Mobile Linux ; mgo = Meego ; nsy = Nokia Symbian ; wce = Windows CE / Windows Mobile ; plm = Palm / WebOS
+$configs['js']['popup-override-mobiles'] 		= '<ios>,<and>,<mlx>,<mgo>,<nsy>,<bby>,<wce>,<plm>'; // Override Modal with PopUp mode for Mobile Operating Systems: ios = iPhone ; ipd = ios iPad ; and = Android ; mlx = Mobile Linux ; mgo = Meego ; nsy = Nokia Symbian ; wce = Windows CE / Windows Mobile ; plm = Palm / WebOS
 //----------------------------------------
 
 //--------------------------------------- MEDIA GALLERY

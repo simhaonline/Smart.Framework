@@ -12,12 +12,13 @@ Hex2Bin@Decoded:&nbsp;<span id="hex2bin-decoded" style="color:#FF5500;">[####HEX
 LZS@Archived:&nbsp;<span id="lzs-archived" style="color:#003399;">[####LZS-ARCHIVED####]</span><br>
 LZS@Unarchived:&nbsp;<span id="lzs-unarchived" style="color:#FF5500;">[####LZS-UNARCHIVED####]</span><br>
 <input type="hidden" id="blowfisk-key" value="[####BLOWFISH-KEY####]">
-Blowfish@Encrypted:&nbsp;<span id="blowfish-encrypted" style="color:#66AA00;">[####BLOWFISH-ENCRYPTED####]</span><br>
-Blowfish@Encrypted/LZS:&nbsp;<span id="blowfish-lzs-encrypted" style="color:#8CB23F;">[####BLOWFISH-LZS-ENCRYPTED####]</span><br>
-Blowfish@Decrypted:&nbsp;<span id="blowfish-decrypted" style="color:#FF5500;">[####BLOWFISH-DECRYPTED####]</span><br>
-Blowfish@Method:&nbsp;<span style="color:#CCCCCC;">PHP/[####BLOWFISH-METHOD####]</span><br>
-HashCrypt@Encrypted:&nbsp;<span id="hash-encrypted" style="color:#626831;">[####HASH-CRYPT####]</span><br>
-HashCrypt@Decrypted:&nbsp;<span id="hash-decrypted" style="color:#FF5500;">[####HASH-DECRYPT####]</span><br>
+Blowfish.CBC@Encrypted:&nbsp;<span id="blowfish-encrypted" style="color:#66AA00;">[####BLOWFISH-ENCRYPTED####]</span><br>
+Blowfish.CBC@Encrypted/LZS:&nbsp;<span id="blowfish-lzs-encrypted" style="color:#8CB23F;">[####BLOWFISH-LZS-ENCRYPTED####]</span><br>
+Blowfish.CBC@Decrypted:&nbsp;<span id="blowfish-decrypted" style="color:#FF5500;">[####BLOWFISH-DECRYPTED####]</span><br>
+Blowfish.CBC@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[####BLOWFISH-OPTIONS####]</span><br>
+CustomCipher@Encrypted:&nbsp;<span id="hash-encrypted" style="color:#626831;">[####HASHCRYPT-ENC####]</span><br>
+CustomCipher@Decrypted:&nbsp;<span id="hash-decrypted" style="color:#FF5500;">[####HASHCRYPT-DEC####]</span><br>
+CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[####HASHCRYPT-OPTIONS####]</span><br>
 <hr>
 <h2>Javascript Unicode Crypto Tests:</h2>
 <div id="testunit-partial-crypto"></div>
@@ -62,7 +63,7 @@ HashCrypt@Decrypted:&nbsp;<span id="hash-decrypted" style="color:#FF5500;">[####
 	htmlcode += 'Blowfish@Encrypted:&nbsp;<span style="color:#66AA00;">' + SmartJS_CoreUtils.escape_html(bf_enc) + '</span><br>';
 	htmlcode += 'Blowfish@Encrypted/LZS:&nbsp;<span style="color:#8CB23F;">' + SmartJS_CoreUtils.escape_html(arch_bf_lzs) + '</span><br>';
 	htmlcode += 'Blowfish@Decrypted:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(bf_dec) + '</span><br>';
-	htmlcode += 'Blowfish@Method:&nbsp;<span style="color:#CCCCCC;">JS/blowfish</span>' + '<br>';
+	htmlcode += 'Blowfish@Method:&nbsp;<span style="color:#CCCCCC;">JS:blowfish.cbc</span>' + '<br>';
 	$('#testunit-partial-crypto').html(htmlcode);
 	//-- JS Tests
 	if((b64dec !== unicodeText) || (SmartJS_CryptoHash.sha1(b64dec) !== the_sha1)) {
@@ -151,7 +152,7 @@ HashCrypt@Decrypted:&nbsp;<span id="hash-decrypted" style="color:#FF5500;">[####
 	//--
 	if(the_error === 0) {
 		SmartJS_BrowserUtils.alert_Dialog(
-			'<img src="lib/core/img/sign_info.png" align="right"><h1><span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span></h1><hr><h2><span style="color:#333333;"><span style="color:#83B953;">All</span> the SmartFramework Unicode <span style="color:#83B953;">Tests PASSED</span> on both <span style="color:#83B953;">PHP / Javascript</span>:</span></h2><br><img src="lib/core/img/q_completed.png" align="right"><span style="font-size:14px;">' + SmartJS_CoreUtils.nl2br('* Unicode support / UTF-8 \n * JS-Escape \n * SHA512 \n * SHA1 \n * MD5 \n * Base64: Encode / Decode \n * Bin2Hex / Hex2Bin \n * LZS-Arch: Archive / Unarchive \n * Blowfish (CBC): Encrypt / Decrypt \n * Hash: Encrypt / Decrypt (** Only for PHP)') + '</span>',
+			'<img src="lib/core/img/sign_info.png" align="right"><h1><span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span></h1><hr><h2><span style="color:#333333;"><span style="color:#83B953;">All</span> the SmartFramework Unicode <span style="color:#83B953;">Tests PASSED</span> on both <span style="color:#83B953;">PHP / Javascript</span>:</span></h2><br><img src="lib/core/img/q_completed.png" align="right"><span style="font-size:14px;">' + SmartJS_CoreUtils.nl2br('* Unicode support / UTF-8 \n * JS-Escape \n * SHA512 \n * SHA1 \n * MD5 \n * Base64: Encode / Decode \n * Bin2Hex / Hex2Bin \n * LZS-Arch: Archive / Unarchive \n * Blowfish (CBC): Encrypt / Decrypt \n * Crypto: Encrypt / Decrypt (** Only for PHP)') + '</span>',
 			'',
 			'Crypto Test Suite for SmartFramework: PHP + Javascript',
 			'750',

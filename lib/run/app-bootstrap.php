@@ -29,10 +29,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //####################
 
 //==
-require('lib/core/plugins/autoload.php'); // plugins (load by dependency injection)
-//==
-
-//==
 if(Smart::array_size($configs['redis']) > 0) {
 	require('lib/app/persistent-cache-redis.php'); // load the redis based persistent cache
 } else {

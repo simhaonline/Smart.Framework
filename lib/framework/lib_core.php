@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160212
+ * @version     v.160221
  * @package     Core
  *
  */
@@ -849,7 +849,11 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
  * @return STRING 						:: The safe path
  */
 public static function safe_pathname($y_path, $ysupresschar='') {
-	//-- v.160205
+	//-- v.160221
+	if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) {
+		return (string) $y_path;
+	} //end if
+	//--
 	$ysupresschar = (string) $ysupresschar; // force string and be sure is lower
 	switch((string)$ysupresschar) {
 		case '-':
@@ -889,7 +893,11 @@ public static function safe_pathname($y_path, $ysupresschar='') {
  * @return STRING 						:: The safe file or single-dir name
  */
 public static function safe_filename($y_fname, $ysupresschar='') {
-	//-- v.160205
+	//-- v.160221
+	if(preg_match('/^[_a-zA-Z0-9\-\.@#]+$/', (string)$y_fname)) {
+		return (string) $y_fname;
+	} //end if
+	//--
 	$ysupresschar = (string) $ysupresschar; // force string and be sure is lower
 	switch((string)$ysupresschar) { // DO NOT ALLOW DOT . AS IS SECURITY RISK, replaced below
 		case '-':
@@ -921,7 +929,11 @@ public static function safe_filename($y_fname, $ysupresschar='') {
  * @return STRING 						:: The safe validated variable
  */
 public static function safe_validname($y_name, $ysupresschar='') {
-	//-- v.160205
+	//-- v.160221
+	if(preg_match('/^[_a-z0-9\-\.@]+$/', (string)$y_name)) {
+		return (string) $y_name;
+	} //end if
+	//--
 	$ysupresschar = (string) $ysupresschar; // force string and be sure is lower
 	switch((string)$ysupresschar) {
 		case '-':
@@ -953,7 +965,11 @@ public static function safe_validname($y_name, $ysupresschar='') {
  * @return STRING 						:: The safe validated variable
  */
 public static function safe_username($y_name) {
-	//-- v.160205
+	//-- v.160221
+	if(preg_match('/^[a-z0-9\.]+$/', (string)$y_name)) {
+		return (string) $y_name;
+	} //end if
+	//--
 	$y_name = (string) $y_name; // force string
 	$y_name = (string) self::safe_validname($y_name, '.');
 	$y_name = (string) str_replace(array('@', '-', '_'), array('', '', ''), $y_name); // replace also @ - _
@@ -968,6 +984,7 @@ public static function safe_username($y_name) {
 //================================================================
 /**
  * Safe Valid Variable Like Names
+ * NOTICE: this have a special usage and must allow also 0..9 as prefix because is used for many purposes not just for real variables ...
  * ALLOWED CHARS: [a-z0-9] _
  *
  * @param STRING 		$y_name			:: Variable to validate
@@ -975,7 +992,11 @@ public static function safe_username($y_name) {
  * @return STRING 						:: The safe validated variable
  */
 public static function safe_varname($y_name) {
-	//-- v.160205 (NOTICE: this have a special usage and must allow also 0..9 as prefix because is used for many purposes not just for real variables ...)
+	//-- v.160221
+	if(preg_match('/^[_a-z0-9]+$/', (string)$y_name)) {
+		return (string) $y_name;
+	} //end if
+	//--
 	$y_name = (string) $y_name; // force string
 	$y_name = (string) self::safe_validname($y_name, '-');
 	$y_name = (string) str_replace(array('.', '@', '-'), array('', '', ''), $y_name); // replace also . @ -

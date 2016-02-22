@@ -1,27 +1,34 @@
-<!-- #START :: SMART.FRAMEWORK / DEBUG FOOTER :: v.151215 -->
+<!-- #START :: SMART.FRAMEWORK / DEBUG FOOTER :: v.160221 -->
 <script type="text/javascript">
 	smart_debug_bar_panel_visible = '';
 </script>
 <div id="SmartFramework___Debug_InfoBar" align="left" class="smartframework_debugbar_bar">
 	<!-- Toggle and Refresh Buttons -->
-	<div id="SmartFramework___Debug_BtnClose" title="Toggle :: Debug Bar" class="smartframework_debugbar_switcher" style="left: 0px;" onClick="SmartDebugToggleDebugBar();"><i class="fa fa-2x fa-eye"></i></div>
-	<div id="SmartFramework___Debug_BtnRefresh" title="Refresh :: Debug Bar (Loaded @ [####DEBUG-TIME####])" class="smartframework_debugbar_refresher" style="left: 50px;" onClick="document.getElementById('SmartFramework__Debug__Profiler').innerHTML = ''; setTimeout(function(){ SmartDebugProfilerRefreshPanel(); }, 250);"><i class="fa fa-2x fa-refresh"></i></div>
+	<div id="SmartFramework___Debug_BtnClose" title="Toggle :: Debug Bar" class="smartframework_debugbar_switcher" style="left: 0px;" onClick="SmartDebugToggleDebugBar();"><i class="octicon octicon-eye mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_BtnRefresh" title="Refresh :: Debug Bar (Loaded @ [####DEBUG-TIME####])" class="smartframework_debugbar_refresher" style="left: 50px;" onClick="document.getElementById('SmartFramework__Debug__Profiler').innerHTML = ''; setTimeout(function(){ SmartDebugProfilerRefreshPanel(); }, 250);"><i class="octicon octicon-sync mega-octicon"></i></div>
 	<!-- Active Buttons -->
-	<div id="SmartFramework___Debug_AreaRuntime" title="Debug :: Client / Server RUNTIME" class="smartframework_debugbar_element" style="left: 100px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-tasks"></i></div>
-	<div id="SmartFramework___Debug_AreaAjx" title="Debug :: Ajax Sub-Requests" class="smartframework_debugbar_element" style="left: 150px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-retweet"></i></div>
-	<div id="SmartFramework___Debug_AreaRes" title="Debug :: Script Execution / Resources" class="smartframework_debugbar_element" style="left: 200px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-pie-chart"></i></div>
-	<div id="SmartFramework___Debug_AreaHeads" title="Debug :: Request / Response Headers" class="smartframework_debugbar_element" style="left: 250px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-umbrella"></i></div>
-	<div id="SmartFramework___Debug_AreaEnv" title="Debug :: Request / Environment Variables" class="smartframework_debugbar_element" style="left: 300px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-sliders"></i></div>
-	<div id="SmartFramework___Debug_AreaSess" title="Debug :: Session Variables" class="smartframework_debugbar_element" style="left: 350px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-cogs"></i></div>
-	<div id="SmartFramework___Debug_AreaAuth" title="Debug :: Authentication Metadata" class="smartframework_debugbar_element" style="left: 400px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-street-view"></i></div>
-	<div id="SmartFramework___Debug_AreaExtra" title="Debug :: App Extra Log" class="smartframework_debugbar_element" style="left: 450px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-leaf"></i></div>
-	<div id="SmartFramework___Debug_AreaDBs" title="Debug :: Database Log" class="smartframework_debugbar_element" style="left: 500px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-database"></i></div>
-	<div id="SmartFramework___Debug_AreaMail" title="Debug :: Mailer Log" class="smartframework_debugbar_element" style="left: 550px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-envelope"></i></div>
-	<div id="SmartFramework___Debug_AreaMods" title="Debug :: Modules Log" class="smartframework_debugbar_element" style="left: 600px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="fa fa-2x fa-share-alt-square"></i></div>
+	<div id="SmartFramework___Debug_AreaRuntime" title="Debug :: Client / Server RUNTIME" class="smartframework_debugbar_element" style="left: 100px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-gear mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaConfigs" title="Debug :: Configuration Variables and Constants" class="smartframework_debugbar_element" style="left: 150px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-tools mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaAjx" title="Debug :: Ajax Sub-Requests" class="smartframework_debugbar_element" style="left: 200px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-globe mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaRes" title="Debug :: Script Execution / Resources" class="smartframework_debugbar_element" style="left: 250px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-graph mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaHeads" title="Debug :: Request / Response Headers" class="smartframework_debugbar_element" style="left: 300px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-unfold mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaEnv" title="Debug :: Request / Environment Variables" class="smartframework_debugbar_element" style="left: 350px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-settings mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaSess" title="Debug :: Session Variables" class="smartframework_debugbar_element" style="left: 400px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-mirror mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaAuth" title="Debug :: Authentication Metadata" class="smartframework_debugbar_element" style="left: 450px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-organization mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaExtra" title="Debug :: App Extra Log" class="smartframework_debugbar_element" style="left: 500px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-beaker mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaDBs" title="Debug :: Database Log" class="smartframework_debugbar_element" style="left: 550px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-database mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaMail" title="Debug :: Mailer Log" class="smartframework_debugbar_element" style="left: 600px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-mail-read mega-octicon"></i></div>
+	<div id="SmartFramework___Debug_AreaMods" title="Debug :: Modules Log" class="smartframework_debugbar_element" style="left: 650px;" onClick="SmartDebugProfilerDisableActivePanel(this); SmartDebugProfilerEnablePanel(this);"><i class="octicon octicon-repo-forked mega-octicon"></i></div>
 	<!-- Signature -->
-	<div class="smartframework_debugbar_txt" style="position: absolute; top: 0px; left: 700px; height: 35px; width: 395px; text-align:center;"><b>Smart.Framework :: Profiler</b></div>
+	<div class="smartframework_debugbar_txt" title="Smart.Framework :: Profiler (c) 2015-2016 unix-world.org">Smart.Framework :: Profiler</div>
 	<!-- Panels -->
 	<div id="SmartFramework___Debug_AreaRuntime_Panel" class="smartframework_debugbar_panel">[####DEBUG-RUNTIME####]</div>
+	<div id="SmartFramework___Debug_AreaConfigs_Panel" class="smartframework_debugbar_panel">[####DEBUG-CONFIGS####]</div>
+	<div id="SmartFramework___Debug_AreaAjx_Panel" class="smartframework_debugbar_panel">
+		<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="5"><b># DEBUG Data :: AJAX SUB-REQUESTS #</b></font></div>
+		<div id="SmartFramework___Debug_AreaAjx_InfoArea"></div>
+		<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="3"><b># DEBUG # END #</b></font></div>
+	</div>
 	<div id="SmartFramework___Debug_AreaRes_Panel" class="smartframework_debugbar_panel">[####DEBUG-RESOURCES####]</div>
 	<div id="SmartFramework___Debug_AreaHeads_Panel" class="smartframework_debugbar_panel">[####DEBUG-HEADERS####]</div>
 	<div id="SmartFramework___Debug_AreaEnv_Panel" class="smartframework_debugbar_panel">[####DEBUG-ENVIRONMENT####]</div>
@@ -31,11 +38,6 @@
 	<div id="SmartFramework___Debug_AreaDBs_Panel" class="smartframework_debugbar_panel">[####DEBUG-DATABASE####]</div>
 	<div id="SmartFramework___Debug_AreaMail_Panel" class="smartframework_debugbar_panel">[####DEBUG-MAIL####]</div>
 	<div id="SmartFramework___Debug_AreaMods_Panel" class="smartframework_debugbar_panel">[####DEBUG-MODULES####]</div>
-	<div id="SmartFramework___Debug_AreaAjx_Panel" class="smartframework_debugbar_panel">
-		<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="5"><b># DEBUG Data :: AJAX SUB-REQUESTS #</b></font></div>
-		<div id="SmartFramework___Debug_AreaAjx_InfoArea"></div>
-		<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="3"><b># DEBUG # END #</b></font></div>
-	</div>
 	<!-- #END -->
 </div>
 <script type="text/javascript">

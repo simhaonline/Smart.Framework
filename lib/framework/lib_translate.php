@@ -13,8 +13,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Regional Text
 // DEPENDS:
 //	* Smart::
-//	* SmartAdapterTextTranslations::
 //	* SmartPersistentCache::
+//	* SmartAdapterTextTranslations:: *BOOTSTRAP*
 //======================================================
 
 // [REGEX-SAFE-OK]

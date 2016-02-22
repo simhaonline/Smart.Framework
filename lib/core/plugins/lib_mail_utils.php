@@ -733,15 +733,14 @@ public static function encode_mime_fileurl($y_msg_file, $y_ctrl_key) {
 	$access_key = sha1('MimeLink:'.SMART_SOFTWARE_NAMESPACE.'-'.SMART_FRAMEWORK_SECURITY_KEY.'-'.SMART_APP_VISITOR_COOKIE.':'.$y_msg_file.'>'.$y_ctrl_key);
 	$unique_key = sha1('Time='.$crrtime.'#'.SMART_SOFTWARE_NAMESPACE.'-'.SMART_FRAMEWORK_SECURITY_KEY.'-'.$access_key.'-'.SmartUtils::unique_auth_client_private_key().':'.$y_msg_file.'>'.$y_ctrl_key);
 	$self_robot_key = sha1('Time='.$crrtime.'#'.SmartAuth::get_login_id().'*'.SMART_SOFTWARE_NAMESPACE.'-'.SMART_FRAMEWORK_SECURITY_KEY.'-'.SmartUtils::get_selfrobot_useragent_name().'$'.$access_key.':'.$y_msg_file.'>'.$y_ctrl_key);
-	//--
-	$hash = new SmartCryptoEncryptionHash('SmartFramework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY);
 	//-- {{{SYNC-MIME-ENCRYPT-ARR}}}
-	$safe_link = $hash->encrypt(
+	$safe_link = SmartUtils::crypto_encrypt(
 		trim((string)$crrtime)."\n". 			// current time stamp
 		trim((string)$y_msg_file)."\n". 		// file
 		trim((string)$access_key)."\n". 		// access key based on UniqueID cookie
 		trim((string)$unique_key)."\n". 		// unique key based on: AuthUserID, User-Agent and IP
-		trim((string)$self_robot_key)."\n" 		// self robot browser UserAgentName/ID key
+		trim((string)$self_robot_key)."\n", 		// self robot browser UserAgentName/ID key
+		'SmartFramework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
 	);
 	//--
 	return (string) $safe_link;
@@ -791,8 +790,11 @@ public static function decode_mime_fileurl($y_enc_msg_file, $y_ctrl_key) {
 	if((string)$the_msg_part != '') {
 		$the_msg_part = strtolower(trim((string)SmartUtils::url_hex_decode((string)$the_msg_part)));
 	} //end if
-	$hash = new SmartCryptoEncryptionHash('SmartFramework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY);
-	$decoded_link = $hash->decrypt((string)$y_enc_msg_file);
+	//--
+	$decoded_link =  trim((string)SmartUtils::crypto_decrypt(
+		(string)$y_enc_msg_file,
+		'SmartFramework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
+	));
 	$dec_arr = (array) @explode("\n", trim($decoded_link));
 	//print_r($dec_arr);
 	//--

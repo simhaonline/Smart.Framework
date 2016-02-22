@@ -100,7 +100,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 	// This reads and parse from YAML sources
 	public static function getTranslationsVersion() {
 		//--
-		$version = 'Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_VERSION.' '.SMART_FRAMEWORK_RUNTIME_HEAD_VERSION;
+		$version = 'Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_VERSION.' '.SMART_FRAMEWORK_RELEASE_TAGVERSION;
 		//--
 		//if(defined('SMART_FRAMEWORK_MODULES_VERSION')) {
 		//	if(defined('SMART_FRAMEWORK_MODULES_HEAD_VERSION')) {
@@ -108,8 +108,8 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 		//	} //end if
 		//} //end if
 		//--
-		if(defined('APP_MODULES_RELEASE')) {
-			$version .= "\n".'App.Modules :: '.APP_MODULES_RELEASE;
+		if(defined('SMART_APP_MODULES_RELEASE')) {
+			$version .= "\n".'App.Modules :: '.SMART_APP_MODULES_RELEASE;
 		} //end if
 		//--
 		return (string) trim('#TextTranslations::Version#'."\n".$version."\n".'#.#');

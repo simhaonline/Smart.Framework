@@ -46,7 +46,7 @@ if(!defined('SMART_FRAMEWORK_MEDIAGALLERY_PDF_EXTRACTOR')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP GD Extension (w. TrueColor support) ; executables: imageMagick Utility (can replace PHP GD), FFMpeg (for movies) ; classes: Smart, SmartUtils, SmartFileSystem
- * @version 	v.160128
+ * @version 	v.160219
  * @package 	MediaGallery
  *
  */
@@ -709,7 +709,7 @@ return $html ;
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP GD Extension (w. TrueColor support) ; executables: imageMagick Utility (can replace PHP GD), FFMpeg (for movies) ; classes: Smart, SmartUtils, SmartFileSystem
- * @version 	v.160128
+ * @version 	v.160219
  * @package 	MediaGallery
  *
  */
@@ -1009,11 +1009,11 @@ public function draw($y_title, $y_dir, $y_process_previews_and_images='no', $y_r
 		$out .= '<div title="'.Smart::escape_html($this->gallery_show_counter).'">'."\n";
 		//--
 		if((string)$y_title != '') {
-			$out .= '<div style="background: #F7F7F7; padding-top: 4px; padding-bottom: 4px; padding-left: 12px; padding-right: 12px;"><h1>'.Smart::escape_html($y_title).'</h1></div><br>';
+			$out .= '<div id="mediagallery_title">'.Smart::escape_html($y_title).'</div><br>';
 		} //end if
-		$out .= '<div class="section row">';
+		$out .= '<div id="mediagallery_row">';
 		for($i=0; $i<Smart::array_size($out_arr); $i++) {
-			$out .= '<div class="column content">';
+			$out .= '<div id="mediagallery_cell">';
 			$out .= $out_arr[$i];
 			$out .= '</div>'."\n";
 		} //end for
@@ -1120,7 +1120,7 @@ private function img_draw_box($y_dir, $y_big_img_file) {
 	//--
 	if((string)$this->preview_description != 'no') {
 		if(strlen($description) > 0) {
-			$out .= '<br>'.'<b>'.$description.'</b>';
+			$out .= '<div id="mediagallery_label">'.$description.'</div>';
 		} //end if
 	} //end if
 	//--
@@ -1231,7 +1231,7 @@ private function mov_draw_box($y_dir, $y_video_file, $y_type) {
 	//--
 	if((string)$this->preview_description != 'no') {
 		if(strlen($description) > 0) {
-			$out .= '<br>'.'<b>'.$description.'</b>';
+			$out .= '<div id="mediagallery_label">'.$description.'</div>';
 		} //end if
 	} //end if
 	//--
