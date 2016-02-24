@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160213
+ * @version 	v.160224
  * @package 	Templating:Engines
  *
  */
@@ -320,27 +320,31 @@ private static function have_subtemplate($mtemplate) {
 /* {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}}
 <!-- INFO: The VALID Escaping Sequences for a Marker are all below ; If other escaping sequences are used or the escaping order is invalid, the Marker will not be detected and replaced ... -->
 [####MARKER####]
+[####MARKER|bool####]
 [####MARKER|num####]
-	[####MARKER|num|url####]			* mainly unused
-	[####MARKER|num|js####]				* mainly unused
-	[####MARKER|num|html####]			* mainly unused
-	[####MARKER|num|url|js####]			* mainly unused
-	[####MARKER|num|url|html####]		* mainly unused
-	[####MARKER|num|js|html####]		* mainly unused
-	[####MARKER|num|url|js|html####]	* mainly unused
+[####MARKER|htmid####]
+[####MARKER|jsvar####]
+[####MARKER|json####]
+	[####MARKER|json|url####]
+	[####MARKER|json|js####] 			** not necessary unless special purpose **
+	[####MARKER|json|html####]
+	[####MARKER|json|url|js####]
+	[####MARKER|json|url|html####]
+	[####MARKER|json|js|html####] 		** not necessary unless special purpose **
+	[####MARKER|json|url|js|html####] 	** not necessary unless special purpose **
 [####MARKER|url####]
 [####MARKER|url|js####]
 [####MARKER|url|html####]
-[####MARKER|url|js|html####]
+[####MARKER|url|js|html####] 			** not necessary unless special purpose **
 [####MARKER|js####]
-[####MARKER|js|html####]
+[####MARKER|js|html####] 				** not necessary unless special purpose **
 [####MARKER|html####]
 */
 private static function replace_marker($mtemplate, $key, $val) {
 	//--
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key).'(\|num)?(\|url)?(\|js)?(\|html)?'.'####\]/';
+		$regex = '/\[####'.preg_quote((string)$key).'(\|bool|\|num|\|htmid|\|jsvar|\|json)?(\|url)?(\|js)?(\|html)?'.'####\]/';
 		//--
 		if((string)$val != '') {
 			$val = (string) str_replace(
@@ -353,9 +357,23 @@ private static function replace_marker($mtemplate, $key, $val) {
 		$mtemplate = (string) preg_replace_callback(
 			(string) $regex,
 			function($matches) use ($val) {
-				if((string)$matches[1] == '|num') {
+				//-- Format
+				if((string)$matches[1] == '|num') { // Number
 					$val = (string) (float) $val;
+				} elseif((string)$matches[1] == '|bool') { // Boolean
+					if($val) {
+						$val = 'true';
+					} else {
+						$val = 'false';
+					} //end if else
+				} elseif((string)$matches[1] == '|htmid') { // HTML ID
+					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$val));
+				} elseif((string)$matches[1] == '|jsvar') { // JS Variable
+					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
+				} elseif((string)$matches[1] == '|json') { // Json Data (!!! DO NOT ENCLOSE IN ' or " as it can contain them as well as it can be [] or {} ... this is pure JSON !!!)
+					$val = (string) Smart::json_encode($val, false, false); // no pretty print, escape unicode as it is served inline !
 				} //end if
+				//-- Escape
 				if((string)$matches[2] == '|url') {
 					$val = (string) Smart::escape_url((string)$val);
 				} //end if
@@ -365,7 +383,9 @@ private static function replace_marker($mtemplate, $key, $val) {
 				if((string)$matches[4] == '|html') {
 					$val = (string) Smart::escape_html((string)$val);
 				} //end if
+				//--
 				return (string) $val;
+				//--
 			}, //end anonymous function
 			(string) $mtemplate
 		);

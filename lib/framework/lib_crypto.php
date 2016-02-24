@@ -30,6 +30,7 @@ if(!function_exists('hash_algos')) {
 	die('PHP Extension Hash is not available');
 } //end if
 
+
 /**
  * Class: SmartHashCrypto - provide various hashes for a string: salted password, sha512, sha384, sha256, sha1, md5.
  *
@@ -255,6 +256,7 @@ final class SmartHashCrypto {
  *
  * @depends     classes: Smart
  * @version     v.160220
+ * @package     Crypto
  *
  */
 final class SmartCipherCrypto {

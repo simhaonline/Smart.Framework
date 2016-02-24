@@ -1,34 +1,10 @@
 <!-- Partial Template: Core.DrawEditArea -->
 <script type="text/javascript">
-var the_readonly_editor__[####TXT-AREA-ID####] = [####READ-ONLY####];
-var the_code_editor__[####TXT-AREA-ID####] = CodeMirror.fromTextArea(document.getElementById('[####TXT-AREA-ID####]'), {
-	readOnly: [####READ-ONLY####],
-	lineNumbers: [####SHOW-LINE-NUM####],
-	cursorBlinkRate: [####BLINK-CURSOR####],
-	mode: '[####CODE-TYPE####]',
-	theme: 'eclipse',
-	matchBrackets: true,
-	matchTags: true,
-	highlightSelectionMatches: {showToken: /\w/},
-	styleActiveLine: true,
-	extraKeys: {
-		"F11": function(cm) {
-			//if(the_readonly_editor__[####TXT-AREA-ID####] !== true) {
-				cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-			//} //end if
-		},
-		"Esc": function(cm) {
-			if(cm.getOption("fullScreen")) {
-				cm.setOption("fullScreen", false);
-			}
-		}
-	}
-});
-the_code_editor__[####TXT-AREA-ID####].setSize([####WIDTH####], [####HEIGHT####]);
-if(the_readonly_editor__[####TXT-AREA-ID####] === false) {
-	the_code_editor__[####TXT-AREA-ID####].on('blur', function(){
-		the_code_editor__[####TXT-AREA-ID####].save();
-	});
-} //end if
+var SmartCodeMirror__[####TXT-AREA-ID|jsvar####]__Instance, SmartCodeMirror__[####TXT-AREA-ID|jsvar####]__Width = '[####WIDTH|js####]', SmartCodeMirror__[####TXT-AREA-ID|jsvar####]__Height = '[####HEIGHT|js####]';
+</script>
+<div id="TheMenu__[####TXT-AREA-ID|htmid####]__CodeArea" title="[####CODE-TYPE|html####]"></div>
+<textarea id="[####TXT-AREA-ID|htmid####]" name="[####TXT-AREA-VAR-NAME|html####]" style="width:[####WIDTH|html####];height:[####HEIGHT|html####];" wrap="OFF"[####TXT-AREA-READONLY|html####]>[####TXT-AREA-CONTENT|html####]</textarea>
+<script type="text/javascript">
+	SmartCodeMirror__[####TXT-AREA-ID|jsvar####]__Instance = SmartCodeMirror_Initialize('[####TXT-AREA-ID|jsvar|js####]', [####READ-ONLY|bool####], '[####CODE-TYPE|js####]', SmartCodeMirror__[####TXT-AREA-ID|jsvar####]__Width, SmartCodeMirror__[####TXT-AREA-ID|jsvar####]__Height, '[####THEME|js####]', [####SHOW-LINE-NUM|bool####], [####BLINK-CURSOR|num####], 'TheMenu__[####TXT-AREA-ID|htmid|js####]__CodeArea');
 </script>
 <!-- #END :: Partial Template: Core.DrawEditArea -->

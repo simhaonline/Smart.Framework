@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160221
+ * @version     v.160224
  * @package     Core
  *
  */
@@ -488,7 +488,7 @@ public static function escape_html($y_string) {
 
 //================================================================
 /**
- * Safe escape strings to be injected in Javascript code
+ * Safe escape strings to be injected in Javascript code as strings
  *
  * @param 	STRING 		$str			:: The string to be escaped
  *
@@ -518,18 +518,28 @@ public static function escape_js($str) {
 /**
  * JSON Encode PHP variables to a JSON string
  *
- * @param 	MIXED 		$data			:: The variable to be encoded: numeric, string, array
+ * @param 	MIXED 		$data			:: The variable to be encoded (mixed): numeric, string, array
  * @param 	BOOLEAN		$prettyprint	:: If true will format the json as pretty-print (takes much more space, but sometimes make sense ...)
  *
  * @return 	STRING						:: The JSON encoded string
  */
-public static function json_encode($data, $prettyprint=false) {
-	// encode json v.151129 :: encode the string excludding unicode chars, with all possible: <tag>, ' " &
-	if($prettyprint) {
-		return (string) @json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-	} else {
-		return (string) @json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true) {
+	// encode json v.160224 :: encode the string excludding unicode chars, with all possible: <tag>, ' " &
+	if(!$unescaped_unicode) {
+		if($prettyprint) {
+			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_PRETTY_PRINT;
+		} else {
+			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+		} //end if else
+	} else { // default
+		if($prettyprint) {
+			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+		} else {
+			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+		} //end if else
 	} //end if else
+	//--
+	return (string) @json_encode($data, $options);
 	//--
 } //END FUNCTION
 //================================================================
@@ -546,7 +556,7 @@ public static function json_encode($data, $prettyprint=false) {
  * @return 	MIXED						:: The PHP native Variable
  */
 public static function json_decode($y_json, $y_ret_array=true, $y_depth=1024) {
-	//-- decode json v.151129
+	//-- decode json v.160224
 	return @json_decode((string)$y_json, $y_ret_array, $y_depth, JSON_BIGINT_AS_STRING);
 	//--
 } //END FUNCTION
@@ -563,8 +573,8 @@ public static function json_decode($y_json, $y_ret_array=true, $y_depth=1024) {
  * @return 	STRING						:: The JSON encoded string
  */
 public static function seryalize($data) {
-	//-- seryalize json v.151129
-	return (string) @json_encode($data);
+	//-- seryalize json v.160224
+	return (string) self::json_encode($data, false, false); // is better to escape unicode when stored in Redis
 	//--
 } //END FUNCTION
 //================================================================
@@ -580,8 +590,8 @@ public static function seryalize($data) {
  * @return 	MIXED						:: The PHP native Variable
  */
 public static function unseryalize($y_json) {
-	//-- unseryalize json v.151129
-	return @json_decode((string)$y_json, true, 1024, JSON_BIGINT_AS_STRING);
+	//-- unseryalize json v.160224
+	return self::json_decode((string)$y_json, true, 512);
 	//--
 } //END FUNCTION
 //================================================================

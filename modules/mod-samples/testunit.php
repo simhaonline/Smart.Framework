@@ -2,7 +2,7 @@
 // Controller: Samples/TestUnit
 // Route: ?/page/samples.testunit (?page=samples.testunit)
 // Author: unix-world.org
-// r.2015-12-05
+// r.2016-02-24
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -119,7 +119,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				$this->PageViewSetCfg('template-file', 'template-modal.htm');
 				$main = SmartComponents::js_init_away_page();
 				$main .= SmartComponents::js_init_html_area();
-				$main .= SmartComponents::js_draw_html_area('test_html_area', 'test_html_area', 128, 30, '');
+				$main .= SmartComponents::js_draw_html_area('test_html_area', 'test_html_area', '', '920px', '500px');
 				$main .= '<button class="ux-button" onClick="alert($(\'#test_html_area\').val());">Get HTML Source</button>';
 				//--
 				break;
@@ -128,8 +128,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				$this->PageViewSetCfg('template-file', 'template-modal.htm');
 				$main = SmartComponents::js_init_away_page('The changes will be lost !');
 				$main .= SmartComponents::js_init_editarea();
-				$main .= '<textarea name="test_code_editor" cols="128" rows="29" wrap="OFF" id="test_code_editor"></textarea>';
-				$main .= SmartComponents::js_draw_editarea('test_code_editor', 'true', 'html', '895', '545');
+				$main .= SmartComponents::js_draw_editarea('test_code_editor', 'test_code_editor', '', 'html', true, '920px', '450px');
 				//--
 				break;
 			case 'testunit.load-url-or-file':
@@ -308,6 +307,22 @@ class SmartAppIndexController extends SmartAbstractAppController {
 					array('data 1.1', 'data 1.2', 1.30, 'data 2.1', 'data 2.2', 2.31),
 					array('', '', 'decimal4')
 				);
+				//--
+				break;
+			case 'testunit.json-test':
+				//--
+				$mixed_data = ['Unicode Text' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド\'#@<tag>!$%^&*()-_=+'."\r\n\t".'</tag>', 'Numbers' => 1234567890.99, 'Boolean TRUE:' => true, 'Boolean FALSE:' => false];
+				//--
+				$main = '<h1> Json Test</h1>';
+				$main .= '<pre style="background:#ECECEC; border:1px solid #CCCCCC; line-height:32px; padding:8px;">';
+				$main .= '<b>Default (Unicode Unescaped) Json:</b>'."\n".Smart::json_encode($mixed_data)."\n";
+				$main .= '<hr>';
+				$main .= '<b>Default (Unicode Unescaped) Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true)."\n";
+				$main .= '<hr>';
+				$main .= '<b>Unicode Escaped Json:</b>'."\n".Smart::json_encode($mixed_data, false, false)."\n";
+				$main .= '<hr>';
+				$main .= '<b>Unicode Escaped Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true, false)."\n";
+				$main .= '</pre>';
 				//--
 				break;
 			case 'testunit.main':

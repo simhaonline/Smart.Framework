@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / Plugins / Markdown -- */
+/* -- CSS Start :: SmartFramework / Plugins / Markdown v.160223 -- */
 
 /* ----------------------------- */
 
@@ -12,6 +12,13 @@
 #markdown h5,
 #markdown h6 {
 	display: block;
+}
+
+/* Helpers */
+#markdown hr {
+	border: none 0;
+	border-top: 1px solid #EDEDED;
+	height: 1px;
 }
 
 /* Table */

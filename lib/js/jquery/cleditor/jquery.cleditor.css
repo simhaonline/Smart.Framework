@@ -17,8 +17,8 @@
 	font-size: 13px;
 	resize: none;
 	outline: none;
-	background: #FFFFF0;
-	border: 1px solid #FDFE98 !important;
+	background: #FFFFF5;
+	border: 1px solid #FFFFF0 !important;
 }
 .cleditorToolbar {
 	background: url('images/toolbar.png') repeat;

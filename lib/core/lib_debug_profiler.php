@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.160221
+ * @version 	v.160224
  *
  */
 final class SmartDebugProfiler {
@@ -348,7 +348,7 @@ private static function print_log_mail($log_mail_arr) {
 			$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Operation: <b>'.strtoupper((string)$key).'</b></div>';
 			$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:#000000;">';
 			if(is_array($val['log'])) {
-				$log .= '<pre style="font-size:11px; color:#000000;">'.Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)print_r($val['log'],1)))).'</pre>';
+				$log .= '<pre style="font-size:11px; color:#000000;">'.Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)self::print_value_by_type($val['log'])))).'</pre>';
 			} //end if else
 			$log .= '</div>';
 			//--
@@ -413,7 +413,7 @@ private static function print_log_runtime() {
 		if(is_array($debug_val)) {
 			$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
 			foreach($debug_val as $key => $val) {
-				$log .= '<tr valign="top"><td width="295"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.Smart::escape_html(print_r($val,1)).'</div></td></tr>';
+				$log .= '<tr valign="top"><td width="295"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.Smart::escape_html(self::print_value_by_type($val)).'</div></td></tr>';
 			} //end foreach
 			$log .= '</table>';
 		} else {
@@ -440,7 +440,9 @@ private static function print_log_configs() {
 	$i=0;
 	$j=0;
 	foreach((array)$arr as $key => $val) {
+		//--
 		$i++;
+		//--
 		$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
 		$log .= '<tr valign="top" title="#'.$i.'"><td width="195"><div class="smartframework_debugbar_inforow">';
 		$log .= '<b>'.Smart::escape_html((string)$key).'</b>';
@@ -455,7 +457,7 @@ private static function print_log_configs() {
 				} else {
 					$color = '#FAFAFA';
 				} //end if else
-				$log .= '<tr bgcolor="'.$color.'" valign="top" title="#'.$i.'.'.$j.'"><td width="290"><b>'.Smart::escape_html((string)$k).'</b></td><td>'.Smart::nl_2_br(Smart::escape_html(print_r($v,1))).'</td></tr>';
+				$log .= '<tr bgcolor="'.$color.'" valign="top" title="#'.$i.'.'.$j.'"><td width="290"><b>'.Smart::escape_html((string)$k).'</b></td><td>'.Smart::nl_2_br(Smart::escape_html(self::print_value_by_type($v))).'</td></tr>';
 			} //end foreach
 			$log .= '</table>';
 		} else {
@@ -463,6 +465,7 @@ private static function print_log_configs() {
 		} //end if else
 		$log .= '</div></td></tr>';
 		$log .= '</table>';
+		//--
 	} //end while
 	//-- constants
 	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>App SETTING CONSTANTS</b></div>';
@@ -472,10 +475,21 @@ private static function print_log_configs() {
 	$i=0;
 	$j=0;
 	foreach((array)$arr as $key => $val) {
+		//--
 		$i++;
+		//--
+		if(((string)$key == 'SMART_FRAMEWORK_CHMOD_DIRS') OR ((string)$key == 'SMART_FRAMEWORK_CHMOD_FILES')) {
+			if(is_numeric($val)) {
+				$val = (string) '0'.@decoct($val).' (octal)';
+			} else {
+				$val = (string) $val.' (!!! Warning, Invalid ... Must be OCTAL !!!)';
+			} //end if
+		} //end if
+		//--
 		$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
-		$log .= '<tr valign="top" title="#'.$i.'"><td width="375"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html((string)$key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.Smart::nl_2_br(Smart::escape_html(print_r($val,1))).'</div></td></tr>';
+		$log .= '<tr valign="top" title="#'.$i.'"><td width="375"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html((string)$key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.Smart::nl_2_br(Smart::escape_html(self::print_value_by_type($val))).'</div></td></tr>';
 		$log .= '</table>';
+		//--
 	} //end while
 	//--
 	return $log;
@@ -558,7 +572,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$cnt = 0;
 		foreach($req_filtered as $debug_key => $debug_val) {
 			$cnt++;
-			$tbl .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.Smart::escape_html(print_r($debug_val,1)).'</font></div></td></tr>';
+			$tbl .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.Smart::escape_html(self::print_value_by_type($debug_val)).'</font></div></td></tr>';
 		} //end while
 		$tbl .= '</table>';
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total (Non-Empty) Variables: <b>'.Smart::escape_html($cnt).'</b></div>';
@@ -588,7 +602,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($get_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.Smart::escape_html(print_r($debug_val,1)).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.Smart::escape_html(self::print_value_by_type($debug_val)).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -601,7 +615,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($post_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.Smart::escape_html(print_r($debug_val,1)).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.Smart::escape_html(self::print_value_by_type($debug_val)).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -638,7 +652,7 @@ private static function print_log_session($session_arr) {
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		while(list($debug_key, $debug_val) = each($session_arr)) {
 			if((is_array($debug_val)) OR (is_object($debug_val))) {
-				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><font color="#333333"><b>'.Smart::escape_html($debug_key).'</b></font></div></td><td><div class="smartframework_debugbar_inforow"><pre color:#333333;">'.Smart::escape_html(print_r($debug_val,1)).'</pre></div></td></tr>';
+				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><font color="#333333"><b>'.Smart::escape_html($debug_key).'</b></font></div></td><td><div class="smartframework_debugbar_inforow"><pre color:#333333;">'.Smart::escape_html(self::print_value_by_type($debug_val)).'</pre></div></td></tr>';
 			} else {
 				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.Smart::escape_html($debug_val).'</font></div></td></tr>';
 			} //end if else
@@ -671,7 +685,7 @@ private static function print_log_auth($auth_arr) {
 		foreach($login_data as $debug_key => $debug_val) {
 			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">';
 			if(is_array($debug_val)) {
-				$log .= '<pre>'.Smart::escape_html(print_r($debug_val,1)).'</pre>';
+				$log .= '<pre>'.Smart::escape_html(self::print_value_by_type($debug_val)).'</pre>';
 			} else {
 				$log .= Smart::escape_html($debug_val);
 			} //end if else
@@ -779,7 +793,7 @@ private static function print_log_database($title, $db_log) {
 					if(is_array($tmp_arr['command'])) {
 						$tmp_params = array();
 						foreach($tmp_arr['command'] as $key => $val) {
-							$tmp_params[] = Smart::escape_html($key.' => `'.print_r($val,1).'`');
+							$tmp_params[] = Smart::escape_html($key.' => `'.self::print_value_by_type($val).'`');
 						} //end foreach
 						$log .= '<br>'.'@COMMAND-PARAMS:&nbsp;{ '.implode(', ', $tmp_params).' }';
 						$tmp_params = array();
@@ -894,6 +908,31 @@ private static function print_log_modules($title, $modules_log) {
 	} //end if
 	//--
 	return $log;
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function print_value_by_type($value) {
+	//--
+	if($value === null) {
+		$value = 'NULL (null)';
+	} elseif($value === false) {
+		$value = 'FALSE (bool)';
+	} elseif($value === true) {
+		$value = 'TRUE (bool)';
+	} elseif($value === 0) {
+		$value = '0 (zero)';
+	} elseif($value === '') {
+		$value = '`` (empty string)';
+	} elseif(is_array($value)) {
+		$value = (string) print_r($value,1);
+	} elseif(is_object($value)) {
+		$value = '[!OBJECT!]';
+	} //end if else
+	//--
+	return (string) $value;
 	//--
 } //END FUNCTION
 //==================================================================

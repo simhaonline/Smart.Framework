@@ -14,6 +14,9 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
+if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based');
+} //end if
 
 /**
  * Class: SmartPersistentCache (Redis based Persistent Cache adapter) - provides a persistent Cache (in-Redis-Memory), that can be shared and/or reused between multiple PHP executions.
@@ -31,7 +34,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160215
+ * @version 	v.160224
  * @package 	Caching
  *
  */
@@ -39,7 +42,8 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 
 	// ::
 
-	private static $redis = null; // Redis Object
+	private static $redis = null; 		// Redis Object
+	private static $is_active = 0;		// Cache if Active (init to zero; then on 1st check set as TRUE or FALSE)
 
 
 	/**
@@ -51,11 +55,30 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 		//--
 		global $configs;
 		//--
+		if((self::$is_active === true) OR (self::$is_active === false)) {
+			return (bool) self::$is_active;
+		} //end if
+		//--
 		if(Smart::array_size($configs['redis']) > 0) {
-			return true;
+			self::$is_active = true;
 		} else {
-			return false;
+			self::$is_active = false;
 		} //end if else
+		//--
+		return (bool) self::$is_active;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Check if the persistent Cache is Memory Based
+	 * This function must ALWAYS be used in conjunction with isActive() as it will return TRUE just if the backend is a Memory Based one and will not check if Backed is Active or not ...
+	 *
+	 * @return BOOLEAN	TRUE if is Memory Based (Ex: Redis / Memcache / ...) or FALSE if not (Ex: File Cache)
+	 */
+	public static function isMemoryBased() {
+		//--
+		return true; // Redis is a memory based cache backend, so it is TRUE
 		//--
 	} //END FUNCTION
 

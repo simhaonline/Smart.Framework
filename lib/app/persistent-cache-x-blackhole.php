@@ -13,9 +13,12 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
+if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Blackhole: None');
+} //end if
 
 /**
- * Class: SmartPersistentCache (Blackhole: X-None) - provides a Blackhole persistent Cache for the case another Persistent Cache is not available.
+ * Class: SmartPersistentCache (Blackhole: None) - provides a Blackhole persistent Cache for the case another Persistent Cache is not available.
  *
  * This is provided just for compatibility.
  * When this class will be used instead of other persistent cache options it will function as a blackhole, meaning no Persistent Cache will be available,

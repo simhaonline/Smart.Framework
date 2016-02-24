@@ -184,7 +184,7 @@ final class SmartCache {
 abstract class SmartAbstractPersistentCache {
 
 	// :: ABSTRACT
-	// v.160120
+	// v.160224
 
 
 	/**
@@ -193,6 +193,19 @@ abstract class SmartAbstractPersistentCache {
 	 * @return BOOLEAN	TRUE if is Active or FALSE if not
 	 */
 	public static function isActive() {
+		//--
+		return false;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Check if the persistent Cache is Memory Based.
+	 * This function must ALWAYS be used in conjunction with isActive() as it will return TRUE just if the backend is a Memory Based one and will not check if Backed is Active or not ...
+	 *
+	 * @return BOOLEAN	TRUE if is Memory Based (Ex: Redis / Memcache / ...) or FALSE if not (Ex: File Cache)
+	 */
+	public static function isMemoryBased() {
 		//--
 		return false;
 		//--

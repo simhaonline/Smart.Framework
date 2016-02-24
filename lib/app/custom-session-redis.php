@@ -20,6 +20,9 @@ if(Smart::array_size($configs['redis']) <= 0) {
 //===================================================================================== CLASS START
 //=====================================================================================
 
+if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
+} //end if
 
 /**
  * Class Smart.Framework App.Custom.Session.Redis

@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160221
+ * @version 	v.160224
  * @package 	Components:Framework
  *
  */
@@ -2418,16 +2418,7 @@ public static function js_init_away_page($y_question='') {
 		$y_question = 'Do you want to leave this page ?';
 	} //end if else
 	//--
-	$js = '';
-	$js .= '<script type="text/javascript">'."\n";
-	$js .=	SmartMarkersTemplating::render_file_template(
-				'lib/js/framework/page_away_control.inc.js',
-				array('QUESTION' => Smart::escape_js($y_question)),
-				'yes' // export to cache
-			);
-	$js .= '</script>'."\n";
-	//--
-	return $js;
+	return '<script type="text/javascript">SmartJS_BrowserUtils.PageAwayControl(\''.Smart::escape_js($y_question).'\');</script>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2465,17 +2456,19 @@ public static function js_answer_suggest_ajx_selector($y_arr_values, $y_cols, $y
 
 //================================================================
 /**
- * Outputs the JS Code to init the HTML Editor
+ * Outputs the HTML Code to init the HTML (wysiwyg) Editor
  *
- * @param $y_filebrowser_link STRING 		:: Example: script.php?op=fileman&modal=yes&typ=
- * @return STRING							[JS HTML Code]
+ * @param $y_filebrowser_link STRING 		URL to Image Browser (Example: script.php?op=image-gallery&type=images)
+ *
+ * @return STRING							[HTML Code]
  */
 public static function js_init_html_area($y_filebrowser_link='') {
 //--
 return SmartMarkersTemplating::render_file_template(
 	'lib/core/templates/html-editor-init.inc.htm',
 	array(
-		'FILE-BROWSER-CALLBACK-URL' => Smart::escape_js($y_filebrowser_link)
+		'LANG' => (string) SmartTextTranslations::getLanguage(),
+		'FILE-BROWSER-CALLBACK-URL' => (string) $y_filebrowser_link
 	),
 	'yes' // export to cache
 );
@@ -2486,28 +2479,43 @@ return SmartMarkersTemplating::render_file_template(
 
 //================================================================
 /**
- * Draw a TextArea with a built-in javascript html editor
+ * Draw a TextArea with a built-in javascript HTML (wysiwyg) Editor
  *
- * @param STRING $y_text		[Text for Toggle Area]
- * @param STRING $yvarname		[HTML Form Variable Name]
- * @param STRING $yid			[Unique HTML Page Element ID]
- * @param INTEGER+ $ywidth		[Area Width: (Example) 96]
- * @param INTEGER+ $yheight		[Area Height (Example) 28]
- * @param ENUM	$y_toolbars		[Toolbar Mode: normal, complete, maxi]
+ * @param STRING $yid					[Unique HTML Page Element ID]
+ * @param STRING $yvarname				[HTML Form Variable Name]
+ * @param STRING $yvalue				[HTML Data]
+ * @param INTEGER+ $ywidth				[Area Width: (Example) 720px or 75%]
+ * @param INTEGER+ $yheight				[Area Height (Example) 480px or 50%]
+ * @param BOOLEAN $y_allow_scripts		[Allow JavaScripts]
+ * @param BOOLEAN $y_allow_script_src	[Allow JavaScript SRC attribute]
+ * @param MIXED $y_cleaner_deftags 		['' or array of HTML Tags to be allowed / dissalowed by the cleaner ... see HTML Cleaner Documentation]
+ * @param ENUM $y_cleaner_mode 			[HTML Cleaner mode for defined tags: ALLOW / DISALLOW]
+ * @param STRING $y_toolbar_ctrls		[Toolbar Controls: ... see CLEditor Documentation]
  *
- * @return STRING				[HTML Code]
+ * @return STRING						[HTML Code]
  *
  */
-public static function js_draw_html_area($yid, $yvarname, $ywidth='96', $yheight='28', $yvalue='', $y_toggle_text='', $y_toolbars='') {
+public static function js_draw_html_area($yid, $yvarname, $yvalue='', $ywidth='720px', $yheight='480px', $y_allow_scripts=false, $y_allow_script_src=false, $y_cleaner_deftags='', $y_cleaner_mode='', $y_toolbar_ctrls='') {
+//--
+if((string)$y_cleaner_mode != '') {
+	if((string)$y_cleaner_mode !== 'DISALLOW') {
+		$y_cleaner_mode = 'ALLOW';
+	} //end if
+} //end if
 //--
 return SmartMarkersTemplating::render_file_template(
 	'lib/core/templates/html-editor-draw.inc.htm',
 	array(
-		'TXT-AREA-ID' => Smart::escape_js($yid), // HTML or JS ID
-		'TXT-AREA-VAR-NAME' => Smart::escape_html($yvarname), // HTML variable name
-		'TXT-AREA-COLS' => (int)$ywidth,
-		'TXT-AREA-ROWS' => (int)$yheight,
-		'TXT-AREA-CONTENT' => Smart::escape_html($yvalue)
+		'TXT-AREA-ID' 					=> (string) $yid, // HTML or JS ID
+		'TXT-AREA-VAR-NAME' 			=> (string) $yvarname, // HTML variable name
+		'TXT-AREA-WIDTH' 				=> (string) $ywidth, // 100px or 100%
+		'TXT-AREA-HEIGHT' 				=> (string) $yheight, // 100px or 100%
+		'TXT-AREA-CONTENT' 				=> (string) $yvalue,
+		'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool) $y_allow_scripts, // boolean
+		'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool) $y_allow_script_src, // boolean
+		'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed
+		'CLEANER-MODE-TAGS' 			=> (string) $y_cleaner_mode,
+		'TXT-AREA-TOOLBAR' 				=> (string) $y_toolbar_ctrls
 	),
 	'yes' // export to cache
 );
@@ -2517,14 +2525,21 @@ return SmartMarkersTemplating::render_file_template(
 
 
 //================================================================
-// CallBack Mapping for Editor
+/**
+ * CallBack Mapping for HTML (wysiwyg) Editor - FileBrowser Integration
+ *
+ * @param STRING $yurl					The Callback URL
+ * @param BOOLEAN $is_popup 			Set to True if Popup (incl. Modal)
+ *
+ * @return STRING						[JS Code]
+ */
 public static function js_callback_html_area($yurl, $is_popup=false) {
 //--
 return str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
 	'lib/core/templates/html-editor-callback.inc.htm',
 	array(
-		'IS_POPUP' => (int) $is_popup,
-		'URL' => Smart::escape_js($yurl)
+		'IS_POPUP' 	=> (int) $is_popup,
+		'URL' 		=> (string) $yurl
 	),
 	'yes' // export to cache
 ));
@@ -2535,14 +2550,17 @@ return str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (
 
 //================================================================
 /**
- * Function: JS Init The Edit Area
+ * Init the Code Editor (Edit Area)
  *
+ * @return STRING						[HTML Code]
  */
 public static function js_init_editarea() {
 //--
 return SmartMarkersTemplating::render_file_template(
 	'lib/core/templates/code-editor-init.inc.htm',
-	array(),
+	array(
+		'LANG' => (string) SmartTextTranslations::getLanguage()
+	),
 	'yes' // export to cache
 );
 //--
@@ -2552,10 +2570,22 @@ return SmartMarkersTemplating::render_file_template(
 
 //================================================================
 /**
- * Function: JS Draw The Edit Area
+ * Draw a TextArea with a built-in javascript Code Editor (Edit Area).
+ * Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL, PHP, Text (default).
+ *
+ * @param STRING $yid					[Unique HTML Page Element ID]
+ * @param STRING $yvarname				[HTML Form Variable Name]
+ * @param STRING $yvalue				[HTML Data]
+ * @param ENUM $y_mode 					[Parser mode: css, javascript, json, html, xml, yaml, markdown, sql, php, text]
+ * @param BOOLEAN $y_editable 			[Editable: true / Not Editable: false]
+ * @param INTEGER+ $ywidth				[Area Width: (Example) 720px or 75%]
+ * @param INTEGER+ $yheight				[Area Height (Example) 480px or 50%]
+ * @param BOOLEAN $y_line_numbers		[Display line numbers: true ; Hide line numbersL false]
+ *
+ * @return STRING						[HTML Code]
  *
  */
-public static function js_draw_editarea($y_textarea_id, $y_editable='true', $y_mode='', $y_width='720', $y_height='300') {
+public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='text', $y_editable=true, $y_width='720px', $y_height='300px', $y_line_numbers=true) {
 //--
 $the_lang = SmartTextTranslations::getLanguage();
 //--
@@ -2591,29 +2621,32 @@ switch((string)$y_mode) {
 	default:
 		$the_mode = 'text/plain';
 } //end switch
-switch((string)$y_editable) {
-	case 'false':
-		$is_readonly = 'true';
-		$line_numbers = 'false';
-		$cursor_blinking = '0';
-		break;
-	case 'true':
-	default:
-		$is_readonly = 'false';
-		$line_numbers = 'true';
-		$cursor_blinking = '530';
+if(!$y_editable) {
+	$is_readonly = true;
+	$attrib_readonly = ' readonly';
+	$cursor_blinking = '0';
+	$theme = 'neo';
+} else {
+	$is_readonly = false;
+	$attrib_readonly = '';
+	$cursor_blinking = '530';
+	$theme = 'eclipse';
 } //end switch
 //--
 return SmartMarkersTemplating::render_file_template(
 	'lib/core/templates/code-editor-draw.inc.htm',
 	array(
-		'TXT-AREA-ID' => Smart::escape_js($y_textarea_id),
-		'WIDTH' => Smart::format_number_int($y_width, '+'),
-		'HEIGHT' => Smart::format_number_int($y_height, '+'),
-		'SHOW-LINE-NUM' => Smart::escape_js($line_numbers),
-		'READ-ONLY' => Smart::escape_js($is_readonly),
-		'BLINK-CURSOR' => Smart::escape_js($cursor_blinking),
-		'CODE-TYPE' => Smart::escape_js($the_mode)
+		'TXT-AREA-ID' 		=> (string) $yid,
+		'WIDTH' 			=> (string) $y_width,
+		'HEIGHT' 			=> (string) $y_height,
+		'SHOW-LINE-NUM' 	=> (bool) $y_line_numbers,
+		'READ-ONLY' 		=> (bool) $is_readonly,
+		'BLINK-CURSOR' 		=> Smart::format_number_int($cursor_blinking,'+'),
+		'CODE-TYPE' 		=> (string) $the_mode,
+		'THEME' 			=> (string) $theme,
+		'TXT-AREA-VAR-NAME' => (string) $yvarname,
+		'TXT-AREA-CONTENT' 	=> (string) $yvalue,
+		'TXT-AREA-READONLY'	=> (string) $attrib_readonly
 	),
 	'yes' // export to cache
 );
@@ -2635,7 +2668,7 @@ return SmartMarkersTemplating::render_file_template(
  * @param ARRAY 	$y_extra_options		[Options Array[width, ...] for for datePicker]
  * @param JS-Code 	$yjs_custom				[JS Code to execute on Select(date)]
  *
- * @return HTMLCode
+ * @return STRING 							[HTML Code]
  */
 public static function js_draw_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='new Date(1937, 1 - 1, 1)', $yjs_maxdate='new Date(2037, 12 - 1, 31)', $y_extra_options=array(), $yjs_custom='') {
 //-- v.20151112
@@ -2711,7 +2744,7 @@ return $js_code;
  * @param JS-Code 	$y_extra_options		[Options Array[width, ...] for timePicker]
  * @param JS-Code 	$yjs_custom				[JS Code to execute on Select(time)]
  *
- * @return HTMLCode
+ * @return STRING 							[HTML Code]
  */
 public static function js_draw_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', $y_extra_options=array(), $yjs_custom='') {
 //-- v.20151112

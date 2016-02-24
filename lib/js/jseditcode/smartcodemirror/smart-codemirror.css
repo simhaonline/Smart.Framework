@@ -1,0 +1,23 @@
+/*
+Smart Code Mirror CSS
+(c) 2016 unix-world.org
+r. 160223
+*/
+
+.CodeMirror-SmartMenu-default {
+	height: 22px;
+	background: #FCFCFC;
+	border: 1px solid #DDDDDD;
+	border-bottom: 0;
+	text-align: center;
+}
+
+.CodeMirror-SmartMenu-fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: auto;
+	z-index: 99999;
+}
+
+/* END */
