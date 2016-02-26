@@ -158,27 +158,27 @@ final class SmartMarkdownToHTML {
 	private function prepareHTML($markup) {
 		//--
 		if($this->breaksEnabled) {
-			$info_linebreaks = 'Breaks=1';
+			$info_linebreaks = 'B:1';
 		} else {
-			$info_linebreaks = 'Breaks=0';
+			$info_linebreaks = 'B:0';
 		} //end if else
 		if($this->markupEscaped) {
-			$info_markup = 'Markup=0';
+			$info_markup = 'M:0';
 		} else {
-			$info_markup = 'Markup=1';
+			$info_markup = 'M:1';
 		} //end if else
 		if($this->urlsLinked) {
-			$info_urls = 'Links=1';
+			$info_urls = 'L:1';
 		} else {
-			$info_urls = 'Links=0';
+			$info_urls = 'L:0';
 		} //end if else
 		if($this->htmlEntitiesEscaped) {
-			$info_entities = 'Entities=0';
+			$info_entities = 'E:0';
 		} else {
-			$info_entities = 'Entities=1';
+			$info_entities = 'E:1';
 		} //end if else
 		//-- it always add tags ...
-		return $markup = "\n".'<!-- MarkdownToHTML '.' #'.self::version.'# '.'['.$info_linebreaks.';'.$info_markup.';'.$info_urls.';'.$info_entities.']'.' -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!-- END # Markdown -->'."\n"; // if parsed and contain HTML Tags, add div and comments
+		return $markup = "\n".'<!--  HTML/Markdown # ( '.Smart::escape_html($info_linebreaks.' '.$info_markup.' '.$info_urls.' '.$info_entities.' T:'.date('ymdHi')).' )  -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!--  # HTML/Markdown # '.Smart::escape_html((string)self::version).' #  -->'."\n"; // if parsed and contain HTML Tags, add div and comments
 		//--
 	} //END FUNCTION
 

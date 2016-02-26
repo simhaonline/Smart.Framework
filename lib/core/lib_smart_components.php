@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160224
+ * @version 	v.160226
  * @package 	Components:Framework
  *
  */
@@ -151,14 +151,14 @@ public static function lock_file() {
  */
 public static function http_status_message($y_title, $y_message) {
 	//--
-	return SmartMarkersTemplating::render_file_template(
+	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/http-message-status.inc.htm',
-		array(
+		[
 			'CHARSET' => SmartUtils::get_encoding_charset(),
 			'TITLE' => Smart::escape_html($y_title),
 			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
 			'MESSAGE' => $y_message
-		),
+		],
 		'no'
 	);
 	//--
@@ -176,15 +176,15 @@ public static function http_status_message($y_title, $y_message) {
  */
 public static function http_error_message($y_title, $y_message, $y_extra_message='') {
 	//--
-	return SmartMarkersTemplating::render_file_template(
+	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/http-message-error.inc.htm',
-		array(
+		[
 			'CHARSET' => SmartUtils::get_encoding_charset(),
 			'TITLE' => Smart::escape_html($y_title),
 			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
 			'MESSAGE' => self::operation_error($y_message, '100%'),
 			'EXTMSG' => $y_extra_message
-		),
+		],
 		'no'
 	);
 	//--
@@ -796,15 +796,15 @@ public static function rounded_table($htmlcode, $class, $y_width='100%', $y_bgco
 		$color = ' class="rounded '.$class.'"';
 	} //end if
 	//--
-	return SmartMarkersTemplating::render_file_template(
+	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/rounded-table.inc.htm',
-		array(
+		[
 			'WIDTH' => $y_width,
 			'HEIGHT' => $y_height,
 			'STYLE-BGCOLOR' => $color,
 			'V-ALIGN' => $y_valign,
 			'HTML-CONTENT' => $htmlcode
-		),
+		],
 		'yes' // export to cache
 	);
 	//--
@@ -1627,15 +1627,15 @@ private static function arrows_navpager($link, $total, $limit, $current, $displa
 				$tmp_box_nav_end = $txt_end;
 			} //end if
 			//--
-			$html = SmartMarkersTemplating::render_file_template(
+			$html = (string) SmartMarkersTemplating::render_file_template(
 				'lib/core/templates/nav-box.inc.htm',
-				array(
+				[
 					'NAV-START' => $tmp_box_nav_start,
 					'NAV-PREV' => $tmp_box_nav_prev,
 					'NAV-NEXT' => $tmp_box_nav_next,
 					'NAV-END' => $tmp_box_nav_end,
 					'NAV-INFO' => $tmp_nfo
-				),
+				],
 				'yes' // export to cache
 			);
 			//--
@@ -1643,15 +1643,15 @@ private static function arrows_navpager($link, $total, $limit, $current, $displa
 			//--
 			if($display_if_empty !== false) {
 				//--
-				$html = SmartMarkersTemplating::render_file_template(
+				$html = (string) SmartMarkersTemplating::render_file_template(
 					'lib/core/templates/nav-box.inc.htm',
-					array(
+					[
 						'NAV-START' => $txt_start,
 						'NAV-PREV' => $txt_prev,
 						'NAV-NEXT' => $txt_next,
 						'NAV-END' => $txt_end,
 						'NAV-INFO' => '<div title="'.Smart::escape_html('0-0 / 0').'">&nbsp;&nbsp;'.$txt_empty.'&nbsp;&nbsp;</div>'
-					),
+					],
 					'yes' // export to cache
 				);
 				//--
@@ -2196,9 +2196,9 @@ public static function js_inc_base() {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		$the_js_base_file,
-		array(
+		[
 			'LANG' => SmartTextTranslations::getLanguage()
-		)
+		]
 	);
 	//--
 } //END FUNCTION
@@ -2227,10 +2227,10 @@ public static function js_inc_ui() {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		$the_js_ui_file,
-		array(
+		[
 			'LANG' => SmartTextTranslations::getLanguage(),
 			'THEME' => self::js_ui_theme()
-		)
+		]
 	);
 	//--
 } //END FUNCTION
@@ -2436,7 +2436,6 @@ public static function js_init_away_page($y_question='') {
  *
  */
 public static function js_answer_suggest_ajx_selector($y_arr_values, $y_cols, $y_src) {
-
 	//--
 	if($y_cols < 0) {
 		$y_cols = 0;
@@ -2449,7 +2448,6 @@ public static function js_answer_suggest_ajx_selector($y_arr_values, $y_cols, $y
 	//--
 	return Smart::json_encode($arr);
 	//--
-
 } //END FUNCTION
 //================================================================
 
@@ -2463,16 +2461,16 @@ public static function js_answer_suggest_ajx_selector($y_arr_values, $y_cols, $y
  * @return STRING							[HTML Code]
  */
 public static function js_init_html_area($y_filebrowser_link='') {
-//--
-return SmartMarkersTemplating::render_file_template(
-	'lib/core/templates/html-editor-init.inc.htm',
-	array(
-		'LANG' => (string) SmartTextTranslations::getLanguage(),
-		'FILE-BROWSER-CALLBACK-URL' => (string) $y_filebrowser_link
-	),
-	'yes' // export to cache
-);
-//--
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/html-editor-init.inc.htm',
+		[
+			'LANG' => (string) SmartTextTranslations::getLanguage(),
+			'FILE-BROWSER-CALLBACK-URL' => (string) $y_filebrowser_link
+		],
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -2496,30 +2494,30 @@ return SmartMarkersTemplating::render_file_template(
  *
  */
 public static function js_draw_html_area($yid, $yvarname, $yvalue='', $ywidth='720px', $yheight='480px', $y_allow_scripts=false, $y_allow_script_src=false, $y_cleaner_deftags='', $y_cleaner_mode='', $y_toolbar_ctrls='') {
-//--
-if((string)$y_cleaner_mode != '') {
-	if((string)$y_cleaner_mode !== 'DISALLOW') {
-		$y_cleaner_mode = 'ALLOW';
+	//--
+	if((string)$y_cleaner_mode != '') {
+		if((string)$y_cleaner_mode !== 'DISALLOW') {
+			$y_cleaner_mode = 'ALLOW';
+		} //end if
 	} //end if
-} //end if
-//--
-return SmartMarkersTemplating::render_file_template(
-	'lib/core/templates/html-editor-draw.inc.htm',
-	array(
-		'TXT-AREA-ID' 					=> (string) $yid, // HTML or JS ID
-		'TXT-AREA-VAR-NAME' 			=> (string) $yvarname, // HTML variable name
-		'TXT-AREA-WIDTH' 				=> (string) $ywidth, // 100px or 100%
-		'TXT-AREA-HEIGHT' 				=> (string) $yheight, // 100px or 100%
-		'TXT-AREA-CONTENT' 				=> (string) $yvalue,
-		'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool) $y_allow_scripts, // boolean
-		'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool) $y_allow_script_src, // boolean
-		'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed
-		'CLEANER-MODE-TAGS' 			=> (string) $y_cleaner_mode,
-		'TXT-AREA-TOOLBAR' 				=> (string) $y_toolbar_ctrls
-	),
-	'yes' // export to cache
-);
-//--
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/html-editor-draw.inc.htm',
+		[
+			'TXT-AREA-ID' 					=> (string) $yid, // HTML or JS ID
+			'TXT-AREA-VAR-NAME' 			=> (string) $yvarname, // HTML variable name
+			'TXT-AREA-WIDTH' 				=> (string) $ywidth, // 100px or 100%
+			'TXT-AREA-HEIGHT' 				=> (string) $yheight, // 100px or 100%
+			'TXT-AREA-CONTENT' 				=> (string) $yvalue,
+			'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool) $y_allow_scripts, // boolean
+			'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool) $y_allow_script_src, // boolean
+			'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed
+			'CLEANER-MODE-TAGS' 			=> (string) $y_cleaner_mode,
+			'TXT-AREA-TOOLBAR' 				=> (string) $y_toolbar_ctrls
+		],
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -2534,16 +2532,16 @@ return SmartMarkersTemplating::render_file_template(
  * @return STRING						[JS Code]
  */
 public static function js_callback_html_area($yurl, $is_popup=false) {
-//--
-return str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
-	'lib/core/templates/html-editor-callback.inc.htm',
-	array(
-		'IS_POPUP' 	=> (int) $is_popup,
-		'URL' 		=> (string) $yurl
-	),
-	'yes' // export to cache
-));
-//--
+	//--
+	return (string) str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/html-editor-callback.inc.htm',
+		[
+			'IS_POPUP' 	=> (int) $is_popup,
+			'URL' 		=> (string) $yurl
+		],
+		'yes' // export to cache
+	));
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -2555,15 +2553,15 @@ return str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (
  * @return STRING						[HTML Code]
  */
 public static function js_init_editarea() {
-//--
-return SmartMarkersTemplating::render_file_template(
-	'lib/core/templates/code-editor-init.inc.htm',
-	array(
-		'LANG' => (string) SmartTextTranslations::getLanguage()
-	),
-	'yes' // export to cache
-);
-//--
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/code-editor-init.inc.htm',
+		[
+			'LANG' => (string) SmartTextTranslations::getLanguage()
+		],
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -2586,71 +2584,90 @@ return SmartMarkersTemplating::render_file_template(
  *
  */
 public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='text', $y_editable=true, $y_width='720px', $y_height='300px', $y_line_numbers=true) {
-//--
-$the_lang = SmartTextTranslations::getLanguage();
-//--
-switch((string)$y_mode) {
-	case 'css':
-		$the_mode = 'text/css';
-		break;
-	case 'javascript':
-		$the_mode = 'text/javascript';
-		break;
-	case 'json':
-		$the_mode = 'application/x-json';
-		break;
-	case 'html':
-		$the_mode = 'text/html';
-		break;
-	case 'xml':
-		$the_mode = 'text/xml';
-		break;
-	case 'yaml':
-		$the_mode = 'text/x-yaml';
-		break;
-	case 'markdown':
-		$the_mode = 'text/x-markdown';
-		break;
-	case 'sql':
-		$the_mode = 'text/x-sql';
-		break;
-	case 'php':
-		$the_mode = 'application/x-httpd-php';
-		break;
-	case 'text':
-	default:
-		$the_mode = 'text/plain';
-} //end switch
-if(!$y_editable) {
-	$is_readonly = true;
-	$attrib_readonly = ' readonly';
-	$cursor_blinking = '0';
-	$theme = 'neo';
-} else {
-	$is_readonly = false;
-	$attrib_readonly = '';
-	$cursor_blinking = '530';
-	$theme = 'eclipse';
-} //end switch
-//--
-return SmartMarkersTemplating::render_file_template(
-	'lib/core/templates/code-editor-draw.inc.htm',
-	array(
-		'TXT-AREA-ID' 		=> (string) $yid,
-		'WIDTH' 			=> (string) $y_width,
-		'HEIGHT' 			=> (string) $y_height,
-		'SHOW-LINE-NUM' 	=> (bool) $y_line_numbers,
-		'READ-ONLY' 		=> (bool) $is_readonly,
-		'BLINK-CURSOR' 		=> Smart::format_number_int($cursor_blinking,'+'),
-		'CODE-TYPE' 		=> (string) $the_mode,
-		'THEME' 			=> (string) $theme,
-		'TXT-AREA-VAR-NAME' => (string) $yvarname,
-		'TXT-AREA-CONTENT' 	=> (string) $yvalue,
-		'TXT-AREA-READONLY'	=> (string) $attrib_readonly
-	),
-	'yes' // export to cache
-);
-//--
+	//--
+	$the_lang = SmartTextTranslations::getLanguage();
+	//--
+	switch((string)$y_mode) {
+		case 'css':
+			$the_mode = 'text/css';
+			break;
+		case 'javascript':
+			$the_mode = 'text/javascript';
+			break;
+		case 'json':
+			$the_mode = 'application/x-json';
+			break;
+		case 'html':
+			$the_mode = 'text/html';
+			break;
+		case 'xml':
+			$the_mode = 'text/xml';
+			break;
+		case 'yaml':
+			$the_mode = 'text/x-yaml';
+			break;
+		case 'markdown':
+			$the_mode = 'text/x-markdown';
+			break;
+		case 'sql':
+			$the_mode = 'text/x-sql';
+			break;
+		case 'php':
+			$the_mode = 'application/x-httpd-php';
+			break;
+		case 'text':
+		default:
+			$the_mode = 'text/plain';
+	} //end switch
+	if(!$y_editable) {
+		$is_readonly = true;
+		$attrib_readonly = ' readonly';
+		$cursor_blinking = '0';
+		$theme = 'neo';
+	} else {
+		$is_readonly = false;
+		$attrib_readonly = '';
+		$cursor_blinking = '530';
+		$theme = 'eclipse';
+	} //end switch
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/code-editor-draw.inc.htm',
+		[
+			'TXT-AREA-ID' 		=> (string) $yid,
+			'WIDTH' 			=> (string) $y_width,
+			'HEIGHT' 			=> (string) $y_height,
+			'SHOW-LINE-NUM' 	=> (bool) $y_line_numbers,
+			'READ-ONLY' 		=> (bool) $is_readonly,
+			'BLINK-CURSOR' 		=> Smart::format_number_int($cursor_blinking,'+'),
+			'CODE-TYPE' 		=> (string) $the_mode,
+			'THEME' 			=> (string) $theme,
+			'TXT-AREA-VAR-NAME' => (string) $yvarname,
+			'TXT-AREA-CONTENT' 	=> (string) $yvalue,
+			'TXT-AREA-READONLY'	=> (string) $attrib_readonly
+		],
+		'yes' // export to cache
+	);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px', $y_height='300px', $y_sandbox='') {
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/preview-iframe-draw.inc.htm',
+		[
+			'IFRM-ID' 		=> (string) $yid,
+			'WIDTH' 		=> (string) $y_width,
+			'HEIGHT' 		=> (string) $y_height,
+			'SANDBOX' 		=> (string) $y_sandbox,
+			'CONTENT' 		=> (string) $y_contents,
+		],
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -2884,7 +2901,7 @@ public static function js_draw_suggest_ajx_selector($y_width, $y_prefix, $y_suff
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/js/jsjssuggest/ajax_suggest.inc.htm',
-		array(
+		[
 			//-- passed as html
 			'WIDTH' 		=> Smart::escape_html((string)$y_width),
 			'DIV-HTML-ID' 	=> Smart::escape_html((string)$ajx_div),
@@ -2901,7 +2918,7 @@ public static function js_draw_suggest_ajx_selector($y_width, $y_prefix, $y_suff
 			'PREFIX' 		=> (string) $y_prefix, // this is preformatted HTML
 			'SUFFIX' 		=> (string) $y_suffix // this is preformatted HTML
 			//--
-		),
+		],
 		'yes' // export to cache
 	);
 	//--
@@ -3481,9 +3498,9 @@ public static function draw_powered_info($y_show_versions, $y_software_name='', 
 	$icon_dblite_powered = 'lib/core/img/db/powered_by_sqlite.png';
 	$icon_dblite_logo = 'lib/core/img/db/sqlite_logo_small.png';
 	//--
-	return SmartMarkersTemplating::render_file_template(
+	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/powered-info.inc.htm',
-		array(
+		[
 			'OS-LOGO' => $os_pict,
 			'WEB-SERVER-POWERED-VERSION' => $name_webserver.$version_webserver,
 			'WEB-SERVER-POWERED-ICON' => $icon_webserver_powered,
@@ -3503,7 +3520,7 @@ public static function draw_powered_info($y_show_versions, $y_software_name='', 
 
 			'SOFTWARE-NAME' => Smart::escape_html($y_software_name),
 			'SOFTWARE-POWERED-LOGO' => Smart::escape_html($y_software_powered_logo)
-		)
+		]
 	);
 	//--
 } //END FUNCTION
