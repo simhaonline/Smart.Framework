@@ -1,5 +1,5 @@
 
-/* SlickGrid Fixes for Bootstrap and others v.150318 */
+/* SlickGrid Fixes for Bootstrap and others v.160301 */
 
 .slickgrid-table {
 	margin-top: 5px;
@@ -11,7 +11,9 @@
 
 [class^="slick"],
 [class^="slick"] div {
-     box-sizing: content-box !important;
+	box-sizing: content-box !important;
+	-moz-box-sizing: content-box !important;
+	-webkit-box-sizing: content-box !important;
 }
 
 /* END */

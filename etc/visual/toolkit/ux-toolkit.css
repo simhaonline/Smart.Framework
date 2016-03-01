@@ -1,4 +1,4 @@
-/***** UX CSS Toolkit by unixman, r.160301.1721 :: License: BSD *****/
+/***** UX CSS Toolkit by unixman, r.160301.1927 :: License: BSD *****/
 /* based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ */
 
 /*** Base ***/
@@ -24,8 +24,8 @@
 	margin-right: auto;
 	margin-left: auto;
 	box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 .ux-g-grid-fluid {
 	padding-right: 15px;
@@ -33,16 +33,16 @@
 	margin-right: auto;
 	margin-left: auto;
 	box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 .ux-g-row {
 	clear: both !important;
 	margin-right: -15px;
 	margin-left: -15px;
 	box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 .ux-g-border {
 	border: 1px solid #ECECEC;
@@ -53,8 +53,8 @@
 	padding-right: 15px;
 	padding-left: 15px;
 	box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 .ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
 	float: left;
@@ -112,7 +112,6 @@
 	white-space: nowrap !important;
 	vertical-align: middle !important;
 	text-align: center !important;
-	box-sizing: border-box !important;
 	font-family: inherit !important;
 	font-size: 100% !important;
 	font-weight: bold !important;
@@ -125,6 +124,9 @@
 	user-select: none !important;
 	zoom: 1 !important;
 	margin-bottom: 5px;
+	box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 .ux-button:hover,
 .ux-button:focus {
@@ -390,6 +392,8 @@ so we can ignore the csslint warning.
 	border-radius: 4px;
 	vertical-align: middle;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 
 .ux-form select option,
@@ -410,6 +414,8 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	box-shadow: inset 0 1px 3px #ddd;
 	border-radius: 4px;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 
 
@@ -766,6 +772,8 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 
 .ux-menu {
 	box-sizing: border-box;
+	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
 }
 
 .ux-menu-fixed {
