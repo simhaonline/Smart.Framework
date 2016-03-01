@@ -1,4 +1,4 @@
-/***** UX CSS Toolkit by unixman, r.151128 :: License: BSD *****/
+/***** UX CSS Toolkit by unixman, r.160301.1721 :: License: BSD *****/
 /* based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ */
 
 /*** Base ***/
@@ -16,6 +16,91 @@
 	display: block;
 }
 
+/*** Grid :: 12 columns / fluid / responsive (extra, based on Bootstrap Grid) ***/
+
+.ux-g-grid {
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: auto;
+	box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
+}
+.ux-g-grid-fluid {
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: auto;
+	box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
+}
+.ux-g-row {
+	clear: both !important;
+	margin-right: -15px;
+	margin-left: -15px;
+	box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
+}
+.ux-g-border {
+	border: 1px solid #ECECEC;
+}
+.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
+	position: relative;
+	min-height: 1px;
+	padding-right: 15px;
+	padding-left: 15px;
+	box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
+}
+.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
+	float: left;
+}
+.ux-g-col-12 {
+	width: 100%;
+}
+.ux-g-col-11 {
+	width: 91.66666667%;
+}
+.ux-g-col-10 {
+	width: 83.33333333%;
+}
+.ux-g-col-9 {
+	width: 75%;
+}
+.ux-g-col-8 {
+	width: 66.66666667%;
+}
+.ux-g-col-7 {
+	width: 58.33333333%;
+}
+.ux-g-col-6 {
+	width: 50%;
+}
+.ux-g-col-5 {
+	width: 41.66666667%;
+}
+.ux-g-col-4 {
+	width: 33.33333333%;
+}
+.ux-g-col-3 {
+	width: 25%;
+}
+.ux-g-col-2 {
+	width: 16.66666667%;
+}
+.ux-g-col-1 {
+	width: 8.33333333%;
+}
+@media all and (max-width:767px) {
+	.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
+		width: 99% !important;
+		display: block !important;
+	}
+}
 
 /*** Buttons :: modified ***/
 
@@ -33,18 +118,19 @@
 	font-weight: bold !important;
 	text-decoration: none !important;
 	border-radius: 3px !important;
-	border: 1px solid #EEEEEE !important;
+	border: 1px solid #DDDDDD !important;
 	background-color: #FCFCFC !important;
 	color: #317AB9 !important;
 	cursor: pointer !important;
 	user-select: none !important;
 	zoom: 1 !important;
+	margin-bottom: 5px;
 }
 .ux-button:hover,
 .ux-button:focus {
-	border: 1px solid #317AB9 !important;
-	background-color: #428BCA !important;
-	color: #FFFFFF !important;
+	border: 1px solid #DDDDDD !important;
+	background-color: #F5F5F5 !important;
+	color: #317AB9 !important;
 }
 .ux-button:focus {
 	outline: 0 !important;
@@ -74,50 +160,56 @@
 }
 
 .ux-button-primary {
-	border: 1px solid #1B588E !important;
-	background-color: #2C699F !important;
+	border: 1px solid #3174AF !important;
+	background-color: #337AB7 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-primary:hover,
 .ux-button-primary:focus {
-	border: 1px solid #2C699F !important;
-	background-color: #3D7AAF !important;
+	border: 1px solid #20639E !important;
+	background-color: #2269A6 !important;
 	color: #FFFFFF !important;
 }
 
 .ux-button-secondary {
-	border: 1px solid #2EA3C6 !important;
-	background-color: #3FB4D7 !important;
+	border: 1px solid #289EC1 !important;
+	background-color: #31B0D5 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-secondary:hover,
 .ux-button-secondary:focus {
-	border: 1px solid #4AB0CD !important;
+	border: 1px solid #52BCDC !important;
 	background-color: #5BC0DE !important;
 	color: #FFFFFF !important;
 }
 
 .ux-button-regular {
+	/* border: 1px solid #55B455 !important;
+	background-color: #5CB85C !important;
+	color: #FFFFFF !important; */
 	border: 1px solid #608200 !important;
 	background-color: #719300 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-regular:hover,
 .ux-button-regular:focus {
+/*	border: 1px solid #3C893C !important;
+	background-color: #449D44 !important;
+	color: #FFFFFF !important; */
 	border: 1px solid #5C7702 !important;
 	background-color: #6D8813 !important;
 	color: #FFFFFF !important;
 }
 
 .ux-button-highlight {
-	border: 1px solid #DB8813 !important;
-	background-color: #EC9924 !important;
+	border: 1px solid #EC971F !important;
+	background-color: #FF9900 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-highlight:hover,
 .ux-button-highlight:focus {
-	border: 1px solid #DD9530 !important;
-	background-color: #EEA641 !important;
+	border: 1px solid #D98814 !important;
+	background-color: #EC971F !important;
 	color: #FFFFFF !important;
 }
 

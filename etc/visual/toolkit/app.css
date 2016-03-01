@@ -14,17 +14,6 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 /* -- framework -- */
 
-/* choose one from the following responsive grids for your application ;
-each of them have advantages but also disadvantages ;
-if you are not satisfied with any of them, roll out your own here: YUI Grid Builder http://yui.github.io/gridbuilder/
-of course you can replace it by the Bootstrap grid or any other grid system ...
-*/
-@import url("fluid-responsive-grid.css");
-/*
-@import url("fluid-responsive-uxgrid-12.css");
-@import url("fluid-responsive-uxgrid-16.css");
-*/
-
 /* you can modify this or you can use your own visual toolkit ;
 you can also roll out your own here: Yahoo PureCSS http://purecss.io/ ;
 of course you can replace it by Bootstrap or any other toolkit ...
