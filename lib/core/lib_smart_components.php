@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160226
+ * @version 	v.160302
  * @package 	Components:Framework
  *
  */
@@ -2654,7 +2654,7 @@ public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 
 
 //================================================================
-public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px', $y_height='300px', $y_sandbox='') {
+public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px', $y_height='300px', $y_sandbox='allow-popups') {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/preview-iframe-draw.inc.htm',

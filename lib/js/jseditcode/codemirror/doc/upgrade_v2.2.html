@@ -5,15 +5,15 @@
 <link rel=stylesheet href="docs.css">
 
 <div id=nav>
-  <a href="http://codemirror.net"><img id=logo src="logo.png"></a>
+  <a href="http://codemirror.net"><h1>CodeMirror</h1><img id=logo src="logo.png"></a>
 
   <ul>
-	<li><a href="../index.html">Home</a>
-	<li><a href="manual.html">Manual</a>
-	<li><a href="https://github.com/codemirror/codemirror">Code</a>
+    <li><a href="../index.html">Home</a>
+    <li><a href="manual.html">Manual</a>
+    <li><a href="https://github.com/codemirror/codemirror">Code</a>
   </ul>
   <ul>
-	<li><a class=active href="#">2.2 upgrade guide</a>
+    <li><a class=active href="#">2.2 upgrade guide</a>
   </ul>
 </div>
 
@@ -48,8 +48,8 @@ option, which can hold an object mapping key names to functionality. A
 simple example would be:</p>
 
 <pre>  extraKeys: {
-	"Ctrl-S": function(instance) { saveText(instance.getValue()); },
-	"Ctrl-/": "undo"
+    "Ctrl-S": function(instance) { saveText(instance.getValue()); },
+    "Ctrl-/": "undo"
   }</pre>
 
 <p>Keys can be mapped either to functions, which will be given the

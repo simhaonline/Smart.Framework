@@ -24,7 +24,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160204
+ * @version 	v.160302
  * @package 	Exporters
  *
  */
@@ -32,7 +32,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	const version = 'v.1.5.4-r.160204@smart'; // with fixes from 1.5.1 -> 1.5.4
+	const version = 'v.1.5.4-r.160302@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
 
 	//===================================
 
@@ -84,10 +84,11 @@ final class SmartMarkdownToHTML {
 		'[' => array('Link'),
 		'_' => array('Emphasis'),
 		'`' => array('Code'),
-		'~' => array('Strikethrough'),
+		'~' => array('Strikethrough', 'Subscript'), // '~' => array('Strikethrough') # extended syntax by unixman
+		'^' => array('Superscript'), // extended syntax by unixman
 		'\\' => array('EscapeSequence'),
 	);
-	private $inlineMarkerList = '!"*_&[:<>`~\\';
+	private $inlineMarkerList = '!"*_&[:<>`~^\\'; // $inlineMarkerList = '!"*_&[:<>`~\\'; # extended syntax by unixman
 	private $DefinitionData;
 	private $specialCharacters = array(
 		'\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|',
@@ -1141,7 +1142,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$Excerpt = array('text' => $excerpt, 'context' => $text);
 			//--
-			foreach ($this->InlineTypes[$marker] as $inlineType) {
+			foreach($this->InlineTypes[$marker] as $inlineType) {
 				//--
 				$Inline = $this->{'inline'.$inlineType}($Excerpt);
 				//--
@@ -1254,7 +1255,7 @@ final class SmartMarkdownToHTML {
 		//--
 		if($Excerpt['text'][1] === $marker AND preg_match($this->StrongRegex[$marker], $Excerpt['text'], $matches)) {
 			$emphasis = 'b'; // 'strong';
-		} elseif (preg_match($this->EmRegex[$marker], $Excerpt['text'], $matches)) {
+		} elseif(preg_match($this->EmRegex[$marker], $Excerpt['text'], $matches)) {
 			$emphasis = 'i'; // 'em';
 		} else {
 			return;
@@ -1464,6 +1465,49 @@ final class SmartMarkdownToHTML {
 	} //END FUNCTION
 
 
+	// added by unixman to extend syntax: ^Superscript^
+	private function inlineSuperscript($Excerpt) {
+		//--
+		if(!isset($Excerpt['text'][0])) {
+			return;
+		} //end if
+		//--
+		if($Excerpt['text'][0] === '^' AND preg_match('/^\^(?=\S)(.+?)(?<=\S)\^/', $Excerpt['text'], $matches)) {
+			return array(
+				'extent' => strlen($matches[0]),
+				'element' => array(
+					'name' => 'sup',
+					'text' => $matches[1],
+					'handler' => 'line',
+				),
+			);
+		} //end if
+		//--
+	} //END FUNCTION
+
+
+	// added by unixman to extend syntax: ~Subscript~
+	private function inlineSubscript($Excerpt) {
+		//--
+		if(!isset($Excerpt['text'][0])) {
+			return;
+		} //end if
+		//--
+		if($Excerpt['text'][0] === '~' AND $Excerpt['text'][1] !== '~' AND preg_match('/^~(?=\S)(.+?)(?<=\S)~/', $Excerpt['text'], $matches)) {
+			return array(
+				'extent' => strlen($matches[0]),
+				'element' => array(
+					'name' => 'sub',
+					'text' => $matches[1],
+					'handler' => 'line',
+				),
+			);
+		} //end if
+		//--
+	} //END FUNCTION
+
+
+	// syntax: ~~Strikethrough~~
 	private function inlineStrikethrough($Excerpt) {
 		//--
 		if(!isset($Excerpt['text'][1])) {

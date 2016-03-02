@@ -14,25 +14,25 @@
 <script src="activebookmark.js"></script>
 
 <div id=nav>
-  <a href="http://codemirror.net"><img id=logo src="logo.png"></a>
+  <a href="http://codemirror.net"><h1>CodeMirror</h1><img id=logo src="logo.png"></a>
 
   <ul>
-	<li><a href="../index.html">Home</a>
-	<li><a href="manual.html">Manual</a>
-	<li><a href="https://github.com/codemirror/codemirror">Code</a>
+    <li><a href="../index.html">Home</a>
+    <li><a href="manual.html">Manual</a>
+    <li><a href="https://github.com/codemirror/codemirror">Code</a>
   </ul>
   <ul>
-	<li><a class=active href="#upgrade">Upgrade guide</a>
-	<li><a href="#dom">DOM structure</a></li>
-	<li><a href="#gutters">Gutter model</a></li>
-	<li><a href="#events">Event handling</a></li>
-	<li><a href="#marktext">markText method arguments</a></li>
-	<li><a href="#folding">Line folding</a></li>
-	<li><a href="#lineclass">Line CSS classes</a></li>
-	<li><a href="#positions">Position properties</a></li>
-	<li><a href="#matchbrackets">Bracket matching</a></li>
-	<li><a href="#modes">Mode management</a></li>
-	<li><a href="#new">New features</a></li>
+    <li><a class=active href="#upgrade">Upgrade guide</a>
+    <li><a href="#dom">DOM structure</a></li>
+    <li><a href="#gutters">Gutter model</a></li>
+    <li><a href="#events">Event handling</a></li>
+    <li><a href="#marktext">markText method arguments</a></li>
+    <li><a href="#folding">Line folding</a></li>
+    <li><a href="#lineclass">Line CSS classes</a></li>
+    <li><a href="#positions">Position properties</a></li>
+    <li><a href="#matchbrackets">Bracket matching</a></li>
+    <li><a href="#modes">Mode management</a></li>
+    <li><a href="#new">New features</a></li>
   </ul>
 </div>
 
@@ -94,8 +94,8 @@ only behavior).</p>
 &lt;script>
   // Create an instance with two gutters -- line numbers and notes
   var cm = new CodeMirror(document.body, {
-	gutters: ["note-gutter", "CodeMirror-linenumbers"],
-	lineNumbers: true
+    gutters: ["note-gutter", "CodeMirror-linenumbers"],
+    lineNumbers: true
   });
   // Add a note to line 0
   cm.setGutterMarker(0, "note-gutter", document.createTextNode("hi"));

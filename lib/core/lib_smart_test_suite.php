@@ -79,7 +79,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 	//--
 
 	//-- AJAX POST FORM
-	$btnop = '<button class="ux-button ux-button-primary" onClick="'.SmartComponents::post_form_by_ajax('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>').' return false;">Submit Form by AJAX</button>';
+	$btnop = '<button class="ux-button ux-button-large ux-button-highlight" onClick="'.SmartComponents::post_form_by_ajax('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>').' return false;">Submit this Test Form by AJAX &nbsp; <span class="fa fa-send"></span></button>';
 	//-- END
 
 	//-- lists with one element
