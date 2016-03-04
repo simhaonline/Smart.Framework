@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160302
+ * @version 	v.160303
  * @package 	Components:Framework
  *
  */
@@ -2588,14 +2588,14 @@ public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 	$the_lang = SmartTextTranslations::getLanguage();
 	//--
 	switch((string)$y_mode) {
-		case 'css':
-			$the_mode = 'text/css';
+		case 'json':
+			$the_mode = 'application/json';
 			break;
 		case 'javascript':
 			$the_mode = 'text/javascript';
 			break;
-		case 'json':
-			$the_mode = 'application/x-json';
+		case 'css':
+			$the_mode = 'text/css';
 			break;
 		case 'html':
 			$the_mode = 'text/html';
@@ -2603,17 +2603,24 @@ public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 		case 'xml':
 			$the_mode = 'text/xml';
 			break;
+		case 'markdown':
+			$the_mode = 'text/x-markdown';
+			break;
 		case 'yaml':
 			$the_mode = 'text/x-yaml';
 			break;
-		case 'markdown':
-			$the_mode = 'text/x-markdown';
+		case 'php':
+			$the_mode = 'application/x-httpd-php';
 			break;
 		case 'sql':
 			$the_mode = 'text/x-sql';
 			break;
-		case 'php':
-			$the_mode = 'application/x-httpd-php';
+		case 'spreadsheet':
+			$the_mode = 'text/x-spreadsheet';
+			break;
+		case 'gpg':
+		case 'pgp':
+			$the_mode = 'application/pgp';
 			break;
 		case 'text':
 		default:
@@ -2623,12 +2630,12 @@ public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 		$is_readonly = true;
 		$attrib_readonly = ' readonly';
 		$cursor_blinking = '0';
-		$theme = 'neo';
+		$theme = 'uxm';
 	} else {
 		$is_readonly = false;
 		$attrib_readonly = '';
 		$cursor_blinking = '530';
-		$theme = 'eclipse';
+		$theme = 'uxw';
 	} //end switch
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
@@ -2654,7 +2661,7 @@ public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 
 
 //================================================================
-public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px', $y_height='300px', $y_sandbox='allow-popups') {
+public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px', $y_height='300px', $y_maximized=false, $y_sandbox='allow-popups') {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/preview-iframe-draw.inc.htm',
@@ -2663,7 +2670,8 @@ public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px
 			'WIDTH' 		=> (string) $y_width,
 			'HEIGHT' 		=> (string) $y_height,
 			'SANDBOX' 		=> (string) $y_sandbox,
-			'CONTENT' 		=> (string) $y_contents,
+			'MAXIMIZED' 	=> (bool) $y_maximized,
+			'CONTENT' 		=> (string) $y_contents
 		],
 		'yes' // export to cache
 	);

@@ -311,8 +311,10 @@ div.CodeMirror-dragcursors {
 .CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }
 
 .cm-searching {
-  background: #ffa;
-  background: rgba(255, 255, 0, .4);
+  background: #FFFFAA;
+}
+.cm-matchhighlight {
+  background: #FBEE6B; /* fix by unixman */
 }
 
 /* IE7 hack to prevent it from returning funny offsetTops on the spans */

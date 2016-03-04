@@ -117,7 +117,7 @@ final class SmartMarkdownToHTML {
 						  'time',
 	);
 	//-- extra
-	private $regexAttribute = '[ ]*{((?:[#\.@][_a-zA-Z0-9,\-\=\$\:;]+[ ]*)+)}';
+	private $regexAttribute = '[ ]*{((?:[#\.@][_a-zA-Z0-9,\-\=\$\:;\!]+[ ]*)+)}';
 	//--
 
 	//===================================
@@ -1030,7 +1030,8 @@ final class SmartMarkdownToHTML {
 					if(!is_array($Element['attributes'])) {
 						$Element['attributes'] = array();
 					} //end if
-					$Element['attributes']['style'] = 'text-align: '.$Block['alignments'][$index].';';
+					//$Element['attributes']['style'] = 'text-align: '.$Block['alignments'][$index].';';
+					$Element['attributes']['style'] = 'text-align: '.$Block['alignments'][$index].'; '.$Element['attributes']['style']; // fix by unixman
 				} //end if
 				//--
 				$Elements[] = $Element;
