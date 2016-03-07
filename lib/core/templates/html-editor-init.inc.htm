@@ -1,15 +1,19 @@
 <!-- Partial Template: Core.InitHTMLEditor -->
-<!-- CLEditor-jQuery :: START (Language: [####LANG|html####]) -->
-<script type="text/javascript" src="lib/js/jquery/cleditor/jquery.htmlcleaner.js"></script>
-<link rel="stylesheet" type="text/css" href="lib/js/jquery/cleditor/jquery.cleditor.css">
-<script type="text/javascript" src="lib/js/jquery/cleditor/jquery.cleditor.js"></script>
+<script type="text/javascript">
+	// CLEditor-jQuery :: START (Language: [####LANG|html####])
+	SmartJS_BrowserUtils.RequireJS('lib/js/jquery/cleditor/jquery.htmlcleaner.js');
+	SmartJS_BrowserUtils.RequireCSS('lib/js/jquery/cleditor/jquery.cleditor.css');
+	SmartJS_BrowserUtils.RequireJS('lib/js/jquery/cleditor/jquery.cleditor.js');
+</script>
 <script type="text/javascript">
 	var CLEditor_SmartFrameworkComponents_fileBrowserCallBackURL = '[####FILE-BROWSER-CALLBACK-URL|js####]';
 </script>
-<script type="text/javascript" src="lib/js/jquery/cleditor/jquery.cleditor.smartframeworkcomponents-img.js"></script>
-<script type="text/javascript" src="lib/js/jquery/cleditor/jquery.cleditor.fullscreen.js"></script>
-<script type="text/javascript" src="lib/js/jquery/cleditor/jquery.cleditor.wordcount.js"></script>
-<script type="text/javascript" src="lib/js/jquery/cleditor/jquery.cleditor.tableadvanced.js"></script>
-<script type="text/javascript" src="lib/js/jquery/cleditor/jquery.cleditor.smartframeworkcomponents-utils.js"></script>
-<!-- CLEditor-jQuery :: END -->
+<script type="text/javascript">
+	SmartJS_BrowserUtils.RequireJS('lib/js/jquery/cleditor/jquery.cleditor.smartframeworkcomponents-img.js');
+	SmartJS_BrowserUtils.RequireJS('lib/js/jquery/cleditor/jquery.cleditor.fullscreen.js');
+	SmartJS_BrowserUtils.RequireJS('lib/js/jquery/cleditor/jquery.cleditor.wordcount.js');
+	SmartJS_BrowserUtils.RequireJS('lib/js/jquery/cleditor/jquery.cleditor.tableadvanced.js');
+	SmartJS_BrowserUtils.RequireJS('lib/js/jquery/cleditor/jquery.cleditor.smartframeworkcomponents-utils.js');
+	// CLEditor-jQuery :: END
+</script>
 <!-- #END :: Partial Template: Core.InitHTMLEditor -->

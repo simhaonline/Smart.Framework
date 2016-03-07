@@ -13,7 +13,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.1.2');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.1.3');
 
 
 //==================================================================================
@@ -28,7 +28,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.1.2');
  * @access 		private
  * @internal
  *
- * @version		160222
+ * @version		160307
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -523,27 +523,13 @@ public static function Run() {
 	$appData['app-domain'] = (string) $configs['app']['index-domain'];
 	$appData['template-file'] = SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file;
 	$appData['template-path'] = SMART_APP_TEMPLATES_DIR.$the_template_path;
-	//--
-	if(strpos($the_template_content, '[####CSS.BASE####]') !== false) {
-		$appData['css.base'] = SmartComponents::css_inc_base();
-	} //end if
-	if(strpos($the_template_content, '[####JS.BASE####]') !== false) {
-		$appData['js.base'] = SmartComponents::js_inc_base();
-	} //end if
-	if(strpos($the_template_content, '[####JS.UI####]') !== false) {
-		$appData['js.ui'] = SmartComponents::js_inc_ui();
-	} //end if
-	if(strpos($the_template_content, '[####JS.SETTINGS####]') !== false) {
-		$appData['js.settings'] = SmartComponents::js_inc_settings((string)$configs['js']['popup-mode'], false, (bool)SMART_APP_VISITOR_COOKIE);
-	} //end if
-	//--
+	$appData['js.settings'] = SmartComponents::js_inc_settings((string)$configs['js']['popup-mode'], false, (bool)SMART_APP_VISITOR_COOKIE);
 	$appData['head-meta'] = (string) $appData['head-meta'];
 	if((string)$appData['head-meta'] == '') {
 		$appData['head-meta'] = '<!-- Head Meta -->';
 	} //end if
 	$appData['title'] = (string) $appData['title'];
 	$appData['main'] = (string) $appData['main'];
-	//--
 	$appData['lang'] = SmartTextTranslations::getLanguage();
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {

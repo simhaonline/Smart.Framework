@@ -9,10 +9,10 @@
 <!-- Base Path is: [####BASE-PATH####] -->
 <title>[####TITLE####]</title>
 [####HEAD-META####]
-[####CSS.BASE####]
-<link rel="stylesheet" type="text/css" href="[####TEMPLATE-PATH####]styles.css">
-[####JS.BASE####]
-[####JS.UI####]
+[@@@@SUB-TEMPLATE:css-app.inc.htm@@@@]
+<!-- Template Styles --><link rel="stylesheet" type="text/css" href="[####TEMPLATE-PATH####]styles.css">
+[@@@@SUB-TEMPLATE:js-base.inc.htm@@@@]
+[@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
 [####JS.SETTINGS####]
 </head>
 <body>

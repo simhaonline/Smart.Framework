@@ -20,7 +20,7 @@
 	height: 0px;
 }
 .smartframework_debugbar_switcher {
-	color: #955251;
+	color: #403F6F;
 	cursor: pointer;
 	width: 50px;
 	height: 35px;
@@ -30,7 +30,7 @@
 	top: 0px;
 }
 .smartframework_debugbar_switcher:hover {
-	color: #F5926C;
+	color: #007784;
 }
 .smartframework_debugbar_refresher {
 	color: #D09D5D;
@@ -43,7 +43,7 @@
 	top: 0px;
 }
 .smartframework_debugbar_refresher:hover {
-	color: #007784;
+	color: #955251;
 }
 .smartframework_debugbar_element {
 	color: #302E32;
@@ -129,7 +129,7 @@
 	font-size: 22px !important;
 	line-height: 34px !important;
 	font-weight: bold;
-	color: #CCCCCC;
+	color: #A3AC99;
 	position: absolute;
 	top: 1px;
 	left: 705px;
@@ -188,7 +188,6 @@ function SmartDebugToggleDebugBar() {
 	var toggle_button = document.getElementById('SmartFramework___Debug_BtnClose');
 	//--
 	if(parent_div.style.width == '45px') {
-		toggle_button.style.color = '';
 		parent_div.style.borderBottomLeftRadius = '';
 		parent_div.style.borderTopLeftRadius = '';
 		parent_div.style.bottom = '';
@@ -198,7 +197,6 @@ function SmartDebugToggleDebugBar() {
 		parent_div.style.bottom = '350px';
 		parent_div.style.borderTopLeftRadius = '10px';
 		parent_div.style.borderBottomLeftRadius = '10px';
-		toggle_button.style.color = '#007784';
 	} //end if else
 	//--
 } //END FUNCTION

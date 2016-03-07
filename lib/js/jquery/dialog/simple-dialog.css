@@ -1,5 +1,5 @@
 /*
- * Simple Dialog r.150527
+ * Simple Dialog r.160306
  *
  * (c) 2015 unix-world.org
  *
@@ -42,7 +42,7 @@
 	font-weight: bold;
 	padding-left: 10px;
 	padding-right: 10px;
-	border: 1px solid #ECECEC;
+	border-bottom: 1px solid #ECECEC;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 }
@@ -51,7 +51,7 @@
 	font-size: 14px;
 	margin: 0;
 	padding: 12px 4px 12px 8px;
-	width: 90%;
+	width: 98%;
 	height: 40%;
 	overflow: auto;
 }

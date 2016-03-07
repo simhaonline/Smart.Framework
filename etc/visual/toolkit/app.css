@@ -1,11 +1,11 @@
 
-/* -- CSS Start :: SmartFramework / App :: r.160219 -- */
+/* -- CSS Start :: SmartFramework / App :: r.160307 -- */
 
 /* NOTICE:
-DO NOT modify the CSS except if located in the etc/ folder.
+DO NOT modify the CSS original files except if located in the etc/ folder.
 For the rest of CSS located in other folders (example: lib/),
-just make a copy of it somewhere under the /etc folder, modify it
-and load it from there ...
+just make a copy of it somewhere under the /etc folder,
+modify it and load it from there ...
 The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 */
 
@@ -14,33 +14,32 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 /* -- framework -- */
 
-/* you can modify this or you can use your own visual toolkit ;
-you can also roll out your own here: Yahoo PureCSS http://purecss.io/ ;
-of course you can replace it by Bootstrap or any other toolkit ...
-*/
-@import url("ux-toolkit.css");
+@import url("../../../lib/framework/css/ux-toolkit.css");
 
-/* this is optional, but it will enhance the application by a toolset of smart font icons ;
-you can disable it or you can replace it with other icons font ...
-*/
-@import url("fonts/fontawesome.css");
+@import url("../../../lib/framework/css/fonts/fontawesome.css");
 
 
-/* -- components -- */
+/* -- core -- */
 
-/* this is required but you can make a copy of it,
-modify it and after add it somewhere into the etc/ folder and load from there
-*/
 @import url("../../../lib/core/css/notifications.css");
 
-/* this is required only if using the components / navbox
 @import url("../../../lib/core/css/navbox.css");
-*/
 
-/* this is required if using the components / (active) table
+/* optional, required just for Components / ActiveTable */
 @import url("../../../lib/core/css/activetable.css");
-*/
 
+
+/* -- plugins -- */
+
+@import url("../../../lib/core/plugins/css/mediagallery.css");
+
+@import url("../../../lib/core/plugins/css/markdown.css");
+
+/* optional, required just for ActiveCalendar */
+@import url("../../../lib/core/plugins/css/calendar.css");
+
+/* optional, required just for Email Mime Parser */
+@import url("../../../lib/core/plugins/css/email.css");
 
 /* ----------------------------- */
 

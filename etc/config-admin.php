@@ -18,7 +18,5 @@ $configs['app']['admin-template-file'] 				= 'template.htm';			// default admin 
 $configs['app']['admin-template-modal-popup-file'] 	= 'template-modal.htm';		// default admin modal/popup template file
 //---------------------------------------
 
-$configs['js']['ui-theme'] = 'default-grey-neutral'; 							// use a custom theme for admin ; values: @default or choose a theme from cfg/visual/ui/themes
-
 // end of php code
 ?>

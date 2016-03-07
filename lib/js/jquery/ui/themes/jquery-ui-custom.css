@@ -1,5 +1,10 @@
 /* jQueryUI Fixes Fix */
 
+.ui-tooltip {
+	max-width: 512px;
+	word-wrap: break-word;
+}
+
 .ui-dialog {
 	z-index: 2137483009;
 }

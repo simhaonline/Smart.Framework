@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160303
+ * @version 	v.160307
  * @package 	Components:Framework
  *
  */
@@ -440,17 +440,23 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
 			} //end if else
 			//--
 			if((string)$tmp_extra_style == '#JQUERY-FILTER#') {
-				$have_filter = 'true';
+				$have_filter = true;
 				$the_width += 25;
 			} else {
-				$have_filter = 'false';
+				$have_filter = false;
 			} //end if else
 			//--
-			$js = '<script type="text/javascript">';
-			//$js .= '(function() { ';
-			$js .= "SmartJS_BrowserUIUtils.Smart_SelectList('".Smart::escape_js($element_id)."', ".(int)$the_width.", ".(int)$the_height.", false, ".$have_filter.");";
-			//$js .= ' })();';
-			$js .= '</script>';
+			$js = (string) SmartMarkersTemplating::render_file_template(
+				'lib/core/templates/ui-list-single.inc.htm',
+				[
+					'LANG' => (string) SmartTextTranslations::getLanguage(),
+					'ID' => (string) $element_id,
+					'WIDTH' => (int) $the_width,
+					'HEIGHT' => (int) $the_height,
+					'HAVE-FILTER' => (bool) $have_filter
+				],
+				'yes' // export to cache
+			);
 			//--
 		} //end if else
 		//--
@@ -574,10 +580,10 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 
 	//-- bug fix
 	if(Smart::array_size($yarr_data) > 2) {
-		$use_multi_list_jq = 'true';
+		$use_multi_list_jq = true;
 		$use_multi_list_htm = 'multiple size="8"';
 	} else {
-		$use_multi_list_jq = 'false';
+		$use_multi_list_jq = false;
 		$use_multi_list_htm = 'size="1"';
 	} //end if else
 	//--
@@ -624,21 +630,28 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 			} //end if else
 			//--
 			if((string)$tmp_extra_style == '#JQUERY-FILTER#') {
-				$have_filter = 'true';
+				$have_filter = true;
 				$the_width += 25;
 			} else {
-				$have_filter = 'false';
+				$have_filter = false;
 			} //end if else
 			//--
-			if((string)$use_multi_list_jq == 'false') {
-				$have_filter = 'false'; // if multi will be enforced to single because of just 2 rows or less, disable filter !
+			if($use_multi_list_jq === false) {
+				$have_filter = false; // if multi will be enforced to single because of just 2 rows or less, disable filter !
 			} //end if
 			//--
-			$js = '<script type="text/javascript">';
-			//$js .= '(function() { ';
-			$js .= "SmartJS_BrowserUIUtils.Smart_SelectList('".Smart::escape_js($element_id)."', ".(int)$the_width.", ".(int)$the_height.", ".$use_multi_list_jq.", ".$have_filter.");";
-			//$js .= ' })();';
-			$js .= '</script>';
+			$js = (string) SmartMarkersTemplating::render_file_template(
+				'lib/core/templates/ui-list-multi.inc.htm',
+				[
+					'LANG' => (string) SmartTextTranslations::getLanguage(),
+					'ID' => (string) $element_id,
+					'WIDTH' => (int) $the_width,
+					'HEIGHT' => (int) $the_height,
+					'USE-JQ' => (bool) $use_multi_list_jq,
+					'HAVE-FILTER' => (bool) $have_filter
+				],
+				'yes' // export to cache
+			);
 			//--
 		} //end if
 		//--
@@ -652,7 +665,7 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 	//--
 
 	//--
-	if((string)$use_multi_list_jq == 'false') {
+	if($use_multi_list_jq === false) {
 		$use_blank_value = 'yes';
 	} //emd if
 	//--
@@ -854,21 +867,21 @@ public static function format_css_width($y_width) {
 
 //================================================================
 /**
- * Function: Rounded Message Template
+ * Function: Notifications Message Template
  *
  * @access 		private
  * @internal
  *
  */
-public static function rounded_msg_template($y_html, $y_sign, $y_sgnstyle, $y_style, $y_width) {
+private static function notifications_template($y_html, $y_sign, $y_sgnstyle, $y_style, $y_width) {
 	//--
 	$y_width = self::format_css_width($y_width);
 	//--
-	if((string)$y_width == '100%') {
+	if(((string)$y_width == '100%') OR ((string)$y_width == '99%') OR ((string)$y_width == '98%')) {
 		$y_width = '97%'; // correction because of the margin
 	} //end if
 	//--
-	return '<div align="center"><div style="width:'.$y_width.';"><div id="'.$y_style.'"><div style="'.$y_sgnstyle.'"><img src="'.$y_sign.'" style="vertical-align:middle; padding-left:10px;"></div>'.$y_html.'</div></div></div>';
+	return '<!-- require: notifications.css --><div align="center"><div style="width:'.$y_width.';"><div id="'.$y_style.'"><div style="'.$y_sgnstyle.'"><img src="'.$y_sign.'" style="vertical-align:middle; padding-left:10px;"></div>'.$y_html.'</div></div></div>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -877,7 +890,7 @@ public static function rounded_msg_template($y_html, $y_sign, $y_sgnstyle, $y_st
 //================================================================
 public static function operation_question($y_html, $y_width='550') {
 	//--
-	return self::rounded_msg_template($y_html, 'lib/core/img/sign_quest.png', 'float:right; line-height:40px;', 'operation_question', $y_width); // question
+	return self::notifications_template($y_html, 'lib/core/img/sign_quest.png', 'float:right; line-height:40px;', 'operation_question', $y_width); // question
 	//--
 } //END FUNCTION
 //================================================================
@@ -886,7 +899,7 @@ public static function operation_question($y_html, $y_width='550') {
 //================================================================
 public static function operation_notice($y_html, $y_width='550') {
 	//--
-	return self::rounded_msg_template($y_html, 'lib/core/img/sign_notice.png', 'float:right; line-height:40px;', 'operation_notice', $y_width); // notice
+	return self::notifications_template($y_html, 'lib/core/img/sign_notice.png', 'float:right; line-height:40px;', 'operation_notice', $y_width); // notice
 	//--
 } //END FUNCTION
 //================================================================
@@ -895,7 +908,7 @@ public static function operation_notice($y_html, $y_width='550') {
 //================================================================
 public static function operation_ok($y_html, $y_width='550') {
 	//--
-	return self::rounded_msg_template($y_html, 'lib/core/img/sign_info.png', 'float:right; line-height:40px;', 'operation_info', $y_width); // info (ok)
+	return self::notifications_template($y_html, 'lib/core/img/sign_info.png', 'float:right; line-height:40px;', 'operation_info', $y_width); // info (ok)
 	//--
 } //END FUNCTION
 //================================================================
@@ -904,7 +917,7 @@ public static function operation_ok($y_html, $y_width='550') {
 //================================================================
 public static function operation_warn($y_html, $y_width='550') {
 	//--
-	return self::rounded_msg_template($y_html, 'lib/core/img/sign_warn.png', 'float:right; line-height:40px;', 'operation_warn', $y_width); // warn
+	return self::notifications_template($y_html, 'lib/core/img/sign_warn.png', 'float:right; line-height:40px;', 'operation_warn', $y_width); // warn
 	//--
 } //END FUNCTION
 //================================================================
@@ -913,7 +926,7 @@ public static function operation_warn($y_html, $y_width='550') {
 //================================================================
 public static function operation_error($y_html, $y_width='550') {
 	//--
-	return self::rounded_msg_template($y_html, 'lib/core/img/sign_error.png', 'float:right; line-height:40px;', 'operation_error', $y_width); // error
+	return self::notifications_template($y_html, 'lib/core/img/sign_error.png', 'float:right; line-height:40px;', 'operation_error', $y_width); // error
 	//--
 } //END FUNCTION
 //================================================================
@@ -1077,6 +1090,7 @@ public static function table($y_size, $y_title, $y_arr_addlink, $y_arr_edtlink, 
 		} //end if else
 	} //end if
 	//--
+	$out .= '<!-- require: activetable.css -->'."\n";
 	$out .= '<div style="width:100%;">'."\n"; // style += overflow:auto;
 	$out .= '<script type="text/javascript">var Smart_Table_Notification_ID;</script>'."\n";
 	$out .= '<table id="'.Smart::escape_html($color_subtitle).'" align="center" width="'.Smart::escape_html($y_size).'" border="0" cellspacing="1" cellpadding="2" title="'.Smart::escape_html(Smart::striptags($y_title, 'no')).'">'."\n";
@@ -1537,10 +1551,12 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 	//--
 	global $configs;
 	//--
+	$styles = '<!-- require: navbox.css -->'."\n";
+	//--
 	if((string)$configs['nav']['pager'] == 'arrows') {
-		return self::arrows_navpager($link, $total, $limit, $current, $display_if_empty, $adjacents);
+		return $styles.self::arrows_navpager($link, $total, $limit, $current, $display_if_empty, $adjacents);
 	} else {
-		return self::numeric_navpager($link, $total, $limit, $current, $display_if_empty, $adjacents);
+		return $styles.self::numeric_navpager($link, $total, $limit, $current, $display_if_empty, $adjacents);
 	} //end if else
 	//--
 } //END FUNCTION
@@ -1781,7 +1797,7 @@ private static function numeric_navpager($link, $total, $limit, $current, $displ
  * @internal
  *
  */
-public static function window_mode_init_smartpopup() {
+private static function window_mode_init_smartpopup() {
 	return '<script type="text/javascript">SmartJS_BrowserUtils_Use_iFModalBox_Active = 0;</script>';
 } //END FUNCTION
 //================================================================
@@ -1796,7 +1812,7 @@ public static function window_mode_init_smartpopup() {
  * @internal
  *
  */
-public static function window_mode_init_smartmodal() {
+private static function window_mode_init_smartmodal() {
 	return '<script type="text/javascript">SmartJS_BrowserUtils_Use_iFModalBox_Active = 1; SmartJS_BrowserUtils.Control_ModalCascading();</script>';
 } //END FUNCTION
 //================================================================
@@ -1810,7 +1826,7 @@ public static function window_mode_init_smartmodal() {
  * @internal
  *
  */
-public static function window_mode_init_protection_to_smartmodal() {
+private static function window_mode_init_protection_to_smartmodal() {
 	return '<script type="text/javascript">SmartJS_BrowserUtils_Use_iFModalBox_Protection = 1;</script>';
 } //END FUNCTION
 //================================================================
@@ -2110,32 +2126,6 @@ public static function js_draw_checkbox_checkall($y_form_name) {
 
 //================================================================
 /**
- * Function: CSS Include Base
- *
- * @access 		private
- * @internal
- *
- */
-public static function css_inc_base() {
-	//--
-	$the_css_base_file = 'etc/visual/css_base.inc.htm';
-	//--
-	if(!is_file($the_css_base_file)) {
-		Smart::raise_error(
-			'ERROR: SmartFramework/Components CSS-Base is missing: '.$the_css_base_file,
-			'ERROR: SmartFramework/Components CSS-Base is missing !' // msg to display
-		);
-		die(''); // just in case
-	} //end if
-	//--
-	return (string) SmartFileSystem::staticread($the_css_base_file);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
  * Function: JS Include Settings
  *
  * @access 		private
@@ -2156,7 +2146,7 @@ public static function js_inc_settings($y_popup_mode, $y_use_protection=false, $
 	$js_settings = '';
 	//--
 	if($y_use_test_browser === true) {
-		$js_settings .= self::js_inc_testbrowser();
+		$js_settings .= '<script type="text/javascript">Test_Browser_Compliance.checkCookies();</script>';
 	} //end if
 	//--
 	if((string)$the_popup_mode == 'popup') { // popup
@@ -2168,120 +2158,7 @@ public static function js_inc_settings($y_popup_mode, $y_use_protection=false, $
 		} //end if
 	} //end if else
 	//--
-	return (string) '<!-- JS Settings -->'."\n".$js_settings."\n".'<!-- JS Settings :: END -->';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Include Base
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_inc_base() {
-	//--
-	$the_js_base_file = 'lib/js/js_base.inc.htm';
-	//--
-	if(!is_file($the_js_base_file)) {
-		Smart::raise_error(
-			'ERROR: SmartFramework/Components JS-Base is missing: '.$the_js_base_file,
-			'ERROR: SmartFramework/Components JS-Base is missing !' // msg to display
-		);
-		die(''); // just in case
-	} //end if
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		$the_js_base_file,
-		[
-			'LANG' => SmartTextTranslations::getLanguage()
-		]
-	);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Include UI
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_inc_ui() {
-	//--
-	$the_js_ui_file = 'lib/js/jquery/js_ui.inc.htm';
-	//--
-	if(!is_file($the_js_ui_file)) {
-		Smart::raise_error(
-			'ERROR: SmartFramework/Components JS-UI is missing: '.$the_js_ui_file,
-			'ERROR: SmartFramework/Components JS-UI is missing !' // msg to display
-		);
-		die(''); // just in case
-	} //end if
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		$the_js_ui_file,
-		[
-			'LANG' => SmartTextTranslations::getLanguage(),
-			'THEME' => self::js_ui_theme()
-		]
-	);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Include Test Browser
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_inc_testbrowser() {
-	//--
-	return '<script type="text/javascript">Test_Browser_Compliance.checkCookies();</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Path to UI Theme
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_ui_theme($y_theme='') {
-	//--
-	global $configs;
-	//--
-	if(strlen($configs['js']['ui-theme']) <= 0) {
-		$configs['js']['ui-theme'] = '@default';
-	} //end if
-	//--
-	if(strlen($y_theme) > 0) {
-		$configs['js']['ui-theme'] = (string) $y_theme;
-	} //end if
-	//--
-	$the_theme = (string) $configs['js']['ui-theme'];
-	//--
-	if(substr($the_theme, 0, 1) == '@') {
-		$theme = 'lib/js/jquery/ui/themes/'.substr($the_theme, 1);
-	} else {
-		$theme = 'etc/visual/ui/themes/'.$the_theme;
-	} //end if else
-	//--
-	return $theme;
+	return (string) '<!-- JS Settings -->'.$js_settings.'<!-- JS Settings :: END -->';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2688,66 +2565,71 @@ public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px
  * @param STRING 	$y_var					[HTML Variable Name or empty if no necessary]
  * @param DATE 		$yvalue					[DATE, empty or formated as YYYY-MM-DD]
  * @param STRING 	$y_text_select			[The text as title: 'Select Date']
- * @param JS-Date 	$yjs_mindate			[JS Expression, Min Date]
- * @param JS-Date 	$yjs_maxdate			[JS Expression, Max Date]
+ * @param JS-Date 	$yjs_mindate			[JS Expression, Min Date] :: new Date(1937, 1 - 1, 1)   or '-1y -1m -1d'
+ * @param JS-Date 	$yjs_maxdate			[JS Expression, Max Date] :: new Date(2037, 12 - 1, 31) or '1y 1m 1d'
  * @param ARRAY 	$y_extra_options		[Options Array[width, ...] for for datePicker]
  * @param JS-Code 	$yjs_custom				[JS Code to execute on Select(date)]
  *
  * @return STRING 							[HTML Code]
  */
-public static function js_draw_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='new Date(1937, 1 - 1, 1)', $yjs_maxdate='new Date(2037, 12 - 1, 31)', $y_extra_options=array(), $yjs_custom='') {
-//-- v.20151112
-global $configs;
-//--
-if((string)$yvalue != '') {
-	$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
-} //end if
-//--
-if($configs['regional']['calendar-week-start'] == 1) {
-	$the_first_day = 1; // Calendar Start on Monday
-} else {
-	$the_first_day = 0; // Calendar Start on Sunday
-} //end if else
-//--
-$the_altdate_format = self::get_date_format_for_js($configs['regional']['calendar-date-format-client']);
-//--
-$prep_id = Smart::escape_js($y_id);
-$prep_fmt = Smart::escape_js($the_altdate_format);
-$prep_val = Smart::escape_js($yvalue);
-$prep_js = Smart::escape_js($yjs_custom);
-//--
-if(!is_array($y_extra_options)) {
-	$y_extra_options = array();
-} //end if
-if((string)$y_extra_options['width'] == '') {
-	$the_option_size = '85';
-} else {
-	$the_option_size = (string) $y_extra_options['width'];
-} //end if
-$the_option_size = 0 + $the_option_size;
-if($the_option_size >= 1) {
-	$the_option_size = ' width:'.((int)$the_option_size).'px;';
-} elseif($the_option_size > 0) {
-	$the_option_size = ' width:'.($the_option_size * 100).'%;';
-} else {
-	$the_option_size = '';
-} //end if else
-//--
-$js_code = <<<HTML_CODE
-<span id="date-area-{$y_id}" title="{$y_text_select} [{$the_altdate_format}]">
-<input type="hidden" id="{$y_id}" name="{$y_var}" value="{$yvalue}">
-<input type="text" id="date-entry-{$y_id}" name="dtfmt__{$y_var}" maxlength="13" value="" readonly="readonly" ondblclick="jQuery('#{$y_id}').val(''); jQuery('#date-bttn-{$y_id}').attr('title', ''); jQuery(this).val('');" onclick="setTimeout(function(){jQuery('#{$y_id}').datepicker('show');}, 200);" style="text-align:center; display:inline;{$the_option_size}">
-<img src="lib/js/jquery/ui/themes/calendar.png" onclick="jQuery('#{$y_id}').datepicker('show');" style="cursor:pointer; vertical-align:middle; margin-left:3px;" id="date-bttn-{$y_id}" title="">
-</span>
-<script type="text/javascript">
-(function() {
-	SmartJS_BrowserUIUtils.Date_Picker('{$prep_id}', '{$prep_fmt}', '{$prep_val}', {$the_first_day}, {$yjs_mindate}, {$yjs_maxdate}, 2, '{$prep_js}');
-})();
-</script>
-HTML_CODE;
-//--
-return $js_code;
-//--
+public static function js_draw_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', $y_extra_options=array(), $yjs_custom='') {
+	//-- v.160306
+	global $configs;
+	//--
+	if((string)$yvalue != '') {
+		$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
+	} //end if
+	//--
+	if($configs['regional']['calendar-week-start'] == 1) {
+		$the_first_day = 1; // Calendar Start on Monday
+	} else {
+		$the_first_day = 0; // Calendar Start on Sunday
+	} //end if else
+	//--
+	$the_altdate_format = self::get_date_format_for_js((string)$configs['regional']['calendar-date-format-client']);
+	//--
+	if(!is_array($y_extra_options)) {
+		$y_extra_options = array();
+	} //end if
+	if((string)$y_extra_options['width'] == '') {
+		$the_option_size = '85';
+	} else {
+		$the_option_size = (string) $y_extra_options['width'];
+	} //end if
+	$the_option_size = 0 + $the_option_size;
+	if($the_option_size >= 1) {
+		$the_option_size = ' width:'.((int)$the_option_size).'px;';
+	} elseif($the_option_size > 0) {
+		$the_option_size = ' width:'.($the_option_size * 100).'%;';
+	} else {
+		$the_option_size = '';
+	} //end if else
+	//--
+	if((string)$yjs_mindate == '') {
+		$yjs_mindate = 'null';
+	} //end if
+	if((string)$yjs_maxdate == '') {
+		$yjs_maxdate = 'null';
+	} //end if
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/ui-picker-date.inc.htm',
+		[
+			'LANG' 				=> (string) SmartTextTranslations::getLanguage(),
+			'THE-ID' 			=> (string) $y_id,
+			'THE-VAR' 			=> (string) $y_var,
+			'THE-VALUE' 		=> (string) $yvalue,
+			'TEXT-SELECT' 		=> (string) $y_text_select,
+			'ALT-DATE-FORMAT' 	=> (string) $the_altdate_format,
+			'STYLE-SIZE' 		=> (string) $the_option_size,
+			'FDOW' 				=> (int) $the_first_day, // of week
+			'DATE-MIN' 			=> (string) $yjs_mindate,
+			'DATE-MAX' 			=> (string) $yjs_maxdate,
+			'EVAL-JS' 			=> (string) $yjs_custom
+		],
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -2772,51 +2654,55 @@ return $js_code;
  * @return STRING 							[HTML Code]
  */
 public static function js_draw_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', $y_extra_options=array(), $yjs_custom='') {
-//-- v.20151112
-if((string)$yvalue != '') {
-	$yvalue = date('H:i', @strtotime(date('Y-m-d').' '.$yvalue)); // enforce this time format for internals and be sure is valid
-} //end if
-//--
-$prep_id = Smart::escape_js($y_id);
-$prep_hstart = Smart::format_number_int($y_h_st, '+');
-$prep_hend = Smart::format_number_int($y_h_end, '+');
-$prep_istart = Smart::format_number_int($y_i_st, '+');
-$prep_iend = Smart::format_number_int($y_i_end, '+');
-$prep_iinterv = Smart::format_number_int($y_i_step, '+');
-$prep_rows = Smart::format_number_int($y_rows, '+');
-$prep_js = Smart::escape_js($yjs_custom);
-//--
-if(!is_array($y_extra_options)) {
-	$y_extra_options = array();
-} //end if
-if((string)$y_extra_options['width'] == '') {
-	$the_option_size = '50';
-} else {
-	$the_option_size = (string) $y_extra_options['width'];
-} //end if
-$the_option_size = 0 + $the_option_size;
-if($the_option_size >= 1) {
-	$the_option_size = ' width:'.((int)$the_option_size).'px;';
-} elseif($the_option_size > 0) {
-	$the_option_size = ' width:'.($the_option_size * 100).'%;';
-} else {
-	$the_option_size = '';
-} //end if else
-//--
-$js_code = <<<HTML_CODE
-<span id="time-area-{$y_id}" title="{$y_text_select} [HH:ii]">
-<input type="text" name="{$y_var}" id="{$y_id}" maxlength="5" size="5" value="{$yvalue}" readonly="readonly" ondblclick="jQuery(this).val('');" onclick="setTimeout(function(){jQuery('#{$y_id}').timepicker('show');}, 200);" style="text-align:center; display:inline;{$the_option_size}">
-<img id="time-bttn-{$y_id}" src="lib/js/jquery/ui/themes/timepicker.png" onClick="jQuery('#{$y_id}').timepicker('show');" style="vertical-align:middle; cursor:pointer;" title="">
-</span>
-<script type="text/javascript">
-(function() {
-	SmartJS_BrowserUIUtils.Time_Picker('{$prep_id}', {$prep_hstart}, {$prep_hend}, {$prep_istart}, {$prep_iend}, {$prep_iinterv}, {$prep_rows}, '{$prep_js}');
-})();
-</script>
-HTML_CODE;
-//--
-return $js_code;
-//--
+	//-- v.160306
+	if((string)$yvalue != '') {
+		$yvalue = date('H:i', @strtotime(date('Y-m-d').' '.$yvalue)); // enforce this time format for internals and be sure is valid
+	} //end if
+	//--
+	$prep_hstart = Smart::format_number_int($y_h_st, '+');
+	$prep_hend = Smart::format_number_int($y_h_end, '+');
+	$prep_istart = Smart::format_number_int($y_i_st, '+');
+	$prep_iend = Smart::format_number_int($y_i_end, '+');
+	$prep_iinterv = Smart::format_number_int($y_i_step, '+');
+	$prep_rows = Smart::format_number_int($y_rows, '+');
+	//--
+	if(!is_array($y_extra_options)) {
+		$y_extra_options = array();
+	} //end if
+	if((string)$y_extra_options['width'] == '') {
+		$the_option_size = '50';
+	} else {
+		$the_option_size = (string) $y_extra_options['width'];
+	} //end if
+	$the_option_size = 0 + $the_option_size;
+	if($the_option_size >= 1) {
+		$the_option_size = ' width:'.((int)$the_option_size).'px;';
+	} elseif($the_option_size > 0) {
+		$the_option_size = ' width:'.($the_option_size * 100).'%;';
+	} else {
+		$the_option_size = '';
+	} //end if else
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/ui-picker-time.inc.htm',
+		[
+			'LANG' 			=> (string) SmartTextTranslations::getLanguage(),
+			'THE-ID' 		=> (string) $y_id,
+			'THE-VAR' 		=> (string) $y_var,
+			'THE-VALUE' 	=> (string) $yvalue,
+			'TEXT-SELECT' 	=> (string) $y_text_select,
+			'STYLE-SIZE' 	=> (string) $the_option_size,
+			'H-START' 		=> (int) $prep_hstart,
+			'H-END' 		=> (int) $prep_hend,
+			'MIN-START'		=> (int) $prep_istart,
+			'MIN-END' 		=> (int) $prep_iend,
+			'MIN-INTERVAL' 	=> (int) $prep_iinterv,
+			'DISPLAY-ROWS' 	=> (int) $prep_rows,
+			'EVAL-JS' 		=> (string) $yjs_custom
+		],
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 

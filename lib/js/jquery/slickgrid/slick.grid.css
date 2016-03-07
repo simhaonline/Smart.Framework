@@ -35,11 +35,12 @@ classes should alter those!
 	line-height: 16px;
 	margin: 0;
 	padding: 4px;
-	border-right: 1px solid silver;
+	border-right: 1px solid #DDDDDD;
 	border-left: 0px;
 	border-top: 0px;
 	border-bottom: 0px;
 	float: left;
+	font-weight: bold;
 }
 
 .slick-header-column-sorted {
@@ -73,7 +74,7 @@ classes should alter those!
 }
 
 .slick-sortable-placeholder {
-	background: silver;
+	background: #DDDDDD;
 }
 
 .grid-canvas {
@@ -89,8 +90,8 @@ classes should alter those!
 .slick-cell {
 	float: left;
 	border: 1px solid transparent;
-	border-right: 1px dotted silver;
-	border-bottom-color: silver;
+	border-right: 1px dotted #DDDDDD;
+	border-bottom-color: #DDDDDD;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -103,8 +104,7 @@ classes should alter those!
 }
 
 .slick-cell.highlighted {
-	background: lightskyblue;
-	background: rgba(0,0,255,0.2);
+	background: #DDEEFF;
 	-webkit-transition: all 0.5s;
 	-moz-transition: all 0.5s;
 	transition: all 0.5s;

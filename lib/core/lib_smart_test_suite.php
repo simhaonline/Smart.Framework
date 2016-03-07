@@ -141,7 +141,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'NO-CACHE-TIME' => time(),
 			'TEST-JS_SCRIPTS.Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')),
 			'Test-Buttons.AJAX-POST' => $btnop,
-			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;">SmartFramework :: '.$info_adm.' // Test Suite, using the JQuery UI Theme: <b>'.Smart::escape_html($configs['js']['ui-theme']).'</b></div>',
+			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;">SmartFramework :: '.$info_adm.' // Test Suite</div>',
 			'TEST-ELEMENTS.DIALOG' => '<a href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JQuery Dialog</a>',
 			'TEST-ELEMENTS.ALERT' => '<a href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JQuery Alert</a>',
 			'TEST-ELEMENTS.SEND-CONFIRM-MODAL' => $basic_form_start.$basic_form_send_modal.$basic_form_end,
@@ -152,7 +152,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TEST-ELEMENTS.MULTI-SELECT' => 'MultiSelect DropDown List: '.$elem_multi_select,
 			'TEST-ELEMENTS.MULTIBOX-SELECT' => 'MultiSelect CheckBoxes:<br>'.$elem_multi_boxes,
 			'TEST-ELEMENTS.CALENDAR' => 'Calendar Selector: '.SmartComponents::js_draw_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
-			'TEST-ELEMENTS.TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '7', '20', '0', '45', '15', '2', '', 'alert(\'You selected the time: \' + time);'),
+			'TEST-ELEMENTS.TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
 			'TEST-elements.Captcha' => SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captcha_form_name()),
 			'test-elements.limited-area' => 'Limited TextArea: '.SmartComponents::js_draw_limited_text_area('frm[text_area_1]', '', '300', '50', '5'),
 			'POWERED-INFO' => SmartComponents::draw_powered_info('no'),
@@ -708,9 +708,13 @@ public static function test_strings() {
 
 //--
 $html = <<<HTML
+<script type="text/javascript">
+	SmartJS_BrowserUtils.RequireCSS("lib/js/jquery/dialog/simple-dialog.css");
+	SmartJS_BrowserUtils.RequireJS("lib/js/jquery/dialog/simple-dialog.js");
+</script><!-- this is just for testing require and simple dialog ... -->
 <h1>SmartFramework Unicode Strings Tests: DONE ...</h1>
 <script type="text/javascript">
-	SmartJS_BrowserUtils.alert_Dialog(
+	SmartSimpleDialog.Dialog_Alert(
 		'<img src="{$img_sign}" align="right"><h1>{$text_main}</h1><hr><span style="color:#333333;"><img src="{$img_check}" align="right">{$text_info}<br>',
 		'',
 		'Unicode String Test Suite for SmartFramework: PHP',
@@ -1206,20 +1210,43 @@ public static function test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sor
 		'src' => (string) $src
 	);
 	//--
+	if((string)strtoupper((string)$sortdir) == 'DESC') {
+		$syntax_sort_dir = 'DESC';
+	} else {
+		$syntax_sort_dir = 'ASC';
+	} //end if else
+	$syntax_sort_mode = '';
+	switch((string)$sortby) {
+		case 'iso':
+			$syntax_sort_mode = ' ORDER BY iso '.$syntax_sort_dir;
+			break;
+		case 'name':
+			$syntax_sort_mode = ' ORDER BY name '.$syntax_sort_dir;
+			break;
+		case 'iso3':
+			$syntax_sort_mode = ' ORDER BY iso3 '.$syntax_sort_dir;
+			break;
+		case 'numcode':
+			$syntax_sort_mode = ' ORDER BY numcode '.$syntax_sort_dir;
+			break;
+		default:
+			$syntax_sort_mode = '';
+	} //end switch
+	//--
 	$where = '';
 	if((string)$src != '') {
 		if(is_numeric($src)) {
-			$where = $model->prepare_param_query('WHERE numcode LIKE ?', array('%'.(int)$src.'%'));
+			$where = $model->prepare_param_query(' WHERE numcode LIKE ?', array('%'.(int)$src.'%'));
 		} elseif(strlen((string)$src) == 2) {
-			$where = $model->prepare_param_query('WHERE iso = ?', array(SmartUnicode::str_toupper($src)));
+			$where = $model->prepare_param_query(' WHERE iso = ?', array(SmartUnicode::str_toupper($src)));
 		} elseif(strlen((string)$src) == 3) {
-			$where = $model->prepare_param_query('WHERE iso3 = ?', array(SmartUnicode::str_toupper($src)));
+			$where = $model->prepare_param_query(' WHERE iso3 = ?', array(SmartUnicode::str_toupper($src)));
 		} else {
-			$where = $model->prepare_param_query('WHERE name LIKE ?', array($src.'%'));
+			$where = $model->prepare_param_query(' WHERE name LIKE ?', array($src.'%'));
 		} //end if else
 	} //end if
-	$data['totalRows'] = $model->count_data('SELECT COUNT(1) FROM sample_countries '.$where);
-	$data['rowsList'] = $model->read_adata('SELECT iso, name, iso3, numcode FROM sample_countries '.$where.' LIMIT '.(int)$data['itemsPerPage'].' OFFSET '.(int)$data['crrOffset']);
+	$data['totalRows'] = $model->count_data('SELECT COUNT(1) FROM sample_countries'.$where);
+	$data['rowsList'] = $model->read_adata('SELECT iso, name, iso3, numcode FROM sample_countries'.$where.$syntax_sort_mode.' LIMIT '.(int)$data['itemsPerPage'].' OFFSET '.(int)$data['crrOffset']);
 	//--
 	unset($db); // close
 	//--

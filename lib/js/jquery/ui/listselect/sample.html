@@ -4,11 +4,11 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>jQuery MultiSelect Widget Demo</title>
-	<script type="text/javascript" src="../jquery.js"></script>
-	<script type="text/javascript" src="../../framework/core_utils.js"></script>
-	<script type="text/javascript" src="../../framework/browser_utils.js"></script>
-	<link rel="stylesheet" type="text/css" href="../ui/themes/default/jquery-ui.css">
-	<script type="text/javascript" src="../ui/jquery-ui.js"></script>
+	<script type="text/javascript" src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../../framework/core_utils.js"></script>
+	<script type="text/javascript" src="../../../framework/browser_utils.js"></script>
+	<link rel="stylesheet" type="text/css" href="../themes/default/jquery-ui.css">
+	<script type="text/javascript" src="../jquery-ui.js"></script>
 	<link rel="stylesheet" type="text/css" href="jquery.multiselect.css">
 	<script type="text/javascript" src="jquery.multiselect.js"></script>
 </head>
@@ -69,7 +69,7 @@
 
 	<h3>Basic</h3>
 	<p>
-		<select id="List2" title="Basic example" multiple="multiple" name="example-basic" size="5" onChange="alert(this.value);">
+		<select name="list2" id="List2" title="Basic example" multiple size="5" onBlur="alert('Values');">
 		<option value="option1">Option 1</option>
 		<option value="option2">Option 2</option>
 		<option value="option3">Option 3</option>
