@@ -154,7 +154,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TEST-ELEMENTS.CALENDAR' => 'Calendar Selector: '.SmartComponents::js_draw_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
 			'TEST-ELEMENTS.TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
 			'TEST-elements.Captcha' => SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captcha_form_name()),
-			'test-elements.limited-area' => 'Limited TextArea: '.SmartComponents::js_draw_limited_text_area('frm[text_area_1]', '', '300', '50', '5'),
+			'test-elements.limited-area' => 'Limited TextArea: '.SmartComponents::js_draw_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '100px'),
 			'POWERED-INFO' => SmartComponents::draw_powered_info('no'),
 			'STR-NUM' => '1abc', // this will be converted to num !!
 			'NUM-NUM' => '0.123456789',

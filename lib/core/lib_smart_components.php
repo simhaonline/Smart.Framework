@@ -2708,57 +2708,56 @@ public static function js_draw_time_field($y_id, $y_var, $yvalue, $y_text_select
 
 
 //================================================================
-// $y_limit :: max characters :: between 100 and 99999
 /**
  * Function: JS Draw Limited Text Area
  *
  */
-public static function js_draw_limited_text_area($y_var_name, $y_var_value, $y_limit, $y_cols='40', $y_rows='7', $y_field_id='', $y_wrap='physical', $y_rawval='no', $y_placeholder='', $y_percent_w='') {
-//--
-if((int)$y_limit < 50) {
-	$y_limit = 50;
-} //end if
-//--
-if((int)$y_limit > 99999) {
-	$y_limit = 99999;
-} //end if
-//--
-if($y_rawval != 'yes') {
-	$y_var_value = Smart::escape_html($y_var_value);
-} //end if
-//--
-if(strlen($y_field_id) > 0) {
-	$field = (string) $y_field_id;
-} else {
-	$field = '__Fld_TEXTAREA__'.sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'__NO_Var__';
-} //end if else
-//--
-$counter = '__Fld_COUNTER__'.sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'__NO_Var__';
-//--
-$style_override_w = '';
-if(($y_percent_w > 0) AND ($y_percent_w <= 100)) {
-	$css_w = ((int) $y_percent_w).'%';
-	$style_override_w = 'width:'.$css_w;
-} else {
-	$css_w = ((int) $y_cols * 8).'px';
-} //end if
-$css_h = ((int) $y_rows * 18).'px';
-//--
-$placeholder = '';
-if((string)$y_placeholder != '') {
-	$placeholder = ' placeholder="'.$y_placeholder.'"';
-} //end if
-//--
-$html = <<<HTML_CODE
-<!-- Limited Text Area -->
-<div style="position:relative;{$style_override_w}">
-	<textarea id="{$field}" name="{$y_var_name}" wrap="{$y_wrap}" maxlength="{$y_limit}" onClick="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onBlur="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onKeyDown="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" onKeyUp="SmartJS_BrowserUtils.textArea_Limit('{$field}', '{$counter}', {$y_limit});" style="width:{$css_w}; height:{$css_h};"{$placeholder}>{$y_var_value}</textarea>
-	<input title="Max Chars Limit: {$y_limit}" type="text" readonly disabled id="{$counter}" size="5" maxlength="4" value="{$y_limit}" style="padding:1px!important; font-size:10px!important; text-align:center!important; position:absolute; left:5px; bottom:5px; opacity:0.5;">
-</div>
-HTML_CODE;
-//--
-return $html;
-//--
+public static function js_draw_limited_text_area($y_field_id, $y_var_name, $y_var_value, $y_limit, $y_css_w='125px', $y_css_h='50px', $y_placeholder='', $y_wrap='physical', $y_rawval='no') {
+	//--
+	$y_limit = (int) $y_limit; // max characters :: between 100 and 99999
+	//--
+	if((int)$y_limit < 50) {
+		$y_limit = 50;
+	} //end if
+	//--
+	if((int)$y_limit > 99999) {
+		$y_limit = 99999;
+	} //end if
+	//--
+	if($y_rawval != 'yes') {
+		$y_var_value = Smart::escape_html($y_var_value);
+	} //end if
+	//--
+	if(strlen($y_field_id) > 0) {
+		$field = (string) $y_field_id;
+		$counter = '__Fld_COUNTER__'.$field.'_'.Smart::uuid_10_str().'__Id__';
+	} else {
+		$fldhash = sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'_'.Smart::uuid_10_str();
+		$field = '__Fld_TEXTAREA__'.$fldhash.'__NO_Id__';
+		$counter = '__Fld_COUNTER__'.$fldhash.'__NO_Id__';
+	} //end if else
+	//--
+	$placeholder = '';
+	if((string)$y_placeholder != '') {
+		$placeholder = ' placeholder="'.Smart::escape_html($y_placeholder).'"';
+	} //end if
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/limited-text-area.inc.htm',
+		[
+			'LIMIT-CHARS' 		=> (int) $y_limit,
+			'ID-AREA' 			=> (string) $field,
+			'VAR-AREA' 			=> (string) $y_var_name,
+			'VAL-AREA-HTML' 	=> (string) $y_var_value, // this is pre-escaped if not raw
+			'WRAP-MODE' 		=> (string) $y_wrap,
+			'ID-COUNTER' 		=> (string) $counter,
+			'WIDTH' 			=> (string) $y_css_w,
+			'HEIGHT' 			=> (string) $y_css_h,
+			'PLACEHOLDER-HTML' 	=> (string) $placeholder
+		],
+		'yes' // export to cache
+	);
+	//--
 } //END FUNCTION
 //================================================================
 
