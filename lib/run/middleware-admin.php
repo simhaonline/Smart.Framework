@@ -28,7 +28,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.1.3');
  * @access 		private
  * @internal
  *
- * @version		160307
+ * @version		160309
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
