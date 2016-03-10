@@ -1,4 +1,4 @@
-<!-- #START :: SMART.FRAMEWORK / DEBUG HEAD :: v.160221 -->
+<!-- #START :: SMART.FRAMEWORK / DEBUG HEAD :: v.160309 -->
 <link rel="stylesheet" type="text/css" href="lib/framework/css/fonts/octicons.css">
 <style type="text/css">
 .smartframework_debugbar_bar {
@@ -225,18 +225,25 @@ function SmartDebugAjaxLoadDivContent(y_div, y_url, y_method, y_exec_jscripts) {
 		ajx.onreadystatechange = function() {
 			if(ajx.readyState == 4) {
 				if(ajx.status == 200) {
-					ss.innerHTML = '' + ajx.responseText;
-					if(y_exec_jscripts != false) {
-						var xscripts = ss.getElementsByTagName('script');
-						for(var i=0; i<xscripts.length; i++) {
-							try {
-								//console.log('Evaluating Js: ' + xscripts[i].text);
-								eval('(function(){ ' + xscripts[i].text + ' })();'); // sandbox
-							} catch(err) {
-								alert('Failed to evaluate some javascripts from Ajax call ...');
-								break;
-							} //end try catch
-						} //end for
+					if(ss !== null) { // bugfix: catch err on high refresh rates where it may return null and only the last refresh will be valid !
+						ss.innerHTML = '' + ajx.responseText;
+						console.log('Profiler Toolbar Update Ajax Calls ...');
+						if(y_exec_jscripts != false) {
+							var xscripts = ss.getElementsByTagName('script');
+							for(var i=0; i<xscripts.length; i++) {
+								if((typeof xscripts[i].text != 'undefined') && (xscripts[i].text != null) && (xscripts[i].text != '')) {
+									try {
+										//console.log('Evaluating Js: ' + xscripts[i].text);
+										eval('(function(){ ' + xscripts[i].text + ' })();'); // sandbox
+									} catch(err) {
+										alert('Failed to evaluate some javascripts from Ajax call ...');
+										break;
+									} //end try catch
+								} //end if
+							} //end for
+						} //end if
+					} else {
+						//console.log('FAILED to update the Profiler Toolbar - Ajax Calls ...');
 					} //end if
 				} else {
 					alert('Ajax Request Failed with code: ' + ajx.status);
