@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160217
+	// v.160311
 
 
 //==================================================================
@@ -708,10 +708,6 @@ public static function test_strings() {
 
 //--
 $html = <<<HTML
-<script type="text/javascript">
-	SmartJS_BrowserUtils.RequireCSS("lib/js/jquery/dialog/simple-dialog.css");
-	SmartJS_BrowserUtils.RequireJS("lib/js/jquery/dialog/simple-dialog.js");
-</script><!-- this is just for testing require and simple dialog ... -->
 <h1>SmartFramework Unicode Strings Tests: DONE ...</h1>
 <script type="text/javascript">
 	SmartSimpleDialog.Dialog_Alert(
@@ -1869,7 +1865,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160217
+	// v.160311
 
 private $db;
 

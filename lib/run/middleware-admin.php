@@ -13,7 +13,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.1.4');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.1.5');
 
 
 //==================================================================================
@@ -28,7 +28,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.1.4');
  * @access 		private
  * @internal
  *
- * @version		160310
+ * @version		160311
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {

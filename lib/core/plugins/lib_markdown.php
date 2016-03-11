@@ -24,7 +24,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160302
+ * @version 	v.160311
  * @package 	Exporters
  *
  */
@@ -32,7 +32,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	const version = 'v.1.5.4-r.160302@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
+	const version = 'v.1.5.4-r.160311@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
 
 	//===================================
 
@@ -117,7 +117,7 @@ final class SmartMarkdownToHTML {
 						  'time',
 	);
 	//-- extra
-	private $regexAttribute = '[ ]*{((?:[#\.@][_a-zA-Z0-9,\-\=\$\:;\!]+[ ]*)+)}';
+	private $regexAttribute = '[ ]*{((?:[#\.@][_a-zA-Z0-9,%\-\=\$\:;\!]+[ ]*)+)}';
 	//--
 
 	//===================================

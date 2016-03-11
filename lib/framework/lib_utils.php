@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.160213
+ * @version 	v.160311
  * @package 	Core
  *
  */
@@ -2000,14 +2000,14 @@ public static function get_os_browser_ip($y_mode='') {
 		//--
 		$the_lower_signature = strtolower((string)$_SERVER['HTTP_USER_AGENT']);
 		//-- identify browser
-		if((strpos($the_lower_signature, 'firefox') !== false) OR (strpos($the_lower_signature, 'iceweasel') !== false) OR (strpos($the_lower_signature, 'seamonkey') !== false)) {
+		if((strpos($the_lower_signature, 'firefox') !== false) OR (strpos($the_lower_signature, 'iceweasel') !== false) OR (strpos($the_lower_signature, 'seamonkey') !== false) OR (strpos($the_lower_signature, ' fxios/') !== false)) {
 			$wp_browser = 'fox'; // firefox
-		} elseif((strpos($the_lower_signature, 'chrome') !== false) OR (strpos($the_lower_signature, 'chromium') !== false)) {
-			$wp_browser = 'crm'; // Chrome
-		} elseif((strpos($the_lower_signature, ' msie ') !== false) OR (strpos($the_lower_signature, 'trident') !== false)) {
+		} elseif((strpos($the_lower_signature, ' msie ') !== false) OR (strpos($the_lower_signature, ' trident/') !== false) OR (strpos($the_lower_signature, ' edge/') !== false)) {
 			$wp_browser = 'iex'; // internet explorer (this must be before any stealth browsers as ex.: opera)
-		} elseif(strpos($the_lower_signature, 'opera') !== false) {
+		} elseif((strpos($the_lower_signature, 'opera') !== false) OR (strpos($the_lower_signature, ' opr/') !== false) OR (strpos($the_lower_signature, ' opios/') !== false)) {
 			$wp_browser = 'opr'; // opera
+		} elseif((strpos($the_lower_signature, 'chrome') !== false) OR (strpos($the_lower_signature, 'chromium') !== false) OR (strpos($the_lower_signature, ' crios/') !== false)) {
+			$wp_browser = 'crm'; // Chrome
 		} elseif((strpos($the_lower_signature, 'safari') !== false) OR (strpos($the_lower_signature, 'webkit') !== false)) {
 			$wp_browser = 'sfr'; // safari / webkit
 		} elseif(strpos($the_lower_signature, 'camino') !== false) {
@@ -2078,11 +2078,11 @@ public static function get_os_browser_ip($y_mode='') {
 		} elseif(strpos($the_lower_signature, 'ipad') !== false) {
 			$wp_os = 'ipd'; // apple mobile ios/ipad
 			$wp_mb = 'yes';
-		} elseif(strpos($the_lower_signature, 'android') !== false) {
-			$wp_os = 'and'; // google android
-			$wp_mb = 'yes';
 		} elseif((strpos($the_lower_signature, 'windows ce') !== false) OR (strpos($the_lower_signature, 'windows phone') !== false) OR (strpos($the_lower_signature, 'windows mobile') !== false)) {
 			$wp_os = 'wce'; // ms windows mobile
+			$wp_mb = 'yes';
+		} elseif(strpos($the_lower_signature, 'android') !== false) {
+			$wp_os = 'and'; // google android
 			$wp_mb = 'yes';
 		} elseif((strpos($the_lower_signature, 'linux mobile') !== false) OR (strpos($the_lower_signature, 'maemo') !== false) OR (strpos($the_lower_signature, 'openmoko') !== false) OR (strpos($the_lower_signature, 'qtopia') !== false) OR (strpos($the_lower_signature, 'opie') !== false) OR (strpos($the_lower_signature, 'zaurus') !== false) OR (strpos($the_lower_signature, 'nucleus') !== false)) {
 			$wp_os = 'mlx'; // linux mobile
@@ -2098,6 +2098,14 @@ public static function get_os_browser_ip($y_mode='') {
 			$wp_mb = 'yes';
 		} elseif((strpos($the_lower_signature, 'webos') !== false) OR (strpos($the_lower_signature, ' palm') !== false)) {
 			$wp_os = 'plm'; // palm os
+			$wp_mb = 'yes';
+		} //end if
+		//-- fixes
+		if(strpos($the_lower_signature, ' opr/') !== false) {
+			$wp_os = 'and'; // google android
+			$wp_mb = 'yes';
+		} elseif(strpos($the_lower_signature, ' opios/') !== false) {
+			$wp_os = 'ios'; // apple mobile ios/iphone
 			$wp_mb = 'yes';
 		} //end if
 		//-- identify ip addr
