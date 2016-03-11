@@ -306,7 +306,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @internal
  *
  * @depends 	-
- * @version 	v.160213
+ * @version 	v.160311
  * @package 	Application
  *
  */
@@ -510,7 +510,7 @@ final class SmartFrameworkRegistry {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160205
+ * @version 	v.160311
  * @package 	Application
  *
  */
@@ -660,7 +660,7 @@ public static function FilterGetPostCookieVars($y_var) {
  * @access 		private
  * @internal
  *
- * @version		160212
+ * @version		160311
  *
  */
 final class SmartFrameworkRuntime {
@@ -1155,7 +1155,7 @@ public static function DebugRequestLog($y_message) {
  * @access 		private
  * @internal
  *
- * @version		160213
+ * @version		160311
  *
  */
 abstract class SmartAbstractAppMiddleware {
