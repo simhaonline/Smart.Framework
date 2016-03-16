@@ -24,12 +24,12 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 /**
- * Class: SmartCalendarComponent - Generates a simple HTML Calendar.
+ * Class: SmartCalendarComponent - Easy to use HTML Calendar Component (with / without Events).
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160215
+ * @version 	v.160316
  * @package 	Components:Calendar
  *
  */
@@ -39,7 +39,25 @@ final class SmartCalendarComponent {
 
 
 //================================================================
-public static function display_html_minicalendar($y_sel_date='', $y_width='150', $y_highlight_selected=true) {
+public static function display_html_minicalendar($y_sel_date='', $y_width='150', $y_highlight_selected=true, $y_events_arr=array()) {
+	//--
+	return (string) self::display_calendar('small', (string)$y_sel_date, (string)$y_width, (bool)$y_highlight_selected, (array)$y_events_arr);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function display_html_calendar($y_sel_date='', $y_width='100%', $y_highlight_selected=true, $y_events_arr=array()) {
+	//--
+	return (string) self::display_calendar('', (string)$y_sel_date, (string)$y_width, (bool)$y_highlight_selected, (array)$y_events_arr);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_highlight_selected, $y_events_arr) {
 	//--
 	global $configs;
 	//--
@@ -55,7 +73,7 @@ public static function display_html_minicalendar($y_sel_date='', $y_width='150',
 	//--
 	$translator_core_calendar = SmartTextTranslations::getTranslator('@core', 'calendar');
 	//--
-	$calendar = new SmartHTMLCalendar(date('Y-m-d', @strtotime($y_sel_date)), $y_highlight_selected, $y_width, 'small');
+	$calendar = new SmartHTMLCalendar(date('Y-m-d', @strtotime($y_sel_date)), $y_highlight_selected, $y_width, (string)$y_mode);
 	//-- set months
 	$calendar->setMonthNames(array(
 		'01' => $translator_core_calendar->text('m_01'),
@@ -72,19 +90,41 @@ public static function display_html_minicalendar($y_sel_date='', $y_width='150',
 		'12' => $translator_core_calendar->text('m_12')
 	));
 	//-- set days
-	$calendar->setDayNames(array(
-		0 => SmartUnicode::sub_str($translator_core_calendar->text('w_1'), 0, 2),
-		1 => SmartUnicode::sub_str($translator_core_calendar->text('w_2'), 0, 2),
-		2 => SmartUnicode::sub_str($translator_core_calendar->text('w_3'), 0, 2),
-		3 => SmartUnicode::sub_str($translator_core_calendar->text('w_4'), 0, 2),
-		4 => SmartUnicode::sub_str($translator_core_calendar->text('w_5'), 0, 2),
-		5 => SmartUnicode::sub_str($translator_core_calendar->text('w_6'), 0, 2),
-		6 => SmartUnicode::sub_str($translator_core_calendar->text('w_7'), 0, 2)
-	));
+	if((string)$y_mode == 'small') {
+		$calendar->setDayNames(array(
+			0 => SmartUnicode::sub_str($translator_core_calendar->text('w_1'), 0, 2),
+			1 => SmartUnicode::sub_str($translator_core_calendar->text('w_2'), 0, 2),
+			2 => SmartUnicode::sub_str($translator_core_calendar->text('w_3'), 0, 2),
+			3 => SmartUnicode::sub_str($translator_core_calendar->text('w_4'), 0, 2),
+			4 => SmartUnicode::sub_str($translator_core_calendar->text('w_5'), 0, 2),
+			5 => SmartUnicode::sub_str($translator_core_calendar->text('w_6'), 0, 2),
+			6 => SmartUnicode::sub_str($translator_core_calendar->text('w_7'), 0, 2)
+		));
+	} else {
+		$calendar->setDayNames(array(
+			0 => $translator_core_calendar->text('w_1'),
+			1 => $translator_core_calendar->text('w_2'),
+			2 => $translator_core_calendar->text('w_3'),
+			3 => $translator_core_calendar->text('w_4'),
+			4 => $translator_core_calendar->text('w_5'),
+			5 => $translator_core_calendar->text('w_6'),
+			6 => $translator_core_calendar->text('w_7'),
+		));
+	} //end if else
 	//-- set start on
 	$calendar->setStartOfWeek($the_first_day);
+	//--
+	if(Smart::array_size($y_events_arr) > 0) {
+		for($i=0; $i<count($y_events_arr); $i++) {
+			if($y_events_arr[$i]['date-end'] === false) {
+				$calendar->addDayEvent((string)$y_events_arr[$i]['event-html'], date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-start'])), false);
+			} else {
+				$calendar->addDayEvent((string)$y_events_arr[$i]['event-html'], date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-start'])), date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-end'])));
+			} //end if else
+		} //end for
+	} //end if
 	//-- draw
-	return '<div title="'.Smart::escape_html($y_sel_date).'">'.$calendar->draw().'</div>';
+	return '<div title="'.Smart::escape_html(date('Y-m', @strtotime((string)$y_sel_date))).'">'.$calendar->draw().'</div>';
 	//--
 } //END FUNCTION
 //================================================================

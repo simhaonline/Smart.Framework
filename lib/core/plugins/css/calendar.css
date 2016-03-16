@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / Calendar :: v.2015.01.15 -- */
+/* -- CSS Start :: SmartFramework / Calendar :: v.2016.03.16 -- */
 
 /* ----------------------------- */
 
@@ -8,8 +8,8 @@ table.SmartCalendar {
 	border-collapse: collapse;
 }
 table.SmartCalendar th {
-	border: 1px solid #FFFFFF;
-	background: #666699;
+/*	border: 1px solid #20639E; */
+	background: #2269A6;
 	color: #FFFFFF;
 	font-size: 13px;
 	padding: 9px;
@@ -17,7 +17,7 @@ table.SmartCalendar th {
 	text-align: center;
 }
 table.SmartCalendar td {
-	border: 1px solid #CCCCCC;
+	border: 1px solid #ECECEC;
 	background: #FFFFFF;
 	color: #000000;
 	padding: 2px;
@@ -25,7 +25,7 @@ table.SmartCalendar td {
 	vertical-align: top;
 }
 table.SmartCalendar td div.SCalendarDayHead {
-	background: #778899;
+	background: #5BC0DE;
 	color: #FFFFFF;
 	font-size: 13px;
 	display: block;
@@ -38,17 +38,16 @@ table.SmartCalendar td div.SCalendarContent {
 	overflow: auto;
 }
 table.SmartCalendar td.SCalendarSuffix, table.SmartCalendar td.SCalendarPrefix {
-	background: #F5F5F5;
+	background: #F9F9F9;
 }
 table.SmartCalendar td div.SCalendarEvent {
-	background: #FFFFFF;
 	color: #333333;
 	font-size: 11px;
 	padding: 5px;
 	line-height: 1em;
 }
 table.SmartCalendar td.SCalendarToday {
-	background: #FF5500;
+	background: #FFFFCC;
 }
 table.SmartCalendar td.SCalendarSelected {
 	background: #FFCC00;
@@ -65,7 +64,7 @@ table.SmartSmallCalendar {
 	border-collapse: collapse;
 }
 table.SmartSmallCalendar th {
-	background: #666699;
+	background: #2269A6;
 	color: #FFFFFF;
 	font-size: 11px;
 	padding: 1px;
@@ -89,7 +88,7 @@ table.SmartSmallCalendar td div.SCalendarDayHead {
 table.SmartSmallCalendar td div.SCalendarContent {
 }
 table.SmartSmallCalendar td.SCalendarSuffix, table.SmartSmallCalendar td.SCalendarPrefix {
-	background: #F5F5F5;
+	background: #F9F9F9;
 }
 table.SmartSmallCalendar td div.SCalendarEvent {
 	background: #FFFFFF;
@@ -99,7 +98,7 @@ table.SmartSmallCalendar td div.SCalendarEvent {
 	line-height: 1em;
 }
 table.SmartSmallCalendar td.SCalendarToday {
-	background: #FF5500;
+	background: #FFFFCC;
 }
 table.SmartSmallCalendar td.SCalendarSelected {
 	background: #FFCC00;
