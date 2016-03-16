@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!-- UX CSS Toolkit by unixman, r.160301.1427 :: License: BSD -->
-<!-- based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ -->
+<!-- Smart UX CSS Toolkit, r.160316 :: License: BSD -->
+<!-- extended by unixman, (c) 2015-2016 unix-world.org :: based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ -->
 <html>
 <head>
 	<!-- basepath -->
@@ -33,35 +33,37 @@
 
 <!-- Buttons -->
 
-	<h2>Regular Buttons</h2>
+	<h2>Buttons</h2>
+
+	<h3>Regular Buttons</h3>
 	<p>
 		<button class="ux-button">Regular Button</button>
 		<a class="ux-button" href="#">Regular anchor Button</a>
 		<button class="ux-button ux-button-disabled" disabled>Regular Button disabled</button>
 		<a class="ux-button ux-button-disabled" href="#">Regular anchor Button disabled</a>
 	</p>
-	<h2>Dark Buttons</h2>
+	<h3>Dark Buttons</h3>
 	<p>
 		<button class="ux-button ux-button-dark">Dark Button</button>
 		<a class="ux-button ux-button-dark" href="#">Dark anchor Button</a>
 		<button class="ux-button ux-button-dark ux-button-disabled">Dark Button disabled</button>
 		<a class="ux-button ux-button-dark ux-button-disabled" href="#">Dark anchor Button disabled</a>
 	</p>
-	<h2>Primary Buttons</h2>
+	<h3>Primary Buttons</h3>
 	<p>
 		<button class="ux-button ux-button-primary">Primary Button</button>
 		<a class="ux-button ux-button-primary" href="#">Primary anchor Button</a>
 		<button class="ux-button ux-button-primary ux-button-disabled">Primary Button disabled</button>
 		<a class="ux-button ux-button-primary ux-button-disabled" href="#">Primary anchor Button disabled</a>
 	</p>
-	<h2>Secondary Buttons</h2>
+	<h3>Secondary Buttons</h3>
 	<p>
 		<button class="ux-button ux-button-secondary">Secondary Button</button>
 		<a class="ux-button ux-button-secondary" href="#">Secondary anchor Button</a>
 		<button class="ux-button ux-button-secondary ux-button-disabled">Secondary Button disabled</button>
 		<a class="ux-button ux-button-secondary ux-button-disabled" href="#">Secondary anchor Button disabled</a>
 	</p>
-	<h2>Styled Buttons</h2>
+	<h3>Styled Buttons</h3>
 	<p>
 		<button class="ux-button ux-button-regular">Regular Button</button>
 		<a class="ux-button ux-button-regular" href="#">Regular anchor Button</a>
@@ -81,7 +83,7 @@
 		<a class="ux-button ux-button-special ux-button-disabled" href="#">Special anchor Button disabled</a>
 	</p>
 
-	<h2>Custom Buttons with Various Icons</h2>
+	<h3>Custom Buttons with Various Icons</h3>
 	<p>
 		<button class="ux-button ux-button-custom">
 			<span class="fa fa-film"></span>
@@ -101,7 +103,7 @@
 		</a>
 	</p>
 
-	<h2>Form Buttons</h2>
+	<h3>Form Buttons</h3>
 	<p>
 		<button class="ux-button ux-button-regular ux-button-large"><span class="fa fa-send"></span> &nbsp; Submit (Button)</button>
 		<input type="submit" class="ux-button ux-button-primary ux-button-xsmall" value="Submit (Input)">
@@ -109,180 +111,172 @@
 		<input type="reset" class="ux-button ux-button-special ux-button-xlarge" value="Reset (Input)">
 	</p>
 
+	<br>
+
 <!-- Grid -->
 
-	<h2>Fluid Responsive Grid, 12 columns</h2>
-
+	<h2>Fluid Responsive Layout Grid, 12 columns (with / without border)</h2>
 	<div class="ux-g-grid">
-
 		<div class="ux-g-row">
 			<div class="ux-g-border ux-g-col-12">
-				Cell
+				12 columns
 			</div>
 		</div>
-
 		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-6">
-				6
+			<div class="ux-g-col-6">
+				6 columns
 			</div>
-			<div class="ux-g-border ux-g-col-6">
-				6
+			<div class="ux-g-col-6">
+				6 columns
 			</div>
 		</div>
-
 		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-1">
-				1
+			<div class="ux-g-col-1">
+				1 column
 			</div>
-			<div class="ux-g-border ux-g-col-5">
-				5
+			<div class="ux-g-col-5">
+				5 columns
 			</div>
-			<div class="ux-g-border ux-g-col-6">
-				6
+			<div class="ux-g-col-6">
+				6 columns
 			</div>
 		</div>
-
 		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-6">
-				6
+			<div class="ux-g-col-6">
+				6 columns
 			</div>
-			<div class="ux-g-border ux-g-col-5">
-				5
+			<div class="ux-g-col-5">
+				5 columns
 			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
+			<div class="ux-g-col-1">
+				1 column
 			</div>
 		</div>
-
 		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-4">
-				4
+			<div class="ux-g-col-4">
+				4 columns
 			</div>
-			<div class="ux-g-border ux-g-col-4">
-				4
+			<div class="ux-g-col-4">
+				4 columns
 			</div>
-			<div class="ux-g-border ux-g-col-4">
-				4
+			<div class="ux-g-col-4">
+				4 columns
 			</div>
 		</div>
-
 		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-3">
-				3
+			<div class="ux-g-col-3">
+				3 columns
 			</div>
-			<div class="ux-g-border ux-g-col-3">
-				3
+			<div class="ux-g-col-3">
+				3 columns
 			</div>
-			<div class="ux-g-border ux-g-col-3">
-				3
+			<div class="ux-g-col-3">
+				3 columns
 			</div>
-			<div class="ux-g-border ux-g-col-3">
-				3
+			<div class="ux-g-col-3">
+				3 columns
 			</div>
 		</div>
-
+		<div class="ux-g-row">
+			<div class="ux-g-col-2">
+				2 columns
+			</div>
+			<div class="ux-g-col-2">
+				2 columns
+			</div>
+			<div class="ux-g-col-2">
+				2 columns
+			</div>
+			<div class="ux-g-col-2">
+				2 columns
+			</div>
+			<div class="ux-g-col-2">
+				2 columns
+			</div>
+			<div class="ux-g-col-2">
+				2 columns
+			</div>
+		</div>
+		<div class="ux-g-row">
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+		</div>
+		<div class="ux-g-row">
+			<div class="ux-g-col-3">
+				3 columns
+			</div>
+			<div class="ux-g-col-9">
+				9 columns
+			</div>
+		</div>
+		<div class="ux-g-row">
+			<div class="ux-g-col-8">
+				8 columns
+			</div>
+			<div class="ux-g-col-4">
+				4 columns
+			</div>
+		</div>
+		<div class="ux-g-row">
+			<div class="ux-g-col-11">
+				11 columns
+			</div>
+			<div class="ux-g-col-1">
+				1 column
+			</div>
+		</div>
 		<div class="ux-g-row">
 			<div class="ux-g-border ux-g-col-2">
-				2
+				2 columns
 			</div>
-			<div class="ux-g-border ux-g-col-2">
-				2
-			</div>
-			<div class="ux-g-border ux-g-col-2">
-				2
-			</div>
-			<div class="ux-g-border ux-g-col-2">
-				2
-			</div>
-			<div class="ux-g-border ux-g-col-2">
-				2
-			</div>
-			<div class="ux-g-border ux-g-col-2">
-				2
+			<div class="ux-g-border ux-g-col-10">
+				10 columns
 			</div>
 		</div>
-
-		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-		</div>
-
-		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-3">
-				3
-			</div>
-			<div class="ux-g-border ux-g-col-9">
-				9
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-9">
-				9
-			</div>
-			<div class="ux-g-border ux-g-col-3">
-				3
-			</div>
-		</div>
-
-		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-11">
-				11
-			</div>
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-1">
-				1
-			</div>
-			<div class="ux-g-border ux-g-col-11">
-				11
-			</div>
-		</div>
-
 	</div>
+
+	<div style="clear:both;"><br></div>
 
 <!-- Tables -->
 
 	<br>
 	<br>
 
-	<h2>Fluid (Div Based Table)</h2>
+	<h2>Fluid (Div Based) Responsive Table</h2>
 
 	<style type="text/css">
 	#myFluidTable {
@@ -323,7 +317,6 @@
 			</div>
 		</div>
 	</div>
-
 	<br>
 
 	<style type="text/css">
@@ -366,7 +359,12 @@
 		</div>
 	</div>
 
-	<h2>Default Table</h2>
+	<br>
+	<br>
+
+	<h2>Misc Tables</h2>
+
+	<h3>Default Table</h3>
 
 	<table class="ux-table">
 		<thead>
@@ -399,7 +397,7 @@
 		</tbody>
 	</table>
 
-	<h2>Table using width and alignment</h2>
+	<h3>Table using width and alignment</h3>
 
 	<table class="ux-table ux-table-bordered" width="500">
 		<thead>
@@ -432,7 +430,7 @@
 		</tbody>
 	</table>
 
-	<h2>Bordered Table</h2>
+	<h3>Bordered Table</h3>
 
 	<table class="ux-table ux-table-bordered">
 		<thead>
@@ -465,7 +463,7 @@
 		</tbody>
 	</table>
 
-	<h2>Bordered Table with rowspan</h2>
+	<h3>Bordered Table with rowspan</h3>
 
 	<table class="ux-table ux-table-bordered">
 		<thead>
@@ -496,7 +494,7 @@
 		</tbody>
 	</table>
 
-	<h2>Bordered Table with colspan</h2>
+	<h3>Bordered Table with colspan</h3>
 
 	<table class="ux-table ux-table-bordered">
 		<thead>
@@ -527,7 +525,7 @@
 		</tbody>
 	</table>
 
-	<h2>Table with Horizontal Borders</h2>
+	<h3>Table with Horizontal Borders</h3>
 
 	<table class="ux-table ux-table-horizontal">
 		<thead>
@@ -560,7 +558,7 @@
 		</tbody>
 	</table>
 
-	<h2>Striped Table</h2>
+	<h3>Striped Table</h3>
 
 	<table class="ux-table">
 		<thead>
@@ -686,7 +684,7 @@
 		</tbody>
 	</table>
 
-	<h2>Nested Table</h2>
+	<h3>Nested Table</h3>
 
 	<table class="ux-table ux-table-bordered">
 		<thead>
@@ -776,10 +774,14 @@
 		</tbody>
 	</table>
 
+	<br>
+	<br>
 
 <!-- Forms -->
 
-	<h2>Form Input normalization</h2>
+	<h2>Form Elements</h2>
+
+	<h3>Form Input normalization</h3>
 
 	<form class="ux-form">
 		<fieldset>
@@ -795,11 +797,11 @@
 			<textarea rows="7" cols="50">This is some text ...</textarea>
 		</fieldset>
 		<fieldset>
-			<button type="submit" class="ux-button ux-button-primary">Sign in</button>
+			<button type="submit" class="ux-button ux-button-primary">Sign in &nbsp; <i class="fa fa-sign-in"></i></button>
 		</fieldset>
 	</form>
 
-	<h2>Default Form</h2>
+	<h3>Default Form</h3>
 
 	<form class="ux-form">
 		<fieldset>
@@ -812,12 +814,12 @@
 				<input type="checkbox"> Remember me
 			</label>
 
-			<button type="submit" class="ux-button">Sign in</button>
+			<button type="submit" class="ux-button">Sign in &nbsp; <i class="fa fa-sign-in"></i></button>
 		</fieldset>
 	</form>
 
 
-	<h2>Multi-Column Form with Grids</h2>
+	<h3>Multi-Column Form with Grids</h3>
 
 	<form class="ux-form ux-form-stacked">
 		<fieldset>
@@ -856,13 +858,13 @@
 				<input type="checkbox"> I've read the terms and conditions
 			</label>
 
-			<button type="submit" class="ux-button">Submit</button>
-			<button type="reset" class="ux-button">Reset</button>
+			<button type="submit" class="ux-button ux-button-primary">Submit &nbsp; <i class="fa fa-check-square-o"></i></button>
+			<button type="reset" class="ux-button ux-button-special">Reset &nbsp; <i class="fa fa-times"></i></button>
 		</fieldset>
 	</form>
 
 
-	<h2>Stacked Form</h2>
+	<h3>Stacked Form</h3>
 
 	<form class="ux-form ux-form-stacked">
 		<fieldset>
@@ -898,13 +900,13 @@
 				<input type="checkbox"> I've read the terms and conditions
 			</label>
 
-			<button type="submit" class="ux-button notice">Submit</button>
-			<button type="reset" class="ux-button">Reset</button>
+			<button type="submit" class="ux-button notice">Submit &nbsp; <i class="fa fa-check-square"></i></button>
+			<button type="reset" class="ux-button">Reset &nbsp; <i class="fa fa-times"></i></button>
 		</fieldset>
 	</form>
 
 
-	<h2>Aligned Form</h2>
+	<h3>Aligned Form</h3>
 
 	<form class="ux-form ux-form-aligned">
 		<fieldset>
@@ -940,13 +942,13 @@
 					<input type="checkbox"> Remember Me
 				</label>
 
-				<button type="submit" class="ux-button">Submit</button>
+				<button type="submit" class="ux-button">Submit &nbsp; <i class="fa fa-check-circle"></i></button>
 			</div>
 		</fieldset>
 	</form>
 
 
-	<h2>Grouped Inputs</h2>
+	<h3>Grouped Inputs</h3>
 
 	<form class="ux-form">
 		<fieldset class="ux-group">
@@ -961,87 +963,82 @@
 			<input type="text" class="ux-input-1-2" placeholder="Even More Stuff">
 			<input type="text" class="ux-input-1-2" placeholder="Last Item">
 		</fieldset>
-		<button type="submit" class="ux-button ux-button-primary ux-input-1-2">Sign in</button>
+		<button type="submit" class="ux-button ux-button-primary ux-input-1-2">Sign in &nbsp; <i class="fa fa-sign-in"></i></button>
 	</form>
 
 
-	<h2>Dynamic Grouped Inputs</h2>
+	<h3>Dynamic Grouped Inputs</h3>
 
 	<form class="ux-form" onsubmit="return false">
 		<script type="text/javascript">
 		function testDynamicGroupAdd() {
-			var g = document.getElementById('test-dynamic-group'),
-				newNode = g.getElementsByTagName("input")[0].cloneNode();
-
+			var g = document.getElementById('test-dynamic-group');
+			var newNode = g.getElementsByTagName("input")[0].cloneNode();
 			g.appendChild(newNode);
 		}
 		function testDynamicGroupRemove() {
-			var g = document.getElementById('test-dynamic-group'),
-				nodeCount = g.getElementsByTagName("input").length;
-
-			if (nodeCount > 1) {
+			var g = document.getElementById('test-dynamic-group');
+			var nodeCount = g.getElementsByTagName("input").length;
+			if(nodeCount > 1) {
 				g.removeChild(g.lastChild);
 			}
 		}
 		</script>
 		<fieldset class="ux-group">
-			<button type="submit" class="ux-button" onclick="testDynamicGroupAdd()">Add field</button>
-			<button type="submit" class="ux-button" onclick="testDynamicGroupRemove()">Remove field</button>
+			<button type="submit" class="ux-button" onclick="testDynamicGroupAdd()"><i class="fa fa-plus"></i> &nbsp; Add field</button>
+			<button type="submit" class="ux-button" onclick="testDynamicGroupRemove()"><i class="fa fa-minus"></i> &nbsp; Remove field</button>
 		</fieldset>
-
 		<fieldset class="ux-group" id="test-dynamic-group">
 			<input type="text" class="ux-input-1-3" placeholder="Add or remove fields to test">
 		</fieldset>
 	</form>
 
 
-	<h2>Form Input Sizing</h2>
+	<h3>Form Input Sizing</h3>
 
 	<form class="ux-form">
-		<input class="ux-input-1-1" type="text" placeholder=".ux-input-1-1"><br>
-		<input class="ux-input-2-3" type="text" placeholder=".ux-input-2-3"><br>
-		<input class="ux-input-1-2" type="text" placeholder=".ux-input-1-2"><br>
-		<input class="ux-input-1-3" type="text" placeholder=".ux-input-1-3"><br>
-		<input class="ux-input-1-4" type="text" placeholder=".ux-input-1-4"><br>
+		<input class="ux-input-1-1" type="text" placeholder=".ux-input-1-1" style="margin-bottom:3px;"><br>
+		<input class="ux-input-2-3" type="text" placeholder=".ux-input-2-3" style="margin-bottom:3px;"><br>
+		<input class="ux-input-1-2" type="text" placeholder=".ux-input-1-2" style="margin-bottom:3px;"><br>
+		<input class="ux-input-1-3" type="text" placeholder=".ux-input-1-3" style="margin-bottom:3px;"><br>
+		<input class="ux-input-1-4" type="text" placeholder=".ux-input-1-4" style="margin-bottom:3px;"><br>
 	</form>
 
 
-	<h2>Invalid Form Inputs</h2>
+	<h3>Invalid Form Inputs</h3>
 
 	<form class="ux-form">
 		<input type="email" placeholder="Requires an email" required>
 	</form>
 
 
-	<h2>Disabled Form Inputs</h2>
+	<h3>Disabled Form Inputs</h3>
 
 	<form class="ux-form">
 		<input class="ux-input-xlarge" type="text" placeholder="Disabled input here..." value="Foo bar baz" disabled>
 	</form>
 
 
-	<h2>ReadOnly Form Inputs</h2>
+	<h3>ReadOnly Form Inputs</h3>
 
 	<form class="ux-form">
 		<input class="ux-input-xlarge" type="text" placeholder="Readonly input here..." value="Foo bar baz" readonly>
 	</form>
 
 
-	<h2>Rounded Form</h2>
+	<h3>Rounded Form Inputs</h3>
 
 	<form class="ux-form ux-form-stacked">
 		<label>Subject</label>
 		<input type="text" class="ux-input-rounded" placeholder="Subject">
-
 		<label>Message</label>
 		<textarea class="ux-input-rounded" rows="5" cols="40" placeholder="Message..."></textarea>
-
-		<button type="submit" class="ux-button ux-input-rounded">Search</button>
-		<input type="reset" class="ux-button ux-input-rounded" value="Reset">
+		<button type="submit" class="ux-button ux-input-rounded"><i class="fa fa-search"></i> &nbsp; Search</button>
+		<button type="reset" class="ux-button ux-input-rounded">Reset &nbsp; <i class="fa fa-times"></i></button>
 	</form>
 
 
-	<h2>Form Selects</h2>
+	<h3>Form Selects</h3>
 
 	<form class="ux-form">
 		<select class="ux-input-medium">
@@ -1063,7 +1060,7 @@
 	</form>
 
 
-	<h2>Form Checkboxes and Radios</h2>
+	<h3>Form Checkboxes and Radios</h3>
 
 	<form class="ux-form">
 		<label class="ux-checkbox">
@@ -1083,7 +1080,7 @@
 	</form>
 
 
-	<h2>Form Help text</h2>
+	<h3>Form Help text</h3>
 
 	<form class="ux-form ux-form-stacked">
 		<fieldset>
@@ -1094,14 +1091,15 @@
 	</form>
 
 
-	<h2>Form Buttons</h2>
+	<h3>Form Buttons</h3>
 
 	<form class="ux-form">
-		<a class="ux-button ux-button-primary">Anchor</a>
-		<button class="ux-button ux-button-primary">Button</button>
-		<input type="submit" class="ux-button ux-button-primary" value="Submit">
-		<input type="button" class="ux-button ux-button-primary" value="Input Button">
-		<input type="reset" class="ux-button ux-button-primary" value="Reset">
+		<a class="ux-button"><i class="fa fa-anchor"></i> &nbsp; Anchor</a>
+		<a class="ux-button ux-button-special" href="#"><i class="fa fa-link"></i> &nbsp; Link</a>
+		<button class="ux-button ux-button-primary">Button &nbsp; <i class="fa fa-paperclip"></i></button>
+		<button type="submit" class="ux-button ux-button-secondary">Submit &nbsp; <i class="fa fa-paper-plane-o"></i></button>
+		<input type="button" class="ux-button ux-button-regular" value="Input Button">
+		<input type="reset" class="ux-button ux-button-highlight" value="Reset">
 	</form>
 
 	<br>
@@ -1109,7 +1107,10 @@
 
 <!-- Menus -->
 
-	<h2>Horizontal Menu</h2>
+	<h2>Menus</h2>
+
+	<br>
+	<h3>Horizontal Menu</h3>
 	<div class="ux-menu ux-menu-horizontal">
 		<a href="javascript:void(0)" class="ux-menu-heading">Title</a>
 		<ul class="ux-menu-list">
@@ -1122,7 +1123,8 @@
 		</ul>
 	</div>
 
-	<h1>Vertical Menu, with nested children</h2>
+	<br>
+	<h3>Vertical Menu, with nested children</h3>
 	<div class="ux-menu ux-menu-custom-2" style="width:275px;">
 		<a href="javascript:void(0)" class="ux-menu-heading">Title</a>
 		<ul class="ux-menu-list">
@@ -1151,27 +1153,34 @@
 	</div>
 
 	<br>
+	<br>
 
 <!-- Breadcrumbs -->
 
-<div align="center">
-	<!-- a simple div with some links -->
-	<div class="ux-breadcrumb">
-		<a href="#" class="active">Browse</a>
-		<a href="#">Compare</a>
-		<a href="#">Order Confirmation</a>
-		<a href="#">Checkout</a>
+	<h2 id="breadcrumbs">Breadcrumbs</h2>
+
+	<br>
+	<div align="left">
+		<!-- a simple div with some links -->
+		<div class="ux-breadcrumb">
+			<a href="#breadcrumbs" class="active">Browse</a>
+			<a href="#breadcrumbs">Compare</a>
+			<a href="#breadcrumbs">Order Confirmation</a>
+			<a href="#breadcrumbs">Checkout</a>
+		</div>
+		<br>
+		<br>
+		<!-- another version - flat style with animated hover effect -->
+		<div class="ux-breadcrumb ux-flat-breadcrumb">
+			<a href="#breadcrumbs">Browse</a>
+			<a href="#breadcrumbs" class="active">Compare</a>
+			<a href="#breadcrumbs">Order Confirmation</a>
+			<a href="#breadcrumbs">Checkout</a>
+		</div>
 	</div>
+
 	<br>
 	<br>
-	<!-- another version - flat style with animated hover effect -->
-	<div class="ux-breadcrumb ux-flat-breadcrumb">
-		<a href="#" class="active">Browse</a>
-		<a href="#">Compare</a>
-		<a href="#">Order Confirmation</a>
-		<a href="#">Checkout</a>
-	</div>
-</div>
 
 <!-- END -->
 

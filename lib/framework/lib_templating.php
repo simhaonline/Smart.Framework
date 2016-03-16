@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160224
+ * @version 	v.160316
  * @package 	Templating:Engines
  *
  */
@@ -344,7 +344,7 @@ private static function replace_marker($mtemplate, $key, $val) {
 	//--
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key).'(\|bool|\|num|\|htmid|\|jsvar|\|json)?(\|url)?(\|js)?(\|html)?'.'####\]/';
+		$regex = '/\[####'.preg_quote((string)$key).'(\|bool|\|num|\|htmid|\|jsvar|\|json)?(\|url)?(\|js)?(\|html)?(\|nl2br)?'.'####\]/';
 		//--
 		if((string)$val != '') {
 			$val = (string) str_replace(
@@ -382,6 +382,10 @@ private static function replace_marker($mtemplate, $key, $val) {
 				} //end if
 				if((string)$matches[4] == '|html') {
 					$val = (string) Smart::escape_html((string)$val);
+				} //end if
+				//--
+				if((string)$matches[5] == '|nl2br') {
+					$val = (string) Smart::nl_2_br((string)$val);
 				} //end if
 				//--
 				return (string) $val;

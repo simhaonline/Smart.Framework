@@ -130,7 +130,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewSetVar(
 			'main',
 			SmartMarkersTemplating::render_template(
-				'<h1>'.'[[####TXT-OK####]] [####TXT-HELLO-WORLD####] [[####DATE-TIME|html####]]'."\n".'</h1><br><a class="ux-button ux-button-special" href="http://sourceforge.net/projects/warp-cms/files/smart-framework/" target="_blank">Download Smart.Framework (latest stable releases)</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-highlight" href="http://demo.unix-world.org/smart-framework.docs/" target="_blank">Documentation for the Smart.Framework</a><br>'."\n".'<br><a class="ux-button ux-button-primary" href="[####URL-TESTUNIT|html####]">Go To the Smart.Framework Test &amp; Demo Suite</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-secondary" href="[####URL-BENCHMARK|html####]">If you want to run a Benchmark over Smart.Framework, use this URL</a><br><br>',
+				'<h1>'.'[[####TXT-OK####]] [####TXT-HELLO-WORLD####] [[####DATE-TIME|html####]]'."\n".'</h1><br><a class="ux-button ux-button-special" href="http://sourceforge.net/projects/warp-cms/files/smart-framework/" target="_blank"><i class="fa fa-cloud-download"></i> &nbsp; Download Smart.Framework (latest stable releases)</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-highlight" href="http://demo.unix-world.org/smart-framework.docs/" target="_blank"><i class="fa fa-book"></i> &nbsp; Documentation for the Smart.Framework</a><br>'."\n".'<br><a class="ux-button ux-button-primary" href="[####URL-TESTUNIT|html####]"><i class="fa fa-object-group"></i> &nbsp; Go To the Smart.Framework Test &amp; Demo Suite</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-secondary" href="[####URL-BENCHMARK|html####]"><i class="fa fa-line-chart"></i> &nbsp; If you want to run a Benchmark over Smart.Framework, use this URL</a><br><br>',
 				[
 					'DATE-TIME' 		=> date('Y-m-d H:i:s O'),
 					'TXT-OK' 			=> $translator_core->text('ok'),
@@ -140,7 +140,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				]
 			)
 		);
-		$this->PageViewAppendVar('main', '<hr>'.Smart::escape_html('Unicode@String: Unicode String [ 1448824461 ]: @ Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム \'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #1234567890.,#').'<br>'.'['.Smart::escape_html($some_var_from_request).']'.'<hr>');
+		$this->PageViewAppendVar('main', '<hr><div style="color:#DDDDDD">'.Smart::escape_html('Unicode@String :: Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム :: áâãäåāăąÁÂÃÄÅĀĂĄ ćĉčçĆĈČÇ ďĎ èéêëēĕėěęÈÉÊËĒĔĖĚĘ ĝģĜĢ ĥħĤĦ ìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮ ĳĵĲĴ ķĶ ĺļľłĹĻĽŁ ñńņňÑŃŅŇ óôõöōŏőøœÒÓÔÕÖŌŎŐØŒ ŕŗřŔŖŘ șşšśŝßȘŞŠŚŜ țţťȚŢŤ ùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲ ŵŴ ẏỳŷÿýẎỲŶŸÝ źżžŹŻŽ').'</div><hr><div align="right">['.Smart::escape_html($some_var_from_request).']</div>');
 		$this->PageViewAppendVar('main', trim($fcontent));
 		//--
 

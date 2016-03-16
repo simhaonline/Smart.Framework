@@ -1,5 +1,10 @@
-/***** UX CSS Toolkit by unixman, r.160301.2307 :: License: BSD *****/
-/* based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ */
+/***** Smart UX CSS Toolkit, r.160316 *****/
+
+/*
+License: BSD
+	extended by unixman, (c) 2015-2016 unix-world.org
+	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
+*/
 
 /*** Base ***/
 
@@ -16,7 +21,7 @@
 	display: block;
 }
 
-/*** Grid :: 12 columns / fluid / responsive (extra, based on Bootstrap Grid) ***/
+/*** Grid :: 12 columns / fluid / responsive (extra, based on Bootstrap Grid, by Unixman) ***/
 
 .ux-g-grid {
 	padding-right: 15px;
@@ -612,7 +617,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 /* Rounded Inputs */
 .ux-form input.ux-input-rounded,
 .ux-form .ux-input-rounded {
-	border-radius: 2em;
+	border-radius: 12px;
 	padding: 0.5em 1em;
 }
 
@@ -903,7 +908,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	float: left;
 	font-size: 12px;
 	line-height: 36px;
-	color: white;
+	color: #FFFFFF !important;
 	/*need more margin on the left of links to accomodate the numbers*/
 	padding: 0 10px 0 60px;
 	background: #666666;
@@ -976,6 +981,9 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	font-weight: bold;
 }
 
+.ux-flat-breadcrumb a {
+	color: #333333 !important;
+}
 .ux-flat-breadcrumb a, .ux-flat-breadcrumb a:after {
 	background: #FFFFFF;
 	color: #000000;
