@@ -30,7 +30,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$this->PageViewSetVar(
 			'title',
-			'Benchmark'
+			'Benchmark Test URL'
 		);
 		//--
 		$this->PageViewSetVars([
@@ -38,7 +38,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			'main' => SmartMarkersTemplating::render_file_template(
 				$this->ControllerGetParam('module-path').'views/benchmark.htm',
 				[
-					'BENCHMARK-TITLE' => 'Benchmark Test'
+					'BENCHMARK-TITLE' => '[ Benchmark Test URL ]<br>use this URL to run a benchmark of this PHP framework ...'
 				]
 			)
 		]);

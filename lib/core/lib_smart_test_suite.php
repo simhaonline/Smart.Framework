@@ -141,7 +141,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'NO-CACHE-TIME' => time(),
 			'TEST-JS_SCRIPTS.Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')),
 			'Test-Buttons.AJAX-POST' => $btnop,
-			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;">SmartFramework :: '.$info_adm.' // Test Suite</div>',
+			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: '.$info_adm.' // Test Suite</div>',
 			'TEST-ELEMENTS.DIALOG' => '<a href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JQuery Dialog</a>',
 			'TEST-ELEMENTS.ALERT' => '<a href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JQuery Alert</a>',
 			'TEST-ELEMENTS.SEND-CONFIRM-MODAL' => $basic_form_start.$basic_form_send_modal.$basic_form_end,
