@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.160311
+ * @version 	v.160323
  * @package 	Core
  *
  */
@@ -542,18 +542,26 @@ public static function pretty_print_bytes($y_bytes, $y_decimals=1) {
 	} //end if
 	//--
 	if($y_bytes < 1024) {
-		return 0 + Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' bytes';
+		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' bytes';
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1024;
 	if($y_bytes < 1024) {
-		return 0 + Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' KB';
+		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' KB';
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1024;
 	if($y_bytes < 1024) {
-		return 0 + Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' MB';
+		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' MB';
 	} //end if
+	//--
+	$y_bytes = $y_bytes / 1024;
+	if($y_bytes < 1024) {
+		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' GB';
+	} //end if
+	//--
+	$y_bytes = $y_bytes / 1024;
+	return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' TB';
 	//--
 } //END FUNCTION
 //================================================================
@@ -575,18 +583,16 @@ public static function pretty_print_numbers($y_number, $y_decimals=1) {
 	} //end if
 	//--
 	if($y_number < 1000) {
-		return Smart::format_number_dec($y_number, $y_decimals, '.', '');
+		return (string) Smart::format_number_dec($y_number, $y_decimals, '.', '');
 	} //end if
 	//--
 	$y_number = $y_number / 1000;
 	if($y_number < 1000) {
-		return Smart::format_number_dec($y_number, $y_decimals, '.', '').'k';
+		return (string) Smart::format_number_dec($y_number, $y_decimals, '.', '').'k';
 	} //end if
 	//--
 	$y_number = $y_number / 1000;
-	if($y_number < 1000) {
-		return Smart::format_number_dec($y_number, $y_decimals, '.', '').'m';
-	} //end if
+	return (string) Smart::format_number_dec($y_number, $y_decimals, '.', '').'m';
 	//--
 } //END FUNCTION
 //================================================================

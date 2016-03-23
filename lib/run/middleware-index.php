@@ -179,7 +179,7 @@ public static function Run() {
 		//--
 	} //end if else
 	//--
-	if(((string)$arr[1] == 'html') OR ((string)$arr[1] == 'stml') OR ((string)$arr[1] == 'json')) { // this will neber be empty as it will fall to the default module if this is empty
+	if(((string)$arr[1] == 'html') OR ((string)$arr[1] == 'stml') OR ((string)$arr[1] == 'json')) { // this will never be empty as it will fall to the default module if this is empty
 		$arr[1] = 'default'; // fix to get default controller if empty
 	} //end if
 	//--
