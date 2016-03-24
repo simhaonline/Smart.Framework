@@ -128,7 +128,7 @@ License: BSD
 	cursor: pointer !important;
 	user-select: none !important;
 	zoom: 1 !important;
-/*	margin-bottom: 5px; */
+	margin-bottom: 1px;
 	box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
 	-webkit-box-sizing: border-box !important;
