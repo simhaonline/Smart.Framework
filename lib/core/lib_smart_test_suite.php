@@ -86,6 +86,9 @@ public static function main_screen($tab, $frm, $testformdata) {
 	$one_single_select = SmartComponents::html_single_select_list('test-unit-s-list-one', '', 'form', array('one' => 'One'), 'frm[one_single]', '150', '', 'no', 'no', '#JQUERY#'); // returns HTML Code
 	$one_single_with_blank_select = SmartComponents::html_multi_select_list('test-unit-lst-m-1', '', 'form', array('one' => 'One'), 'frm[one_multi][]', 'list', 'no', '200', '', '#JQUERY-FILTER#'); // returns HTML Code
 	//--
+	$test_normal_list_s = SmartComponents::html_single_select_list('test_normal_s', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3']);
+	$test_normal_list_m = SmartComponents::html_multi_select_list('test_normal_m', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3'], '', 'list', 'no', '200/75', '', 'height:65px;');
+	//--
 
 	//-- misc purpose data array
 	$array_of_values = array();
@@ -151,6 +154,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TEST-ELEMENTS.SINGLE-SEARCH-SELECT' => 'SingleSelect DropDown List with Search: '.$elem_single_select,
 			'TEST-ELEMENTS.MULTI-SELECT' => 'MultiSelect DropDown List: '.$elem_multi_select,
 			'TEST-ELEMENTS.MULTIBOX-SELECT' => 'MultiSelect CheckBoxes:<br>'.$elem_multi_boxes,
+			'TEST-ELEMENTS.NORMAL-LIST-S' => $test_normal_list_s,
+			'TEST-ELEMENTS.NORMAL-LIST-M' => $test_normal_list_m,
 			'TEST-ELEMENTS.CALENDAR' => 'Calendar Selector: '.SmartComponents::js_draw_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
 			'TEST-ELEMENTS.TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
 			'TEST-elements.Captcha' => SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captcha_form_name()),

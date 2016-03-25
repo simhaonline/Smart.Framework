@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160307
+ * @version 	v.160325
  * @package 	Components:Framework
  *
  */
@@ -372,7 +372,7 @@ public static function check_single_user() {
  * @param ENUM				$y_mode					'form' = display form | 'list' = display list
  * @param ARRAY				$yarr_data				DATASET ROWS AS: ['id' => 'name', 'id2' => 'name2'] OR ['id', 'name', 'id2', 'name2']
  * @param STRING 			$y_varname				as 'frm[test]'
- * @param INTEGER			$y_width				width in pixels
+ * @param INTEGER			$y_dimensions			dimensions in pixels (width or width / (list) height for #JQUERY%#)
  * @param CODE				$y_custom_js			custom js code (Ex: submit on change)
  * @param YES/NO			$y_raw					If Yes, the description values will not apply html special chars
  * @param YES/NO			$y_allowblank			If Yes, a blank value is allowed in list
@@ -416,6 +416,7 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
 
 	//--
 	$js = '';
+	$css_class = '';
 	//--
 	if(((string)$element_id != '') && (((string)$y_extrastyle == '#JQUERY#') || ((string)$y_extrastyle == '#JQUERY-FILTER#'))) {
 		//--
@@ -460,6 +461,10 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
 			//--
 		} //end if else
 		//--
+	} else {
+		//--
+		$css_class = 'class="ux-field"';
+		//--
 	} //end if else
 	//--
 
@@ -468,7 +473,7 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
 	//--
 	if((string)$y_mode == 'form') {
 		//--
-		$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" size="1" style="width: '.$the_width.'px; '.$y_extrastyle.'" '.$y_custom_js.'>'."\n";
+		$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" size="1" '.$css_class.' style="width:'.$the_width.'px; '.$y_extrastyle.'" '.$y_custom_js.'>'."\n";
 		//--
 		if((string)$y_allowblank == 'yes') {
 			$out .= '<option value="">&nbsp;</option>'."\n"; // we need a blank value to avoid wrong display of selected value
@@ -557,7 +562,7 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
  * @param STRING 			$y_varname				as 'frm[test][]'
  * @param ENUM				$y_draw 				list | checkboxes
  * @param YES/NO 			$y_sync_values			If Yes, sync select similar values used (curently works only for checkboxes)
- * @param INTEGER			$y_width				width in pixels (Only for jQuery Style)
+ * @param INTEGER			$y_dimensions			dimensions in pixels (width or width / (list) height for #JQUERY%#)
  * @param CODE				$y_custom_js			custom js code (Ex: submit on change)
  * @param SPECIAL			$y_extrastyle			Extra Style CSS | '#JQUERY#' | '#JQUERY-FILTER#'
  *
@@ -606,6 +611,8 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 	//--
 
 	//--
+	$css_class = '';
+	//--
 	if(((string)$element_id != '') && (((string)$y_extrastyle == '#JQUERY#') || ((string)$y_extrastyle == '#JQUERY-FILTER#'))) {
 		//--
 		$use_blank_value = 'no';
@@ -637,6 +644,7 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 			} //end if else
 			//--
 			if($use_multi_list_jq === false) {
+				$use_blank_value = 'yes';
 				$have_filter = false; // if multi will be enforced to single because of just 2 rows or less, disable filter !
 			} //end if
 			//--
@@ -657,17 +665,12 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 		//--
 	} else {
 		//--
-		$use_blank_value = 'yes';
+		$use_blank_value = 'no';
 		//--
 		$js = '';
+		$css_class = 'class="ux-field"';
 		//--
 	} //end if else
-	//--
-
-	//--
-	if($use_multi_list_jq === false) {
-		$use_blank_value = 'yes';
-	} //emd if
 	//--
 
 	//--
@@ -678,7 +681,7 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 		if((string)$y_draw == 'checkboxes') { // checkboxes
 			$out .= '<input type="hidden" name="'.$y_varname.'" value="">'."\n"; // we need a hidden value
 		} else { // list
-			$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" '.$use_multi_list_htm.' '.$y_custom_js.'>'."\n";
+			$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" '.$css_class.' style="width:'.$the_width.'px; '.$y_extrastyle.'" '.$use_multi_list_htm.' '.$y_custom_js.'>'."\n";
 			if((string)$use_blank_value == 'yes') {
 				$out .= '<option value="">&nbsp;</option>'."\n"; // we need a blank value to unselect
 			} //end if
@@ -827,39 +830,35 @@ public static function rounded_table($htmlcode, $class, $y_width='100%', $y_bgco
 
 //================================================================
 /**
- * Function: Format CSS Width
+ * Function: Format CSS Width or Height
  * Format the CSS Width: Passed number (550) or percent (100%) and return the correct CSS3 format as 550px or 100%
- *
- * @access 		private
- * @internal
- *
  */
-public static function format_css_width($y_width) {
+public static function format_css_dimension($y_w_or_h) {
 	//--
-	if(strpos($y_width, '%') !== false) {
+	if(strpos($y_w_or_h, '%') !== false) {
 		//--
-		$css_width = (string) $y_width; // Ex: 100%
+		$css_w_or_h = (string) Smart::escape_html(str_replace(array(':', ';'), array('', ''), (string)$y_w_or_h)); // Ex: 100% and dissalow styles separators : ;
 		//--
-	} elseif(strlen($y_width) > 0) {
+	} elseif(strlen($y_w_or_h) > 0) {
 		//--
-		$y_width = (int) $y_width;
+		$y_w_or_h = (int) $y_w_or_h;
 		//--
-		if($y_width < 1) {
-			$y_width = 1;
+		if($y_w_or_h < 1) {
+			$y_w_or_h = 1;
 		} //end if
-		if($y_width > 3200) {
-			$y_width = 3200;
+		if($y_w_or_h > 3200) {
+			$y_w_or_h = 3200;
 		} //end if
 		//--
-		$css_width = (string) $y_width.'px'; // Ex: 750px
+		$css_w_or_h = (string) $y_w_or_h.'px'; // Ex: 750px
 		//--
 	} else {
 		//--
-		$css_width = '100px';
+		$css_w_or_h = ''; // default
 		//--
 	} //end if else
 	//--
-	return $css_width;
+	return (string) $css_w_or_h;
 	//--
 } //END FUNCTION
 //================================================================
@@ -875,7 +874,7 @@ public static function format_css_width($y_width) {
  */
 private static function notifications_template($y_html, $y_sign, $y_sgnstyle, $y_style, $y_width) {
 	//--
-	$y_width = self::format_css_width($y_width);
+	$y_width = self::format_css_dimension($y_width);
 	//--
 	if(((string)$y_width == '100%') OR ((string)$y_width == '99%') OR ((string)$y_width == '98%')) {
 		$y_width = '97%'; // correction because of the margin
