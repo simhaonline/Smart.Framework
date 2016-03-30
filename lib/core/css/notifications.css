@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / Components / Notifications -- */
+/* -- CSS Start :: SmartFramework / Components / Notifications v.160329 -- */
 
 /* ----------------------------- */
 
@@ -7,15 +7,21 @@
 div#operation_question {
 	background-color: #FFEE11;
 	color: #000000;
+	background-image: url(../img/sign_quest.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
 	text-align: left;
 	font-size: 17px;
 	font-weight: bold;
 	font-style: normal;
-	padding-left: 8px;
+	padding-left: 48px;
 	padding-right: 8px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin: 8px;
+	padding-top: 12px;
+	padding-bottom: 8px;
+	margin: 0 auto;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	min-width: 250px;
 	min-height: 40px;
 	height: auto !important;
 	height: 40px;
@@ -30,15 +36,21 @@ div#operation_question * {
 div#operation_notice {
 	background-color: #009ACE;
 	color: #FFFFFF;
+	background-image: url(../img/sign_notice.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
 	text-align: left;
 	font-size: 17px;
 	font-weight: bold;
 	font-style: normal;
-	padding-left: 8px;
+	padding-left: 48px;
 	padding-right: 8px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin: 8px;
+	padding-top: 12px;
+	padding-bottom: 8px;
+	margin: 0 auto;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	min-width: 250px;
 	min-height: 40px;
 	height: auto !important;
 	height: 40px;
@@ -53,15 +65,21 @@ div#operation_notice * {
 div#operation_info {
 	background-color: #FEFF99;
 	color: #000000;
+	background-image: url(../img/sign_info.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
 	text-align: left;
 	font-size: 17px;
 	font-weight: bold;
 	font-style: normal;
-	padding-left: 8px;
+	padding-left: 48px;
 	padding-right: 8px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin: 8px;
+	padding-top: 12px;
+	padding-bottom: 8px;
+	margin: 0 auto;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	min-width: 250px;
 	min-height: 40px;
 	height: auto !important;
 	height: 40px;
@@ -76,15 +94,21 @@ div#operation_info * {
 div#operation_warn {
 	background-color: #FF9900;
 	color: #000000;
+	background-image: url(../img/sign_warn.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
 	text-align: left;
 	font-size: 17px;
 	font-weight: bold;
 	font-style: normal;
-	padding-left: 8px;
+	padding-left: 48px;
 	padding-right: 8px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin: 8px;
+	padding-top: 12px;
+	padding-bottom: 8px;
+	margin: 0 auto;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	min-width: 250px;
 	min-height: 40px;
 	height: auto !important;
 	height: 40px;
@@ -99,15 +123,21 @@ div#operation_warn * {
 div#operation_error {
 	background-color: #EF0000;
 	color: #FFFFFF;
+	background-image: url(../img/sign_error.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
 	text-align: left;
 	font-size: 17px;
 	font-weight: bold;
 	font-style: normal;
-	padding-left: 8px;
+	padding-left: 48px;
 	padding-right: 8px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	margin: 8px;
+	padding-top: 12px;
+	padding-bottom: 8px;
+	margin: 0 auto;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	min-width: 250px;
 	min-height: 40px;
 	height: auto !important;
 	height: 40px;

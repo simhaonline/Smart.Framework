@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160325
+ * @version 	v.160329
  * @package 	Components:Framework
  *
  */
@@ -866,13 +866,13 @@ public static function format_css_dimension($y_w_or_h) {
 
 //================================================================
 /**
- * Function: Notifications Message Template
+ * Function: Notifications Message Template v.160329
  *
  * @access 		private
  * @internal
  *
  */
-private static function notifications_template($y_html, $y_sign, $y_sgnstyle, $y_style, $y_width) {
+private static function notifications_template($y_html, $y_style, $y_width) {
 	//--
 	$y_width = self::format_css_dimension($y_width);
 	//--
@@ -880,52 +880,52 @@ private static function notifications_template($y_html, $y_sign, $y_sgnstyle, $y
 		$y_width = '97%'; // correction because of the margin
 	} //end if
 	//--
-	return '<!-- require: notifications.css --><div align="center"><div style="width:'.$y_width.';"><div id="'.$y_style.'"><div style="'.$y_sgnstyle.'"><img src="'.$y_sign.'" style="vertical-align:middle; padding-left:10px;"></div>'.$y_html.'</div></div></div>';
+	return '<!-- require: notifications.css --><div id="'.$y_style.'" style="width:'.$y_width.'!important;">'.$y_html.'</div>';
 	//--
 } //END FUNCTION
 //================================================================
 
 
 //================================================================
-public static function operation_question($y_html, $y_width='550') {
+public static function operation_question($y_html, $y_width='500') {
 	//--
-	return self::notifications_template($y_html, 'lib/core/img/sign_quest.png', 'float:right; line-height:40px;', 'operation_question', $y_width); // question
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function operation_notice($y_html, $y_width='550') {
-	//--
-	return self::notifications_template($y_html, 'lib/core/img/sign_notice.png', 'float:right; line-height:40px;', 'operation_notice', $y_width); // notice
+	return self::notifications_template($y_html, 'operation_question', $y_width); // question
 	//--
 } //END FUNCTION
 //================================================================
 
 
 //================================================================
-public static function operation_ok($y_html, $y_width='550') {
+public static function operation_notice($y_html, $y_width='500') {
 	//--
-	return self::notifications_template($y_html, 'lib/core/img/sign_info.png', 'float:right; line-height:40px;', 'operation_info', $y_width); // info (ok)
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function operation_warn($y_html, $y_width='550') {
-	//--
-	return self::notifications_template($y_html, 'lib/core/img/sign_warn.png', 'float:right; line-height:40px;', 'operation_warn', $y_width); // warn
+	return self::notifications_template($y_html, 'operation_notice', $y_width); // notice
 	//--
 } //END FUNCTION
 //================================================================
 
 
 //================================================================
-public static function operation_error($y_html, $y_width='550') {
+public static function operation_ok($y_html, $y_width='500') {
 	//--
-	return self::notifications_template($y_html, 'lib/core/img/sign_error.png', 'float:right; line-height:40px;', 'operation_error', $y_width); // error
+	return self::notifications_template($y_html, 'operation_info', $y_width); // info (ok)
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function operation_warn($y_html, $y_width='500') {
+	//--
+	return self::notifications_template($y_html, 'operation_warn', $y_width); // warn
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function operation_error($y_html, $y_width='500') {
+	//--
+	return self::notifications_template($y_html, 'operation_error', $y_width); // error
 	//--
 } //END FUNCTION
 //================================================================
