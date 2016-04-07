@@ -11,9 +11,9 @@
 	<b>Switch Eval for Status = [####STATUS####]</b>
 	<div>
 		[%%%%IF:STATUS:==####TEST-COMPARE####%%%%]
-			<span style="color:#003399">is equal with TEST-COMPARE [c]</span>
+			<span style="color:#003399">is equal with TEST-COMPARE [a]</span>
 		[%%%%ELSE:STATUS%%%%]
-			<span style="color:#FF3300">is NOT equal with TEST-COMPARE [c]</span>
+			<span style="color:#FF3300">is NOT equal with TEST-COMPARE [a]</span>
 		[%%%%/IF:STATUS%%%%]
 	</div>
 	<div>
@@ -58,7 +58,7 @@
 			<td>[####DATA.SLUG|html####]</td>
 			<td>[####DATA.NAME|html####]</td>
 			[%%%%IF:DATA.IS_VOWEL:==1%%%%]
-				[%%%%IF:DATA.SLUG:==a%%%%]
+				[%%%%IF:DATA.SLUG:==####TEST-COMPARE####%%%%]
 				<td>First*** Vowel: [[####DATA.IS_VOWEL|html####]]</td>
 				[%%%%ELSE:DATA.SLUG%%%%]
 				<td>Vowel: [[####DATA.IS_VOWEL|html####]]</td>
