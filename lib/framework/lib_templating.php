@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160316
+ * @version 	v.160407
  * @package 	Templating:Engines
  *
  */
@@ -446,7 +446,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 	//--
 	if(strpos((string)$mtemplate, '[%%%%IF:') !== false) {
 		//--
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|@\=|@\!)([a-zA-Z0-9_\-\.\|]*)%%%%\](.*)?(\[%%%%ELSE\:\1%%%%\](.*)?)?\[%%%%\/IF\:\1%%%%\]}sU';
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|@\=|@\!)([#a-zA-Z0-9_\-\.\|]*)%%%%\](.*)?(\[%%%%ELSE\:\1%%%%\](.*)?)?\[%%%%\/IF\:\1%%%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
@@ -469,6 +469,10 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				} //end if
 				if(strpos((string)$else_part[$i], '[%%%%IF:') !== false) {
 					$else_part[$i] = (string) self::process_if_syntax((string)$else_part[$i], (array)$y_arr_vars, (string)$y_context);
+				} //end if
+				//--
+				if((substr((string)$compare_val[$i], 0, 4) == '####') AND (substr((string)$compare_val[$i], -4, 4) == '####')) { // compare with variable instead of static value
+					$compare_val[$i] = (string) $y_arr_vars[str_replace('#', '', (string)$compare_val[$i])];
 				} //end if
 				//-- do last if / else processing
 				switch((string)$sign_not[$i]) {

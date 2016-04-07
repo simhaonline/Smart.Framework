@@ -32,6 +32,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 					$this->ControllerGetParam('module-path').'views/templating-test.htm', // the view
 					[
 						'TITLE' => $title,
+						'TEST-COMPARE' => 'c',
 						'TESTURL' => 'a"b\'c',
 						'DATA' => [
 						   // id        slug         name                is_vowel

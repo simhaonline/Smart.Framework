@@ -10,6 +10,13 @@
 <div>
 	<b>Switch Eval for Status = [####STATUS####]</b>
 	<div>
+		[%%%%IF:STATUS:==####TEST-COMPARE####%%%%]
+			<span style="color:#003399">is equal with TEST-COMPARE [c]</span>
+		[%%%%ELSE:STATUS%%%%]
+			<span style="color:#FF3300">is NOT equal with TEST-COMPARE [c]</span>
+		[%%%%/IF:STATUS%%%%]
+	</div>
+	<div>
 		[%%%%IF:STATUS:@=a|b|c%%%%]
 			<span style="color:#003399">IN [A | B | C]</span>
 		[%%%%ELSE:STATUS%%%%]

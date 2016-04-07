@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / ERRORS MANAGEMENT]
 // this should be loaded from app web root only
-// v.2.3.1.6 r.2016.03.25 / smart.framework.v.2.3
+// v.2.3.1.7 r.2016.04.07 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -113,7 +113,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	//--
 }, E_ALL & ~E_NOTICE);
 //==
-set_exception_handler(function($exception) {
+set_exception_handler(function($exception) { // no type for EXCEPTION to be PHP 7 compatible
 	//--
 	//print_r($exception);
 	//print_r($exception->getTrace());

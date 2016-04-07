@@ -12,7 +12,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 } //end if
 //-----------------------------------------------------
 
-// v.2.3.1.6 r.2016.03.25 / smart.framework.v.2.3
+// v.2.3.1.7 r.2016.04.07 / smart.framework.v.2.3
 
 //======================================================
 // Smart-Framework - App Bootstrap
