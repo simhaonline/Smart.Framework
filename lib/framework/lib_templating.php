@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160407.r2
+ * @version 	v.160407.r3
  * @package 	Templating:Engines
  *
  */
@@ -457,7 +457,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 			//--
 			$bind_var_key = (string) $var_part[$i];
 			if(((string)$y_context != '') AND (substr($bind_var_key, strlen((string)$y_context), 1) == '.')) {
-				$bind_var_key = (string) '&&&&'.$bind_var_key; // if context var appears as '&&&&CONTEXT.VAR123' instead of 'CONTEXT.VAR123'
+				$bind_var_key = (string) '$$$$'.$bind_var_key; // if context var appears as '$$$$CONTEXT.VAR123' instead of 'CONTEXT.VAR123'
 			} //end if
 			//--
 			if(((string)$bind_var_key != '') AND (array_key_exists((string)$bind_var_key, (array)$y_arr_vars))) { // if the IF is binded to an existing, non-empty KEY
@@ -590,10 +590,10 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 					//-- operate on a copy of original
 					$mks_line = (string) $loop_orig;
 					//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
+					$tmp_arr_context = array();
 					if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-						$tmp_arr_context = array(strtoupper('&&&&'.$bind_var_key.'.'.'__-ITERATOR-__') => $j);
 						foreach((array)$y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
-							$tmp_arr_context[strtoupper('&&&&'.$bind_var_key.'.'.$key)] = $val;
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$key)] = $val;
 						} //end foreach
 						$mks_line = (string) self::process_if_syntax(
 							(string) $mks_line,
