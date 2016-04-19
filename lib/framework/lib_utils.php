@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.160323
+ * @version 	v.160419
  * @package 	Core
  *
  */
@@ -1387,7 +1387,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 		//--
 		$browser->cookies = (array) $cookies;
 		//--
-		$data = (array) $browser->browse_url($y_url_or_path, $auth_name, $auth_pass, $y_method, $y_ssl_method); // do browse
+		$data = (array) $browser->browse_url($y_url_or_path, $y_method, $y_ssl_method, $auth_name, $auth_pass); // do browse
 		//--
 		return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
 			'log' 		=> (string) $data['log'].$tmp_extra_log,

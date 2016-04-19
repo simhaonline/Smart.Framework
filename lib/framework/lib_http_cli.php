@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.160122
+ * @version 	v.160419
  * @package 	Network:HTTP
  *
  */
@@ -48,6 +48,7 @@ final class SmartHttpClient {
 	public $poststring;										// Pre-Built Post String (for working with Lucene / Solr)
 	public $rawheaders;										// Raw Headers (to send)
 	public $xmlrequest;										// XML Request (to send)
+	public $jsonrequest;									// JSON Request (to send)
 	//--
 	//============================================== privates
 	//-- set
@@ -88,6 +89,7 @@ final class SmartHttpClient {
 		$this->cookies = array();
 		$this->postvars = array();
 		$this->rawheaders = array();
+		$this->jsonrequest = '';
 		$this->xmlrequest = '';
 		//--
 
@@ -105,7 +107,7 @@ final class SmartHttpClient {
 
 	//==============================================
 	// [PUBLIC] :: browse the url as a robot (auth works only with Basic authentication)
-	public function browse_url($url, $user='', $pwd='', $method='GET', $ssl_version='') {
+	public function browse_url($url, $method='GET', $ssl_version='', $user='', $pwd='') {
 		//--
 		$result = $this->fetch_url($url, $user, $pwd, $method, $ssl_version);
 		//--
@@ -469,7 +471,7 @@ final class SmartHttpClient {
 		//--
 
 		//-- auth
-		if((strlen($user) > 0) AND (strlen($pwd) > 0)) {
+		if(((string)$user != '') AND ((string)$pwd != '')) {
 			//--
 			if($this->debug) {
 				$this->log .= '[INF] Authentication will be attempted for USERNAME = \''.$user.'\' ; PASSWORD('.strlen($pwd).') *****'."\n";
@@ -486,14 +488,14 @@ final class SmartHttpClient {
 		if($have_cookies) {
 			//--
 			foreach($this->cookies as $key => $value) {
-				if(strlen($key) > 0) {
-					if(strlen($value) > 0) {
+				if((string)$key != '') {
+					if((string)$value != '') {
 						$send_cookies .= (string) $this->encode_cookie($key, $value);
 					} //end if
 				} //end if
 			} //end foreach
 			//--
-			if(strlen($send_cookies) > 0) {
+			if((string)$send_cookies != '') {
 				$this->raw_headers['Cookie'] = $send_cookies;
 				if($this->debug) {
 					$this->log .= '[INF] Cookies will be SET: '.$send_cookies."\n";
@@ -504,15 +506,33 @@ final class SmartHttpClient {
 		//--
 
 		//-- request
-		if($have_post_vars) { // post vars
+		if((string)$this->jsonrequest != '') { // json request
+			//--
+			if($this->debug) {
+				$this->log .= '[INF] JSON Request will be sent to server via: '.$method."\n";
+			} //end if
+			//--
+			$request = $method.' '.$path.' HTTP/'.$this->protocol."\r\n";
+			$this->raw_headers['Content-Type'] = 'application/json';
+			$this->raw_headers['Content-Length'] = strlen($this->jsonrequest);
+			//--
+		} elseif((string)$this->xmlrequest != '') { // xml request
+			//--
+			if($this->debug) {
+				$this->log .= '[INF] XML Request will be sent to server via: '.$method."\n";
+			} //end if
+			//--
+			$request = $method.' '.$path.' HTTP/'.$this->protocol."\r\n";
+			$this->raw_headers['Content-Type'] = 'application/xml'; // may be also: text/xml
+			$this->raw_headers['Content-Length'] = strlen($this->xmlrequest);
+			//--
+		} elseif($have_post_vars) { // post vars
 			//--
 			if($this->debug) {
 				$this->log .= '[INF] Variables will be sent to server using POST method'."\n";
 			} //end if
 			//--
-			$request = 'POST '.$path.' HTTP/'.$this->protocol."\r\n";
 			$post_string = '';
-			//--
 			if((string)$this->poststring != '') {
 				$post_string = (string) $this->poststring;
 			} elseif(is_array($this->postvars)) {
@@ -521,17 +541,9 @@ final class SmartHttpClient {
 				} //end foreach
 			} //end if else
 			//--
+			$request = 'POST '.$path.' HTTP/'.$this->protocol."\r\n";
 			$this->raw_headers['Content-Type'] = 'application/x-www-form-urlencoded';
 			$this->raw_headers['Content-Length'] = strlen($post_string);
-			//--
-		} elseif(strlen($this->xmlrequest) > 0) { // xml request
-			//--
-			if($this->debug) {
-				$this->log .= '[INF] XML Request will be sent to server via: '.$method."\n";
-			} //end if
-			//--
-			$request = $method.' '.$path.' HTTP/'.$this->protocol."\r\n";
-			$this->raw_headers['Content-Length'] = strlen($this->xmlrequest);
 			//--
 		} else { // simple request
 			//--
@@ -575,20 +587,28 @@ final class SmartHttpClient {
 		//--
 
 		//--
-		if($have_post_vars) {
-			if(@fwrite($this->socket, $post_string."\r\n") === false) {
+		if((string)$this->jsonrequest != '') { // json request
+			if(@fwrite($this->socket, $this->jsonrequest."\r\n") === false) {
 				if($this->debug) {
-					$this->log .= '[ERR] Error writing POST data to socket'."\n";
+					$this->log .= '[ERR] Error writing JSON Request data to socket'."\n";
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing POST data to socket ...');
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing JSON Request data to socket ...');
 				return 0;
 			} //end if
-		} elseif(strlen($this->xmlrequest) > 0) {
+		} elseif((string)$this->xmlrequest != '') { // xml request
 			if(@fwrite($this->socket, $this->xmlrequest."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing XML Request data to socket'."\n";
 				} //end if
 				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing XML Request data to socket ...');
+				return 0;
+			} //end if
+		} elseif($have_post_vars) {
+			if(@fwrite($this->socket, $post_string."\r\n") === false) {
+				if($this->debug) {
+					$this->log .= '[ERR] Error writing POST data to socket'."\n";
+				} //end if
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing POST data to socket ...');
 				return 0;
 			} //end if
 		} //end if else
