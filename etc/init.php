@@ -130,9 +130,9 @@ date_default_timezone_set((string)SMART_FRAMEWORK_TIMEZONE);
 //-- check safe mode PHP (must be 0=off)
 // no more necessary, it was removed since PHP 5.4
 //-- server output compression (optional)
-if(function_exists('apache_setenv')) {
-	@apache_setenv('no-gzip', 1); // turn off GZip Compression in Apache
-} //end if
+//if(function_exists('apache_setenv')) {
+//	@apache_setenv('no-gzip', 1); // turn off GZip Compression in Apache
+//} //end if
 ini_set('zlib.output_compression', '0'); // disable ZLib PHP Internal Output Compression as it will break sensitive control over headings and timeouts
 if((string)ini_get('zlib.output_compression') != '0') {
 	die('SmartFramework INI // The PHP.INI ZLib Output Compression cannot be disabled !');
