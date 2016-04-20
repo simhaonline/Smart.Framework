@@ -591,78 +591,111 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 				if($arrtype === 1) { // 1: non-associative
 					//--
 					for($j=0; $j<Smart::array_size($y_arr_vars[(string)$bind_var_key]); $j++) {
+						//-- operate with a copy of arr
+						$mks_arr = $y_arr_vars[(string)$bind_var_key][$j];
 						//-- operate on a copy of original
 						$mks_line = (string) $loop_orig;
 						//-- if line is array
-						if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
-							//--
-							$y_arr_vars[(string)$bind_var_key][$j]['_-ITERATOR-_'] = $j;
-							//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
-							$tmp_arr_context = array();
-							if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-								foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
+						if(!is_array($mks_arr)) {
+							$tmp_save_val = $mks_arr;
+							$mks_arr = array();
+							$mks_arr['_-VAL-_'] = $tmp_save_val;
+							$tmp_save_val = '';
+						} //end if else
+						$mks_arr['_-ITERATOR-_'] = $j;
+						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
+						$tmp_arr_context = array();
+						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
+							if(is_array($mks_arr)) {
+								foreach($mks_arr as $key => $val) {
 									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$key)] = $val;
 								} //end foreach
-								$mks_line = (string) self::process_if_syntax(
-									(string) $mks_line,
-									(array) array_merge((array)$y_arr_vars, (array)$tmp_arr_context),
-									(string) $bind_var_key // context
-								);
-							} //end if
-							//-- process the loop replacements
-							foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
-								//--
+							} else {
+								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-VAL-_')] = (string) $mks_arr['_-VAL-_'];
+							} //end if else
+							$mks_line = (string) self::process_if_syntax(
+								(string) $mks_line,
+								(array) array_merge((array)$y_arr_vars, (array)$tmp_arr_context),
+								(string) $bind_var_key // context
+							);
+						} //end if
+						//-- process the loop replacements
+						if(is_array($mks_arr)) {
+							foreach($mks_arr as $key => $val) {
 								$mks_line = (string) self::replace_marker(
 									(string) $mks_line,
 									(string) strtoupper($bind_var_key.'.'.$key),
 									(string) $val
 								);
-								//--
 							} //end for
-							//--
-							$line .= (string) $mks_line;
-							//--
-						} //end if
+						} else {
+							$mks_line = (string) self::replace_marker(
+								(string) $mks_line,
+								(string) strtoupper($bind_var_key.'._-VAL-_'),
+								(string) $mks_arr
+							);
+						} //end if else
+						//-- render
+						$line .= (string) $mks_line;
 						//--
 					} //end for
 					//--
 				} elseif($arrtype === 2) { // 2: associative
 					//--
+					$j=0;
+					//--
 					foreach($y_arr_vars[(string)$bind_var_key] as $zkey => $zval) {
 						//-- operate on a copy of original
 						$mks_line = (string) $loop_orig;
-						//-- if line is array
-						if(is_array($zval)) {
-							//--
-							// ##
-							//--
-						} else {
-							//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
-							$tmp_arr_context = array();
-							if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-KEY-_')] = (string) $zkey;
+						//--
+						$ziterator = $j;
+						$j++;
+						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
+						$tmp_arr_context = array();
+						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $ziterator;
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-KEY-_')] = (string) $zkey;
+							if(is_array($zval)) {
+								foreach($zval as $key => $val) {
+									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$key)] = $val;
+								} //end foreach
+							} else {
 								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-VAL-_')] = (string) $zval;
-								$mks_line = (string) self::process_if_syntax(
-									(string) $mks_line,
-									(array) array_merge((array)$y_arr_vars, (array)$tmp_arr_context),
-									(string) $bind_var_key // context
-								);
-							} //end if
-							//--
-							$mks_line = (string) self::replace_marker(
+							} //end if else
+							$mks_line = (string) self::process_if_syntax(
 								(string) $mks_line,
-								(string) strtoupper($bind_var_key.'._-KEY-_'),
-								(string) $zkey
+								(array) array_merge((array)$y_arr_vars, (array)$tmp_arr_context),
+								(string) $bind_var_key // context
 							);
+						} //end if
+						//-- process the loop replacements
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) strtoupper($bind_var_key.'._-ITERATOR-_'),
+							(string) $ziterator
+						);
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) strtoupper($bind_var_key.'._-KEY-_'),
+							(string) $zkey
+						);
+						if(is_array($zval)) {
+							foreach($zval as $key => $val) {
+								$mks_line = (string) self::replace_marker(
+									(string) $mks_line,
+									(string) strtoupper($bind_var_key.'.'.$key),
+									(string) $val
+								);
+							} //end for
+						} else {
 							$mks_line = (string) self::replace_marker(
 								(string) $mks_line,
 								(string) strtoupper($bind_var_key.'._-VAL-_'),
 								(string) $zval
 							);
-							//--
-							$line .= (string) $mks_line;
-							//--
 						} //end if else
+						//-- render
+						$line .= (string) $mks_line;
 						//--
 					} //end foreach
 					//--

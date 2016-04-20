@@ -36,6 +36,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'TESTURL' => 'a"b\'c',
 						'DATA' => [
 						   // id        slug         name                is_vowel
+							'This is a sample table',
 							['id'=>1,  'slug'=>'a', 'name'=>'Letter A', 'is_vowel'=>true],
 							['id'=>2,  'slug'=>'b', 'name'=>'Letter B', 'is_vowel'=>false],
 							['id'=>3,  'slug'=>'c', 'name'=>'Letter C', 'is_vowel'=>false],
@@ -53,7 +54,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 							['id'=>15, 'slug'=>'o', 'name'=>'Letter O', 'is_vowel'=>true]
 						],
 						'DAT2' => [
-							'key1' => 'val1',
+							'key1' => [ 'id' => 'val1', 'name' => 'Value 1' ],
 							'key2' => 'val2',
 							'key3' => 'val3',
 							'key4' => 'val4',
