@@ -49,11 +49,11 @@
 <table width="550" cellpadding="4">
 [%%%%LOOP:DATA%%%%]
 	[%%%%IF:TEST2:==3%%%%]
-		[%%%%IF:DATA.ID:%2%%%%]
+		[%%%%IF:DATA._-ITERATOR-_:%2%%%%]
 		<tr style="background:#ECECEC;">
-		[%%%%ELSE:DATA.ID%%%%]
+		[%%%%ELSE:DATA._-ITERATOR-_%%%%]
 		<tr style="background:#FFCC00;">
-		[%%%%/IF:DATA.ID%%%%]
+		[%%%%/IF:DATA._-ITERATOR-_%%%%]
 			<td>[####DATA.ID|html####]</td>
 			<td>[####DATA.SLUG|html####]</td>
 			<td>[####DATA.NAME|html####]</td>
@@ -74,6 +74,17 @@
 		<tr><td>Test 2 is not 3, not showing real data ...</td></tr>
 	[%%%%/IF:TEST2%%%%]
 [%%%%/LOOP:DATA%%%%]
+</table>
+<hr>
+<table width="550" cellpadding="4">
+[%%%%LOOP:DAT2%%%%]
+	[%%%%IF:DAT2._-KEY-_:!=key2%%%%]
+	<tr style="background:#DDEEFF;">
+		<td>[####DAT2._-KEY-_|html####]</td>
+		<td>[####DAT2._-VAL-_|html####]</td>
+	</tr>
+	[%%%%/IF:DAT2._-KEY-_%%%%]
+[%%%%/LOOP:DAT2%%%%]
 </table>
 <hr>
 <br>

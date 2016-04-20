@@ -52,6 +52,12 @@ class SmartAppIndexController extends SmartAbstractAppController {
 							['id'=>14, 'slug'=>'n', 'name'=>'Letter N', 'is_vowel'=>false],
 							['id'=>15, 'slug'=>'o', 'name'=>'Letter O', 'is_vowel'=>true]
 						],
+						'DAT2' => [
+							'key1' => 'val1',
+							'key2' => 'val2',
+							'key3' => 'val3',
+							'key4' => 'val4',
+						],
 						'TEST1' => 3,
 						'TEST2' => Smart::random_number(2,3),
 						'TEST3' => 3,
