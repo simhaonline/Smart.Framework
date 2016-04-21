@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160420
+ * @version 	v.160421
  * @package 	Templating:Engines
  *
  */
@@ -446,12 +446,12 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 	//--
 	if(strpos((string)$mtemplate, '[%%%%IF:') !== false) {
 		//--
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|@\=|@\!)([#a-zA-Z0-9_\-\.\|]*)%%%%\](.*)?(\[%%%%ELSE\:\1%%%%\](.*)?)?\[%%%%\/IF\:\1%%%%\]}sU';
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|@\=|@\!)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
 		//--
-		list($orig_part, $var_part, $sign_not, $compare_val, $if_part, $else_all, $else_part) = (array) $matches;
+		list($orig_part, $var_part, $sign_not, $compare_val, $opt_uniqid, $opt_uniqix, $if_part, $else_all, $else_part) = (array) $matches;
 		//--
 		for($i=0; $i<Smart::array_size($orig_part); $i++) {
 			//--
@@ -569,12 +569,12 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 	//--
 	if(strpos((string)$mtemplate, '[%%%%LOOP:') !== false) {
 		//--
-		$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)%%%%\](.*)?\[%%%%\/LOOP\:\1%%%%\]}sU';
+		$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\](.*)?\[%%%%\/LOOP\:\1\2%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
 		//--
-		list($orig_part, $var_part, $loop_part) = (array) $matches;
+		list($orig_part, $var_part, $opt_uniqid, $opt_uniqix, $loop_part) = (array) $matches;
 		//--
 		for($i=0; $i<Smart::array_size($orig_part); $i++) {
 			//--
@@ -591,27 +591,18 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 				if($arrtype === 1) { // 1: non-associative
 					//--
 					for($j=0; $j<Smart::array_size($y_arr_vars[(string)$bind_var_key]); $j++) {
-						//-- operate with a copy of arr
-						$mks_arr = $y_arr_vars[(string)$bind_var_key][$j];
 						//-- operate on a copy of original
 						$mks_line = (string) $loop_orig;
-						//-- if line is array
-						if(!is_array($mks_arr)) {
-							$tmp_save_val = $mks_arr;
-							$mks_arr = array();
-							$mks_arr['_-VAL-_'] = $tmp_save_val;
-							$tmp_save_val = '';
-						} //end if else
-						$mks_arr['_-ITERATOR-_'] = $j;
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
 						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-							if(is_array($mks_arr)) {
-								foreach($mks_arr as $key => $val) {
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $j;
+							if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
+								foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
 									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$key)] = $val;
 								} //end foreach
 							} else {
-								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-VAL-_')] = (string) $mks_arr['_-VAL-_'];
+								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-VAL-_')] = (string) $y_arr_vars[(string)$bind_var_key][$j];
 							} //end if else
 							$mks_line = (string) self::process_if_syntax(
 								(string) $mks_line,
@@ -620,8 +611,13 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 							);
 						} //end if
 						//-- process the loop replacements
-						if(is_array($mks_arr)) {
-							foreach($mks_arr as $key => $val) {
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) strtoupper($bind_var_key.'._-ITERATOR-_'),
+							(string) $j
+						);
+						if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
+							foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
 								$mks_line = (string) self::replace_marker(
 									(string) $mks_line,
 									(string) strtoupper($bind_var_key.'.'.$key),
@@ -632,7 +628,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 							$mks_line = (string) self::replace_marker(
 								(string) $mks_line,
 								(string) strtoupper($bind_var_key.'._-VAL-_'),
-								(string) $mks_arr
+								(string) $y_arr_vars[(string)$bind_var_key][$j]
 							);
 						} //end if else
 						//-- render

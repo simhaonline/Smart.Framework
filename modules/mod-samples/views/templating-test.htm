@@ -34,31 +34,31 @@
 </div>
 <hr>
 [%%%%IF:TEST1:<=3%%%%]
-	[%%%%IF:TEST2:==3%%%%]
+	[%%%%IF:TEST2:==3(1)%%%%]
 		[%%%%IF:TEST3:==3%%%%]
 			This is displayed when TEST2 is = 3<br>
 		[%%%%/IF:TEST3%%%%]
-	[%%%%ELSE:TEST2%%%%]
+	[%%%%ELSE:TEST2(1)%%%%]
 		This is displayed when TEST2 is != 3 (ELSE)<br>
-	[%%%%/IF:TEST2%%%%]
+	[%%%%/IF:TEST2(1)%%%%]
 [%%%%/IF:TEST1%%%%]
-[%%%%IF:TEST2:==3%%%%]
+[%%%%IF:TEST2:==3(2)%%%%]
 	This also appears when TEST2 is 3<br>
-[%%%%/IF:TEST2%%%%]
+[%%%%/IF:TEST2(2)%%%%]
 <hr>
 <table width="550" cellpadding="4">
-[%%%%LOOP:DATA%%%%]
+[%%%%LOOP:DATA(1)%%%%]
 [%%%%IF:TEST2:==3%%%%]
-	[%%%%IF:DATA._-ITERATOR-_:<=0%%%%]
-		<tr style="background:#FFFFFF;">
-			<td colspan="4">[####DATA._-VAL-_|html####]</td>
+	[%%%%IF:DATA._-ITERATOR-_:<=0(1)%%%%]
+		<tr style="background:#003399;color:#FFFFFF;">
+			<td colspan="4"><b>[####DATA._-VAL-_|html####]</b></td>
 		</tr>
-	[%%%%ELSE:DATA._-ITERATOR-_%%%%]
-		[%%%%IF:DATA.ID:%2%%%%]
+	[%%%%ELSE:DATA._-ITERATOR-_(1)%%%%]
+		[%%%%IF:DATA._-ITERATOR-_:%2(2)%%%%]
 		<tr style="background:#ECECEC;">
-		[%%%%ELSE:DATA.ID%%%%]
+		[%%%%ELSE:DATA._-ITERATOR-_(2)%%%%]
 		<tr style="background:#FFCC00;">
-		[%%%%/IF:DATA.ID%%%%]
+		[%%%%/IF:DATA._-ITERATOR-_(2)%%%%]
 			<td>[####DATA.ID|html####]</td>
 			<td>[####DATA.SLUG|html####]</td>
 			<td>[####DATA.NAME|html####]</td>
@@ -75,11 +75,11 @@
 		[%%%%IF:DATA.ID:%2%%%%]
 		<!-- Data ID is % 2 -->
 		[%%%%/IF:DATA.ID%%%%]
-	[%%%%/IF:DATA._-ITERATOR-_%%%%]
+	[%%%%/IF:DATA._-ITERATOR-_(1)%%%%]
 [%%%%ELSE:TEST2%%%%]
 	<tr><td>Test 2 is not 3, not showing real data ...</td></tr>
 [%%%%/IF:TEST2%%%%]
-[%%%%/LOOP:DATA%%%%]
+[%%%%/LOOP:DATA(1)%%%%]
 </table>
 <hr>
 <table width="550" cellpadding="4">
