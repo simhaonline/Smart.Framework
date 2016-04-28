@@ -290,7 +290,7 @@ private function GetChildren($vals, &$i, $type) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160213
+ * @version     v.160425
  * @package     DATA:XML
  *
  */
@@ -343,14 +343,22 @@ private function create_from_array($y_array) {
 	//--
 	$out = '';
 	//--
+	$arrtype = Smart::array_type_test($y_array); // 0: not an array ; 1: non-associative ; 2: associative
+	//--
 	foreach($y_array as $key => $val) {
 		//--
-		if((is_numeric($key)) OR ((string)$key == '')) {
-			$key = (string) '_'.$key; // numeric or empty keys are not allowed
+		if($arrtype === 2) { // fix keys for associative array
+			if((is_numeric($key)) OR ((string)$key == '')) {
+				$key = (string) '_'.$key; // numeric or empty keys are not allowed: _#
+			} //end if
 		} //end if
 		//--
 		if(is_array($val)) {
-			$out .= '<'.Smart::escape_html($key).'>'."\n".$this->create_from_array($val).'</'.Smart::escape_html($key).'>'."\n";
+			if(is_numeric($key)) { // this can happen only if non-associative array as for associative arrays the numeric key is fixed above as _#
+				$out .= $this->create_from_array($val);
+			} else {
+				$out .= '<'.Smart::escape_html($key).'>'."\n".$this->create_from_array($val).'</'.Smart::escape_html($key).'>'."\n";
+			} //end if else
 		} elseif((string)$val != '') {
 			$out .= '<'.Smart::escape_html($key).'>'.Smart::escape_html($val).'</'.Smart::escape_html($key).'>'."\n";
 		} else {

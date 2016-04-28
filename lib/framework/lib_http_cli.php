@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.160419
+ * @version 	v.160425
  * @package 	Network:HTTP
  *
  */
@@ -647,7 +647,7 @@ final class SmartHttpClient {
 		if(is_array($value)) {
 			$arrtype = Smart::array_type_test($value); // 0: not an array ; 1: non-associative ; 2:associative
 			if($arrtype === 1) { // 1: non-associative
-				for($i=0; $i<count($value); $i++) {
+				for($i=0; $i<Smart::array_size($value); $i++) {
 					$out .= urlencode($varname).'[]='.rawurlencode($value[$i]).'&';
 				} //end foreach
 			} else { // 2: associative

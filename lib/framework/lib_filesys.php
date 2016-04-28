@@ -63,7 +63,7 @@ final class SmartFileSysUtils {
 /**
  * Return the MAXIMUM allowed Upload Size
  *
- * @return NUMBER					[Max Upload Size in Bytes]
+ * @return INTEGER								:: the Max Upload Size in Bytes
  */
 public static function max_upload_size() {
 	//--
@@ -74,7 +74,14 @@ public static function max_upload_size() {
 
 
 //================================================================
-// returns 1 if valid ; 0 if not
+/**
+ * Check a Filename or a Dirname if contain valid characters (to avoid security injections)
+ *
+ * @param 	STRING 	$y_path 					:: The path (dir or file) to validate
+ * @param 	YES/NO 	$y_deny_absolute_path 		:: *Optional* If YES will dissalow absolute paths
+ *
+ * @return 	0/1									:: returns 1 if VALID ; 0 if INVALID
+ */
 public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='yes') {
 	//--
 	if((string)$y_path == '') { // dissalow empty paths
@@ -107,8 +114,9 @@ public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='ye
 
 //================================================================ CHECK ABSOLUTE PATH ACCESS
 /**
- * Function: Raise Error if Unsafe Path
- * Security: implements protection if unsafe paths are accessed
+ * Function: Raise Error if Unsafe Path.
+ *
+ * Security: implements protection if unsafe paths are accessed.
  *
  * @access 		private
  * @internal
@@ -214,7 +222,16 @@ private static function test_absolute_path($y_path) {
 
 
 //================================================================
-// safe add trailing slash to a dir if not already there
+/**
+ * Safe add a trailing slash to a path if not already have it, with safe detection and avoid root access.
+ *
+ * Adding a trailing slash to a path is not a simple task as if path is empty, adding the trailing slash will result in accessing the root file system as will be: /.
+ * Otherwise it have to detect if the trailing slash exists already to avoid double slash.
+ *
+ * @param 	STRING 	$y_path 					:: The path to add the trailing slash to
+ *
+ * @return 	STRING								:: The fixed path with a trailing
+ */
 public static function add_dir_last_slash($y_path) {
 	//--
 	$y_path = (string) Smart::fix_path_separator(trim((string)$y_path));
@@ -239,8 +256,13 @@ public static function add_dir_last_slash($y_path) {
 
 
 //================================================================
-// WARNING: works only for files (no paths)
-// remove version from a file
+/**
+ * Remove the version from a file name.
+ *
+ * @param 	STRING 	$file 						:: The file name to be processed
+ *
+ * @return 	STRING								:: The fixed file name without the version
+ */
 public static function version_remove($file) {
 	//--
 	$file = (string) $file;
@@ -258,8 +280,14 @@ public static function version_remove($file) {
 
 
 //================================================================
-// WARNING: works only for files (no paths)
-// add version from a file
+/**
+ * Add the version to a file name.
+ *
+ * @param 	STRING 	$file 						:: The file name to be processed
+ * @param 	STRING 	$version 					:: The version to be added
+ *
+ * @return 	STRING								:: The fixed file name with a version
+ */
 public static function version_add($file, $version) {
 	//--
 	$file = (string) self::version_remove(trim((string)$file));
@@ -275,6 +303,14 @@ public static function version_add($file, $version) {
 
 
 //================================================================
+/**
+ * Check the version from a file name.
+ *
+ * @param 	STRING 	$file 						:: The file name to be checked
+ * @param 	STRING 	$version 					:: The version to be checked
+ *
+ * @return 	0/1									:: returns 1 if the version is detected ; otherwise returns 0 if version not detected
+ */
 public static function version_check($file, $version) {
 	//--
 	$file = (string) trim((string)$file);
@@ -292,10 +328,10 @@ public static function version_check($file, $version) {
 
 //================================================================
 /**
- * Return the folder name from path (except last /)
+ * Return the folder name from a path (except last trailing slash: /)
  *
- * @param STRING 		$ypath		path or file
- * @return STRING 					[FOLDER NAME]
+ * @param STRING 	$ypath						:: the path (dir or file)
+ * @return STRING 								:: a directory path [FOLDER NAME]
  */
 public static function get_dir_from_path($y_path) {
 	//--
