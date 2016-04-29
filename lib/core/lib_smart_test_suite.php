@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160311
+	// v.160429
 
 
 //==================================================================
@@ -1499,7 +1499,34 @@ public static function test_fs() {
 		} //end if
 	} //end if
 	if((string)$err == '') {
-		$the_test = 'FILE WRITE: write() : '.$the_file;
+		$the_test = 'FILE WRITE: write() / before append : '.$the_file;
+		$tests[] = $the_test;
+		$result = 0;
+		$result = SmartFileSystem::write($the_file, $test_string);
+		if($result !== 1) {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$the_test = 'FILE WRITE: write() +append : '.$the_file;
+		$tests[] = $the_test;
+		$result = 0;
+		$result = SmartFileSystem::write($the_file, $test_string, 'a');
+		if($result !== 1) {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$the_test = 'FILE READ / Append: read() Full Size: '.$the_file;
+		$tests[] = $the_test;
+		$result = 0;
+		$result = SmartFileSystem::read($the_file);
+		if((string)SmartHashCrypto::sha512($result) != (string)SmartHashCrypto::sha512($test_string.$test_string)) {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$the_test = 'FILE WRITE: re-write() : '.$the_file;
 		$tests[] = $the_test;
 		$result = 0;
 		$result = SmartFileSystem::write($the_file, $test_string);

@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.160131
+ * @version 	v.160429
  * @package 	Filesystem
  *
  */
@@ -432,13 +432,19 @@ public static function get_file_extension_from_path($y_path) {
 
 
 //================================================================
-// Generate a prefixed dir from a base36 ID: [0-9A-Z] length: 10 chars
-// It does include also the ID as final folder
-// the prefixed folder will be grouped by each 2 characters (max sub-folders per folder: 36 x 36 = 1296)
-// this is made to avoid limitations on some filesystems (ext3) where max sub-dirs per dir is 32k
-// if a lower length than check is provided will pad with 0 on left
-// if a higher length or an invalid ID is provided will reset the ID to 000000..00 for the given length, but also drop a warning
-// Ex: for ID ABCDEFGHIJ09 will return: 9T/5B/0B/9M/9T5B0B9M8M/
+/**
+ * Generate a prefixed dir from a base36 ID: [0-9A-Z] length: 10 chars.
+ * It does include also the ID as final folder.
+ * Example: for ID ABCDEFGHIJ09 will return: 9T/5B/0B/9M/9T5B0B9M8M/ as the generated prefixed path.
+ * This have to be used for large folder storage structure to avoid limitations on some filesystems (ext3 / ntfs) where max sub-dirs per dir is 32k.
+ *
+ * The prefixed path will be grouped by each 2 characters (max sub-folders per folder: 36 x 36 = 1296).
+ * If a lower length than 10 chars is provided will pad with 0 on the left.
+ * If a higher length or an invalid ID is provided will reset the ID to 000000..00 (10 chars) for the given length, but also drop a warning.
+ *
+ * @param STRING 		$y_id		10 chars id
+ * @return STRING 					Prefixed Path
+ */
 public static function prefixed_uuid10_dir($y_id) { // check len is default 10 as set in lib core uuid 10s
 	//--
 	$y_id = (string) strtoupper(trim((string)$y_id));
@@ -462,13 +468,19 @@ public static function prefixed_uuid10_dir($y_id) { // check len is default 10 a
 
 
 //================================================================
-// Generate a prefixed parent dir from a base16 sha1: [0-9a-f] length: 40 chars
-// It does NOT include the ID final folder
-// the prefixed folder will be grouped by each 3 characters (max sub-folders per folder: 16 x 16 x 16 = 4096)
-// this is made to avoid limitations on some filesystems (ext3) where max sub-dirs per dir is 32k
-// if a lower length than check is provided will pad with 0 on left
-// if a lower or higher length or an invalid ID is provided will reset tthe ID to 000000..00 (40 chars), but also drop a warning
-// Ex: for ID df3a808b2bf20aaab4419c43d9f3a6143bd6b4bb will return: d/f3a/808/b2b/f20/aaa/b44/19c/43d/9f3/a61/43b/d6b/
+/**
+ * Generate a prefixed parent dir from a base16 sha1: [0-9a-f] length: 40 chars.
+ * It does NOT include the ID final folder.
+ * Example: for ID df3a808b2bf20aaab4419c43d9f3a6143bd6b4bb will return: d/f3a/808/b2b/f20/aaa/b44/19c/43d/9f3/a61/43b/d6b/ as the generated prefixed path.
+ * This have to be used for large folder storage structure to avoid limitations on some filesystems (ext3 / ntfs) where max sub-dirs per dir is 32k.
+ *
+ * The prefixed folder will be grouped by each 3 characters (max sub-folders per folder: 16 x 16 x 16 = 4096).
+ * If a lower length than 40 chars is provided will pad with 0 on the left.
+ * If a higher length than 40 chars or an invalid ID is provided will reset the ID to 000000..00 (40 chars) for the given length, but also drop a warning.
+ *
+ * @param STRING 		$y_id		10 chars id
+ * @return STRING 					Prefixed Path
+ */
 public static function prefixed_sha1_path($y_id) { // here the number of levels does not matter too much as at the end will be a cache file
 	//--
 	$y_id = (string) strtolower(trim((string)$y_id));
@@ -492,7 +504,13 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
 
 
 //================================================================
-public static function mime_eval($yfile, $yforce='') {
+/**
+ * Evaluate and return the File MimeType by File Extension.
+ *
+ * @param STRING 		$yfile		the file name (includding file extension) ; Ex: file.ext
+ * @return ARRAY 					0 => mime type ; 1 => inline/attachment; filename="file.ext"
+ */
+public static function mime_eval($yfile, $ydisposition='') {
 	//--
 	$yfile = Smart::safe_pathname($yfile);
 	//--
@@ -884,7 +902,7 @@ public static function mime_eval($yfile, $yforce='') {
 		//--------------
 	} //end switch
 	//--
-	switch((string)$yforce) {
+	switch((string)$ydisposition) {
 		case 'inline':
 			$disp = 'inline'; 	// rewrite display mode
 			break;
@@ -926,7 +944,7 @@ public static function mime_eval($yfile, $yforce='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160215
+ * @version 	v.160429
  * @package 	Filesystem
  *
  */
@@ -1322,17 +1340,22 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 			if($the_lock_file) {
 				//--
 				if(is_file($file_name)) {
-					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
+					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod first to be sure file is writable
 				} //end if
+				/* this method lacks the real locking which can be achieved just with flock which is not as safe as doing at once with: file_put_contents
 				if((string)$write_mode == 'w') {
 					$f_id = @fopen($file_name, 'wb');
 				} else {
 					$f_id = @fopen($file_name, 'ab');
 				} //end if else
-				//--
 				$result = @fwrite($f_id, (string)$file_content); // return the number of bytes written or false on error
-				//--
 				@fclose($f_id);
+				*/
+				if((string)$write_mode == 'w') { // wb (write, binary safe)
+					$result = @file_put_contents($file_name, (string)$file_content, LOCK_EX);
+				} else { // ab (append, binary safe)
+					$result = @file_put_contents($file_name, (string)$file_content, FILE_APPEND | LOCK_EX);
+				} //end if else
 				//--
 				if(is_file($file_name)) {
 					//--
