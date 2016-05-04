@@ -64,7 +64,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160215
+ * @version 	v.160504
  * @package 	Database:PostgreSQL
  *
  */
@@ -73,6 +73,7 @@ final class SmartPgsqlDb {
 	// ::
 
 	private static $slow_time = 0.0050;
+	private static $server_version = [];
 
 
 //======================================================
@@ -1148,9 +1149,11 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 /**
  * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
  * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ...
- * This function cannot be used with params: $1, ... $n as they are not supported by PostgreSQL syntax inside a stored procedure.
+ * This function cannot be used with params ($1, ... $n) for versions older than 9.5 as they are not supported by PostgreSQL syntax inside a stored procedure.
  *
- * IMPORTANT: this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
+ * IMPORTANT:
+ * For PostgreSQL versions 9.5 or later will use the new UPSERT syntax as: ON CONFLICT DO NOTHING ...
+ * For PostgreSQL versions older than 9.5 this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
  * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a block.
  * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
  *
@@ -1196,25 +1199,39 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 	//--
 
 	//--
-	$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
-	//--
-	$prep_query = '
-	DO LANGUAGE plpgsql
-	$'.$unique_id.'$
-	DECLARE affected_rows INTEGER;
-	BEGIN
-		-- do the query an safe catch exceptions (unique key, foreign key)
-			affected_rows := 0;
-	'."\t\t".trim(rtrim($queryval, ';')).';'.'
-			GET DIAGNOSTICS affected_rows = ROW_COUNT;
-			RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #%\', affected_rows;
-			RETURN;
-		EXCEPTION
-			WHEN unique_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
-			WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
-	END
-	$'.$unique_id.'$;
-	';
+	if(version_compare(self::check_server_version($y_connection), '9.5') >= 0) {
+		//--
+		$xmode = 'affected';
+		$vmode = '[ON CONFLICT DO NOTHING]';
+		//--
+		$prep_query = $queryval.' ON CONFLICT DO NOTHING RETURNING *'; // fix for PostgreSQL >= 9.5
+		//--
+	} else {
+		//--
+		$xmode = 'notice';
+		$vmode = '[Catch EXCEPTION]';
+		//--
+		$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
+		//--
+		$prep_query = '
+		DO LANGUAGE plpgsql
+		$'.$unique_id.'$
+		DECLARE affected_rows INTEGER;
+		BEGIN
+			-- do the query an safe catch exceptions (unique key, foreign key)
+				affected_rows := 0;
+		'."\t\t".trim(rtrim($queryval, ';')).';'.'
+				GET DIAGNOSTICS affected_rows = ROW_COUNT;
+				RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #%\', affected_rows;
+				RETURN;
+			EXCEPTION
+				WHEN unique_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
+				WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
+		END
+		$'.$unique_id.'$;
+		';
+		//--
+	} //end if else
 	//--
 
 	//--
@@ -1228,8 +1245,11 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 	if(!$result) {
 		$error = 'Query FAILED:'."\n".@pg_last_error($y_connection);
 	} else {
-		//$affected = @pg_affected_rows($result); // this can't handle complex query blocks ; will be handled via custom notices
-		$affected = (int) self::get_notice_smart_affected_rows(@pg_last_notice($y_connection)); // in this case we can only monitor affected rows via a custom notice
+		if((string)$xmode == 'notice') {
+			$affected = (int) self::get_notice_smart_affected_rows(@pg_last_notice($y_connection)); // in this case we can only monitor affected rows via a custom notice
+		} else { // affected
+			$affected = @pg_affected_rows($result); // for PostgreSQL >= 9.5
+		} //end if else
 	} //end if else
 	//--
 
@@ -1251,16 +1271,16 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 		//--
 		if((strtoupper(substr(trim($queryval), 0, 5)) == 'BEGIN') OR (strtoupper(substr(trim($queryval), 0, 17)) == 'START TRANSACTION') OR (strtoupper(substr(trim($queryval), 0, 6)) == 'COMMIT') OR (strtoupper(substr(trim($queryval), 0, 8)) == 'ROLLBACK')) {
 			// ERROR
-			self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: This function cannot handle TRANSACTION Specific Statements ...', $queryval, $querytitle);
+			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle TRANSACTION Specific Statements ...', $queryval, $querytitle);
 			return array($message, 0);
 		} elseif(strtoupper(substr(trim($queryval), 0, 4)) == 'SET ') {
 			// ERROR
-			self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: This function cannot handle SET Statements ...', $queryval, $querytitle);
+			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle SET Statements ...', $queryval, $querytitle);
 			return array($message, 0);
 		} else {
 			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
 				'type' => 'write',
-				'data' => 'WRITE / IGNORE ERRORS :: '.$the_query_title,
+				'data' => 'WRITE / IGNORE '.$vmode.' :: '.$the_query_title,
 				'query' => $queryval,
 				'params' => $dbg_query_params,
 				'rows' => $affected,
@@ -1277,7 +1297,7 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 		//--
 		$message = 'errorsqlwriteoperation: '.$error;
 		//--
-		self::error($y_connection, 'WRITE-IG-DATA', $error, $queryval, $querytitle);
+		self::error($y_connection, 'WRITE-IG-DATA '.$vmode, $error, $queryval, $querytitle);
 		return array($message, 0);
 		//--
 	} else {
@@ -1632,18 +1652,26 @@ public static function list_db_tables($y_schema, $y_connection='DEFAULT') {
  * @internal
  *
  */
-public static function check_server_version($y_connection='DEFAULT') {
+public static function check_server_version($y_connection='DEFAULT', $y_revalidate=false) {
 
 	//==
 	$y_connection = self::check_connection($y_connection, 'CHECK-SERVER-VERSION');
 	//==
 
 	//--
+	if($y_revalidate !== true) {
+		if((string)self::$server_version[(string)$y_connection] != '') {
+			return (string) self::$server_version[(string)$y_connection];
+		} //end if
+	} //end if
+	//--
+
+	//--
 	$minimum_pgsql_version_for_smartframework = '9.0.x'; // PostgreSQL minimum version required [9.0.x] or later (DO NOT RUN THIS SOFTWARE ON OLDER PostgreSQL Versions !!!
 	//--
 
 	//--
-	$queryval = 'SELECT VERSION()';
+	$queryval = 'SHOW SERVER_VERSION';
 	$result = @pg_query($y_connection, $queryval);
 	//--
 	$error = '';
@@ -1654,7 +1682,7 @@ public static function check_server_version($y_connection='DEFAULT') {
 	if((string)$error != '') {
 		//--
 		self::error($y_connection, 'CHECK-SERVER-VERSION', $error, $queryval, '');
-		return array();
+		return '';
 		//--
 	} else {
 		//--
@@ -1667,16 +1695,15 @@ public static function check_server_version($y_connection='DEFAULT') {
 
 	//--
 	$pgsql_version = trim((string)$record[0]);
-	$tmp_arr = @explode(' ', $pgsql_version);
-	$pgsql_txt_version = strtoupper(trim($tmp_arr[0]));
-	$pgsql_num_version = strtolower(trim($tmp_arr[1]));
+	$pgsql_txt_version = strtoupper('PostgreSQL');
+	$pgsql_num_version = strtolower((string)$pgsql_version);
 	//--
 
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
 			'type' => 'set',
-			'data' => 'Validate PostgreSQL Server Version: '.$pgsql_version,
+			'data' => 'Detect PostgreSQL Server Version: '.$pgsql_version,
 			'connection' => (string) $y_connection,
 			'skip-count' => 'yes'
 		]);
@@ -1688,6 +1715,10 @@ public static function check_server_version($y_connection='DEFAULT') {
 		self::error($y_connection, 'Server-Version', 'PgSQL Server Version not supported', $pgsql_txt_version.' '.$pgsql_num_version, 'PgSQL.version='.self::major_version($minimum_pgsql_version_for_smartframework).' or later is required to run this software !');
 		return '';
 	} //end if
+	//--
+
+	//--
+	self::$server_version[(string)$y_connection] = (string) $pgsql_num_version;
 	//--
 
 	//--
@@ -1806,7 +1837,7 @@ private static function check_connection($y_connection, $y_description) {
 				//--
 				if(is_resource($y_connection)) {
 					//--
-					define('SMART_FRAMEWORK_DB_VERSION_PostgreSQL', self::check_server_version($y_connection));
+					define('SMART_FRAMEWORK_DB_VERSION_PostgreSQL', self::check_server_version($y_connection, true)); // re-validate
 					//--
 				} //end if
 				//--
@@ -2023,7 +2054,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160215
+ * @version 	v.160504
  * @package 	Database:PostgreSQL
  *
  */
@@ -2078,7 +2109,7 @@ public function __construct($y_configs_arr) {
 			(string)$y_configs_arr['type']
 		);
 		//--
-		$this->check_server_version();
+		$this->check_server_version(true); // re-validate
 		//--
 	} //end if else
 	//--
@@ -2274,17 +2305,18 @@ public function write_data($queryval, $params_or_title='') {
 
 
 /**
- * PgSQL Query -> Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
+ * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
  * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ...
- * This function cannot be used with params: $1, ... $n as they are not supported by PostgreSQL syntax inside a stored procedure.
+ * This function cannot be used with params ($1, ... $n) for versions older than 9.5 as they are not supported by PostgreSQL syntax inside a stored procedure.
  *
- * IMPORTANT: this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
+ * IMPORTANT:
+ * For PostgreSQL versions 9.5 or later will use the new UPSERT syntax as: ON CONFLICT DO NOTHING ...
+ * For PostgreSQL versions older than 9.5 this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
  * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a block.
  * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
  *
  * @param STRING $queryval						:: the query
  * @param STRING $querytitle 					:: *optional* query title for easy debugging (no parameters are allowed in this case)
- * @param RESOURCE $y_connection				:: the connection
  * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
  */
 public function write_igdata($queryval, $querytitle='') {
@@ -2352,9 +2384,9 @@ public function list_db_tables($y_schema) {
  * @internal
  *
  */
-public function check_server_version() {
+public function check_server_version($y_revalidate=false) {
 	//--
-	return SmartPgsqlDb::check_server_version($this->connection);
+	return SmartPgsqlDb::check_server_version($this->connection, $y_revalidate);
 	//--
 } //END FUNCTION
 

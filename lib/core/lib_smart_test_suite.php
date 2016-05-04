@@ -981,6 +981,8 @@ public static function test_pgsqlserver() {
 			unset($pgsql);
 		} //end if
 		//--
+		$tests[] = 'PostgreSQL Server Version: '.SmartPgsqlDb::check_server_version();
+		//--
 		$tests[] = 'Start Transaction';
 		SmartPgsqlDb::write_data('BEGIN');
 		//--
