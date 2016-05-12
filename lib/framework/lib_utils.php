@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.160419
+ * @version 	v.160506
  * @package 	Core
  *
  */
@@ -542,7 +542,7 @@ public static function pretty_print_bytes($y_bytes, $y_decimals=1) {
 	} //end if
 	//--
 	if($y_bytes < 1024) {
-		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' bytes';
+		return (string) Smart::format_number_int($y_bytes).' bytes';
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1024;
@@ -583,7 +583,7 @@ public static function pretty_print_numbers($y_number, $y_decimals=1) {
 	} //end if
 	//--
 	if($y_number < 1000) {
-		return (string) Smart::format_number_dec($y_number, $y_decimals, '.', '');
+		return (string) Smart::format_number_int($y_number);
 	} //end if
 	//--
 	$y_number = $y_number / 1000;

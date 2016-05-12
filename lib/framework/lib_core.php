@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160224
+ * @version     v.160506
  * @package     Core
  *
  */
@@ -690,8 +690,8 @@ public static function array_size($y_arr) {
 /**
  * Easy sort for NON-Associative arrays ...
  *
- * @param ARRAY 		$y_arr			:: The array to be sorted
- * @param ENUM 			$y_mode			:: The sort type: natsort, natcasesort, rsort, sort
+ * @param ARRAY 		$y_arr			:: The array to be sorted by a criteria (type, see below)
+ * @param ENUM 			$y_mode			:: The sort type: natsort, sort, rsort, asort, arsort, ksort, krsort
  *
  * @return ARRAY 						:: The sorted array
  */
@@ -707,17 +707,29 @@ public static function array_sort($y_arr, $y_mode) {
 	} //end if
 	//--
 	switch(strtolower((string)$y_mode)) {
-		case 'natsort':
+		case 'natsort': // natural sort
 			@natsort($y_arr);
 			break;
-		case 'natcasesort':
+		case 'natcasesort': // natural case-sensitive sort
 			@natcasesort($y_arr);
 			break;
-		case 'rsort':
+		case 'sort': // regular sort
+			@sort($y_arr);
+			break;
+		case 'rsort': // regular reverse sort
 			@rsort($y_arr);
 			break;
-		case 'sort':
-			@sort($y_arr);
+		case 'asort': // associative sort
+			@asort($y_arr);
+			break;
+		case 'arsort': // associative reverse sort
+			@arsort($y_arr);
+			break;
+		case 'ksort': // key sort
+			@ksort($y_arr);
+			break;
+		case 'krsort': // key reverse sort
+			@krsort($y_arr);
 			break;
 		default:
 			self::raise_error(

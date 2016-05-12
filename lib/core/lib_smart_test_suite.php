@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160429
+	// v.160512
 
 
 //==================================================================
@@ -1647,6 +1647,15 @@ public static function test_fs() {
 		$tests[] = $the_test;
 		$result = 0;
 		$result = SmartFileSystem::copy($the_file, $the_copy_file);
+		if($result !== 1) {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$the_test = 'FILE COPY with OVERWRITE: copy() : '.$the_file.' to: '.$the_copy_file;
+		$tests[] = $the_test;
+		$result = 0;
+		$result = SmartFileSystem::copy($the_file, $the_copy_file, true); // overwrite destination file(s)
 		if($result !== 1) {
 			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 		} //end if

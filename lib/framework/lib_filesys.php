@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.160429
+ * @version 	v.160512
  * @package 	Filesystem
  *
  */
@@ -505,7 +505,7 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
 
 //================================================================
 /**
- * Evaluate and return the File MimeType by File Extension.
+ * Evaluate and return the File MimeType and Disposition by File Extension.
  *
  * @param STRING 		$yfile		the file name (includding file extension) ; Ex: file.ext
  * @return ARRAY 					0 => mime type ; 1 => inline/attachment; filename="file.ext"
@@ -944,7 +944,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160429
+ * @version 	v.160512
  * @package 	Filesystem
  *
  */
@@ -1134,6 +1134,8 @@ private static function lock_file_check($lock_file, $lock_time=60) {
 //================================================================
 // BUG FIX: PHP file_exists() will return false if the file is a broken link ...
 public static function file_or_link_exists($y_file_or_link) {
+	//--
+	@clearstatcache();
 	//--
 	if((file_exists($y_file_or_link)) OR (is_link($y_file_or_link))) {
 		return true;
@@ -1447,7 +1449,7 @@ public static function write_if_not_exists($file_name, $file_content, $y_chkcomp
 // copy a file to a new location
 // return true or false
 // returns: 1 for success and 0 for error/fail
-public static function copy($file_name, $newlocation) {
+public static function copy($file_name, $newlocation, $overwrite_destination=false) {
 	//--
 	$file_name = (string) $file_name;
 	$newlocation = (string) $newlocation;
@@ -1466,12 +1468,14 @@ public static function copy($file_name, $newlocation) {
 	} //end if
 	//--
 	if((!is_file($file_name)) OR ((is_link($file_name)) AND (!is_file(self::link_get_origin($file_name))))) {
-		Smart::log_warning('LibFileSys // Rename/Move // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
+		Smart::log_warning('LibFileSys // Copy // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
-	if(self::file_or_link_exists($newlocation)) {
-		Smart::log_warning('LibFileSys // Rename/Move // The destination already exists: S='.$file_name.' ; D='.$newlocation);
-		return 0;
+	if($overwrite_destination !== true) {
+		if(self::file_or_link_exists($newlocation)) {
+			Smart::log_warning('LibFileSys // Copy // The destination file exists (1): S='.$file_name.' ; D='.$newlocation);
+			return 0;
+		} //end if
 	} //end if
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
@@ -1500,8 +1504,8 @@ public static function copy($file_name, $newlocation) {
 	$result = false;
 	//--
 	if(is_file($file_name)) {
-		if(!self::file_or_link_exists($newlocation)) {
-			$result = @copy($file_name, $newlocation);
+		if(($overwrite_destination === true) OR (!self::file_or_link_exists($newlocation))) {
+			$result = @copy($file_name, $newlocation); // if destination exists will overwrite it
 			if(is_file($newlocation)) {
 				@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 			} else {
@@ -1511,7 +1515,7 @@ public static function copy($file_name, $newlocation) {
 				Smart::log_warning('LibFileSys // CopyFile // Destination file is not readable: '.$newlocation);
 			} //end if
 		} else {
-			Smart::log_warning('LibFileSys // CopyFile // Destination file exists: '.$newlocation);
+			Smart::log_warning('LibFileSys // CopyFile // Destination file exists (2): '.$newlocation);
 		} //end if
 	} //end if
 	//--
