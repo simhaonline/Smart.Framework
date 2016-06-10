@@ -225,7 +225,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160127
+ * @version 	v.160525
  * @package 	Application
  *
  */
@@ -414,36 +414,7 @@ abstract class SmartAbstractAppController {
 		//--
 		global $configs;
 		//--
-		$param = strtolower((string)$param);
-		//--
-		$cfg = '';
-		//--
-		$arr = explode('.', trim((string)$param));
-		//--
-		if((string)$arr[0] != '') { // prevent returning all configs (require at least one level)
-			//--
-			$cfg = (array) $configs[$arr[0]];
-			$max = count($arr);
-			//--
-			if($max > 1) {
-				for($i=1; $i<$max; $i++) {
-					if((string)$arr[$i] != '') {
-						if(is_array($cfg)) {
-							if(array_key_exists($arr[$i], $cfg)) {
-								$cfg = $cfg[$arr[$i]];
-							} else {
-								$cfg = '';
-							} //end if
-						} else {
-							$cfg = '';
-						} //end if else
-					} //end if
-				} //end for
-			} //end if
-			//--
-		} //end if
-		//--
-		return $cfg; // mixed
+		return Smart::array_get_by_key_path($configs, strtolower((string)$param), '.'); // mixed
 		//--
 	} //END FUNCTION
 	//=====

@@ -335,7 +335,7 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160202
+ * @version     v.160526
  * @package     Core
  *
  */
@@ -357,7 +357,7 @@ public static function regex_textrecognition_expression($y_mode) {
 	switch(strtolower($y_mode)) {
 		//--
 		case 'url':
-			$regex = '(http|https)(://)([^\s<>\(\)\|]*)'; 		// url recognition in a text / html code :: fixed in html <>
+			$regex = '(http|https)(:\/\/)([^\s<>\(\)\|]*)'; 		// url recognition in a text / html code :: fixed in html <>
 			break;
 		case 'email':
 			$regex = '[_a-z0-9\-\.]*+@+[_a-z0-9\-\.]*'; 		// email recognition in a text / html code

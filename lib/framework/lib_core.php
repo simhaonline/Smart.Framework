@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160506
+ * @version     v.160607
  * @package     Core
  *
  */
@@ -642,32 +642,6 @@ public static function format_number_dec($y_number, $y_decimals=0, $y_sep_decima
 
 //================================================================
 /**
- * Test if the Array Type
- *
- * @param ARRAY 		$y_arr			:: The array to test
- *
- * @return ENUM 						:: The array type as: 0 = not an array ; 1 = non-associative (sequential) array ; 2 = associative array
- */
-public static function array_type_test($y_arr) {
-	//--
-	if(!is_array($y_arr)) {
-		return 0; // not an array
-	} //end if
-	//--
-	$a = (array) array_keys($y_arr);
-	if($a === array_keys($a)) { // memory-optimized
-	//if(array_values($y_arr) === $y_arr) { // speed-optimized
-		return 1; // non-associative
-	} else {
-		return 2; // associative
-	} //end if else
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
  * Safe array count(), for safety, with array type check ; this should be used instead of count() because count(string) returns a non-zero value and can confuse if a string is passed to count instead of an array
  *
  * @param ARRAY 		$y_arr			:: The array to count elements on
@@ -740,6 +714,124 @@ public static function array_sort($y_arr, $y_mode) {
 	} //end switch
 	//--
 	return @array_values($y_arr);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Array Get By Key Path
+ *
+ * @param ARRAY 		$y_arr 					:: The input array
+ * @param STRING 		$y_key_path 			:: The composed key path by levels (Ex: key1.key2)
+ * @param STRING 		$y_path_separator 		:: The key path separator (Example: .)
+ *
+ * @return MIXED 								:: The array value of the specified key path
+ */
+public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separator) {
+	//--
+	$y_arr = (array) $y_arr;
+	$y_key_path = (string) trim((string)$y_key_path);
+	if((string)$y_key_path == '') {
+		return '';
+	} //end if
+	$y_path_separator = (string) trim((string)$y_path_separator);
+	if(strlen($y_path_separator) != 1) {
+		return '';
+	} //end if
+	//--
+	$out = '';
+	//--
+	$arr = explode((string)$y_path_separator, (string)$y_key_path);
+	//--
+	if((string)$arr[0] != '') { // prevent returning all configs (require at least one level)
+		//--
+		$out = (array) $y_arr[(string)$arr[0]];
+		$max = count($arr);
+		//--
+		if($max > 1) {
+			for($i=1; $i<$max; $i++) {
+				if((string)$arr[$i] != '') {
+					if(is_array($out)) {
+						if(array_key_exists($arr[$i], $out)) {
+							$out = $out[$arr[$i]];
+						} else {
+							$out = '';
+						} //end if
+					} else {
+						$out = '';
+					} //end if else
+				} //end if
+			} //end for
+		} //end if
+		//--
+	} //end if
+	//--
+	return $out; // mixed
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Array Recursive Change Key Case
+ *
+ * @param ARRAY 		$y_arr 					:: The input array
+ * @param ENUM 			$y_mode 				:: Change Mode: LOWER | UPPER
+ *
+ * @return ARRAY 								:: The modified array
+ */
+public static function array_change_key_case_recursive($y_arr, $y_mode) {
+	//--
+	if(!is_array($y_arr)) {
+		return array();
+	} //end if
+	//--
+	switch((string)strtoupper((string)$y_mode)) {
+		case 'UPPER':
+			$case = CASE_UPPER;
+			break;
+		case 'LOWER':
+			$case = CASE_LOWER;
+			break;
+		default:
+			return (array) $y_arr;
+	} //end if
+	//--
+	return (array) array_map(function($y_arr)use($y_mode){
+		if(is_array($y_arr)) {
+			$y_arr = self::array_change_key_case_recursive($y_arr, $y_mode);
+		} //end if
+		return $y_arr;
+	}, array_change_key_case($y_arr, $case));
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Test if the Array Type
+ *
+ * @param ARRAY 		$y_arr			:: The array to test
+ *
+ * @return ENUM 						:: The array type as: 0 = not an array ; 1 = non-associative (sequential) array ; 2 = associative array
+ */
+public static function array_type_test($y_arr) {
+	//--
+	if(!is_array($y_arr)) {
+		return 0; // not an array
+	} //end if
+	//--
+	$a = (array) array_keys($y_arr);
+	if($a === array_keys($a)) { // memory-optimized
+	//if(array_values($y_arr) === $y_arr) { // speed-optimized
+		return 1; // non-associative
+	} else {
+		return 2; // associative
+	} //end if else
 	//--
 } //END FUNCTION
 //================================================================

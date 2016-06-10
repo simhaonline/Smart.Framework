@@ -961,7 +961,7 @@ public static function test_pgsqlserver() {
 
 	//--
 	$value = date('Y-m-d H:i:s');
-	$comments = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド'.'-'.Smart::random_number(1000,9999);
+	$comments = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド'.'-'.Smart::random_number(1000,9999)."'";
 	//--
 
 	//-- PgSQL Tests
@@ -987,7 +987,7 @@ public static function test_pgsqlserver() {
 		SmartPgsqlDb::write_data('BEGIN');
 		//--
 		$tests[] = 'Create a Temporary Table for this Test, after transaction to test DDL';
-		SmartPgsqlDb::write_data('CREATE TABLE "public"."_test_unit_db_server_tests" ( "variable" character varying(100) NOT NULL, "value" character varying(16384) DEFAULT \'\'::character varying NOT NULL, "comments" text DEFAULT \'\'::text NOT NULL, CONSTRAINT _test_unit_db_server_tests__check__variable CHECK ((char_length((variable)::text) >= 1)), CONSTRAINT _test_unit_db_server_tests__uniq__variable UNIQUE(variable) )');
+		SmartPgsqlDb::write_data('CREATE TABLE "public"."_test_unit_db_server_tests" ( "variable" character varying(100) NOT NULL, "value" character varying(16384) DEFAULT \'\'::character varying, "comments" text DEFAULT \'\'::text NOT NULL, CONSTRAINT _test_unit_db_server_tests__check__variable CHECK ((char_length((variable)::text) >= 1)), CONSTRAINT _test_unit_db_server_tests__uniq__variable UNIQUE(variable) )');
 		//--
 		$variable = SmartPgsqlDb::new_safe_id('uid10seq', 'variable', '_test_unit_db_server_tests', 'public');
 		//--
@@ -1110,7 +1110,7 @@ public static function test_pgsqlserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Write Ignore Duplicates [ Insert Ignore Positive ]';
-			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert');
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('variable'=>$variable, 'value'=>null, 'comments'=>$comments), 'insert');
 			$data = SmartPgsqlDb::write_igdata($quer_str);
 			if($data[1] !== 1) {
 				$err = 'Write / Insert Ignore Positive Test Failed, should return 1 but returned: '.$data[1];
@@ -1239,7 +1239,7 @@ public static function test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sor
 	$where = '';
 	if((string)$src != '') {
 		if(is_numeric($src)) {
-			$where = $model->prepare_param_query(' WHERE numcode LIKE ?', array('%'.(int)$src.'%'));
+			$where = $model->prepare_param_query(' WHERE numcode = ?', array((int)$src));
 		} elseif(strlen((string)$src) == 2) {
 			$where = $model->prepare_param_query(' WHERE iso = ?', array(SmartUnicode::str_toupper($src)));
 		} elseif(strlen((string)$src) == 3) {
@@ -3178,8 +3178,8 @@ private function init_table_samples_countries() {
 	foreach($rows AS $key => $row) {
 		$this->db->write_data('INSERT INTO sample_countries '.$this->db->prepare_write_statement($row, 'insert'));
 	} //end foreach
-	$this->db->write_data('UPDATE sample_countries '.$this->db->prepare_write_statement($rows[0], 'update').' WHERE (iso = NULL)'); // test
-	$this->db->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->db->prepare_write_statement(array('a', 7, 'US'), 'in-select').')');
+	$this->db->write_data('UPDATE sample_countries '.$this->db->prepare_write_statement($rows[0], 'update').' WHERE (iso IS NULL)'); // test
+	$this->db->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->db->prepare_write_statement(array('US', 7, null), 'in-select').')');
 	$this->db->write_data('COMMIT');
 	//--
 

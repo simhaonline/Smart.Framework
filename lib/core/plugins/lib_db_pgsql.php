@@ -64,7 +64,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160504
+ * @version 	v.160527
  * @package 	Database:PostgreSQL
  *
  */
@@ -1330,14 +1330,13 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
  *
  * @param ARRAY-associative $arrdata			:: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
  * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select'
- * @param TRUE/FALSE $escape_data				:: escape data or not (default is TRUE, will escape the data)
  * @param RESOURCE $y_connection 				:: the connection to pgsql server
  * @return STRING								:: The SQL partial Statement
  *
  */
-public static function prepare_write_statement($arrdata, $mode, $escape_data=true, $y_connection='DEFAULT') {
+public static function prepare_write_statement($arrdata, $mode, $y_connection='DEFAULT') {
 
-	// version: 151026
+	// version: 160527
 
 	//==
 	$y_connection = self::check_connection($y_connection, 'PREPARE-WRITE-STATEMENT');
@@ -1397,44 +1396,33 @@ public static function prepare_write_statement($arrdata, $mode, $escape_data=tru
 			//--
 			if(is_array($val)) { // array (this is a special case, and always escape data)
 				//--
-				$val_x = (string) self::escape_str(Smart::array_to_list($val), 'no', $y_connection); // array values will be converted to: <val1>, <val2>, ...
+				$val_x = (string) self::escape_literal((string)Smart::array_to_list($val), 'no', $y_connection); // array values will be always escaped and converted to: <val1>, <val2>, ...
 				//--
-			} elseif($val === false) { // emulate the null character through false === (this cannot be set outside PHP)
+			} elseif($val === null) { // emulate the SQL: NULL
 				//--
-				$val_x = false;
+				$val_x = 'NULL';
 				//--
-			} else { // string or number
+			} elseif($val === false) { // emulate the SQL: FALSE
 				//--
-				if($escape_data !== false) {
-					//--
-					$val_x = self::escape_str($val, 'no', $y_connection);
-					//--
-				} else {
-					//--
-					$val_x = $val; // expect data that is already escaped !!!
-					//--
-				} //end if else
+				$val_x = 'FALSE';
+				//--
+			} elseif($val === true) { // emulate the SQL: TRUE
+				//--
+				$val_x = 'TRUE';
+				//--
+			} else { // string, number or other cases
+				//--
+				$val_x = (string) self::escape_literal($val, 'no', $y_connection);
 				//--
 			} //end if else
 			//--
-			if($val_x === false) { // the case of NULL
-				if((string)$mode == 'in-select') { // in-select
-					$tmp_query_w .= 'NULL,';
-				} elseif((string)$mode == 'update') { // update
-					$tmp_query_x .= (string) self::escape_identifier($key, $y_connection).'='.'NULL,';
-				} else { // insert, insert-subselect
-					$tmp_query_y .= (string) self::escape_identifier($key, $y_connection).',';
-					$tmp_query_z .= 'NULL,';
-				} //end if else
-			} else { // the case of string or number
-				if((string)$mode == 'in-select') { // in-select
-					$tmp_query_w .= "'".$val_x."'".',';
-				} elseif((string)$mode == 'update') { // update
-					$tmp_query_x .= (string) self::escape_identifier($key, $y_connection).'='."'".$val_x."'".',';
-				} else { // insert, insert-subselect
-					$tmp_query_y .= (string) self::escape_identifier($key, $y_connection).',';
-					$tmp_query_z .= "'".$val_x."'".',';
-				} //end if else
+			if((string)$mode == 'in-select') { // in-select
+				$tmp_query_w .= $val_x.',';
+			} elseif((string)$mode == 'update') { // update
+				$tmp_query_x .= self::escape_identifier($key, $y_connection).'='.$val_x.',';
+			} else { // insert, insert-subselect
+				$tmp_query_y .= self::escape_identifier($key, $y_connection).',';
+				$tmp_query_z .= $val_x.',';
 			} //end if else
 			//--
 		} //end while
@@ -2054,7 +2042,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160504
+ * @version 	v.160527
  * @package 	Database:PostgreSQL
  *
  */
@@ -2332,13 +2320,12 @@ public function write_igdata($queryval, $querytitle='') {
  *
  * @param ARRAY-associative $arrdata			:: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
  * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select'
- * @param TRUE/FALSE $escape_data				:: escape data or not (default is TRUE, will escape the data)
  * @return STRING								:: The SQL partial Statement
  *
  */
-public function prepare_write_statement($arrdata, $mode, $escape_data=true) {
+public function prepare_write_statement($arrdata, $mode) {
 	//--
-	return SmartPgsqlDb::prepare_write_statement($arrdata, $mode, $escape_data, $this->connection);
+	return SmartPgsqlDb::prepare_write_statement($arrdata, $mode, $this->connection);
 	//--
 } //END FUNCTION
 
