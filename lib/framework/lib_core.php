@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160607
+ * @version     v.160614
  * @package     Core
  *
  */
@@ -727,48 +727,51 @@ public static function array_sort($y_arr, $y_mode) {
  * @param STRING 		$y_key_path 			:: The composed key path by levels (Ex: key1.key2)
  * @param STRING 		$y_path_separator 		:: The key path separator (Example: .)
  *
- * @return MIXED 								:: The array value of the specified key path
+ * @return MIXED [ NUMERIC / STRING / ARRAY ] 	:: The array value of the specified key path
  */
 public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separator) {
 	//--
-	$y_arr = (array) $y_arr;
+	if(!is_array($y_arr)) {
+		return '';
+	} //end if
+	//--
 	$y_key_path = (string) trim((string)$y_key_path);
-	if((string)$y_key_path == '') {
-		return '';
-	} //end if
 	$y_path_separator = (string) trim((string)$y_path_separator);
+	//--
+	if((string)$y_key_path == '') {
+		return ''; // dissalow empty key path
+	} //end if
+	//--
 	if(strlen($y_path_separator) != 1) {
-		return '';
+		return ''; // dissalow empty separator
 	} //end if
 	//--
-	$out = '';
-	//--
-	$arr = explode((string)$y_path_separator, (string)$y_key_path);
-	//--
-	if((string)$arr[0] != '') { // prevent returning all configs (require at least one level)
-		//--
-		$out = (array) $y_arr[(string)$arr[0]];
-		$max = count($arr);
-		//--
-		if($max > 1) {
-			for($i=1; $i<$max; $i++) {
-				if((string)$arr[$i] != '') {
-					if(is_array($out)) {
-						if(array_key_exists($arr[$i], $out)) {
-							$out = $out[$arr[$i]];
-						} else {
-							$out = '';
-						} //end if
-					} else {
-						$out = '';
-					} //end if else
+	$arr = (array) explode((string)$y_path_separator, (string)$y_key_path);
+	$max = count($arr);
+	for($i=0; $i<$max; $i++) {
+		if((string)trim((string)$arr[$i]) != '') {
+			if(is_array($y_arr)) {
+				if(array_key_exists($arr[$i], $y_arr)) {
+					$y_arr = $y_arr[$arr[$i]]; // array, string or number
+				} else {
+					$y_arr = '';
+					break;
 				} //end if
-			} //end for
+			} else {
+				$y_arr = '';
+				break;
+			} //end if
+		} else {
+			$y_arr = '';
+			break;
 		} //end if
-		//--
+	} //end for
+	//--
+	if($y_arr === null) {
+		$y_arr = '';
 	} //end if
 	//--
-	return $out; // mixed
+	return $y_arr; // mixed
 	//--
 } //END FUNCTION
 //================================================================

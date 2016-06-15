@@ -8,7 +8,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// v.160219 / Sample Auth based on HTTP Basic Authentication
+// v.160219 / Sample Auth based on Basic HTTP Authentication (for Admin Area, overall)
 
 //======================================================
 // App Authenticate Middleware / Admin Area (admin.php)

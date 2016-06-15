@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / App Runtime]
 // (c) 2006-2016 unix-world.org - all rights reserved
-// this should be loaded from app web root only
+// v.2.3.2.2 r.2016.06.15 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -9,10 +9,11 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
+
 //======================================================
-// Smart-Framework - App Runtime
+// Smart-Framework - App Runtime (this should be loaded only from app web root)
 // DEPENDS: SmartFramework + SmartFramework/Components
-// DO NOT CHANGE THIS FILE OR ANY OTHER FILE(S) UNDER lib/* or index.php / admin.php [They will be all overwritten on future upgrades] !!!
+// DO NOT MODIFY THIS FILE OR ANY OTHER FILE(S) UNDER lib/* or index.php / admin.php [They will be all overwritten on any future framework upgrades] !!!
 // YOU CAN ONLY CHANGE / CUSTOMIZE:
 //	* Configurations: etc/*
 //	* Modules: modules/*
@@ -25,8 +26,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 //--
-if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime (not yet well tested with PHP 7)
-	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.4 / 5.5 / 5.6 / 7.0 or later');
+if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime (not yet very well tested with PHP 7)
+	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.4 / 5.5 / 5.6 / 7.0 / 7.1 or later');
 } //end if
 //--
 
@@ -35,8 +36,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.2.3.2.1'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.05.13'); // this is the real release version
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.2.3.2.2'); // this is the real release version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.06.15'); // this is the real release version
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
