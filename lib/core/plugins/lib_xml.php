@@ -18,8 +18,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //--
-if(!function_exists('xml_parser_create')) {
-	die('ERROR: The PHP XML Parser Extension is required for the SmartFramework XML Library');
+if(!function_exists('simplexml_load_string')) {
+	die('ERROR: The PHP SimpleXML Parser Extension is required for the SmartFramework XML Library');
 } //end if
 //--
 
@@ -44,7 +44,7 @@ if(!function_exists('xml_parser_create')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.160213
+ * @version     v.160617.r2
  * @package     DATA:XML
  *
  */
@@ -77,178 +77,100 @@ public function __construct($encoding='') {
 
 //===============================
 // PUBLIC
-public function transform($xml_str) {
+public function transform($xml_str, $log_all_errors=false) {
 	//--
-	$xml_str = (string) trim((string)preg_replace('#<\?xml (.*?)>#si', '', (string)$xml_str)); // remove the xml markup tag
+	libxml_use_internal_errors(true);
 	//--
-	return (array) $this->GetXMLTree((string)$xml_str);
+	$arr = $this->SimpleXML2Array(
+		simplexml_load_string(
+			$this->FixXmlRoot((string)$xml_str),
+			'SimpleXMLElement',
+			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES // options
+		)
+	);
+	//-- log errors if any
+	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') || ($log_all_errors == true) || (Smart::array_size($arr) <= 0)) {
+		$errors = (array) libxml_get_errors();
+		if(Smart::array_size($errors) > 0) {
+			foreach($errors as $error) {
+				if(is_object($error)) {
+					Smart::log_notice('SmartXmlParser ERROR: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n".'Encoding: '.$this->encoding."\n");
+				} //end if
+			} //end foreach
+			Smart::log_notice('Xml-String:'."\n".$xml_str."\n".'#END');
+		} //end if
+	} //end if
+	//--
+	libxml_clear_errors();
+	libxml_use_internal_errors(false);
+	//--
+	if(Smart::array_size($arr) <= 0) {
+		$arr = array('xml2array_error' => 'SmartXmlParser / Parsing ERROR');
+	} //end if
+	//--
+	return (array) $arr;
 	//--
 } //END FUNCTION
 //===============================
 
 # PRIVATES
 
-//===============================
-// PRIVATE
-private function GetXMLTree($xmldata) {
+
+//=============================== fix parser bugs by adding the xml markup tag and a valid xml root
+private function FixXmlRoot($xml_str) {
 	//--
-	$parser = xml_parser_create($this->encoding);
+	$xml_str = (string) trim((string)preg_replace('#<\?xml (.*?)>#si', '', (string)$xml_str)); // remove the xml markup tag
+	//$xml_str = str_replace(['<'.'?', '?'.'>'], ['<!-- ', ' -->'], $xml_str); // comment out any markup tags
 	//--
-	xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
-	xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
-	//--
-	$handle = 0;
-	//--
-	if(!Smart::test_if_xml($xmldata)) { // fix parser bug if empty data passed
+	if(!Smart::test_if_xml($xml_str)) { // fix parser bug if empty data passed
 		//--
-		Smart::log_warning('SmartXmlParser / GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xmldata."\n".'#END');
-		return array('xml2array_error' => 'ERROR: (555) Invalid XML !');
+		Smart::log_warning('SmartXmlParser / GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xml_str."\n".'#END');
+		$xml_str = '<'.'?'.'xml version="1.0" encoding="'.$this->encoding.'"'.'?'.'>'."\n".'<smart_framework_xml_data_parser_fix_tag>'."\n".'</smart_framework_xml_data_parser_fix_tag>';
 		//--
 	} else {
-		//-- fix parser bug: $xmldata = '<xml>'."\n".'</xml>';
-		$xmldata = '<'.'?xml version="1.0" encoding="'.$this->encoding.'"?'.'>'."\n".'<xml_data_parser_tag>'."\n".trim($xmldata)."\n".'</xml_data_parser_tag>';
 		//--
-		$handle = xml_parse_into_struct($parser, $xmldata, $vals, $index);
-		//--
-		if(!$handle) {
-			//--
-			$the_err = @xml_error_string(@xml_get_error_code($parser));
-			Smart::log_warning('SmartXmlParser / GetXMLTree: XML Parser Error (444): '.$the_err."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xmldata."\n".'#END');
-			return array('xml2array_error' => 'ERROR: (444) XML Parsing Error: '.$the_err);
-			//--
-		} //end if
+		$xml_str = '<'.'?'.'xml version="1.0" encoding="'.$this->encoding.'"'.'?'.'>'."\n".'<smart_framework_xml_data_parser_fix_tag>'."\n".trim($xml_str)."\n".'</smart_framework_xml_data_parser_fix_tag>';
 		//--
 	} //end if
 	//--
-	xml_parser_free($parser);
-	//--
-	$result = array();
-	//--
-	if(is_array($vals)) {
-		//--
-		$i = 0;
-		//--
-		if(isset($vals[$i]['attributes'])) {
-			foreach(array_keys($vals[$i]['attributes']) as $attkey) {
-				$attributes[$attkey] = $vals[$i]['attributes'][$attkey];
-			} //end foreach
-		} //end if
-		//--
-		$result[$vals[$i]['tag']] = array_merge((array)$attributes, (array)$this->GetChildren($vals, $i, 'open'));
-		//--
-	} //end if
-	//--
-	return (array) $result['xml_data_parser_tag'];
+	return (string) $xml_str;
 	//--
 } //END FUNCTION
 //===============================
 
 
 //===============================
-// PRIVATE
-private function GetChildren($vals, &$i, $type) {
-
+private function SimpleXML2Array($sxml) {
 	//--
-	if((string)$type == 'complete') {
-		//--
-		if(isset($vals[$i]['value'])) {
-			//--
-			return($vals[$i]['value']);
-			//--
-		} else {
-			//--
-			return '';
-			//--
-		} //end if else
-		//--
+	if(!is_object($sxml)) {
+		return array();
 	} //end if
 	//--
-
-	//--
-	$children = array(); // Contains node data
-	//--
-
-	//-- Loop through children
-	while((string)$vals[++$i]['type'] != 'close') {
-		//--
-		$type = $vals[$i]['type'];
-		//-- first check if we already have one and need to create an array
-		if(isset($children[$vals[$i]['tag']])) {
-			//--
-			if(is_array($children[$vals[$i]['tag']])) {
-				$temp = array_keys($children[$vals[$i]['tag']]);
-				// there is one of these things already and it is itself an array
-				if(is_string($temp[0])) {
-					$a = $children[$vals[$i]['tag']];
-					unset($children[$vals[$i]['tag']]);
-					$children[$vals[$i]['tag']][0] = $a;
-				} //end if
-			} else {
-				$a = $children[$vals[$i]['tag']];
-				unset($children[$vals[$i]['tag']]);
-				$children[$vals[$i]['tag']][0] = $a;
-			} //end if else
-			//--
-			$children[$vals[$i]['tag']][] = $this->GetChildren($vals, $i, $type);
-			//--
-		} else {
-			//--
-			$children[$vals[$i]['tag']] = $this->GetChildren($vals, $i, $type);
-			//--
-		} //end if else
-		//-- I don't think I need attributes but this is how I would do them:
-		if(isset($vals[$i]['attributes'])) {
-			//--
-			$attributes = array();
-			//--
-			foreach(array_keys($vals[$i]['attributes']) as $attkey) {
-				$attributes [$attkey] = $vals[$i]['attributes'][$attkey];
-			} //end foreach
-			//-- now check: do we already have an array or a value?
-			if(isset($children[$vals[$i]['tag']])) {
-				//--
-				if((string)$children[$vals[$i]['tag']] == '') {
-					//-- case where there is an attribute but no value, a complete with an attribute in other words
-					unset($children[$vals[$i]['tag']]);
-					$children[$vals[$i]['tag']] = $attributes;
-					//--
-				} elseif(is_array($children[$vals[$i]['tag']])) {
-					//-- case where there is an array of identical items with attributes
-					$index = count($children[$vals[$i]['tag']]) - 1;
-					//-- probably also have to check here whether the individual item is also an array or not or what... all a bit messy
-					if((string)$children[$vals[$i]['tag']][$index] == '') {
-						unset($children[$vals[$i]['tag']][$index]);
-						$children[$vals[$i]['tag']][$index] = $attributes;
+	$array = (array) $sxml;
+	$sxml = array();
+	//-- recursive Parser
+	foreach($array as $key => $value) {
+		if(is_object($value)) {
+			if(strpos(get_class($value), 'SimpleXML') !== false) {
+				$tmp_val = $this->SimpleXML2Array($value);
+				if(is_array($tmp_val)) {
+					if(Smart::array_size($tmp_val) <= 0) {
+						$array[(string)$key] = ''; // FIX: avoid return empty XML key as array() in SimpleXML (empty XML key should be returned as empty string)
+					} else {
+						$array[(string)$key] = (array) $tmp_val;
 					} //end if
-					//--
-					$children[$vals[$i]['tag']][$index] = array_merge ((array)$children[$vals[$i]['tag']][$index], (array)$attributes);
-					//--
 				} else {
-					//--
-					$value = $children[$vals[$i]['tag']];
-					unset($children[$vals[$i]['tag']]);
-					$children[$vals[$i]['tag']]['value'] = $value;
-					$children[$vals[$i]['tag']] = array_merge((array)$children[$vals[$i]['tag']], (array)$attributes);
-					//--
+					$array[(string)$key] = (string) $tmp_val;
 				} //end if else
-				//--
-			} else {
-				//--
-				$children[$vals[$i]['tag']] = $attributes;
-				//--
-			} //end if else
-			//--
+			} //end if
 		} //end if
-		//--
-	} //end while
+	} //end foreach
 	//--
-
+	return (array) $array;
 	//--
-	return $children;
-	//--
-
 } //END FUNCTION
 //===============================
+
 
 } //END CLASS
 

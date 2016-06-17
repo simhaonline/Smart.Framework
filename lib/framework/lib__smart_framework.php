@@ -225,7 +225,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160525
+ * @version 	v.160615
  * @package 	Application
  *
  */
@@ -484,10 +484,13 @@ abstract class SmartAbstractAppController {
 				case 'numeric':
 					$val = 0 + (float) $val;
 					break;
-				case 'raw':
-				case '':
+				case 'mixed': // mixed variable types, can vary by context
+				case 'raw': // raw (leave as is ...)
+				case '': // no explicit format (take as raw / mixed)
+					// return as is (in this case extra validations have to be done explicit in the controller)
+					break;
 				default:
-					// no explicit format, return as is (in this case extra validations have to be done explicit in the controller)
+					Smart::log_warning('Controller::RequestVarGet() // Invalid Request Variable Type: '.$type);
 			} //end switch
 			//--
 		} //end if else
