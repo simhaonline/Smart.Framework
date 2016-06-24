@@ -134,9 +134,9 @@ if($user ne "") {
 }
 if($url_get ne "") {
 	if($auth eq "") {
-		print "############### Smart.Task.Engine // MASTER: Fetching URL".$txtNavOffs.": ".$url_get;
+		print colored($clr_notice,"############### Smart.Task.Engine // MASTER: Fetching URL".$txtNavOffs.": ".$url_get);
 	} else {
-		print "############### Smart.Task.Engine // MASTER: Fetching URL [using AUTH=".$user."/*****"."]".$txtNavOffs.": ".$url_get;
+		print colored($clr_notice, "############### Smart.Task.Engine // MASTER: Fetching URL [using AUTH=".$user."/*****"."]".$txtNavOffs.": ".$url_get);
 	}
 } else {
 	print colored($clr_notice, "############### Smart.Task.Engine // MASTER: Fetching FILE".$txtNavOffs.": test-batch.txt");
