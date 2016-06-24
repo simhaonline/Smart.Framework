@@ -1,0 +1,290 @@
+#!/usr/bin/env perl
+
+# [SmartFramework / Task Engine / Master]
+# (c) 2006-2016 unix-world.org - all rights reserved
+# r.160624
+
+# Fetch the Batch URL (will spawn the number of childs in $max_threads, fetching the Distribution URL: $url_get)
+# This can be used in the run.pl (daemon) or can be run via a cron job each minute
+
+##### START: Test batch model
+##IDs-BATCH:START#
+#id1
+#Id-2
+#ID_3
+#101
+#other_ID
+#Last-Id
+##IDs-BATCH:END#
+##### END: Test batch model
+
+######################################## PERL MODULES
+
+use strict;
+use warnings;
+use Cwd;
+use Time::HiRes;
+
+use Term::ANSIColor;
+
+my $clr_error = ['bright_white on_red'];
+my $clr_fail = ['black on_bright_magenta'];
+my $clr_notice = ['bright_white on_blue'];
+my $clr_info = ['bold black'];
+my $clr_hint = ['bold blue'];
+my $clr_msg_ok = ['green'];
+my $clr_msg_yok = ['bold bright_green'];
+my $clr_msg_xok = ['bright_yellow on_magenta'];
+
+
+######################################## PARSE INI SETTINGS ### DO NOT EDIT THIS SCRIPT !!! ### USE master.ini to store all settings ###
+
+my %inisett = ();
+my $cfname;
+my $cfval;
+open(CONF, "master.ini") || die "Failed to open config file master.ini";
+while(<CONF>) {
+	s/\r|\n//g;
+	if (/^#/ || !/\S/) {
+		next;
+	}
+	/^([^=]+)=(.*)$/;
+	$cfname = $1;
+	$cfval = $2;
+	$cfname =~ s/^\s+//g;
+	$cfname =~ s/\s+$//g;
+	$cfval =~ s/^\s+//g;
+	$cfval =~ s/\s+$//g;
+	$inisett{$cfname} = $cfval;
+}
+close(CONF);
+
+# setting: max number of childs
+my $max_threads = $inisett{'ChildThreads'}; # 3
+my $batch_size = $inisett{'BatchSize'}; # 1000
+my $offset_param = $inisett{'OffsetParam'}; # &ofs=
+
+# setting: batch list URL
+my $url_get = $inisett{'URLGetBatch'}; # http://some.url/?/action/get-batch
+
+# setting: batch list URL Auth username [can be empty if no authentication is required]
+my $user = $inisett{'URLAuthUser'}; # URL Auth User Name
+# setting: batch list URL Auth password [can be empty if no authentication is required]
+my $pass = $inisett{'URLAuthPassword'}; # URL Auth User Password
+
+######################################## RUNTIME
+
+my $num_args = $#ARGV + 1;
+my $navOffset = -1;
+my $fArg = "";
+
+my $txtNavOffs = " [using BATCH-SIZE=".$batch_size."] ";
+
+if($url_get ne "") {
+	$url_get = $url_get.$batch_size;
+}
+if($num_args == 1) {
+	$fArg = $ARGV[0];
+	$fArg =~ s/^\s+|\s+$//g; #trim
+	if($fArg =~ /^[0-9]*$/) { # test if in 0-9
+		if($fArg >= 0) {
+			$navOffset = $fArg;
+			if($navOffset >= 0) {
+				if($offset_param ne "") {
+					$txtNavOffs .= " [using OFFSET=".($navOffset * $batch_size)." / PAGE-OFFSET=".$navOffset."] ";
+					$txtNavOffs .= " [using OFFSET-PARAM=".$offset_param."] ";
+					if($url_get ne "") {
+						$url_get = $url_get.$offset_param.($navOffset * $batch_size);
+					}
+				}
+			}
+		}
+	}
+}
+
+# Test if semaphore exists
+my $dir = getcwd;
+my $the_master_pid = $dir."/master-semaphore.pid";
+if(-e $the_master_pid) {
+	print colored($clr_error, "MASTER.ERR: Pid Semaphore already exist ... ".$the_master_pid);
+	print "\n";
+	exit;
+}
+
+# Catch CTRL+C
+$SIG{INT} = sub { system("rm ".$the_master_pid); exit; };
+
+# Create Semaphores Directory in the current directory of this script
+system("mkdir -p ".$dir."/child-semaphores");
+if(-d $dir."/child-semaphores") {
+	# OK
+} else {
+	print colored($clr_error, "MASTER.ERR: Could Not Create Semaphores Dir: ".$dir."/child-semaphores");
+	print "\n";
+	exit;
+}
+
+# Build the URL Request to get the Task List Batch
+my $auth = "";
+if($user ne "") {
+	$auth = " --basic -u ".$user;
+	if($pass ne "") {
+		$auth = $auth.":".$pass;
+	}
+}
+if($url_get ne "") {
+	if($auth eq "") {
+		print "############### Smart.Task.Engine // MASTER: Fetching URL".$txtNavOffs.": ".$url_get;
+	} else {
+		print "############### Smart.Task.Engine // MASTER: Fetching URL [using AUTH=".$user."/*****"."]".$txtNavOffs.": ".$url_get;
+	}
+} else {
+	print colored($clr_notice, "############### Smart.Task.Engine // MASTER: Fetching FILE".$txtNavOffs.": test-batch.txt");
+}
+print "\n";
+
+# Get the Task List Batch from URL using curl
+## G = get
+## f = don't output if HTTP error
+## s = silent, don't output warnings
+## k = insecure, ignore self-signed certificate
+my @arr_lines = ();
+my $arr_len = 0;
+my $response = "";
+
+if($url_get ne "") {
+	$response = `curl -Gfsk --connect-timeout 30 --max-time 600${auth} --url "${url_get}"`;
+} else {
+	$response = `cat ./test-batch.txt`;
+}
+$response =~ s/^\s+|\s+$//g; #trim
+if($response eq '') { # in perl == is only for numbers
+	print colored($clr_fail, 'MASTER.ERR: EMPTY BATCH FILE ...');
+	print "\n";
+	exit;
+}
+#print $response."\n"; # Debug only: server response
+
+# Test if server $response is empty
+@arr_lines = split("\n", $response);
+$arr_len = scalar @arr_lines;
+if($arr_len <= 0) {
+	print colored($clr_fail, 'MASTER.ERR: INVALID BATCH FILE LINES ...');
+	print "\n";
+	exit;
+}
+
+# Info: how many lines are in the server response
+print colored($clr_info, "MASTER.INF: Server Answer batch have [".$arr_len."] lines");
+print "\n";
+
+# Trim $response
+$arr_lines[0] =~ s/^\s+|\s+$//g;
+
+# Test if server $response first line is: #IDs-BATCH:START#
+if($arr_lines[0] ne "#IDs-BATCH:START#") {
+	print colored($clr_fail, 'MASTER.ERR: INVALID BATCH FILE START-LINE ...');
+	print "\n";
+	exit;
+}
+#print "Checking 1st Line: OK"."\n";
+
+# Test if server $response last line is: #IDs-BATCH:END#
+if($arr_lines[$arr_len-1] ne "#IDs-BATCH:END#") {
+	print colored($clr_fail, 'MASTER.ERR: INVALID BATCH FILE END-LINE ...');
+	print "\n";
+	exit;
+}
+#print "Checking last Line: OK"."\n";
+
+# create the master semaphore
+system("echo ".'MASTER'." > ".$the_master_pid);
+if(-e $the_master_pid) {
+	#OK
+} else {
+	print colored($clr_fail, 'MASTER.ERR: FAILED to Lock the Master Semaphore: ['.$the_master_pid.'] ...');
+	print "\n";
+	exit;
+}
+
+# Main Loop to launch Childs
+if($arr_len > 2) {
+	my $running_childs = 0;
+	my $i = 0;
+	while($i < $arr_len) {
+		# trim each line
+		$arr_lines[$i] =~ s/^\s+|\s+$//g;
+		# skip first line
+		if($arr_lines[$i] eq "#IDs-BATCH:START#") {
+			$i++;
+			next; # skip
+		}
+		# skip last line
+		if($arr_lines[$i] eq "#IDs-BATCH:END#") {
+			$i++;
+			next; # skip
+		}
+		# test line to be a valid ID
+		my $the_task_id = "";
+		if($arr_lines[$i] =~ /^[_A-Za-z0-9\-]*$/) { # test if in A-Z a-z 0-9 _ -
+			$the_task_id = $arr_lines[$i];
+		}
+		# count how many child semaphores are currently running
+		$running_childs = sprintf("%d", `ls ./child-semaphores/ | wc -l`);
+		# test semaphore ID line is non-empty (if empty and valid as tested with regex above)
+		if($the_task_id eq "") { # if ID is empty
+			print colored($clr_hint, "INVALID Batch Line #".$i.": [".$arr_lines[$i]."]");
+			print "\n";
+		} else { # if ID is non-empty
+			print colored($clr_info, "@ Loop #".$i." / PageOffset=".$navOffset." for [TaskID: ".$the_task_id."] :: Running Childs # [".$running_childs."] of max [".$max_threads."]");
+			print "\n";
+			# build the file reference for the child semaphore to test if exists only (child pid semaphores are managed in child.pl)
+			my $the_child_pid = "./child-semaphores/semaphore@".$the_task_id.".pid";
+			if($running_childs < $max_threads) { # if number of semaphores is lower than allowed
+				if(-e $the_child_pid) { # if this semaphore is running, SKIP (old behaviour was RETRY)
+					#if($i < ($arr_len - 1)) { # fix: decrease only if not the last ID (doing so will jump next list)
+					#	$i--;
+					#}
+					#print colored($clr_msg_xok, "@ Retry ... the SEMAPHORE is currently RUNNING [TaskID=".$the_task_id."]");
+					print colored($clr_msg_xok, "* SKIP Child ... the SEMAPHORE is currently RUNNING [TaskID=".$the_task_id."]");
+					print "\n";
+					Time::HiRes::sleep(1);
+				} else { # if semaphore is not running, launch new child
+					print colored($clr_msg_ok, "+ SPAWNING Child # ".($running_childs+1)." [TaskID=".$the_task_id."]");
+					print "\n";
+					system("./child.pl ".$the_task_id." &");
+					Time::HiRes::sleep(0.1);
+				}
+			} else { # if number of semaphores is higher than allowed
+				$i--;
+				print colored($clr_msg_yok, "- WAITING Child ... to get a FREE SEMAPHORE ... Running Childs # ".$running_childs." [TaskID=".$the_task_id."]");
+				print "\n";
+				Time::HiRes::sleep(1);
+			}
+		}
+		$i++;
+		Time::HiRes::sleep(0.1); # loop sleep 0.1 seconds to be able to catch CTRL+C
+	}
+} else {
+	print colored($clr_hint, "INFO: NO TASKS AVAILABLE # [".$arr_len."]");
+	print "\n";
+}
+
+print colored($clr_notice, "############### Smart.Task.Engine // MASTER: DONE");
+print "\n";
+
+# finally sleep 0.1 seconds to avoid overloading on high speed CPUs
+Time::HiRes::sleep(1);
+
+#sleep(7); # sleep seconds, testing only (must be a higher value than daemon sleep seconds)
+
+# remove the master.pid
+if(-e $the_master_pid) {
+	system("rm ".$the_master_pid); # remove the master semaphore if exists
+}
+
+exit;
+
+########################################
+
+#END
