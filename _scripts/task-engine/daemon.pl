@@ -19,7 +19,7 @@ my $clr_error = ['bold black on_bright_red'];
 my $clr_info = ['bold bright_white on_black'];
 my $clr_notice = ['bold black on_bright_yellow'];
 
-######################################## PARSE INI SETTINGS ### DO NOT EDIT THIS SCRIPT !!! ### USE daemon.ini to store all settings ###
+######################################## PARSE INI SETTINGS {{{SYNC-PERL-INIPARSE}}} ### DO NOT EDIT THIS SCRIPT !!! ### USE daemon.ini to store all settings ###
 
 my %inisett = ();
 my $cfname;
@@ -108,8 +108,8 @@ while(1) {
 	}
 }
 
-exit;
+######################################## EXIT
 
-########################################
+exit 0;
 
 #END

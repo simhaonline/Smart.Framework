@@ -19,7 +19,7 @@ my $clr_warn = ['bright_magenta'];
 my $clr_notice = ['bright_blue'];
 my $clr_ok = ['blue'];
 
-######################################## PARSE INI SETTINGS ### DO NOT EDIT THIS SCRIPT !!! ### USE child.ini to store all settings ###
+######################################## PARSE INI SETTINGS {{{SYNC-PERL-INIPARSE}}} ### DO NOT EDIT THIS SCRIPT !!! ### USE child.ini to store all settings ###
 
 # setting: the child task
 my $task_script = "";
@@ -116,8 +116,8 @@ if(-e $the_child_pid) {
 	print "\n";
 }
 
-exit;
+######################################## EXIT
 
-########################################
+exit 0;
 
 #END

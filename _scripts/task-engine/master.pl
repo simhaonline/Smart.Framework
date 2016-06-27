@@ -37,7 +37,7 @@ my $clr_msg_ok = ['green'];
 my $clr_msg_yok = ['bold bright_green'];
 my $clr_msg_xok = ['cyan'];
 
-######################################## PARSE INI SETTINGS ### DO NOT EDIT THIS SCRIPT !!! ### USE master.ini to store all settings ###
+######################################## PARSE INI SETTINGS {{{SYNC-PERL-INIPARSE}}} ### DO NOT EDIT THIS SCRIPT !!! ### USE master.ini to store all settings ###
 
 my %inisett = ();
 my $cfname;
@@ -74,13 +74,15 @@ my $pass = $inisett{'URLAuthPassword'}; # URL Auth User Password
 
 ######################################## RUNTIME
 
+my $is_url = str_begins_with($url_get, 'http://') || str_begins_with($url_get, 'https://') || str_begins_with($url_get, 'ftp://');
+
 my $num_args = $#ARGV + 1;
 my $navOffset = -1;
 my $fArg = "";
 
 my $txtNavOffs = " [using BATCH-SIZE=".$batch_size."] ";
 
-if($url_get ne "") {
+if($is_url eq "OK") {
 	$url_get = $url_get.$batch_size;
 }
 if($num_args == 1) {
@@ -93,7 +95,7 @@ if($num_args == 1) {
 				if($offset_param ne "") {
 					$txtNavOffs .= " [using OFFSET=".($navOffset * $batch_size)." / PAGE-OFFSET=".$navOffset."] ";
 					$txtNavOffs .= " [using OFFSET-PARAM=".$offset_param."] ";
-					if($url_get ne "") {
+					if($is_url eq "OK") {
 						$url_get = $url_get.$offset_param.($navOffset * $batch_size);
 					}
 				}
@@ -125,21 +127,27 @@ if(-d $dir."/child-semaphores") {
 }
 
 # Build the URL Request to get the Task List Batch
+$url_get = str_single_quotes_escapeshellarg($url_get);
 my $auth = "";
-if($user ne "") {
-	$auth = " --basic -u ".$user;
-	if($pass ne "") {
-		$auth = $auth.":".$pass;
+if($is_url eq "OK") {
+	if($user ne "") {
+		if($pass ne "") { # use auth: user and pass
+			$auth = " --basic -u '".str_single_quotes_escapeshellarg($user).":".str_single_quotes_escapeshellarg($pass)."'";
+		} else { # use auth: only user
+			$auth = " --basic -u '".str_single_quotes_escapeshellarg($user)."'";
+		}
 	}
-}
-if($url_get ne "") {
 	if($auth eq "") {
 		print colored($clr_notice,"############### Smart.Task.Engine // MASTER: Fetching URL".$txtNavOffs.": ".$url_get);
 	} else {
 		print colored($clr_notice, "############### Smart.Task.Engine // MASTER: Fetching URL [using AUTH=".$user."/*****"."]".$txtNavOffs.": ".$url_get);
 	}
 } else {
-	print colored($clr_notice, "############### Smart.Task.Engine // MASTER: Fetching FILE".$txtNavOffs.": test-batch.txt");
+	if($url_get ne "") {
+		print colored($clr_notice, "############### Smart.Task.Engine // MASTER: Fetching FILE: ".$url_get);
+	} else {
+		print colored($clr_error, "############### Smart.Task.Engine // MASTER: NO FILE OR URL TO FETCH !");
+	}
 }
 print "\n";
 
@@ -153,9 +161,13 @@ my $arr_len = 0;
 my $response = "";
 
 if($url_get ne "") {
-	$response = `curl -Gfsk --connect-timeout 30 --max-time 600${auth} --url "${url_get}"`;
+	if($is_url eq "OK") {
+		$response = `curl -Gfsk --connect-timeout 30 --max-time 600${auth} --url '${url_get}'`;
+	} else {
+		$response = `cat '${url_get}'`;
+	}
 } else {
-	$response = `cat ./test-batch.txt`;
+	$response = "";
 }
 $response =~ s/^\s+|\s+$//g; #trim
 if($response eq '') { # in perl == is only for numbers
@@ -276,15 +288,29 @@ print "\n";
 # finally sleep 0.1 seconds to avoid overloading on high speed CPUs
 Time::HiRes::sleep(1);
 
-#sleep(7); # sleep seconds, testing only (must be a higher value than daemon sleep seconds)
-
 # remove the master.pid
 if(-e $the_master_pid) {
 	system("rm ".$the_master_pid); # remove the master semaphore if exists
 }
 
-exit;
+######################################## INTERNAL FUNCTIONS {{{SYNC-PERL-FXS}}}
 
-########################################
+sub str_single_quotes_escapeshellarg {
+	my $arg = shift;
+	$arg =~ s/'/'\\''/g; # escape single quotes
+	return "".$arg;
+}
+
+sub str_begins_with {
+	my $ok = "";
+	if(substr($_[0], 0, length($_[1])) eq $_[1]) {
+		$ok = "OK";
+	}
+	return "".$ok;
+}
+
+######################################## EXIT
+
+exit 0;
 
 #END
