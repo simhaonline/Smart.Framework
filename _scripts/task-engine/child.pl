@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Child]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160624
+# r.160627
 
 ######################################## PERL MODULES
 
@@ -10,6 +10,14 @@ use strict;
 use warnings;
 use Cwd;
 use Time::HiRes;
+use Term::ANSIColor;
+
+######################################## TERM COLORS
+
+my $clr_error = ['red'];
+my $clr_warn = ['bright_magenta'];
+my $clr_notice = ['bright_blue'];
+my $clr_ok = ['blue'];
 
 ######################################## PARSE INI SETTINGS ### DO NOT EDIT THIS SCRIPT !!! ### USE child.ini to store all settings ###
 
@@ -42,19 +50,11 @@ if($inisett{'ChildTask'} ne "") {
 
 ######################################## RUNTIME
 
-# Terminal Colors
-my $color_black = "\033[0m";
-my $color_red = "\033[0;31m";
-my $color_green = "\033[0;32m";
-my $color_blue = "\033[0;34m";
-my $color_cyan = "\033[0;36m";
-
 # Child Usage Info
 my $num_args = $#ARGV + 1;
 if($num_args != 1) {
-	system("echo -n \"$color_red\"");
-	print "CHILD.ERR: Usage: script.pl TaskID\n";
-	system("echo -n \"$color_black\"");
+	print colored($clr_error, "CHILD.ERR: Usage: child.pl TaskID");
+	print "\n";
 	exit;
 }
 
@@ -66,9 +66,8 @@ if($fArg =~ /^[_A-Za-z0-9\-]*$/) { # test if in A-Z a-z 0-9 _ -
 	$the_task_id = $fArg;
 }
 if($the_task_id eq "") {
-	system("echo -n \"$color_red\"");
-	print "CHILD.ERR: TaskID is EMPTY or INVALID: [".$fArg."]\n";
-	system("echo -n \"$color_black\"");
+	print colored($clr_error, "CHILD.ERR: Task ID is EMPTY or INVALID: [ID=".$fArg."]");
+	print "\n";
 	exit;
 }
 
@@ -76,9 +75,8 @@ if($the_task_id eq "") {
 my $dir = getcwd;
 my $the_child_pid = $dir."/child-semaphores/semaphore@".$the_task_id.".pid";
 if(-e $the_child_pid) {
-	system("echo -n \"$color_red\"");
-	print "CHILD.ERR: Pid Semaphore already exist ... ".$the_task_id."\n";
-	system("echo -n \"$color_black\"");
+	print colored($clr_notice, "CHILD.NOTICE: Semaphore already exist, skipping ... [ID=".$the_task_id."]");
+	print "\n";
 	exit;
 }
 
@@ -87,22 +85,19 @@ system("echo ".$the_task_id." > ".$the_child_pid);
 if(-e $the_child_pid) {
 	#OK
 } else {
-	system("echo -n \"$color_red\"");
-	print "CHILD.ERR: Cannot Lock the Semaphore ... ".$the_task_id."\n";
-	system("echo -n \"$color_black\"");
+	print colored($clr_error, "CHILD.ERR: FAILED to Lock the Semaphore ... [ID=".$the_task_id."]");
+	print "\n";
 	exit;
 }
 
 # Run Task script (if empty run a test only)
 if($task_script eq "") {
-	system("echo -n \"$color_red\"");
-	print "CHILD.ERR: No Task Defined in child.ini";
-	system("echo -n \"$color_black\"");
+	print colored($clr_warn, "CHILD.WARN: No Task Defined in child.ini (Running TEST ONLY) !!!");
+	print "\n";
 } else {
-	system("echo -n \"$color_cyan\"");
-	print "CHILD.TASK ".$the_task_id." [".$task_script."] :: Smart.Task.Engine // CHILD"."\n"; # RUN REAL TASK
-	system("echo -n \"$color_black\"");
-	system($task_script." ".$the_task_id);
+	print colored($clr_ok, "CHILD.INF: Task FORK :: Smart.Task.Engine [ID=".$the_task_id."] "."[Script=".$task_script."]");
+	print "\n";
+	system($task_script." ".$the_task_id); # RUN REAL TASK
 	Time::HiRes::sleep(0.5);
 }
 
@@ -110,18 +105,15 @@ if($task_script eq "") {
 if(-e $the_child_pid) {
 	system("rm ".$the_child_pid);
 	if(-e $the_child_pid) {
-		system("echo -n \"$color_red\"");
-		print "CHILD.ERR: Pid Semaphore could not be removed ... ".$the_task_id."\n";
-		system("echo -n \"$color_black\"");
+		print colored($clr_error, "CHILD.ERR: FAILED to Unlock the Semaphore ... [ID=".$the_task_id."]");
+		print "\n";
 	} else {
-		system("echo -n \"$color_green\"");
-		print "CHILD.DONE ".$the_task_id."\n";
-		system("echo -n \"$color_black\"");
+		print colored($clr_ok, "CHILD.INF: Task DONE [ID=".$the_task_id."]");
+		print "\n";
 	}
 } else {
-	system("echo -n \"$color_red\"");
-	print "CHILD.ERR: Pid Semaphore does not exist for removal ... ".$the_task_id."\n";
-	system("echo -n \"$color_black\"");
+	print colored($clr_error, "CHILD.ERR: FAILED to Find the Semaphore for Unlocking ... [ID=".$the_task_id."]");
+	print "\n";
 }
 
 exit;

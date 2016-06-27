@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Daemon]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160624
+# r.160627
 
 # Main Runtime - Daemon (Press CTRL+C to break/stop) !
 
@@ -11,11 +11,12 @@
 use strict;
 use warnings;
 use Cwd;
-
 use Term::ANSIColor;
 
-my $clr_info = ['bold bright_white on_black'];
+######################################## TERM COLORS
+
 my $clr_error = ['bold black on_bright_red'];
+my $clr_info = ['bold bright_white on_black'];
 my $clr_notice = ['bold black on_bright_yellow'];
 
 ######################################## PARSE INI SETTINGS ### DO NOT EDIT THIS SCRIPT !!! ### USE daemon.ini to store all settings ###
@@ -39,6 +40,8 @@ while(<CONF>) {
 	$inisett{$cfname} = $cfval;
 }
 close(CONF);
+
+######################################## RUNTIME
 
 # setting: set the min page offset (loops) for using to batch count = startRows / batchSize ; if > 0 will use (and start here) the navigation offset * number of pages by appending to URL ofs=123
 my $min_offset = 0;

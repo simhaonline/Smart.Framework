@@ -1,6 +1,14 @@
 #!/usr/bin/env perl
 
-##### Test Batch Task #####
+# [SmartFramework / Task Engine / TEST-Sample Task]
+# (c) 2006-2016 unix-world.org - all rights reserved
+# r.160627
+
+###
+### INFO: This Script can be customized as you need, this is just a sample of a TASK Script (Sample) ###
+###
+
+##### Test Sample Task #####
 
 use strict;
 use warnings;

@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Master]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160624
+# r.160627
 
 # Fetch the Batch URL (will spawn the number of childs in $max_threads, fetching the Distribution URL: $url_get)
 # This can be used in the run.pl (daemon) or can be run via a cron job each minute
@@ -24,18 +24,18 @@ use strict;
 use warnings;
 use Cwd;
 use Time::HiRes;
-
 use Term::ANSIColor;
 
-my $clr_error = ['bright_white on_red'];
-my $clr_fail = ['black on_bright_magenta'];
-my $clr_notice = ['bright_white on_blue'];
+######################################## TERM COLORS
+
+my $clr_error = ['bold yellow on_red'];
+my $clr_fail = ['bold black on_bright_magenta'];
+my $clr_notice = ['bold bright_white on_blue'];
 my $clr_info = ['bold black'];
-my $clr_hint = ['bold blue'];
+my $clr_hint = ['bold bright_yellow on_bright_blue'];
 my $clr_msg_ok = ['green'];
 my $clr_msg_yok = ['bold bright_green'];
-my $clr_msg_xok = ['bright_yellow on_magenta'];
-
+my $clr_msg_xok = ['cyan'];
 
 ######################################## PARSE INI SETTINGS ### DO NOT EDIT THIS SCRIPT !!! ### USE master.ini to store all settings ###
 
