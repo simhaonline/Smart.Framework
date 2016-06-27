@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# [SmartFramework / Task Engine / TEST-Sample Task]
+# [SmartFramework / Task Engine / TASK-Template :: Customize it ...]
 # (c) 2006-2016 unix-world.org - all rights reserved
 # r.160627
 
