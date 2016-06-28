@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Daemon]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160627
+# r.160628
 
 # Main Runtime - Daemon (Press CTRL+C to break/stop) !
 

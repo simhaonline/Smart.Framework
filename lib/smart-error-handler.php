@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / ERRORS MANAGEMENT]
 // this should be loaded from app web root only
-// v.2.3.3.1 r.2016.06.17 / smart.framework.v.2.3
+// v.2.3.3.2 r.2016.06.28 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
