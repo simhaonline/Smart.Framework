@@ -64,7 +64,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160527
+ * @version 	v.160629
  * @package 	Database:PostgreSQL
  *
  */
@@ -1226,10 +1226,10 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 				RETURN;
 			EXCEPTION
 				WHEN unique_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
-				WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
 		END
 		$'.$unique_id.'$;
 		';
+		// WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\'; -- this have been disabled to make it the same for pgsql < 9.5 and 9.5 or later versions ...
 		//--
 	} //end if else
 	//--
@@ -2042,7 +2042,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160527
+ * @version 	v.160629
  * @package 	Database:PostgreSQL
  *
  */
