@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160527
+ * @version 	v.160703
  * @package 	Database:SQLite
  *
  */
@@ -284,7 +284,7 @@ public function prepare_write_statement($arrdata, $mode) {
 
 //--
 /**
- * Create Escaped SQL Statements from Parameters and Array of Data
+ * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
  * This can be used for a full SQL statement or just for a part.
  * The statement must not contain any Single Quotes !
  *
@@ -420,7 +420,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160527
+ * @version 	v.160703
  * @package 	Database:SQLite
  *
  */
@@ -1223,20 +1223,29 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 
 
 //======================================================
+/**
+ * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
+ * This can be used for a full SQL statement or just for a part.
+ * The statement must not contain any Single Quotes !
+ *
+ * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
+ * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
+ * @return STRING								:: The SQL processed (partial/full) Statement
+ */
 public static function prepare_param_query($db, $query, $replacements_arr) {
 	//--
 	if(!is_string($query)) {
-		throw new Exception('SQLite / PrepareParamQuery :: The param/query requires and Query String !');
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), print_r($replacements_arr,1));
 		return ''; // single quote is not allowed
 	} //end if
 	//--
 	if(stripos($query, "'") !== false) {
-		throw new Exception('SQLite / PrepareParamQuery :: The param/query cannot contain single quotes !');
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query cannot contain single quotes !', (string)$query, print_r($replacements_arr,1));
 		return ''; // single quote is not allowed
 	} //end if
 	//--
 	if(!is_array($replacements_arr)) {
-		throw new Exception('SQLite / PrepareParamQuery :: The param/query requires and Array of Parameters !');
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, print_r($replacements_arr,1));
 		return ''; // single quote is not allowed
 	} //end if
 	//--

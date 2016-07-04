@@ -989,10 +989,10 @@ public static function test_pgsqlserver() {
 		$tests[] = 'Create a Temporary Table for this Test, after transaction to test DDL';
 		SmartPgsqlDb::write_data('CREATE TABLE "public"."_test_unit_db_server_tests" ( "variable" character varying(100) NOT NULL, "value" character varying(16384) DEFAULT \'\'::character varying, "comments" text DEFAULT \'\'::text NOT NULL, CONSTRAINT _test_unit_db_server_tests__check__variable CHECK ((char_length((variable)::text) >= 1)), CONSTRAINT _test_unit_db_server_tests__uniq__variable UNIQUE(variable) )');
 		//--
-		$variable = SmartPgsqlDb::new_safe_id('uid10seq', 'variable', '_test_unit_db_server_tests', 'public');
+		$variable = '"'.'Ș'."'".substr(SmartPgsqlDb::new_safe_id('uid10seq', 'variable', '_test_unit_db_server_tests', 'public'), 3, 7);
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if the Test Table exists [ Positive ]';
+			$tests[] = 'Check if the Test Table exists [ Positive ; Variable is: '.$variable.' ]';
 			$data = SmartPgsqlDb::check_if_table_exists('_test_unit_db_server_tests', 'public');
 			if($data !== 1) {
 				$err = 'Table Creation FAILED ... Table does not exists in the `public` schema ...';
@@ -1076,8 +1076,11 @@ public static function test_pgsqlserver() {
 		$quer_str = 'SELECT "comments" FROM "public"."_test_unit_db_server_tests" WHERE ("variable" = $1) LIMIT 1 OFFSET 0';
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Read [ Non-Associative ]';
-			$data = SmartPgsqlDb::read_data($quer_str, array($variable));
+			$tests[] = 'Read [ Non-Associative + Param Query ]';
+			//$data = SmartPgsqlDb::read_data($quer_str, array($variable));
+			$param_query = str_replace('$1', '?', $quer_str); // convert $1 to ?
+			$param_query = SmartPgsqlDb::prepare_param_query($param_query, array($variable));
+			$data = SmartPgsqlDb::read_data($param_query, 'Test Param Query');
 			if(trim($data[0]) !== (string)$comments) {
 				$err = 'Read / Non-Associative Test Failed, should return `'.$comments.'` but returned `'.$data[0].'`';
 			} //end if
@@ -1134,6 +1137,7 @@ public static function test_pgsqlserver() {
 			$pgsql2 = new SmartPgsqlExtDb((array)$configs['pgsql']);
 			$pgsql2->write_data('DROP TABLE IF EXISTS "public"."_test_unit_db_server_tests"');
 			$data = $pgsql2->check_if_table_exists('_test_unit_db_server_tests', 'public');
+			$pgsql2->prepare_param_query('SELECT ?', array('\'1"'));
 			unset($pgsql2);
 			if($data === 1) {
 				$err = 'Table Drop FAILED ... Table still exists ...';

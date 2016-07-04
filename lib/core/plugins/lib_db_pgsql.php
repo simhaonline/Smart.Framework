@@ -64,7 +64,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160629
+ * @version 	v.160703
  * @package 	Database:PostgreSQL
  *
  */
@@ -1468,6 +1468,60 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 
 //======================================================
 /**
+ * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
+ * This can be used for a full SQL statement or just for a part.
+ * The statement must not contain any Single Quotes !
+ *
+ * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
+ * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
+ * @param RESOURCE $y_connection 				:: the connection to pgsql server
+ * @return STRING								:: The SQL processed (partial/full) Statement
+ */
+public static function prepare_param_query($query, $replacements_arr, $y_connection='DEFAULT') {
+	//--
+	if(!is_string($query)) {
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), print_r($replacements_arr,1));
+		return ''; // single quote is not allowed
+	} //end if
+	//--
+	if(stripos($query, "'") !== false) {
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query cannot contain single quotes !', (string)$query, print_r($replacements_arr,1));
+		return ''; // single quote is not allowed
+	} //end if
+	//--
+	if(!is_array($replacements_arr)) {
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, print_r($replacements_arr,1));
+		return ''; // single quote is not allowed
+	} //end if
+	//--
+	$out_query = '';
+	//--
+	if(stripos($query, '?') !== false) {
+		//--
+		$expr_arr = explode('?', $query);
+		$expr_count = count($expr_arr);
+		//--
+		for($i=0; $i<$expr_count; $i++) {
+			$out_query .= $expr_arr[$i];
+			if($i < ($expr_count - 1)) {
+				$out_query .= (string) self::escape_literal((string)$replacements_arr[$i], 'no', $y_connection);
+			} //end if
+		} //end for
+		//--
+	} else {
+		//--
+		$out_query = (string) $query;
+		//--
+	} //end if else
+	//--
+	return (string) $out_query;
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
  * Get A UNIQUE (SAFE) ID for DB Tables / Schema
  *
  * @param ENUM 		$y_mode 					:: mode: uid10str | uid10num | uid10seq | uid36 | uid45
@@ -2042,7 +2096,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160629
+ * @version 	v.160703
  * @package 	Database:PostgreSQL
  *
  */
@@ -2326,6 +2380,22 @@ public function write_igdata($queryval, $querytitle='') {
 public function prepare_write_statement($arrdata, $mode) {
 	//--
 	return SmartPgsqlDb::prepare_write_statement($arrdata, $mode, $this->connection);
+	//--
+} //END FUNCTION
+
+
+/**
+ * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
+ * This can be used for a full SQL statement or just for a part.
+ * The statement must not contain any Single Quotes !
+ *
+ * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
+ * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
+ * @return STRING								:: The SQL processed (partial/full) Statement
+ */
+public function prepare_param_query($query, $arrdata) {
+	//--
+	return SmartPgsqlDb::prepare_param_query($query, $arrdata, $this->connection);
 	//--
 } //END FUNCTION
 
