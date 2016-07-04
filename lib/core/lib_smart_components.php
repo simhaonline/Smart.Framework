@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160407
+ * @version 	v.160704
  * @package 	Components:Framework
  *
  */
@@ -372,12 +372,11 @@ public static function check_single_user() {
  * @param ENUM				$y_mode					'form' = display form | 'list' = display list
  * @param ARRAY				$yarr_data				DATASET ROWS AS: ['id' => 'name', 'id2' => 'name2'] OR ['id', 'name', 'id2', 'name2']
  * @param STRING 			$y_varname				as 'frm[test]'
- * @param INTEGER			$y_dimensions			dimensions in pixels (width or width / (list) height for #JQUERY%#)
+ * @param INTEGER			$y_dimensions			dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')
  * @param CODE				$y_custom_js			custom js code (Ex: submit on change)
  * @param YES/NO			$y_raw					If Yes, the description values will not apply html special chars
  * @param YES/NO			$y_allowblank			If Yes, a blank value is allowed in list
- * @param CSS/#JQUERY#		$y_extrastyle			Extra Style CSS | '#JQUERY#'
- * @param YES/NO			$y_jquery_filter  		Use Jquery Filter (only works with style '#JQUERY#' ; NOT WORK with Blank Value)
+ * @param CSS/#JS-UI#		$y_extrastyle			Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'
  *
  * @return HTMLCode
  */
@@ -418,7 +417,7 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
 	$js = '';
 	$css_class = '';
 	//--
-	if(((string)$element_id != '') && (((string)$y_extrastyle == '#JQUERY#') || ((string)$y_extrastyle == '#JQUERY-FILTER#'))) {
+	if(((string)$element_id != '') && (((string)$y_extrastyle == '#JS-UI#') || ((string)$y_extrastyle == '#JS-UI-FILTER#'))) {
 		//--
 		$tmp_extra_style = (string) $y_extrastyle;
 		$y_extrastyle = ''; // reset
@@ -440,7 +439,7 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
 				} //end if
 			} //end if else
 			//--
-			if((string)$tmp_extra_style == '#JQUERY-FILTER#') {
+			if((string)$tmp_extra_style == '#JS-UI-FILTER#') {
 				$have_filter = true;
 				$the_width += 25;
 			} else {
@@ -562,13 +561,13 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
  * @param STRING 			$y_varname				as 'frm[test][]'
  * @param ENUM				$y_draw 				list | checkboxes
  * @param YES/NO 			$y_sync_values			If Yes, sync select similar values used (curently works only for checkboxes)
- * @param INTEGER			$y_dimensions			dimensions in pixels (width or width / (list) height for #JQUERY%#)
+ * @param INTEGER			$y_dimensions			dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')
  * @param CODE				$y_custom_js			custom js code (Ex: submit on change)
- * @param SPECIAL			$y_extrastyle			Extra Style CSS | '#JQUERY#' | '#JQUERY-FILTER#'
+ * @param SPECIAL			$y_extrastyle			Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'
  *
  * @return HTMLCode
  */
-public static function html_multi_select_list($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_draw='list', $y_sync_values='no', $y_dimensions='300/0', $y_custom_js='', $y_extrastyle='#JQUERY-FILTER#') {
+public static function html_multi_select_list($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_draw='list', $y_sync_values='no', $y_dimensions='300/0', $y_custom_js='', $y_extrastyle='#JS-UI-FILTER#') {
 
 	//-- fix associative array
 	$arr_type = Smart::array_type_test($yarr_data);
@@ -613,7 +612,7 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 	//--
 	$css_class = '';
 	//--
-	if(((string)$element_id != '') && (((string)$y_extrastyle == '#JQUERY#') || ((string)$y_extrastyle == '#JQUERY-FILTER#'))) {
+	if(((string)$element_id != '') && (((string)$y_extrastyle == '#JS-UI#') || ((string)$y_extrastyle == '#JS-UI-FILTER#'))) {
 		//--
 		$use_blank_value = 'no';
 		//--
@@ -636,7 +635,7 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 				} //end if
 			} //end if else
 			//--
-			if((string)$tmp_extra_style == '#JQUERY-FILTER#') {
+			if((string)$tmp_extra_style == '#JS-UI-FILTER#') {
 				$have_filter = true;
 				$the_width += 25;
 			} else {
@@ -1833,7 +1832,7 @@ private static function window_mode_init_protection_to_smartmodal() {
 
 //================================================================
 /**
- * Post Form by Ajax / JQuery
+ * Post Form by Ajax
  *
  * @param $y_form_id 			HTML form ID (Example: myForm)
  * @param $y_script_url 		the php script to post to (Example: admin.php)
@@ -1867,7 +1866,7 @@ public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_q
 
 //================================================================
 /**
- * Answer Post Form by Ajax / JQuery
+ * Answer Post Form by Ajax
  *
  * NOTICE:
  * - if OK: and redirect URL have been provided, the replace div is not handled
@@ -2820,13 +2819,13 @@ public static function js_draw_suggest_ajx_selector($y_width, $y_prefix, $y_suff
 
 //================================================================
 /**
- * Function: JS Draw AutoComplete Single
+ * Function: JS-UI Draw AutoComplete Single
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_draw_jquery_autocomplete_single($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_eval_selector_js='') {
+public static function js_draw_ui_autocomplete_single($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_eval_selector_js='') {
 	//--
 	$y_min_len = Smart::format_number_int($y_min_len, '+');
 	if($y_min_len < 1) {
@@ -2844,13 +2843,13 @@ public static function js_draw_jquery_autocomplete_single($y_element_id, $y_scri
 
 //================================================================
 /**
- * Function: JS Draw AutoComplete Multi
+ * Function: JS-UI Draw AutoComplete Multi
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_draw_jquery_autocomplete_multi($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_eval_selector_js='') {
+public static function js_draw_ui_autocomplete_multi($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_eval_selector_js='') {
 	//--
 	$y_min_len = Smart::format_number_int($y_min_len, '+');
 	if($y_min_len < 1) {
@@ -2868,7 +2867,7 @@ public static function js_draw_jquery_autocomplete_multi($y_element_id, $y_scrip
 
 //================================================================
 /**
- * Function: JS Init jQueryUI Tabs
+ * Function: JS Init JS-UI Tabs
  *
  * @access 		private
  * @internal

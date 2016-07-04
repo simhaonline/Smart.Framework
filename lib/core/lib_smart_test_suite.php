@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160512
+	// v.160704
 
 
 //==================================================================
@@ -83,8 +83,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 	//-- END
 
 	//-- lists with one element
-	$one_single_select = SmartComponents::html_single_select_list('test-unit-s-list-one', '', 'form', array('one' => 'One'), 'frm[one_single]', '150', '', 'no', 'no', '#JQUERY#'); // returns HTML Code
-	$one_single_with_blank_select = SmartComponents::html_multi_select_list('test-unit-lst-m-1', '', 'form', array('one' => 'One'), 'frm[one_multi][]', 'list', 'no', '200', '', '#JQUERY-FILTER#'); // returns HTML Code
+	$one_single_select = SmartComponents::html_single_select_list('test-unit-s-list-one', '', 'form', array('one' => 'One'), 'frm[one_single]', '150', '', 'no', 'no', '#JS-UI#'); // returns HTML Code
+	$one_single_with_blank_select = SmartComponents::html_multi_select_list('test-unit-lst-m-1', '', 'form', array('one' => 'One'), 'frm[one_multi][]', 'list', 'no', '200', '', '#JS-UI-FILTER#'); // returns HTML Code
 	//--
 	$test_normal_list_s = SmartComponents::html_single_select_list('test_normal_s', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3']);
 	$test_normal_list_m = SmartComponents::html_multi_select_list('test_normal_m', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3'], '', 'list', 'no', '200/75', '', 'height:65px;');
@@ -100,11 +100,11 @@ public static function main_screen($tab, $frm, $testformdata) {
 	} //end for
 	//-- single-select
 	$selected_value = 'id2';
-	$elem_single_select = SmartComponents::html_single_select_list('test-unit-s-list-two', $selected_value, 'form', $array_of_values, 'frm[list_single]', '150', 'onChange="alert(\''.Smart::escape_js('Getting value from the "SingleList": ').'\' + $(\'#test-unit-s-list-two\').val());"', 'no', 'yes', '#JQUERY-FILTER#'); // returns HTML Code
+	$elem_single_select = SmartComponents::html_single_select_list('test-unit-s-list-two', $selected_value, 'form', $array_of_values, 'frm[list_single]', '150', 'onChange="alert(\''.Smart::escape_js('Getting value from the "SingleList": ').'\' + $(\'#test-unit-s-list-two\').val());"', 'no', 'yes', '#JS-UI-FILTER#'); // returns HTML Code
 	//--
 	// draw a multi-select (classic)
 	$selected_values = '<id1>,<id3>';
-	$elem_multi_select = SmartComponents::html_multi_select_list('test-unit-m-list-2', $selected_values, 'form', $array_of_values, 'frm[list_multi_one][]', 'list', 'no', '250', 'onBlur="alert(\''.Smart::escape_js('Getting value from the:'."\n".' "MultiList": ').'\' + $(\'#test-unit-m-list-2\').val());"', '#JQUERY-FILTER#'); // returns HTML Code
+	$elem_multi_select = SmartComponents::html_multi_select_list('test-unit-m-list-2', $selected_values, 'form', $array_of_values, 'frm[list_multi_one][]', 'list', 'no', '250', 'onBlur="alert(\''.Smart::escape_js('Getting value from the:'."\n".' "MultiList": ').'\' + $(\'#test-unit-m-list-2\').val());"', '#JS-UI-FILTER#'); // returns HTML Code
 	//--
 	// multi-select (checkboxes)
 	$array_of_values = array('id1' => 'Label 1', 'id2' => 'Label 2', 'id3' => 'Label 3');
@@ -145,8 +145,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TEST-JS_SCRIPTS.Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')),
 			'Test-Buttons.AJAX-POST' => $btnop,
 			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: '.$info_adm.' // Test Suite</div>',
-			'TEST-ELEMENTS.DIALOG' => '<a href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JQuery Dialog</a>',
-			'TEST-ELEMENTS.ALERT' => '<a href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JQuery Alert</a>',
+			'TEST-ELEMENTS.DIALOG' => '<a href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
+			'TEST-ELEMENTS.ALERT' => '<a href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
 			'TEST-ELEMENTS.SEND-CONFIRM-MODAL' => $basic_form_start.$basic_form_send_modal.$basic_form_end,
 			'TEST-ELEMENTS.SEND-CONFIRM-POPUP' => $basic_form_start.$basic_form_send_popup.$basic_form_end,
 			'TEST-ELEMENTS.SINGLE-SELECT' => 'SingleSelect DropDown List without Blank: '.$one_single_select,
@@ -1912,7 +1912,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160311
+	// v.160704
 
 private $db;
 
