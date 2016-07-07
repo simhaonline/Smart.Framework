@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.160425
+ * @version 	v.160707.r3
  * @package 	Network:HTTP
  *
  */
@@ -39,46 +39,53 @@ final class SmartHttpClient {
 
 	//==============================================
 	//--
-	public $useragent = 'SmartFramework :: PHP/Robot'; 		// user agent (must have the robot in the name to avoid start un-necessary sessions)
-	public $connect_timeout = 30;							// timeout in seconds
+	public $useragent = 'SmartFramework :: PHP/Robot'; 		// User agent (must have the robot in the name to avoid start un-necessary sessions)
+	public $connect_timeout = 30;							// Connect timeout in seconds
 	public $debug = 0;										// DEBUG
 	//--
-	public $cookies;										// Cookies (to send)
-	public $postvars;										// PostVars (to send)
-	public $poststring;										// Pre-Built Post String (for working with Lucene / Solr)
-	public $rawheaders;										// Raw Headers (to send)
-	public $xmlrequest;										// XML Request (to send)
-	public $jsonrequest;									// JSON Request (to send)
+	public $rawheaders;										// Array of RawHeaders (to send)
+	public $cookies;										// Array of Cookies (to send)
+	public $postvars;										// Array of PostVars (to send)
+	public $poststring;										// Pre-Built Post String (as alternative to PostVars) ; must not contain unencoded \r\n ; must use the RFC 3986 standard.
+	public $jsonrequest;									// JSON Request (to send) ; must not contain unencoded \r\n but only \n ; hint: can be json-encoded without pretty-print.
+	public $xmlrequest;										// XML Request (to send) ; must not contain \r\n but only \n
 	//--
 	//============================================== privates
 	//-- set
-	private $protocol = '1.0';								// HTTP Protocol :: 1.0 or 1.1
+	private $protocol = '1.0';								// HTTP Protocol :: 1.0 (default) or 1.1
 	//-- returns
 	private $header;										// Header (answer)
 	private $body;											// Body (answer)
-	private $status;										// STATUS
+	private $status;										// STATUS (answer) :: 200, 401, 403 ...
 	//-- log
-	private $log;											// Log (debug)
+	private $log;											// Operations Log (debug only)
 	//-- internals
-	private $socket = false;								// Communication Socket
+	private $socket = false;								// The Communication Socket
 	private $raw_headers = array();							// Raw-Headers (internals)
 	private $url_parts = array();							// URL Parts
+	private $method = 'GET';								// method: GET / POST / HEAD / PUT / DELETE ...
+	private $no_content_stop_if_unauth = true;				// Return no Content (response body) if Not Auth (401)
 	//--
 	//==============================================
 
 
 	//==============================================
 	// [CONSTRUCTOR] :: init object
-	public function __construct($y_protocol='') {
+	public function __construct($y_protocol='', $y_no_content_stop_if_unauth=true) {
 
 		//-- preset debugging
 		$this->debug = 0;
 		//--
 
-		//-- set protocol
-		if((string)$y_protocol == '1.1') {
-			$this->protocol = '1.1'; // the time can be significant LONGER ... otherwise default is 1.0
-		} //end if else
+		//-- set protocol: 1.0 or 1.1
+		switch((string)$y_protocol) {
+			case '1.1':
+				$this->protocol = '1.1'; // for 1.1 the time can be significant LONGER than 1.0
+				break;
+			default:
+			case '1.0':
+				$this->protocol = '1.0'; // default is 1.0
+		} //end switch
 		//--
 
 		//-- reset
@@ -97,8 +104,8 @@ final class SmartHttpClient {
 		$this->useragent = 'Mozilla/5.0 PHP.SmartFramework ('.php_uname().')';
 		//--
 
-		//--
-		return 1;
+		//-- option
+		$this->no_content_stop_if_unauth = (bool) $y_no_content_stop_if_unauth;
 		//--
 
 	} //END FUNCTION
@@ -109,16 +116,28 @@ final class SmartHttpClient {
 	// [PUBLIC] :: browse the url as a robot (auth works only with Basic authentication)
 	public function browse_url($url, $method='GET', $ssl_version='', $user='', $pwd='') {
 		//--
-		$result = $this->fetch_url($url, $user, $pwd, $method, $ssl_version);
+		$result = $this->get_answer($url, $user, $pwd, $method, $ssl_version);
 		//--
 		return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
-			'log' 		=> 'User-Agent: '.$this->useragent."\n", // this is reserved for calltime functions
-			'mode' 		=> trim((string)$this->url_parts['protocol']),
-			'result' 	=> $result,
-			'code' 		=> $this->status,
-			'headers' 	=> $this->header,
-			'content' 	=> $this->body,
-			'debuglog' 	=> $this->log // this is for internal use
+			'client' 		=> (string) __CLASS__,
+			'date-time' 	=> (string) date('Y-m-d H:i:s O'),
+			'protocol' 		=> (string) $this->protocol,
+			'method' 		=> (string) $this->method,
+			'url' 			=> (string) $url,
+			'ssl'			=> (string) $ssl_version,
+			'auth-user' 	=> (string) $user,
+			'cookies-len' 	=> (int) Smart::array_size($this->cookies),
+			'post-vars-len' => (int) Smart::array_size($this->postvars),
+			'post-str-len' 	=> (int) strlen($this->poststring),
+			'json-req-len' 	=> (int) strlen($this->jsonrequest),
+			'xml-req-len' 	=> (int) strlen($this->jsonrequest),
+			'mode' 			=> (string) trim((string)$this->url_parts['protocol']),
+			'result' 		=> (int) $result,
+			'code' 			=> (string) $this->status,
+			'headers' 		=> (string) $this->header,
+			'content' 		=> (string) $this->body,
+			'log' 			=> (string) 'User-Agent: '.$this->useragent."\n", // this is reserved for calltime functions
+			'debuglog' 		=> (string) $this->log // this is for internal use
 		);
 		//--
 	} //END FUNCTION
@@ -126,7 +145,7 @@ final class SmartHttpClient {
 
 
 	//==============================================
-	private function fetch_url($url, $user, $pwd, $method, $ssl_version) {
+	private function get_answer($url, $user, $pwd, $method, $ssl_version) {
 
 		//-- reset
 		$this->reset();
@@ -147,12 +166,15 @@ final class SmartHttpClient {
 		//--
 
 		//-- user agent will not be rewritten above
+		if((string)$this->protocol == '1.1') {
+			$this->raw_headers['Connection'] = 'close'; // fix for HTTP 1.1: by default on HTTP 1.1 connection is: keep-alive and must be set to explicit: close
+		} //end if
 		$this->raw_headers['User-Agent'] = (string) $this->useragent;
 		//--
 
 		//-- log action
 		if($this->debug) {
-			$this->log .= '[INF] HTTP(S) Robot Browser :: Fetch :: url \''.$url.'\' @ Auth-User: '.$user.' // Auth-Pass-Length: ('.strlen($pwd).') // Method: '.$method.' // SSLVersion: '.$ssl_version."\n";
+			$this->log .= '[INF] HTTP(S) Robot Browser :: Get Answer :: url \''.$url.'\' @ Auth-User: '.$user.' // Auth-Pass-Length: ('.strlen($pwd).') // Method: '.$method.' // SSLVersion: '.$ssl_version."\n";
 		} //end if
 		//--
 
@@ -167,7 +189,7 @@ final class SmartHttpClient {
 		//--
 
 		//-- get from url
-		$success = $this->get_from_url($url, $user, $pwd, $method, $ssl_version);
+		$success = $this->send_request($url, $user, $pwd, $method, $ssl_version);
 		//--
 		if(!$success) {
 			if($this->debug) {
@@ -179,61 +201,66 @@ final class SmartHttpClient {
 		} //end if
 		//--
 
-		//-- Get response header
+		//-- check
 		if(!$this->socket) {
 			//--
 			if($this->debug) {
-				$this->log .= '[ERR] Premature connection end (1)'."\n";
+				$this->log .= '[ERR] Premature connection end (2.1)'."\n";
 			} //end if
 			$this->close_connection();
-			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1) ...'.$url);
+			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.1) ...'.$url);
 			return 0;
 			//--
 		} //end if
 		//--
 
+		//-- Get response header
+		$this->header = (string) @fgets($this->socket, 4096);
+		$this->status = (string) trim(substr(trim($this->header), 9, 3));
 		//--
-		$this->header = @fgets($this->socket, 4096);
-		//--
-		$this->status = trim(substr(trim($this->header), 9, 3));
+		$is_unauth = false;
+		if(((string)$this->status == '401') AND (stripos($this->header, ' 401 Unauthorized') !== false)) {
+			//--
+			$is_unauth = true;
+			//--
+			if($this->debug) {
+				$this->log .= '[ERR] HTTP Authentication Failed for URL [User='.$user.']: '.$url."\n";
+			} //end if
+			Smart::log_notice('LibHTTP // GetFromURL // HTTP Authentication Failed for URL: '.$url);
+			//--
+		} //end if
 		//--
 		while(($this->socket) && (trim($line = @fgets($this->socket, 4096)) != '') && (!feof($this->socket))) {
 			//--
-			$this->header .= $line;
-			//--
-			if(((string)$this->status == '401') AND (stripos($line, 'WWW-Authenticate: Basic realm="') === false)) {
-				//--
-				if($this->debug) {
-					$this->log .= '[ERR] Could not authenticate'."\n";
-				} //end if
-				$this->close_connection();
-				Smart::log_notice('LibHTTP // GetFromURL // Could not authenticate ... : '.$url);
-				return 0;
-				//--
-			} //end if
+			$this->header .= (string) $line;
 			//--
 			if(!$this->socket) {
 				//--
 				if($this->debug) {
-					$this->log .= '[ERR] Premature connection end (2)'."\n";
+					$this->log .= '[ERR] Premature connection end (2.2)'."\n";
 				} //end if
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.2) ... '.$url);
 				$this->close_connection();
-				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2) ... '.$url);
 				return 0;
 				//--
 			} //end if
 			//--
 		} //end while
 		//--
+		if(($is_unauth) AND ($this->no_content_stop_if_unauth)) { // in this case (by settings) no content (response body) should be returned
+			$this->close_connection();
+			return 0;
+		} //end if
+		//--
 
-		//-- Get response header
+		//-- check
 		if(!$this->socket) {
 			//--
 			if($this->debug) {
-				$this->log .= '[ERR] Premature connection end (3)'."\n";
+				$this->log .= '[ERR] Premature connection end (2.3)'."\n";
 			} //end if
+			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.3) ... '.$url);
 			$this->close_connection();
-			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (3) ... '.$url);
 			return 0;
 			//--
 		} //end if
@@ -242,15 +269,15 @@ final class SmartHttpClient {
 		//-- Get response body
 		while(($this->socket) && (!feof($this->socket))) {
 			//--
-			$this->body .= @fgets($this->socket, 4096);
+			$this->body .= (string) @fgets($this->socket, 4096);
 			//--
 			if(!$this->socket) {
 				//--
 				if($this->debug) {
-					$this->log .= '[ERR] Premature connection end (4)'."\n";
+					$this->log .= '[ERR] Premature connection end (2.4)'."\n";
 				} //end if
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.4) ... '.$url);
 				$this->close_connection();
-				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (4) ... '.$url);
 				return 0;
 				//--
 			} //end if
@@ -264,8 +291,11 @@ final class SmartHttpClient {
 
 		//--
 		if($this->debug) {
+			//--
 			$run_time = microtime(true) - $run_time;
+			//--
 			$this->log .= '[INF] Total Time: '.$run_time.' sec.'."\n";
+			//--
 		} //end if
 		//--
 
@@ -289,6 +319,7 @@ final class SmartHttpClient {
 		$this->header = '';
 		$this->body = '';
 		//-- internals
+		$this->method = 'GET';
 		$this->raw_headers = array();
 		$this->url_parts = array();
 		$this->socket = false;
@@ -306,7 +337,7 @@ final class SmartHttpClient {
 			@fclose($this->socket);
 			//--
 			if($this->debug) {
-				$this->log .= '[INF] Connection Closed / OK.'."\n";
+				$this->log .= '[INF] Connection Closed: OK.'."\n";
 			} //end if
 			//--
 		} else {
@@ -319,13 +350,19 @@ final class SmartHttpClient {
 			//--
 		} //end if
 		//--
+		$this->socket = false;
+		//--
 	} //END FUNCTION
 	//==============================================
 
 
 	//==============================================
-	// [PRIVATE] :: get content from url
-	private function get_from_url($url, $user='', $pwd='', $method='GET', $ssl_version='') {
+	// [PRIVATE] :: request from url and return content, headers, ...
+	private function send_request($url, $user='', $pwd='', $method='GET', $ssl_version='') {
+
+		//--
+		$this->method = (string) strtoupper(trim((string)$method));
+		//--
 
 		//--
 		$this->connect_timeout = (int) $this->connect_timeout;
@@ -344,15 +381,14 @@ final class SmartHttpClient {
 		//--
 
 		//-- separations
-		$parts = (array) Smart::separe_url_parts($url);
-		$this->url_parts = $parts;
-		$protocol = $parts['protocol'];
-		$server = $parts['server'];
-		$port = $parts['port'];
-		$path = $parts['path'];
+		$this->url_parts = (array) Smart::separe_url_parts($url);
+		$protocol = (string) $this->url_parts['protocol'];
+		$server = (string) $this->url_parts['server'];
+		$port = (string) $this->url_parts['port'];
+		$path = (string) $this->url_parts['path'];
 		//--
 		if($this->debug) {
-			$this->log .= '[INF] Analize of the URL: '.@print_r($parts,1)."\n";
+			$this->log .= '[INF] Analize of the URL: '.@print_r($this->url_parts,1)."\n";
 		} //end if
 		//--
 
@@ -371,7 +407,7 @@ final class SmartHttpClient {
 		//--
 		if((string)$protocol == 'https://') {
 			//--
-			switch(strtolower($ssl_version)) {
+			switch(strtolower((string)$ssl_version)) {
 				case 'ssl':
 					$browser_protocol = 'ssl://';
 					break;
@@ -414,7 +450,7 @@ final class SmartHttpClient {
 
 		//-- navigate
 		if($this->debug) {
-			$this->log .= 'Opening HTTP(S) Browser: '.$protocol.$server.':'.$port.$path.' using socket protocol: ['.$browser_protocol.']'."\n";
+			$this->log .= 'Opening HTTP(S) Browser Connection to: '.$protocol.$server.':'.$port.$path.' using socket protocol: ['.$browser_protocol.']'."\n";
 			$this->log .= '[INF] HTTP Protocol: '.$this->protocol."\n";
 			$this->log .= '[INF] Connection TimeOut: '.$this->connect_timeout."\n";
 		} //end if
@@ -490,7 +526,7 @@ final class SmartHttpClient {
 			foreach($this->cookies as $key => $value) {
 				if((string)$key != '') {
 					if((string)$value != '') {
-						$send_cookies .= (string) $this->encode_cookie($key, $value);
+						$send_cookies .= (string) SmartHttpUtils::encode_var_cookie($key, $value);
 					} //end if
 				} //end if
 			} //end foreach
@@ -509,24 +545,28 @@ final class SmartHttpClient {
 		if((string)$this->jsonrequest != '') { // json request
 			//--
 			if($this->debug) {
-				$this->log .= '[INF] JSON Request will be sent to server via: '.$method."\n";
+				$this->log .= '[INF] JSON Request will be sent to server via: '.$this->method."\n";
 			} //end if
 			//--
-			$request = $method.' '.$path.' HTTP/'.$this->protocol."\r\n";
+			$request = $this->method.' '.$path.' HTTP/'.$this->protocol."\r\n";
 			$this->raw_headers['Content-Type'] = 'application/json';
 			$this->raw_headers['Content-Length'] = strlen($this->jsonrequest);
 			//--
 		} elseif((string)$this->xmlrequest != '') { // xml request
 			//--
 			if($this->debug) {
-				$this->log .= '[INF] XML Request will be sent to server via: '.$method."\n";
+				$this->log .= '[INF] XML Request will be sent to server via: '.$this->method."\n";
 			} //end if
 			//--
-			$request = $method.' '.$path.' HTTP/'.$this->protocol."\r\n";
+			$request = $this->method.' '.$path.' HTTP/'.$this->protocol."\r\n";
 			$this->raw_headers['Content-Type'] = 'application/xml'; // may be also: text/xml
 			$this->raw_headers['Content-Length'] = strlen($this->xmlrequest);
 			//--
 		} elseif($have_post_vars) { // post vars
+			//--
+			if((string)$this->method == 'GET') {
+				$this->method = 'POST'; // FIX: if GET Method is using PostVars, then set method to POST ; this should not be fixed for other methods like: HEAD, PUT, DELETE ...
+			} //end if
 			//--
 			if($this->debug) {
 				$this->log .= '[INF] Variables will be sent to server using POST method'."\n";
@@ -537,23 +577,37 @@ final class SmartHttpClient {
 				$post_string = (string) $this->poststring;
 			} elseif(is_array($this->postvars)) {
 				foreach($this->postvars as $key => $value) {
-					$post_string .= (string) $this->encode_postvar($key, $value);
+					$post_string .= (string) SmartHttpUtils::encode_var_post($key, $value);
 				} //end foreach
 			} //end if else
 			//--
-			$request = 'POST '.$path.' HTTP/'.$this->protocol."\r\n";
+			$request = $this->method.' '.$path.' HTTP/'.$this->protocol."\r\n";
 			$this->raw_headers['Content-Type'] = 'application/x-www-form-urlencoded';
 			$this->raw_headers['Content-Length'] = strlen($post_string);
 			//--
 		} else { // simple request
 			//--
 			if($this->debug) {
-				$this->log .= '[INF] Simple Request via: '.$method."\n";
+				$this->log .= '[INF] Simple Request via: '.$this->method."\n";
 			} //end if
 			//--
-			$request = $method.' '.$path.' HTTP/'.$this->protocol."\r\n";
+			$request = $this->method.' '.$path.' HTTP/'.$this->protocol."\r\n";
 			//--
 		} //end if else
+		//--
+
+		//-- check
+		if(!$this->socket) {
+			//--
+			if($this->debug) {
+				$this->log .= '[ERR] Premature connection end (1.1)'."\n";
+			} //end if
+			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.1) ... '.$url);
+			return 0;
+			//--
+		} //end if
+		//--
+
 		//--
 		if(@fwrite($this->socket, $request) === false) {
 			if($this->debug) {
@@ -565,6 +619,16 @@ final class SmartHttpClient {
 		//--
 
 		//-- raw headers
+		if(!$this->socket) {
+			//--
+			if($this->debug) {
+				$this->log .= '[ERR] Premature connection end (1.2)'."\n";
+			} //end if
+			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.2) ... '.$url);
+			return 0;
+			//--
+		} //end if
+		//--
 		foreach($this->raw_headers as $key => $value) {
 			if(@fwrite($this->socket, $key.": ".$value."\r\n") === false) {
 				if($this->debug) {
@@ -577,6 +641,16 @@ final class SmartHttpClient {
 		//--
 
 		//-- end-line or blank line before post / cookies
+		if(!$this->socket) {
+			//--
+			if($this->debug) {
+				$this->log .= '[ERR] Premature connection end (1.3)'."\n";
+			} //end if
+			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.3) ... '.$url);
+			return 0;
+			//--
+		} //end if
+		//--
 		if(@fwrite($this->socket, "\r\n") === false) {
 			if($this->debug) {
 				$this->log .= '[ERR] Error writing End-Of-Line to socket'."\n";
@@ -588,6 +662,17 @@ final class SmartHttpClient {
 
 		//--
 		if((string)$this->jsonrequest != '') { // json request
+			//--
+			if(!$this->socket) {
+				//--
+				if($this->debug) {
+					$this->log .= '[ERR] Premature connection end (1.4)'."\n";
+				} //end if
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.4) ... '.$url);
+				return 0;
+				//--
+			} //end if
+			//--
 			if(@fwrite($this->socket, $this->jsonrequest."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing JSON Request data to socket'."\n";
@@ -595,7 +680,19 @@ final class SmartHttpClient {
 				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing JSON Request data to socket ...');
 				return 0;
 			} //end if
+			//--
 		} elseif((string)$this->xmlrequest != '') { // xml request
+			//--
+			if(!$this->socket) {
+				//--
+				if($this->debug) {
+					$this->log .= '[ERR] Premature connection end (1.5)'."\n";
+				} //end if
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.5) ... '.$url);
+				return 0;
+				//--
+			} //end if
+			//--
 			if(@fwrite($this->socket, $this->xmlrequest."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing XML Request data to socket'."\n";
@@ -603,7 +700,19 @@ final class SmartHttpClient {
 				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing XML Request data to socket ...');
 				return 0;
 			} //end if
+			//--
 		} elseif($have_post_vars) {
+			//--
+			if(!$this->socket) {
+				//--
+				if($this->debug) {
+					$this->log .= '[ERR] Premature connection end (1.6)'."\n";
+				} //end if
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.6) ... '.$url);
+				return 0;
+				//--
+			} //end if
+			//--
 			if(@fwrite($this->socket, $post_string."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing POST data to socket'."\n";
@@ -611,7 +720,14 @@ final class SmartHttpClient {
 				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing POST data to socket ...');
 				return 0;
 			} //end if
+			//--
 		} //end if else
+		//--
+
+		//-- NOTICE: is this necessary ??? appears that not (it was tested a long time without and appear to be faster) ...
+		//if(@fwrite($this->socket, "\r\n") === false) {
+		//	Smart::log_notice('LibHTTP // GetFromURL ('.$conex_info.') // Error writing EOL ...'); // FIX: the final \r\n
+		//} //end if
 		//--
 
 		//--
@@ -622,21 +738,84 @@ final class SmartHttpClient {
 	//==============================================
 
 
+} //END CLASS
+
+
+//===================================================== USAGE
+/*
+$browser = new SmartHttpClient();
+$browser->connect_timeout = 20;
+print_r(
+	$browser->browse_url('https://some-website.ext:443/some-path/', 'GET', 'tls')
+);
+*/
+//===================================================== SAMPLE PARSE PUT METHOD IN PHP
+/*
+if((string)$_SERVER['REQUEST_METHOD'] === 'PUT') {
+	$putdata = file_get_contents('php://input', false , null, -1 , (int)$_SERVER['CONTENT_LENGTH']);
+	file_put_contents("test-http-stdin.txt", $putdata);
+	//$put_vars = (array) parse_str($putdata); // parse PUT data to array
+} //end if
+*/
+//=====================================================
+
+
+//=====================================================================================
+//===================================================================================== CLASS END
+//=====================================================================================
+
+
+//=====================================================================================
+//===================================================================================== CLASS START
+//=====================================================================================
+
+
+/**
+ * Class: Smart HTTP Utils) - provides utils function to work with HTTP protocol.
+ *
+ * <code>
+ * // Usage example:
+ * Smart::some_method_of_this_class(...);
+ * </code>
+ *
+ * @usage       static object: Class::method() - This class provides only STATIC methods
+ * @hints       It is recommended to use the methods in this class instead of PHP native methods whenever is possible because this class will offer Long Term Support and the methods will be supported even if the behind PHP methods can change over time, so the code would be easier to maintain.
+ *
+ * @access      PUBLIC
+ * @depends     classes: Smart
+ * @version     v.160607
+ * @package     Core
+ *
+ */
+final class SmartHttpUtils {
+
+
+	// ::
+
+
 	//==============================================
-	// [PRIVATE] :: encode a cookie
-	private function encode_cookie($name, $value) {
+	// encode a cookie var ; returns the HTTP Cookie string
+	public static function encode_var_cookie($name, $value) {
+		//--
+		$name = (string) trim((string)$name);
+		//--
 		$out = '';
+		//--
 		if((string)$name != '') {
 			$out = (string) urlencode($name).'='.rawurlencode($value).';';
 		} //end if else
+		//--
 		return (string) $out;
+		//--
 	} //END FUNCTION
 	//==============================================
 
 
 	//==============================================
-	// [PRIVATE] :: encode a post var
-	private function encode_postvar($varname, $value) {
+	// encode a post var ; returns the HTTP Post string
+	public static function encode_var_post($varname, $value) {
+		//--
+		$varname = (string) trim((string)$varname);
 		//--
 		if((string)$varname == '') {
 			return '';
@@ -658,21 +837,13 @@ final class SmartHttpClient {
 		} else {
 			$out = urlencode($varname).'='.rawurlencode($value).'&';
 		} //end if else
+		//--
 		return (string) $out;
+		//--
 	} //END FUNCTION
 	//==============================================
 
-
 } //END CLASS
-
-
-//===================================================== USAGE
-/*
-$browser = new SmartHttpClient();
-$browser->connect_timeout=20;
-print_r($browser->browse_url('https://some-website.ext:443/some-path/'));
-*/
-//=====================================================
 
 
 //=====================================================================================
