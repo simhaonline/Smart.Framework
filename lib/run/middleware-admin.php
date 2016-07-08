@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Middleware / Admin
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.3.2 r.2016.06.28 / smart.framework.v.2.3
+// v.2.3.3.3 r.2016.07.08 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -15,7 +15,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.3.2');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.3.3');
 
 
 //==================================================================================
@@ -30,7 +30,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.3.2');
  * @access 		private
  * @internal
  *
- * @version		160628
+ * @version		160708
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
