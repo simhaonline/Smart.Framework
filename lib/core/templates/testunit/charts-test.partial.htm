@@ -1,5 +1,5 @@
 <!-- Partial Template: TestUnit.SampleCharts -->
-<b>A full set of responsive Charts: Line, Z-Line (+/- ErrorBars), Area, Bubbles, Bars (+/- ErrorBars), Stacked Bars, Doughnut, Pie, Polar, Radar</b>
+<b>A full set of responsive Charts: Line, Z-Line (+/- ErrorBars), Area, Bubbles, Bars (+/- ErrorBars), Stacked Bars, Stacked Area (+/- Relative), Doughnut, Pie, Polar, Radar. Optionals: Bezier Curves, Legend for charts. Customizable: Colors, Tooltips, Legends, Axis and many more ...</b>
 <script src="lib/js/jscharts/Chart.Core.js"></script>
 <script type="text/javascript">
 function randomScalingFactor() {
@@ -13,6 +13,7 @@ function randomScalingFactor() {
 <div style="width:90%">
 	<canvas id="canvas-line" width="600" height="400"></canvas>
 </div>
+<div id="legend-line" style="padding:8px; border: 1px solid #ECECEC;"></div>
 <script src="lib/js/jscharts/Chart.Line.js"></script>
 <script type="text/javascript">
 function Smart_JsCharts_LineChart() {
@@ -54,13 +55,16 @@ function Smart_JsCharts_LineChart() {
 	};
 	//--
 	var LineChartCanvas = document.getElementById('canvas-line').getContext('2d');
-	new Chart(LineChartCanvas).Line(lineChartData, {
+	var LineGfx = new Chart(LineChartCanvas).Line(lineChartData, {
 		responsive: true,
 		animationSteps: 20,
-		multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>",
 		datasetFill: false,
-		pointDotRadius: 6
+		pointDotRadius: 6,
+		legendTemplate : "<% for (var i=0; i<datasets.length; i++){%><span style=\"padding:2px; background-color:<%=datasets[i].strokeColor%>\">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;<%if(datasets[i].label){%><%=datasets[i].label%><%}%> &nbsp; &nbsp; &nbsp; <%}%>"
 	});
+	//--
+	document.getElementById('legend-line').innerHTML = LineGfx.generateLegend();
 	//--
 } //END FUNCTION
 </script>
@@ -104,12 +108,111 @@ function Smart_JsCharts_AreaChart() {
 	var AreaChartGfx = new Chart(AreaChartCanvas).Line(lineChartData, {
 		responsive: true,
 		animationSteps: 20,
-		multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>",
 		datasetFill: true,
 		legendTemplate : "<% for (var i=0; i<datasets.length; i++){%><span style=\"padding:2px; background-color:<%=datasets[i].strokeColor%>\">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;<%if(datasets[i].label){%><%=datasets[i].label%><%}%> &nbsp; &nbsp; &nbsp; <%}%>"
 	});
 	//--
 	document.getElementById('legend-area').innerHTML = AreaChartGfx.generateLegend();
+	//--
+} //END FUNCTION
+</script>
+</td>
+</tr>
+<tr valign="top">
+<td width="50%">
+<div align="center"><h2>Stacked Area Chart</h2></div>
+<div style="width:90%">
+	<canvas id="canvas-stacked-area" width="600" height="400"></canvas>
+</div>
+<script src="lib/js/jscharts/Chart.StackedArea.js"></script>
+<script type="text/javascript">
+function Smart_JsCharts_StackedAreaChart() {
+	//--
+	var areaChartData = {
+		labels: ["January", "February", "March", "April", "May", "June", "July"],
+		datasets: [{
+			fillColor: "rgba(220,220,220,0.5)",
+			strokeColor: "rgba(220,220,220,0.8)",
+			pointColor: "rgba(220,220,220,0.8)",
+			pointStrokeColor: "rgba(220,220,220,0.8)",
+			pointHighlightFill: "rgba(220,220,220,0.75)",
+			pointHighlightStroke: "rgba(220,220,220,1)",
+			data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+		}, {
+			fillColor: "rgba(151,187,205,0.5)",
+			strokeColor: "rgba(151,187,205,0.8)",
+			pointColor: "rgba(151,187,205,0.8)",
+			pointStrokeColor: "rgba(151,187,205,0.8)",
+			pointHighlightFill: "rgba(151,187,205,0.75)",
+			pointHighlightStroke: "rgba(151,187,205,1)",
+			data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+		}, {
+			fillColor: "rgba(240,73,73,0.5)",
+			strokeColor: "rgba(240,73,73,0.8)",
+			pointColor: "rgba(240,73,73,0.8)",
+			pointStrokeColor: "rgba(240,73,73,0.8)",
+			pointHighlightFill: "rgba(240,73,73,0.75)",
+			pointHighlightStroke: "rgba(240,73,73,1)",
+			data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+		}]
+	};
+	//--
+	var StackedAreaChartCanvas = document.getElementById('canvas-stacked-area').getContext('2d');
+	new Chart(StackedAreaChartCanvas).StackedArea(areaChartData, {
+		responsive: true,
+		animationSteps: 20,
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>"
+	});
+	//--
+} //END FUNCTION
+</script>
+</td>
+<td width="50%">
+<div align="center"><h2>Stacked Relative Area Chart</h2></div>
+<div style="width:90%">
+	<canvas id="canvas-stacked-relative-area" width="600" height="400"></canvas>
+</div>
+<script type="text/javascript">
+function Smart_JsCharts_StackedRelativeAreaChart() {
+	//--
+	var areaChartData = {
+		labels: ["January", "February", "March", "April", "May", "June", "July"],
+		datasets: [{
+			fillColor: "rgba(220,220,220,0.5)",
+			strokeColor: "rgba(220,220,220,0.8)",
+			pointColor: "rgba(220,220,220,0.8)",
+			pointStrokeColor: "rgba(220,220,220,0.8)",
+			pointHighlightFill: "rgba(220,220,220,0.75)",
+			pointHighlightStroke: "rgba(220,220,220,1)",
+			data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+		}, {
+			fillColor: "rgba(151,187,205,0.5)",
+			strokeColor: "rgba(151,187,205,0.8)",
+			pointColor: "rgba(151,187,205,0.8)",
+			pointStrokeColor: "rgba(151,187,205,0.8)",
+			pointHighlightFill: "rgba(151,187,205,0.75)",
+			pointHighlightStroke: "rgba(151,187,205,1)",
+			data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+		}, {
+			fillColor: "rgba(240,73,73,0.5)",
+			strokeColor: "rgba(240,73,73,0.8)",
+			pointColor: "rgba(240,73,73,0.8)",
+			pointStrokeColor: "rgba(240,73,73,0.8)",
+			pointHighlightFill: "rgba(240,73,73,0.75)",
+			pointHighlightStroke: "rgba(240,73,73,1)",
+			data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+		}]
+	};
+	//--
+	var StackedAreaChartCanvas = document.getElementById('canvas-stacked-relative-area').getContext('2d');
+	new Chart(StackedAreaChartCanvas).StackedArea(areaChartData, {
+		responsive: true,
+		animationSteps: 20,
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>",
+		relativePoints: true,
+		bezierCurve: false,
+	});
 	//--
 } //END FUNCTION
 </script>
@@ -168,7 +271,7 @@ function Smart_JsCharts_ZLineChart() {
 	new Chart(LineChartCanvas).Line(lineChartData, {
 		responsive: true,
 		animationSteps: 20,
-		multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>",
 		datasetFill: false,
 		bezierCurve: false,
 		pointDotRadius: 8
@@ -239,7 +342,7 @@ function Smart_JsCharts_BubbleChart() {
 	new Chart(BubblesChartCanvas).Line(lineChartData, {
 		responsive: true,
 		animationSteps: 20,
-		multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>, <%= radius %>",
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>, <%= radius %>",
 		datasetFill: false,
 		pointDotRadius: 1,
 		datasetStrokeWidth: 0,
@@ -299,7 +402,7 @@ function Smart_JsCharts_BarChart() {
 	var BarChartGfx = new Chart(BarChartCanvas).Bar(barChartData, {
 		responsive: true,
 		animationSteps: 20,
-		multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>",
 		legendTemplate : "<% for (var i=0; i<datasets.length; i++){%><span style=\"padding:2px; background-color:<%=datasets[i].strokeColor%>\">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;<%if(datasets[i].label){%><%=datasets[i].label%><%}%> &nbsp; &nbsp; &nbsp; <%}%>"
 	});
 	//--
@@ -313,6 +416,7 @@ function Smart_JsCharts_BarChart() {
 <div style="width:90%">
 	<canvas id="canvas-sbar" width="600" height="400"></canvas>
 </div>
+<div id="legend-stacked-bar" style="padding:8px; border: 1px solid #ECECEC;"></div>
 <script src="lib/js/jscharts/Chart.StackedBar.js"></script>
 <script type="text/javascript">
 function Smart_JsCharts_StackedBarChart() {
@@ -348,11 +452,14 @@ function Smart_JsCharts_StackedBarChart() {
 	};
 	//--
 	var SBarChartCanvas = document.getElementById('canvas-sbar').getContext('2d');
-	new Chart(SBarChartCanvas).StackedBar(barChartData, {
+	var BarStackedChartGfx = new Chart(SBarChartCanvas).StackedBar(barChartData, {
 		responsive: true,
 		animationSteps: 20,
-		multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>",
+		legendTemplate : "<% for (var i=0; i<datasets.length; i++){%><span style=\"padding:2px; background-color:<%=datasets[i].strokeColor%>\">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;<%if(datasets[i].label){%><%=datasets[i].label%><%}%> &nbsp; &nbsp; &nbsp; <%}%>"
 	});
+	//--
+	document.getElementById('legend-stacked-bar').innerHTML = BarStackedChartGfx.generateLegend();
 	//--
 } //END FUNCTION
 </script>
@@ -545,7 +652,7 @@ function Smart_JsCharts_RadarChart() {
 	new Chart(RadarChartCanvas).Radar(radarChartData, {
 		responsive: true,
 		animationSteps: 20,
-		multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+		multiTooltipTemplate: "<%= datasetLabel %> : <%= value %>",
 	});
 	//--
 } //END FUNCTION
@@ -556,8 +663,10 @@ function Smart_JsCharts_RadarChart() {
 <script type="text/javascript">
 	Smart_JsCharts_LineChart();
 	Smart_JsCharts_AreaChart();
-	Smart_JsCharts_BubbleChart();
+	Smart_JsCharts_StackedAreaChart()
+	Smart_JsCharts_StackedRelativeAreaChart();
 	Smart_JsCharts_ZLineChart();
+	Smart_JsCharts_BubbleChart();
 	Smart_JsCharts_BarChart();
 	Smart_JsCharts_StackedBarChart();
 	Smart_JsCharts_DoughnutChart();

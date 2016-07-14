@@ -19,6 +19,11 @@
 * https://github.com/CAYdenberg/Chart.js
 * Released under the MIT license
 
+# Chart.StackedArea.js
+* Copyright (c) 2016 tannerlinsley
+* https://github.com/tannerlinsley/Chart.StackedArea.js
+* Released under the MIT license
+
 # Stable Release with Fixes and Enhancements:
 * Copyright 2014 Unix-World.org (support@unix-world.org)
 * http://sourceforge.net/projects/warp-cms/files/open-framework/
