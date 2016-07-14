@@ -226,7 +226,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160615
+ * @version 	v.160714
  * @package 	Application
  *
  */
@@ -349,12 +349,17 @@ abstract class SmartAbstractAppController {
 	 *
 	 * @param 	ENUM 		$param 			:: The selected parameter.
 	 * The valid param values are:
-	 * 		module-area 	:: 		ex: index / admin
-	 * 		module-path 	:: 		ex: modules/mod-samples/
-	 * 		module-name 	:: 		ex: mod-samples
-	 * 		url-script 		:: 		ex: index.php / admin.php
-	 * 		url-path 		:: 		ex: /sites/smart-framework/
-	 * 		url-addr 		:: 		ex: http(s)://127.0.0.1/sites/smart-framework/
+	 * 		module-area 		:: 		ex: index / admin
+	 * 		module-name 		:: 		ex: mod-samples
+	 * 		module-path 		:: 		ex: modules/mod-samples/
+	 * 		module-view-path 	:: 		ex: modules/mod-samples/views/
+	 * 		module-model-path 	:: 		ex: modules/mod-samples/models/
+	 * 		module-lib-path 	:: 		ex: modules/mod-samples/libs/
+	 * 		controller 			:: 		ex: samples.test
+	 * 		url-script 			:: 		ex: index.php / admin.php
+	 * 		url-path 			:: 		ex: /sites/smart-framework/
+	 * 		url-addr 			:: 		ex: http(s)://127.0.0.1/sites/smart-framework/
+	 * 		url-page 			:: 		ex: samples.test | test  (if samples is the default module) ; this is returning the URL page variable as is in the URL (it can be the same as 'controller' or if rewrite is used inside framework can vary
 	 *
 	 * @return 	STRING						:: The value for the selected parameter.
 	 */
@@ -368,11 +373,23 @@ abstract class SmartAbstractAppController {
 			case 'module-area':
 				$out = $this->modulearea;
 				break;
+			case 'module-name':
+				$out = $this->modulename;
+				break;
 			case 'module-path':
 				$out = $this->modulepath;
 				break;
-			case 'module-name':
-				$out = $this->modulename;
+			case 'module-view-path':
+				$out = $this->modulepath.'views/';
+				break;
+			case 'module-model-path':
+				$out = $this->modulepath.'models/';
+				break;
+			case 'module-lib-path':
+				$out = $this->modulepath.'libs/';
+				break;
+			case 'controller':
+				$out = $this->controller;
 				break;
 			case 'url-script':
 				$out = $this->urlscript;
@@ -386,11 +403,8 @@ abstract class SmartAbstractAppController {
 			case 'url-page':
 				$out = $this->urlpage;
 				break;
-			case 'controller':
-				$out = $this->controller;
-				break;
 			default:
-				Smart::log_warning('SmartAbstractAppController / ControllerGet: Invalid Parameter: '.$param);
+				Smart::log_warning('SmartAbstractAppController / ControllerGetParam: Invalid Parameter: '.$param);
 		} //end switch
 		//--
 		return (string) $out;
