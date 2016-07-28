@@ -22,7 +22,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // DEPENDS-EXT: PHP PgSQL Extension
 //======================================================
 // Tested and Stable on PgSQL versions:
-// 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x
+// 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x
 // Tested and Stable with PgPool-II versions:
 // 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x
 //======================================================
@@ -64,7 +64,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160703
+ * @version 	v.160728
  * @package 	Database:PostgreSQL
  *
  */
@@ -415,6 +415,33 @@ public static function escape_identifier($y_identifier, $y_connection='DEFAULT')
 
 //======================================================
 /**
+ * Fix charset for param queries
+ * Used for: pg_query_params()
+ *
+ * @param ARRAY $arr_params				:: A mixed variable
+ * @return STRING 								:: JSON string
+ *
+ */
+private static function escape_arr_params($arr_params) {
+
+	//--
+	if(is_array($arr_params)) {
+		foreach($arr_params as $k => $v) {
+			$arr_params[$k] = (string) SmartUnicode::utf8_fix_charset((string)$v); // fix
+		} //end foreach
+	} //end if
+	//--
+
+	//--
+	return $arr_params; // this should not be enforced to a type ... must remain as it is
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
  * PostgreSQL compliant and Safe Json Encode.
  * This should be used with PostgreSQL json / jsonb fields.
  *
@@ -538,6 +565,7 @@ public static function count_data($queryval, $params_or_title='', $y_connection=
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
 		$the_query_title = (string) $params_or_title;
@@ -650,6 +678,7 @@ public static function read_data($queryval, $params_or_title='', $y_connection='
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
 		$the_query_title = (string) $params_or_title;
@@ -771,6 +800,7 @@ public static function read_adata($queryval, $params_or_title='', $y_connection=
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
 		$the_query_title = (string) $params_or_title;
@@ -911,6 +941,7 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
 		$the_query_title = (string) $params_or_title;
@@ -1046,6 +1077,7 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title); // NOTICE: parameters are only allowed in ONE command not combined statements
 	} else {
 		$the_query_title = (string) $params_or_title;
@@ -2096,7 +2128,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160703
+ * @version 	v.160728
  * @package 	Database:PostgreSQL
  *
  */
