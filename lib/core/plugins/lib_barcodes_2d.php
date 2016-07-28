@@ -46,7 +46,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160205
+ * @version 	v.160728
  * @package 	Components:BarCodes
  *
  */
@@ -357,13 +357,15 @@ final class SmartBarcode2D {
 		//--
 		if(!is_array($barcode_arr)) {
 			//--
-			$width = 100;
+			Smart::log_notice('Invalid Barcode2D PNG Data: Not Array !');
+			//--
+			$width = 125;
 			$height = 10;
 			//--
 			$png = @imagecreate($width, $height);
 			$bgcol = @imagecolorallocate($png, 250, 250, 250);
 			$fgcol = @imagecolorallocate($png, 255, 0, 0);
-			@imagestring($png, 1, 1, 1, "[ INVALID BARCODE ]", $fgcol);
+			@imagestring($png, 1, 1, 1, "[ INVALID BARCODE (1) ]", $fgcol);
 			//--
 		} else {
 			//--
@@ -371,32 +373,52 @@ final class SmartBarcode2D {
 			//-- calculate image size
 			$the_width = ($barcode_arr['num_cols'] * $z);
 			$the_height = ($barcode_arr['num_rows'] * $z);
-			//-- requires GD library
-			$png = @imagecreate($the_width, $the_height);
-			$bgcol = @imagecolorallocate($png, 255, 255, 255);
-			$fgcol = @imagecolorallocate($png, $color[0], $color[1], $color[2]);
-			//-- print barcode elements
-			$y = 0;
-			//-- for each row
-			for($r = 0; $r < $barcode_arr['num_rows']; ++$r) {
+			//--
+			$png = null;
+			if(($the_width > 0) AND ($the_height > 0)) {
+				$png = @imagecreate($the_width, $the_height);
+			} //end if
+			//--
+			if(!$png) {
 				//--
-				$x = 0;
-				//-- for each column
-				for($c = 0; $c < $barcode_arr['num_cols']; ++$c) {
+				Smart::log_notice('Invalid Barcode2D PNG Dimensions: '."\n".'Code='.$barcode_arr['code']."\n".'Cols='.$barcode_arr['num_cols'].' ; Rows='.$barcode_arr['num_rows']);
+				//--
+				$width = 125;
+				$height = 10;
+				//--
+				$png = @imagecreate($width, $height);
+				$bgcol = @imagecolorallocate($png, 250, 250, 250);
+				$fgcol = @imagecolorallocate($png, 255, 0, 0);
+				@imagestring($png, 1, 1, 1, "[ INVALID BARCODE (2) ]", $fgcol);
+				//--
+			} else {
+				//--
+				$bgcol = @imagecolorallocate($png, 255, 255, 255);
+				$fgcol = @imagecolorallocate($png, $color[0], $color[1], $color[2]);
+				//-- print barcode elements
+				$y = 0;
+				//-- for each row
+				for($r = 0; $r < $barcode_arr['num_rows']; ++$r) {
 					//--
-					if($barcode_arr['bcode'][$r][$c] == 1) {
-						//-- draw a single barcode cell
-						@imagefilledrectangle($png, $x, $y, ($x + $z - 1), ($y + $z - 1), $fgcol);
+					$x = 0;
+					//-- for each column
+					for($c = 0; $c < $barcode_arr['num_cols']; ++$c) {
 						//--
-					} //end if
+						if($barcode_arr['bcode'][$r][$c] == 1) {
+							//-- draw a single barcode cell
+							@imagefilledrectangle($png, $x, $y, ($x + $z - 1), ($y + $z - 1), $fgcol);
+							//--
+						} //end if
+						//--
+						$x += $z;
+						//--
+					} //end for
 					//--
-					$x += $z;
+					$y += $z;
 					//--
 				} //end for
 				//--
-				$y += $z;
-				//--
-			} //end for
+			} //end if else
 			//--
 		} //end if else
 		//--
