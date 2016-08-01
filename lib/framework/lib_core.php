@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160730
+ * @version     v.160801
  * @package     Core
  *
  */
@@ -789,6 +789,9 @@ public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separa
 public static function array_change_key_case_recursive($y_arr, $y_mode) {
 	//--
 	if(!is_array($y_arr)) {
+		return array();
+	} //end if
+	if(self::array_size($y_arr) <= 0) {
 		return array();
 	} //end if
 	//--
