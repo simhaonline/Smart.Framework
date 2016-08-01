@@ -37,4 +37,16 @@
 	margin-bottom: -3px;
 }
 
+.ui-menu .ui-menu-item a, .ui-menu .ui-menu-item a:link, .ui-menu .ui-menu-item a:visited {
+	display: block;
+}
+
+.ui-slider .ui-slider-range {
+	background: #778899;
+}
+
+.ui-progressbar .ui-progressbar-value {
+	background: #778899;
+}
+
 /* END */

@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160614
+ * @version     v.160730
  * @package     Core
  *
  */
@@ -835,6 +835,77 @@ public static function array_type_test($y_arr) {
 	} else {
 		return 2; // associative
 	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+//================================================================
+/**
+ * Array recursive Diff (Dual-Way, from Left to Right and from Right to Left)
+ *
+ * @param ARRAY $array1
+ * @param ARRAY $array2
+ *
+ * @return ARRAY
+ */
+public static function array_diff_assoc_recursive($array1, $array2) {
+	//--
+	if(!is_array($array1)) {
+		self::log_warning('WARNING: '.'Smart::array_diff_assoc_recursive()'.' array#1 is not array !');
+		return array();
+	} //end if
+	if(!is_array($array2)) {
+		self::log_warning('WARNING: '.'Smart::array_diff_assoc_recursive()'.' array#2 is not array !');
+		return array();
+	} //end if
+	//--
+	$diff_1 = (array) self::array_diff_assoc_oneway_recursive($array1, $array2);
+	$diff_2 = (array) self::array_diff_assoc_oneway_recursive($array2, $array1);
+	//--
+	return (array) array_merge_recursive((array)$diff_1, (array)$diff_2);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Array recursive Diff (One Way Only, from Left to Right)
+ *
+ * @param ARRAY $array1
+ * @param ARRAY $array2
+ *
+ * @return ARRAY
+ */
+public static function array_diff_assoc_oneway_recursive($array1, $array2) {
+	//--
+	if(!is_array($array1)) {
+		self::log_warning('WARNING: '.'Smart::array_diff_assoc_oneway_recursive()'.' array#1 is not array !');
+		return array();
+	} //end if
+	if(!is_array($array2)) {
+		self::log_warning('WARNING: '.'Smart::array_diff_assoc_oneway_recursive()'.' array#2 is not array !');
+		return array();
+	} //end if
+	//--
+	$difference = array();
+	//--
+	foreach($array1 as $key => $value) {
+		if(is_array($value)) {
+			if(!isset($array2[$key]) || !is_array($array2[$key])) {
+				$difference[$key] = $value;
+			} else {
+				$new_diff = self::array_diff_assoc_oneway_recursive($value, $array2[$key]);
+				if(!empty($new_diff)) {
+					$difference[$key] = $new_diff;
+				} //end if
+			} //end if else
+		} elseif(!array_key_exists($key, $array2) || $array2[$key] != $value) { // !==
+			$difference[$key] = $value;
+		} //end if else
+	} //end foreach
+	//--
+	return (array) $difference;
 	//--
 } //END FUNCTION
 //================================================================
