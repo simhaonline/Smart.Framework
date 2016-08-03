@@ -36,7 +36,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewSetVars([
 			'head-meta' => '<meta name="author" content="Smart.Framework by Unix-World, https://github.com/unix-world/Smart.Framework">',
 			'main' => SmartMarkersTemplating::render_file_template(
-				$this->ControllerGetParam('module-path').'views/benchmark.htm',
+				$this->ControllerGetParam('module-view-path').'benchmark.htm',
 				[
 					'BENCHMARK-TITLE' => '[ Benchmark Test URL ]<br>use this URL to run a benchmark of this PHP framework ...'
 				]

@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160801
+ * @version     v.160803
  * @package     Core
  *
  */
@@ -671,13 +671,8 @@ public static function array_size($y_arr) {
  */
 public static function array_sort($y_arr, $y_mode) {
 	//--
-	if(!is_array($y_arr)) {
-		self::raise_error(
-			'ERROR: Invalid Array as Parameter :: Smart array_sort: '.print_r($y_arr,1),
-			'ERROR: Invalid Array as Parameter :: Smart array_sort' // msg to display
-		);
-		die(''); // just in case
-		return;
+	if(self::array_size($y_arr) <= 0) {
+		return array();
 	} //end if
 	//--
 	switch(strtolower((string)$y_mode)) {
@@ -706,14 +701,33 @@ public static function array_sort($y_arr, $y_mode) {
 			@krsort($y_arr);
 			break;
 		default:
-			self::raise_error(
-				'ERROR: Invalid Sort Mode for Array :: Smart array_sort: '.$y_mode,
-				'ERROR: Invalid Sort Mode for Array :: Smart array_sort' // msg to display
-			);
-			die(''); // just in case
+			self::log_warning('WARNING: Invalid Sort Mode in Smart::array_sort() : '.$y_mode);
+			return (array) $y_arr;
 	} //end switch
 	//--
-	return @array_values($y_arr);
+	return (array) @array_values((array)$y_arr);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Shuffle for NON-Associative arrays ...
+ *
+ * @param ARRAY 		$y_arr			:: The array to be sorted by a criteria (type, see below)
+ *
+ * @return ARRAY 						:: The sorted array
+ */
+public static function array_shuffle($y_arr) {
+	//--
+	if(self::array_size($y_arr) <= 0) {
+		return array();
+	} //end if
+	//--
+	@shuffle($y_arr);
+	//--
+	return (array) $y_arr;
 	//--
 } //END FUNCTION
 //================================================================
@@ -731,7 +745,7 @@ public static function array_sort($y_arr, $y_mode) {
  */
 public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separator) {
 	//--
-	if(!is_array($y_arr)) {
+	if(self::array_size($y_arr) <= 0) {
 		return '';
 	} //end if
 	//--
@@ -788,10 +802,7 @@ public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separa
  */
 public static function array_change_key_case_recursive($y_arr, $y_mode) {
 	//--
-	if(!is_array($y_arr)) {
-		return array();
-	} //end if
-	if(self::array_size($y_arr) <= 0) {
+	if(self::array_size($y_arr) <= 0) { // fix bug if empty array / max nested level
 		return array();
 	} //end if
 	//--
