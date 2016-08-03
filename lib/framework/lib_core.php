@@ -725,7 +725,7 @@ public static function array_shuffle($y_arr) {
 		return array();
 	} //end if
 	//--
-	@shuffle($y_arr);
+	@shuffle((array)$y_arr);
 	//--
 	return (array) $y_arr;
 	//--
