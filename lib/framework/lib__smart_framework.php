@@ -226,7 +226,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160714
+ * @version 	v.160803
  * @package 	Application
  *
  */
@@ -418,18 +418,14 @@ abstract class SmartAbstractAppController {
 	 * Get the value for a Config parameter from the app $configs array.
 	 *
 	 * @param 	ENUM 		$param 			:: The selected configuration parameter.
-	 * Examples:
-	 * 		app.info-url will get value from $configs['app']['info-url']
-	 * 		regional.decimal-separator will get the value (string) from $configs['regional']['decimal-separator']
-	 * 		regional will get the value (array) from $configs['regional']
+	 * @param 	MIXED 		$defval 		:: The default value (non-null) if the config parameter is not set.
+	 * Examples: 'app.info-url' will get value from $configs['app']['info-url'] ; 'regional.decimal-separator' will get the value (string) from $configs['regional']['decimal-separator'] ; 'regional' will get the value (array) from $configs['regional']
 	 *
 	 * @return 	MIXED						:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string.
 	 */
-	final public function ConfigParamGet($param) {
+	final public function ConfigParamGet($param, $defval=null) {
 		//--
-		global $configs;
-		//--
-		return Smart::array_get_by_key_path($configs, strtolower((string)$param), '.'); // mixed
+		return Smart::get_from_config($param, $defval); // mixed
 		//--
 	} //END FUNCTION
 	//=====
@@ -447,9 +443,10 @@ abstract class SmartAbstractAppController {
 	 */
 	final public function RequestVarGet($param, $defval=null, $type='') {
 		//--
-		$val = $defval; // init with the default value
 		if(SmartFrameworkRegistry::issetRequestVar((string)$param) === true) {
-			$val = SmartFrameworkRegistry::getRequestVar((string)$param); // use the value from request
+			$val = SmartFrameworkRegistry::getRequestVar((string)$param); // use the value from request :: mixed
+		} else {
+			$val = $defval; // init with the default value :: mixed
 		} //end if
 		//--
 		if(is_array($type)) { // # if $type is array, it must contain an array with all allowed values (enum list) #
@@ -502,7 +499,10 @@ abstract class SmartAbstractAppController {
 				case 'mixed': // mixed variable types, can vary by context
 				case 'raw': // raw (leave as is ...)
 				case '': // no explicit format (take as raw / mixed)
-					// return as is (in this case extra validations have to be done explicit in the controller)
+					// return as is, but dissalow objects here ... (in this case extra validations have to be done explicit in the controller)
+					if(is_object($val)) {
+						$val = '';
+					} //end if
 					break;
 				default:
 					Smart::log_warning('Controller::RequestVarGet() // Invalid Request Variable Type: '.$type);

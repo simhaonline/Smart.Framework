@@ -78,6 +78,36 @@ final class Smart {
 
 //================================================================
 /**
+ * Get the value for a Config parameter from the app $configs array.
+ *
+ * @param 	ENUM 		$param 			:: The selected configuration parameter. Example: 'app.info-url' will get value (STRING) from $configs['app']['info-url'] ; 'app' will get the value (ARRAY) from $configs['app']
+ * @param 	MIXED 		$defval 		:: The default value (non-null) if the config parameter is not set.
+ *
+ * @return 	MIXED						:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string or the default value
+ */
+public static function get_from_config($param, $defval=null) {
+	//--
+	global $configs;
+	//--
+	$value = self::array_get_by_key_path($configs, strtolower((string)$param), '.'); // mixed
+	//--
+	if((string)$value == '') { // if not set, by default will return an empty string
+		if($defval !== null) {
+			$value = $defval; // get default value
+		} //end if
+	} //end if
+	if(is_object($value)) {
+		$value = ''; // fix: dissalow objects in config ; allowed types: BOOL, NUMERIC, STRING, ARRAY
+	} //end if
+	//--
+	return $value; // mixed
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
  * Fix for Directory Separator if on Windows
  *
  * @param 	STRING 	$y_path 			:: The path name to fix
