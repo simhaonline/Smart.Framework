@@ -32,6 +32,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//--
 		$module_area = $this->ControllerGetParam('module-area');
+		$the_lang = (string) $this->ConfigParamGet('regional.language-id', '???');
+		$the_sep = (string) $this->ConfigParamGet('regional.decimal-separator');
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			$this->SetDebugData('Module Area', $module_area);
@@ -41,7 +43,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			$this->SetDebugData('URL Path', $this->ControllerGetParam('url-path'));
 			$this->SetDebugData('URL Address', $this->ControllerGetParam('url-addr'));
 			$this->SetDebugData('URL Page', $this->ControllerGetParam('url-page'));
-			$this->SetDebugData('Config / Language ID', $this->ConfigParamGet('regional.language-id'));
+			$this->SetDebugData('Config / Language ID', $the_lang);
 		} //end if
 		//--
 
@@ -87,9 +89,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$fcontent = SmartFileSystem::staticread('lib/framework/css/ux-toolkit-samples.html');
 		$arr_data = explode('<body>', $fcontent);
-		$fcontent = $arr_data[1];
+		$fcontent = (string) $arr_data[1];
 		$arr_data = explode('</body>', $fcontent);
-		$fcontent = $arr_data[0];
+		$fcontent = (string) $arr_data[0];
 		//--
 
 		//-- building a semantic URL
@@ -124,8 +126,10 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$this->PageViewSetVar('title', 'Toolkit Samples');
-		$this->PageViewSetVar('main', '<h1>This text should not be displayed, it was RESET !!!</h1>');
+		$this->PageViewSetVars([
+			'title' => 'Toolkit Samples',
+			'main'	=> '<h1>This text should not be displayed, it was RESET !!!</h1>'
+		]);
 		$this->PageViewResetVar('main'); // test reset
 		$this->PageViewSetVar(
 			'main',
@@ -134,7 +138,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				[
 					'DATE-TIME' 		=> date('Y-m-d H:i:s O'),
 					'TXT-OK' 			=> $translator_core->text('ok'),
-					'TXT-HELLO-WORLD' 	=> $txt_hello_world.', '.$txt_this_is_sf.' - a modern PHP / Javascript framework featuring MVC + Middlewares',
+					'TXT-HELLO-WORLD' 	=> '['.Smart::escape_html($the_lang).']'.Smart::escape_html($the_sep).' '.$txt_hello_world.', '.$txt_this_is_sf.' - a modern PHP / Javascript framework featuring MVC + Middlewares',
 					'URL-TESTUNIT'		=> $url_test_unit,
 					'URL-BENCHMARK'		=> $url_benchmark
 				]
