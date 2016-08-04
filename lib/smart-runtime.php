@@ -307,7 +307,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @internal
  *
  * @depends 	-
- * @version 	v.160311
+ * @version 	v.160804
  * @package 	Application
  *
  */
@@ -318,11 +318,12 @@ final class SmartFrameworkRegistry {
 	public static $Connections = array(); // connections registry
 
 	private static $DebugMessages = array( // debug messages registry
-		'stats'		=> [],
-		'extra' 	=> [],
-		'db' 		=> [],
-		'mail' 		=> [],
-		'modules' 	=> [],
+		'stats' 			=> [],
+		'optimizations' 	=> [],
+		'extra' 			=> [],
+		'db' 				=> [],
+		'mail' 				=> [],
+		'modules' 			=> []
 	);
 
 	private static $RequestLock = false; 	// request locking flag
@@ -334,6 +335,9 @@ final class SmartFrameworkRegistry {
 		switch((string)$area) {
 			case 'stats':
 				return (array) self::$DebugMessages['stats'];
+				break;
+			case 'optimizations':
+				return (array) self::$DebugMessages['optimizations'];
 				break;
 			case 'extra':
 				return (array) self::$DebugMessages['extra'];
@@ -379,6 +383,9 @@ final class SmartFrameworkRegistry {
 		switch((string)$area) {
 			case 'stats':
 				self::$DebugMessages['stats'][(string)$context] = $dbgmsg; // stats will be always rewrite (as assign: =) to avoid duplicates
+				break;
+			case 'optimizations':
+				self::$DebugMessages['optimizations'][(string)$context][] = $dbgmsg;
 				break;
 			case 'extra':
 				self::$DebugMessages['extra'][(string)$context][] = $dbgmsg;

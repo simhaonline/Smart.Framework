@@ -32,8 +32,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//--
 		$module_area = $this->ControllerGetParam('module-area');
-		$the_lang = (string) $this->ConfigParamGet('regional.language-id', '???');
-		$the_sep = (string) $this->ConfigParamGet('regional.decimal-separator');
+		$the_lang = (string) $this->ConfigParamGet('regional.language-id');
+		$the_xlang = (string) $this->ConfigParamGet('regional.language-id'); // repeat this to check if caching works
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			$this->SetDebugData('Module Area', $module_area);
@@ -138,7 +138,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				[
 					'DATE-TIME' 		=> date('Y-m-d H:i:s O'),
 					'TXT-OK' 			=> $translator_core->text('ok'),
-					'TXT-HELLO-WORLD' 	=> '['.Smart::escape_html($the_lang).']'.Smart::escape_html($the_sep).' '.$txt_hello_world.', '.$txt_this_is_sf.' - a modern PHP / Javascript framework featuring MVC + Middlewares',
+					'TXT-HELLO-WORLD' 	=> '<span title="LanguageID: '.Smart::escape_html($the_xlang).'" style="cursor:help;">'.'['.Smart::escape_html($the_lang).']'.'</span>'.' '.$txt_hello_world.', '.$txt_this_is_sf.' - a modern PHP / Javascript framework featuring MVC + Middlewares',
 					'URL-TESTUNIT'		=> $url_test_unit,
 					'URL-BENCHMARK'		=> $url_benchmark
 				]

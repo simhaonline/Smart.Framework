@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160421
+ * @version 	v.160804
  * @package 	Templating:Engines
  *
  */
@@ -39,14 +39,27 @@ final class SmartMarkersTemplating {
 
 	// ::
 
-
-	private static $cache = array();
+	private static $MkTplFCount = array(); // counter to register how many times a template / sub-template file is read from filesystem (can be used for optimizations)
+	private static $MkTplCache = array(); // registry of cached template data
 
 
 //================================================================
 // returns the prepared marker template from a string
-// replacement of sub-templates is made before injecting variables
+// no caching is available
+// the replacement of sub-templates is made before injecting variables to avoid security issues
+/**
+ * Parse Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
+ *
+ * @param 	STRING 		$mtemplate 						:: The markers template (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+ * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
+ * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if markers template is empty ; 'no' will add a warning (default)
+ *
+ * @return 	STRING										:: The parsed template
+ *
+ */
 public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_empty='no') {
+	//--
+	$y_ignore_if_empty = (string) $y_ignore_if_empty;
 	//--
 	$mtemplate = (string) trim((string)$mtemplate);
 	//--
@@ -82,10 +95,19 @@ public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_emp
 
 
 //================================================================
-// returns the prepared marker template from a file
-// it can use caching to avoid read a file more than once per execution if required
-// if using the cache also sub-templates are cached as they are embedded in it before exporting to cache
-// replacement of sub-templates is made before injecting variables to avoid security issues
+// it can *optional* use caching to avoid read a file template (or it's sub-templates) more than once per execution if required
+// if using the cache the template and also sub-templates (if any) are cached internally as they are embedded in it before exporting to cache
+// the replacement of sub-templates is made before injecting variables to avoid security issues
+/**
+ * Render Marker File Template (incl. Sub-Templates from Files if any)
+ *
+ * @param 	STRING 		$y_file_path 					:: The relative path to the file markers template (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+ * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
+ * @param 	ENUM 		$y_use_caching 					:: 'yes' will cache the template (incl. sub-templates if any) into memory to avoid re-read them from file system (to be used if a template is used more than once per execution) ; 'no' means no caching is used (default)
+ *
+ * @return 	STRING										:: The parsed and rendered template
+ *
+ */
 public static function render_file_template($y_file_path, $y_arr_vars, $y_use_caching='no') {
 	//--
 	$y_file_path = (string) $y_file_path;
@@ -99,60 +121,40 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 		Smart::log_warning('Invalid Markers-File-Template Data-Set for Template file: '.$y_file_path);
 	} //end if
 	//--
+	$y_use_caching = (string) $y_use_caching;
+	//--
 	$y_arr_vars = (array) @array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper
 	//--
-	$mtemplate = ''; // init
-	if((string)$y_use_caching == 'yes') { // try loading from cache if cached
-		$mtemplate = (string) self::$cache['render_file_template:'.$y_file_path];
+	$mtemplate = (string) self::read_template_or_subtemplate_file((string)$y_file_path, (string)$y_use_caching);
+	if((string)$mtemplate == '') {
+		Smart::log_warning('Empty or Un-Readable Markers-Template File: '.$y_file_path);
+		return '{#### Empty Markers-Template File. See the ErrorLog for Details. ####}';
 	} //end if
 	//--
-	if((string)$mtemplate == '') { // if not in cache, build it's sub-templates if any and cache it if set so
-		//--
-		$mtemplate = (string) SmartFileSystem::staticread($y_file_path);
-		if((string)$mtemplate == '') {
-			Smart::log_warning('Empty or Un-Readable Markers-Template File: '.$y_file_path);
-			return '{#### Empty Markers-Template File. See the ErrorLog for Details. ####}';
-		} //end if
-		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
-				'title' => '[TPL-Render.START] :: Markers-Templating / File-Render: '.$y_file_path.' ; Caching: '.$y_use_caching,
-				'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
-			]);
-		} //end if
-		//--
-		$arr_sub_templates = array();
-		if(is_array($y_arr_vars['@SUB-TEMPLATES@'])) { // if supplied use it (preffered), never mix supplied with detection else results would be unpredictable ...
-			$arr_sub_templates = (array) $y_arr_vars['@SUB-TEMPLATES@'];
-		} else { // if not supplied, try to detect
-			$arr_sub_templates = (array) self::detect_subtemplates($mtemplate);
-		} //end if else
-		if(Smart::array_size($arr_sub_templates) > 0) {
-			$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-				SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
-					'title' => '[TPL-Render.LOAD-SUBTEMPLATES] :: Markers-Templating / File-Render: '.$y_file_path.' ; Sub-Templates Load Base Path: '.$tpl_basepath,
-					'data' => 'Sub-Templates: '."\n".print_r($arr_sub_templates,1)
-				]);
-			} //end if
-			$mtemplate = (string) self::load_subtemplates($tpl_basepath, $mtemplate, $arr_sub_templates); // load sub-templates before template processing and use caching also for sub-templates if set
-		} //end if
-		$arr_sub_templates = array();
-		//--
-		if((string)$y_use_caching == 'yes') { // save to cache if set so
-			self::$cache['render_file_template:'.$y_file_path] = (string) $mtemplate; // if set will cache the template with all sub-templates loaded to be able to serve from cache without re-loading them
-		} //end if
-		//--
-	} else {
-		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
-				'title' => '[TPL-Render.START] :: Markers-Templating / File-Render ; Serving from Cache the File Template (includding Sub-Templates if any): '.$y_file_path.' ; Caching: '.$y_use_caching.' ;',
-				'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
-			]);
-		} //end if
-		//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
+			'title' => '[TPL-Render.START] :: Markers-Templating / File-Render: '.$y_file_path,
+			'data' => 'Caching: '.$y_use_caching
+		]);
+	} //end if
+	//--
+	$arr_sub_templates = array();
+	if(is_array($y_arr_vars['@SUB-TEMPLATES@'])) { // if supplied then use it (preffered), never mix supplied with detection else results would be unpredictable ...
+		$arr_sub_templates = (array) $y_arr_vars['@SUB-TEMPLATES@'];
+	} else { // if not supplied, try to detect
+		$arr_sub_templates = (array) self::detect_subtemplates($mtemplate);
 	} //end if else
+	if(Smart::array_size($arr_sub_templates) > 0) {
+		$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
+				'title' => '[TPL-Render.LOAD-SUBTEMPLATES] :: Markers-Templating / File-Render: '.$y_file_path.' ; Sub-Templates Load Base Path: '.$tpl_basepath,
+				'data' => 'Sub-Templates: '."\n".print_r($arr_sub_templates,1)
+			]);
+		} //end if
+		$mtemplate = (string) self::load_subtemplates((string)$y_use_caching, $tpl_basepath, $mtemplate, $arr_sub_templates); // load sub-templates before template processing and use caching also for sub-templates if set
+	} //end if
+	$arr_sub_templates = array();
 	//-- avoid send the sub-templates array to the render_template() as the all sub-templates were processed here if any ; that function will try to detect only if used from separate context, this context will not allow re-detection as there would be no more
 	if(array_key_exists('@SUB-TEMPLATES@', (array)$y_arr_vars)) {
 		unset($y_arr_vars['@SUB-TEMPLATES@']);
@@ -165,20 +167,26 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 
 
 //================================================================
+// no caching is available
+// the replacement of sub-templates is made before injecting variables to avoid security issues
 /**
- * Function: Parse Mixed Marker Template (String Template + Sub-Templates from Files)
- * This is intended for very special usage since it does not support caching (and is not optimal to reload sub-templates several times) ...
+ * Parse Mixed Marker Template (String Template + Sub-Templates from Files if any)
  * If no-subtemplates are available is better to use render_template() instead of this one.
- *
- * The replacement of sub-templates is made before injecting variables.
+ * !!! This is intended for very special usage (ex: main app template) since it does not support caching (and is not optimal to reload sub-templates several times) ... !!!
  *
  * @access 		private
  * @internal
  *
- * @return 	STRING						:: The parsed template
+ * @param 	STRING 		$mtemplate 						:: The markers template (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+ * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
+ * @param 	STRING 		$y_sub_templates_base_path 		:: The (relative) base path of sub-templates files if they are used (required to be non-empty)
+ * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if markers template is empty ; 'no' will add a warning (default)
+ * @param 	ENUM 		$y_use_caching 					:: 'yes' will cache the sub-templates files (if any) into memory to avoid re-read them from file system (to be used if a sub-template is used more than once per execution) ; 'no' means no caching is used (default)
+ *
+ * @return 	STRING										:: The parsed template
  *
  */
-public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_templates_base_path, $y_ignore_if_empty='no') {
+public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_templates_base_path, $y_ignore_if_empty='no', $y_use_caching='no') {
 	//--
 	$mtemplate = (string) trim((string)$mtemplate);
 	//--
@@ -215,7 +223,7 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 		$arr_sub_templates = (array) self::detect_subtemplates($mtemplate);
 	} //end if else
 	if(Smart::array_size($arr_sub_templates) > 0) {
-		$mtemplate = (string) self::load_subtemplates((string)$y_sub_templates_base_path, (string)$mtemplate, (array)$arr_sub_templates); // load sub-templates before template processing
+		$mtemplate = (string) self::load_subtemplates((string)$y_use_caching, (string)$y_sub_templates_base_path, (string)$mtemplate, (array)$arr_sub_templates); // load sub-templates before template processing
 	} //end if
 	$arr_sub_templates = array();
 	//-- avoid use the sub-templates array later than this point ... not needed and safer to unset
@@ -760,11 +768,13 @@ private static function detect_subtemplates($mtemplate) {
 // max 3 levels: template -> sub-template -> sub-sub-template
 // max 255 cycles overall: template + sub-templates + sub-sub-templates)
 // returns the prepared marker template contents
-private static function load_subtemplates($y_base_path, $mtemplate, $y_arr_vars_sub_templates, $cycles=0, $process_sub_sub_templates=true) {
+private static function load_subtemplates($y_use_caching, $y_base_path, $mtemplate, $y_arr_vars_sub_templates, $cycles=0, $process_sub_sub_templates=true) {
 	//--
+	$y_use_caching = (string) $y_use_caching;
 	$y_base_path = (string) $y_base_path;
 	$mtemplate = (string) $mtemplate;
 	$y_arr_vars_sub_templates = (array) $y_arr_vars_sub_templates;
+	$cycles = (int) $cycles;
 	//--
 	if((string)$y_base_path == '') {
 		Smart::log_warning('Marker Template Load Sub-Templates: INVALID Base Path (Empty) ... / Template: '.$mtemplate);
@@ -820,12 +830,12 @@ private static function load_subtemplates($y_base_path, $mtemplate, $y_arr_vars_
 						return 'Invalid Markers-Sub-Template File. See the ErrorLog for Details.';
 					} //end if
 					//--
-					$stemplate = (string) SmartFileSystem::staticread((string)$stpl_path); // read
+					$stemplate = (string) self::read_template_or_subtemplate_file((string)$stpl_path, (string)$y_use_caching); // read
 					if($process_sub_sub_templates === true) {
 						$arr_sub_sub_templates = (array) self::detect_subtemplates((string)$stemplate); // detect sub-sub templates
 						$num_sub_sub_templates = Smart::array_size($arr_sub_sub_templates);
 						if($num_sub_sub_templates > 0) {
-							$stemplate = (string) self::load_subtemplates($y_base_path, $stemplate, $arr_sub_sub_templates, $cycles, false); // this is level 3 !!
+							$stemplate = (string) self::load_subtemplates((string)$y_use_caching, $y_base_path, $stemplate, $arr_sub_sub_templates, $cycles, false); // this is level 3 !!
 							$cycles += $num_sub_sub_templates;
 						} //end if
 					} //end if
@@ -881,6 +891,105 @@ private static function load_subtemplates($y_base_path, $mtemplate, $y_arr_vars_
 
 
 //================================================================
+private static function read_template_or_subtemplate_file($y_file_path, $y_use_caching) {
+	//--
+	$y_file_path = (string) $y_file_path;
+	//--
+	$cached_key = 'read_template_or_subtemplate_file:'.$y_file_path;
+	//--
+	if(array_key_exists((string)$cached_key, (array)self::$MkTplCache)) {
+		//--
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
+				'title' => '[TPL-ReadFileTemplate-From-CACHE] :: Markers-Templating / File-Read ; Serving from Cache the File Template: '.$y_file_path.' ; Caching: '.$y_use_caching,
+				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
+			]);
+		} //end if
+		//--
+		return (string) self::$MkTplCache[(string)$cached_key];
+		//--
+	} //end if
+	//--
+	self::$MkTplFCount[(string)$cached_key]++; // register to counter anytime is read from FileSystem
+	//--
+	if((string)$y_use_caching == 'yes') {
+		//--
+		self::$MkTplCache[(string)$cached_key] = (string) SmartFileSystem::staticread($y_file_path);
+		//--
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
+				'title' => '[TPL-ReadFileTemplate-From-FILESYSTEM-Register-In-Cache] :: Markers-Templating / Registering to internal cache the File Template: '.$y_file_path.' ;',
+				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
+			]);
+		} //end if
+		//--
+		return (string) self::$MkTplCache[(string)$cached_key];
+		//--
+	} else {
+		//--
+		$mtemplate = (string) SmartFileSystem::staticread($y_file_path);
+		//--
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
+				'title' => '[TPL-ReadFileTemplate-From-FILESYSTEM] :: Markers-Templating / File-Read ; Serving from FileSystem the File Template: '.$y_file_path.' ;',
+				'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
+			]);
+		} //end if
+		//--
+		return (string) $mtemplate;
+		//--
+	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function registerOptimizationHintsToDebugLog() {
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$optim_msg = [];
+		foreach(self::$MkTplFCount as $key => $val) {
+			$key = (string) $key;
+			if(strpos($key, 'debug') === false) { // avoid hints for debug templates / sub-templates
+				$key = (array) explode(':', $key);
+				$key = (string) $key[1];
+				$val = (int) $val;
+				if($val > 1) {
+					$optim_msg[] = [
+						'optimal' => false,
+						'value' => (int) $val,
+						'key' => (string) $key,
+						'msg' => 'Optimization Hint: Set Caching Parameter for Rendering this Template to avoid multiple reads on FileSystem'
+					];
+				} else {
+					$optim_msg[] = [
+						'optimal' => true,
+						'value' => (int) $val,
+						'key' => (string) $key,
+						'msg' => 'OK'
+					];
+					$optim_msg[] = $val.' # OK # '.$key."\n";
+				} //end if else
+			} //end if
+		} //end foreach
+		SmartFrameworkRegistry::setDebugMsg('optimizations', '*SMART-CLASSES:OPTIMIZATION-HINTS*', [
+			'title' => 'SmartMarkersTemplating // Optimization Hints @ Number of FileSystem Reads for each Template / Sub-Template',
+			'data' => (array) $optim_msg
+		]);
+	} //end if
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 /**
  *
  * @access 		private
@@ -893,7 +1002,7 @@ public static function registerInternalCacheToDebugLog() {
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			SmartFrameworkRegistry::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [
 				'title' => 'SmartMarkersTemplating // Internal Cache',
-				'data' => 'Dump:'."\n".print_r(self::$cache,1)
+				'data' => 'Dump of Cached Templates / Sub-Templates:'."\n".print_r(self::$MkTplCache,1)
 			]);
 		} //end if
 	} //end if

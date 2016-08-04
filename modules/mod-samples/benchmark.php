@@ -39,7 +39,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				$this->ControllerGetParam('module-view-path').'benchmark.htm',
 				[
 					'BENCHMARK-TITLE' => '[ Benchmark Test URL ]<br>use this URL to run a benchmark of this PHP framework ...'
-				]
+				],
+				'no' // don't use caching (use of caching make sense only if file template is used more than once per execution)
 			)
 		]);
 		//--

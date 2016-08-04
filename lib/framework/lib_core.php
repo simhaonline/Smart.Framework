@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160803
+ * @version     v.160803.r2
  * @package     Core
  *
  */
@@ -75,30 +75,32 @@ final class Smart {
 
 	// ::
 
+	private static $Cfgs = array(); // registry of cached config data
+
 
 //================================================================
 /**
  * Get the value for a Config parameter from the app $configs array.
  *
  * @param 	ENUM 		$param 			:: The selected configuration parameter. Example: 'app.info-url' will get value (STRING) from $configs['app']['info-url'] ; 'app' will get the value (ARRAY) from $configs['app']
- * @param 	MIXED 		$defval 		:: The default value (non-null) if the config parameter is not set.
  *
- * @return 	MIXED						:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string or the default value
+ * @return 	MIXED						:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string.
  */
-public static function get_from_config($param, $defval=null) {
+public static function get_from_config($param) {
 	//--
 	global $configs;
 	//--
+	if(array_key_exists((string)$param, self::$Cfgs)) {
+		return self::$Cfgs[(string)$param]; // mixed
+	} //end if
+	//--
 	$value = self::array_get_by_key_path($configs, strtolower((string)$param), '.'); // mixed
 	//--
-	if((string)$value == '') { // if not set, by default will return an empty string
-		if($defval !== null) {
-			$value = $defval; // get default value
-		} //end if
-	} //end if
 	if(is_object($value)) {
 		$value = ''; // fix: dissalow objects in config ; allowed types: BOOL, NUMERIC, STRING, ARRAY
 	} //end if
+	//--
+	self::$Cfgs[(string)$param] = $value; // mixed
 	//--
 	return $value; // mixed
 	//--
@@ -731,7 +733,7 @@ public static function array_sort($y_arr, $y_mode) {
 			@krsort($y_arr);
 			break;
 		default:
-			self::log_warning('WARNING: Invalid Sort Mode in Smart::array_sort() : '.$y_mode);
+			self::log_warning('WARNING: Invalid Sort Mode in '.__CLASS__.'::'.__FUNCTION__.'()'.' : '.$y_mode);
 			return (array) $y_arr;
 	} //end switch
 	//--
@@ -895,11 +897,11 @@ public static function array_type_test($y_arr) {
 public static function array_diff_assoc_recursive($array1, $array2) {
 	//--
 	if(!is_array($array1)) {
-		self::log_warning('WARNING: '.'Smart::array_diff_assoc_recursive()'.' array#1 is not array !');
+		self::log_warning('WARNING: '.__CLASS__.'::'.__FUNCTION__.'()'.' array#1 is not array !');
 		return array();
 	} //end if
 	if(!is_array($array2)) {
-		self::log_warning('WARNING: '.'Smart::array_diff_assoc_recursive()'.' array#2 is not array !');
+		self::log_warning('WARNING: '.__CLASS__.'::'.__FUNCTION__.'()'.' array#2 is not array !');
 		return array();
 	} //end if
 	//--
@@ -924,11 +926,11 @@ public static function array_diff_assoc_recursive($array1, $array2) {
 public static function array_diff_assoc_oneway_recursive($array1, $array2) {
 	//--
 	if(!is_array($array1)) {
-		self::log_warning('WARNING: '.'Smart::array_diff_assoc_oneway_recursive()'.' array#1 is not array !');
+		self::log_warning('WARNING: '.__CLASS__.'::'.__FUNCTION__.'()'.' array#1 is not array !');
 		return array();
 	} //end if
 	if(!is_array($array2)) {
-		self::log_warning('WARNING: '.'Smart::array_diff_assoc_oneway_recursive()'.' array#2 is not array !');
+		self::log_warning('WARNING: '.__CLASS__.'::'.__FUNCTION__.'()'.' array#2 is not array !');
 		return array();
 	} //end if
 	//--
@@ -1708,6 +1710,28 @@ public static function raise_error($message_to_log, $message_to_display='') {
 	$smart_____framework_____last__error = (string) $message_to_display;
 	@trigger_error('#SMART-FRAMEWORK.ERROR# '.$message_to_log, E_USER_ERROR);
 	die('App Level Raise ERROR. Execution Halted. See the App Error log for more details.'); // normally this line will never be executed because the E_USER_ERROR via Smart Error Handler will die() before ... but this is just in case, as this is a fatal error and the execution should be halted here !
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function registerInternalCacheToDebugLog() {
+	//--
+	if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			SmartFrameworkRegistry::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [
+				'title' => 'Smart (Core) // Internal Cache',
+				'data' => 'Dump of Cfgs:'."\n".print_r(self::$Cfgs,1)
+			]);
+		} //end if
+	} //end if
 	//--
 } //END FUNCTION
 //================================================================

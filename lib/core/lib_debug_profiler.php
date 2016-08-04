@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.160407
+ * @version 	v.160804
  *
  */
 final class SmartDebugProfiler {
@@ -117,8 +117,11 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 		if(is_writable($the_dir)) {
 			//--
 			$arr = array();
+			//-- generate debug info if set to show optimizations
+			SmartMarkersTemplating::registerOptimizationHintsToDebugLog();
 			//-- generate debug info if set to show internals
 			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
+				Smart::registerInternalCacheToDebugLog();
 				SmartFrameworkRegistry::registerInternalCacheToDebugLog();
 				SmartAuth::registerInternalCacheToDebugLog();
 				SmartHashCrypto::registerInternalCacheToDebugLog();
@@ -157,6 +160,9 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 			} else {
 				$arr['auth-data'] = array('is_auth' => false, 'login_data' => array());
 			} //end if else
+			foreach((array)SmartFrameworkRegistry::getDebugMsgs('optimizations') as $key => $val) {
+				$arr['log-optimizations'][(string)$key] = base64_encode(Smart::seryalize((array)$val));
+			} //end foreach
 			foreach((array)SmartFrameworkRegistry::getDebugMsgs('extra') as $key => $val) {
 				$arr['log-extra'][(string)$key] = base64_encode(Smart::seryalize((array)$val));
 			} //end foreach
@@ -226,6 +232,7 @@ public static function print_debug_info($y_area, $y_debug_token) {
 	$debug_auth = '';
 	$debug_mail = '';
 	$debug_dbqueries = '';
+	$debug_optimizations = '';
 	$debug_extra = '';
 	$debug_modules = '';
 	$tmp_decode_arr = array();
@@ -253,6 +260,13 @@ public static function print_debug_info($y_area, $y_debug_token) {
 		//--
 		$debug_auth .= $txt_main.$txt_url.$txt_token.self::print_log_auth($arr[$i]['auth-data']).'<hr>';
 		//--
+		if(is_array($arr[$i]['log-optimizations'])) {
+			$debug_optimizations .= $txt_main.$txt_url.$txt_token;
+			foreach($arr[$i]['log-optimizations'] as $key => $val) {
+				$debug_optimizations .= self::print_log_optimizations(strtoupper((string)$key), Smart::unseryalize(base64_decode($val))).'<hr>';
+			} //end foreach
+		} //end if
+		//--
 		if(is_array($arr[$i]['log-mail'])) {
 			$debug_mail .= $txt_main.$txt_url.$txt_token.self::print_log_mail(Smart::unseryalize(base64_decode($arr[$i]['log-mail']))).'<hr>';
 		} //end if
@@ -279,6 +293,12 @@ public static function print_debug_info($y_area, $y_debug_token) {
 		} //end if
 		//--
 	} //end for
+	//--
+	if((string)$debug_optimizations == '') {
+		$debug_optimizations = '<div class="smartframework_debugbar_status smartframework_debugbar_status_nodata"><font size="5"><b>Optimization Hints: N/A</b></font></div>';
+	} else {
+		$debug_optimizations .= $end_marker;
+	} //end if else
 	//--
 	if((string)$debug_mail == '') {
 		$debug_mail = '<div class="smartframework_debugbar_status smartframework_debugbar_status_nodata"><font size="5"><b>Mail Debug: No data</b></font></div>';
@@ -317,6 +337,7 @@ public static function print_debug_info($y_area, $y_debug_token) {
 			'DEBUG-ENVIRONMENT' => $debug_environment.$end_marker, // ok
 			'DEBUG-SESSION' => $debug_session.$end_marker, // ok
 			'DEBUG-AUTH' => $debug_auth.$end_marker,
+			'DEBUG-OPTIMIZATIONS' => $debug_optimizations, // ok
 			'DEBUG-MAIL' => $debug_mail,
 			'DEBUG-DATABASE' => $debug_dbqueries, // ok
 			'DEBUG-EXTRA' => $debug_extra, // ok
@@ -828,6 +849,57 @@ private static function print_log_database($title, $db_log) {
 					$log .= '</div>';
 					//--
 			} //end switch
+			//--
+		} //end for
+		//--
+	} else {
+		//--
+		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_warn" style="width: 100px; text-align: center;"><font size="2"><b>N/A</b></font></div>';
+		//--
+	} //end if
+	//--
+	return $log;
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function print_log_optimizations($title, $optimizations_log) {
+	//--
+	$log = '';
+	//--
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>'.Smart::escape_html($title).' :: OPTIMIZATIONS Log</b></font></div>';
+	//--
+	$max = Smart::array_size($optimizations_log);
+	if(is_array($optimizations_log) AND ($max > 0)) {
+		//--
+		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Entries: <b>'.Smart::escape_html($max).'</b></div>';
+		//--
+		for($i=0; $i<$max; $i++) {
+			//--
+			$tmp_item = array(); // init
+			$tmp_arr = (array) $optimizations_log[$i];
+			//--
+			$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:#000000;">';
+			$log .= '<b>'.Smart::escape_html((string)$tmp_arr['title']).'</b><br>';
+			if(Smart::array_size($tmp_arr['data']) > 0) {
+				for($j=0; $j<Smart::array_size($tmp_arr['data']); $j++) {
+					$tmp_item = $tmp_arr['data'][$j];
+					if(is_array($tmp_item)) {
+						$tmp_line = '# '.$tmp_item['value'].' # '.$tmp_item['key'].' # '.$tmp_item['msg'];
+						if($tmp_item['optimal'] !== true) {
+							$color = '#F5926C';
+						} else {
+							$color = '#3FA325';
+						} //end if else
+						$log .= '<span style="font-size:11px; color:'.$color.';">'.Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_line)).'</span><br>';
+					} //end if
+				} //end for
+			} else {
+				$log .= '<span style="font-size:11px; color:#333333;">N/A</span>';
+			} //end if else
+			$log .= '</div>';
 			//--
 		} //end for
 		//--

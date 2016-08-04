@@ -226,7 +226,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160803
+ * @version 	v.160803.r2
  * @package 	Application
  *
  */
@@ -418,14 +418,13 @@ abstract class SmartAbstractAppController {
 	 * Get the value for a Config parameter from the app $configs array.
 	 *
 	 * @param 	ENUM 		$param 			:: The selected configuration parameter.
-	 * @param 	MIXED 		$defval 		:: The default value (non-null) if the config parameter is not set.
 	 * Examples: 'app.info-url' will get value from $configs['app']['info-url'] ; 'regional.decimal-separator' will get the value (string) from $configs['regional']['decimal-separator'] ; 'regional' will get the value (array) from $configs['regional']
 	 *
 	 * @return 	MIXED						:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string.
 	 */
-	final public function ConfigParamGet($param, $defval=null) {
+	final public function ConfigParamGet($param) {
 		//--
-		return Smart::get_from_config($param, $defval); // mixed
+		return Smart::get_from_config($param); // mixed
 		//--
 	} //END FUNCTION
 	//=====

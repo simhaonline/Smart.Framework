@@ -30,7 +30,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.5.1');
  * @access 		private
  * @internal
  *
- * @version		160708
+ * @version		160804
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -541,7 +541,7 @@ public static function Run() {
 		//--
 	} //end if
 	//--
-	echo SmartMarkersTemplating::render_mixed_template((string)$the_template_content, (array)$appData, (string)$appData['template-path'], 'no');
+	echo SmartMarkersTemplating::render_mixed_template((string)$the_template_content, (array)$appData, (string)$appData['template-path'], 'no', 'no');
 	//-- {{{SYNC-RESOURCES}}}
 	if(function_exists('memory_get_peak_usage')) {
 		$res_memory = @memory_get_peak_usage(false);
