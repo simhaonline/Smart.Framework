@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160803.r2
+ * @version     v.160804
  * @package     Core
  *
  */
@@ -434,7 +434,7 @@ public static function url_add_params($y_url, $y_params) {
  * Add URL Suffix (to a standard RFC3986 URL) as: script.php?a=b&c=d&e=%20d
  *
  * @param 	STRING 		$y_url				:: The base URL to use as prefix like: script.php or script.php?a=b&c=d or empty
- * @param 	STRING		$y_suffix 			:: A RFC3986 URL segment like: a=b or e=%20d (without ? or & as they will be detected if need append ? or &; variable values must be encoded using rawurlencode() RFC3986)
+ * @param 	STRING		$y_suffix 			:: A RFC3986 URL segment like: a=b or e=%20d (without ? or not starting with & as they will be detected if need append ? or &; variable values must be encoded using rawurlencode() RFC3986)
  *
  * @return 	STRING							:: The prepared URL in the standard RFC3986 format (all values are escaped using rawurlencode() to be Unicode full compliant
  */

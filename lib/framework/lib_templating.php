@@ -45,7 +45,6 @@ final class SmartMarkersTemplating {
 
 //================================================================
 // returns the prepared marker template from a string
-// no caching is available
 // the replacement of sub-templates is made before injecting variables to avoid security issues
 /**
  * Parse Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
@@ -95,8 +94,8 @@ public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_emp
 
 
 //================================================================
-// it can *optional* use caching to avoid read a file template (or it's sub-templates) more than once per execution if required
-// if using the cache the template and also sub-templates (if any) are cached internally as they are embedded in it before exporting to cache
+// it can *optional* use caching to avoid read a file template (or it's sub-templates) more than once per execution
+// if using the cache the template and also sub-templates (if any) are cached internally to avoid re-read them from filesystem
 // the replacement of sub-templates is made before injecting variables to avoid security issues
 /**
  * Render Marker File Template (incl. Sub-Templates from Files if any)
@@ -167,7 +166,8 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 
 
 //================================================================
-// no caching is available
+// it can *optional* use caching to avoid read the sub-templates (if any) more than once per execution
+// if using the cache the sub-templates (if any) are cached internally to avoid re-read them from filesystem
 // the replacement of sub-templates is made before injecting variables to avoid security issues
 /**
  * Parse Mixed Marker Template (String Template + Sub-Templates from Files if any)
