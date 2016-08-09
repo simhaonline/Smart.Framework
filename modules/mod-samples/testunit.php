@@ -18,7 +18,7 @@ define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
  * @ignore
  *
  */
-class SmartAppIndexController extends SmartAbstractAppController {
+class SmartAppAdminController extends SmartAbstractAppController {
 
 	public function Run() {
 
@@ -356,7 +356,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
  * @ignore
  *
  */
-class SmartAppAdminController extends SmartAppIndexController {
+class SmartAppIndexController extends SmartAppAdminController {
 
 	// this will clone the SmartAppIndexController to run exactly the same action in admin.php
 	// or this can implement a completely different controller if it is accessed via admin.php

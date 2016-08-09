@@ -46,7 +46,7 @@ if(!defined('SMART_FRAMEWORK_MEDIAGALLERY_PDF_EXTRACTOR')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP GD Extension (w. TrueColor support) ; executables: imageMagick Utility (can replace PHP GD), FFMpeg (for movies) ; classes: Smart, SmartUtils, SmartFileSystem
- * @version 	v.160219
+ * @version 	v.160809
  * @package 	MediaGallery
  *
  */
@@ -581,7 +581,7 @@ public static function mov_pw_process($y_mov_file, $y_mov_img_preview, $y_qualit
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP GD Extension (w. TrueColor support) / imageMagick Utility (executable) ; classes: Smart, SmartUtils, SmartFileSystem
- * @version 	v.160128
+ * @version 	v.160809
  * @package 	MediaGallery
  *
  * @access 		private
@@ -709,7 +709,7 @@ return $html ;
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP GD Extension (w. TrueColor support) ; executables: imageMagick Utility (can replace PHP GD), FFMpeg (for movies) ; classes: Smart, SmartUtils, SmartFileSystem
- * @version 	v.160219
+ * @version 	v.160809
  * @package 	MediaGallery
  *
  */
@@ -1285,7 +1285,7 @@ private function mov_preview_create($y_mov_file, $y_mov_img_preview) {
 final class SmartImagickImageProcess {
 
 	// ::
-	// v.160128
+	// v.160809
 
 //===========================================================================
 // create a preview from a big image {{{SYNC-IMGALLERY-PREVIEW}}}
@@ -1360,7 +1360,7 @@ public static function apply_watermark($y_file, $y_watermark_file, $y_quality, $
 final class SmartGdImageProcess {
 
 	// ::
-	// v.160128
+	// v.160809
 
 //===========================================================================
 private static function check_gd_truecolor() {
@@ -1410,7 +1410,7 @@ public static function create_preview($imagePath, $newPath, $newW, $newH, $quali
 		switch((string)$t_img) {
 			case 'image/png':
 			case 'image/x-png':
-				$the_type = 'jpg';
+				$the_type = 'png';
 				$source = @imagecreatefrompng($imagePath);
 				break;
 			case 'image/gif':
@@ -1420,7 +1420,7 @@ public static function create_preview($imagePath, $newPath, $newW, $newH, $quali
 			case 'image/pjpeg':
 			case 'image/jpeg':
 			case 'image/jpg':
-				$the_type = 'png';
+				$the_type = 'jpg';
 				$source = @imagecreatefromjpeg($imagePath);
 				break;
 			default:
