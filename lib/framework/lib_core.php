@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160804
+ * @version     v.160812
  * @package     Core
  *
  */
@@ -1615,20 +1615,33 @@ public static function list_to_array($y_list) {
 
 //================================================================
 /**
- * Test if XML (this is very basic detection ; and must be developed more in the future)
+ * Detect HTML or XML tags (this can be a bit slow at the moment but is safe ...)
  *
- * @param STRING 	$y_xml			:: The String to be tested
+ * @param STRING 	$y_html_or_xml_code		:: The String to be tested
  *
- * @return BOOLEAN 					:: TRUE (if XML detected) or FALSE if not
+ * @return BOOLEAN 							:: TRUE (if XML or HTML tags are detected) or FALSE if not
  */
-public static function test_if_xml($y_xml) {
-	//--
-	if((strpos($y_xml, '<') !== false) AND (strpos($y_xml, '>') !== false)) {
+public static function detect_html_or_xml_tags($y_html_or_xml_code) {
+	//-- enforce string
+	$y_html_or_xml_code = (string) trim((string)$y_html_or_xml_code);
+	//-- regex expr
+	$expr_tag_name 			= SmartValidator::regex_stringvalidation_expression('tag-name');
+	$expr_tag_start 		= SmartValidator::regex_stringvalidation_expression('tag-start');
+	$expr_tag_end_start 	= SmartValidator::regex_stringvalidation_expression('tag-end-start');
+	$expr_tag_simple_end 	= SmartValidator::regex_stringvalidation_expression('tag-simple-end');
+	$expr_tag_complex_end 	= SmartValidator::regex_stringvalidation_expression('tag-complex-end');
+	//-- {{{SYNC-HTML-TAGS-REGEX}}}
+	$regex_part_tag_name 	= '['.$expr_tag_name.']+'; // regex syntax: tag name def
+	//-- build regex syntax
+	$regex_match_tag = '#'.$expr_tag_start.$regex_part_tag_name.$expr_tag_simple_end.'|'.$expr_tag_start.$regex_part_tag_name.$expr_tag_complex_end.'#si';
+	//-- evaluate
+	//if(((string)$y_html_or_xml_code != '') AND (strpos((string)$y_html_or_xml_code, '<') !== false) AND (strpos((string)$y_html_or_xml_code, '>') !== false) AND ((string)$y_html_or_xml_code != (string)strip_tags((string)$y_html_or_xml_code))) {
+	if(((string)$y_html_or_xml_code != '') AND (strpos((string)$y_html_or_xml_code, '<') !== false) AND (strpos((string)$y_html_or_xml_code, '>') !== false) AND (preg_match((string)$regex_match_tag, (string)$y_html_or_xml_code))) {
 		$out = true;
 	} else {
 		$out = false;
 	} //end if else
-	//--
+	//-- return
 	return (bool) $out;
 	//--
 } //END FUNCTION

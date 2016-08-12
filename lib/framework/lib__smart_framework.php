@@ -226,7 +226,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160804
+ * @version 	v.160812
  * @package 	Application
  *
  */
@@ -332,9 +332,13 @@ abstract class SmartAbstractAppController {
 			return false;
 		} //end if
 		//--
+		if(is_array($debug_msg) OR is_object($debug_msg)) {
+			$debug_msg = (string) print_r($debug_msg,1);
+		} //end if
+		//--
 		SmartFrameworkRegistry::setDebugMsg('modules', (string)$this->modulename, [
-			'title' => (string)$title,
-			'data' => (string)$debug_msg
+			'title' => (string) $title,
+			'data' => (string) $debug_msg
 		]);
 		//--
 		return true;

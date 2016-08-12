@@ -34,7 +34,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160224
+ * @version 	v.160812
  * @package 	Caching
  *
  */
@@ -176,7 +176,7 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 		//--
 		self::initCacheManager();
 		//--
-		$y_value = (string) SmartUnicode::utf8_fix_charset((string)$y_value); // fix
+		$y_value = (string) SmartUnicode::fix_charset((string)$y_value); // fix
 		$y_expiration = Smart::format_number_int($y_expiration, '+');
 		//--
 		$resexp = 1;

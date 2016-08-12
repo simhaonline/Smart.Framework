@@ -64,7 +64,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160728
+ * @version 	v.160812
  * @package 	Database:PostgreSQL
  *
  */
@@ -322,7 +322,7 @@ public static function escape_str($y_string, $y_escape_likes='no', $y_connection
 	//==
 
 	//-- Fix
-	$y_string = (string) SmartUnicode::utf8_fix_charset((string)$y_string);
+	$y_string = (string) SmartUnicode::fix_charset((string)$y_string);
 	//--
 
 	//--
@@ -360,7 +360,7 @@ public static function escape_literal($y_string, $y_escape_likes='no', $y_connec
 	//==
 
 	//-- Fix
-	$y_string = (string) SmartUnicode::utf8_fix_charset((string)$y_string);
+	$y_string = (string) SmartUnicode::fix_charset((string)$y_string);
 	//--
 
 	//--
@@ -397,7 +397,7 @@ public static function escape_identifier($y_identifier, $y_connection='DEFAULT')
 
 	//-- Fix
 	$y_identifier = (string) SmartUnicode::utf8_to_iso((string)$y_identifier); // this is in sync with validate table and field names to make them all ISO
-	$y_identifier = (string) SmartUnicode::utf8_fix_charset((string)$y_identifier); // fix in the case that something went wrong
+	$y_identifier = (string) SmartUnicode::fix_charset((string)$y_identifier); // fix in the case that something went wrong
 	$y_identifier = (string) str_replace('?', '', (string)$y_identifier); // remove ? after conversion
 	//--
 
@@ -427,7 +427,7 @@ private static function escape_arr_params($arr_params) {
 	//--
 	if(is_array($arr_params)) {
 		foreach($arr_params as $k => $v) {
-			$arr_params[$k] = (string) SmartUnicode::utf8_fix_charset((string)$v); // fix
+			$arr_params[$k] = (string) SmartUnicode::fix_charset((string)$v); // fix
 		} //end foreach
 	} //end if
 	//--
@@ -2128,7 +2128,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160728
+ * @version 	v.160812
  * @package 	Database:PostgreSQL
  *
  */

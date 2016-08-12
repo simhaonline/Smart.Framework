@@ -141,7 +141,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.160205
+ * @version     v.160812
  * @package     Core
  *
  */
@@ -428,13 +428,15 @@ public static function convert_charset($ystr, $y_charset_from, $y_charset_to='',
 	$y_charset_from = strtoupper((string)$y_charset_from);
 	$y_charset_to = strtoupper((string)$y_charset_to);
 	//--
-	if(((string)$y_charset_from != '') AND ((string)$y_charset_to != '') AND ((string)$y_charset_to != (string)$y_charset_from)) {
+	if(((string)$y_charset_from != '') AND ((string)$y_charset_to != '')) {
 		//--
 		$ystr = (string) @mb_convert_encoding((string)$ystr, (string)$y_charset_to, (string)$y_charset_from);
 		//--
-		if((string)$y_charset_to != (string)SMART_FRAMEWORK_CHARSET) {
-			if($normalize) {
-				$ystr = (string) @utf8_encode($ystr);
+		if((string)SMART_FRAMEWORK_CHARSET == 'UTF-8') {
+			if((string)$y_charset_to != (string)SMART_FRAMEWORK_CHARSET) {
+				if($normalize) {
+					$ystr = (string) @utf8_encode($ystr); // fix: this is needed to normalize the strings into the framework's current charset
+				} //end if
 			} //end if
 		} //end if
 		//--
@@ -448,16 +450,17 @@ public static function convert_charset($ystr, $y_charset_from, $y_charset_to='',
 
 //================================================================
 /**
- * Safe Fix the string to contain only UTF-8 charset.
+ * Safe Fix the string to contain only current charset.
  * All the unsafe characters will be replaced by: ?
+ * This is not necessary after SmartUnicode::convert_charset() as it will already fix it
  *
  * @param STRING 	$str			:: The string
  *
  * @return STRING					:: The fixed string
  */
-public static function utf8_fix_charset($str) {
+public static function fix_charset($str) {
 	//--
-	return (string) @mb_convert_encoding((string)$str, 'UTF-8', 'UTF-8');
+	return (string) self::convert_charset((string)$str, '', (string)SMART_FRAMEWORK_CHARSET); // charset from is EMPTY to try to detect it
 	//--
 } //END FUNCTION
 //================================================================

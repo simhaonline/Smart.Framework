@@ -1,6 +1,9 @@
 
 # CHANGELOG / MIGRATION NOTES - SMART.FRAMEWORK #
 
+Aug, 12, 2016 :: Version 2.3.5
+	* renamed SmartUnicode::utf8_fix_charset() to SmartUnicode::fix_charset()
+
 Feb, 19, 2016 :: Version 2.3
 	* Release / Stable (switch to SVN ; keep GIT just for public ...)
 

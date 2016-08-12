@@ -44,7 +44,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.160617.r2
+ * @version     v.160811
  * @package     DATA:XML
  *
  */
@@ -77,32 +77,40 @@ public function __construct($encoding='') {
 
 //===============================
 // PUBLIC
-public function transform($xml_str, $log_all_errors=false) {
+public function transform($xml_str, $log_parse_err_warns=false) {
 	//--
-	libxml_use_internal_errors(true);
+	$xml_str = (string) trim((string)$xml_str);
+	if((string)$xml_str == '') {
+		return array();
+	} //end if
+	//--
+	@libxml_use_internal_errors(true);
+	@libxml_clear_errors();
 	//--
 	$arr = $this->SimpleXML2Array(
-		simplexml_load_string(
+		@simplexml_load_string(
 			$this->FixXmlRoot((string)$xml_str),
 			'SimpleXMLElement',
-			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES // options
+			LIBXML_ERR_NONE | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES // {{{SYNC-LIBXML-OPTIONS}}} :: previous was LIBXML_ERR_WARNING
 		)
 	);
 	//-- log errors if any
-	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') || ($log_all_errors == true) || (Smart::array_size($arr) <= 0)) {
-		$errors = (array) libxml_get_errors();
+	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') || ($log_parse_err_warns === true) || (Smart::array_size($arr) <= 0)) {
+		$errors = (array) @libxml_get_errors();
 		if(Smart::array_size($errors) > 0) {
 			foreach($errors as $error) {
 				if(is_object($error)) {
-					Smart::log_notice('SmartXmlParser ERROR: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n".'Encoding: '.$this->encoding."\n");
+					Smart::log_notice('SmartXmlParser NOTICE: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n".'Encoding: '.$this->encoding."\n");
 				} //end if
 			} //end foreach
-			Smart::log_notice('Xml-String:'."\n".$xml_str."\n".'#END');
+			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				Smart::log_notice('SmartXmlParser / Debug XML-String:'."\n".$xml_str."\n".'#END');
+			} //end if
 		} //end if
 	} //end if
 	//--
-	libxml_clear_errors();
-	libxml_use_internal_errors(false);
+	@libxml_clear_errors();
+	@libxml_use_internal_errors(false);
 	//--
 	if(Smart::array_size($arr) <= 0) {
 		$arr = array('xml2array_error' => 'SmartXmlParser / Parsing ERROR');
@@ -122,7 +130,7 @@ private function FixXmlRoot($xml_str) {
 	$xml_str = (string) trim((string)preg_replace('#<\?xml (.*?)>#si', '', (string)$xml_str)); // remove the xml markup tag
 	//$xml_str = str_replace(['<'.'?', '?'.'>'], ['<!-- ', ' -->'], $xml_str); // comment out any markup tags
 	//--
-	if(!Smart::test_if_xml($xml_str)) { // fix parser bug if empty data passed
+	if(!Smart::detect_html_or_xml_tags($xml_str)) { // fix parser bug if empty data passed
 		//--
 		Smart::log_warning('SmartXmlParser / GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xml_str."\n".'#END');
 		$xml_str = '<'.'?'.'xml version="1.0" encoding="'.$this->encoding.'"'.'?'.'>'."\n".'<smart_framework_xml_data_parser_fix_tag>'."\n".'</smart_framework_xml_data_parser_fix_tag>';
@@ -212,7 +220,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160425
+ * @version     v.160811
  * @package     DATA:XML
  *
  */

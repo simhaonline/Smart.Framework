@@ -335,7 +335,7 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160526
+ * @version     v.160812
  * @package     Core
  *
  */
@@ -354,7 +354,7 @@ final class SmartValidator {
  */
 public static function regex_textrecognition_expression($y_mode) {
 	//--
-	switch(strtolower($y_mode)) {
+	switch(strtolower((string)$y_mode)) {
 		//--
 		case 'url':
 			$regex = '(http|https)(:\/\/)([^\s<>\(\)\|]*)'; 		// url recognition in a text / html code :: fixed in html <>
@@ -396,7 +396,7 @@ public static function regex_textrecognition_expression($y_mode) {
  */
 public static function regex_stringvalidation_expression($y_mode) {
 	//-- WARNING: Never use class modifiers like [:print:] with /u modifier as it fails with some versions of PHP / Regex / PCRE
-	switch(strtolower($y_mode)) {
+	switch(strtolower((string)$y_mode)) {
 		//--
 		case 'number-integer':
 			$regex = '/^([0-9\-])+$/';
@@ -428,6 +428,22 @@ public static function regex_stringvalidation_expression($y_mode) {
 		//--
 		case 'lower-unsafe-characters':
 			$regex = '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/'; // all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
+			break;
+		//-- {{{SYNC-HTML-TAGS-REGEX}}}
+		case 'tag-name':
+			$regex = 'a-z0-9\-\:'; // regex expr: the allowed characters in tag names (just for open tags ... the end tags will add / and space
+			break;
+		case 'tag-start':
+			$regex = '\<\s*?'; // regex expr: tag start
+			break;
+		case 'tag-end-start':
+			$regex = '\<\s*?/\s*?'; // regex expr: end tag start
+			break;
+		case 'tag-simple-end':
+			$regex = '\s*?\>'; // regex expr: tag end without attributes
+			break;
+		case 'tag-complex-end':
+			$regex = '\s+[^>]*?\>'; // regex expr: tag end with attributes or / (it needs at least one space after tag name)
 			break;
 		//--
 		default:

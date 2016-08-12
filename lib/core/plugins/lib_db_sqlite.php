@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160703
+ * @version 	v.160812
  * @package 	Database:SQLite
  *
  */
@@ -420,7 +420,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160703
+ * @version 	v.160812
  * @package 	Database:SQLite
  *
  */
@@ -1085,7 +1085,7 @@ public static function escape_str($db, $y_string) {
 	//--
 	self::check_connection($db);
 	//--
-	$y_string = (string) SmartUnicode::utf8_fix_charset((string)$y_string); // Fix
+	$y_string = (string) SmartUnicode::fix_charset((string)$y_string); // Fix
 	//--
 	$y_string = (string) @$db->escapeString((string)$y_string);
 	//--

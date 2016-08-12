@@ -23,12 +23,12 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 /**
- * Class: SmartHtmlParser - provides a HTML Parser that will convert HTML to a PHP array.
+ * Class: SmartHtmlParser - provides a HTML Parser and Cleaner that will sanitize and parse the HTML code.
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160213
+ * @version 	v.160812
  * @package 	DATA:HTML
  *
  */
@@ -37,21 +37,51 @@ final class SmartHtmlParser {
 	// ->
 
 //=========================================================================
-private $html = '';
-private $elements = array();
-private $el_parsed = false;
-private $comments = array();
-private $cm_parsed = false;
-private $is_std = false;
-private $is_clean = false;
+//-- parsing registers
+private $html 					= '';					// the html string
+private $elements 				= array();				// html elements array
+private $comments 				= array();				// html comments array
+//-- parsing flags
+private $el_parsed 				= false;				// init: false ; will be set to true after html elements are parsed to avoid re-parsing of elements
+private $cm_parsed 				= false;				// init: false ; will be set to true after html comments are parsed to avoid re-parsing of comments
+private $is_std 				= false;				// init: false ; will be set to true after html is standardized to avoid re-standardize
+private $is_clean 				= false;				// init: false ; will be set to true after html is cleaned to avoid re-clean
+//-- extra settings
+private $signature 				= true;					// if set to true will add the signature for the cleanup code as html comments
+private $dom_processing 		= true;					// if set to false will dissalow post-processing of html cleanup with DomDocument ; if set to true (default) if DomDocument class is available will use it for post-processing of html cleanup
+private $dom_log_errors 		= false; 				// if set to true will log LibXML -> DomDocument errors and warnings
+//-- regex expressions
+private $expr_tag_name 			= ''; 					// regex expr: the allowed characters in tag names (just for open tags ... the end tags will add / and space
+private $expr_tag_start 		= ''; 					// regex expr: tag start
+private $expr_tag_end_start 	= ''; 					// regex expr: end tag start
+private $expr_tag_simple_end 	= ''; 					// regex expr: tag end without attributes
+private $expr_tag_complex_end 	= ''; 					// regex expr: tag end with attributes or / (it needs at least one space after tag name)
+//-- regex syntax
+private $regex_tag_name 		= ''; 					// regex syntax: this is just generic as a sample, will be rewritten on constructor
+//--
 //=========================================================================
 
 
 //=========================================================================
-public function __construct($y_html='') {
+public function __construct($y_html='', $y_signature=true, $y_allow_dom_processing=true, $y_log_dom_warn_err=false) {
+
 	//--
 	$this->html = (string) $y_html;
+	$this->signature = (bool) $y_signature;
+	$this->dom_processing = (bool) $y_allow_dom_processing;
+	$this->dom_log_errors = (bool) $y_log_dom_warn_err;
 	//--
+
+	//--
+	$this->expr_tag_name 		= SmartValidator::regex_stringvalidation_expression('tag-name');
+	$this->expr_tag_start 		= SmartValidator::regex_stringvalidation_expression('tag-start');
+	$this->expr_tag_end_start 	= SmartValidator::regex_stringvalidation_expression('tag-end-start');
+	$this->expr_tag_simple_end 	= SmartValidator::regex_stringvalidation_expression('tag-simple-end');
+	$this->expr_tag_complex_end = SmartValidator::regex_stringvalidation_expression('tag-complex-end');
+	//-- {{{SYNC-HTML-TAGS-REGEX}}}
+	$this->regex_tag_name 		= '/^['.$this->expr_tag_name.']+$/si';
+	//--
+
 } //END FUNCTION
 //=========================================================================
 
@@ -124,10 +154,31 @@ public function get_std_html() {
 
 
 //=========================================================================
-public function get_clean_html($y_comments=true) {
+// TODO: add allowed tags attributes
+public function get_clean_html($y_comments=true, $y_extra_tags_remove=array(), $y_extra_tags_clean=array(), $y_allowed_tags=array()) {
 
 	//--
-	$this->clean_html($y_comments);
+	if(!Smart::detect_html_or_xml_tags((string)$this->html)) {
+		return (string) $this->html;
+	} //end if
+	//--
+
+	//--
+	if(!is_array($y_extra_tags_remove)) {
+		$y_extra_tags_remove = array();
+	} //end if
+	//--
+	if(!is_array($y_extra_tags_clean)) {
+		$y_extra_tags_clean = array();
+	} //end if
+	//--
+	if(!is_array($y_allowed_tags)) {
+		$y_allowed_tags = array();
+	} //end if
+	//--
+
+	//--
+	$this->clean_html((bool)$y_comments, (array)$y_extra_tags_remove, (array)$y_extra_tags_clean, (array)$y_allowed_tags);
 	//--
 
 	//--
@@ -145,6 +196,12 @@ public function get_clean_html($y_comments=true) {
 //=========================================================================
 private function standardize_html() {
 
+	//-- STANDARDIZE THE HTML CODE
+	// * protect against client-side scripting and html denied tags ::  the < ? ? > or < % % > tag(s) will be detected and if present, will be replaced with dummy tags to prevent code injection
+	// * remove all weird / unsafe characters (ex: non-utf8)
+	// * replace multiple spaces with just one space
+	//--
+
 	//--
 	if($this->is_std != false) {
 		return; // avoid to re-parse
@@ -158,7 +215,7 @@ private function standardize_html() {
 	//-- standardize new lines, tabs and line ends
 	$this->html = (string) str_replace(array("\0", "\r\n", "\r", ' />', '/>'), array('', "\n", "\n", '>', '>'), (string)$this->html);
 	//-- protect against server-side tags
-	$this->html = (string) str_replace(array('<'.'?', '?'.'>', '<'.'%', '%'.'>'), array('<tag-question:start', '<tag-question:end', '<tag-percent:start', '<tag-percent:end'), (string)$this->html);
+	$this->html = (string) str_replace(array('<'.'?', '?'.'>', '<'.'%', '%'.'>'), array('<tag-question:start', 'tag-question:end>', '<tag-percent:start', 'tag-percent:end>'), (string)$this->html);
 	//--
 
 	//-- standardize spaces and new lines
@@ -173,6 +230,7 @@ private function standardize_html() {
 	);
 	//--
 	$this->html = (string) preg_replace((array)array_keys((array)$arr_spaces_cleanup), (array)array_values((array)$arr_spaces_cleanup), (string)$this->html);
+	$this->html = (string) SmartUnicode::fix_charset($this->html);
 	//--
 
 } //END FUNCTION
@@ -180,13 +238,33 @@ private function standardize_html() {
 
 
 //=========================================================================
-private function clean_html($y_comments) {
+private function regex_tag($tag) {
 
-	//-- v.160204
-	// INVALID TAGS :: HTML only :: protect against client-side scripting and html denied tags
-	// NOTE: the <? tag(s) will be detected and if present, will make HIGHLIGHTCODE to prevent code injection
-	// NOTE: the <% tag will be commented :-)
-	// insensitive
+	//--
+	$tag = (string) trim((string)$tag);
+	//--
+
+	//-- {{{SYNC-HTML-TAGS-REGEX}}}
+	return array(
+		'delimiter' => '#', // these regex must be used with # delimiter
+		'tag-start' => $this->expr_tag_start.preg_quote((string)$tag, '#').$this->expr_tag_simple_end.'|'.$this->expr_tag_start.preg_quote((string)$tag, '#').$this->expr_tag_complex_end,
+		'tag-end' 	=> $this->expr_tag_end_start.preg_quote((string)$tag, '#').$this->expr_tag_simple_end.'|'.$this->expr_tag_end_start.preg_quote((string)$tag, '#').$this->expr_tag_complex_end
+	);
+	//--
+
+} //END FUNCTION
+//=========================================================================
+
+
+//=========================================================================
+private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_tags_clean=array(), $y_allowed_tags=array()) {
+
+	//-- CLEANUP DISSALOWED AND FIX INVALID HTML TAGS
+	// * it will use code standardize before to fix active PHP tags and weird characters
+	// * will convert all UTF-8 characters to the coresponding HTML-ENTITIES
+	// * will remove all tags that are unsafe like <script> or <head> and many other dissalowed unsafe tags
+	// * if allowed tags are specified they will take precedence and will be filtered via strip_tags by allowing only these tags, at the end of cleanup to be safer !
+	// * if DomDocument is detected and is allowed to be used by current settings will be used finally to do (post-processing) extra cleanup and fixes
 	//--
 
 	//--
@@ -198,11 +276,15 @@ private function clean_html($y_comments) {
 	//--
 
 	//--
-	$this->standardize_html();
+	$this->standardize_html(); // first, standardize the HTML Code
 	//--
 
 	//--
-	$arr_tags_2x_list_bad = array( // remove them and their content
+	$arr_tags_0x_list_comments = array( // {{{SYNC-COMMENTS-REGEX}}}
+		'#\<\s*?\!\-?\-?(.*?)\-?\-?\>#si' // comments (incl. invalid comments ...)
+	);
+	//--
+	$arr_tags_2x_list_bad = array( // remove tags and their content
 		'head',
 		'style',
 		'script',
@@ -221,26 +303,29 @@ private function clean_html($y_comments) {
 		'xmp',
 		'o:p'
 	);
-	$arr_tags_2x_repl_bad = array(
-		'#<\!\-\-(.*?)\-\->#si', // comments
-		'#<\! (.*?)>#si' // invalid comments
-	);
-	$arr_tags_2x_repl_good = array(
-		'<!-- SmartFramework HTML Cleaner // Comment Removed ! -->',
-		'<!-- SmartFramework HTML Cleaner // Invalid Comment Removed ! -->'
-	);
-	$arr_tags_2x_repl_egood = array(
-		''
-	);
+	if(Smart::array_size($y_extra_tags_remove) > 0) { // add extra entries such as: img, p, div, ...
+		for($i=0; $i<count($y_extra_tags_remove); $i++) {
+			if(preg_match((string)$this->regex_tag_name, (string)$y_extra_tags_remove[$i])) {
+				if(!in_array((string)$y_extra_tags_remove[$i], $arr_tags_2x_list_bad)) {
+					$arr_tags_2x_list_bad[] = (string) $y_extra_tags_remove[$i];
+				} //end if
+			} //end if
+		} //end for
+	} //end if
+	$arr_tags_2x_repl_bad = (array) $arr_tags_0x_list_comments;
+	for($i=0; $i<count($arr_tags_0x_list_comments); $i++) {
+		$arr_tags_2x_repl_good[] = '<!-- # -->'; // comment
+	} //end for
 	for($i=0; $i<count($arr_tags_2x_list_bad); $i++) {
-		$arr_tags_2x_repl_bad[] = '#<'.preg_quote((string)$arr_tags_2x_list_bad[$i]).'[^>]*?>.*?</'.preg_quote((string)$arr_tags_2x_list_bad[$i]).'[^>]*?>#si';
-		$arr_tags_2x_repl_good[] = '<!-- SmartFramework HTML Cleaner // Removed (2): ['.Smart::escape_html((string)$arr_tags_2x_list_bad[$i]).'] ! -->';
-		$arr_tags_2x_repl_egood[] = '';
+		$tmp_regex_tag = (array) $this->regex_tag((string)$arr_tags_2x_list_bad[$i]);
+		// currently if nested tags some content between those tags may remain not removed ... but that is ok as long as the tag is replaced ; possible fix: match with siU instead of si but will go ungreedy and will match all content until very last end tag ... which may remove too many content
+		$arr_tags_2x_repl_bad[] = $tmp_regex_tag['delimiter'].'('.$tmp_regex_tag['tag-start'].')'.'.*?'.'('.$tmp_regex_tag['tag-end'].')'.$tmp_regex_tag['delimiter'].'si'; // fix: paranthesis are required to correct match in this case (balanced regex)
+		$arr_tags_2x_repl_good[] = '<!-- '.Smart::escape_html((string)$arr_tags_2x_list_bad[$i]).'/ -->';
 	} //end if
 	//--
 
 	//--
-	$arr_tags_1x_list_bad = (array) array_merge((array)$arr_tags_2x_list_bad, array( // remove them and their content
+	$arr_tags_1x_list_bad = (array) array_merge((array)$arr_tags_2x_list_bad, array( // remove these tags but keep their content
 		'!doctype',
 		'html',
 		'body',
@@ -252,27 +337,28 @@ private function clean_html($y_comments) {
 		'plaintext',
 		'marquee'
 	));
+	if(Smart::array_size($y_extra_tags_clean) > 0) { // add extra entries such as: img, p, div, ...
+		for($i=0; $i<count($y_extra_tags_clean); $i++) {
+			if(preg_match((string)$this->regex_tag_name, (string)$y_extra_tags_clean[$i])) {
+				if(!in_array((string)$y_extra_tags_clean[$i], $arr_tags_1x_list_bad)) {
+					$arr_tags_1x_list_bad[] = (string) $y_extra_tags_clean[$i];
+				} //end if
+			} //end if
+		} //end for
+	} //end if
 	$arr_tags_1x_repl_bad = array(
 	);
 	$arr_tags_1x_repl_good = array(
 	);
-	$arr_tags_1x_repl_egood = array(
-	);
 	for($i=0; $i<count($arr_tags_1x_list_bad); $i++) {
-		$arr_tags_1x_repl_bad[] = '#<'.preg_quote((string)$arr_tags_1x_list_bad[$i]).'[^>]*?>#si';
-		$arr_tags_1x_repl_bad[] = '#</'.preg_quote((string)$arr_tags_1x_list_bad[$i]).'[^>]*?>#si';
-		$arr_tags_1x_repl_good[] = '<!-- SmartFramework HTML Cleaner // Removed (1): ['.Smart::escape_html((string)$arr_tags_1x_list_bad[$i]).'] ! -->';
-		$arr_tags_1x_repl_good[] = '<!-- SmartFramework HTML Cleaner // Removed (1): [/'.Smart::escape_html((string)$arr_tags_1x_list_bad[$i]).'] ! -->';
-		$arr_tags_1x_repl_egood[] = '';
-		$arr_tags_1x_repl_egood[] = '';
+		$tmp_regex_tag = (array) $this->regex_tag((string)$arr_tags_1x_list_bad[$i]);
+		$arr_tags_1x_repl_bad[] = $tmp_regex_tag['delimiter'].$tmp_regex_tag['tag-start'].$tmp_regex_tag['delimiter'].'si';
+		$arr_tags_1x_repl_bad[] = $tmp_regex_tag['delimiter'].$tmp_regex_tag['tag-end'].$tmp_regex_tag['delimiter'].'si';
+		$arr_tags_1x_repl_good[] = '<!-- '.Smart::escape_html((string)$arr_tags_1x_list_bad[$i]).' -->';
+		$arr_tags_1x_repl_good[] = '<!-- /'.Smart::escape_html((string)$arr_tags_1x_list_bad[$i]).' -->';
 	} //end if
 	//--
 
-	//--
-	if($y_comments === false) {
-		$arr_tags_2x_repl_good = $arr_tags_2x_repl_egood;
-		$arr_tags_1x_repl_good = $arr_tags_1x_repl_egood;
-	} //end if
 	//--
 	$arr_all_repl_bad  = (array) array_merge((array)$arr_tags_2x_repl_bad,  (array)$arr_tags_1x_repl_bad);
 	$arr_all_repl_good = (array) array_merge((array)$arr_tags_2x_repl_good, (array)$arr_tags_1x_repl_good);
@@ -314,7 +400,7 @@ private function clean_html($y_comments) {
 				$this->elements[$i] = strtolower((string)$tmp_arr[0]); // recompose the tags
 				foreach($tmp_parse_attr as $key => $val) {
 					$tmp_is_valid_attr = true;
-					if(!preg_match('/^[a-z0-9\-\:]+$/si', (string)$key)) { // {{{SYNC-TAGS-ATTRIBUTES-CHARS}}}
+					if(!preg_match((string)$this->regex_tag_name, (string)$key)) {
 						$tmp_is_valid_attr = false; // remove invalid attributes
 					} elseif(substr((string)trim((string)$key), 0, 2) == 'on') {
 						$tmp_is_valid_attr = false; // remove attributes starting with 'on' (all JS Events)
@@ -337,7 +423,7 @@ private function clean_html($y_comments) {
 				} //end if
 				$tmp_arr = array();
 				//--
-			} elseif(preg_match('/^[<a-z0-9\-\:\/ >]+$/si', (string)$code)) { // simple tags {{{SYNC-TAGS-ATTRIBUTES-CHARS}}}
+			} elseif(preg_match('/^[<'.$this->expr_tag_name.'\/ >]+$/si', (string)$code)) { // simple tags (includding tags like <br />) ; needs extra / and space
 				//--
 				$this->elements[$i] = strtolower((string)$code);
 				if($tag_have_endline) {
@@ -355,7 +441,102 @@ private function clean_html($y_comments) {
 	//--
 
 	//--
-	$this->html = "\n".'<!-- Smart.HTML/Cleaner [Start] -->'."\n".(string) implode('', (array)$this->elements)."\n".'<!-- Smart.HTML/Cleaner [END] -->'."\n";
+	$this->html = (string) SmartUnicode::convert_charset((string)implode('', (array)$this->elements), 'UTF-8', 'HTML-ENTITIES');
+	//--
+	if($y_comments === false) {
+		$this->html = preg_replace(
+			(array) $arr_tags_0x_list_comments,
+			'',
+			$this->html
+		);
+	} //end if
+	//--
+
+	//--
+	if(Smart::array_size($y_allowed_tags) > 0) {
+		$arr_striptags_allow = array();
+		for($i=0; $i<count($y_allowed_tags); $i++) {
+			if(preg_match((string)$this->regex_tag_name, (string)$y_allowed_tags[$i])) {
+				if(!in_array((string)$y_allowed_tags[$i], (array)$arr_striptags_allow)) { // despite if a tag is specified as unallowed, if allowed here will take precedence
+					$arr_striptags_allow[] = '<'.$y_allowed_tags[$i].'>';
+				} //end if
+			} //end if
+		} //end for
+		if(Smart::array_size($arr_striptags_allow) > 0) {
+			//print_r($arr_striptags_allow);
+			$str_striptags_allow = (string) implode(',', (array)$arr_striptags_allow);
+			//echo $str_striptags_allow;
+			$this->html = (string) @strip_tags($this->html, (string)$str_striptags_allow);
+		} //end if
+	} //end if
+	//--
+
+	//--
+	$use_dom = false;
+	//--
+	if(($this->dom_processing !== false) AND (class_exists('DOMDocument'))) {
+		//--
+		$use_dom = true;
+		//--
+		@libxml_use_internal_errors(true);
+		@libxml_clear_errors();
+		//--
+		$dom = new DOMDocument(5, (string)SMART_FRAMEWORK_CHARSET);
+		//--
+		$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
+		$dom->strictErrorChecking = false; 	// do not throw errors
+		$dom->preserveWhiteSpace = true; 	// do not remove redundant white space
+		$dom->formatOutput = true; 			// try to format pretty-print the code
+		$dom->resolveExternals = false; 	// disable load external entities from a doctype declaration
+		$dom->validateOnParse = false; 		// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
+		//--
+		@$dom->loadHTML(
+			(string) $this->html,
+			LIBXML_ERR_NONE | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED // {{{SYNC-LIBXML-OPTIONS}}} :: previous was LIBXML_ERR_WARNING
+		);
+		//--
+		$this->html = (string) @$dom->saveHTML(); //print_r($dom->doctype);
+		unset($dom);
+		//-- fixes: normally with the above options will add no doctype or html / body tags, but use it just in case ...
+		$this->html = (string) preg_replace('~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', $this->html); // or explode by body to get content
+		//-- log errors if any
+		if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') || ($this->dom_log_errors === true)) {
+			$errors = (array) @libxml_get_errors();
+			if(Smart::array_size($errors) > 0) {
+				foreach($errors as $error) {
+					if(is_object($error)) {
+						Smart::log_notice('SmartHtmlParser NOTICE: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n");
+					} //end if
+				} //end foreach
+				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					Smart::log_notice('SmartHtmlParser / Debug HTML-String:'."\n".$this->html."\n".'#END');
+				} //end if
+			} //end if
+		} //end if
+		//--
+		@libxml_clear_errors();
+		@libxml_use_internal_errors(false);
+		//--
+	} //end if
+	//--
+
+	//--
+	if($this->signature) {
+		if($use_dom) {
+		$start_signature = '<!-- Smart/HTML.Cleaner [@] -->';
+		$end_signature = '<!-- [/@] Smart/HTML.Cleaner -->';
+		} else {
+			$start_signature = '<!-- Smart/HTML.Cleaner [#] -->';
+			$end_signature = '<!-- [/#] Smart/HTML.Cleaner -->';
+		} //end if else
+	} else {
+		$start_signature = '';
+		$end_signature = '';
+	} //end if else
+	//--
+
+	//--
+	$this->html = (string) $start_signature.trim($this->html).$end_signature;
 	//--
 
 } //END FUNCTION
@@ -363,12 +544,45 @@ private function clean_html($y_comments) {
 
 
 //=========================================================================
+/*
+// https://gist.github.com/Xeoncross/5118201
+public function clean_dom_html($html, array $whitelist) {
+	libxml_use_internal_errors(true) AND libxml_clear_errors();
+	if(is_object($html)) {
+		if ($html->hasChildNodes()) {
+			foreach (range($html->childNodes->length - 1, 0) as $i) {
+				$this->clean_dom_html($html->childNodes->item($i), $whitelist);
+			}
+		}
+		if ( ! in_array($html->nodeName, $whitelist)) {
+			$fragment = $html->ownerDocument->createDocumentFragment();
+			while ($html->childNodes->length > 0) {
+			    $fragment->appendChild($html->childNodes->item(0));
+			}
+			return $html->parentNode->replaceChild($fragment, $html);
+		}
+		while ($html->hasAttributes()) {
+			$html->removeAttributeNode($html->attributes->item(0));
+		}
+	} else if($dom = DOMDocument::loadHTML($html)) {
+		$this->clean_dom_html($dom->documentElement, $whitelist);
+		return preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i', '', $dom->saveHTML());
+	}
+} //END FUNCTION
+*/
+//=========================================================================
+
+
+//=========================================================================
 private function parse_comments() {
+
 	//--
 	if($this->cm_parsed != false) {
 		return; // avoid to re-parse
 	} //end if
 	$this->cm_parsed = true;
+	//--
+
 	//--
 	$this->comments = array(); // init
 	//--
@@ -377,13 +591,14 @@ private function parse_comments() {
 	} //end if
 	//--
 	$rcomments = array();
-	if(preg_match_all('#<\!--(.*?)-->#si', (string)$this->html, $rcomments)) {
+	if(preg_match_all('#\<\s*?\!\-\-(.*?)\-\-\>#si', (string)$this->html, $rcomments)) { // {{{SYNC-COMMENTS-REGEX}}} ; this will get just VALID comments
 		if(is_array($rcomments)) {
 			$this->comments['comment-keys'] = (array) $rcomments[1];
 			$this->comments['comment-tags'] = (array) $rcomments[0];
 		} //end if
 	} //end if
 	//--
+
 } //END FUNCTION
 //=========================================================================
 
@@ -391,17 +606,22 @@ private function parse_comments() {
 //=========================================================================
 // use no SmartUnicode, tag names are always non-unicode
 private function parse_elements() {
+
 	//--
 	if($this->el_parsed != false) {
 		return; // avoid to re-parse
 	} //end if
 	$this->el_parsed = true;
 	//--
+
+	//--
 	$this->elements = array(); // init
 	//--
 	if((string)$this->html == '') {
 		return;
 	} //end if
+	//--
+
 	//--
 	$ignorechar = false;
 	$intag = false;
@@ -451,16 +671,21 @@ private function parse_elements() {
 		} //end for
 	} //end while
 	//--
+
 } //END FUNCTION
 //=========================================================================
 
 
 //=========================================================================
 private function get_attributes($html) {
-	//-- {{{SYNC-TAGS-ATTRIBUTES-CHARS}}}
-	$attr_with_dbl_quote = '(([a-z0-9\-\:]+)\s*=\s*"([^"]*)")*';
-	$attr_with_quote = '(([a-z0-9\-\:]+)\s*=\s*\'([^\']*)\')*';
-	$attr_without_quote = '(([a-z0-9\-\:]+)\s*=([^\s>\/]*))*';
+
+	//--
+	$attr_with_dbl_quote = '((['.$this->expr_tag_name.']+)\s*=\s*"([^"]*)")*';
+	$attr_with_quote = '((['.$this->expr_tag_name.']+)\s*=\s*\'([^\']*)\')*';
+	$attr_without_quote = '((['.$this->expr_tag_name.']+)\s*=([^\s>\/]*))*';
+	//--
+
+	//--
 	$attr = array();
 	preg_match_all('/'.$attr_with_dbl_quote.'|'.$attr_with_quote.'|'.$attr_without_quote.'/si', (string)$html, $attr);
 	//--
@@ -484,8 +709,11 @@ private function get_attributes($html) {
 		} //end foreach
 	} //end if
 	//--
+
+	//--
 	return (array) $res;
 	//--
+
 } //END FUNCTION
 //=========================================================================
 
@@ -502,6 +730,7 @@ $html = <<<HTML_CODE
 HTML_CODE;
 $obj = new SmartHtmlParser($html);
 print_r($obj->get_tags("img"));
+echo $obj->get_clean_html();
 ********************/
 //=========================================================================
 

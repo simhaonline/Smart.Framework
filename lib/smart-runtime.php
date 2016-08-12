@@ -30,6 +30,10 @@ if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need 
 	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.4 / 5.5 / 5.6 / 7.0 / 7.1 or later');
 } //end if
 //--
+if(!function_exists('preg_match')) {
+	die('PHP PCRE Extension is missing. It is needed for Regular Expression ...');
+} //end if
+//--
 
 //--
 if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_RELEASE_VERSION') || defined('SMART_FRAMEWORK_RELEASE_URL') || defined('SMART_FRAMEWORK_RELEASE_MIDDLEWARE')) {
@@ -37,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.2.3.5.2'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.08.09'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.08.10'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
