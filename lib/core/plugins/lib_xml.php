@@ -44,7 +44,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.160811
+ * @version     v.160816
  * @package     DATA:XML
  *
  */
@@ -91,11 +91,11 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 		@simplexml_load_string(
 			$this->FixXmlRoot((string)$xml_str),
 			'SimpleXMLElement',
-			LIBXML_ERR_NONE | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES // {{{SYNC-LIBXML-OPTIONS}}} :: previous was LIBXML_ERR_WARNING
+			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES // {{{SYNC-LIBXML-OPTIONS}}}
 		)
 	);
 	//-- log errors if any
-	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') || ($log_parse_err_warns === true) || (Smart::array_size($arr) <= 0)) {
+	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true) OR (Smart::array_size($arr) <= 0)) {
 		$errors = (array) @libxml_get_errors();
 		if(Smart::array_size($errors) > 0) {
 			foreach($errors as $error) {
@@ -220,7 +220,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160811
+ * @version     v.160816
  * @package     DATA:XML
  *
  */

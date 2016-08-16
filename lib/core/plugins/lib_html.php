@@ -28,7 +28,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160812
+ * @version 	v.160816
  * @package 	DATA:HTML
  *
  */
@@ -492,7 +492,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 		//--
 		@$dom->loadHTML(
 			(string) $this->html,
-			LIBXML_ERR_NONE | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED // {{{SYNC-LIBXML-OPTIONS}}} :: previous was LIBXML_ERR_WARNING
+			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED // {{{SYNC-LIBXML-OPTIONS}}}
 		);
 		//--
 		$this->html = (string) @$dom->saveHTML(); //print_r($dom->doctype);
@@ -500,7 +500,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 		//-- fixes: normally with the above options will add no doctype or html / body tags, but use it just in case ...
 		$this->html = (string) preg_replace('~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', $this->html); // or explode by body to get content
 		//-- log errors if any
-		if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') || ($this->dom_log_errors === true)) {
+		if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($this->dom_log_errors === true) OR ((string)$this->html == '')) {
 			$errors = (array) @libxml_get_errors();
 			if(Smart::array_size($errors) > 0) {
 				foreach($errors as $error) {
