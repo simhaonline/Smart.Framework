@@ -44,7 +44,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.160816
+ * @version     v.160817
  * @package     DATA:XML
  *
  */
@@ -91,7 +91,7 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 		@simplexml_load_string(
 			$this->FixXmlRoot((string)$xml_str),
 			'SimpleXMLElement',
-			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES // {{{SYNC-LIBXML-OPTIONS}}}
+			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
 		)
 	);
 	//-- log errors if any
@@ -220,7 +220,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160816
+ * @version     v.160817
  * @package     DATA:XML
  *
  */
