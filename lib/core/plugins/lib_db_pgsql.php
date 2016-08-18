@@ -8,6 +8,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 } //end if
 //-----------------------------------------------------
 
+@ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order to work with advanced PostgreSQL Notifications (example: write ignores)
+
 // NOTES ABOUT REUSING CONNECTIONS:
 //		* BY DEFAULT the PHP PgSQL driver reuses connections if the same host:port@dbname#username are used
 //		* this is not enough since Smart.Framework uses also the concept of settings like UTF8 and transaction mode
@@ -64,7 +66,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160817
+ * @version 	v.160817.r2
  * @package 	Database:PostgreSQL
  *
  */
@@ -130,9 +132,9 @@ public static function server_connect($yhost, $yport, $ydb, $yuser, $ypass, $yti
 		return;
 	} //end if
 	//--
-	if((string)ini_get('pgsql.ignore_notice') != '0') {
+	if((string)ini_get('pgsql.ignore_notice') != '0') { // {{{SYNC-PGSQL-NOTIF-CHECK}}}
 		self::error('[PRE-CONNECT]', 'PHP-Inits-PgSQL', 'Check PgSQL PHP.INI Settings', 'SETTINGS: PostgreSQL Notifications need to be ENABLED in PHP.INI !', 'SET in PHP.INI this: pgsql.ignore_notice = 0');
-		return array($message, 0);
+		return;
 	} //end if
 	//--
 
@@ -1169,14 +1171,15 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 
 //======================================================
 /**
- * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
- * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ...
+ * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE or PostgreSQL 9.5/later ON CONFLICT DO NOTHING statements, but it can catch UNIQUE violations on both: INSERT / UPDATE statements and also can catch FOREIGN KEY violations).
+ * This function is intended to be used for write type queries: INSERT ; UPDATE in a safe way as a write ignore (returning the # of affected rows or zero if an exception raised).
+ * The catch of PostgreSQL exceptions are handled completely by this function so there is no need for a try/catch in PHP.
  *
  * IMPORTANT:
- * For PostgreSQL versions 9.5 or later will use the new UPSERT syntax as: ON CONFLICT DO NOTHING ...
- * For PostgreSQL versions older than 9.5 this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
- * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a block.
+ * This function needs the pgsql notice message tracking enabled in PHP (NOT IGNORED); This must be set in php.ini (pgsql.ignore_notice = 0).
+ * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a DO block.
  * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
+ * It cannot handle special statements such as: BEGIN, START TRANSACTION, COMMIT, ROLLBACK or SET.
  *
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
@@ -1201,7 +1204,7 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 	$transact_status = @pg_transaction_status($y_connection);
 	if(($transact_status === PGSQL_TRANSACTION_INTRANS) OR ($transact_status === PGSQL_TRANSACTION_INERROR)) {
 		self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: Write Ignore cannot be used inside Transaction Blocks ...', $queryval, '');
-		return array($message, 0);
+		return array('errortransact: '.'Write Ignore cannot be used inside Transaction Blocks', 0);
 	} //end if
 	*/
 	//--
@@ -1227,12 +1230,13 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 	//--
 
 	//--
-	if(version_compare(self::check_server_version($y_connection), '9.5') >= 0) {
+	/* At the moment, in PgSQL 9.5 only works ON CONFLICT DO NOTHING for INSERT (for UPDATE statements fails ...)
+	if(version_compare(self::check_server_version($y_connection), '9.6') >= 0) {
 		//--
 		$xmode = 'affected';
 		$vmode = '[ON CONFLICT DO NOTHING]';
 		//--
-		$prep_query = (string) $queryval.' ON CONFLICT DO NOTHING RETURNING *'; // fix for PostgreSQL >= 9.5
+		$prep_query = (string) $queryval.' ON CONFLICT DO NOTHING'; // fix for PostgreSQL >= 9.5 :: RETURNING *
 		//--
 		if($use_param_query === true) {
 			$result = @pg_query_params($y_connection, $prep_query, $params_or_title); // NOTICE: parameters are only allowed in ONE command not combined statements
@@ -1241,36 +1245,43 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 		} //end if else
 		//--
 	} else {
-		//--
-		$xmode = 'notice';
-		$vmode = '[Catch EXCEPTION]';
-		//--
-		if($use_param_query === true) {
-			$queryval = (string) self::prepare_param_query((string)$queryval, (array)$params_or_title, $y_connection);
-		} //end if
-		//--
-		$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
-		//--
-		$prep_query = (string) '
-		DO LANGUAGE plpgsql
-		$'.$unique_id.'$
-		DECLARE affected_rows INTEGER;
-		BEGIN
-			-- do the query an safe catch exceptions (unique key, foreign key)
-				affected_rows := 0;
-		'."\t\t".trim(rtrim($queryval, ';')).';'.'
-				GET DIAGNOSTICS affected_rows = ROW_COUNT;
-				RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #%\', affected_rows;
-				RETURN;
-			EXCEPTION
-				WHEN unique_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
-		END
-		$'.$unique_id.'$;
-		'; // WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\'; -- this have been disabled to make it the same for pgsql < 9.5 and 9.5 or later versions ...
-		//--
-		$result = @pg_query($y_connection, $prep_query);
-		//--
-	} //end if else
+	*/
+	//--
+	if((string)ini_get('pgsql.ignore_notice') != '0') { // {{{SYNC-PGSQL-NOTIF-CHECK}}}
+		self::error($y_connection, 'WRITE-IG-DATA', 'Check PgSQL PHP.INI Settings', 'SETTINGS: PostgreSQL Notifications need to be ENABLED in PHP.INI !', 'SET in PHP.INI this: pgsql.ignore_notice = 0');
+		return array('errorinits: PostgreSQL Notifications need to be ENABLED in PHP.INI', 0);
+	} //end if
+	//--
+	$xmode = 'notice';
+	$vmode = '[Catch EXCEPTION on Violations for: Unique / Foreign Key]';
+	//--
+	if($use_param_query === true) {
+		$queryval = (string) self::prepare_param_query((string)$queryval, (array)$params_or_title, $y_connection);
+	} //end if
+	//--
+	$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
+	//--
+	$prep_query = (string) '
+	DO LANGUAGE plpgsql
+	$'.$unique_id.'$
+	DECLARE affected_rows BIGINT;
+	BEGIN
+		-- do the query an safe catch exceptions (unique key, foreign key)
+			affected_rows := 0;
+	'."\t\t".trim(rtrim($queryval, ';')).';'.'
+			GET DIAGNOSTICS affected_rows = ROW_COUNT;
+			RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #%\', affected_rows;
+			RETURN;
+		EXCEPTION
+			WHEN unique_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
+			WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\'; -- this is a different behaviour than ON CONFLICT DO NOTHING in PgSQL 9.5 or later versions ...
+	END
+	$'.$unique_id.'$;
+	';
+	//--
+	$result = @pg_query($y_connection, $prep_query);
+	//--
+	//} //end if else
 	//--
 
 	//--
@@ -1279,11 +1290,11 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 	if(!$result) {
 		$error = 'Query FAILED:'."\n".@pg_last_error($y_connection);
 	} else {
-		if((string)$xmode == 'notice') {
-			$affected = (int) self::get_notice_smart_affected_rows(@pg_last_notice($y_connection)); // in this case we can only monitor affected rows via a custom notice
-		} else { // affected
-			$affected = @pg_affected_rows($result); // for PostgreSQL >= 9.5
-		} //end if else
+		//if((string)$xmode == 'notice') {
+		$affected = (int) self::get_notice_smart_affected_rows(@pg_last_notice($y_connection)); // in this case we can only monitor affected rows via a custom notice (the only possible way to return something from anonymous pgsql functions ...)
+		//} else { // affected
+		//	$affected = @pg_affected_rows($result); // for PostgreSQL >= 9.5
+		//} //end if else
 	} //end if else
 	//--
 
@@ -1306,11 +1317,11 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 		if((strtoupper(substr(trim($queryval), 0, 5)) == 'BEGIN') OR (strtoupper(substr(trim($queryval), 0, 17)) == 'START TRANSACTION') OR (strtoupper(substr(trim($queryval), 0, 6)) == 'COMMIT') OR (strtoupper(substr(trim($queryval), 0, 8)) == 'ROLLBACK')) {
 			// ERROR
 			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle TRANSACTION Specific Statements ...', $queryval, $the_query_title);
-			return array($message, 0);
+			return array('errorsqlstatement: '.'This function cannot handle TRANSACTION Specific Statements', 0);
 		} elseif(strtoupper(substr(trim($queryval), 0, 4)) == 'SET ') {
 			// ERROR
 			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle SET Statements ...', $queryval, $the_query_title);
-			return array($message, 0);
+			return array('errorsqlstatement: '.'This function cannot handle SET Statements', 0);
 		} else {
 			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
 				'type' => 'write',
@@ -2175,7 +2186,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160817
+ * @version 	v.160817.r2
  * @package 	Database:PostgreSQL
  *
  */
@@ -2426,15 +2437,15 @@ public function write_data($queryval, $params_or_title='') {
 
 
 /**
- * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
- * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ...
- * This function cannot be used with params ($1, ... $n) for versions older than 9.5 as they are not supported by PostgreSQL syntax inside a stored procedure.
+ * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE or PostgreSQL 9.5/later ON CONFLICT DO NOTHING statements, but it can catch UNIQUE violations on both: INSERT / UPDATE statements and also can catch FOREIGN KEY violations).
+ * This function is intended to be used for write type queries: INSERT ; UPDATE in a safe way as a write ignore (returning the # of affected rows or zero if an exception raised).
+ * The catch of PostgreSQL exceptions are handled completely by this function so there is no need for a try/catch in PHP.
  *
  * IMPORTANT:
- * For PostgreSQL versions 9.5 or later will use the new UPSERT syntax as: ON CONFLICT DO NOTHING ...
- * For PostgreSQL versions older than 9.5 this function needs the pgsql notice message tracking enabled - NOT IGNORED in php.ini (pgsql.ignore_notice = 0).
- * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a block.
+ * This function needs the pgsql notice message tracking enabled in PHP (NOT IGNORED); This must be set in php.ini (pgsql.ignore_notice = 0).
+ * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a DO block.
  * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
+ * It cannot handle special statements such as: BEGIN, START TRANSACTION, COMMIT, ROLLBACK or SET.
  *
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging

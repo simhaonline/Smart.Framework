@@ -199,11 +199,9 @@ ini_set('session.hash_bits_per_character', '5'); 							// session mode using ch
 ini_set('session.hash_function', 'sha512');									// set session hash to sha512 :: (only available since PHP 5.3)
 ini_set('session.serialize_handler', 'php');								// use php (default) ; wddx can be buggy
 //-- check magic quotes runtime
-// no more necessary since PHP 5.4
-//-- check if suhoshin enabled (not supported)
-// no more necessary since PHP 5.4 but using it may break this app working with large data packets or corrupt session data
-//-- specific settings (PgSQL) - DO NOT CHANGE !
-ini_set('pgsql.ignore_notice', '0');										// this is REQUIRED to be set to 0 in order to work with advanced PostgreSQL Notifications (example: write ignores)
+// no more necessary since PHP 5.4, it was removed
+//-- check if suhoshin enabled (suhoshin patch breaks a lot of functionality in latest PHP version, thus is not supported ... use it on your own risk !! ; example: it may break this app when working with large data packets or even corrupt session data or unicode strings)
+// no more necessary to check as since PHP 5.4 was no more includded by default on popular distros
 //----------------------------------------
 
 //---------------------------------------- security: avoid load this multiple times
