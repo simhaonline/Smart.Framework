@@ -64,7 +64,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160812
+ * @version 	v.160817
  * @package 	Database:PostgreSQL
  *
  */
@@ -557,10 +557,8 @@ public static function count_data($queryval, $params_or_title='', $y_connection=
 
 	//--
 	$use_param_query = false;
-	if(is_array($params_or_title)) {
-		if(Smart::array_size($params_or_title) > 0) {
-			$use_param_query = true;
-		} //end if
+	if(Smart::array_size($params_or_title) > 0) {
+		$use_param_query = true;
 	} //end if
 	//--
 	if($use_param_query === true) {
@@ -670,10 +668,8 @@ public static function read_data($queryval, $params_or_title='', $y_connection='
 
 	//--
 	$use_param_query = false;
-	if(is_array($params_or_title)) {
-		if(Smart::array_size($params_or_title) > 0) {
-			$use_param_query = true;
-		} //end if
+	if(Smart::array_size($params_or_title) > 0) {
+		$use_param_query = true;
 	} //end if
 	//--
 	if($use_param_query === true) {
@@ -792,10 +788,8 @@ public static function read_adata($queryval, $params_or_title='', $y_connection=
 
 	//--
 	$use_param_query = false;
-	if(is_array($params_or_title)) {
-		if(Smart::array_size($params_or_title) > 0) {
-			$use_param_query = true;
-		} //end if
+	if(Smart::array_size($params_or_title) > 0) {
+		$use_param_query = true;
 	} //end if
 	//--
 	if($use_param_query === true) {
@@ -933,10 +927,8 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
 
 	//--
 	$use_param_query = false;
-	if(is_array($params_or_title)) {
-		if(Smart::array_size($params_or_title) > 0) {
-			$use_param_query = true;
-		} //end if
+	if(Smart::array_size($params_or_title) > 0) {
+		$use_param_query = true;
 	} //end if
 	//--
 	if($use_param_query === true) {
@@ -1069,10 +1061,8 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 
 	//--
 	$use_param_query = false;
-	if(is_array($params_or_title)) {
-		if(Smart::array_size($params_or_title) > 0) {
-			$use_param_query = true;
-		} //end if
+	if(Smart::array_size($params_or_title) > 0) {
+		$use_param_query = true;
 	} //end if
 	//--
 	if($use_param_query === true) {
@@ -1181,7 +1171,6 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 /**
  * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE statement).
  * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ...
- * This function cannot be used with params ($1, ... $n) for versions older than 9.5 as they are not supported by PostgreSQL syntax inside a stored procedure.
  *
  * IMPORTANT:
  * For PostgreSQL versions 9.5 or later will use the new UPSERT syntax as: ON CONFLICT DO NOTHING ...
@@ -1190,11 +1179,11 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
  * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
  *
  * @param STRING $queryval						:: the query
- * @param STRING $querytitle 					:: *optional* query title for easy debugging (no parameters are allowed in this case)
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
  * @param RESOURCE $y_connection				:: the connection
  * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
  */
-public static function write_igdata($queryval, $querytitle='', $y_connection='DEFAULT') {
+public static function write_igdata($queryval, $params_or_title='', $y_connection='DEFAULT') {
 
 	//==
 	$y_connection = self::check_connection($y_connection, 'WRITE-IG-DATA');
@@ -1211,7 +1200,7 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 	/* PRE-CHECK (DO NOT ALLOW IN TRANSACTION BLOCKS) - No More Necessary !!, now can be safe used also in transactions as the exceptions are catch in the DO block
 	$transact_status = @pg_transaction_status($y_connection);
 	if(($transact_status === PGSQL_TRANSACTION_INTRANS) OR ($transact_status === PGSQL_TRANSACTION_INERROR)) {
-		self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: Write Ignore cannot be used inside Transaction Blocks ...', $queryval, $querytitle);
+		self::error($y_connection, 'WRITE-IG-DATA', 'ERROR: Write Ignore cannot be used inside Transaction Blocks ...', $queryval, '');
 		return array($message, 0);
 	} //end if
 	*/
@@ -1225,9 +1214,16 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 	//--
 
 	//--
-	if(is_array($querytitle)) {
-		$querytitle = '';
+	$use_param_query = false;
+	if((strpos((string)$queryval, '$') !== false) AND (Smart::array_size($params_or_title) > 0)) {
+		$use_param_query = true;
 	} //end if
+	//--
+	if($use_param_query === true) {
+		$the_query_title = '';
+	} else {
+		$the_query_title = (string) $params_or_title;
+	} //end if else
 	//--
 
 	//--
@@ -1236,16 +1232,26 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 		$xmode = 'affected';
 		$vmode = '[ON CONFLICT DO NOTHING]';
 		//--
-		$prep_query = $queryval.' ON CONFLICT DO NOTHING RETURNING *'; // fix for PostgreSQL >= 9.5
+		$prep_query = (string) $queryval.' ON CONFLICT DO NOTHING RETURNING *'; // fix for PostgreSQL >= 9.5
+		//--
+		if($use_param_query === true) {
+			$result = @pg_query_params($y_connection, $prep_query, $params_or_title); // NOTICE: parameters are only allowed in ONE command not combined statements
+		} else {
+			$result = @pg_query($y_connection, $prep_query);
+		} //end if else
 		//--
 	} else {
 		//--
 		$xmode = 'notice';
 		$vmode = '[Catch EXCEPTION]';
 		//--
+		if($use_param_query === true) {
+			$queryval = (string) self::prepare_param_query((string)$queryval, (array)$params_or_title, $y_connection);
+		} //end if
+		//--
 		$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
 		//--
-		$prep_query = '
+		$prep_query = (string) '
 		DO LANGUAGE plpgsql
 		$'.$unique_id.'$
 		DECLARE affected_rows INTEGER;
@@ -1260,15 +1266,11 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 				WHEN unique_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\';
 		END
 		$'.$unique_id.'$;
-		';
-		// WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\'; -- this have been disabled to make it the same for pgsql < 9.5 and 9.5 or later versions ...
+		'; // WHEN foreign_key_violation THEN RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #0\'; -- this have been disabled to make it the same for pgsql < 9.5 and 9.5 or later versions ...
+		//--
+		$result = @pg_query($y_connection, $prep_query);
 		//--
 	} //end if else
-	//--
-
-	//--
-	$the_query_title = (string) $querytitle;
-	$result = @pg_query($y_connection, $prep_query);
 	//--
 
 	//--
@@ -1303,11 +1305,11 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 		//--
 		if((strtoupper(substr(trim($queryval), 0, 5)) == 'BEGIN') OR (strtoupper(substr(trim($queryval), 0, 17)) == 'START TRANSACTION') OR (strtoupper(substr(trim($queryval), 0, 6)) == 'COMMIT') OR (strtoupper(substr(trim($queryval), 0, 8)) == 'ROLLBACK')) {
 			// ERROR
-			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle TRANSACTION Specific Statements ...', $queryval, $querytitle);
+			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle TRANSACTION Specific Statements ...', $queryval, $the_query_title);
 			return array($message, 0);
 		} elseif(strtoupper(substr(trim($queryval), 0, 4)) == 'SET ') {
 			// ERROR
-			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle SET Statements ...', $queryval, $querytitle);
+			self::error($y_connection, 'WRITE-IG-DATA '.$vmode, 'ERROR: This function cannot handle SET Statements ...', $queryval, $the_query_title);
 			return array($message, 0);
 		} else {
 			SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
@@ -1329,7 +1331,7 @@ public static function write_igdata($queryval, $querytitle='', $y_connection='DE
 		//--
 		$message = 'errorsqlwriteoperation: '.$error;
 		//--
-		self::error($y_connection, 'WRITE-IG-DATA '.$vmode, $error, $queryval, $querytitle);
+		self::error($y_connection, 'WRITE-IG-DATA '.$vmode, $error, $queryval, $the_query_title);
 		return array($message, 0);
 		//--
 	} else {
@@ -1509,35 +1511,80 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
  * @param RESOURCE $y_connection 				:: the connection to pgsql server
  * @return STRING								:: The SQL processed (partial/full) Statement
  */
-public static function prepare_param_query($query, $replacements_arr, $y_connection='DEFAULT') {
+public static function prepare_param_query($query, $replacements_arr, $y_connection='DEFAULT') { // {{{SYNC-SQL-PARAM-QUERY}}}
 	//--
 	if(!is_string($query)) {
 		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), print_r($replacements_arr,1));
-		return ''; // single quote is not allowed
+		return ''; // query must be a string
 	} //end if
 	//--
-	if(stripos($query, "'") !== false) {
+	if((string)trim((string)$query) == '') {
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is empty !', (string)$query, print_r($replacements_arr,1));
+		return ''; // empty query not allowed
+	} //end if
+	//--
+	if(strpos($query, "'") !== false) { // this must be avoided as below will be exploded by ? thus if a ? is inside '' this is a problem ...
 		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query cannot contain single quotes !', (string)$query, print_r($replacements_arr,1));
 		return ''; // single quote is not allowed
 	} //end if
 	//--
 	if(!is_array($replacements_arr)) {
 		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, print_r($replacements_arr,1));
-		return ''; // single quote is not allowed
+		return ''; // replacements must be an array
 	} //end if
 	//--
 	$out_query = '';
 	//--
-	if(stripos($query, '?') !== false) {
+	if(strpos((string)$query, '?') !== false) {
 		//--
-		$expr_arr = explode('?', $query);
+		$expr_arr = (array) explode('?', (string)$query);
 		$expr_count = count($expr_arr);
 		//--
 		for($i=0; $i<$expr_count; $i++) {
-			$out_query .= $expr_arr[$i];
-			if($i < ($expr_count - 1)) {
+			//--
+			$out_query .= (string) $expr_arr[$i];
+			//--
+			if($i < ($expr_count - 1)) { // this is req. as it comes from explode
+				//--
+				if(!array_key_exists((string)$i, $replacements_arr)) {
+					self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array.Size ; Key: #'.$i, (string)$query, print_r($replacements_arr,1));
+					return ''; // array key does not exists in replacements
+					break;
+				} //end if
+				//-- {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}} :: for PostgreSQL IS IMPOSSIBLE TO KNOW OUT OF CONTEXT TO PASS A PURE NUMERIC OR A STRING VALUE BECAUSE OF ERRORS ; THUS IS SAFE TO USE ESCAPE LITERAL WHICH ALWAYS ADDS QUOTES ARROUND VALUES (INCL. NUMERIC) ; ERROR EXAMPLE: DO A QUERY WHERE A VALUE = NUMERIC WHERE COLUMN IS TEXT
 				$out_query .= (string) self::escape_literal((string)$replacements_arr[$i], 'no', $y_connection);
+				//--
 			} //end if
+			//--
+		} //end for
+		//--
+	} elseif(strpos((string)$query, '$') !== false) {
+		//--
+		$expr_arr = array();
+		preg_match_all('{'.'([^\$]*)?(\$[0-9]+)?'.'}s', (string)$query, $expr_arr);
+		//print_r($expr_arr); die();
+		list($orig_arr, $plain_arr, $params_arr) = (array) $expr_arr;
+		$expr_count = Smart::array_size($params_arr);
+		//--
+		for($i=0; $i<$expr_count; $i++) {
+			//--
+			$out_query .= (string) $plain_arr[$i];
+			//--
+			$crr_key = (int) substr((string)trim((string)$params_arr[$i]), 1);
+			$crr_key -= 1; // fix: $1 is for $arr[0]
+			//--
+			if((int)$crr_key >= 0) {
+				//--
+				if(!array_key_exists((string)$crr_key, $replacements_arr)) {
+					self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array.Size ; Key: #'.$i.' / $'.($crr_key+1), (string)$query, print_r($replacements_arr,1));
+					return ''; // array key does not exists in replacements
+					break;
+				} //end if
+				//-- {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}} :: for PostgreSQL IS IMPOSSIBLE TO KNOW OUT OF CONTEXT TO PASS A PURE NUMERIC OR A STRING VALUE BECAUSE OF ERRORS ; THUS IS SAFE TO USE ESCAPE LITERAL WHICH ALWAYS ADDS QUOTES ARROUND VALUES (INCL. NUMERIC) ; ERROR EXAMPLE: DO A QUERY WHERE A VALUE = NUMERIC WHERE COLUMN IS TEXT
+				$out_query .= (string) self::escape_literal((string)$replacements_arr[$crr_key], 'no', $y_connection);
+				//--
+			} //end if
+			//--
 		} //end for
 		//--
 	} else {
@@ -2128,7 +2175,7 @@ return (string) $sql;
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160812
+ * @version 	v.160817
  * @package 	Database:PostgreSQL
  *
  */
@@ -2390,12 +2437,12 @@ public function write_data($queryval, $params_or_title='') {
  * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
  *
  * @param STRING $queryval						:: the query
- * @param STRING $querytitle 					:: *optional* query title for easy debugging (no parameters are allowed in this case)
+ * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
  * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
  */
-public function write_igdata($queryval, $querytitle='') {
+public function write_igdata($queryval, $params_or_title='') {
 	//--
-	return SmartPgsqlDb::write_igdata($queryval, $querytitle, $this->connection);
+	return SmartPgsqlDb::write_igdata($queryval, $params_or_title, $this->connection);
 	//--
 } //END FUNCTION
 

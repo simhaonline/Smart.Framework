@@ -335,7 +335,7 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160812
+ * @version     v.160817
  * @package     Core
  *
  */
@@ -381,7 +381,7 @@ public static function regex_textrecognition_expression($y_mode) {
 /**
  * Regex Expressions for Text Parsing of: Numbers, IP addresses, Valid eMail Address with TLD domain, Phone (US), Unicode Text (UTF-8)
  *
- * @param 	ENUM 	$y_mode 		:: The Regex mode to be returned ; valid modes:
+ * @param 	ENUM 	$y_mode 			:: The Regex mode to be returned ; valid modes:
  * 											number-integer			:: number integer: as -10 or 10
  * 											number-decimal			:: number decimal: as -0.05 or 0.05
  * 											number-list-integer 	:: number, list integer: as 1;2;30 (numbers separed by semicolon=;)
@@ -395,21 +395,23 @@ public static function regex_textrecognition_expression($y_mode) {
  * @return 	STRING						:: The Regex expression or empty if invalid mode is provided
  */
 public static function regex_stringvalidation_expression($y_mode) {
-	//-- WARNING: Never use class modifiers like [:print:] with /u modifier as it fails with some versions of PHP / Regex / PCRE
-	switch(strtolower((string)$y_mode)) {
+	//--
+	switch(strtolower((string)$y_mode)) { // WARNING: Never use class modifiers like [:print:] with /u modifier as it fails with some versions of PHP / Regex / PCRE
 		//--
-		case 'number-integer':
-			$regex = '/^([0-9\-])+$/';
+		//== #EXTERNAL USE
+		//--
+		case 'number-integer': 						// strict validation
+			$regex = '/^(\-)?[0-9]+?$/'; 			// before was: '/^([0-9\-])+$/' but was not good enough as a strict rule
 			break;
-		case 'number-decimal':
-			$regex = '/^([0-9\-\.])+$/';
+		case 'number-decimal': 						// strict validation ; must match also integer values ; {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}}
+			$regex = '/^(\-)?[0-9]+(\.[0-9]+)?$/'; 	// before was: '/^([0-9\-\.])+$/' but was not good enough as a strict rule
 			break;
 		//--
-		case 'number-list-integer':
-			$regex = '/^([0-9\-\;])+$/';
+		case 'number-list-integer': 				// flexible validation (since this is a list, it may contain any numbers and ;)
+			$regex = '/^([0-9\-\;])+$/'; 			// example: 1;2;30
 			break;
-		case 'number-list-decimal':
-			$regex = '/^([0-9\-\.\;])+$/';
+		case 'number-list-decimal': 				// flexible validation (since this is a list, it may contain any numbers and ;) ; must match also integer list values
+			$regex = '/^([0-9\-\.\;])+$/'; 			// example: 1.0;2;30.44
 			break;
 		//--
 		case 'ipv4':
@@ -426,10 +428,43 @@ public static function regex_stringvalidation_expression($y_mode) {
 			$regex = '/^(?:1(?:[. -])?)?(?:\((?=\d{3}\)))?([2-9]\d{2})(?:(?<=\(\d{3})\))? ?(?:(?<=\d{3})[.-])?([2-9]\d{2})[. -]?(\d{4})(?: (?i:ext)\.? ?(\d{1,5}))?$/'; // Note: Only matches U.S. phone numbers
 			break;
 		//--
-		case 'lower-unsafe-characters':
-			$regex = '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/'; // all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
-			break;
-		//-- {{{SYNC-HTML-TAGS-REGEX}}}
+		//== #ERROR: INVALID
+		//--
+		default:
+			$regex = '+';
+			Smart::raise_error(
+				'INVALID mode in function '.__CLASS__.'::'.__FUNCTION__.'(): '.$y_mode,
+				'Validations Internal ERROR' // msg to display
+			);
+			die(''); // just in case
+		//--
+		//== #END
+		//--
+	} //end switch
+	//--
+	return (string) $regex;
+	//--
+} //END FUNCTION
+//=================================================================
+
+
+//=================================================================
+/**
+ * Regex Segment to build Regex Expressions (Internal Use Only)
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param 	ENUM 	$y_mode 			:: The Regex mode to be returned (see in function)
+ *
+ * @return 	STRING						:: The Regex expression or empty if invalid mode is provided
+ */
+public static function regex_stringvalidation_segment($y_mode) {
+	//--
+	switch(strtolower((string)$y_mode)) { // WARNING: Never use class modifiers like [:print:] with /u modifier as it fails with some versions of PHP / Regex / PCRE
+		//--
+		//== #INTERNAL USE ONLY
+		//-- {{{SYNC-HTML-TAGS-REGEX}}} ; expression delimiter must be # (not / or others ...)
 		case 'tag-name':
 			$regex = 'a-z0-9\-\:'; // regex expr: the allowed characters in tag names (just for open tags ... the end tags will add / and space
 			break;
@@ -446,9 +481,17 @@ public static function regex_stringvalidation_expression($y_mode) {
 			$regex = '\s+[^>]*?\>'; // regex expr: tag end with attributes or / (it needs at least one space after tag name)
 			break;
 		//--
+		//== #ERROR: INVALID
+		//--
 		default:
-			Smart::log_warning('INVALID mode for regex_stringvalidation_expression(): '.$y_mode);
-			$regex = '';
+			$regex = '+';
+			Smart::raise_error(
+				'INVALID mode in function '.__CLASS__.'::'.__FUNCTION__.'(): '.$y_mode,
+				'Segment Validations Internal ERROR' // msg to display
+			);
+			die(''); // just in case
+		//--
+		//== #END
 		//--
 	} //end switch
 	//--
@@ -464,34 +507,83 @@ public static function regex_stringvalidation_expression($y_mode) {
  *
  * @param 	STRING		$y_string			:: The String to be validated
  * @param 	ENUM 		$y_mode 			:: The Regex mode to use for validation ; see reference for SmartValidator::regex_stringvalidation_expression()
- * @param 	BOOL		$y_default			:: TRUE to validate by default or FALSE to invalidate by default (in the case the mode is not valid)
  *
- * @return 	BOOLEAN							:: TRUE if validated ; FALSE if not validated
+ * @return 	BOOLEAN							:: TRUE if validated by regex ; FALSE if not validated
  */
-public static function validate_string($y_string, $y_mode, $y_default=false) {
+public static function validate_string($y_string, $y_mode) {
 	//--
 	$regex = self::regex_stringvalidation_expression($y_mode);
 	//--
-	$out = (bool) $y_default; // default in the case the MODE is invalid
-	//--
-	if(strlen($regex) > 0) {
-		//--
-		if(@preg_match((string)$regex, (string)$y_string)) {
-			$out = true;
-		} else {
-			$out = false;
-		} //end if else
-		//--
+	if(@preg_match((string)$regex, (string)$y_string)) {
+		return true;
 	} else {
-		//--
-		Smart::log_warning('INVALID mode for validate_string(): '.$y_mode);
-		//--
-	} //end if
-	//--
-	return (bool) $out;
+		return false;
+	} //end if else
 	//--
 } //END FUNCTION
 //=================================================================
+
+
+//================================================================
+/**
+ * Validate if a string or number is Integer or Decimal (positive / negative)
+ *
+ * @param 	STRING		$val				:: The string or number to be validated
+ * @return 	BOOL							:: TRUE if Integer or Decimal (positive / negative) ; FALSE if not
+ */
+public static function validate_numeric_integer_or_decimal_values($val) { // {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}}
+	//--
+	$val = (string) $val; // do not use TRIM as it may strip out null or weird characters that may inject security issues if not trimmed outside (MUST VALIDATE THE REAL STRING !!!)
+	//--
+	$regex_decimal = (string) self::regex_stringvalidation_expression('number-decimal');
+	if((string)$regex_decimal == '') {
+		Smart::log_warning('EMPTY Regex for in function '.__CLASS__.'::'.__FUNCTION__.'()');
+		return false; // ERROR (MUST RETURN NOT VALID)
+	} //end if
+	//--
+	if(((string)$val != '') AND (is_numeric($val)) AND (preg_match((string)$regex_decimal, (string)$val))) { // detect numbers: 0..9 - .
+		return true; // VALID
+	} else {
+		return false; // NOT VALID
+	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Detect HTML or XML code contain tags (if does not contain tags is not html or xml code ...)
+ *
+ * @param STRING 	$y_html_or_xml_code		:: The String to be tested
+ *
+ * @return BOOLEAN 							:: TRUE (if XML or HTML tags are detected) or FALSE if not
+ */
+public static function validate_html_or_xml_code($y_html_or_xml_code) {
+	//-- enforce string
+	$y_html_or_xml_code = (string) trim((string)$y_html_or_xml_code);
+	//-- regex expr
+	$expr_tag_name 			= self::regex_stringvalidation_segment('tag-name');
+	$expr_tag_start 		= self::regex_stringvalidation_segment('tag-start');
+	$expr_tag_end_start 	= self::regex_stringvalidation_segment('tag-end-start');
+	$expr_tag_simple_end 	= self::regex_stringvalidation_segment('tag-simple-end');
+	$expr_tag_complex_end 	= self::regex_stringvalidation_segment('tag-complex-end');
+	//-- {{{SYNC-HTML-TAGS-REGEX}}}
+	$regex_part_tag_name 	= '['.$expr_tag_name.']+'; // regex syntax: tag name def
+	//-- build regex syntax
+	$regex_match_tag = '#'.$expr_tag_start.$regex_part_tag_name.$expr_tag_simple_end.'|'.$expr_tag_start.$regex_part_tag_name.$expr_tag_complex_end.'#si';
+	//-- evaluate
+	//if(((string)$y_html_or_xml_code != '') AND (strpos((string)$y_html_or_xml_code, '<') !== false) AND (strpos((string)$y_html_or_xml_code, '>') !== false) AND ((string)$y_html_or_xml_code != (string)strip_tags((string)$y_html_or_xml_code))) {
+	if(((string)$y_html_or_xml_code != '') AND (strpos((string)$y_html_or_xml_code, '<') !== false) AND (strpos((string)$y_html_or_xml_code, '>') !== false) AND (preg_match((string)$regex_match_tag, (string)$y_html_or_xml_code))) {
+		$out = true;
+	} else {
+		$out = false;
+	} //end if else
+	//-- return
+	return (bool) $out;
+	//--
+} //END FUNCTION
+//================================================================
 
 
 //================================================================ Validate an IP Address

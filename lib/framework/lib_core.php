@@ -67,7 +67,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160812
+ * @version     v.160817
  * @package     Core
  *
  */
@@ -1098,7 +1098,7 @@ public static function safe_pathname($y_path, $ysupresschar='') {
 	} //end if
 	//--
 	$y_path = (string) $y_path; // force string
-	$y_path = (string) preg_replace((string)SmartValidator::regex_stringvalidation_expression('lower-unsafe-characters'), '', (string)$y_path); // remove dangerous characters
+	$y_path = (string) preg_replace((string)self::lower_unsafe_characters(), '', (string)$y_path); // remove dangerous characters
 	$y_path = (string) SmartUnicode::utf8_to_iso($y_path); // bring STRING to ISO-8859-1
 	$y_path = (string) stripslashes($y_path); // remove any possible back-slashes
 	$y_path = (string) str_replace('?', $ysupresschar, $y_path); // replace questionmark (that may come from utf8 decode)
@@ -1615,41 +1615,6 @@ public static function list_to_array($y_list) {
 
 //================================================================
 /**
- * Detect HTML or XML tags (this can be a bit slow at the moment but is safe ...)
- *
- * @param STRING 	$y_html_or_xml_code		:: The String to be tested
- *
- * @return BOOLEAN 							:: TRUE (if XML or HTML tags are detected) or FALSE if not
- */
-public static function detect_html_or_xml_tags($y_html_or_xml_code) {
-	//-- enforce string
-	$y_html_or_xml_code = (string) trim((string)$y_html_or_xml_code);
-	//-- regex expr
-	$expr_tag_name 			= SmartValidator::regex_stringvalidation_expression('tag-name');
-	$expr_tag_start 		= SmartValidator::regex_stringvalidation_expression('tag-start');
-	$expr_tag_end_start 	= SmartValidator::regex_stringvalidation_expression('tag-end-start');
-	$expr_tag_simple_end 	= SmartValidator::regex_stringvalidation_expression('tag-simple-end');
-	$expr_tag_complex_end 	= SmartValidator::regex_stringvalidation_expression('tag-complex-end');
-	//-- {{{SYNC-HTML-TAGS-REGEX}}}
-	$regex_part_tag_name 	= '['.$expr_tag_name.']+'; // regex syntax: tag name def
-	//-- build regex syntax
-	$regex_match_tag = '#'.$expr_tag_start.$regex_part_tag_name.$expr_tag_simple_end.'|'.$expr_tag_start.$regex_part_tag_name.$expr_tag_complex_end.'#si';
-	//-- evaluate
-	//if(((string)$y_html_or_xml_code != '') AND (strpos((string)$y_html_or_xml_code, '<') !== false) AND (strpos((string)$y_html_or_xml_code, '>') !== false) AND ((string)$y_html_or_xml_code != (string)strip_tags((string)$y_html_or_xml_code))) {
-	if(((string)$y_html_or_xml_code != '') AND (strpos((string)$y_html_or_xml_code, '<') !== false) AND (strpos((string)$y_html_or_xml_code, '>') !== false) AND (preg_match((string)$regex_match_tag, (string)$y_html_or_xml_code))) {
-		$out = true;
-	} else {
-		$out = false;
-	} //end if else
-	//-- return
-	return (bool) $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
  * The Info logger.
  * This will add messages to the App Info Log. (depending if on admin or index, will output into 'tmp/logs/adm/' or 'tmp/logs/idx/')
  *
@@ -1723,6 +1688,21 @@ public static function raise_error($message_to_log, $message_to_display='') {
 	$smart_____framework_____last__error = (string) $message_to_display;
 	@trigger_error('#SMART-FRAMEWORK.ERROR# '.$message_to_log, E_USER_ERROR);
 	die('App Level Raise ERROR. Execution Halted. See the App Error log for more details.'); // normally this line will never be executed because the E_USER_ERROR via Smart Error Handler will die() before ... but this is just in case, as this is a fatal error and the execution should be halted here !
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function lower_unsafe_characters() {
+	//--
+	return '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/'; // all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
 	//--
 } //END FUNCTION
 //================================================================

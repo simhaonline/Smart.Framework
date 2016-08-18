@@ -141,13 +141,14 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.160812
+ * @version     v.160817
  * @package     Core
  *
  */
 final class SmartUnicode {
 
 	// ::
+
 
 //================================================================
 /**
@@ -1037,6 +1038,7 @@ public static function accented_html_entities() {
 
 
 } //END CLASS
+
 
 //=================================================================================
 //================================================================================= CLASS END

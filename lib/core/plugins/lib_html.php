@@ -28,7 +28,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160816
+ * @version 	v.160817
  * @package 	DATA:HTML
  *
  */
@@ -73,11 +73,11 @@ public function __construct($y_html='', $y_signature=true, $y_allow_dom_processi
 	//--
 
 	//--
-	$this->expr_tag_name 		= SmartValidator::regex_stringvalidation_expression('tag-name');
-	$this->expr_tag_start 		= SmartValidator::regex_stringvalidation_expression('tag-start');
-	$this->expr_tag_end_start 	= SmartValidator::regex_stringvalidation_expression('tag-end-start');
-	$this->expr_tag_simple_end 	= SmartValidator::regex_stringvalidation_expression('tag-simple-end');
-	$this->expr_tag_complex_end = SmartValidator::regex_stringvalidation_expression('tag-complex-end');
+	$this->expr_tag_name 		= SmartValidator::regex_stringvalidation_segment('tag-name');
+	$this->expr_tag_start 		= SmartValidator::regex_stringvalidation_segment('tag-start');
+	$this->expr_tag_end_start 	= SmartValidator::regex_stringvalidation_segment('tag-end-start');
+	$this->expr_tag_simple_end 	= SmartValidator::regex_stringvalidation_segment('tag-simple-end');
+	$this->expr_tag_complex_end = SmartValidator::regex_stringvalidation_segment('tag-complex-end');
 	//-- {{{SYNC-HTML-TAGS-REGEX}}}
 	$this->regex_tag_name 		= '/^['.$this->expr_tag_name.']+$/si';
 	//--
@@ -158,7 +158,7 @@ public function get_std_html() {
 public function get_clean_html($y_comments=true, $y_extra_tags_remove=array(), $y_extra_tags_clean=array(), $y_allowed_tags=array()) {
 
 	//--
-	if(!Smart::detect_html_or_xml_tags((string)$this->html)) {
+	if(!SmartValidator::validate_html_or_xml_code((string)$this->html)) {
 		return (string) $this->html;
 	} //end if
 	//--
@@ -211,7 +211,7 @@ private function standardize_html() {
 	//--
 
 	//-- remove all non utf8 characters
-	$this->html = (string) preg_replace((string)SmartValidator::regex_stringvalidation_expression('lower-unsafe-characters'), '', (string)$this->html);
+	$this->html = (string) preg_replace((string)Smart::lower_unsafe_characters(), '', (string)$this->html);
 	//-- standardize new lines, tabs and line ends
 	$this->html = (string) str_replace(array("\0", "\r\n", "\r", ' />', '/>'), array('', "\n", "\n", '>', '>'), (string)$this->html);
 	//-- protect against server-side tags

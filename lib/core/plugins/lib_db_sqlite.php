@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160812
+ * @version 	v.160817
  * @package 	Database:SQLite
  *
  */
@@ -420,7 +420,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160812
+ * @version 	v.160817
  * @package 	Database:SQLite
  *
  */
@@ -1164,7 +1164,7 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 				//--
 				$val_x = 'TRUE';
 				//--
-			} elseif(self::validate_pure_numeric_values($val) === true) { // number
+			} elseif(SmartValidator::validate_numeric_integer_or_decimal_values($val) === true) { // number ; {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}}
 				//--
 				$val_x = (string) trim((string)$val); // not escaped, it is safe: numeric and can contain just 0-9 - .
 				//--
@@ -1232,44 +1232,60 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
  * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
  * @return STRING								:: The SQL processed (partial/full) Statement
  */
-public static function prepare_param_query($db, $query, $replacements_arr) {
+public static function prepare_param_query($db, $query, $replacements_arr) { // {{{SYNC-SQL-PARAM-QUERY}}}
 	//--
 	if(!is_string($query)) {
 		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), print_r($replacements_arr,1));
-		return ''; // single quote is not allowed
+		return ''; // query must be a string
 	} //end if
 	//--
-	if(stripos($query, "'") !== false) {
+	if((string)trim((string)$query) == '') {
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is empty !', (string)$query, print_r($replacements_arr,1));
+		return ''; // empty query not allowed
+	} //end if
+	//--
+	if(strpos($query, "'") !== false) { // this must be avoided as below will be exploded by ? thus if a ? is inside '' this is a problem ...
 		self::error($db, 'PREPARE-PARAM-QUERY', 'Query cannot contain single quotes !', (string)$query, print_r($replacements_arr,1));
 		return ''; // single quote is not allowed
 	} //end if
 	//--
 	if(!is_array($replacements_arr)) {
 		self::error($db, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, print_r($replacements_arr,1));
-		return ''; // single quote is not allowed
+		return ''; // replacements must be an array
 	} //end if
 	//--
 	$out_query = '';
 	//--
-	if(stripos($query, '?') !== false) {
+	if(strpos((string)$query, '?') !== false) {
 		//--
-		$expr_arr = explode('?', $query);
+		$expr_arr = (array) explode('?', (string)$query);
 		$expr_count = count($expr_arr);
 		//--
 		for($i=0; $i<$expr_count; $i++) {
-			$out_query .= $expr_arr[$i];
+			//--
+			$out_query .= (string) $expr_arr[$i];
+			//--
 			if($i < ($expr_count - 1)) {
-				if(self::validate_pure_numeric_values($replacements_arr[$i]) === true) {
+				//--
+				if(!array_key_exists((string)$i, $replacements_arr)) {
+					self::error($db, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array Size ; Key='.$i, (string)$query, print_r($replacements_arr,1));
+					return ''; // array key does not exists in replacements
+					break;
+				} //end if
+				//--
+				if(SmartValidator::validate_numeric_integer_or_decimal_values($replacements_arr[$i]) === true) { // {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}}
 					$out_query .= (string) trim((string)$replacements_arr[$i]); // not escaped, it is safe: numeric and can contain just 0-9 - .
 				} else {
 					$out_query .= "'".self::escape_str($db, (string)$replacements_arr[$i])."'";
 				} //end if else
+				//--
 			} //end if
+			//--
 		} //end for
 		//--
 	} else {
 		//--
-		$out_query = $query;
+		$out_query = (string) $query;
 		//--
 	} //end if else
 	//--
@@ -1363,19 +1379,6 @@ public static function create_table($db, $table_name, $table_schema, $table_inde
 	if($sqlite_table_exists != 1) { // if test failed means table is not available
 		self::write_data($db, $query); // this will die with message if query have errors
 	} //end if
-	//--
-} //END FUNCTION
-//======================================================
-
-
-//======================================================
-private static function validate_pure_numeric_values($val) {
-	//--
-	if((is_numeric(trim((string)$val))) AND (preg_match('/^(\-)?[0-9]*(\.[0-9]+)?$/', (string)trim((string)$val)))) { // detect numbers: 0..9 - .
-		return true; // VALID
-	} else {
-		return false; // NOT VALID
-	} //end if else
 	//--
 } //END FUNCTION
 //======================================================

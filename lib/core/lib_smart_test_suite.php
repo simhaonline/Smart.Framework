@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160704
+	// v.160817
 
 
 //==================================================================
@@ -1009,20 +1009,20 @@ public static function test_pgsqlserver() {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Write [ Insert if not exists ]';
+			$tests[] = 'Write [ Insert if not exists, with Insert-SubSelect ]';
 			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert-subselect');
-			$data = SmartPgsqlDb::write_data($quer_str.' WHERE NOT EXISTS ( SELECT 1 FROM "public"."_test_unit_db_server_tests" WHERE ("variable" = $1) LIMIT 1 OFFSET 0 )', array($variable));
+			$data = SmartPgsqlDb::write_igdata($quer_str);
 			if($data[1] !== 0) {
-				$err = 'Write / Insert if not exists Test Failed, should return 0 but returned: '.$data[1];
+				$err = 'Write / Insert if not exists with insert-subselect Test Failed, should return 0 but returned: '.$data[1];
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Write [ Update ]';
-			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('comments'=>$comments), 'update').' WHERE ("variable" = $1)';
-			$data = SmartPgsqlDb::write_data($quer_str, array($variable));
+			$tests[] = 'Write Ignore [ Update ]';
+			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" SET "comments" = $2 WHERE ("variable" = $1)';
+			$data = SmartPgsqlDb::write_igdata($quer_str, array($variable, $comments));
 			if($data[1] !== 1) {
-				$err = 'Write / Update Test Failed, should return 1 but returned: '.$data[1];
+				$err = 'Write Ignore / Update Test Failed, should return 1 but returned: '.$data[1];
 			} //end if
 		} //end if
 		//--
@@ -1076,9 +1076,10 @@ public static function test_pgsqlserver() {
 		$quer_str = 'SELECT "comments" FROM "public"."_test_unit_db_server_tests" WHERE ("variable" = $1) LIMIT 1 OFFSET 0';
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Read [ Non-Associative + Param Query ]';
+			$tests[] = 'Read [ Non-Associative + Param Query $ ]';
 			//$data = SmartPgsqlDb::read_data($quer_str, array($variable));
-			$param_query = str_replace('$1', '?', $quer_str); // convert $1 to ?
+			//$param_query = str_replace('$1', '?', $quer_str); // convert $1 to ?
+			$param_query = (string) $quer_str; // no more necessary to convert $1 to ? as prepare_param_query() has been extended to support ? or $#
 			$param_query = SmartPgsqlDb::prepare_param_query($param_query, array($variable));
 			$data = SmartPgsqlDb::read_data($param_query, 'Test Param Query');
 			if(trim($data[0]) !== (string)$comments) {
@@ -1133,7 +1134,7 @@ public static function test_pgsqlserver() {
 		SmartPgsqlDb::write_data('COMMIT');
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if the Test Table exists after Drop [ Negative ], using a new Constructor (should be able to re-use connection)';
+			$tests[] = 'Check if the Test Table Exists (Param Query ?) after Drop [ Negative ], using a new Constructor (should be able to re-use connection)';
 			$pgsql2 = new SmartPgsqlExtDb((array)$configs['pgsql']);
 			$pgsql2->write_data('DROP TABLE IF EXISTS "public"."_test_unit_db_server_tests"');
 			$data = $pgsql2->check_if_table_exists('_test_unit_db_server_tests', 'public');
@@ -1912,7 +1913,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160704
+	// v.160817
 
 private $db;
 

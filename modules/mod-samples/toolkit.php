@@ -35,7 +35,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$the_lang = (string) $this->ConfigParamGet('regional.language-id');
 		$the_xlang = (string) $this->ConfigParamGet('regional.language-id'); // repeat this to check if caching works
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if($this->IfDebug()) {
 			$this->SetDebugData('Module Area', $module_area);
 			$this->SetDebugData('Module Path', $this->ControllerGetParam('module-path'));
 			$this->SetDebugData('Module Name', $this->ControllerGetParam('module-name'));
@@ -68,7 +68,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 					$this->PageViewSetCfgs((array)$test_cache['configs']);
 					$this->PageViewSetVars((array)$test_cache['vars']);
 					$this->PageViewAppendVar('main', "\n".'<!-- Redis Cached Content Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
-					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if($this->IfDebug()) {
 						$this->SetDebugData('Page Cache Info', 'Serving page from Persistent Cache: Redis (override PHP Execution). Page key is: '.$the_page_cache_key);
 					} // end if
 					return; // the page was served from Cache (stop here)
@@ -163,13 +163,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				3600 // 60 mins
 			);
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if($this->IfDebug()) {
 				$this->SetDebugData('Page Cache Info', 'Setting page in Persistent Cache: Redis (after PHP Execution). Page key is: '.$the_page_cache_key);
 			} //end if
 			//--
 		} else {
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if($this->IfDebug()) {
 				$this->SetDebugData('Page Cache Info', 'Persistent Cache (Redis) is not active. Serving Page from PHP Execution.');
 			} //end if
 			//--

@@ -130,7 +130,7 @@ private function FixXmlRoot($xml_str) {
 	$xml_str = (string) trim((string)preg_replace('#<\?xml (.*?)>#si', '', (string)$xml_str)); // remove the xml markup tag
 	//$xml_str = str_replace(['<'.'?', '?'.'>'], ['<!-- ', ' -->'], $xml_str); // comment out any markup tags
 	//--
-	if(!Smart::detect_html_or_xml_tags($xml_str)) { // fix parser bug if empty data passed
+	if(!SmartValidator::validate_html_or_xml_code($xml_str)) { // fix parser bug if empty data passed
 		//--
 		Smart::log_warning('SmartXmlParser / GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xml_str."\n".'#END');
 		$xml_str = '<'.'?'.'xml version="1.0" encoding="'.$this->encoding.'"'.'?'.'>'."\n".'<smart_framework_xml_data_parser_fix_tag>'."\n".'</smart_framework_xml_data_parser_fix_tag>';
