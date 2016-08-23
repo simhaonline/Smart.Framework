@@ -1,6 +1,7 @@
 <?php
 // [LIB - SmartFramework / HTTP(S) Client]
 // (c) 2006-2016 unix-world.org - all rights reserved
+// v.2.3.5.3 r.2016.08.23 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
@@ -784,7 +785,7 @@ if((string)$_SERVER['REQUEST_METHOD'] === 'PUT') {
  * @access      PUBLIC
  * @depends     classes: Smart
  * @version     v.160607
- * @package     Core
+ * @package 	Network:HTTP
  *
  */
 final class SmartHttpUtils {

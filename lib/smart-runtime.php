@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / App Runtime]
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.5.2 r.2016.08.09 / smart.framework.v.2.3
+// v.2.3.5.3 r.2016.08.23 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -40,8 +40,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.2.3.5.2'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.08.10'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.2.3.5.3'); // this is the real release version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2016.08.23'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 

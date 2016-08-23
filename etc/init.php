@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [SmartFramework / INIT]
-// v.2.3.5.2 r.2016.08.09 / smart.framework.v.2.3
+// v.2.3.5.3 r.2016.08.23 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -198,10 +198,9 @@ ini_set('session.use_only_cookies', '1');									// It is safe to use only cook
 ini_set('session.hash_bits_per_character', '5'); 							// session mode using characters as: (0-9, a-v) :: (only available since PHP 5.3)
 ini_set('session.hash_function', 'sha512');									// set session hash to sha512 :: (only available since PHP 5.3)
 ini_set('session.serialize_handler', 'php');								// use php (default) ; wddx can be buggy
-//-- check magic quotes runtime
-// no more necessary since PHP 5.4, it was removed
-//-- check if suhoshin enabled (suhoshin patch breaks a lot of functionality in latest PHP version, thus is not supported ... use it on your own risk !! ; example: it may break this app when working with large data packets or even corrupt session data or unicode strings)
-// no more necessary to check as since PHP 5.4 was no more includded by default on popular distros
+//-- other checks:
+// magic quotes runtime must be disabled :: no more necessary since PHP 5.4, it was removed
+// suhoshin must be not enabled :: no more necessary to check as since PHP 5.4 was no more includded by default on popular distros :: suhoshin patch breaks a lot of functionality in latest PHP version, thus is not supported ... use it on your own risk !! ; example: it may break this app when working with large data packets or even corrupt session data or unicode strings
 //----------------------------------------
 
 //---------------------------------------- security: avoid load this multiple times
