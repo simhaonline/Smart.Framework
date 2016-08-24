@@ -5,12 +5,14 @@
 <img src="lib/js/jquery/ui/themes/calendar.png" onclick="jQuery('#[####THE-ID|jsvar|js####]').datepicker('show');" style="cursor:pointer; vertical-align:middle; margin-left:3px;" id="date-bttn-[####THE-ID|jsvar|html####]" title="">
 </span>
 <script type="text/javascript">
-(function() {
-	try {
-		SmartJS_BrowserUIUtils.Date_Picker('[####THE-ID|jsvar|js####]', '[####ALT-DATE-FORMAT|js####]', '[####THE-VALUE|js####]', [####FDOW|num####], [####DATE-MIN####], [####DATE-MAX####], 2, '[####EVAL-JS|js####]');
-	} catch(err) {
-		console.log('UI DatePicker ERR: ' + err);
-	}
-})();
+if(typeof SmartJS_BrowserUIUtils != 'undefined') {
+	(function() {
+		try {
+			SmartJS_BrowserUIUtils.Date_Picker('[####THE-ID|jsvar|js####]', '[####ALT-DATE-FORMAT|js####]', '[####THE-VALUE|js####]', [####FDOW|num####], [####DATE-MIN####], [####DATE-MAX####], 2, '[####EVAL-JS|js####]');
+		} catch(err) {
+			console.log('UI DatePicker ERR: ' + err);
+		}
+	})();
+}
 </script>
 <!-- #END :: Partial Template: Core.UIPickerDate -->

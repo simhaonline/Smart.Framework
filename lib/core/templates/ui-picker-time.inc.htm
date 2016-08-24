@@ -5,12 +5,14 @@
 <img id="time-bttn-[####THE-ID|jsvar|html####]" src="lib/js/jquery/ui/themes/timepicker.png" onClick="jQuery('#[####THE-ID|jsvar|js####]').timepicker('show');" style="vertical-align:middle; cursor:pointer;" title="">
 </span>
 <script type="text/javascript">
-(function() {
-	try {
-		SmartJS_BrowserUIUtils.Time_Picker('[####THE-ID|jsvar|js####]', [####H-START|num####], [####H-END|num####], [####MIN-START|num####], [####MIN-END|num####], [####MIN-INTERVAL|num####], [####DISPLAY-ROWS|num####], '[####EVAL-JS|js####]');
-	} catch(err) {
-		console.log('UI TimePicker ERR: ' + err);
-	}
-})();
+if(typeof SmartJS_BrowserUIUtils != 'undefined') {
+	(function() {
+		try {
+			SmartJS_BrowserUIUtils.Time_Picker('[####THE-ID|jsvar|js####]', [####H-START|num####], [####H-END|num####], [####MIN-START|num####], [####MIN-END|num####], [####MIN-INTERVAL|num####], [####DISPLAY-ROWS|num####], '[####EVAL-JS|js####]');
+		} catch(err) {
+			console.log('UI TimePicker ERR: ' + err);
+		}
+	})();
+}
 </script>
 <!-- #END :: Partial Template: Core.UIPickerTime -->

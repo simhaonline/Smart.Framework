@@ -3,18 +3,12 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cycle2 API</title>
-<link rel=stylesheet href="http://fonts.googleapis.com/css?family=Acme">
-<link rel=stylesheet href="../site.css">
-<link rel=stylesheet href="../demo/demo-slideshow.css">
-<style>.adsbygoogle { display: block; margin:auto }</style>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-<script src="http://malsup.github.io/jquery.cycle2.js"></script>
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<script>if (screen.width < 640)  document.write('<style>.adsbygoogle { display: none }</style>');</script>
+<script src="../jquery.js"></script>
+<script src="jquery.cycle2.js"></script>
 </head>
 <body>
 <div class=page-header>
-	<h1><a href="../"><img id=logo src="../logo.png" width=48 height=48></a> API</h1>
+	<h1>API</h1>
 </div>
 
 <div id="main">
@@ -29,15 +23,10 @@
 	<a href="#commands">Commands</a>
 	<a href="#events">Events</a>
 	<a href="#misc">Misc</a>
-	<a href="advanced.php" class=unit>Advanced API</a>
+	<a href="#advanced" class=unit>Advanced API</a>
 </div>
 
-<h2 id="auto-init">Auto-Initialization</h2>
-<ins class="adsbygoogle"
-	 style="width:728px;height:15px;margin:20px auto"
-	 data-ad-client="ca-pub-0063430075356651"
-	 data-ad-slot="3606401229"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+	<h2 id="auto-init">Auto-Initialization</h2>
 	<p>
 	Cycle2 slideshows can be automatically initialized simply by adding the classname
 	<code>cycle-slideshow</code> to your slideshow container element.
@@ -59,11 +48,6 @@
 	code above multiple times without having to worry about slideshows that are already running.
 
 <h2 id="options">Options</h2>
-<ins class="adsbygoogle"
-	 style="width:728px;height:15px;margin:20px auto"
-	 data-ad-client="ca-pub-0063430075356651"
-	 data-ad-slot="3606401229"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 	<p>
 	Options are set on the slideshow element using <code>data-cycle-<em><strong>option-name</strong></em></code>
 	attributes. The option name is always lowercase and prefixed with <code>data-cycle-</code>.
@@ -121,7 +105,7 @@
 			<pre>data-cycle-auto-height="600:400"</pre>
 			<p>To disable height management, set this option's value to <code>-1</code>
 				or <code>false</code>.
-			<p> See <a href="../demo/autoheight.php">Auto Height demo</a> for more info.
+			<p> See <a href="#autoheight">Auto Height demo</a> for more info.
 
 	<tr><th>autoSelector<br><span class=softer>(programmatic use only)</span><td><td>jQuery selector<td>'.cycle-slideshow[data-cycle-auto-init!=false]'<td>
 			A jQuery selector which identifies elements that should be
@@ -179,7 +163,7 @@
 
 	<tr><th>loader<td><td>true | false | "wait"<td>false<td>
 			The <em>loader</em> option sets the image loader behavior for the slideshow.
-			<a href="../demo/loader.php">Example</a>.
+			<a href="#loader">Example</a>.
 			<ul>
 			<li><code>false</code> disabled loader functionality
 			<li><code>true</code> load slides as images arrive
@@ -290,7 +274,7 @@
 	<tr><th>progressive<td><td>selector string<td>undefined<td>
 			Identifies an element in the DOM which holds a JSON array representing the slides to be
 			progressively loaded into the slideshow.
-			<a href="../demo/progressive.php">Example</a>.
+			<a href="#progressive">Example</a>.
 
 	<tr id="random"><th>random<td><td>boolean<td>false<td>
 			If <code>true</code> the order of the slides will be randomized.  This only effects
@@ -545,29 +529,11 @@ $('.cycle-slideshow').cycle('remove', 1);
 	assign a value to this attribute then the location hash of the current page will be updated
 	to reflect that value when the slide is active.  Likewise, when the page is loaded if the
 	location hash is equal to the <code>data-cycle-hash</code> of one of the slides then that slide
-	will be made active.   See the <a href="../demo/bookmark.php">Bookmarkable</a> demo
+	will be made active.   See the <a href="#bookmark">Bookmarkable</a> demo
 	for more information.
 
 </div> <!-- #main -->
 
-<script>
-if (screen.width >= 728) {
-	var s = ''
-	+ '<div style="width: 728px; margin: 10px auto">'
-	+ '<ins class="adsbygoogle"'
-	+ '     style="display:inline-block;width:728px;height:90px"'
-	+ '     data-ad-client="ca-pub-0063430075356651"'
-	+ '     data-ad-slot="2614073966"></ins>'
-	+ '</div>'
-	+ '<scr' + 'ipt>(adsbygoogle = window.adsbygoogle || []).push({});</scr'+'ipt>';
-	document.write(s);
-}
-</script>
-
-
-<!-- google analytics -->
-<script src="http://www.google-analytics.com/urchin.js"></script>
-<script>_uacct = "UA-850242-2"; urchinTracker();</script>
 </body>
 </html>
 

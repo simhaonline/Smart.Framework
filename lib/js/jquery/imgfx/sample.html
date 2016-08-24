@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cycle2 Sample</title>
+<script src="../jquery.js"></script>
+<script src="jquery.cycle2.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#logoslide').cycle({
+		log: false,
+		timeout: 1000
+	});
+});
+</script>
+<div align="center"><div id="logoslide" style="width: 600px; height: 400px; text-align:center;">
+	<img width="600" src="http://www.w3schools.com/w3css/img_mountains.jpg"><br>
+	<img width="600" src="http://www.w3schools.com/w3css/img_lights.jpg" style="display:none;"><br>
+	<img width="600" src="http://www.w3schools.com/w3css/img_fjords.jpg" style="display:none;"><br>
+	<img width="600" src="http://www.w3schools.com/w3css/img_forest.jpg" style="display:none;"><br>
+</div></div>
+
+</body>
+</html>
+
