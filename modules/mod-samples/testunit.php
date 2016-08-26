@@ -325,6 +325,13 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main .= '</pre>';
 				//--
 				break;
+			case 'testunit.interractions':
+				//--
+				$main = SmartTestSuite::test_interractions(
+					$this->RequestVarGet('mode')
+				);
+				//--
+				break;
 			case 'testunit.main':
 			default:
 				//--

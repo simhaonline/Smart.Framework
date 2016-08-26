@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160817
+	// v.160825
 
 
 //==================================================================
@@ -75,8 +75,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 	$basic_form_start = '<form id="form_for_test" action="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.main&tab=1'.'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='.SMART_FRAMEWORK_URL_VALUE_ENABLED.'" method="post" target="_blank"><input type="hidden" name="testformdata[test]" value="Testing ..."><input type="hidden" name="testformdata[another-test]" value="Testing more ...">';
 	$basic_form_end = '</form>';
 	//--
-	$basic_form_send_modal = '<input class="ux-button ux-button-primary" type="submit" value="Submit Form (with Confirmation / Modal)" OnClick="'.SmartComponents::js_draw_html_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [MODAL] ?</b></h3></div>', 'my_form').'">';
-	$basic_form_send_popup = '<input class="ux-button ux-button-secondary" type="submit" value="Submit Form (with Confirmation / PopUp)" OnClick="'.SmartComponents::js_draw_html_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [POPUP] ?</b></h3></div>', 'my_form', '780', '420', '1').'">';
+	$basic_form_send_modal = '<input class="ux-button ux-button-primary" style="min-width:325px;" type="submit" value="Submit Form (with Confirmation / Modal)" OnClick="'.SmartComponents::js_draw_html_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [MODAL] ?</b></h3></div>', 'my_form').'">';
+	$basic_form_send_popup = '<input class="ux-button ux-button-secondary" style="min-width:325px;" type="submit" value="Submit Form (with Confirmation / PopUp)" OnClick="'.SmartComponents::js_draw_html_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [POPUP] ?</b></h3></div>', 'my_form', '780', '420', '1').'">';
 	//--
 
 	//-- AJAX POST FORM
@@ -150,6 +150,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TEST-ELEMENTS.ALERT' => '<a href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
 			'TEST-ELEMENTS.SEND-CONFIRM-MODAL' => $basic_form_start.$basic_form_send_modal.$basic_form_end,
 			'TEST-ELEMENTS.SEND-CONFIRM-POPUP' => $basic_form_start.$basic_form_send_popup.$basic_form_end,
+			'TEST-ELEMENTS-WND-INTERRACTIONS-MODAL' => self::bttn_open_modal(true, 'test_interractions_modal_start'),
+			'TEST-ELEMENTS-WND-INTERRACTIONS-POPUP' => self::bttn_open_popup(true, 'test_interractions_popup_start'),
 			'TEST-ELEMENTS.SINGLE-SELECT' => 'SingleSelect DropDown List without Blank: '.$one_single_select,
 			'TEST-ELEMENTS.SINGLE-BLANK-SELECT' => 'SingleSelect DropDown List (from Multi): '.$one_single_with_blank_select,
 			'TEST-ELEMENTS.SINGLE-SEARCH-SELECT' => 'SingleSelect DropDown List with Search: '.$elem_single_select,
@@ -205,6 +207,83 @@ public static function main_screen($tab, $frm, $testformdata) {
 } //END FUNCTION
 //==================================================================
 
+
+//==================================================================
+public static function test_interractions($mode) {
+	//--
+	return '<div><h1>Interractions Test for Windows</h1></div>'.self::bttn_open_modal(true).' &nbsp;&nbsp;&nbsp; '.self::bttn_open_modal(false).'<br><br>'.self::bttn_open_popup(true).' &nbsp;&nbsp;&nbsp; '.self::bttn_open_popup(false).'<br><br>'.self::bttn_set_confirm_unload().' &nbsp;&nbsp;&nbsp; '.self::bttn_set_parent_refresh().'<br><br>'.self::bttn_close_modal_or_popup();
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function bttn_open_modal($forced, $winname='') {
+	if((string)$winname == '') {
+		$wname = 'test_interractions_mod_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_num().'_'.Smart::uuid_10_str();
+	} else {
+		$wname = (string) $winname;
+	} //end if else
+	if($forced) {
+		$mode = 'mod';
+		$set = '-1';
+		$btn = 'Open Modal (strict)';
+	} else {
+		$mode = 'auto';
+		$set = '0';
+		$btn = 'Open Modal or PopUp (auto)';
+	} //end if else
+	return '<a class="ux-button ux-button-regular" style="min-width:325px;" target="'.Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions&mode='.Smart::escape_url($mode).'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.Smart::escape_js($set).'); return false;">'.Smart::escape_html($btn).'</a>';
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function bttn_open_popup($forced, $winname='') {
+	if((string)$winname == '') {
+		$wname = 'test_interractions_pop_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_num().'_'.Smart::uuid_10_str();
+	} else {
+		$wname = (string) $winname;
+	} //end if else
+	if($forced) {
+		$mode = 'pop';
+		$set = '1';
+		$btn = 'Open PopUp (strict)';
+	} else {
+		$mode = 'auto';
+		$set = '0';
+		$btn = 'Open PopUp or Modal (auto)';
+	} //end if else
+	return '<a class="ux-button ux-button-highlight" style="min-width:325px;" target="'.Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions&mode='.Smart::escape_url($mode).'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.Smart::escape_js($set).'); return false;">'.Smart::escape_html($btn).'</a>';
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function bttn_close_modal_or_popup() {
+	//--
+	return '<button class="ux-button ux-button-special" style="min-width:325px;" onClick="SmartJS_BrowserUtils.CloseModalPopUp(); return false;">[ Close: Modal / PopUp ]</button>';
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function bttn_set_parent_refresh() {
+	//--
+	return '<button class="ux-button ux-button-dark" style="min-width:325px;" onClick="SmartJS_BrowserUtils.RefreshParent(); return false;">[ Set: Parent Refresh / Reload ]</button>';
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+private static function bttn_set_confirm_unload() {
+	//--
+	$question = 'This is a test for Confirm Unload. Are you sure you want to close this page ?';
+	//--
+	return '<button class="ux-button ux-button-dark" style="min-width:325px;" onClick="SmartJS_BrowserUtils.PageAwayControl(\''.Smart::escape_js($question).'\'); return false;">[ Set: Confirm Unload ]</button>';
+	//--
+} //END FUNCTION
 
 //==================================================================
 private static function captcha_form_name() {

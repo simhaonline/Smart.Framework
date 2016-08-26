@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160817
+ * @version 	v.160824
  * @package 	DATA:HTML
  *
  */
@@ -473,50 +473,57 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 	//--
 
 	//--
+	$this->html = (string) trim((string)$this->html);
+	//--
+
+	//--
 	$use_dom = false;
 	//--
 	if(($this->dom_processing !== false) AND (class_exists('DOMDocument'))) {
 		//--
 		$use_dom = true;
 		//--
-		@libxml_use_internal_errors(true);
-		@libxml_clear_errors();
-		//--
-		$dom = new DOMDocument(5, (string)SMART_FRAMEWORK_CHARSET);
-		//--
-		$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
-		$dom->strictErrorChecking = false; 	// do not throw errors
-		$dom->preserveWhiteSpace = true; 	// do not remove redundant white space
-		$dom->formatOutput = true; 			// try to format pretty-print the code
-		$dom->resolveExternals = false; 	// disable load external entities from a doctype declaration
-		$dom->validateOnParse = false; 		// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
-		//--
-		@$dom->loadHTML(
-			(string) $this->html,
-			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED // {{{SYNC-LIBXML-OPTIONS}}}
-		);
-		//--
-		$this->html = (string) @$dom->saveHTML(); //print_r($dom->doctype);
-		unset($dom);
-		//-- fixes: normally with the above options will add no doctype or html / body tags, but use it just in case ...
-		$this->html = (string) preg_replace('~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', $this->html); // or explode by body to get content
-		//-- log errors if any
-		if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($this->dom_log_errors === true) OR ((string)$this->html == '')) {
-			$errors = (array) @libxml_get_errors();
-			if(Smart::array_size($errors) > 0) {
-				foreach($errors as $error) {
-					if(is_object($error)) {
-						Smart::log_notice('SmartHtmlParser NOTICE: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n");
+		if((string)$this->html != '') {
+			//--
+			@libxml_use_internal_errors(true);
+			@libxml_clear_errors();
+			//--
+			$dom = new DOMDocument(5, (string)SMART_FRAMEWORK_CHARSET);
+			//--
+			$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
+			$dom->strictErrorChecking = false; 	// do not throw errors
+			$dom->preserveWhiteSpace = true; 	// do not remove redundant white space
+			$dom->formatOutput = true; 			// try to format pretty-print the code
+			$dom->resolveExternals = false; 	// disable load external entities from a doctype declaration
+			$dom->validateOnParse = false; 		// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
+			//--
+			@$dom->loadHTML(
+				(string) $this->html,
+				LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED // {{{SYNC-LIBXML-OPTIONS}}}
+			);
+			$this->html = (string) @$dom->saveHTML(); // get back from DOM
+			//print_r($this->html);
+			unset($dom); // clear DOM
+			$this->html = (string) trim((string)preg_replace('~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', (string)$this->html)); // cleanup ; fixes: normally with the above options will add no doctype or html / body tags, but use it just in case ; alternative to this: explode by body to get content
+			//--
+			if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($this->dom_log_errors === true) OR ((string)$this->html == '')) { // log errors if any
+				$errors = (array) @libxml_get_errors();
+				if(Smart::array_size($errors) > 0) {
+					foreach($errors as $error) {
+						if(is_object($error)) {
+							Smart::log_notice('SmartHtmlParser NOTICE: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n");
+						} //end if
+					} //end foreach
+					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+						Smart::log_notice('SmartHtmlParser / Debug HTML-String:'."\n".$this->html."\n".'#END');
 					} //end if
-				} //end foreach
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-					Smart::log_notice('SmartHtmlParser / Debug HTML-String:'."\n".$this->html."\n".'#END');
 				} //end if
 			} //end if
+			//--
+			@libxml_clear_errors();
+			@libxml_use_internal_errors(false);
+			//--
 		} //end if
-		//--
-		@libxml_clear_errors();
-		@libxml_use_internal_errors(false);
 		//--
 	} //end if
 	//--
@@ -537,7 +544,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 	//--
 
 	//--
-	$this->html = (string) $start_signature.trim($this->html).$end_signature;
+	$this->html = (string) $start_signature.$this->html.$end_signature;
 	//--
 
 } //END FUNCTION

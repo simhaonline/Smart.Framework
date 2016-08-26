@@ -47,7 +47,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160704
+ * @version 	v.160825
  * @package 	Components:Framework
  *
  */
@@ -2133,7 +2133,7 @@ public static function js_draw_checkbox_checkall($y_form_name) {
  */
 public static function js_inc_settings($y_popup_mode, $y_use_protection=false, $y_use_test_browser=false) {
 	//--
-	switch((string)$y_popup_mode == '') {
+	switch((string)$y_popup_mode) {
 		case 'popup':
 			$the_popup_mode = 'popup';
 			break;
