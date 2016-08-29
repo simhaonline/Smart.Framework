@@ -46,14 +46,15 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * );
  * $sq_ins = (array) $db->write_data('INSERT INTO "other_table" '.$db->prepare_write_statement($arr_insert, 'insert'));
  * $sq_upd = (array) $db->write_data('UPDATE "other_table" SET "active" = 0 WHERE ("id" = ?)', array(100));
- * $db->close();
+ * $prepared_sql = $db->prepare_param_query('SELECT * FROM "table" WHERE "id" = ?', [99]);
+ * $db->close(); // optional, but safe
  *
  * </code>
  *
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160817
+ * @version 	v.160827
  * @package 	Database:SQLite
  *
  */
@@ -287,7 +288,7 @@ public function prepare_write_statement($arrdata, $mode) {
 /**
  * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
  * This can be used for a full SQL statement or just for a part.
- * The statement must not contain any Single Quotes !
+ * The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !
  *
  * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
  * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
@@ -421,7 +422,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160817
+ * @version 	v.160827
  * @package 	Database:SQLite
  *
  */
@@ -744,7 +745,7 @@ public static function read_data($db, $query, $params_or_title='') {
 					//--
 					$arr_data[] = (string) $res[$i]; // force string
 					//--
-				} //end foreach
+				} //end for
 				//--
 			} else {
 				//--
@@ -1137,7 +1138,7 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 		foreach($arrdata as $key => $val) {
 			//-- check for SQL INJECTION
 			$key = trim(@str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
-			//-- Except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
+			//-- except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if((string)$mode == 'in-select') { // in-select
 				$key = (int) $key; // force int keys
 			} else {
@@ -1227,7 +1228,7 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 /**
  * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
  * This can be used for a full SQL statement or just for a part.
- * The statement must not contain any Single Quotes !
+ * The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !
  *
  * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
  * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
@@ -1236,22 +1237,22 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 public static function prepare_param_query($db, $query, $replacements_arr) { // {{{SYNC-SQL-PARAM-QUERY}}}
 	//--
 	if(!is_string($query)) {
-		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), print_r($replacements_arr,1));
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), $replacements_arr);
 		return ''; // query must be a string
 	} //end if
 	//--
 	if((string)trim((string)$query) == '') {
-		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is empty !', (string)$query, print_r($replacements_arr,1));
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is empty !', (string)$query, $replacements_arr);
 		return ''; // empty query not allowed
 	} //end if
 	//--
 	if(strpos($query, "'") !== false) { // this must be avoided as below will be exploded by ? thus if a ? is inside '' this is a problem ...
-		self::error($db, 'PREPARE-PARAM-QUERY', 'Query cannot contain single quotes !', (string)$query, print_r($replacements_arr,1));
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query used for prepare with params in '.__FUNCTION__.'() cannot contain single quotes to prevent possible SQL injections which can produce unpredictable results !', (string)$query, $replacements_arr);
 		return ''; // single quote is not allowed
 	} //end if
 	//--
 	if(!is_array($replacements_arr)) {
-		self::error($db, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, print_r($replacements_arr,1));
+		self::error($db, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, $replacements_arr);
 		return ''; // replacements must be an array
 	} //end if
 	//--
@@ -1269,7 +1270,7 @@ public static function prepare_param_query($db, $query, $replacements_arr) { // 
 			if($i < ($expr_count - 1)) {
 				//--
 				if(!array_key_exists((string)$i, $replacements_arr)) {
-					self::error($db, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array Size ; Key='.$i, (string)$query, print_r($replacements_arr,1));
+					self::error($db, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array Size ; Key='.$i, (string)$query, $replacements_arr);
 					return ''; // array key does not exists in replacements
 					break;
 				} //end if
@@ -1423,32 +1424,51 @@ private static function get_connection_id($db) {
  * Displays the SQLite Errors and HALT EXECUTION (This have to be a FATAL ERROR as it occur when a FATAL SQLite ERROR happens or when a Query Syntax is malformed)
  * PRIVATE
  *
- * @param STRING $y_error_message :: The Error Message to Display
  * @return :: HALT EXECUTION WITH ERROR MESSAGE
  *
  */
-private static function error($db, $y_area, $y_error_message, $y_query, $y_title_query, $y_warning='Execution Halted !') {
+private static function error($db, $y_area, $y_error_message, $y_query, $y_params_or_title, $y_warning='') {
 //--
-$the_area = Smart::escape_html($y_area);
-$the_params = '';
-if(is_array($y_title_query)) {
-	//$the_params = '<pre>'.Smart::escape_html('[Params]'."\n".print_r($y_title_query, 1)).'</pre>'; // not necessary to add the params because they are pre-processed
-	$the_title_query = '+Untitled+';
-} elseif((string)$y_title_query == '') {
-	$the_title_query = '-Untitled-';
-} else {
-	$the_title_query = Smart::escape_html($y_title_query);
-} //end if else
+$def_warn = 'Execution Halted !';
+$y_warning = (string) trim((string)$y_warning);
 if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-	$the_error_message = Smart::escape_html($y_error_message);
-	$the_query_info = Smart::escape_html($y_query).$the_params;
 	$width = 750;
+	$the_area = (string) $y_area;
+	if((string)$y_warning == '') {
+		$y_warning = (string) $def_warn;
+	} //end if
+	$the_error_message = 'Operation FAILED: '.$def_warn."\n".$y_error_message;
+	if(is_array($y_params_or_title)) {
+		$the_params = '*** Params ***'."\n".print_r($y_params_or_title, 1);
+	} elseif((string)$y_params_or_title != '') {
+		$the_params = '[ Reference Title ]: '.$y_params_or_title;
+	} else {
+		$the_params = '- No Params or Reference Title -';
+	} //end if
+	$the_query_info = (string) trim((string)$y_query);
+	if((string)$the_query_info == '') {
+		$the_query_info = '-'; // query cannot e empty in this case (templating enforcement)
+	} //end if
 } else {
 	$width = 550;
-	$the_title_query = '!';
-	$the_error_message = 'An operation failed. '.Smart::escape_html($y_warning).'...';
-	$the_query_info = 'View the App ERROR Log for more details about this Error !'; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
+	$the_area = '';
+	$the_error_message = 'Operation FAILED: '.$def_warn;
+	$the_params = '';
+	$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
 } //end if else
+//--
+$out = SmartComponents::db_error_message(
+	'SQLite Client',
+	'SQLite',
+	'Embedded',
+	'SQL/DB',
+	'lib/core/img/db/sqlite_logo.png',
+	$width, // width
+	$the_area, // area
+	$the_error_message, // err msg
+	$the_params, // title or params
+	$the_query_info // sql statement
+);
 //--
 if(!($db instanceof SQLite3)) {
 	$the_conn = (string) $db;
@@ -1456,48 +1476,8 @@ if(!($db instanceof SQLite3)) {
 	$the_conn = (string) self::get_connection_id($db);
 } //end if else
 //--
-$out = <<<HTML_CODE
-<style type="text/css">
-	* {
-		font-family: verdana,tahoma,arial,sans-serif;
-		font-smooth: always;
-	}
-</style>
-<div align="center">
-	<table width="{$width}" cellspacing="0" cellpadding="8" bordercolor="#CCCCCC" border="1" style="border-style: solid; border-color: #CCCCCC; border-collapse: collapse;">
-		<tr valign="middle" bgcolor="#FFFFFF">
-			<td width="64" align="center">
-				<img src="lib/framework/img/sign_warn.png">
-			</td>
-			<td align="center">
-				<div align="center"><font size="5" color="#DD0000"><b>SQLite :: ERROR</b><br>{$the_area}</font></div>
-			</td>
-		</tr>
-		<tr valign="top" bgcolor="#FFFFFF">
-			<td width="64" align="center">
-				<img src="lib/core/img/db/sqlite_logo.png">
-				<br>
-				<br>
-				<font size="1" color="#778899"><sub><b>SQLite</b><br><b><i>DB</i></b></sub></font>
-			</td>
-			<td>
-				<div align="center">
-					<font size="4" color="#778899"><b>[ {$the_title_query} ]</b></font>
-				</div>
-				<br>
-				<div align="left">
-					<font size="3" color="#DD0000"><b>{$the_error_message}</b></font>
-					<br>
-					<font size="3" color="#DD0000">{$the_query_info}</font>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
-HTML_CODE;
-//--
 Smart::raise_error(
-	'#SQLITE-DB@'.$the_conn.'# :: Q# // SQLite :: ERROR :: '.$y_area.' // '.print_r($y_title_query,1)."\n".$y_query."\n".'Error-Message: '.$y_error_message,
+	'#SQLITE-DB@'.$the_conn.'# :: Q# // SQLite Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Params / Title:'."\n".print_r($y_params_or_title,1)."\n".'*** Query:'."\n".$y_query,
 	$out // msg to display
 );
 die(''); // just in case

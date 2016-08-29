@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160817
+ * @version     v.160827
  * @package     Core
  *
  */
@@ -166,6 +166,26 @@ public static function dir_name($y_path) {
 	$dir_name = (string) @dirname($y_path);
 	//--
 	return (string) self::fix_path_separator($dir_name); // FIX: on Windows, is possible to return a backslash \ instead of slash /
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Return the FIXED basename(), in a safe way
+ *
+ * @param 	STRING 	$y_path 			:: The path name from to extract basename()
+ *
+ * @return 	STRING						:: The basename
+ */
+public static function base_name($y_path) {
+	//--
+	$y_path = trim((string)$y_path);
+	//--
+	$base_name = (string) @basename($base_name);
+	//--
+	return (string) $base_name;
 	//--
 } //END FUNCTION
 //================================================================

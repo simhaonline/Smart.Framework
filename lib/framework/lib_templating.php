@@ -14,6 +14,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Marker Templating
 // DEPENDS:
 //	* Smart::
+//	* SmartUnicode::
 //	* SmartParser::
 //	* SmartFileSystem::
 //	* SmartFileSysUtils::
@@ -25,6 +26,17 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
+//#####
+// INFO: This template engine is 100% safe against un-predictable recursion patterns !
+// It does support: MARKERS, IF/ELSE, LOOP, INCLUDES syntax.
+// It does not currently support: nested identic IF/ELSE or nested identic LOOP syntax.
+//#####
+// Because the recursion patterns are un-predictable, as a template can be rendered in other template in controllers or libs,
+// the str_replace() is used internally instead of strtr()
+// but with a fix: will replace all values before assign as:
+// [#### => (####- ; ####] => -####) ; [%%%% => (%%%%+/- ; %%%%] => -/+%%%%) ; [@@@@ -> (@@@@+/- ; @@@@] -> -/+@@@@]
+// in order to protect against unwanted or un-predictable recursions / replacements
+//#####
 
 /**
  * Class: SmartMarkersTemplating - provides a very fast and low footprint templating system.
@@ -32,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160811
+ * @version 	v.160827
  * @package 	Templating:Engines
  *
  */
@@ -264,7 +276,7 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 	} //end foreach
 	//-- if any garbage markers are still detected log warning
 	if(self::have_marker((string)$mtemplate) === true) {
-		Smart::log_warning('Undefined Markers detected in Template: '.$mtemplate);
+		Smart::log_warning('Undefined Markers detected in Template:'."\n".self::log_template($mtemplate));
 		$mtemplate = (string) str_replace(array('[####', '####]'), array('(####-', '-####)'), (string)$mtemplate); // finally protect against undefined variables
 	} //end if
 	//-- debug end
@@ -422,7 +434,7 @@ private static function process_syntax($mtemplate, $y_arr_vars) {
 	$mtemplate = (string) self::process_loop_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any LOOP Syntax
 	//-- 3rd, if any garbage syntax is detected log warning
 	if(self::have_syntax((string)$mtemplate) === true) {
-		Smart::log_warning('Undefined Marker Syntax detected in Template: '.$mtemplate);
+		Smart::log_warning('Undefined Marker Syntax detected in Template:'."\n".self::log_template($mtemplate));
 		$mtemplate = (string) str_replace(array('[%%%%', '%%%%]'), array('(%%%%-', '-%%%%)'), (string)$mtemplate); // finally protect against invalid loops (may have not bind to an existing var or invalid syntax)
 	} //end if
 	//--
@@ -881,7 +893,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 	} //end if
 	//--
 	if(self::have_subtemplate((string)$mtemplate) === true) {
-		Smart::log_warning('Undefined Marker Sub-Templates detected in Template: '.$mtemplate);
+		Smart::log_warning('Undefined Marker Sub-Templates detected in Template:'."\n".self::log_template($mtemplate));
 		$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$mtemplate); // finally protect against undefined sub-templates
 	} //end if
 	//--
@@ -939,6 +951,19 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 		//--
 		return (string) $mtemplate;
 		//--
+	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+private static function log_template($mtemplate) {
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		return (string) $mtemplate;
+	} else {
+		return (string) SmartUnicode::sub_str($mtemplate, 0, 255)."\n".'***** turn on Debugging to see more ... *****';
 	} //end if else
 	//--
 } //END FUNCTION

@@ -43,7 +43,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160213
+ * @version 	v.160827
  * @package 	DATA:YAML
  *
  */
@@ -55,13 +55,13 @@ final class SmartYamlConverter {
 public $setting_dump_force_quotes = false; // @var bool :: Setting this to true will force YAMLDump to enclose any string value in quotes.  False by default.
 //--
 private $REMPTY = "\0\0\0\0\0";
-private $_dumpIndent;
-private $_containsGroupAnchor = false;
-private $_containsGroupAlias = false;
+private $yaml_dump_indent;
+private $yaml_contains_group_anchor = false;
+private $yaml_contains_group_alias = false;
 private $path;
 private $result;
-private $LiteralPlaceHolder = '___YAML_Literal_Block___';
-private $SavedGroups = array();
+private $yaml_literal_placeholder = '___YAML_Literal_Block___';
+private $yaml_arr_saved_groups = array();
 private $indent;
 //--
 private $delayedPath = array(); // @var array :: Path modifier that should be applied after adding current element.
@@ -120,9 +120,9 @@ public function compose($array, $indent=2) {
 	// and options soon.  And better support for folding.
 	//-- New features and options.
 	if(!is_int($indent)) {
-		$this->_dumpIndent = 2;
+		$this->yaml_dump_indent = 2;
 	} else {
-		$this->_dumpIndent = $indent;
+		$this->yaml_dump_indent = $indent;
 	} //end if
 	//-- New YAML document
 	$string = "---\n";
@@ -130,8 +130,8 @@ public function compose($array, $indent=2) {
 	if($array) {
 		$array = (array)$array;
 		$previous_key = -1;
-		foreach ($array as $key => $value) {
-			if (!isset($first_key)) $first_key = $key;
+		foreach($array as $key => $value) {
+			if(!isset($first_key)) $first_key = $key;
 			$string .= $this->_yamlize($key, $value, 0, $previous_key, $first_key, $array);
 			$previous_key = $key;
 		} //end foreach
@@ -165,7 +165,7 @@ private function _yamlize($key, $value, $indent, $previous_key=-1, $first_key=0,
 		//-- It has children.  What to do? Make it the right kind of item
 		$string = $this->_dumpNode($key, $this->REMPTY, $indent, $previous_key, $first_key, $source_array);
 		//-- Add the indent
-		$indent += $this->_dumpIndent;
+		$indent += $this->yaml_dump_indent;
 		//-- Yamlize the array
 		$string .= $this->_yamlizeArray($value, $indent);
 	} elseif (!is_array($value)) {
@@ -263,7 +263,7 @@ private function _dumpNode($key, $value, $indent, $previous_key=-1, $first_key=0
 		$string = $spaces.'- '.$value."\n";
 	} else {
 		//--
-		//if($first_key===0) throw new Exception('YAML // Keys are all screwy.  The first one was zero, now it\'s "'. $key .'"');
+		//if($first_key===0) die('YAML // Keys are all screwy.  The first one was zero, now it\'s "'. $key .'"');
 		//-- It's mapped
 		if(strpos($key, ":") !== false || strpos($key, "#") !== false) {
 			$key = '"'.$key.'"';
@@ -302,10 +302,10 @@ private function _doLiteralBlock($value, $indent) {
 	//--
 	$exploded = explode("\n", $value);
 	$newValue = '|';
-	$indent += $this->_dumpIndent;
+	$indent += $this->yaml_dump_indent;
 	$spaces = str_repeat(' ', $indent);
 	//--
-	foreach($exploded as $line) {
+	foreach($exploded as $key => $line) {
 		$newValue .= "\n".$spaces.($line);
 	} //end foreach
 	//--
@@ -362,7 +362,7 @@ private function loadWithSource($Source) {
 		if($literalBlockStyle) {
 			$line = rtrim($line, $literalBlockStyle." \n");
 			$literalBlock = '';
-			$line .= $this->LiteralPlaceHolder;
+			$line .= $this->yaml_literal_placeholder;
 			$literal_block_indent = strlen($Source[$i+1]) - strlen(ltrim($Source[$i+1]));
 			while(++$i < $cnt && $this->literalBlockContinues($Source[$i], $this->indent)) {
 			  $literalBlock = $this->addLiteralLine($literalBlock, $Source[$i], $literalBlockStyle, $literal_block_indent);
@@ -381,7 +381,7 @@ private function loadWithSource($Source) {
 		//--
 		$lineArray = $this->_parseLine($line);
 		if($literalBlockStyle) {
-			$lineArray = $this->revertLiteralPlaceHolder($lineArray, $literalBlock);
+			$lineArray = $this->revertLiteralYamlPlaceHolder($lineArray, $literalBlock);
 		} //end if
 		$this->addArray($lineArray, $this->indent);
 		foreach($this->delayedPath as $indent => $delayedPath) {
@@ -399,10 +399,10 @@ private function loadWithSource($Source) {
 //================================================================
 private function loadFromString($input) {
 	//--
-	$lines = explode("\n", $input);
+	$lines = explode("\n", (string)$input);
 	//--
-	foreach($lines as $k => $_) {
-		$lines[$k] = rtrim ($_, "\r");
+	foreach($lines as $k => $v) {
+		$lines[$k] = (string) rtrim((string)$v, "\r");
 	} //end foreach
 	//--
 	return (array) $lines;
@@ -508,7 +508,7 @@ private function _toType($value) {
 		$explode = $this->_inlineEscape($innerValue);
 		// Propagate value array
 		$value  = array();
-		foreach($explode as $v) {
+		foreach($explode as $z => $v) {
 			$value[] = $this->_toType($v);
 		} //end foreach
 		return $value;
@@ -533,7 +533,7 @@ private function _toType($value) {
 		$explode = $this->_inlineEscape($innerValue);
 		// Propagate value array
 		$array = array();
-		foreach($explode as $v) {
+		foreach($explode as $z => $v) {
 			$SubArr = $this->_toType($v);
 			if(empty($SubArr)) {
 				continue;
@@ -588,7 +588,7 @@ private function _toType($value) {
 	} //end if
 	//--
 	return $value;
-	//--
+	//-- $k
 } //END FUNCTION
 //================================================================
 
@@ -747,15 +747,15 @@ private function referenceContentsByAlias($alias) {
 	//--
 	do {
 		//-
-		if(!isset($this->SavedGroups[$alias])) {
-			throw new Exception('YAML // Bad group name: '.$alias);
+		if(!isset($this->yaml_arr_saved_groups[$alias])) {
+			Smart::log_warning('YAML // Bad group name: '.$alias);
 			break; // just in case
 		} //end if
 		//--
-		$groupPath = $this->SavedGroups[$alias];
+		$groupPath = $this->yaml_arr_saved_groups[$alias];
 		$value = $this->result;
 		//--
-		foreach ($groupPath as $k) {
+		foreach($groupPath as $z => $k) {
 			$value = $value[$k];
 		} //end foreach
 		//--
@@ -776,8 +776,8 @@ private function addArrayInline($array, $indent) {
 		return false;
 	} //end if
 	//--
-	foreach($array as $k => $_) {
-		$this->addArray(array($k => $_), $indent);
+	foreach($array as $k => $v) {
+		$this->addArray(array($k => $v), $indent);
 		$this->path = $CommonGroupPath;
 	} //end foreach
 	//--
@@ -802,7 +802,7 @@ private function addArray($incoming_data, $incoming_indent) {
 		$key = '0';
 	} //end if
 	//--
-	if($incoming_indent == 0 && !$this->_containsGroupAlias && !$this->_containsGroupAnchor) { // Shortcut for root-level values.
+	if($incoming_indent == 0 && !$this->yaml_contains_group_alias && !$this->yaml_contains_group_anchor) { // Shortcut for root-level values.
 		if($key || $key === '' || $key === '0') {
 			$this->result[$key] = $value;
 		} else {
@@ -816,40 +816,40 @@ private function addArray($incoming_data, $incoming_indent) {
 	//--
 	$history = array();
 	//-- Unfolding inner array tree.
-	$history[] = $_arr = $this->result;
-	foreach($this->path as $k) {
-		$history[] = $_arr = $_arr[$k];
+	$history[] = $tmp_arr = $this->result;
+	foreach($this->path as $z => $k) {
+		$history[] = $tmp_arr = $tmp_arr[$k];
 	} //end foreach
 	//--
-	if($this->_containsGroupAlias) {
-		$value = $this->referenceContentsByAlias($this->_containsGroupAlias);
-		$this->_containsGroupAlias = false;
+	if($this->yaml_contains_group_alias) {
+		$value = $this->referenceContentsByAlias($this->yaml_contains_group_alias);
+		$this->yaml_contains_group_alias = false;
 	} //end if
 	//-- Adding string or numeric key to the innermost level or $this->arr.
 	if(is_string($key) && $key == '<<') {
-		if(!is_array ($_arr)) {
-			$_arr = array ();
+		if(!is_array ($tmp_arr)) {
+			$tmp_arr = array ();
 		} //end if
-		$_arr = array_merge($_arr, $value);
+		$tmp_arr = array_merge($tmp_arr, $value);
 	} elseif($key || $key === '' || $key === '0') {
-		if (!is_array ($_arr)) {
-			$_arr = array ($key=>$value);
+		if (!is_array ($tmp_arr)) {
+			$tmp_arr = array ($key=>$value);
 		} else {
-			$_arr[$key] = $value;
+			$tmp_arr[$key] = $value;
 		} //end if else
 	} else {
-		if(!is_array ($_arr)) {
-			$_arr = array ($value); $key = 0;
+		if(!is_array ($tmp_arr)) {
+			$tmp_arr = array ($value); $key = 0;
 		} else {
-			$_arr[] = $value;
-			end($_arr);
-			$key = key($_arr);
+			$tmp_arr[] = $value;
+			end($tmp_arr);
+			$key = key($tmp_arr);
 		} //end if else
 	} //end if else
 	//--
 	$reverse_path = array_reverse($this->path);
 	$reverse_history = array_reverse($history);
-	$reverse_history[0] = $_arr;
+	$reverse_history[0] = $tmp_arr;
 	$cnt = Smart::array_size($reverse_history) - 1;
 	for($i=0; $i<$cnt; $i++) {
 		$reverse_history[$i+1][$reverse_path[$i]] = $reverse_history[$i];
@@ -857,15 +857,15 @@ private function addArray($incoming_data, $incoming_indent) {
 	$this->result = $reverse_history[$cnt];
 	$this->path[$incoming_indent] = $key;
 	//--
-	if($this->_containsGroupAnchor) {
-		$this->SavedGroups[$this->_containsGroupAnchor] = $this->path;
+	if($this->yaml_contains_group_anchor) {
+		$this->yaml_arr_saved_groups[$this->yaml_contains_group_anchor] = $this->path;
 		if(is_array ($value)) {
 			$k = key($value);
 			if(!is_int ($k)) {
-				$this->SavedGroups[$this->_containsGroupAnchor][$incoming_indent + 2] = $k;
+				$this->yaml_arr_saved_groups[$this->yaml_contains_group_anchor][$incoming_indent + 2] = $k;
 			} //end if
 		} //end if
-		$this->_containsGroupAnchor = false;
+		$this->yaml_contains_group_anchor = false;
 	} //end if
 	//--
 } //END FUNCTION
@@ -954,12 +954,12 @@ private function addLiteralLine ($literalBlock, $line, $literalBlockStyle, $inde
 
 
 //================================================================
-function revertLiteralPlaceHolder($lineArray, $literalBlock) {
+function revertLiteralYamlPlaceHolder($lineArray, $literalBlock) {
 	//--
-	foreach($lineArray as $k => $_) {
-		if(is_array($_)) {
-			$lineArray[$k] = $this->revertLiteralPlaceHolder ($_, $literalBlock);
-		} elseif(substr($_, -1 * strlen($this->LiteralPlaceHolder)) == $this->LiteralPlaceHolder) {
+	foreach($lineArray as $k => $v) {
+		if(is_array($v)) {
+			$lineArray[$k] = $this->revertLiteralYamlPlaceHolder($v, $literalBlock);
+		} elseif(substr($v, -1 * strlen($this->yaml_literal_placeholder)) == $this->yaml_literal_placeholder) {
 			$lineArray[$k] = rtrim($literalBlock, " \r\n");
 		} //end if else
 	} //end foreach
@@ -1017,7 +1017,7 @@ private function clearBiggerPathValues($indent) {
 		return true;
 	} //end if
 	//--
-	foreach($this->path as $k => $_) {
+	foreach($this->path as $k => $v) {
 		if($k > $indent) {
 			unset($this->path[$k]);
 		} //end if
@@ -1280,10 +1280,10 @@ private function nodeContainsGroup($line) {
 private function addGroup($line, $group) {
 	//--
 	if($group[0] == '&') {
-		$this->_containsGroupAnchor = substr($group, 1);
+		$this->yaml_contains_group_anchor = substr($group, 1);
 	} //end if
 	if($group[0] == '*') {
-		$this->_containsGroupAlias = substr($group, 1);
+		$this->yaml_contains_group_alias = substr($group, 1);
 	} //end if
 	//print_r($this->path);
 	//--

@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.160804
+ * @version 	v.160827
  *
  */
 final class SmartDebugProfiler {
@@ -411,11 +411,12 @@ private static function print_log_runtime() {
 			'Smart.Framework Encoding: Internal / DB' => SMART_FRAMEWORK_CHARSET.' / '.SMART_FRAMEWORK_DBSQL_CHARSET
 		],
 		'Server Runtime: PHP' => [
-			'PHP OS' => PHP_OS,
+			'PHP OS' => (string) PHP_OS,
 			'PHP Version' => 'PHP '.PHP_VERSION.' / '.@php_sapi_name(),
+			'PHP Locales: ' => (string) @setlocale(LC_ALL, 0),
 			'PHP Encoding: Internal / MBString' => @ini_get('default_charset').' / '.@mb_internal_encoding(),
-			'PHP Memory' => @ini_get('memory_limit'),
-			'PHP Loaded Modules' => strtolower(implode(', ', (array)@get_loaded_extensions()))
+			'PHP Memory' => (string) @ini_get('memory_limit'),
+			'PHP Loaded Modules' => (string) strtolower(implode(', ', (array)@get_loaded_extensions()))
 		],
 		'Server Domain Info' => [
 			'Server Full URL' => SmartUtils::get_server_current_url(),

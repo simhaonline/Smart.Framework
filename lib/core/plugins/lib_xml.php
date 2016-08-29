@@ -45,7 +45,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.160817
+ * @version     v.160827
  * @package     DATA:XML
  *
  */
@@ -99,7 +99,7 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true) OR (Smart::array_size($arr) <= 0)) {
 		$errors = (array) @libxml_get_errors();
 		if(Smart::array_size($errors) > 0) {
-			foreach($errors as $error) {
+			foreach($errors as $z => $error) {
 				if(is_object($error)) {
 					Smart::log_notice('SmartXmlParser NOTICE: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n".'Encoding: '.$this->encoding."\n");
 				} //end if
@@ -221,7 +221,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160817
+ * @version     v.160827
  * @package     DATA:XML
  *
  */

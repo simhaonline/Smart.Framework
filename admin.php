@@ -20,6 +20,13 @@ define('SMART_FRAMEWORK_APP_BOOTSTRAP', 	'lib/run/app-bootstrap.php'); 	// App B
 define('SMART_APP_TEMPLATES_DIR', 			'etc/templates/'); 				// App Templates Dir
 //--
 require('etc/init.php'); 													// the PHP.INI local settings (they must be called first !!!)
+//--
+// Set Locales to Default: C
+// WARNING: NEVER CHANGE LOCALES in this framework ; THEY MUST BE 'C' (default) ; you should work with overall C and never mix locales as the results will be unpredictable
+// If you ever change locales with other values it may break many things like Example: 3.5 may become become 3,5 or dates may become uncompatible as format in the overall context
+// HINTS: if you need to display localised values never use setlocale() but instead write your own formatters to just format the displayed values in Views
+@setlocale(LC_ALL, 'C'); // DON'T CHANGE THIS !!! THIS IS COMPATIBLE WILL ALL UTF-8 UNICODE CONTEXTS !!!
+//--
 require('lib/smart-error-handler.php'); 									// Smart Error Handler
 require('lib/smart-runtime.php'); 											// Smart Runtime
 require('etc/config-admin.php'); 											// Admin Config
@@ -36,6 +43,18 @@ if((string)get_parent_class('SmartAppAdminMiddleware') != 'SmartAbstractAppMiddl
 } //end if
 //--
 SmartAppAdminMiddleware::Run(); // Handle the Admin service
+//--
+if((string)@setlocale(LC_ALL, 0) != 'C') { // {{{SYNC-LOCALES-CHECK}}}
+	@trigger_error(
+		'#SMART-FRAMEWORK-LOCALES-NOTICE#'."\n".
+		'Invalid PHP Locales (other than C) detected: ['.@setlocale(LC_ALL, 0).'].'."\n".
+		'The locale information is maintained per process, not per thread'."\n".
+		'Thus if other external PHP scripts changed locales while Smart.Framework was running in the same (server) process this will generate unpredictable results.'."\n".
+		'Solution: You should assure to run Smart.Framework in an isolated (server) process context to avoid this issue !'."\n".
+		'If you changed the locales using setlocale() in your PHP scripts inside Smart.Framework you should stop doing this as other locales than C are not supported ...',
+		E_USER_NOTICE
+	);
+} //end if
 //--
 //==
 //#END

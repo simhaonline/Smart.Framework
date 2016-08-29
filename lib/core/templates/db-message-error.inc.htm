@@ -1,0 +1,50 @@
+<!-- Partial Template: Core.DB-MESSAGE-ERROR -->
+[%%%%COMMENT%%%%]
+	This must be ONLY a partial HTML template as is used after raising the main error !
+[%%%%/COMMENT%%%%]
+<style type="text/css">
+	* {
+		font-family: verdana,tahoma,arial,sans-serif;
+		font-smooth: always;
+	}
+</style>
+<div align="center">
+	<table width="[####WIDTH|num####]" cellspacing="0" cellpadding="8" bordercolor="#CCCCCC" border="1" style="border-style: solid; border-color: #CCCCCC; border-collapse: collapse;">
+		<tr valign="middle" bgcolor="#FFFFFF">
+			<td width="64" align="center">
+				<img src="lib/framework/img/sign_warn.png">
+			</td>
+			<td align="center">
+				<div align="center">
+					<font size="5" color="#DD0000"><b>[####TITLE|html####] :: ERROR</b></font>
+					[%%%%IF:AREA:==%%%%]
+					<!-- empty area -->
+					[%%%%ELSE:AREA%%%%]
+					<br>
+					<font size="4" color="#778899">[####AREA|html####]</font>
+					[%%%%/IF:AREA%%%%]
+				</div>
+			</td>
+		</tr>
+		<tr valign="top" bgcolor="#FFFFFF">
+			<td width="64" align="center">
+				<img src="[####LOGO|html####]">
+				<br>
+				<br>
+				<font size="1" color="#778899"><sub><b>[####NAME|html####]</b><br><b><i>[####MODE|html####]&nbsp;[####TYPE|html####]</i></b></sub></font>
+			</td>
+			<td align="left">
+				<div style="max-width:[####WIDTH|num####]px; overflow-x:auto;">
+				<font size="3" color="#DD0000"><b>[####ERR-MSG|html|nl2br####]</b></font>
+				<br>
+				<br>
+				<font size="4" color="#778899">[%%%%IF:PARAMS:==%%%%]Debug is OFF[%%%%ELSE:PARAMS%%%%]<pre>[####PARAMS|html####]</pre>[%%%%/IF:PARAMS%%%%]</font>
+				<br>
+				<font size="3" color="#333333">[%%%%IF:STATEMENT:==%%%%]View the App ERROR Log for more details about this Error ![%%%%ELSE:STATEMENT%%%%][####STATEMENT|html|nl2br####]<br>[%%%%/IF:STATEMENT%%%%]</font>
+				<br>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<!-- #END :: Partial Template: Core.DB-MESSAGE-ERROR -->

@@ -15,7 +15,6 @@ $configs['app']['index-home'] 						= 'samples.toolkit';		// index home page act
 $configs['app']['index-default-module'] 			= SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE; // index default module
 $configs['app']['index-template-path'] 				= 'default';				// default index templates folder from etc/templates/
 $configs['app']['index-template-file'] 				= 'template.htm';			// default index template file
-$configs['app']['index-template-modal-popup-file'] 	= 'template-modal.htm';		// default index modal/popup template file
 //---------------------------------------
 
 // end of php code

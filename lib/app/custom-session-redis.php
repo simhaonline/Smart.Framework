@@ -35,7 +35,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 final class SmartCustomSession extends SmartAbstractCustomSession {
 
 	// ->
-	// v.160215
+	// v.160827
 	// Redis Custom Session [OPTIONAL]
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 
@@ -54,9 +54,10 @@ public function open() {
 	//--
 	global $configs;
 	//--
-	$ignore_conn_errs = true;
-	if(defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) {
+	if((defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) AND (SMART_SOFTWARE_MEMDB_FATAL_ERR === true)) {
 		$ignore_conn_errs = false;
+	} else {
+		$ignore_conn_errs = true; // default
 	} //end if
 	//--
 	$this->redis = new SmartRedisDb(

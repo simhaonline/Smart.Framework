@@ -47,7 +47,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160728
+ * @version 	v.160827
  * @package 	Components:BarCodes
  *
  */
@@ -106,7 +106,7 @@ final class SmartBarcode2D {
 				break;
 			default:
 				$barcode_type = '???';
-				throw new Exception('ERROR: BarCodes2D - Invalid Type Selected for getBarcode');
+				Smart::log_warning('ERROR: BarCodes2D - Invalid Type Selected for getBarcode');
 				return '';
 		} //end switch
 		//--
@@ -128,7 +128,7 @@ final class SmartBarcode2D {
 				break;
 			default:
 				$barcode_format = '.unknown';
-				throw new Exception('ERROR: BarCodes2D - Invalid Mode Selected for getBarcode');
+				Smart::log_warning('ERROR: BarCodes2D - Invalid Mode Selected for getBarcode');
 				return '';
 		} //end switch
 		//--
@@ -516,7 +516,7 @@ final class SmartBarcode2D {
 final class SmartBarcode2D_QRcode {
 
 	// ->
-	// v.160205
+	// v.160827
 
 
 	// Encoding modes (characters which can be encoded in QRcode)
@@ -937,10 +937,10 @@ final class SmartBarcode2D_QRcode {
 		$barcode_array['num_rows'] = $size;
 		$barcode_array['num_cols'] = $size;
 		$barcode_array['bcode'] = array();
-		foreach($qrTab as $line) {
+		foreach($qrTab as $u => $line) {
 			$arrAdd = array();
-			foreach(str_split($line) as $char) {
-				$arrAdd[] = ($char=='1')?1:0;
+			foreach(str_split($line) as $u => $char) {
+				$arrAdd[] = ($char=='1') ? 1 : 0;
 			} //end foreach
 			$barcode_array['bcode'][] = $arrAdd;
 		} //end foreach
@@ -970,7 +970,7 @@ final class SmartBarcode2D_QRcode {
 	private function binarize($frame) {
 		$len = count($frame);
 		// the frame is square (width = height)
-		foreach($frame as &$frameLine) {
+		foreach($frame as &$frameLine) { // PHP7-CHECK:FOREACH-BY-VAL
 			for($i=0; $i<$len; $i++) {
 				$frameLine[$i] = (ord($frameLine[$i])&1)?'1':'0';
 			} //end for
@@ -1541,7 +1541,7 @@ final class SmartBarcode2D_QRcode {
 			} //end for
 		} //end if
 		$bestMask = $frame;
-		foreach($checked_masks as $i) {
+		foreach($checked_masks as $u => $i) {
 			$mask = array_fill(0, $width, str_repeat("\0", $width));
 			$demerit = 0;
 			$blacks = 0;
@@ -2045,7 +2045,7 @@ final class SmartBarcode2D_QRcode {
 	 */
 	 private function calcParity($items) {
 		$parity = 0;
-		foreach($items as $item) {
+		foreach($items as $u => $item) {
 			if($item['mode'] != self::QR_BARCODE_MODE_ST) {
 				for($i=$item['size']-1; $i>=0; --$i) {
 					$parity ^= $item['data'][$i];
@@ -2217,7 +2217,7 @@ final class SmartBarcode2D_QRcode {
 		if($version == 0) {
 			$version = 1;
 		} //end if
-		foreach($items as $item) {
+		foreach($items as $u => $item) {
 			switch($item['mode']) {
 				case self::QR_BARCODE_MODE_NM:
 					$bits = $this->estimateBitsModeNum($item['size']);
@@ -2408,7 +2408,7 @@ final class SmartBarcode2D_QRcode {
 			return null;
 		} //end if
 		$bstream = array();
-		foreach($items as $item) {
+		foreach($items as $u => $item) {
 			$bstream = $this->appendBitstream($bstream, $item['bstream']);
 		} //end foreach
 		return $bstream;
@@ -3053,7 +3053,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return array Array of RS values:<ul><li>mm = Bits per symbol;</li><li>nn = Symbols per block;</li><li>alpha_to = log lookup table array;</li><li>index_of = Antilog lookup table array;</li><li>genpoly = Generator polynomial array;</li><li>nroots = Number of generator;</li><li>roots = number of parity symbols;</li><li>fcr = First consecutive root, index form;</li><li>prim = Primitive element, index form;</li><li>iprim = prim-th root of 1, index form;</li><li>pad = Padding bytes in shortened block;</li><li>gfpoly</ul>.
 	 */
 	private function init_rs($symsize, $gfpoly, $fcr, $prim, $nroots, $pad) {
-		foreach($this->rsitems as $rs) {
+		foreach($this->rsitems as $u => $rs) {
 			if(($rs['pad'] != $pad) OR ($rs['nroots'] != $nroots) OR ($rs['mm'] != $symsize) OR ($rs['gfpoly'] != $gfpoly) OR ($rs['fcr'] != $fcr) OR ($rs['prim'] != $prim)) {
 				continue;
 			} //end if
@@ -3260,7 +3260,7 @@ final class SmartBarcode2D_QRcode {
 final class SmartBarcode2D_DataMatrix {
 
 	// ->
-	// v.160205
+	// v.160827
 
 
 	const SEMACODE_ENCODE_ASCII = 0; 		// ASCII encoding: ASCII character 0 to 127 (1 byte per CW)
@@ -3414,7 +3414,7 @@ final class SmartBarcode2D_DataMatrix {
 			return false;
 		} //end if
 		//-- get minimum required matrix size.
-		foreach($this->symbattr as $params) {
+		foreach($this->symbattr as $u => $params) {
 			if($params[11] >= $nd) {
 				break;
 			} //end if
@@ -4479,7 +4479,7 @@ final class SmartBarcode2D_DataMatrix {
 final class SmartBarcode2D_Pdf417 {
 
 	// ->
-	// v.160205
+	// v.160827
 
 
 	const BCODE2D_PDF_417_ROW_HEIGHT = 4; // Row height respect X dimension of single module
@@ -4947,7 +4947,7 @@ final class SmartBarcode2D_Pdf417 {
 		//-- get the input sequence array
 		$sequence = $this->getInputSequences($code);
 		$codewords = array(); // array of code-words
-		foreach($sequence as $seq) {
+		foreach($sequence as $u => $seq) {
 			$cw = $this->getCompaction($seq[0], $seq[1], true);
 			$codewords = array_merge($codewords, $cw);
 		} //end foreach
@@ -5249,7 +5249,7 @@ final class SmartBarcode2D_Pdf417 {
 		preg_match_all('/([0-9]{13,44})/', (string)$code, $numseq, PREG_OFFSET_CAPTURE); // get numeric sequences
 		$numseq[1][] = array('', strlen($code));
 		$offset = 0;
-		foreach($numseq[1] as $seq) {
+		foreach($numseq[1] as $u => $seq) {
 			$seqlen = strlen($seq[0]);
 			if($seq[1] > 0) {
 				$prevseq = substr($code, $offset, ($seq[1] - $offset)); // extract text sequence before the number sequence
@@ -5257,7 +5257,7 @@ final class SmartBarcode2D_Pdf417 {
 				preg_match_all('/([\x09\x0a\x0d\x20-\x7e]{5,})/', (string)$prevseq, $textseq, PREG_OFFSET_CAPTURE); // get text sequences
 				$textseq[1][] = array('', strlen($prevseq));
 				$txtoffset = 0;
-				foreach($textseq[1] as $txtseq) {
+				foreach($textseq[1] as $u => $txtseq) {
 					$txtseqlen = strlen($txtseq[0]);
 					if($txtseq[1] > 0) {
 						// extract byte sequence before the text sequence

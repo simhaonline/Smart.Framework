@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160205
+ * @version 	v.160827
  * @package 	Mailer:Utility
  *
  */
@@ -675,7 +675,7 @@ private function printarray($array, $part_id) {
 final class SmartMailerMimeExtract {
 
 	// ->
-	// v.160205
+	// v.160827
 
 //================================================================
 	//--
@@ -781,7 +781,7 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 	//--
 
 	//--
-	foreach($headers as $value) {
+	foreach($headers as $u => $value) {
 		//--
 		if(isset($return->headers[SmartUnicode::str_tolower($value['name'])]) AND !is_array($return->headers[SmartUnicode::str_tolower($value['name'])])) {
 			$return->headers[SmartUnicode::str_tolower($value['name'])]   = array($return->headers[SmartUnicode::str_tolower($value['name'])]);
@@ -963,7 +963,7 @@ private function _parseHeaders($input) {
 		$input   = preg_replace("/\r\n(\t| )+/", ' ', (string)$input);
 		$headers = explode("\r\n", trim($input));
 		//--
-		foreach($headers as $value) {
+		foreach($headers as $u => $value) {
 			//--
 			$hdr_name = SmartUnicode::sub_str($value, 0, $pos = SmartUnicode::str_pos($value, ':'));
 			$hdr_value = SmartUnicode::sub_str($value, $pos+1);

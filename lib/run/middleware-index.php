@@ -30,7 +30,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.5.3');
  * @access 		private
  * @internal
  *
- * @version		160809
+ * @version		160827
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -74,6 +74,10 @@ public static function Run() {
 	} //end if
 	if(defined('SMART_APP_MODULE_AUTH')) {
 		self::Raise500Error('Smart App Module Auth must NOT be Defined outside controllers ...');
+		return;
+	} //end if
+	if(defined('SMART_APP_MODULE_REALM_AUTH')) {
+		self::Raise500Error('Smart App Module Realm Auth must NOT be Defined outside controllers ...');
 		return;
 	} //end if
 	if(defined('SMART_APP_MODULE_DIRECT_OUTPUT')) {
@@ -158,20 +162,16 @@ public static function Run() {
 		$page = (string) $configs['app']['index-home'];
 	} //end if
 	//--
-	if(strpos($page, '.') !== false) {
+	if(strpos($page, '.') !== false) { // page can be as module.controller / module.controller.(html|stml|json) / module.controller.some-indexing-words-for-spiders.(html|stml|json)
 		//--
-		$arr = explode('.', (string)$page);
+		$arr = (array) explode('.', (string)$page, 3); // separe 1st and 2nd from the rest
 		$arr[0] = trim(strtolower((string)$arr[0])); // module
 		$arr[1] = trim(strtolower((string)$arr[1])); // controller
-		$arr[2] = trim(strtolower((string)$arr[2])); // optional segment, '' | 'html' | 'stml' | 'json'
-		$arr[3] = trim((string)$arr[3]); // last segment, must be empty
 		//--
 	} elseif((string)$configs['app']['index-default-module'] != '') {
 		//--
 		$arr[0] = trim(strtolower((string)$configs['app']['index-default-module'])); // get default module
 		$arr[1] = trim(strtolower((string)$page)); // controller
-		$arr[2] = '';
-		$arr[3] = '';
 		//--
 	} else {
 		//--
@@ -181,10 +181,6 @@ public static function Run() {
 		//--
 	} //end if else
 	//--
-	if(((string)$arr[1] == 'html') OR ((string)$arr[1] == 'stml') OR ((string)$arr[1] == 'json')) { // this will never be empty as it will fall to the default module if this is empty
-		$arr[1] = 'default'; // fix to get default controller if empty
-	} //end if
-	//--
 	if(((string)$arr[0] == '') OR ((string)$arr[1] == '')) {
 		if((string)$err404 == '') {
 			$err404 = 'Invalid Page (Empty or Missing URL Page Segments): '.$page;
@@ -193,16 +189,6 @@ public static function Run() {
 	if((!preg_match('/^[a-z0-9_\-]+$/', (string)$arr[0])) OR (!preg_match('/^[a-z0-9_\-]+$/', (string)$arr[1]))) {
 		if((string)$err404 == '') {
 			$err404 = 'Invalid Page (Invalid Characters in the URL Page Segments): '.$page;
-		} //end if
-	} //end if
-	if(((string)$arr[2] != '') AND ((string)$arr[2] != 'html') AND ((string)$arr[2] != 'stml') AND ((string)$arr[2] != 'json')) { // {{{SYNC-CMS-EXTENSIONS}}}
-		if((string)$err404 == '') {
-			$err404 = 'Invalid Page (Invalid URL Page Segments Extension): '.$page;
-		} //end if
-	} //end if
-	if((string)$arr[3] != '') {
-		if((string)$err404 == '') {
-			$err404 = 'Invalid Page (Too many URL Segments): '.$page;
 		} //end if
 	} //end if
 	//--
@@ -236,10 +222,16 @@ public static function Run() {
 		self::Raise403Error('Page Access Denied for Index Area: '.$page);
 		return;
 	} //end if
-	if(SMART_APP_MODULE_AUTH === true) {
+	if(defined('SMART_APP_MODULE_AUTH')) {
 		if(SmartAuth::check_login() !== true) {
 			self::Raise403Error('Page Access Denied ! No Authentication: '.$page);
 			return;
+		} //end if
+		if(defined('SMART_APP_MODULE_REALM_AUTH')) {
+			if((string)SmartAuth::get_login_realm() !== (string)SMART_APP_MODULE_REALM_AUTH) {
+				self::Raise403Error('Page Access Denied ! Invalid Login Realm: '.$page);
+				return;
+			} //end if
 		} //end if
 	} //end if
 	//--
@@ -331,23 +323,6 @@ public static function Run() {
 	if(stripos((string)$configs['js']['popup-override-mobiles'], '<'.SmartUtils::get_os_browser_ip('os').'>') !== false) {
 		$configs['js']['popup-mode'] = 'popup'; // particular os settings for mobiles
 	} //end if
-	//--
-	$winmod = '';
-	if(isset($appSettings['winmod'])) {
-		$winmod = (string) $appSettings['winmod'];
-	} elseif(SmartFrameworkRegistry::issetRequestVar((string)SMART_FRAMEWORK_URL_PARAM_MODALPOPUP) === true) {
-		if((string)SmartFrameworkRegistry::getRequestVar((string)SMART_FRAMEWORK_URL_PARAM_MODALPOPUP) == (string)SMART_FRAMEWORK_URL_VALUE_ENABLED) {
-			$winmod = 'yes';
-		} //end if
-	} //end if else
-	switch(strtolower((string)$winmod)) {
-		case 'yes':
-			$winmod = 'yes';
-			break;
-		case '':
-		default:
-			$winmod = '';
-	} //end switch
 	//--
 	$rawpage = '';
 	if(isset($appSettings['rawpage'])) {
@@ -463,49 +438,52 @@ public static function Run() {
 	//== DEFAULT OUTPUT
 	//--
 	if(isset($appSettings['template-path'])) {
-		$the_template_path = Smart::safe_pathname(SmartFileSysUtils::add_dir_last_slash(trim((string)$appSettings['template-path'])));
+		if((string)$appSettings['template-path'] == '@') { // if template path is set to self (module)
+			$the_template_path = '@'; // this is a special setting
+		} else {
+			$the_template_path = Smart::safe_pathname(SmartFileSysUtils::add_dir_last_slash(trim((string)$appSettings['template-path'])));
+		} //end if else
 	} else {
 		$the_template_path = Smart::safe_pathname(SmartFileSysUtils::add_dir_last_slash(trim((string)$configs['app']['index-template-path']))); // use default template path
 	} //end if else
 	//--
-	if((string)$winmod != '') { // modal template
-		if(isset($appSettings['template-modal-popup-file'])) {
-			$the_template_file = Smart::safe_filename(trim((string)$appSettings['template-modal-popup-file']));
-		} else {
-			$the_template_file = Smart::safe_filename(trim((string)$configs['app']['index-template-modal-popup-file'])); // use default modal template
-		} //end if else
-	} else { // main template
-		if(isset($appSettings['template-file'])) {
-			$the_template_file = Smart::safe_filename(trim((string)$appSettings['template-file']));
-		} else {
-			$the_template_file = Smart::safe_filename(trim((string)$configs['app']['index-template-file'])); // use default template
-		} //end if else
-	} //end if
+	if(isset($appSettings['template-file'])) {
+		$the_template_file = Smart::safe_filename(trim((string)$appSettings['template-file']));
+	} else {
+		$the_template_file = Smart::safe_filename(trim((string)$configs['app']['index-template-file'])); // use default template
+	} //end if else
 	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name(SMART_APP_TEMPLATES_DIR.$the_template_path)) {
-		Smart::log_warning('Invalid Page Template Path: '.SMART_APP_TEMPLATES_DIR.$the_template_path);
+	if((string)$the_template_path == '@') {
+		$the_template_path = (string) $the_path_to_module.'templates/'; // must have the dir last slash as above
+	} else {
+		$the_template_path = (string) SMART_APP_TEMPLATES_DIR.$the_template_path; // finally normalize and set the complete template path
+	} //end if else
+	$the_template_file = (string) $the_template_file; // finally normalize
+	//--
+	if(!SmartFileSysUtils::check_file_or_dir_name($the_template_path)) {
+		Smart::log_warning('Invalid Page Template Path: '.$the_template_path);
 		self::Raise500Error('Invalid Page Template Path. See the error log !');
 		return;
 	} //end if
-	if(!is_dir(SMART_APP_TEMPLATES_DIR.$the_template_path)) {
-		Smart::log_warning('Page Template Path does not Exists: '.SMART_APP_TEMPLATES_DIR.$the_template_path);
+	if(!is_dir($the_template_path)) {
+		Smart::log_warning('Page Template Path does not Exists: '.$the_template_path);
 		self::Raise500Error('Page Template Path does not Exists. See the error log !');
 		return;
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name(SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file)) {
-		Smart::log_warning('Invalid Page Template File: '.SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file);
+	if(!SmartFileSysUtils::check_file_or_dir_name($the_template_path.$the_template_file)) {
+		Smart::log_warning('Invalid Page Template File: '.$the_template_path.$the_template_file);
 		self::Raise500Error('Invalid Page Template File. See the error log !');
 		return;
 	} //end if
-	if(!is_file(SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file)) {
-		Smart::log_warning('Page Template File does not Exists: '.SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file);
+	if(!is_file($the_template_path.$the_template_file)) {
+		Smart::log_warning('Page Template File does not Exists: '.$the_template_path.$the_template_file);
 		self::Raise500Error('Page Template File does not Exists. See the error log !');
 		return;
 	} //end if
 	//--
-	$the_template_content = trim(SmartFileSystem::staticread(SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file));
+	$the_template_content = trim(SmartFileSystem::staticread($the_template_path.$the_template_file));
 	if((string)$the_template_content == '') {
-		Smart::log_warning('Page Template File is Empty or cannot be read: '.SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file);
+		Smart::log_warning('Page Template File is Empty or cannot be read: '.$the_template_path.$the_template_file);
 		self::Raise500Error('Page Template File is Empty or cannot be read. See the error log !');
 		return;
 	} //end if
@@ -516,8 +494,8 @@ public static function Run() {
 	} //end if
 	//--
 	$appData['app-domain'] = (string) $configs['app']['index-domain'];
-	$appData['template-file'] = SMART_APP_TEMPLATES_DIR.$the_template_path.$the_template_file;
-	$appData['template-path'] = SMART_APP_TEMPLATES_DIR.$the_template_path;
+	$appData['template-file'] = $the_template_path.$the_template_file;
+	$appData['template-path'] = $the_template_path;
 	$appData['js.settings'] = SmartComponents::js_inc_settings((string)$configs['js']['popup-mode'], false, (bool)SMART_APP_VISITOR_COOKIE);
 	$appData['head-meta'] = (string) $appData['head-meta'];
 	if((string)$appData['head-meta'] == '') {

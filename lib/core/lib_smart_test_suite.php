@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160826
+	// v.160827
 
 
 //==================================================================
@@ -143,6 +143,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 			],
 			'TESTUNIT_BASE_URL' => SMART_FRAMEWORK_TESTUNIT_BASE_URL,
 			'NO-CACHE-TIME' => time(),
+			'CURRENT-DATE-TIME' => date('Y-m-d H:i:s O'),
 			'TEST-JS_SCRIPTS.Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')),
 			'Test-Buttons.AJAX-POST' => $btnop,
 			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: '.$info_adm.' // Test Suite</div>',
@@ -447,7 +448,7 @@ public static function test_crypto() {
 	$he_dec = SmartUtils::crypto_decrypt($he_enc, $hkey);
 	//--
 	if(((string)$he_dec != (string)$unicode_text) OR (sha1($he_dec) != sha1($unicode_text))) {
-		throw new Exception('TestUnit: Crypto Cipher test failed ...');
+		Smart::raise_error('TestUnit FAILED in '.__FUNCTION__.'() :: Crypto Cipher test', 'TestUnit: Crypto Cipher test failed ...');
 		return;
 	} //end if
 	//--
@@ -457,7 +458,7 @@ public static function test_crypto() {
 	$bf_enc = SmartUtils::crypto_blowfish_encrypt($unicode_text, $bf_key);
 	$bf_dec = SmartUtils::crypto_blowfish_decrypt($bf_enc, $bf_key);
 	if(((string)$bf_dec != (string)$unicode_text) OR (sha1($bf_dec) != sha1($unicode_text))) {
-		throw new Exception('TestUnit: BlowFish test failed ...');
+		Smart::raise_error('TestUnit FAILED in '.__FUNCTION__.'() :: Crypto Blowfish test', 'TestUnit: Blowfish test failed ...');
 		return;
 	} //end if
 	//--
@@ -466,7 +467,7 @@ public static function test_crypto() {
 	$arch_lzs = SmartArchiverLZS::compressToBase64($unicode_text);
 	$unarch_lzs = SmartArchiverLZS::decompressFromBase64($arch_lzs);
 	if(((string)$unarch_lzs != (string)$unicode_text) OR (sha1($unarch_lzs) != sha1($unicode_text))) {
-		throw new Exception('TestUnit: Arch-LZS test failed ...');
+		Smart::raise_error('TestUnit FAILED in '.__FUNCTION__.'() :: Crypto Arch-LZS test', 'TestUnit: Arch-LZS test failed ...');
 		return;
 	} //end if
 	//--
@@ -475,7 +476,7 @@ public static function test_crypto() {
 	$arch_bf_lzs = SmartArchiverLZS::compressToBase64($bf_enc);
 	$unarch_bf_lzs = SmartArchiverLZS::decompressFromBase64($arch_bf_lzs);
 	if(((string)$unarch_bf_lzs != (string)$bf_enc) OR (sha1($unarch_bf_lzs) != sha1($bf_enc))) {
-		throw new Exception('TestUnit: Blowfish-Arch-LZS test failed ...');
+		Smart::raise_error('TestUnit FAILED in '.__FUNCTION__.'() :: Crypto Blowfish-Arch-LZS test', 'TestUnit: Blowfish-Arch-LZS test failed ...');
 		return;
 	} //end if
 	//--
@@ -831,7 +832,7 @@ private static function pack_test_archive($y_exclusions_arr='') {
 			$randomizer = (string) '#'.Smart::random_number().'#'."\n";
 			$testfile = SmartUtils::data_archive((string)$randomizer.$testsrcfile);
 			if(sha1((string)SmartUtils::data_unarchive((string)$testfile)) !== sha1((string)$randomizer.$testsrcfile)) {
-				throw new Exception('Data Unarchive Failed for Pack Test Archive ...');
+				Smart::log_warning('Data Unarchive Failed for Pack Test Archive ...');
 				return 'Data Unarchive Failed for Pack Test Archive !';
 			} //end if
 			$out .= (string) $testfile;
@@ -839,7 +840,7 @@ private static function pack_test_archive($y_exclusions_arr='') {
 		//--
 	} else {
 		//--
-		throw new Exception('Failed to read the test file: lib/core/lib_smart_test_suite.php');
+		Smart::log_warning('Failed to read the test file: lib/core/lib_smart_test_suite.php');
 		return 'ERROR: Cannot Get File Read for this test !';
 		//--
 	} //end if
@@ -1993,7 +1994,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160817
+	// v.160827
 
 private $db;
 
@@ -3260,7 +3261,7 @@ private function init_table_samples_countries() {
 	//--
 	$this->db->write_data('BEGIN'); // start transaction
 	$this->db->create_table('sample_countries', "iso character varying(2) PRIMARY KEY NOT NULL, name character varying(100) NOT NULL, iso3 character varying(3) NOT NULL, numcode integer NOT NULL");
-	foreach($rows AS $key => $row) {
+	foreach($rows as $key => $row) {
 		$this->db->write_data('INSERT INTO sample_countries '.$this->db->prepare_write_statement($row, 'insert'));
 	} //end foreach
 	$this->db->write_data('UPDATE sample_countries '.$this->db->prepare_write_statement($rows[0], 'update').' WHERE (iso IS NULL)'); // test

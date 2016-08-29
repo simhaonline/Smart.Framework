@@ -15,7 +15,6 @@ $configs['app']['admin-home'] 						= 'samples.toolkit';		// admin home page act
 $configs['app']['admin-default-module'] 			= 'samples';				// admin default module
 $configs['app']['admin-template-path'] 				= 'default';				// default admin templates folder from etc/templates/
 $configs['app']['admin-template-file'] 				= 'template.htm';			// default admin template file
-$configs['app']['admin-template-modal-popup-file'] 	= 'template-modal.htm';		// default admin modal/popup template file
 //---------------------------------------
 
 // end of php code

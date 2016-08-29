@@ -81,9 +81,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//=== if no cached, execute the code below ...
 
 		//--
-		$this->PageViewSetCfg('template-path', 'default');
-		$this->PageViewSetCfg('template-file', 'template.htm');
-		$this->PageViewSetCfg('template-modal-popup-file', 'template-modal.htm');
+		$this->PageViewSetCfg('template-path', 'default'); 		// set the template path (must be inside etc/templates/)
+		$this->PageViewSetCfg('template-file', 'template.htm');	// set the template file
 		//--
 
 		//--

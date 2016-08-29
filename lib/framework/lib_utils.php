@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.160506
+ * @version 	v.160827
  * @package 	Core
  *
  */
@@ -340,7 +340,7 @@ public static function data_archive($y_str) {
 	$out = @gzdeflate($y_str, 6, ZLIB_ENCODING_RAW); // deflate (default compression of zlib is 6)
 	//-- check for possible deflate errors
 	if(($out === false) OR ((string)$out == '')) {
-		throw new Exception('SmartFramework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
+		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
 		return '';
 	} //end if
 	$len_data = strlen((string)$y_str);
@@ -351,11 +351,11 @@ public static function data_archive($y_str) {
 		$ratio = 0;
 	} //end if
 	if($ratio <= 0) { // check for empty input / output !
-		throw new Exception('SmartFramework Utils / Data Archive :: ZLib Data Ratio is zero ! ...');
+		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is zero ! ...');
 		return '';
 	} //end if
 	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZDEFLATE-ERR-CHECK}}}
-		throw new Exception('SmartFramework Utils / Data Archive :: ZLib Data Ratio is higher than 32768 ! ...');
+		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is higher than 32768 ! ...');
 		return '';
 	} //end if
 	//--
@@ -365,7 +365,7 @@ public static function data_archive($y_str) {
 	//-- test unarchive
 	$unarch_checksum = SmartHashCrypto::sha1(self::data_unarchive($out));
 	if((string)$chksum != (string)$unarch_checksum) { // check: if this is a very serious bug with ZLib or PHP so we can't tolerate
-		throw new Exception('SmartFramework Utils / Data Archive :: Data Encode Check Failed ! ...');
+		Smart::log_warning('SmartFramework Utils / Data Archive :: Data Encode Check Failed ! ...');
 		return '';
 	} //end if
 	//-- if all test pass, return archived data
@@ -519,7 +519,7 @@ public static function print_array_to_html($y_aray) {
 		} //end foreach
 		$out .= '</td></tr></table>';
 	} else {
-		throw new Exception('ERROR: SmartUtils print_array_to_html expect the 1st param to be array !');
+		Smart::log_warning('ERROR: SmartUtils print_array_to_html expect the 1st param to be array !');
 		return '';
 	} //end if else
 	return $out;
@@ -1665,7 +1665,7 @@ public static function get_server_current_path() {
 			} //end if
 		} //end if
 		if((string)$current_path == '') {
-			throw new Exception('Cannot Determine Current WebServer URL / Path');
+			Smart::raise_error('Cannot Determine Current WebServer URL / Path', 'Invalid WebServer URL / Path');
 			return '';
 		} //end if
 		//--
@@ -1693,14 +1693,14 @@ public static function get_server_current_url() {
 		//--
 		$current_port = self::get_server_current_port();
 		if((string)$current_port == '') {
-			throw new Exception('Cannot Determine Current WebServer URL / Port');
+			Smart::raise_error('Cannot Determine Current WebServer URL / Port', 'Invalid WebServer URL / Port');
 			return '';
 		} //end if
 		$used_port = ':'.$current_port;
 		//--
 		$current_domain = self::get_server_current_domain_name();
 		if((string)$current_domain == '') {
-			throw new Exception('Cannot Determine Current WebServer URL / Domain');
+			Smart::raise_error('Cannot Determine Current WebServer URL / Domain', 'Invalid WebServer URL / Domain');
 			return '';
 		} //end if
 		//--
@@ -1740,7 +1740,7 @@ public static function get_server_current_script() {
 			$current_script = basename(self::get_server_current_full_script());
 		} //end if
 		if((string)$current_script == '') {
-			throw new Exception('Cannot Determine Current WebServer Script');
+			Smart::raise_error('Cannot Determine Current WebServer Script', 'Invalid Current WebServer Script');
 			return '';
 		} //end if
 		//--
@@ -1937,7 +1937,7 @@ public static function get_ip_client() {
 		$ip = SmartValidator::validate_filter_ip_address((string)$_SERVER['REMOTE_ADDR']); // no forward or client IP should be considered here as they can be a security risk as they are untrusted !!
 		//--
 		if((string)$ip == '') {
-			throw new Exception('Cannot Determine Current Client IP Address');
+			Smart::raise_error('Cannot Determine Current Client IP Address', 'Invalid Client IP Address');
 			return '';
 		} //end if
 		//--

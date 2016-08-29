@@ -47,7 +47,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160825
+ * @version 	v.160827
  * @package 	Components:Framework
  *
  */
@@ -138,6 +138,48 @@ public static function parse_settings($arr_base_settings, $arr_local_settings) {
  */
 public static function lock_file() {
 	return '____SMART-FRAMEWORK_SingleUser_Mode__Enabled';
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: DB Error Message
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function db_error_message($y_title, $y_name, $y_mode, $y_type, $y_logo, $y_width, $y_area, $y_errmsg, $y_params, $y_statement) {
+	//--
+	$y_width = (int) $y_width;
+	if($y_width < 550) {
+		$y_width = 550;
+	} elseif($y_width > 750) {
+		$y_width = 750;
+	} //end if
+	//--
+	$y_area = (string) trim((string)$y_area); // if this is empty will simply not be displayed
+	$y_params = (string) trim((string)$y_params); // if this is empty will display: DEBUG OFF
+	$y_statement = (string) trim((string)$y_statement); // if this is empty will display: View App Log for more details ...
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/db-message-error.inc.htm',
+		[
+			'WIDTH' 	=> (int) $y_width,
+			'TITLE' 	=> (string) $y_title,
+			'AREA' 		=> (string) $y_area,
+			'LOGO' 		=> (string) $y_logo,
+			'NAME' 		=> (string) $y_name,
+			'MODE' 		=> (string) $y_mode,
+			'TYPE' 		=> (string) $y_type,
+			'ERR-MSG' 	=> (string) $y_errmsg,
+			'PARAMS' 	=> (string) $y_params,
+			'STATEMENT' => (string) $y_statement,
+		],
+		'no'
+	);
+	//--
 } //END FUNCTION
 //================================================================
 

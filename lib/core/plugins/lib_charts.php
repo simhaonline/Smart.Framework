@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160204
+ * @version 	v.160827
  * @package 	Components:Charts
  *
  */
@@ -110,7 +110,7 @@ private $area_height;
 public function __construct($y_type, $y_title, $y_arr_data, $y_format='png') {
 	//--
 	if(!function_exists('imagecreatetruecolor')) {
-		throw new Exception('"[ERROR] :: SmartImgBizCharts :: PHP-GD TrueColor extension is missing ...');
+		Smart::log_warning('"[ERROR] :: SmartImgBizCharts :: PHP-GD TrueColor extension is missing ...');
 		return;
 	} //end if
 	//--
@@ -119,7 +119,7 @@ public function __construct($y_type, $y_title, $y_arr_data, $y_format='png') {
 			$this->type = 'matrix';
 			break;
 		default:
-			throw new Exception('"[ERROR] :: SmartImgBizCharts :: Invalid Chart Type: '.$y_type.' ...');
+			Smart::log_warning('"[ERROR] :: SmartImgBizCharts :: Invalid Chart Type: '.$y_type.' ...');
 			return;
 	} //end if
 	//--
@@ -520,7 +520,7 @@ private function color_alocate($y_color) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160204
+ * @version 	v.160827
  * @package 	Components:Charts
  *
  */
@@ -578,7 +578,7 @@ private $legend_exists;
 public function __construct($y_type, $y_title, $y_arr_data, $y_format='png', $y_display_graph2=true, $y_display_graph_depths=true) {
 	//--
 	if(!function_exists('imagecreatetruecolor')) {
-		throw new Exception('"[ERROR] :: SmartImgGfxCharts :: PHP-GD TrueColor extension is missing ...');
+		Smart::log_warning('"[ERROR] :: SmartImgGfxCharts :: PHP-GD TrueColor extension is missing ...');
 		return;
 	} //end if
 	//--
@@ -602,7 +602,7 @@ public function __construct($y_type, $y_title, $y_arr_data, $y_format='png', $y_
 			$this->type = 6;
 			break;
 		default:
-			throw new Exception('"[ERROR] :: SmartImgBizCharts :: Invalid Chart Type: '.$y_type.' ...');
+			Smart::log_warning('"[ERROR] :: SmartImgBizCharts :: Invalid Chart Type: '.$y_type.' ...');
 			return;
 	} //end if
 	//--

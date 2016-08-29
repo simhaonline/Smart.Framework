@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160311
+ * @version 	v.160827
  * @package 	Exporters
  *
  */
@@ -33,7 +33,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	const version = 'v.1.5.4-r.160311@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
+	const version = 'v.1.5.4-r.160827@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
 
 	//===================================
 
@@ -189,7 +189,7 @@ final class SmartMarkdownToHTML {
 		//--
 		$CurrentBlock = null;
 		//--
-		foreach($lines as $line) {
+		foreach($lines as $z => $line) {
 			//--
 			if(chop($line) === '') {
 				//--
@@ -209,7 +209,7 @@ final class SmartMarkdownToHTML {
 				//--
 				unset($parts[0]);
 				//--
-				foreach($parts as $part) {
+				foreach($parts as $z => $part) {
 					//--
 					$shortage = 4 - SmartUnicode::str_len($line) % 4;
 					//--
@@ -261,13 +261,13 @@ final class SmartMarkdownToHTML {
 			//--
 			if(isset($this->BlockTypes[$marker])) {
 				//--
-				foreach($this->BlockTypes[$marker] as $blockType) {
+				foreach($this->BlockTypes[$marker] as $z => $blockType) {
 					$blockTypes[] = $blockType;
 				} //end foreach
 				//--
 			} //end if
 			//--
-			foreach($blockTypes as $blockType) {
+			foreach($blockTypes as $z => $blockType) {
 				//--
 				$Block = $this->{'block'.$blockType}($Line, $CurrentBlock);
 				//--
@@ -321,7 +321,7 @@ final class SmartMarkdownToHTML {
 		//--
 		$markup = '';
 		//--
-		foreach($Blocks as $Block) {
+		foreach($Blocks as $z => $Block) {
 			//--
 			if(isset($Block['hidden'])) {
 				continue;
@@ -893,7 +893,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$dividerCells = explode('|', $divider);
 			//--
-			foreach($dividerCells as $dividerCell) {
+			foreach($dividerCells as $z => $dividerCell) {
 				//--
 				$dividerCell = trim($dividerCell);
 				//--
@@ -1092,7 +1092,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$Excerpt = array('text' => $excerpt, 'context' => $text);
 			//--
-			foreach($this->InlineTypes[$marker] as $inlineType) {
+			foreach($this->InlineTypes[$marker] as $z => $inlineType) {
 				//--
 				$Inline = $this->{'inline'.$inlineType}($Excerpt);
 				//--
@@ -1144,7 +1144,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$Excerpt = array('text' => $excerpt, 'context' => $text);
 			//--
-			foreach($this->InlineTypes[$marker] as $inlineType) {
+			foreach($this->InlineTypes[$marker] as $z => $inlineType) {
 				//--
 				$Inline = $this->{'inline'.$inlineType}($Excerpt);
 				//--
@@ -1652,7 +1652,7 @@ final class SmartMarkdownToHTML {
 		//--
 		$markup = '';
 		//--
-		foreach($Elements as $Element) {
+		foreach($Elements as $z => $Element) {
 			$markup .= "\n" . $this->element($Element);
 		} //end foreach
 		//--
@@ -1696,7 +1696,7 @@ final class SmartMarkdownToHTML {
 		$attributes = preg_split('/[ ]+/', $attributeString, - 1, PREG_SPLIT_NO_EMPTY);
 		//--
 		$classes = array();
-		foreach($attributes as $attribute) {
+		foreach($attributes as $z => $attribute) {
 			//--
 			if($attribute[0] === '@') { // @
 				$tmp_arr = explode('=', $attribute);

@@ -48,14 +48,14 @@ if(!function_exists('mb_convert_encoding')) {
  * $archString = SmartArchiverLZS::compressToBase64($myString); // archive the string
  * $unarchString = SmartArchiverLZS::decompressFromBase64($archString); // unarchive it back
  * if((string)$unarchString !== (string)$myString) { // Test: check if unarchive is the same as archive
- *     throw new Exception('LZS Archive test Failed !');
+ *     die('LZS Archive test Failed !');
  * } //end if
  * </code>
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.160204
+ * @version 	v.160827
  * @package 	Archivers
  *
  */
@@ -698,7 +698,7 @@ private static function RawInflate($compressed) {
 final class SmartArchiverObjContextLZS {
 	//--
 	// ->
-	// v.150122
+	// v.160827
 	//--
 	public $c = '';
 	public $w = '';
@@ -739,7 +739,7 @@ final class SmartArchiverObjContextLZS {
 final class SmartArchiverObjDataLZS {
 	//--
 	// ->
-	// v.150122
+	// v.160827
 	//--
 	public $str;
 	public $val;

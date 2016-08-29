@@ -56,7 +56,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160205
+ * @version 	v.160827
  * @package 	Components:BarCodes
  *
  */
@@ -97,7 +97,7 @@ final class SmartBarcode1D {
 				break;
 			default:
 				$barcode_type = '???';
-				throw new Exception('ERROR: BarCodes1D - Invalid Type Selected for getBarcode');
+				Smart::log_warning('ERROR: BarCodes1D - Invalid Type Selected for getBarcode');
 				return '';
 		} //end switch
 		//--
@@ -119,7 +119,7 @@ final class SmartBarcode1D {
 				break;
 			default:
 				$barcode_format = '.unknown';
-				throw new Exception('ERROR: BarCodes1D - Invalid Mode Selected for getBarcode');
+				Smart::log_warning('ERROR: BarCodes1D - Invalid Mode Selected for getBarcode');
 				return '';
 		} //end switch
 		//--
@@ -325,7 +325,7 @@ final class SmartBarcode1D {
 		//-- print bars
 		$x = 0;
 		//--
-		foreach ($barcode_arr['bcode'] as $k => $v) {
+		foreach($barcode_arr['bcode'] as $k => $v) {
 			//--
 			$bw = round(($v['w'] * $w), 3);
 			$bh = round(($v['h'] * $h / $barcode_arr['maxh']), 3);
@@ -541,7 +541,7 @@ final class SmartBarcode1D {
 final class SmartBarcode1D_128 {
 
 	// ->
-	// v.160205
+	// v.160827
 
 	private $code = '';
 	private $mode = '';
@@ -772,7 +772,7 @@ final class SmartBarcode1D_128 {
 		//-- add start code at the beginning
 		array_unshift($code_data, $startid);
 		//--
-		foreach($code_data as $val) {
+		foreach($code_data as $u => $val) {
 			$seq = $chr[$val];
 			for($j = 0; $j < 6; ++$j) {
 				if(($j % 2) == 0) {
@@ -838,7 +838,7 @@ final class SmartBarcode1D_128 {
 final class SmartBarcode1D_93 {
 
 	// ->
-	// v.160205
+	// v.160827
 
 	private $code = '';
 	private $extended = true;
@@ -1111,7 +1111,7 @@ final class SmartBarcode1D_93 {
 final class SmartBarcode1D_39 {
 
 	// ->
-	// v.160205
+	// v.160827
 
 	private $code = '';
 	private $extended = true;
@@ -1397,7 +1397,7 @@ final class SmartBarcode1D_39 {
 final class SmartBarcode1D_RMS4CC {
 
 	// ->
-	// v.160205
+	// v.160827
 
 	private $code = '';
 	private $mode = '';

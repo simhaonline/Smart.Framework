@@ -23,8 +23,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 	public function Run() {
 
 		//--
-		$this->PageViewSetCfg('template-path', 'benchmark');
-		$this->PageViewSetCfg('template-file', 'template-benchmark.htm');
+		$this->PageViewSetCfg('template-path', '@'); // set template path to this module
+		$this->PageViewSetCfg('template-file', 'template-benchmark.htm'); // the default template
 		//--
 
 		//--

@@ -60,14 +60,15 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * 		'name' => 'Test Record'
  * );
  * $insert = (array) SmartPgsqlDb::write_data('INSERT INTO "table" '.SmartPgsqlDb::prepare_write_statement($arr_insert, 'insert'));
+ * $prepared_sql = SmartPgsqlDb::prepare_param_query('SELECT * FROM "table" WHERE "id" = $1', [99]);
  *
  * </code>
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
- * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
+ * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160817.r2
+ * @version 	v.160827
  * @package 	Database:PostgreSQL
  *
  */
@@ -1172,15 +1173,18 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 
 //======================================================
 /**
- * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE or PostgreSQL 9.5/later ON CONFLICT DO NOTHING statements, but it can catch UNIQUE violations on both: INSERT / UPDATE statements and also can catch FOREIGN KEY violations).
- * This function is intended to be used for write type queries: INSERT ; UPDATE in a safe way as a write ignore (returning the # of affected rows or zero if an exception raised).
- * The catch of PostgreSQL exceptions are handled completely by this function so there is no need for a try/catch in PHP.
+ * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE / UPDATE IGNORE / DELETE IGNORE, but it can catch UNIQUE violations on both: INSERT / UPDATE / DELETE statements and also can catch FOREIGN KEY violations).
+ * This function is intended to be used only for write type queries like: INSERT / UPDATE / DELETE which can be ignored if unique violations or foreign key violations and will return the # of affected rows or zero if an exception raised.
+ * The catch of PostgreSQL exceptions is handled completely by this function so there is no need for a catch errors outside.
  *
  * IMPORTANT:
- * This function needs the pgsql notice message tracking enabled in PHP (NOT IGNORED); This must be set in php.ini (pgsql.ignore_notice = 0).
- * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a DO block.
- * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
- * It cannot handle special statements such as: BEGIN, START TRANSACTION, COMMIT, ROLLBACK or SET.
+ * This function needs the pgsql notice message tracking enabled in PHP (not ignored); This must be set in php.ini (pgsql.ignore_notice = 0).
+ * The internal mechanism of this function to catch UNIQUE or FOREIGN KEYS violations is that the EXCEPTIONS are catch at the PostgreSQL level in a DO block.
+ * This is the best approach to handle safe UPSERT or INSERT IGNORE / UPDATE IGNORE / DELETE IGNORE like queries in high load envionments or to avoid fatal errors when a INSERT / UPDATE / DELETE violates a unique key or a foreign key with PostgreSQL.
+ * This function can be used inside transactions blocks but never use this function to execute statements as: BEGIN, START TRANSACTION, COMMIT, ROLLBACK or SET statements, as the context is incompatible.
+ * HINTS:
+ * On PostgreSQL 9.5/later there is an alternative which can be used directly with write_data() without the need of this function as the following statement: INSERT ... ON CONFLICT DO NOTHING/UPDATE ... (as the equivalent of INSERT IGNORE / UPSERT), but the following statements are still missing (not implemented): UPDATE ... ON CONFLICT DO NOTHING / DELETE ... ON CONFLICT DO NOTHING .
+ * This function will remain in the future to offer backward compatibility with PostgreSQL 8.4 ... 9.5 even if PostgreSQL at some moment will have ON CONFLICT DO implemented for all 3 INSERT / UPDATE / DELETE.
  *
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
@@ -1428,7 +1432,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 		foreach($arrdata as $key => $val) {
 			//-- check for SQL INJECTION
 			$key = trim(@str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
-			//-- Except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
+			//-- except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if((string)$mode == 'in-select') { // in-select
 				$key = (int) $key; // force int keys
 			} else {
@@ -1514,11 +1518,11 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 
 //======================================================
 /**
- * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
+ * Create Escaped SQL Statements from Parameters and Array of Data by replacing $# params
  * This can be used for a full SQL statement or just for a part.
- * The statement must not contain any Single Quotes !
+ * The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !
  *
- * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
+ * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = $1)'
  * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
  * @param RESOURCE $y_connection 				:: the connection to pgsql server
  * @return STRING								:: The SQL processed (partial/full) Statement
@@ -1526,22 +1530,22 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 public static function prepare_param_query($query, $replacements_arr, $y_connection='DEFAULT') { // {{{SYNC-SQL-PARAM-QUERY}}}
 	//--
 	if(!is_string($query)) {
-		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), print_r($replacements_arr,1));
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), $replacements_arr);
 		return ''; // query must be a string
 	} //end if
 	//--
 	if((string)trim((string)$query) == '') {
-		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is empty !', (string)$query, print_r($replacements_arr,1));
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is empty !', (string)$query, $replacements_arr);
 		return ''; // empty query not allowed
 	} //end if
 	//--
 	if(strpos($query, "'") !== false) { // this must be avoided as below will be exploded by ? thus if a ? is inside '' this is a problem ...
-		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query cannot contain single quotes !', (string)$query, print_r($replacements_arr,1));
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query used for prepare with params in '.__FUNCTION__.'() cannot contain single quotes to prevent possible SQL injections which can produce unpredictable results !', (string)$query, $replacements_arr);
 		return ''; // single quote is not allowed
 	} //end if
 	//--
 	if(!is_array($replacements_arr)) {
-		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, print_r($replacements_arr,1));
+		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query Replacements is NOT Array !', (string)$query, $replacements_arr);
 		return ''; // replacements must be an array
 	} //end if
 	//--
@@ -1559,7 +1563,7 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 			if($i < ($expr_count - 1)) { // this is req. as it comes from explode
 				//--
 				if(!array_key_exists((string)$i, $replacements_arr)) {
-					self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array.Size ; Key: #'.$i, (string)$query, print_r($replacements_arr,1));
+					self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array.Size ; Key: #'.$i, (string)$query, $replacements_arr);
 					return ''; // array key does not exists in replacements
 					break;
 				} //end if
@@ -1588,7 +1592,7 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 			if((int)$crr_key >= 0) {
 				//--
 				if(!array_key_exists((string)$crr_key, $replacements_arr)) {
-					self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array.Size ; Key: #'.$i.' / $'.($crr_key+1), (string)$query, print_r($replacements_arr,1));
+					self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Invalid Replacements Array.Size ; Key: #'.$i.' / $'.($crr_key+1), (string)$query, $replacements_arr);
 					return ''; // array key does not exists in replacements
 					break;
 				} //end if
@@ -2042,75 +2046,54 @@ private static function major_version($y_version) {
  * Displays the PgSQL Errors and HALT EXECUTION (This have to be a FATAL ERROR as it occur when a FATAL PgSQL ERROR happens or when a Query Syntax is malformed)
  * PRIVATE
  *
- * @param STRING $y_error_message 				:: The Error Message to Display
  * @return 										:: HALT EXECUTION WITH ERROR MESSAGE
  *
  */
-private static function error($y_connection, $y_area, $y_error_message, $y_query, $y_title_query, $y_warning='Execution Halted !') {
+private static function error($y_connection, $y_area, $y_error_message, $y_query, $y_params_or_title, $y_warning='') {
 //--
-$the_area = Smart::escape_html($y_area);
-$the_params = '';
-if(is_array($y_title_query)) {
-	$the_params = '<pre>'.Smart::escape_html('[Params]'."\n".print_r($y_title_query, 1)).'</pre>';
-	$the_title_query = '+Untitled+';
-} elseif((string)$y_title_query == '') {
-	$the_title_query = '-Untitled-';
-} else {
-	$the_title_query = Smart::escape_html($y_title_query);
-} //end if else
+$def_warn = 'Execution Halted !';
+$y_warning = (string) trim((string)$y_warning);
 if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-	$the_error_message = Smart::escape_html($y_error_message);
-	$the_query_info = Smart::escape_html($y_query).$the_params;
 	$width = 750;
+	$the_area = (string) $y_area;
+	if((string)$y_warning == '') {
+		$y_warning = (string) $def_warn;
+	} //end if
+	$the_error_message = 'Operation FAILED: '.$def_warn."\n".$y_error_message;
+	if(is_array($y_params_or_title)) {
+		$the_params = '*** Params ***'."\n".print_r($y_params_or_title, 1);
+	} elseif((string)$y_params_or_title != '') {
+		$the_params = '[ Reference Title ]: '.$y_params_or_title;
+	} else {
+		$the_params = '- No Params or Reference Title -';
+	} //end if
+	$the_query_info = (string) trim((string)$y_query);
+	if((string)$the_query_info == '') {
+		$the_query_info = '-'; // query cannot e empty in this case (templating enforcement)
+	} //end if
 } else {
 	$width = 550;
-	$the_title_query = '!';
-	$the_error_message = 'An operation failed. '.Smart::escape_html($y_warning).'...';
-	$the_query_info = 'View the App ERROR Log for more details about this Error !'; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
+	$the_area = '';
+	$the_error_message = 'Operation FAILED: '.$def_warn;
+	$the_params = '';
+	$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
 } //end if else
 //--
-$out = <<<HTML_CODE
-<style type="text/css">
-	* {
-		font-family: verdana,tahoma,arial,sans-serif;
-		font-smooth: always;
-	}
-</style>
-<div align="center">
-	<table width="{$width}" cellspacing="0" cellpadding="8" bordercolor="#CCCCCC" border="1" style="border-style: solid; border-color: #CCCCCC; border-collapse: collapse;">
-		<tr valign="middle" bgcolor="#FFFFFF">
-			<td width="64" align="center">
-				<img src="lib/framework/img/sign_warn.png">
-			</td>
-			<td align="center">
-				<div align="center"><font size="5" color="#DD0000"><b>PgSQL :: ERROR</b><br>{$the_area}</font></div>
-			</td>
-		</tr>
-		<tr valign="top" bgcolor="#FFFFFF">
-			<td width="64" align="center">
-				<img src="lib/core/img/db/postgresql_logo.png">
-				<br>
-				<br>
-				<font size="1" color="#778899"><sub><b>PostgreSQL</b><br><b><i>DB&nbsp;Server</i></b></sub></font>
-			</td>
-			<td>
-				<div align="center">
-					<font size="4" color="#778899"><b>[ {$the_title_query} ]</b></font>
-				</div>
-				<br>
-				<div align="left">
-					<font size="3" color="#DD0000"><b>{$the_error_message}</b></font>
-					<br>
-					<font size="3" color="#DD0000">{$the_query_info}</font>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
-HTML_CODE;
+$out = SmartComponents::db_error_message(
+	'PgSQL Client',
+	'PostgreSQL',
+	'SQL/DB',
+	'Server',
+	'lib/core/img/db/postgresql_logo.png',
+	$width, // width
+	$the_area, // area
+	$the_error_message, // err msg
+	$the_params, // title or params
+	$the_query_info // sql statement
+);
 //--
 Smart::raise_error(
-	'#POSTGRESQL-DB@'.$y_connection.'# :: Q# // PgSQL :: ERROR :: '.$y_area.' // '.print_r($y_title_query,1)."\n".$y_query."\n".'Error-Message: '.$y_error_message,
+	'#POSTGRESQL-DB@'.$y_connection.'# :: Q# // PgSQL Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Params / Title:'."\n".print_r($y_params_or_title,1)."\n".'*** Query:'."\n".$y_query,
 	$out // msg to display
 );
 die(''); // just in case
@@ -2184,10 +2167,10 @@ return (string) $sql;
  * </code>
  *
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
- * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
+ * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160817.r2
+ * @version 	v.160827
  * @package 	Database:PostgreSQL
  *
  */
@@ -2438,15 +2421,18 @@ public function write_data($queryval, $params_or_title='') {
 
 
 /**
- * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE or PostgreSQL 9.5/later ON CONFLICT DO NOTHING statements, but it can catch UNIQUE violations on both: INSERT / UPDATE statements and also can catch FOREIGN KEY violations).
- * This function is intended to be used for write type queries: INSERT ; UPDATE in a safe way as a write ignore (returning the # of affected rows or zero if an exception raised).
- * The catch of PostgreSQL exceptions are handled completely by this function so there is no need for a try/catch in PHP.
+ * PgSQL Query :: Write Ignore - Catch Duplicate Key Violation or Foreign Key Violation Errors (This is the equivalent of MySQL's INSERT IGNORE / UPDATE IGNORE / DELETE IGNORE, but it can catch UNIQUE violations on both: INSERT / UPDATE / DELETE statements and also can catch FOREIGN KEY violations).
+ * This function is intended to be used only for write type queries like: INSERT / UPDATE / DELETE which can be ignored if unique violations or foreign key violations and will return the # of affected rows or zero if an exception raised.
+ * The catch of PostgreSQL exceptions is handled completely by this function so there is no need for a catch errors outside.
  *
  * IMPORTANT:
- * This function needs the pgsql notice message tracking enabled in PHP (NOT IGNORED); This must be set in php.ini (pgsql.ignore_notice = 0).
- * It is generally intended for safe writes (mostly INSERT or UPDATE) where values can raise UNIQUE or FOREIGN KEYS violations, thus control can be done with catch EXCEPTION in a DO block.
- * This is the best approach to handle safe UPSERT queries in high load envionments with PostgreSQL.
- * It cannot handle special statements such as: BEGIN, START TRANSACTION, COMMIT, ROLLBACK or SET.
+ * This function needs the pgsql notice message tracking enabled in PHP (not ignored); This must be set in php.ini (pgsql.ignore_notice = 0).
+ * The internal mechanism of this function to catch UNIQUE or FOREIGN KEYS violations is that the EXCEPTIONS are catch at the PostgreSQL level in a DO block.
+ * This is the best approach to handle safe UPSERT or INSERT IGNORE / UPDATE IGNORE / DELETE IGNORE like queries in high load envionments or to avoid fatal errors when a INSERT / UPDATE / DELETE violates a unique key or a foreign key with PostgreSQL.
+ * This function can be used inside transactions blocks but never use this function to execute statements as: BEGIN, START TRANSACTION, COMMIT, ROLLBACK or SET statements, as the context is incompatible.
+ * HINTS:
+ * On PostgreSQL 9.5/later there is an alternative which can be used directly with write_data() without the need of this function as the following statement: INSERT ... ON CONFLICT DO NOTHING/UPDATE ... (as the equivalent of INSERT IGNORE / UPSERT), but the following statements are still missing (not implemented): UPDATE ... ON CONFLICT DO NOTHING / DELETE ... ON CONFLICT DO NOTHING .
+ * This function will remain in the future to offer backward compatibility with PostgreSQL 8.4 ... 9.5 even if PostgreSQL at some moment will have ON CONFLICT DO implemented for all 3 INSERT / UPDATE / DELETE.
  *
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
@@ -2476,11 +2462,11 @@ public function prepare_write_statement($arrdata, $mode) {
 
 
 /**
- * Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)
+ * Create Escaped SQL Statements from Parameters and Array of Data by replacing $# params
  * This can be used for a full SQL statement or just for a part.
- * The statement must not contain any Single Quotes !
+ * The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !
  *
- * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
+ * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = $1)'
  * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
  * @return STRING								:: The SQL processed (partial/full) Statement
  */

@@ -114,7 +114,7 @@ private $slow_time = 0.0005;
 public function __construct($host, $port, $db, $password='', $timeout=5, $y_debug_exch_slowtime=0.0005, $y_description='DEFAULT', $y_ignore_connection_fail=true) {
 	//--
 	if(((string)$host == '') OR ((string)$port == '') OR ((string)$db == '') OR ((string)$timeout == '')) {
-		$this->error(true, 'Redis Configuration Init', 'Some Required Parameters are Empty', ''); // fatal error
+		$this->error(true, 'Redis Configuration Init', 'Some Required Parameters are Empty', 'CFG:host:port@db#timeout'); // fatal error
 		return;
 	} //end if
 	//--
@@ -355,7 +355,7 @@ private function run_command($method, array $args) {
 	//--
 	array_unshift($args, $method);
 	$cmd = '*'.count($args)."\r\n"; // no. of arguments
-	foreach($args as $item) {
+	foreach($args as $z => $item) {
 		$cmd .= '$'.strlen($item)."\r\n"; // str length
 		$cmd .= $item."\r\n"; // key contents
 	} //end foreach
@@ -451,7 +451,7 @@ private function parse_response($method) {
 			do {
 				$chunk = @fread($this->socket, min((int)$bytes_left, $this->recvbuf)); // 4096 was instead of $this->recvbuf
 				if($chunk === false || $chunk === '') {
-					$this->error(true, 'Redis Response', 'Error while reading (bulk) bytes from the server', 'Method: '.$method); // fatal error
+					$this->error(true, 'Redis Response', 'Error while reading bulk reply from the server', 'Method: '.$method); // fatal error
 					return null;
 				} //end if
 				$result .= (string) $chunk;
@@ -552,7 +552,7 @@ private function connect() {
 		} //end if else
 		//--
 		if(!is_resource($this->socket)) {
-			$this->error($this->raise_fatal_err_on_connection_fail, 'Redis Connect', 'Failed to Connect to Redis server: '.$this->server.'@'.$this->db, 'ERROR: #'.$errno.' :: '.$errstr); // non-fatal error, depends on how Redis class is setup
+			$this->error($this->raise_fatal_err_on_connection_fail, 'Redis Connect', 'ERROR: #'.$errno.' :: '.$errstr, 'Connection to Redis server: '.$this->server.'@'.$this->db); // non-fatal error, depends on how Redis class is setup
 			return null;
 		} //end if
 		//--
@@ -607,86 +607,67 @@ private function disconnect() {
  * @return :: HALT EXECUTION WITH ERROR MESSAGE
  *
  */
-private function error($is_fatal, $y_area, $y_error_message, $y_query='', $y_warning='An operation failed') {
+private function error($is_fatal, $y_area, $y_error_message, $y_query='', $y_warning='') {
 //--
-$this->err = true;
+$this->err = true; // required, to halt driver
 //--
 $is_fatal = (bool) $is_fatal;
 //--
-$the_area = Smart::escape_html($y_area);
-//--
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-	$the_error_message = Smart::escape_html($y_error_message);
-	$the_query_info = Smart::escape_html($y_query);
-	$width = 750;
-} else {
-	$width = 550;
-	$the_error_message = Smart::escape_html($y_warning).' !';
-	$the_query_info = 'Error display is restricted. See the error logs.'; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
-} //end if else
-//--
-$out = <<<HTML_CODE
-<style type="text/css">
-	* {
-		font-family: verdana,tahoma,arial,sans-serif;
-		font-smooth: always;
-	}
-</style>
-<div align="center">
-	<table width="{$width}" cellspacing="0" cellpadding="8" bordercolor="#CCCCCC" border="1" style="border-style: solid; border-color: #CCCCCC; border-collapse: collapse;">
-		<tr valign="middle" bgcolor="#FFFFFF">
-			<td width="64" align="center">
-				<img src="lib/framework/img/sign_warn.png">
-			</td>
-			<td align="center">
-				<div align="center"><font size="5" color="#DD0000"><b>Redis :: ERROR</b><br>{$the_area}</font></div>
-			</td>
-		</tr>
-		<tr valign="top" bgcolor="#FFFFFF">
-			<td width="64" align="center">
-				<img src="lib/core/img/db/redis_logo_trans.png">
-				<br>
-				<br>
-				<font size="1" color="#778899"><sub><b>Redis</b><br><b><i>DB&nbsp;Server</i></b></sub></font>
-			</td>
-			<td>
-				<div align="center">
-					<font size="4" color="#778899"><b>[ ! ]</b></font>
-				</div>
-				<br>
-				<div align="left">
-					<font size="3" color="#DD0000"><b>{$the_error_message}</b></font>
-					<br>
-					<font size="3" color="#DD0000">{$the_query_info}</font>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
-HTML_CODE;
-//--
 if($is_fatal !== false) { // FATAL ERROR
 	//--
+	$def_warn = 'Execution Halted !';
+	$y_warning = (string) trim((string)$y_warning);
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		$width = 750;
+		$the_area = (string) $y_area;
+		if((string)$y_warning == '') {
+			$y_warning = (string) $def_warn;
+		} //end if
+		$the_error_message = 'Operation FAILED: '.$def_warn."\n".$y_error_message;
+		$the_params = '- '.$this->description.' -';
+		$the_query_info = (string) $y_query;
+		if((string)$the_query_info == '') {
+			$the_query_info = '-'; // query cannot e empty in this case (templating enforcement)
+		} //end if
+	} else {
+		$width = 550;
+		$the_area = '';
+		$the_error_message = 'Operation FAILED: '.$def_warn;
+		$the_params = '';
+		$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
+	} //end if else
+	//--
+	$out = SmartComponents::db_error_message(
+		'Redis Client',
+		'Redis',
+		'Caching',
+		'Server',
+		'lib/core/img/db/redis_logo_trans.png',
+		$width, // width
+		$the_area, // area
+		$the_error_message, // err msg
+		$the_params, // title or params
+		$the_query_info // command
+	);
+	//--
 	Smart::raise_error(
-		'#REDIS@'.$this->socket.'# :: Q# // Redis :: ERROR :: '.$y_area."\n".$y_query."\n".'Error-Message: '.$y_error_message,
+		'#REDIS@'.$this->socket.'# :: Q# // Redis Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query,
 		$out // msg to display
 	);
 	die(''); // just in case
 	//--
-} else { // WARNING
-	//--
-	$dmsg = $y_area."\n".$y_query."\n".'Error-Message: '.$y_error_message."\n".'The settings for this Redis instance allow just silent warnings on connection fail.'."\n".'All next method calls to this Redis instance will be discarded silently ...';
+} else { // SILENT WARNING
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 			'type' => 'metainfo',
-			'data' => 'Redis silent Warning: '.$dmsg
+			'data' => 'Redis SILENT WARNING: '.$y_area."\n".$y_query."\n".'Error-Message: '.$y_error_message."\n".'The settings for this Redis instance allow just silent warnings on connection fail.'."\n".'All next method calls to this Redis instance will be discarded silently ...'
 		]);
 		//--
 	} //end if
 	//--
-	Smart::log_warning('#REDIS@'.$this->socket.'# :: Q# // Redis :: WARNING :: '.$dmsg);
+	Smart::log_warning('#REDIS@'.$this->socket.'# :: Q# // Redis :: WARNING :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query);
 	//--
 } //end if else
 //--

@@ -19,7 +19,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //--------------------------------------- APP NAMESPACE
 define('SMART_SOFTWARE_NAMESPACE', 			'smartframework.default');						// APP Namespace ID :: [a-z.], length 10..25 :: Used as a unique ID for session and DBs
 //--------------------------------------- ERRORS MANAGEMENT
-define('SMART_ERROR_HANDLER', 				'log'); 										// Error Handler mode: 'log' | 'off' | 'php' :: for production is recommended to use 'off' or 'log' ; for development / advanced debugging use 'log' or 'php' (in the last case there is no error log, all errors are printed inline)
+define('SMART_ERROR_HANDLER', 				'dev'); 										// Error Handler mode: 'log' | 'dev' :: for production is recommended to use 'log' as it will show a blank page with a 500 Internal Server Error message ; for development or debugging use 'dev' but this will display an error with a HTTP 200 OK
 //--------------------------------------- TIMEZONE
 define('SMART_FRAMEWORK_TIMEZONE', 			'UTC'); 										// The timezone for PHP (Example: Europe/London) ; default is: UTC
 //--------------------------------------- SECURITY
@@ -105,7 +105,8 @@ define('SMART_FRAMEWORK_URL_PARAM_PRINTABLE', 		'print');														// Printa
 //---------------------------------------- SPECIAL FEATURES
 define('SMART_SOFTWARE_FRONTEND_ENABLED',			true);															// To Disable Frontend (index.php) set this to false
 define('SMART_SOFTWARE_BACKEND_ENABLED',			true);															// To Disable Backend (admin.php) set this to false
-//define('SMART_SOFTWARE_MEMDB_FATAL_ERR',			true);															// If defined / set to true will not ignore (fatal / connection errors) on memory DB servers such as Redis ; normally memchache servers can be ignored if fail and must behave like no cache
+//define('SMART_SOFTWARE_MEMDB_FATAL_ERR',			true);															// If defined / set to true will not ignore (fatal / connection errors) on all memory DB servers such as Redis ; normally memchache servers can be ignored if fail and must behave like no cache
+//define('SMART_SOFTWARE_SQLDB_FATAL_ERR',			false);															// If defined / set to false will use exceptions that can be catched instead of fatal errors on all SQL DB servers such as PostgreSQL / SQLite ... ; disabling fatal errors on SQL servers will also disable transactions as any SQL error will just break any existing transaction and the results are unpredictable (DO NOT use this parameter unless you know what you are doing !!!)
 //define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status
 //---------------------------------------- CHARSET AND REGIONAL SETTINGS [ NEVER CHANGE THESE MUST BE UNICODE UTF-8 ; CHANGING IT YOU CAN BREAK THE UNICODE SUPPORT ]
 define('SMART_FRAMEWORK_CHARSET', 					'UTF-8');														// This must be `UTF-8` 	:: Default Character Set for PHP

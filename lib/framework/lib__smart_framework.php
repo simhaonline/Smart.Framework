@@ -226,7 +226,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160812
+ * @version 	v.160827
  * @package 	Application
  *
  */
@@ -265,7 +265,7 @@ abstract class SmartAbstractAppController {
 		} //end if else
 		//--
 		$this->modulepath = (string) $y_module_path;
-		$this->modulename = (string) @basename((string)$y_module_path);
+		$this->modulename = (string) Smart::base_name($y_module_path);
 		$this->urlscript = (string) $y_url_script;
 		$this->urlpath = (string) $y_url_path;
 		$this->urladdr = (string) $y_url_addr;
@@ -342,6 +342,46 @@ abstract class SmartAbstractAppController {
 		]);
 		//--
 		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Test if Modal/PopUp is set via (URL) Request.
+	 *
+	 * If is set, will return TRUE, else will return FALSE
+	 *
+	 * @return 	BOOLEAN						:: TRUE / FALSE
+	 */
+	final public function IfRequestModalPopup() {
+		//--
+		if($this->RequestVarGet((string)SMART_FRAMEWORK_URL_PARAM_MODALPOPUP, '', 'string') == (string)SMART_FRAMEWORK_URL_VALUE_ENABLED) {
+			return true;
+		} else {
+			return false;
+		} //end if else
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Test if Printable is set via (URL) Request.
+	 *
+	 * If is set, will return TRUE, else will return FALSE
+	 *
+	 * @return 	BOOLEAN						:: TRUE / FALSE
+	 */
+	final public function IfRequestPrintable() {
+		//--
+		if($this->RequestVarGet((string)SMART_FRAMEWORK_URL_PARAM_PRINTABLE, '', 'string') == (string)SMART_FRAMEWORK_URL_VALUE_ENABLED) {
+			return true;
+		} else {
+			return false;
+		} //end if else
 		//--
 	} //END FUNCTION
 	//=====
@@ -573,7 +613,7 @@ abstract class SmartAbstractAppController {
 		if((is_array($param)) OR (is_object($param)) OR (is_array($value)) OR (is_object($value))) {
 			return false;
 		} //end if
-		//--
+		//-- TODO: validate the param by a fixed list: look in middlewares to see complete list
 		$param = strtolower((string)$param);
 		//--
 		if((string)$param != '') {

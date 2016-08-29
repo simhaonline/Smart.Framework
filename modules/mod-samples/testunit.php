@@ -37,7 +37,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$op = $this->RequestVarGet('op', '', 'string');
+		$op = $this->RequestVarGet('op', 'testunit.main', 'string');
 		//--
 		switch((string)$op) {
 			case 'testunit.phpinfo':
@@ -327,13 +327,19 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'testunit.interractions':
 				//--
+				$this->PageViewSetCfg('template-file', 'template-modal.htm');
 				$main = SmartTestSuite::test_interractions(
 					$this->RequestVarGet('mode')
 				);
 				//--
 				break;
 			case 'testunit.main':
-			default:
+				//--
+				$is_modal = false;
+				if($this->IfRequestModalPopup() OR $this->IfRequestPrintable()) {
+					$is_modal = true;
+					$this->PageViewSetCfg('template-file', 'template-modal.htm');
+				} //end if
 				//--
 				$main = SmartTestSuite::main_screen(
 					$this->RequestVarGet('tab'),
@@ -341,7 +347,18 @@ class SmartAppAdminController extends SmartAbstractAppController {
 					$this->RequestVarGet('testformdata')
 				);
 				//--
-				SmartTestSuite::test_load_libs(); // just for testing all libs
+				if(!$is_modal) {
+					SmartTestSuite::test_load_libs(); // just for testing all libs
+					if($this->IfDebug()) {
+						$this->SetDebugData('TestUnit.Main', 'Loading all staticload libs at once for test purposes ...');
+					} //end if
+				} //end if
+				//--
+				break;
+			default:
+				//--
+				$this->PageViewSetCfg('error', 'Invalid TestUnit Operation ! ...');
+				return 400;
 				//--
 		} //end switch
 		//--

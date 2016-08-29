@@ -10,8 +10,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-define('SMART_APP_MODULE_AREA', 'ADMIN'); 	// INDEX, ADMIN, SHARED
-define('SMART_APP_MODULE_AUTH', true); 		// if set to TRUE requires auth always
+define('SMART_APP_MODULE_AREA', 'ADMIN'); 						// INDEX, ADMIN, SHARED
+define('SMART_APP_MODULE_AUTH', true); 							// if set to TRUE requires auth always
+define('SMART_APP_MODULE_REALM_AUTH', 'SMART-FRAMEWORK.TEST'); 	// if set will check the login realm
 
 /**
  * Admin Controller
@@ -28,8 +29,8 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$this->PageViewSetCfg('template-path', 'benchmark');
-		$this->PageViewSetCfg('template-file', 'template-benchmark.htm');
+		$this->PageViewSetCfg('template-path', '@'); // set template path to this module
+		$this->PageViewSetCfg('template-file', 'template-benchmark.htm'); // the default template
 		//--
 
 		//--

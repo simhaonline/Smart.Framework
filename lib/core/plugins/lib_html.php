@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160824
+ * @version 	v.160827
  * @package 	DATA:HTML
  *
  */
@@ -509,7 +509,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($this->dom_log_errors === true) OR ((string)$this->html == '')) { // log errors if any
 				$errors = (array) @libxml_get_errors();
 				if(Smart::array_size($errors) > 0) {
-					foreach($errors as $error) {
+					foreach($errors as $z => $error) {
 						if(is_object($error)) {
 							Smart::log_notice('SmartHtmlParser NOTICE: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n");
 						} //end if
@@ -558,7 +558,7 @@ public function clean_dom_html($html, array $whitelist) {
 	libxml_use_internal_errors(true) AND libxml_clear_errors();
 	if(is_object($html)) {
 		if ($html->hasChildNodes()) {
-			foreach (range($html->childNodes->length - 1, 0) as $i) {
+			foreach (range($html->childNodes->length - 1, 0) as $z => $i) {
 				$this->clean_dom_html($html->childNodes->item($i), $whitelist);
 			}
 		}
@@ -702,7 +702,7 @@ private function get_attributes($html) {
 	if(is_array($attr)) {
 		foreach($attr as $count => $attr_arrx) {
 			if(is_array($attr_arrx)) {
-				foreach($attr_arrx as $i=>$a) {
+				foreach($attr_arrx as $i => $a) {
 					if(((string)$a != '') AND ($count == 2)) {
 						$res[$a] = (string) $attr[3][$i];
 					} //end if

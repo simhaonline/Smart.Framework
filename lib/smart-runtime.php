@@ -311,7 +311,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @internal
  *
  * @depends 	-
- * @version 	v.160804
+ * @version 	v.160827
  * @package 	Application
  *
  */
@@ -375,7 +375,7 @@ final class SmartFrameworkRegistry {
 		//--
 		$subcontext = '';
 		if(strpos((string)$context, '|') !== false) {
-			$arr = explode('|', $context);
+			$arr = (array) explode('|', (string)$context, 3); // separe 1st and 2nd from the rest
 			$context = (string) trim((string)$arr[0]);
 			$subcontext = (string) trim((string)$arr[1]);
 			unset($arr);
@@ -522,7 +522,7 @@ final class SmartFrameworkRegistry {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160311
+ * @version 	v.160827
  * @package 	Application
  *
  */
@@ -672,7 +672,7 @@ public static function FilterGetPostCookieVars($y_var) {
  * @access 		private
  * @internal
  *
- * @version		160311
+ * @version		160827
  *
  */
 final class SmartFrameworkRuntime {
@@ -702,7 +702,7 @@ public static function Lock_Request_Processing() {
 // This will run before loading the Smart.Framework and must not depend on it's classes
 public static function Parse_Semantic_URL() {
 
-	// PARSE SEMANTIC URL VIA GET v.160123
+	// PARSE SEMANTIC URL VIA GET v.160827
 	// it limits the URL to 65535 and vars to 1000
 
 	//-- check if can run
@@ -723,17 +723,18 @@ public static function Parse_Semantic_URL() {
 	//--
 
 	//--
-	$get_arr = explode('?/', $semantic_url);
-	$location_str = trim((string)$get_arr[1]);
-	$get_arr = explode('&', $location_str);
-	$location_str = trim((string)$get_arr[0]);
+	$get_arr = (array) explode('?/', $semantic_url, 2); // separe 1st from 2nd by ?/ if set
+	$location_str = (string) trim((string)$get_arr[1]);
+	$get_arr = (array) explode('&', $location_str, 2); // separe 1st from 2nd by & if set
+	$location_str = (string) trim((string)$get_arr[0]);
+	$get_arr = array(); // cleanup
 	//--
 
 	//--
 	if((string)$location_str != '') {
 		//--
-		$location_arx = (array) explode('/', $location_str);
-		$cnt_arx = count($location_arx);
+		$location_arx = (array) explode('/', (string)$location_str, 1001); // max is 1000, so separe them from the rest
+		$cnt_arx = (int) count($location_arx);
 		if($cnt_arx > 1000) {
 			$cnt_arx = 1000;
 		} //end if
@@ -1167,7 +1168,7 @@ public static function DebugRequestLog($y_message) {
  * @access 		private
  * @internal
  *
- * @version		160311
+ * @version		160827
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -1324,7 +1325,7 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 	//--
 	$downloaded_file = ''; // init
 	//--
-	$decoded_download_packet = trim((string)SmartUtils::crypto_decrypt(
+	$decoded_download_packet = (string) trim((string)SmartUtils::crypto_decrypt(
 		(string)$encrypted_download_pack,
 		'SmartFramework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY
 	));
@@ -1336,20 +1337,23 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 		} else {
 			$controller_key = (string) 'IndexArea/'.$controller_key;
 		} //end if
-		//--
-		$arr_metadata = @explode("\n", $decoded_download_packet);
-		//print_r($arr_metadata);
 		//-- {{{SYNC-DOWNLOAD-ENCRYPT-ARR}}}
-		// PACKET-STRUCTURE [we will have an array like below, according with the: SmartUtils::create_download_link()]
+		$arr_metadata = explode("\n", (string)$decoded_download_packet, 6); // only need first 5 parts
+		//print_r($arr_metadata);
+		// #PACKET-STRUCTURE# [we will have an array like below, according with the: SmartUtils::create_download_link()]
 		// [TimedAccess]\n
 		// [FilePath]\n
 		// [AccessKey]\n
 		// [UniqueKey]\n
+		// [SFR.UA]\n
+		// #END#
 		//--
-		$crrtime = trim((string)$arr_metadata[0]);
-		$filepath = trim((string)$arr_metadata[1]);
-		$access_key = trim((string)$arr_metadata[2]);
-		$unique_key = trim((string)$arr_metadata[3]);
+		$crrtime = (string) trim((string)$arr_metadata[0]);
+		$filepath = (string) trim((string)$arr_metadata[1]);
+		$access_key = (string) trim((string)$arr_metadata[2]);
+		$unique_key = (string) trim((string)$arr_metadata[3]);
+		//--
+		unset($arr_metadata);
 		//--
 		$timed_hours = 1; // default expire in 1 hour
 		if(defined('SMART_FRAMEWORK_DOWNLOAD_EXPIRE')) {
@@ -1393,12 +1397,12 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 			$tmp_eval = SmartFileSysUtils::mime_eval($tmp_file_name);
 			$mime_type = (string) $tmp_eval[0];
 			$mime_disp = (string) $tmp_eval[1];
-			//--
-			$tmp_arr_paths = explode('/', $filepath);
+			//-- the path must not start with / but this is tested below
+			$tmp_arr_paths = (array) explode('/', $filepath, 2); // only need 1st part for testing
 			//-- allow file downloads just from specific folders like wpub/ or wsys/ (this is a very important security fix to dissalow any downloads that are not in the specific folders)
-			if((strpos((string)SMART_FRAMEWORK_DOWNLOAD_FOLDERS, '<'.trim($tmp_arr_paths[0]).'>') !== false) AND (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_file_ext.'>') === false) AND (SmartFileSysUtils::check_file_or_dir_name($filepath))) {
+			if((substr((string)$filepath, 0, 1) != '/') AND (strpos((string)SMART_FRAMEWORK_DOWNLOAD_FOLDERS, '<'.trim((string)$tmp_arr_paths[0]).'>') !== false) AND (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_file_ext.'>') === false)) {
 				//--
-				SmartFileSysUtils::raise_error_if_unsafe_path($filepath);
+				SmartFileSysUtils::raise_error_if_unsafe_path($filepath); // re-test finally
 				//--
 				@clearstatcache();
 				//--

@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160316
+ * @version 	v.160827
  * @package 	Components:Calendar
  *
  */
@@ -153,7 +153,7 @@ private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_high
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.150107
+ * @version 	v.160827
  * @package 	Components:Calendar
  *
  */
@@ -248,7 +248,7 @@ final class SmartHTMLCalendar {
 		if(strlen($date_string) > 0) {
 			//--
 			if(strlen($date_string) < 10) {
-				throw new Exception('Calendar/SetDate expect a date string as parameter !');
+				Smart::log_warning(__CLASS__.'::'.__FUNCTION__.'() expect a date string as parameter !');
 				return;
 			} else {
 				$this->now = getdate(strtotime($date_string));
@@ -266,12 +266,12 @@ final class SmartHTMLCalendar {
 	public function setMonthNames($y_month_names_arr) {
 		//--
 		if(!is_array($y_month_names_arr)) {
-			throw new Exception('Calendar/setMonthNames expect an array as parameter !');
+			Smart::log_warning(__CLASS__.'::'.__FUNCTION__.'() expect an array as parameter !');
 			return;
 		} //end if
 		//--
 		if(Smart::array_size($y_month_names_arr) != 12) {
-			throw new Exception('Calendar/setMonthNames expect the size of array to be 12 !');
+			Smart::log_warning(__CLASS__.'::'.__FUNCTION__.'() expect the size of array to be 12 !');
 			return;
 		} //end if
 		//--
@@ -283,12 +283,12 @@ final class SmartHTMLCalendar {
 	public function setDayNames($y_day_names_arr) {
 		//--
 		if(!is_array($y_day_names_arr)) {
-			throw new Exception('Calendar/setDayNames expect an array as parameter !');
+			Smart::log_warning(__CLASS__.'::'.__FUNCTION__.'() expect an array as parameter !');
 			return;
 		} //end if
 		//--
 		if(Smart::array_size($y_day_names_arr) != 7) {
-			throw new Exception('Calendar/setDayNames expect the size of array to be 7 !');
+			Smart::log_warning(__CLASS__.'::'.__FUNCTION__.'() expect the size of array to be 7 !');
 			return;
 		} //end if
 		//--

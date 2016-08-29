@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.160205
+ * @version 	v.160827
  * @package 	Mailer:Utility
  *
  */
@@ -697,7 +697,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.160205
+ * @version 	v.160827
  * @package 	Mailer:Utility
  *
  */
@@ -1374,7 +1374,7 @@ private static function mime_link($y_ctrl_key, $y_msg_file, $y_part, $y_link, $y
 		} //end if
 		//--
 		if((string)$y_printable != '') { // printable display
-			$y_link .= '&'.SMART_FRAMEWORK_URL_PARAM_PRINTABLE.'='. Smart::escape_url((string)SMART_FRAMEWORK_URL_VALUE_ENABLED).'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='. Smart::escape_url((string)SMART_FRAMEWORK_URL_VALUE_ENABLED).'&';
+			$y_link .= '&'.SMART_FRAMEWORK_URL_PARAM_PRINTABLE.'='. Smart::escape_url((string)SMART_FRAMEWORK_URL_VALUE_ENABLED); // .'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='. Smart::escape_url((string)SMART_FRAMEWORK_URL_VALUE_ENABLED).'&';
 		} //end if else
 		//--
 		$y_link = str_replace(

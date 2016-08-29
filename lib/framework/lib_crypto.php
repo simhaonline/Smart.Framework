@@ -44,7 +44,7 @@ if(!function_exists('hash_algos')) {
  *
  * @access      PUBLIC
  * @depends     PHP hash_algos() / hash()
- * @version     v.160220
+ * @version     v.160827
  * @package     Crypto
  *
  */
@@ -91,7 +91,8 @@ final class SmartHashCrypto {
 	public static function sha512($y_str) {
 		//--
 		if(!self::algo_check('sha512')) {
-			throw new Exception('ERROR: SmartFramework Crypto Hash requires SHA512 Hash/Algo');
+			Smart::raise_error('ERROR: SmartFramework Crypto Hash requires SHA512 Hash/Algo', 'SHA512 Hash/Algo is missing');
+			return '';
 		} //end if
 		//--
 		return (string) hash('sha512', (string)$y_str, false); // execution cost: 0.35
@@ -110,7 +111,8 @@ final class SmartHashCrypto {
 	public static function sha384($y_str) {
 		//--
 		if(!self::algo_check('sha384')) {
-			throw new Exception('ERROR: SmartFramework Crypto Hash requires SHA384 Hash/Algo');
+			Smart::raise_error('ERROR: SmartFramework Crypto Hash requires SHA384 Hash/Algo', 'SHA384 Hash/Algo is missing');
+			return '';
 		} //end if
 		//--
 		return (string) hash('sha384', (string)$y_str, false); // execution cost: 0.34
@@ -129,7 +131,8 @@ final class SmartHashCrypto {
 	public static function sha256($y_str) {
 		//--
 		if(!self::algo_check('sha256')) {
-			throw new Exception('ERROR: SmartFramework Crypto Hash requires SHA256 Hash/Algo');
+			Smart::raise_error('ERROR: SmartFramework Crypto Hash requires SHA256 Hash/Algo', 'SHA256 Hash/Algo is missing');
+			return '';
 		} //end if
 		//--
 		return (string) hash('sha256', (string)$y_str, false); // execution cost: 0.21
@@ -148,7 +151,8 @@ final class SmartHashCrypto {
 	public static function sha1($y_str) {
 		//--
 		if(!function_exists('sha1')) {
-			throw new Exception('ERROR: SmartFramework Crypto Hash requires the PHP sha1() Function');
+			Smart::raise_error('ERROR: SmartFramework Crypto Hash requires SHA1 support', 'SHA1 support is missing');
+			return '';
 		} //end if
 		//--
 		return (string) sha1((string)$y_str); // execution cost: 0.14
@@ -167,7 +171,8 @@ final class SmartHashCrypto {
 	public static function md5($y_str) {
 		//--
 		if(!function_exists('md5')) {
-			throw new Exception('ERROR: SmartFramework Crypto Hash requires the PHP md5() Function');
+			Smart::raise_error('ERROR: SmartFramework Crypto Hash requires MD5 support', 'MD5 support is missing');
+			return '';
 		} //end if
 		//--
 		return (string) md5((string)$y_str); // execution cost: 0.13
@@ -256,7 +261,7 @@ final class SmartHashCrypto {
  * @hints       Blowfish is a 64-bit (8 bytes) block cipher. Max Key is up to 56 chars length (56 bytes = 448 bits). The CBC mode requires a initialization vector (iv).
  *
  * @depends     classes: Smart
- * @version     v.160220
+ * @version     v.160827
  * @package     Crypto
  *
  */
@@ -379,7 +384,7 @@ final class SmartCipherCrypto {
  * @internal
  *
  * @depends     extensions: PHP MCrypt ; classes: Smart
- * @version     v.160220
+ * @version     v.160827
  *
  */
 final class SmartCryptoMCryptCipher {
@@ -411,7 +416,8 @@ final class SmartCryptoMCryptCipher {
 	public function __construct($key, $runmode) {
 		//--
 		if(!function_exists('mcrypt_module_self_test')) {
-			throw new Exception('SmartCryptoMCryptCipher requires the PHP MCRYPT Extension ! If is not available use the alternative Encryption Mode in Configuration INITS !');
+			Smart::raise_error('SmartCryptoMCryptCipher requires the PHP MCRYPT Extension ! If is not available use the alternative Encryption Mode in Configuration INITS !', 'PHP MCRYPT Extension is missing');
+			return '';
 		} //end if
 		//-- Blowfish uses a variable size key, ranging from 32 to 448 bits (4 to 56 characters)
 		if((string)$key == '') {
@@ -424,7 +430,7 @@ final class SmartCryptoMCryptCipher {
 		$tmp_mcrypt_method 	= trim(strtoupper($tmp_mode_crypto[2]));
 		//--
 		if((string)$tmp_mcrypt_check != 'mcrypt') {
-			throw new Exception('M-Crypt-Encryption // Invalid Settings !');
+			Smart::raise_error('M-Crypt-Encryption // Invalid Settings: '.$tmp_mode_crypto, 'M-Crypt-Encryption // Invalid Settings !');
 			return '';
 		} //end if
 		//-- ECB or OFB are not secure so not accepted ; The CBC and CFB mode requires a initialization vector (iv).
@@ -436,7 +442,7 @@ final class SmartCryptoMCryptCipher {
 				$this->mcrypt_mode = MCRYPT_MODE_CFB;
 				break;
 			default:
-				throw new Exception('M-Crypt-Encryption // Invalid Mode !');
+				Smart::raise_error('M-Crypt-Encryption // Invalid Mode: '.$tmp_mcrypt_method, 'M-Crypt-Encryption // Invalid Mode !');
 				return '';
 		} //end if
 		//--
@@ -477,7 +483,7 @@ final class SmartCryptoMCryptCipher {
 				$this->mcrypt_iv = (string) substr(sha1('@SmartFrameworkCrypto/Ghost:'.$key.'#'.sha1('Ghost-iv-SHA1'.$key).'-'.md5('Ghost-iv-MD5'.$key).'#'), 29, 8);
 				break;
 			default:
-				throw new Exception('M-Crypt-Encryption // Invalid Cipher !');
+				Smart::raise_error('M-Crypt-Encryption // Invalid Cipher: '.$tmp_mcrypt_algo, 'M-Crypt-Encryption // Invalid Cipher !');
 				return '';
 		} //end if
 		//--
@@ -616,7 +622,7 @@ final class SmartCryptoMCryptCipher {
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.160220
+ * @version     v.160827
  *
  */
 final class SmartCryptoCipherBlowfishCBC {
@@ -1220,7 +1226,7 @@ echo "plain text: $plaintext";
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.160220
+ * @version     v.160827
  *
  */
 final class SmartCryptoCipherHash {

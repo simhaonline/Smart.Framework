@@ -35,7 +35,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160812
+ * @version 	v.160827
  * @package 	Caching
  *
  */
@@ -238,7 +238,7 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 				$rarr = (array) self::$redis->keys((string)$y_realm.':*');
 				$err = 0;
 				if(Smart::array_size($rarr) > 0) {
-					foreach($rarr as $rark) {
+					foreach($rarr as $key => $rark) {
 						if((string)$rark != '') {
 							$del = self::$redis->del((string)$rark);
 							if($del <= 0) {
@@ -268,9 +268,10 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 			//--
 		} else {
 			//--
-			$ignore_conn_errs = true;
-			if(defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) {
+			if((defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) AND (SMART_SOFTWARE_MEMDB_FATAL_ERR === true)) {
 				$ignore_conn_errs = false;
+			} else {
+				$ignore_conn_errs = true; // default
 			} //end if
 			//--
 			self::$redis = new SmartRedisDb(
