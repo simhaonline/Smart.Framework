@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160827
+	// v.160829
 
 
 //==================================================================
@@ -144,7 +144,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TESTUNIT_BASE_URL' => SMART_FRAMEWORK_TESTUNIT_BASE_URL,
 			'NO-CACHE-TIME' => time(),
 			'CURRENT-DATE-TIME' => date('Y-m-d H:i:s O'),
-			'TEST-JS_SCRIPTS.Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')),
+			'TEST-JS_SCRIPTS.Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')), // .SmartComponents::js_ajx_tabs_activate('tabs_draw', false),
 			'Test-Buttons.AJAX-POST' => $btnop,
 			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: '.$info_adm.' // Test Suite</div>',
 			'TEST-ELEMENTS.DIALOG' => '<a href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
@@ -1994,7 +1994,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160827
+	// v.160829
 
 private $db;
 

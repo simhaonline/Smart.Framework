@@ -47,7 +47,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160827
+ * @version 	v.160829
  * @package 	Components:Framework
  *
  */
@@ -2927,6 +2927,28 @@ public static function js_ajx_tabs_init($y_id_of_tabs, $y_selected=0, $y_prevent
 	} //end if else
 	//--
 	return '<script type="text/javascript">SmartJS_BrowserUIUtils.Tabs_Init(\''.Smart::escape_js($y_id_of_tabs).'\', '.$y_selected.', '.$prevreload.');</script>';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: JS Activate/Deactivate JS-UI Tabs
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_ajx_tabs_activate($y_id_of_tabs, $y_activate) {
+	//--
+	if($y_activate === false) {
+		$activate = 'false';
+	} else {
+		$activate = 'true';
+	} //end if else
+	//--
+	return '<script type="text/javascript">SmartJS_BrowserUIUtils.Tabs_Activate(\''.Smart::escape_js($y_id_of_tabs).'\', '.$activate.');</script>';
 	//--
 } //END FUNCTION
 //================================================================
