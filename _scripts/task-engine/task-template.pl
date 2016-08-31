@@ -37,7 +37,7 @@ my $clr_ok = ['bold bright_white on_green'];
 
 my $num_args = $#ARGV + 1;
 if($num_args != 1) {
-	print colored($clr_critical_error, "TASK.CRITICAL-ERR : ".$task_name." STOP: The ID parameter is missing (script must have 1 parameter) ...");
+	print colored($clr_critical_error, "TASK.CRITICAL-ERR : ".$task_name." FAIL.STOP: The script ID parameter is missing (script must have 1 parameter) ...");
 	print "\n";
 	exit;
 }
@@ -97,16 +97,19 @@ if($url ne "") {
 ######################################## EVAL RESULT
 
 if($task_output == 200) {
-	print colored($clr_ok, "TASK.INF # ${id} : ".$task_name." COMPLETED SUCCESSFUL: ${task_output}");
+	print colored($clr_ok, "TASK.OK # ${id} : ".$task_name." COMPLETED SUCCESSFUL: ${task_output}");
 	print "\n";
 } elsif($task_output == 202) {
-	print colored($clr_notice, "TASK.NOTICE # ${id} : ".$task_name." COMPLETED: ${task_output}");
+	print colored($clr_notice, "TASK.INF # ${id} : ".$task_name." COMPLETED: ${task_output}");
 	print "\n";
 } elsif($task_output == 203) {
 	print colored($clr_warn, "TASK.WARN # ${id} : ".$task_name." COMPLETED: ${task_output}");
 	print "\n";
-} else {
+} elsif($task_output == 250) {
 	print colored($clr_error, "TASK.ERR # ${id} : ".$task_name." COMPLETED: ${task_output}");
+	print "\n";
+} else {
+	print colored($clr_critical_error, "TASK.CRITICAL-ERR # ${id} : ".$task_name." NOT COMPLETED: ${task_output}");
 	print "\n";
 }
 

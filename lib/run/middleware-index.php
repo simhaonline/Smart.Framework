@@ -283,6 +283,7 @@ public static function Run() {
 	//== STATUS CODE
 	//--
 	switch((int)$appStatusCode) {
+		//-- client errors
 		case 400:
 			self::Raise400Error((string)$appSettings['error']);
 			return;
@@ -299,6 +300,7 @@ public static function Run() {
 			self::Raise404Error((string)$appSettings['error']);
 			return;
 			break;
+		//-- server errors
 		case 500:
 			self::Raise500Error((string)$appSettings['error']);
 			return;
@@ -307,22 +309,32 @@ public static function Run() {
 			self::Raise503Error((string)$appSettings['error']);
 			return;
 			break;
-		case 202:
+		//-- extended 2xx statuses: NOTICE / WARNING / ERROR that can be used for REST / API
+		case 202: // NOTICE
 			if(!headers_sent()) {
-				http_response_code(202); // Accepted (this should be used only as an alternate SUCCESS code instead of 200)
+				http_response_code(202); // Accepted (this should be used only as an alternate SUCCESS code instead of 200 for NOTICES)
 			} else {
 				Smart::log_warning('Headers Already Sent before 202 ...');
 			} //end if else
 			break;
-		case 203:
+		case 203: // WARNING
 			if(!headers_sent()) {
-				http_response_code(203); // Non-Authoritative Information (this should be used only as an alternate SUCCESS code instead of 200)
+				http_response_code(203); // Non-Authoritative Information (this should be used only as an alternate SUCCESS code instead of 200 for WARNINGS)
 			} else {
 				Smart::log_warning('Headers Already Sent before 203 ...');
 			} //end if else
 			break;
-		default:
-			// 200 or other code (nothing to do here), will be interpreted as 200
+		case 250: // ERROR
+			if(!headers_sent()) {
+				http_response_code(250); // Low on Storage Space (this should be used only as an alternate SUCCESS code instead of 200 for ERRORS)
+			} else {
+				Smart::log_warning('Headers Already Sent before 250 ...');
+			} //end if else
+			break;
+		//-- DEFAULT: OK
+		case 200:
+		default: // any other codes not listed above are not supported and will be interpreted as 200
+			// nothing to do here ...
 	} //end switch
 	//--
 	//== PREPARE THE OUTPUT
