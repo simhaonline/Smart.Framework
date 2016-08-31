@@ -324,11 +324,11 @@ public static function Run() {
 				Smart::log_warning('Headers Already Sent before 203 ...');
 			} //end if else
 			break;
-		case 250: // ERROR
+		case 208: // ERROR
 			if(!headers_sent()) {
-				http_response_code(250); // Low on Storage Space (this should be used only as an alternate SUCCESS code instead of 200 for ERRORS)
+				http_response_code(208); // Already Reported (this should be used only as an alternate SUCCESS code instead of 200 for ERRORS)
 			} else {
-				Smart::log_warning('Headers Already Sent before 250 ...');
+				Smart::log_warning('Headers Already Sent before 208 ...');
 			} //end if else
 			break;
 		//-- DEFAULT: OK

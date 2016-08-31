@@ -105,7 +105,7 @@ if($task_output == 200) {
 } elsif($task_output == 203) {
 	print colored($clr_warn, "TASK.WARN # ${id} : ".$task_name." COMPLETED: ${task_output}");
 	print "\n";
-} elsif($task_output == 250) {
+} elsif($task_output == 208) {
 	print colored($clr_error, "TASK.ERR # ${id} : ".$task_name." COMPLETED: ${task_output}");
 	print "\n";
 } else {

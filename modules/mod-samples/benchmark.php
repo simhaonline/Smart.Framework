@@ -38,11 +38,15 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			'main' => SmartMarkersTemplating::render_file_template(
 				$this->ControllerGetParam('module-view-path').'benchmark.htm',
 				[
-					'BENCHMARK-TITLE' => '[ Benchmark Test URL ]<br>use this URL to run a benchmark of this PHP framework ...'
+					'BENCHMARK-TITLE' => '[ Benchmark Test URL '.date('Y-m-d H:i:s O').' ]<br>use this URL to run a benchmark of this PHP framework ...'
 				],
 				'no' // don't use caching (use of caching make sense only if file template is used more than once per execution)
 			)
 		]);
+		//--
+
+		//--
+		return 200; // HTTP 200 OK
 		//--
 
 	} //END FUNCTION
