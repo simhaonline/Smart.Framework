@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / TASK-Template :: Customize it ...]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160628
+# r.160831
 
 
 ###
@@ -31,6 +31,7 @@ my $clr_error = ['bold bright_white on_red'];
 my $clr_warn = ['bold bright_white on_bright_red'];
 my $clr_notice = ['bold black on_bright_cyan'];
 my $clr_ok = ['bold bright_white on_green'];
+my $clr_inf = ['bold black on_bright_yellow'];
 
 ######################################## CHECK ARGUMENTS
 
@@ -95,16 +96,17 @@ if($url ne "") {
 
 ######################################## EVAL RESULT
 
-if($task_output != 200) {
-	if($task_output != 202) {
-		print colored($clr_warn, "TASK.ERR # ${id} : ".$task_name." COMPLETED: ${task_output}");
-		print "\n";
-	} else {
-		print colored($clr_notice, "TASK.WARN # ${id} : ".$task_name." COMPLETED: ${task_output}");
-		print "\n";
-	}
-} else {
+if($task_output == 200) {
 	print colored($clr_ok, "TASK.INF # ${id} : ".$task_name." COMPLETED SUCCESSFUL: ${task_output}");
+	print "\n";
+} elsif($task_output == 203) {
+	print colored($clr_inf, "TASK.NOTICE # ${id} : ".$task_name." COMPLETED: ${task_output}");
+	print "\n";
+} elsif($task_output == 202) {
+	print colored($clr_notice, "TASK.WARN # ${id} : ".$task_name." COMPLETED: ${task_output}");
+	print "\n";
+} else {
+	print colored($clr_warn, "TASK.ERR # ${id} : ".$task_name." COMPLETED: ${task_output}");
 	print "\n";
 }
 

@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Daemon]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160628
+# r.160831
 
 # Main Runtime - Daemon (Press CTRL+C to break/stop) !
 
@@ -17,7 +17,7 @@ use Term::ANSIColor;
 
 my $clr_error = ['bold black on_bright_red'];
 my $clr_info = ['bold bright_white on_black'];
-my $clr_notice = ['bold black on_bright_yellow'];
+my $clr_notice = ['bold white on_bright_black'];
 
 ######################################## PARSE INI SETTINGS {{{SYNC-PERL-INIPARSE}}} ### DO NOT EDIT THIS SCRIPT !!! ### USE daemon.ini to store all settings ###
 

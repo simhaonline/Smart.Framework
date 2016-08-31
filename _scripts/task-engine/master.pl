@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Master]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160628
+# r.160831
 
 # Fetch the Batch URL (will spawn the number of childs in $max_threads, fetching the Distribution URL: $url_get)
 # This can be used in the run.pl (daemon) or can be run via a cron job each minute
