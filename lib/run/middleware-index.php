@@ -30,7 +30,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.5.3');
  * @access 		private
  * @internal
  *
- * @version		160827
+ * @version		160831
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -312,6 +312,13 @@ public static function Run() {
 				http_response_code(202); // Accepted (this should be used only as an alternate SUCCESS code instead of 200)
 			} else {
 				Smart::log_warning('Headers Already Sent before 202 ...');
+			} //end if else
+			break;
+		case 203:
+			if(!headers_sent()) {
+				http_response_code(203); // Non-Authoritative Information (this should be used only as an alternate SUCCESS code instead of 200)
+			} else {
+				Smart::log_warning('Headers Already Sent before 203 ...');
 			} //end if else
 			break;
 		default:

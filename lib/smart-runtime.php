@@ -1168,7 +1168,7 @@ public static function DebugRequestLog($y_message) {
  * @access 		private
  * @internal
  *
- * @version		160827
+ * @version		160831
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -1234,7 +1234,9 @@ final public static function Raise400Error($y_msg) {
 	//--
 	if(!headers_sent()) {
 		http_response_code(400);
-	} //end if
+	} else {
+		Smart::log_warning('Headers Already Sent before 400 ...');
+	} //end if else
 	die(SmartComponents::http_message_400_badrequest(Smart::escape_html((string)$y_msg)));
 	//--
 } //END FUNCTION
@@ -1246,7 +1248,9 @@ final public static function Raise401Error($y_msg) {
 	//--
 	if(!headers_sent()) {
 		http_response_code(401);
-	} //end if
+	} else {
+		Smart::log_warning('Headers Already Sent before 401 ...');
+	} //end if else
 	die(SmartComponents::http_message_401_unauthorized(Smart::escape_html((string)$y_msg)));
 	//--
 } //END FUNCTION
@@ -1258,7 +1262,9 @@ final public static function Raise403Error($y_msg) {
 	//--
 	if(!headers_sent()) {
 		http_response_code(403);
-	} //end if
+	} else {
+		Smart::log_warning('Headers Already Sent before 403 ...');
+	} //end if else
 	die(SmartComponents::http_message_403_forbidden(Smart::escape_html((string)$y_msg)));
 	//--
 } //END FUNCTION
@@ -1270,7 +1276,9 @@ final public static function Raise404Error($y_msg) {
 	//--
 	if(!headers_sent()) {
 		http_response_code(404);
-	} //end if
+	} else {
+		Smart::log_warning('Headers Already Sent before 404 ...');
+	} //end if else
 	die(SmartComponents::http_message_404_notfound(Smart::escape_html((string)$y_msg)));
 	//--
 } //END FUNCTION
@@ -1282,7 +1290,9 @@ final public static function Raise500Error($y_msg) {
 	//--
 	if(!headers_sent()) {
 		http_response_code(500);
-	} //end if
+	} else {
+		Smart::log_warning('Headers Already Sent before 500 ...');
+	} //end if else
 	die(SmartComponents::http_message_500_internalerror(Smart::escape_html((string)$y_msg)));
 	//--
 } //END FUNCTION
@@ -1294,7 +1304,9 @@ final public static function Raise503Error($y_msg) {
 	//--
 	if(!headers_sent()) {
 		http_response_code(503);
-	} //end if
+	} else {
+		Smart::log_warning('Headers Already Sent before 503 ...');
+	} //end if else
 	die(SmartComponents::http_message_503_serviceunavailable(Smart::escape_html((string)$y_msg)));
 	//--
 } //END FUNCTION

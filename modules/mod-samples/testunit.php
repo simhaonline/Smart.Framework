@@ -108,7 +108,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$ofs = $this->RequestVarGet('ofs', 0, 'integer+');
 				$sortby = $this->RequestVarGet('sortby', 'id', 'string');
 				$sortdir = $this->RequestVarGet('sortdir', 'ASC', 'string');
-				$sorttype = $this->RequestVarGet('sorttype', 'string', 'string');
+				$sorttype = $this->RequestVarGet('sorttype', 'text', 'string');
 				$src = $this->RequestVarGet('src', '', 'string'); // filter var
 				//--
 				$main = SmartTestSuite::test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sorttype, $src);

@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160829
+	// v.160830
 
 
 //==================================================================
@@ -95,6 +95,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 	$array_of_values = array();
 	$array_of_values[] = 'a&"/><i>Italic</i></body>';
 	$array_of_values[] = 'a&"/><i>Italic</i></body>';
+	$array_of_values[] = '#OPTGROUP#';
+	$array_of_values[] = 'Labels';
 	for($i=1; $i<=500; $i++) {
 		$array_of_values[] = 'id'.$i;
 		$array_of_values[] = 'Label '.$i;
