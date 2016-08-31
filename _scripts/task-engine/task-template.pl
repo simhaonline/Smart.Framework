@@ -27,17 +27,17 @@ use Term::ANSIColor;
 
 ######################################## TERM COLORS
 
-my $clr_error = ['bold bright_white on_red'];
-my $clr_warn = ['bold bright_white on_bright_red'];
+my $clr_critical_error = ['bold bright_white on_red'];
+my $clr_error = ['bold bright_white on_bright_red'];
+my $clr_warn = ['bold black on_bright_yellow'];
 my $clr_notice = ['bold black on_bright_cyan'];
 my $clr_ok = ['bold bright_white on_green'];
-my $clr_inf = ['bold black on_bright_yellow'];
 
 ######################################## CHECK ARGUMENTS
 
 my $num_args = $#ARGV + 1;
 if($num_args != 1) {
-	print colored($clr_error, "TASK.ERR : ".$task_name." STOP: The ID parameter is missing (script must have 1 parameter) ...");
+	print colored($clr_critical_error, "TASK.ERR : ".$task_name." STOP: The ID parameter is missing (script must have 1 parameter) ...");
 	print "\n";
 	exit;
 }
@@ -99,14 +99,14 @@ if($url ne "") {
 if($task_output == 200) {
 	print colored($clr_ok, "TASK.INF # ${id} : ".$task_name." COMPLETED SUCCESSFUL: ${task_output}");
 	print "\n";
-} elsif($task_output == 203) {
-	print colored($clr_inf, "TASK.NOTICE # ${id} : ".$task_name." COMPLETED: ${task_output}");
-	print "\n";
 } elsif($task_output == 202) {
-	print colored($clr_notice, "TASK.WARN # ${id} : ".$task_name." COMPLETED: ${task_output}");
+	print colored($clr_notice, "TASK.NOTICE # ${id} : ".$task_name." COMPLETED: ${task_output}");
+	print "\n";
+} elsif($task_output == 203) {
+	print colored($clr_warn, "TASK.WARN # ${id} : ".$task_name." COMPLETED: ${task_output}");
 	print "\n";
 } else {
-	print colored($clr_warn, "TASK.ERR # ${id} : ".$task_name." COMPLETED: ${task_output}");
+	print colored($clr_error, "TASK.ERR # ${id} : ".$task_name." COMPLETED: ${task_output}");
 	print "\n";
 }
 

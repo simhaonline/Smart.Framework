@@ -897,7 +897,7 @@ abstract class SmartAbstractAppController {
 	/**
 	 * The Controller Runtime - This function is required to be re-defined in all controllers.
 	 *
-	 * @return 	INTEGER									:: *OPTIONAL* The HTTP Status Code: by default it does not return or it must returns 200 which is optional ; other supported HTTP Status Codes are: 202/203 (OK with warning/notice message - used only for APIs), 500 (Error), 404 (Not Found), 403 (Forbidden), 401 (Authentication Required), 400 (Bad Request) ; if the HTTP status code is not 200, an extra notification message can be set as: ##EXAMPLE: $this->PageViewSetCfg('error', 'Access to this page is restricted'); return 403; ## - to have also a detailed error message to be shown near the HTTP status code)
+	 * @return 	INTEGER									:: *OPTIONAL* The HTTP Status Code: by default it does not return or it must returns 200 which is optional ; other supported HTTP Status Codes are: 202/203 (OK with notice/warning message - used only for APIs), 500 (Internal Error), 404 (Not Found), 403 (Forbidden), 401 (Authentication Required), 400 (Error) ; if the HTTP status code is not 200, an extra notification message can be set as: ##EXAMPLE: $this->PageViewSetCfg('error', 'Access to this page is restricted'); return 403; ## - to have also a detailed error message to be shown near the HTTP status code)
 	 */
 	abstract public function Run(); //END FUNCTION
 	//=====
