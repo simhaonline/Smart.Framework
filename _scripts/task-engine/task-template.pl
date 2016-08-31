@@ -37,7 +37,7 @@ my $clr_ok = ['bold bright_white on_green'];
 
 my $num_args = $#ARGV + 1;
 if($num_args != 1) {
-	print colored($clr_critical_error, "TASK.ERR : ".$task_name." STOP: The ID parameter is missing (script must have 1 parameter) ...");
+	print colored($clr_critical_error, "TASK.CRITICAL-ERR : ".$task_name." STOP: The ID parameter is missing (script must have 1 parameter) ...");
 	print "\n";
 	exit;
 }
