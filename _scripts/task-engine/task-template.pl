@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / TASK-Template :: Customize it ...]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160831
+# r.160901
 
 
 ###
@@ -29,7 +29,7 @@ use Term::ANSIColor;
 
 my $clr_critical_error = ['bold bright_white on_red'];
 my $clr_error = ['bold bright_white on_bright_red'];
-my $clr_warn = ['bold black on_bright_yellow'];
+my $clr_warn = ['bold bright_white on_yellow'];
 my $clr_notice = ['bold black on_bright_cyan'];
 my $clr_ok = ['bold bright_white on_green'];
 
