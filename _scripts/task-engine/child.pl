@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Child]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160831
+# r.160902
 
 ######################################## PERL MODULES
 
@@ -20,9 +20,6 @@ my $clr_notice = ['bright_blue'];
 my $clr_ok = ['blue'];
 
 ######################################## PARSE INI SETTINGS {{{SYNC-PERL-INIPARSE}}} ### DO NOT EDIT THIS SCRIPT !!! ### USE child.ini to store all settings ###
-
-# setting: the child task
-my $task_script = "";
 
 my %inisett = ();
 my $cfname;
@@ -44,8 +41,14 @@ while(<CONF>) {
 }
 close(CONF);
 
+my $task_script = "";
 if($inisett{'ChildTask'} ne "") {
 	$task_script = $inisett{'ChildTask'};
+}
+
+my $task_verbose = "yes";
+if($inisett{'Verbose'} eq "no") {
+	$task_verbose = "no";
 }
 
 ######################################## RUNTIME
@@ -92,11 +95,15 @@ if(-e $the_child_pid) {
 
 # Run Task script (if empty run a test only)
 if($task_script eq "") {
-	print colored($clr_warn, "CHILD.WARN: No Task Defined in child.ini (Running TEST ONLY) !!!");
-	print "\n";
+	if($task_verbose ne "no") {
+		print colored($clr_warn, "CHILD.WARN: No Task Defined in child.ini (Running TEST ONLY) !!!");
+		print "\n";
+	}
 } else {
-	print colored($clr_ok, "CHILD.INF: Task FORK :: Smart.Task.Engine [ID=".$the_task_id."] "."[Script=".$task_script."]");
-	print "\n";
+	if($task_verbose ne "no") {
+		print colored($clr_ok, "CHILD.INF: Task FORK :: Smart.Task.Engine [ID=".$the_task_id."] "."[Script=".$task_script."]");
+		print "\n";
+	}
 	system($task_script." ".$the_task_id); # RUN REAL TASK
 	Time::HiRes::sleep(0.5);
 }
@@ -108,8 +115,10 @@ if(-e $the_child_pid) {
 		print colored($clr_error, "CHILD.ERR: FAILED to Unlock the Semaphore ... [ID=".$the_task_id."]");
 		print "\n";
 	} else {
-		print colored($clr_ok, "CHILD.INF: Task DONE [ID=".$the_task_id."]");
-		print "\n";
+		if($task_verbose ne "no") {
+			print colored($clr_ok, "CHILD.INF: Task DONE [ID=".$the_task_id."]");
+			print "\n";
+		}
 	}
 } else {
 	print colored($clr_error, "CHILD.ERR: FAILED to Find the Semaphore for Unlocking ... [ID=".$the_task_id."]");

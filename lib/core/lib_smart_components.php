@@ -47,7 +47,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160829
+ * @version 	v.160901
  * @package 	Components:Framework
  *
  */
@@ -2287,7 +2287,7 @@ public static function js_draw_html_confirm_dialog($y_question_html, $y_ok_jscri
  * @internal
  *
  */
-public static function js_draw_html_alert($y_message, $y_ok_jscript_function='', $y_width='', $y_height='', $y_title='') {
+public static function js_draw_html_alert($y_message, $y_ok_jscript_function='', $y_width='', $y_height='', $y_title='!') {
 	//--
 	return 'SmartJS_BrowserUtils.alert_Dialog(\''.Smart::escape_js($y_message).'\', \''.Smart::escape_js($y_ok_jscript_function).'\', \''.Smart::escape_js($y_title).'\', '.intval($y_width).', '.intval($y_height).');';
 	//--

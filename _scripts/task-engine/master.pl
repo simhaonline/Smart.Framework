@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Master]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160831
+# r.160902
 
 # Fetch the Batch URL (will spawn the number of childs in $max_threads, fetching the Distribution URL: $url_get)
 # This can be used in the run.pl (daemon) or can be run via a cron job each minute
@@ -71,6 +71,11 @@ my $url_get = $inisett{'URLGetBatch'}; # http://some.url/?/action/get-batch
 my $user = $inisett{'URLAuthUser'}; # URL Auth User Name
 # setting: batch list URL Auth password [can be empty if no authentication is required]
 my $pass = $inisett{'URLAuthPassword'}; # URL Auth User Password
+
+my $master_verbose = "yes";
+if($inisett{'Verbose'} eq "no") {
+	$master_verbose = "no";
+}
 
 ######################################## RUNTIME
 
@@ -258,19 +263,25 @@ if($arr_len > 2) {
 					#	$i--;
 					#}
 					#print colored($clr_msg_xok, "@ Retry ... the SEMAPHORE is currently RUNNING [TaskID=".$the_task_id."]");
-					print colored($clr_msg_xok, "* SKIP Child ... the SEMAPHORE is currently RUNNING [TaskID=".$the_task_id."]");
-					print "\n";
+					if($master_verbose ne "no") {
+						print colored($clr_msg_xok, "* SKIP Child ... the SEMAPHORE is currently RUNNING [TaskID=".$the_task_id."]");
+						print "\n";
+					}
 					Time::HiRes::sleep(1);
 				} else { # if semaphore is not running, launch new child
-					print colored($clr_msg_ok, "+ SPAWNING Child # ".($running_childs+1)." [TaskID=".$the_task_id."]");
-					print "\n";
+					if($master_verbose ne "no") {
+						print colored($clr_msg_ok, "+ SPAWNING Child # ".($running_childs+1)." [TaskID=".$the_task_id."]");
+						print "\n";
+					}
 					system("./child.pl ".$the_task_id." &");
 					Time::HiRes::sleep(0.1);
 				}
 			} else { # if number of semaphores is higher than allowed
 				$i--;
-				print colored($clr_msg_yok, "- WAITING Child ... to get a FREE SEMAPHORE ... Running Childs # ".$running_childs." [TaskID=".$the_task_id."]");
-				print "\n";
+				if($master_verbose ne "no") {
+					print colored($clr_msg_yok, "- WAITING Child ... to get a FREE SEMAPHORE ... Running Childs # ".$running_childs." [TaskID=".$the_task_id."]");
+					print "\n";
+				}
 				Time::HiRes::sleep(1);
 			}
 		}

@@ -1,7 +1,7 @@
 /*
- * Simple Dialog r.160306
+ * Simple Dialog r.160901
  *
- * (c) 2015 unix-world.org
+ * (c) 2015-2016 unix-world.org
  *
  */
 
@@ -30,13 +30,15 @@
 	font-size: 16px;
 	text-align:left;
 	background: #FFFFFF;
-	border: 1px solid #CCCCCC;
+	border: 1px solid #F2F2F2;
+	padding-left: 5px;
+	padding-right: 5px;
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
 }
 #simpledialog-container .header {
-	height: 40px;
-	line-height: 40px;
+	height: 35px;
+	line-height: 35px;
 	background: #FFFFFF;
 	color: #333333;
 	font-weight: bold;
@@ -48,9 +50,12 @@
 }
 #simpledialog-container .message {
 	color: #333333;
-	font-size: 14px;
+	font-size: 0.813em;
 	margin: 0;
-	padding: 12px 4px 12px 8px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 2px;
+	padding-bottom: 27px;
 	width: 98%;
 	height: 40%;
 	overflow: auto;
@@ -62,23 +67,30 @@
 }
 #simpledialog-container .buttons {
 	line-height: 26px;
-	width: 200px;
 	float: right;
-	padding: 5px 8px 0;
-	margin-bottom: 10px
+	padding-top: 2px;
+	padding-right: 15px;
+	padding-bottom: 2px;
+	padding-left: 15px;
 }
 #simpledialog-container .buttons div {
 	float: right;
 	margin-left: 8px;
-	width: 70px;
 	height: 26px;
-	color: #666666;
+	color: #333333;
 	font-weight: bold;
 	text-align: center;
-	background: #FAFAFA;
-	border: 1px solid #BBBBBB;
-	border-radius: 3px;
+	background: #FFFFFF;
+	border: 1px solid #DDDDDD;
 	cursor: pointer;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	border-radius: 3px;
+}
+#simpledialog-container .buttons div:hover {
+	border: 1px solid #333333;
 }
 #simpledialog-container a.modal-close,
 #simpledialog-container a.modal-close:link,
