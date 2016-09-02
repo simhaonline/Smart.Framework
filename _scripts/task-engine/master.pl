@@ -250,7 +250,7 @@ if($arr_len > 2) {
 		$running_childs = sprintf("%d", `ls ./child-semaphores/ | wc -l`);
 		# test semaphore ID line is non-empty (if empty and valid as tested with regex above)
 		if($the_task_id eq "") { # if ID is empty
-			print colored($clr_hint, "INVALID Batch Line #".$i.": [".$arr_lines[$i]."]");
+			print colored($clr_hint, "WARNING: INVALID Batch Line @ Loop #".$i." / PageOffset=".$navOffset." for [TaskID: ".$arr_lines[$i]."] :: Running Childs # [".$running_childs."] of max [".$max_threads."]");
 			print "\n";
 		} else { # if ID is non-empty
 			print colored($clr_info, "@ Loop #".$i." / PageOffset=".$navOffset." for [TaskID: ".$the_task_id."] :: Running Childs # [".$running_childs."] of max [".$max_threads."]");
