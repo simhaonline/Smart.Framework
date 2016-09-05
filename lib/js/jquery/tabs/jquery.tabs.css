@@ -1,0 +1,19 @@
+
+.simple_tabs li {
+	list-style: none;
+	display: inline;
+}
+
+.simple_tabs a.simple_tabs {
+	padding: 5px 10px;
+	display: inline-block;
+	text-decoration: none;
+	border: 1px solid #555555;
+	background: #FFFFFF;
+	color: #555555;
+}
+
+.simple_tabs a.simple_tabs_active {
+	background: #555555;
+	color: #FFFFFF;
+}

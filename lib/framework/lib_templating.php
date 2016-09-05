@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160827
+ * @version 	v.160904
  * @package 	Templating:Engines
  *
  */
@@ -52,6 +52,7 @@ final class SmartMarkersTemplating {
 
 	// ::
 
+	private static $MkTplVars = array(); // registry of template variables
 	private static $MkTplFCount = array(); // counter to register how many times a template / sub-template file is read from filesystem (can be used for optimizations)
 	private static $MkTplCache = array(); // registry of cached template data
 
@@ -481,7 +482,15 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				$bind_var_key = (string) '$$$$'.$bind_var_key; // if context var appears as '$$$$CONTEXT.VAR123' instead of 'CONTEXT.VAR123'
 			} //end if
 			//--
-			if(((string)$bind_var_key != '') AND (array_key_exists((string)$bind_var_key, (array)$y_arr_vars))) { // if the IF is binded to an existing, non-empty KEY
+			if(((string)$bind_var_key != '') AND (array_key_exists((string)$bind_var_key, (array)$y_arr_vars))) { // if the IF is binded to a non-empty KEY and an existing (which is mandatory to avoid mixing levels which will break this syntax in complex blocks !!!)
+				//--
+				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if((string)$y_context != '') {
+						self::$MkTplVars['%IF:'.$var_part[$i]][] = 'Processing IF Syntax in Context: '.$y_context;
+					} else {
+						self::$MkTplVars['%IF:'.$var_part[$i]][] = 'Processing IF Syntax';
+					} //end if else
+				} //end if
 				//--
 				$line = '';
 				//-- recursive process if in pieces of if or else
@@ -602,6 +611,10 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 			$bind_var_key = (string) $var_part[$i];
 			//--
 			if(((string)$bind_var_key != '') AND (is_array($y_arr_vars[(string)$bind_var_key]))) { // if the LOOP is binded to an existing Array Variable and a non-empty KEY
+				//--
+				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					self::$MkTplVars['%LOOP:'.$bind_var_key][] = 'Processing LOOP Syntax: '.Smart::array_size($y_arr_vars[(string)$bind_var_key]);
+				} //end if
 				//--
 				$loop_orig = (string) rtrim((string)$loop_part[$i]);
 				//--
@@ -913,6 +926,7 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 	if(array_key_exists((string)$cached_key, (array)self::$MkTplCache)) {
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Includding a Sub-Template from CACHE';
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 				'title' => '[TPL-ReadFileTemplate-From-CACHE] :: Markers-Templating / File-Read ; Serving from Cache the File Template: '.$y_file_path.' ; Caching: '.$y_use_caching,
 				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
@@ -923,13 +937,16 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 		//--
 	} //end if
 	//--
-	self::$MkTplFCount[(string)$cached_key]++; // register to counter anytime is read from FileSystem
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		self::$MkTplFCount[(string)$cached_key]++; // register to counter anytime is read from FileSystem
+	} //end if
 	//--
 	if((string)$y_use_caching == 'yes') {
 		//--
 		self::$MkTplCache[(string)$cached_key] = (string) SmartFileSystem::staticread($y_file_path);
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FILESYSTEM and REGISTER IN CACHE';
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 				'title' => '[TPL-ReadFileTemplate-From-FILESYSTEM-Register-In-Cache] :: Markers-Templating / Registering to internal cache the File Template: '.$y_file_path.' ;',
 				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
@@ -943,6 +960,7 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 		$mtemplate = (string) SmartFileSystem::staticread($y_file_path);
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FILESYSTEM (CACHE DISABLED)';
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 				'title' => '[TPL-ReadFileTemplate-From-FILESYSTEM] :: Markers-Templating / File-Read ; Serving from FileSystem the File Template: '.$y_file_path.' ;',
 				'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
@@ -980,6 +998,7 @@ private static function log_template($mtemplate) {
 public static function registerOptimizationHintsToDebugLog() {
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		//--
 		$optim_msg = [];
 		foreach(self::$MkTplFCount as $key => $val) {
 			$key = (string) $key;
@@ -1001,14 +1020,34 @@ public static function registerOptimizationHintsToDebugLog() {
 						'key' => (string) $key,
 						'msg' => 'OK'
 					];
-					$optim_msg[] = $val.' # OK # '.$key."\n";
 				} //end if else
 			} //end if
 		} //end foreach
 		SmartFrameworkRegistry::setDebugMsg('optimizations', '*SMART-CLASSES:OPTIMIZATION-HINTS*', [
-			'title' => 'SmartMarkersTemplating // Optimization Hints @ Number of FileSystem Reads for each Template / Sub-Template',
+			'title' => 'SmartMarkersTemplating // Optimization Hints @ Number of FileSystem Reads for current Template / Sub-Templates',
 			'data' => (array) $optim_msg
 		]);
+		//--
+		$optim_msg = [];
+		foreach(self::$MkTplVars as $key => $val) {
+			$counter = Smart::array_size($val);
+			if($counter > 0) {
+
+				$optim_msg[] = [
+					'optimal' => null,
+					'value' => (int) $counter,
+					'key' => (string) $key,
+					'msg' => (string) implode(' ; ', array_unique($val))
+				];
+			} //end if
+		} //end foreach
+		SmartFrameworkRegistry::setDebugMsg('optimizations', '*SMART-CLASSES:OPTIMIZATION-HINTS*', [
+			'title' => 'SmartMarkersTemplating // Optimization Notices @ Rendering Details of current Template / Sub-Templates',
+			'data' => (array) $optim_msg
+		]);
+		//--
+		$optim_msg = [];
+		//--
 	} //end if
 	//--
 } //END FUNCTION

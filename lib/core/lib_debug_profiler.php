@@ -890,10 +890,12 @@ private static function print_log_optimizations($title, $optimizations_log) {
 					$tmp_item = $tmp_arr['data'][$j];
 					if(is_array($tmp_item)) {
 						$tmp_line = '# '.$tmp_item['value'].' # '.$tmp_item['key'].' # '.$tmp_item['msg'];
-						if($tmp_item['optimal'] !== true) {
+						if($tmp_item['optimal'] === false) {
 							$color = '#F5926C';
-						} else {
+						} elseif($tmp_item['optimal'] === true) {
 							$color = '#3FA325';
+						} else {
+							$color = '#555555';
 						} //end if else
 						$log .= '<span style="font-size:11px; color:'.$color.';">'.Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_line)).'</span><br>';
 					} //end if

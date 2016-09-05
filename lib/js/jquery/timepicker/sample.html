@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	<title>jQuery Time Picker</title>
+
+	<script type="text/javascript" src="../jquery.js"></script>
+	<script type="text/javascript" src="../../framework/core_utils.js"></script>
+	<script type="text/javascript" src="../../framework/browser_utils.js"></script>
+
+	<link rel="stylesheet" href="css/jquery.timepicker.css" type="text/css">
+	<script type="text/javascript" src="jquery.timepicker.js"></script>
+</head>
+<body>
+
+<input value="19:30" type="text" id="myTimePicker" style="width:50px; cursor:pointer; text-align:center;" readonly>
+<script>
+	$('#myTimePicker').timepicker({
+		showCloseButton: true,
+		showAnim: null, duration: null,
+		timeSeparator: ':',
+		showPeriodLabels: false,
+		showPeriod: false,
+		amPmText:['',''],
+		rows: 2,
+		hours: {
+			starts: 8,
+			ends: 20
+		},
+		minutes: {
+			starts: 0,
+			ends: 55,
+			interval: 5
+		},
+		onSelect: function(time, inst) {
+			alert('Selected time is: ' + time);
+		} //end function
+	});
+</script>
+
+</body>
+</html>

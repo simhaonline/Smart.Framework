@@ -5,30 +5,6 @@
 			<br><br>
 			[####TEST-ELEMENTS.ALERT####]
 			<br><br>
-			<div id="dialog" title="Basic dialog">
-			<p>This is the dialog. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-			</div>
-			<button id="btn_dlg_openr">Open Dialog</button>
-			<script type="text/javascript">
-			$(function() {
-				$('#dialog').dialog({
-					autoOpen: false,
-					show: {
-						effect: 'blind',
-						duration: 1000
-					},
-					hide: {
-						effect: 'explode',
-						duration: 1000
-					}
-				});
-				$('#btn_dlg_openr').button();
-				$('#btn_dlg_openr').click(function() {
-					$('#dialog').dialog('open');
-				});
-			});
-			</script>
-			<br><br>
 			[####TEST-ELEMENTS.SEND-CONFIRM-MODAL####]
 			<br>
 			[####TEST-ELEMENTS.SEND-CONFIRM-POPUP####]

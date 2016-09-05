@@ -45,7 +45,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.160827
+ * @version     v.160902
  * @package     DATA:XML
  *
  */
@@ -96,14 +96,18 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 		)
 	);
 	//-- log errors if any
-	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true) OR (Smart::array_size($arr) <= 0)) {
+	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true)) { // log errors if set :: OR (Smart::array_size($arr) <= 0)
 		$errors = (array) @libxml_get_errors();
 		if(Smart::array_size($errors) > 0) {
+			$notice_log = '';
 			foreach($errors as $z => $error) {
 				if(is_object($error)) {
-					Smart::log_notice('SmartXmlParser NOTICE: ('.$the_ercode.'): '.'Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n".'Encoding: '.$this->encoding."\n");
+					$notice_log .= 'PARSE-ERROR: ['.$the_ercode.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n";
 				} //end if
 			} //end foreach
+			if((string)$notice_log != '') {
+				Smart::log_notice('SmartXmlParser NOTICE [SimpleXML / Encoding: '.$this->encoding.']:'."\n".$notice_log."\n".'#END'."\n");
+			} //end if
 			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 				Smart::log_notice('SmartXmlParser / Debug XML-String:'."\n".$xml_str."\n".'#END');
 			} //end if
@@ -114,7 +118,7 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 	@libxml_use_internal_errors(false);
 	//--
 	if(Smart::array_size($arr) <= 0) {
-		$arr = array('xml2array_error' => 'SmartXmlParser / Parsing ERROR');
+		$arr = array('XML@PARSER:ERROR' => 'SmartXmlParser / No XML Data or Invalid Data'); // in case of error, return this
 	} //end if
 	//--
 	return (array) $arr;
@@ -221,7 +225,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160827
+ * @version     v.160902
  * @package     DATA:XML
  *
  */

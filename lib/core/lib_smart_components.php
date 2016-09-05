@@ -2606,7 +2606,7 @@ public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px
  * @param STRING 	$y_var					[HTML Variable Name or empty if no necessary]
  * @param DATE 		$yvalue					[DATE, empty or formated as YYYY-MM-DD]
  * @param STRING 	$y_text_select			[The text as title: 'Select Date']
- * @param JS-Date 	$yjs_mindate			[JS Expression, Min Date] :: new Date(1937, 1 - 1, 1)   or '-1y -1m -1d'
+ * @param JS-Date 	$yjs_mindate			[JS Expression, Min Date] :: new Date(1937, 1 - 1, 1) or '-1y -1m -1d'
  * @param JS-Date 	$yjs_maxdate			[JS Expression, Max Date] :: new Date(2037, 12 - 1, 31) or '1y 1m 1d'
  * @param ARRAY 	$y_extra_options		[Options Array[width, ...] for for datePicker]
  * @param JS-Code 	$yjs_custom				[JS Code to execute on Select(date)]
