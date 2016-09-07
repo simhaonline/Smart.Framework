@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160830
+	// v.160907
 
 
 //==================================================================
@@ -798,7 +798,7 @@ public static function test_strings() {
 $html = <<<HTML
 <h1>SmartFramework Unicode Strings Tests: DONE ...</h1>
 <script type="text/javascript">
-	SmartSimpleDialog.Dialog_Alert(
+	SmartJS_BrowserUtils.alert_Dialog(
 		'<img src="{$img_sign}" align="right"><h1>{$text_main}</h1><hr><span style="color:#333333;"><img src="{$img_check}" align="right">{$text_info}<br>',
 		'',
 		'Unicode String Test Suite for SmartFramework: PHP',

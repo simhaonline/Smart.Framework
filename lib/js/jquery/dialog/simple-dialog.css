@@ -6,7 +6,7 @@
  */
 
 /* Overlay */
-#simpledialog-overlay {
+#simpledialog-overlay, .simpledialog-overlay {
 	display: none;
 	position: fixed;
 	top: -50px;
@@ -14,8 +14,9 @@
 	width: 1px;
 	height: 1px;
 	z-index: 1;
-	background-color: #EEEEEE;
-	opacity: 0.5;
+/*	background-color: #EEEEEE;
+	opacity: 0.55; */
+	background: rgba(238, 238, 238, 0.55);
 }
 
 /* Container */

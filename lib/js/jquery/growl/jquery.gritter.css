@@ -98,6 +98,23 @@
 
 /* ----- */
 
+/* neutral */
+.gritter-neutral .gritter-item,
+.gritter-neutral .gritter-bottom,
+.gritter-neutral .gritter-top {
+	background-color: #FFFFFF;
+	color: #777777;
+	opacity: 0.7;
+}
+
+/* dark */
+.gritter-dark .gritter-item,
+.gritter-dark .gritter-bottom,
+.gritter-dark .gritter-top {
+	background-color: #777777;
+	color: #FFFFFF;
+}
+
 /* light */
 .gritter-light .gritter-item,
 .gritter-light .gritter-bottom,

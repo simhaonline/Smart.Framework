@@ -47,7 +47,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160901
+ * @version 	v.160907
  * @package 	Components:Framework
  *
  */
@@ -2926,7 +2926,7 @@ public static function js_ajx_tabs_init($y_id_of_tabs, $y_selected=0, $y_prevent
 		$prevreload = 'false';
 	} //end if else
 	//--
-	return '<script type="text/javascript">SmartJS_BrowserUIUtils.Tabs_Init(\''.Smart::escape_js($y_id_of_tabs).'\', '.$y_selected.', '.$prevreload.');</script>';
+	return '<script type="text/javascript">try { SmartJS_BrowserUIUtils.Tabs_Init(\''.Smart::escape_js($y_id_of_tabs).'\', '.$y_selected.', '.$prevreload.'); } catch(e) { console.log(\'Failed to initialize JS-UI Tabs: \' + e); }</script>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2948,7 +2948,7 @@ public static function js_ajx_tabs_activate($y_id_of_tabs, $y_activate) {
 		$activate = 'true';
 	} //end if else
 	//--
-	return '<script type="text/javascript">SmartJS_BrowserUIUtils.Tabs_Activate(\''.Smart::escape_js($y_id_of_tabs).'\', '.$activate.');</script>';
+	return '<script type="text/javascript">try { SmartJS_BrowserUIUtils.Tabs_Activate(\''.Smart::escape_js($y_id_of_tabs).'\', '.$activate.'); } catch(e) { console.log(\'Failed to activate JS-UI Tabs: \' + e);</script>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2967,7 +2967,7 @@ public static function js_ajx_wait_complete($y_div_id, $y_html_code, $y_url, $y_
 	//--
 	$div_id = 'AJX_requester_DIV_'.$y_div_id;
 	//--
-	return '<div id="'.$div_id.'">'.$y_html_code.'</div><script type="text/javascript">SmartJS_BrowserUtils.Load_Div_Content_By_Ajax(\''.$div_id.'\', \'lib/core/img/busy_timer.gif\', \''.Smart::escape_js($y_url).'\', \'{$y_method}\', \'html\');</script>';
+	return '<div id="'.$div_id.'">'.$y_html_code.'</div><script type="text/javascript">SmartJS_BrowserUtils.Load_Div_Content_By_Ajax(\''.$div_id.'\', \'lib/core/img/busy_timer.gif\', \''.Smart::escape_js($y_url).'\', \''.Smart::escape_js($y_method).'\', \'html\');</script>';
 	//--
 } //END FUNCTION
 //================================================================

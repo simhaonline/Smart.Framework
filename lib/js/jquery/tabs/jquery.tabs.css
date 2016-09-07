@@ -1,19 +1,69 @@
 
-.simple_tabs li {
+/*
+jQuery Tabs 1.0
+(c) 2016 unix-world.org
+r.160907
+*/
+
+div.simple_tabs_container {
+	text-align: left;
+	margin-top: 1px;
+	margin-bottom: 20px;
+}
+
+ul.simple_tabs_head {
+	margin: 0;
+	margin-bottom: -1px;
+	padding: 0;
+	padding-top: 7px;
+	padding-left: 0px;
+}
+
+ul.simple_tabs_head li {
 	list-style: none;
 	display: inline;
 }
 
-.simple_tabs a.simple_tabs {
+ul.simple_tabs_head li a.simple_tabs_inactive {
+	font-weight: bold;
+	text-decoration: none !important;
+	margin-right: 2px;
 	padding: 5px 10px;
 	display: inline-block;
 	text-decoration: none;
-	border: 1px solid #555555;
+	border: 1px solid #F2F2F2;
+	border-bottom: 1px solid #F2F2F2;
 	background: #FFFFFF;
 	color: #555555;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
-.simple_tabs a.simple_tabs_active {
+ul.simple_tabs_head li a.simple_tabs_active {
 	background: #555555;
 	color: #FFFFFF;
+	border: 1px solid #555555;
+	border-bottom: 1px solid #555555;
 }
+
+ul.simple_tabs_head li a.simple_tabs_disabled {
+	opacity: 0.5 !important;
+	cursor: not-allowed !important;
+}
+
+div.simple_tabs_content {
+
+	border: 1px solid #F2F2F2;
+
+	border-top: 1px solid #F2F2F2;
+	padding-top: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 10px;
+}
+
+div.simple_tabs_loader {
+	text-align: right;
+}
+
+/* END */
