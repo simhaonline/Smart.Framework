@@ -74,15 +74,22 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	} //end if
 	//-- The following error types cannot be handled with a user defined function: E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, and most of E_STRICT raised in the file where set_error_handler() is called : http://php.net/manual/en/function.set-error-handler.php
 	$app_halted = '';
+	$is_supressed = false;
 	switch($errno) { // friendly err names
 		case E_NOTICE:
 			$ferr = 'NOTICE';
+			if(0 == error_reporting()) { // fix: don't log E_NOTICE from @functions
+				$is_supressed = true;
+			} //end if
 			break;
 		case E_USER_NOTICE:
 			$ferr = 'APP-NOTICE';
 			break;
 		case E_WARNING:
 			$ferr = 'WARNING';
+			if(0 == error_reporting()) { // fix: don't log E_WARNING from @functions
+				$is_supressed = true;
+			} //end if
 			break;
 		case E_USER_WARNING:
 			$ferr = 'APP-WARNING';
@@ -99,10 +106,21 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 			$ferr = 'OTHER';
 	} //end switch
 	//--
-	$msg = "\n".'===== '.date('Y-m-d H:i:s O')."\n".'PHP '.PHP_VERSION.' [SMART-ERR-HANDLER] #'.$errno.' ['.$ferr.']'.$app_halted."\n".'URI: ['.SMART_ERROR_AREA.'] @ '.$_SERVER['REQUEST_URI']."\n".'Script: '.$errfile."\n".'Line number: '.$errline."\n".$errstr."\n".'==================================='."\n\n";
+	if(((string)SMART_ERROR_HANDLER != 'log') OR ((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes')) {
+		$is_supressed = false;
+	} //end if
+	if(!defined('SMART_ERROR_SILENCE_WARNS_NOTICE')) { // to silence warnings and notices from logs this must be set explicit in init.php as: define('SMART_ERROR_SILENCE_WARNS_NOTICE', true); // Error Handler silence warnings and notices log (available just for SMART_ERROR_HANDLER=log mode)
+		$is_supressed = false;
+	} //end if
 	//--
-	if((is_dir(SMART_ERROR_LOGDIR)) && (is_writable(SMART_ERROR_LOGDIR))) {
-		@file_put_contents(SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE, $msg, FILE_APPEND | LOCK_EX);
+	if($is_supressed !== true) {
+		if((is_dir(SMART_ERROR_LOGDIR)) && (is_writable(SMART_ERROR_LOGDIR))) {
+			@file_put_contents(
+				SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE,
+				"\n".'===== '.date('Y-m-d H:i:s O')."\n".'PHP '.PHP_VERSION.' [SMART-ERR-HANDLER] #'.$errno.' ['.$ferr.']'.$app_halted."\n".'URI: ['.SMART_ERROR_AREA.'] @ '.$_SERVER['REQUEST_URI']."\n".'Script: '.$errfile."\n".'Line number: '.$errline."\n".$errstr."\n".'==================================='."\n\n",
+				FILE_APPEND | LOCK_EX
+			);
+		} //end if
 	} //end if
 	//--
 	if($errno === E_USER_ERROR) { // this is necessary just for E_USER_ERROR is used just for Exceptions and all other PHP errors are FATAL and will stop the execution ; For WARNING / NOTICE type errors we just want to log them, not to stop the execution !

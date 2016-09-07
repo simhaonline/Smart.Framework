@@ -196,8 +196,8 @@ final class SmartHttpClient {
 			if($this->debug) {
 				$this->log .= '[ERR] Robot Browser Failed !'."\n";
 			} //end if
-			$this->close_connection();
 			Smart::log_notice('LibHTTP // GetFromURL // Robot Browser Failed ... '.$url);
+			$this->close_connection();
 			return 0;
 		} //end if
 		//--
@@ -208,8 +208,8 @@ final class SmartHttpClient {
 			if($this->debug) {
 				$this->log .= '[ERR] Premature connection end (2.1)'."\n";
 			} //end if
-			$this->close_connection();
 			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.1) ...'.$url);
+			$this->close_connection();
 			return 0;
 			//--
 		} //end if
@@ -345,9 +345,8 @@ final class SmartHttpClient {
 			//--
 			if($this->debug) {
 				$this->log .= '[ERR] Connection is already closed ...'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL // Connection is already closed ...');
 			} //end if
-			//--
-			Smart::log_notice('LibHTTP // GetFromURL // Connection is already closed ...');
 			//--
 		} //end if
 		//--
