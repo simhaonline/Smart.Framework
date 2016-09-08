@@ -362,36 +362,36 @@ public function select_mailbox($mbox_name, $allow_create=false) { // IMAP4
 	//--
 	$this->crr_mbox = (string) $mbox_name;
 	//--
-	$tmp_arr = @explode('* OK [UIDVALIDITY ', $reply);
+	$tmp_arr = (array) explode('* OK [UIDVALIDITY ', (string)$reply);
 	$tmp_uiv = $tmp_arr['1'];
 	$tmp_arr = array();
-	$tmp_arr = @explode('] UIDs', $tmp_uiv);
+	$tmp_arr = (array) explode('] UIDs', (string)$tmp_uiv);
 	$this->crr_uiv = trim($tmp_arr[0]);
 	//--
 	$size = 0; // we can't determine in IMAP
 	//--
 	$count = 0;
 	$recent = 0;
-	$tmp_arr = @explode("\r\n", $reply);
+	$tmp_arr = (array) explode("\r\n", (string)$reply);
 	for($i=0; $i<count($tmp_arr); $i++) {
 		$tmp_arr[$i] = trim($tmp_arr[$i]);
 		if(strlen($tmp_arr[$i]) > 0) {
 			if(($count == 0) AND (strpos($tmp_arr[$i], ' EXISTS') !== false) AND (substr($tmp_arr[$i], 0, 2) == '* ')) {
 				$tmp_x_arr = array();
 				$tmp_txt = $tmp_arr[$i];
-				$tmp_x_arr = @explode('* ', $tmp_txt);
+				$tmp_x_arr = (array) explode('* ', (string)$tmp_txt);
 				$tmp_txt = trim($tmp_x_arr[1]);
 				$tmp_x_arr = array();
-				$tmp_x_arr = @explode(' EXISTS', $tmp_txt);
+				$tmp_x_arr = (array) explode(' EXISTS', (string)$tmp_txt);
 				$tmp_txt = trim($tmp_x_arr[0]);
 				$count = (int) $tmp_txt;
 			} elseif(($recent == 0) AND (strpos($tmp_arr[$i], ' RECENT') !== false) AND (substr($tmp_arr[$i], 0, 2) == '* ')) {
 				$tmp_x_arr = array();
 				$tmp_txt = $tmp_arr[$i];
-				$tmp_x_arr = @explode('* ', $tmp_txt);
+				$tmp_x_arr = (array) explode('* ', (string)$tmp_txt);
 				$tmp_txt = trim($tmp_x_arr[1]);
 				$tmp_x_arr = array();
-				$tmp_x_arr = @explode(' RECENT', $tmp_txt);
+				$tmp_x_arr = (array) explode(' RECENT', (string)$tmp_txt);
 				$tmp_txt = trim($tmp_x_arr[0]);
 				$recent = (int) $tmp_txt;
 			} //end if
@@ -487,7 +487,7 @@ public function uid($msg_num='') { // IMAP4
 	if(strlen($msg_num) > 0) {
 		//--
 		$uid = '';
-		$tmp_arr = @explode("\r\n", $reply);
+		$tmp_arr = (array) explode("\r\n", (string)$reply);
 		for($i=0; $i<count($tmp_arr); $i++) {
 			$tmp_line = trim($tmp_arr[$i]);
 			if(substr($tmp_line, 0, 9) == '* SEARCH ') {
@@ -499,7 +499,7 @@ public function uid($msg_num='') { // IMAP4
 	} else {
 		//--
 		$uid = '';
-		$tmp_arr = @explode("\r\n", $reply);
+		$tmp_arr = (array) explode("\r\n", (string)$reply);
 		for($i=0; $i<count($tmp_arr); $i++) {
 			$tmp_line = trim($tmp_arr[$i]);
 			if(substr($tmp_line, 0, 9) == '* SEARCH ') {
@@ -508,7 +508,7 @@ public function uid($msg_num='') { // IMAP4
 		} //end for
 		//--
 		if(strlen($uid) > 0) {
-			$tmp_arr = @explode(' ', $uid);
+			$tmp_arr = (array) explode(' ', (string)$uid);
 			$uid = '';
 			for($i=0; $i<count($tmp_arr); $i++) {
 				$tmp_line = trim($tmp_arr[$i]);
@@ -564,10 +564,10 @@ public function size($msg_num) { // IMAP4
 		return '';
 	} //end if
 	//--
-	$tmp_arr = @explode('RFC822.SIZE ', $reply); // The answer is like * {MSGNUM} FETCH (RFC822.SIZE 3663)
+	$tmp_arr = (array) explode('RFC822.SIZE ', (string)$reply); // The answer is like * {MSGNUM} FETCH (RFC822.SIZE 3663)
 	$tmp_size = trim($tmp_arr[1]);
 	$tmp_arr = array();
-	$tmp_arr = @explode(')', $tmp_size);
+	$tmp_arr = (array) explode(')', (string)$tmp_size);
 	$size = trim($tmp_arr[0]);
 	//--
 	if($this->debug) {
@@ -656,14 +656,14 @@ public function header($msg_num, $read_lines=5) { // IMAP4
 	$mark_ok = ')'."\r\n".$this->tag.' OK ';
 	if(strpos($reply, $mark_ok) !== false) {
 		//--
-		$tmp_repl_arr = @explode($mark_ok, $reply);
+		$tmp_repl_arr = (array) explode((string)$mark_ok, (string)$reply);
 		$tmp_repl_txt = $tmp_repl_arr[0];
-		$tmp_repl_arr = @explode("\r\n", trim($tmp_repl_txt));
+		$tmp_repl_arr = (array) explode("\r\n", trim((string)$tmp_repl_txt));
 		$tmp_repl_arr[0] = ''; // the 1st line is the IMAP Answer
 		//--
 		if($read_lines <= 0) {
 			//--
-			$header_out = trim(@implode("\r\n", $tmp_repl_arr));
+			$header_out = trim((string)implode("\r\n", (array)$tmp_repl_arr));
 			//--
 		} else {
 			//--
@@ -728,9 +728,9 @@ public function read($msg_num, $by_uid=false) { // IMAP4
 	$mark_ok = ')'."\r\n".$this->tag.' OK ';
 	if(strpos($reply, $mark_ok) !== false) {
 		//--
-		$tmp_repl_arr = @explode($mark_ok, $reply);
+		$tmp_repl_arr = (array) explode((string)$mark_ok, (string)$reply);
 		$tmp_repl_txt = $tmp_repl_arr[0];
-		$tmp_repl_arr = @explode("\r\n", trim($tmp_repl_txt));
+		$tmp_repl_arr = (array) explode("\r\n", trim((string)$tmp_repl_txt));
 		$tmp_repl_arr[0] = ''; // the 1st line is the IMAP Answer
 		//--
 		for($i=1; $i<count($tmp_repl_arr); $i++) { // we start at 1 because the 1st line is the IMAP Answer
@@ -848,13 +848,13 @@ public function append($message) {
 		return '';
 	} //end if
 	//--
-	$tmp_arr_uid = @explode('[APPENDUID ', $data);
+	$tmp_arr_uid = (array) explode('[APPENDUID ', (string)$data);
 	$tmp_uid = trim($tmp_arr_uid[1]);
 	$tmp_arr_uid = array();
-	$tmp_arr_uid = @explode('] Append', $tmp_uid);
+	$tmp_arr_uid = (array) explode('] Append', (string)$tmp_uid);
 	$tmp_uid = trim($tmp_arr_uid[0]);
 	$tmp_arr_uid = array();
-	$tmp_arr_uid = @explode(' ', $tmp_uid);
+	$tmp_arr_uid = (array) explode(' ', (string)$tmp_uid);
 	if(trim($tmp_arr_uid[0]) == $this->crr_uiv) {
 		$tmp_uid = 'IMAP4-UIV-'.trim($this->crr_uiv).'-UID-'.trim($tmp_arr_uid[1]);
 	} else {
@@ -907,7 +907,7 @@ private function is_ok($reply) { // IMAP4
 	//--
 	$reply = trim($reply);
 	//--
-	$arr_lines = @explode("\r\n", $reply);
+	$arr_lines = (array) explode("\r\n", (string)$reply);
 	//--
 	for($i=0; $i<count($arr_lines); $i++) {
 		//--
@@ -1420,7 +1420,7 @@ public function count() {
 		return '';
 	} //end if
 	//--
-	$vars = @explode(' ', $reply);
+	$vars = (array) explode(' ', (string)$reply);
 	$count = trim($vars[1]);
 	$size = trim($vars[2]);
 	//--
@@ -1470,7 +1470,7 @@ public function uid($msg_num='') {
 	} //end if
 	//--
 	if(strlen($msg_num) > 0) {
-		$tmp_arr = @explode(' ', $reply); // The answer is like [OK] [MSGNUM] [UIDL]
+		$tmp_arr = (array) explode(' ', (string)$reply); // The answer is like [OK] [MSGNUM] [UIDL]
 		$uid = trim($tmp_arr[2]);
 	} else {
 		$uid = $this->retry_data();
@@ -1517,7 +1517,7 @@ public function size($msg_num) {
 		return '';
 	} //end if
 	//--
-	$tmp_arr = @explode(' ', $reply); // The answer is like [JUNK] [MSGNUM] [MSGSIZE]
+	$tmp_arr = (array) explode(' ', (string)$reply); // The answer is like [JUNK] [MSGNUM] [MSGSIZE]
 	$size = trim($tmp_arr[2]);
 	//--
 	if($this->debug) {

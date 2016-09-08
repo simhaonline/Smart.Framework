@@ -95,7 +95,7 @@ public static function local_display_number($y_number, $y_decimals=-1) {
 	//--
 	if(strlen($y_number) >= 14) { // cannot handle numbers greater than 14 precision
 		//--
-		$tmp_arr = @explode('.', (string)$y_number);
+		$tmp_arr = explode('.', (string)$y_number);
 		//--
 		if(count($tmp_arr) > 2) {
 			//--
@@ -158,7 +158,7 @@ public static function local_display_number($y_number, $y_decimals=-1) {
 				//--
 			} //end if else
 			//--
-			$arr = @explode('.', $y_number);
+			$arr = (array) explode('.', (string)$y_number);
 			$int_part = $arr[0];
 			$dec_part = $arr[1];
 			//--
@@ -449,7 +449,7 @@ public static function prepend_to_log($y_message, $y_log) {
 	if((string)$y_message != '') {
 		//--
 		if((string)$y_log != '') {
-			$arr = @explode("\n", $y_log);
+			$arr = (array) explode("\n", (string)$y_log);
 		} else {
 			$arr = array();
 		} //end if else
@@ -810,7 +810,7 @@ public static function extract_keywords($ytxt, $y_count=97) {
 	$ytxt = self::cleanup_numbers_from_text($ytxt);
 	$arr = self::extract_words_from_text_html($ytxt);
 	if(is_array($arr)) {
-		$arr = @array_unique($arr);
+		$arr = array_unique($arr);
 	} //end if
 	//--
 	$cnt = 0;
@@ -1781,10 +1781,10 @@ public static function get_webserver_version() {
 	//--
 	if(Smart::array_size($xout) <= 0) {
 		//--
-		$tmp_version_arr = @explode('/', (string)$_SERVER['SERVER_SOFTWARE']);
+		$tmp_version_arr = (array) explode('/', (string)$_SERVER['SERVER_SOFTWARE']);
 		$tmp_name_str = trim($tmp_version_arr[0]);
 		$tmp_out = trim($tmp_version_arr[1]);
-		$tmp_version_arr = @explode(' ', $tmp_out);
+		$tmp_version_arr = (array) explode(' ', (string)$tmp_out);
 		$tmp_version_str = trim($tmp_version_arr[0]);
 		//--
 		$xout = array(
@@ -2157,7 +2157,7 @@ private static function _iplist_get_first_address($ip) {
 	//--
 	if(strpos((string)$ip, ',') !== false) { // if we detect many IPs in a header
 		//--
-		$arr = @explode(',', (string)$ip);
+		$arr = explode(',', (string)$ip);
 		$ip = ''; // we clear it
 		//--
 		$imax = Smart::array_size($arr);
@@ -2193,7 +2193,7 @@ private static function _iplist_get_last_address($ip) {
 	//--
 	if(strpos((string)$ip, ',') !== false) { // if we detect many IPs in a header
 		//--
-		$arr = @explode(',', (string)$ip);
+		$arr = explode(',', (string)$ip);
 		$ip = ''; // we clear it
 		//--
 		$imax = Smart::array_size($arr);

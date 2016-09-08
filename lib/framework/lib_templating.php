@@ -88,7 +88,7 @@ public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_emp
 		Smart::log_warning('Invalid Markers-Template Data-Set for Template: '.$mtemplate);
 	} //end if
 	//-- make all keys upper
-	$y_arr_vars = (array) @array_change_key_case((array)$y_arr_vars, CASE_UPPER);
+	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER);
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
@@ -136,7 +136,7 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 	//--
 	$y_use_caching = (string) $y_use_caching;
 	//--
-	$y_arr_vars = (array) @array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper
+	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper
 	//--
 	$mtemplate = (string) self::read_template_or_subtemplate_file((string)$y_file_path, (string)$y_use_caching);
 	if((string)$mtemplate == '') {
@@ -221,7 +221,7 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 		return '{#### Empty Base Path for Mixed Markers-Template Content. See the ErrorLog for Details. ####}';
 	} //end if
 	//-- make all keys upper
-	$y_arr_vars = (array) @array_change_key_case((array)$y_arr_vars, CASE_UPPER);
+	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER);
 	//-- process sub-templates if any
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [

@@ -582,7 +582,7 @@ public static function FilterUnsafeString($y_value) {
 	if(defined('SMART_FRAMEWORK_SECURITY_FILTER_INPUT')) {
 		if((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT != '') {
 			if((string)$y_value != '') {
-				$y_value = @preg_replace((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT, '', (string)$y_value);
+				$y_value = preg_replace((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT, '', (string)$y_value);
 			} //end if
 		} //end if
 	} //end if
@@ -1433,7 +1433,7 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 							//--
 						} //end if
 						//-- set max execution time to zero
-						@ini_set('max_execution_time', 0); // we can expect a long time if file is big, but this will be anyway overriden by the WebServer Timeout Directive
+						ini_set('max_execution_time', 0); // we can expect a long time if file is big, but this will be anyway overriden by the WebServer Timeout Directive
 						//--
 						// cache headers are presumed to be sent by runtime before of this step
 						//--

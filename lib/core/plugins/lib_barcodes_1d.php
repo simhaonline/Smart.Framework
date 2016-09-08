@@ -310,7 +310,7 @@ final class SmartBarcode1D {
 		//--
 		if($display_text) {
 			$textheight = 11;
-			$codetext = "\n".'<text x="'.round(round(($barcode_arr['maxw'] * $w), 3)/2).'" y="'.($h + $textheight - 1).'" fill="'.$color.'" text-anchor="middle" font-size="10" font-family="monospace">'.Smart::escape_html(implode(' ', @str_split(trim($barcode_arr['code'])))).'</text>';
+			$codetext = "\n".'<text x="'.round(round(($barcode_arr['maxw'] * $w), 3)/2).'" y="'.($h + $textheight - 1).'" fill="'.$color.'" text-anchor="middle" font-size="10" font-family="monospace">'.Smart::escape_html(implode(' ', str_split(trim((string)$barcode_arr['code'])))).'</text>';
 		} else {
 			$textheight = 0;
 			$codetext = '';
@@ -411,7 +411,7 @@ final class SmartBarcode1D {
 			$width = ($barcode_arr['maxw'] * $w);
 			$height = $h;
 			//--
-			//$codetext = implode(' ', @str_split(trim($barcode_arr['code'])));
+			//$codetext = implode(' ', str_split(trim((string)$barcode_arr['code'])));
 			$codetext = trim($barcode_arr['code']);
 			$fontnum = 2;
 			$fontwidth = @imagefontwidth($fontnum);

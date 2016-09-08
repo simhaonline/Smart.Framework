@@ -176,7 +176,7 @@ public static function start() {
 		Smart::log_warning('WARNING: Session Prefix must have a length between 3 and 9 characters :: SMART_FRAMEWORK_SESSION_PREFIX');
 		return;
 	} //end if
-	if(!@preg_match('/^[a-z\-]+$/', (string)SMART_FRAMEWORK_SESSION_PREFIX)) {
+	if(!preg_match('/^[a-z\-]+$/', (string)SMART_FRAMEWORK_SESSION_PREFIX)) {
 		Smart::log_warning('WARNING: Session Prefix contains invalid characters :: SMART_FRAMEWORK_SESSION_PREFIX');
 		return;
 	} //end if
@@ -189,7 +189,7 @@ public static function start() {
 		Smart::log_warning('WARNING: Session Name must have a length between 10 and 25 characters :: SMART_FRAMEWORK_SESSION_NAME');
 		return;
 	} //end if
-	if(!@preg_match('/^[_A-Za-z0-9]+$/', (string)SMART_FRAMEWORK_SESSION_NAME)) {
+	if(!preg_match('/^[_A-Za-z0-9]+$/', (string)SMART_FRAMEWORK_SESSION_NAME)) {
 		Smart::log_warning('WARNING: Session Name contains invalid characters :: SMART_FRAMEWORK_SESSION_NAME');
 		return;
 	} //end if

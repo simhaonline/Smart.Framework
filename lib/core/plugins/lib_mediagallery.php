@@ -1058,7 +1058,7 @@ private function standardize_title($y_file_name) {
 	$y_file_name = SmartFileSysUtils::version_remove($y_file_name);
 	$y_file_name = strtolower(SmartFileSysUtils::get_noext_file_name_from_path($y_file_name));
 	//--
-	return @str_replace(array('_', '-', '  '), array(' ', ' ', ' '), @ucfirst($y_file_name));
+	return str_replace(array('_', '-', '  '), array(' ', ' ', ' '), (string)ucfirst((string)$y_file_name));
 	//--
 } //END FUNCTION
 //=====================================================================
@@ -1202,7 +1202,7 @@ private function mov_draw_box($y_dir, $y_video_file, $y_type) {
 		$link = $this->url_player_mov.$the_video;
 	} //end if else
 	//--
-	$link = @str_replace(array('{{{MOVIE-FILE}}}', '{{{MOVIE-TYPE}}}', '{{{MOVIE-TITLE}}}'), array(rawurlencode($the_video), rawurlencode($y_type), rawurlencode($description)), $link);
+	$link = str_replace(array('{{{MOVIE-FILE}}}', '{{{MOVIE-TYPE}}}', '{{{MOVIE-TITLE}}}'), array(rawurlencode($the_video), rawurlencode($y_type), rawurlencode($description)), $link);
 	//--
 
 	//--

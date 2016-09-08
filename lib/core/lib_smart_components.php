@@ -384,14 +384,14 @@ public static function http_message_503_serviceunavailable($y_message, $y_extra_
  */
 public static function check_single_user() {
 	//--
-	$lock_file = self::lock_file();
+	$lock_file = (string) self::lock_file();
 	//--
 	$out = 0;
 	//--
 	if(SmartFileSystem::file_or_link_exists($lock_file)) {
 		//--
 		$lock_content = SmartFileSystem::read($lock_file);
-		$chk_arr = @explode("\n", trim($lock_content));
+		$chk_arr = explode("\n", trim($lock_content));
 		$tmp_time = Smart::format_number_dec((($chk_arr[1] - time()) / 60), 0, '.', '');
 		//--
 		if($tmp_time <= 0) {
@@ -439,7 +439,7 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
 	//--
 
 	//--
-	$tmp_dimens = @explode('/', trim($y_dimensions));
+	$tmp_dimens = explode('/', trim((string)$y_dimensions));
 	//--
 	$the_width = (int) $tmp_dimens[0];
 	$the_height = (int) $tmp_dimens[1];
@@ -636,7 +636,7 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 	//--
 
 	//--
-	$tmp_dimens = @explode('/', trim($y_dimensions));
+	$tmp_dimens = explode('/', trim((string)$y_dimensions));
 	$the_width = (int) $tmp_dimens[0];
 	$the_height = (int) $tmp_dimens[1];
 	//--

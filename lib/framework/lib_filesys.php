@@ -269,8 +269,8 @@ public static function version_remove($file) {
 	$file = (string) $file;
 	//--
 	if((strpos($file, '.@') !== false) AND (strpos($file, '@.') !== false)) {
-		$arr = @explode('.@', $file);
-		$arr2 = @explode('@.', $arr[1]);
+		$arr = explode('.@', $file);
+		$arr2 = explode('@.', $arr[1]);
 		$file = $arr[0].'.'.$arr2[1];
 	} //end if
 	//--
@@ -2033,7 +2033,7 @@ public static function dir_recursive_create($dir_name) {
 		return 1; // stop if dir exists
 	} //end if
 	//--
-	$dir_elements = @explode('/', $dir_name);
+	$dir_elements = explode('/', $dir_name);
 	//--
 	if(Smart::array_size($dir_elements) <= 1) { // will have 'dir/'
 		return 0;

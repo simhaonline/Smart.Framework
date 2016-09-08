@@ -19,7 +19,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //================================================================
 // other locales than C may break many things ; Example: 3.5 may become become 3,5 or dates may become uncompatible as format in the overall context ; starting from date() to SQL escapes all will be affected with unpredictable results when working in a mixed locales unicode context other than C
-if((string)@setlocale(LC_ALL, 0) != 'C') { // {{{SYNC-LOCALES-CHECK}}}
+if((string)setlocale(LC_ALL, 0) != 'C') { // {{{SYNC-LOCALES-CHECK}}}
 	die('ERROR: The PHP locales must be reset to C (default) to support the standard UTF-8 context in SmartFramework / Unicode');
 } //end if
 //================================================================
@@ -227,7 +227,7 @@ public static function substr_count($ystr, $ypiece) {
  */
 public static function str_limit_replace($needle, $replace, $haystack, $count) {
 	//--
-	return (string) @implode((string)$replace, @explode((string)$needle, (string)$haystack, ((int)$count + 1)));
+	return (string) implode((string)$replace, (array)explode((string)$needle, (string)$haystack, ((int)$count + 1)));
 	//--
 } //END FUNCTION
 //================================================================

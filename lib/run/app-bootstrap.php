@@ -109,7 +109,7 @@ function autoload__SmartFrameworkModClasses($classname) {
 	$dir = (string) $dir;
 	$file = (string) $parts[(int)$max];
 	$path = (string) $dir.$file;
-	$path = (string) @str_replace(array('\\', "\0"), array('', ''), $path); // filter out null byte and backslash
+	$path = (string) str_replace(array('\\', "\0"), array('', ''), $path); // filter out null byte and backslash
 	//--
 	if(!preg_match('/^[_a-zA-Z0-9\-\/]+$/', $path)) {
 		return; // invalid path characters in file

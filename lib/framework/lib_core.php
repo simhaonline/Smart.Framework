@@ -163,7 +163,7 @@ public static function dir_name($y_path) {
 	//--
 	$y_path = trim((string)$y_path);
 	//--
-	$dir_name = (string) @dirname($y_path);
+	$dir_name = (string) dirname($y_path);
 	//--
 	return (string) self::fix_path_separator($dir_name); // FIX: on Windows, is possible to return a backslash \ instead of slash /
 	//--
@@ -183,7 +183,7 @@ public static function base_name($y_path) {
 	//--
 	$y_path = trim((string)$y_path);
 	//--
-	$base_name = (string) @basename($base_name);
+	$base_name = (string) basename($base_name);
 	//--
 	return (string) $base_name;
 	//--
@@ -203,7 +203,7 @@ public static function path_info($y_path) {
 	//--
 	$y_path = trim((string)$y_path);
 	//--
-	$path_info = (array) @pathinfo($y_path, PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME);
+	$path_info = (array) pathinfo($y_path, PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME);
 	//--
 	$path_info['dirname'] = (string) self::fix_path_separator((string)$path_info['dirname']);
 	//--
@@ -223,7 +223,7 @@ public static function path_info($y_path) {
  */
 public static function url_make_semantic($y_url) {
 	//--
-	$y_url = trim((string)$y_url);
+	$y_url = (string) trim((string)$y_url);
 	//--
 	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE')) {
 		return (string) $y_url;
@@ -244,11 +244,11 @@ public static function url_make_semantic($y_url) {
 	//--
 	$semantic_separator = '?/';
 	//--
-	if(strpos($y_url, $semantic_separator) !== false) {
+	if(strpos((string)$y_url, $semantic_separator) !== false) {
 		return (string) $y_url; // it is already semantic or at least appear to be ...
 	} // end if
 	//--
-	$arr = @parse_url($y_url);
+	$arr = parse_url((string)$y_url);
 	//print_r($arr);
 	//--
 	$arr['scheme'] = trim((string)$arr['scheme']); 	// http
@@ -758,7 +758,7 @@ public static function array_sort($y_arr, $y_mode) {
 			return (array) $y_arr;
 	} //end switch
 	//--
-	return (array) @array_values((array)$y_arr);
+	return (array) array_values((array)$y_arr);
 	//--
 } //END FUNCTION
 //================================================================
@@ -778,7 +778,7 @@ public static function array_shuffle($y_arr) {
 		return array();
 	} //end if
 	//--
-	@shuffle($y_arr);
+	shuffle($y_arr);
 	//--
 	return (array) $y_arr;
 	//--
@@ -1054,7 +1054,7 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 		$yhtmlcode = (string) str_ireplace('<br>', ' ', (string)$yhtmlcode);
 	} //end if else
 	//-- strip the tags
-	$yhtmlcode = (string) @strip_tags((string)$yhtmlcode);
+	$yhtmlcode = (string) strip_tags((string)$yhtmlcode);
 	//-- restore some usual html entities
 	$regex_h = array(
 		'&nbsp;',
@@ -1077,7 +1077,7 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 		'.'
 	);
 	$yhtmlcode = (string) str_ireplace((array)$regex_h, (array)$regex_r, (string)$yhtmlcode);
-	$yhtmlcode = (string) @strip_tags((string)$yhtmlcode); // fix: after all fixes when reversing entities, new tags can appear that were encoded, so needs run again for safety ...
+	$yhtmlcode = (string) strip_tags((string)$yhtmlcode); // fix: after all fixes when reversing entities, new tags can appear that were encoded, so needs run again for safety ...
 	//-- restore html unicode entities
 	$html_accents = (array) SmartUnicode::accented_html_entities();
 	$yhtmlcode = (string) str_replace((array)array_values($html_accents), (array)array_keys($html_accents), (string)$yhtmlcode);
@@ -1548,8 +1548,8 @@ public static function separe_url_parts($y_url) {
 		$path = '/';
 	} //end if
 	//-- script name
-	$tmp_arr = @explode('?', $path);
-	$scriptname = trim($tmp_arr[0]);
+	$tmp_arr = (array) explode('?', (string)$path);
+	$scriptname = trim((string)$tmp_arr[0]);
 	//--
 	return array('protocol' => $protocol, 'server' => $server, 'port' => $port, 'path' => $path, 'scriptname' => $scriptname);
 	//--

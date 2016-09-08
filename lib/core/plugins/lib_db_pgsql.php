@@ -9,7 +9,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 } //end if
 //-----------------------------------------------------
 
-@ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order to work with advanced PostgreSQL Notifications (example: write ignores)
+ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order to work with advanced PostgreSQL Notifications (example: write ignores)
 
 // NOTES ABOUT REUSING CONNECTIONS:
 //		* BY DEFAULT the PHP PgSQL driver reuses connections if the same host:port@dbname#username are used
@@ -331,7 +331,7 @@ public static function escape_str($y_string, $y_escape_likes='no', $y_connection
 
 	//--
 	if((string)$y_escape_likes == 'yes') { // extra special escape: _ = \_ ; % = \%
-		$y_string = @str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
+		$y_string = str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
 	} //end if else
 	//--
 	$y_string = (string) @pg_escape_string($y_connection, (string)$y_string); // [CONN]
@@ -369,7 +369,7 @@ public static function escape_literal($y_string, $y_escape_likes='no', $y_connec
 
 	//--
 	if((string)$y_escape_likes == 'yes') { // extra special escape: _ = \_ ; % = \%
-		$y_string = @str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
+		$y_string = str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
 	} //end if else
 	//--
 	$y_string = (string) @pg_escape_literal($y_connection, (string)$y_string); // [CONN]
@@ -511,7 +511,7 @@ public static function check_if_table_exists($y_table, $y_schema='public', $y_co
 	//==
 
 	//--
-	$y_table = @str_replace('"', '', $y_table);
+	$y_table = (string) str_replace('"', '', (string)$y_table);
 	//--
 
 	//--
@@ -1431,7 +1431,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 		//--
 		foreach($arrdata as $key => $val) {
 			//-- check for SQL INJECTION
-			$key = trim(@str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
+			$key = trim(str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
 			//-- except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if((string)$mode == 'in-select') { // in-select
 				$key = (int) $key; // force int keys
@@ -2033,7 +2033,7 @@ private static function major_version($y_version) {
 	//--
 	$y_version = (string) $y_version;
 	//--
-	$arr = @explode('.', trim($y_version));
+	$arr = (array) explode('.', trim($y_version));
 	//--
 	return trim($arr[0]).'.'.trim($arr[1]).'.x';
 	//--

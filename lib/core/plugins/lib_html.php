@@ -467,7 +467,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			//print_r($arr_striptags_allow);
 			$str_striptags_allow = (string) implode(',', (array)$arr_striptags_allow);
 			//echo $str_striptags_allow;
-			$this->html = (string) @strip_tags($this->html, (string)$str_striptags_allow);
+			$this->html = (string) strip_tags((string)$this->html, (string)$str_striptags_allow);
 		} //end if
 	} //end if
 	//--
@@ -642,9 +642,9 @@ private function parse_elements() {
 	$text = '';
 	$tag = '';
 	//--
-	$raw = @explode("\n", (string)$this->html);
+	$raw = (array) explode("\n", (string)$this->html);
 	//--
-	while(list($key, $line) = @each($raw)) {
+	while(list($key, $line) = each($raw)) {
 		//--
 		$line = trim($line);
 		if((string)$line == '') {

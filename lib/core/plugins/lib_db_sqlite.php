@@ -1137,7 +1137,7 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 		//--
 		foreach($arrdata as $key => $val) {
 			//-- check for SQL INJECTION
-			$key = trim(@str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
+			$key = trim(str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
 			//-- except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if((string)$mode == 'in-select') { // in-select
 				$key = (int) $key; // force int keys

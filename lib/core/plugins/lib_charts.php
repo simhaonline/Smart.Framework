@@ -425,7 +425,7 @@ private function color_alocate($y_color) {
 	//--
 	$y_color = trim((string)$y_color);
 	//--
-	if(@preg_match('/#[0-9a-fA-F]{6}/', (string)$y_color)) {
+	if(preg_match('/#[0-9a-fA-F]{6}/', (string)$y_color)) {
 		//--
 		$r = hexdec(substr($y_color, 1, 2));
 		$g = hexdec(substr($y_color, 3, 2));
@@ -675,7 +675,7 @@ public function generate($y_mode='raw') {
 	//--
 
 	//--
-	$this->legend_exists        = (@preg_match("/(5|6)/", (string)$this->type)) ? true : false;
+	$this->legend_exists        = (preg_match("/(5|6)/", (string)$this->type)) ? true : false;
 	$this->biggest_graphic_name = (strlen($this->graphic_1) > strlen($this->graphic_2)) ? $this->graphic_1 : $this->graphic_2;
 	$this->height_title         = (!empty($this->title)) ? ($this->string_height($this->tsize) + 15) : 0;
 	$this->space_between_bars   = ($this->type == 1) ? 40 : 30;
@@ -696,7 +696,7 @@ public function generate($y_mode='raw') {
 	//--
 
 	//--
-	if(count($this->z) && (@preg_match("/(1|2|3|4)/", (string)$this->type))) {
+	if(count($this->z) && (preg_match("/(1|2|3|4)/", (string)$this->type))) {
 		$this->exists_graph2 = true;
 	} //end if
 	//--
@@ -777,7 +777,7 @@ private function draw_chart() {
 	//--
 
 	//--
-	if(@preg_match("/^(1|3|4)$/", (string)$this->type)) { // Draw axis and background lines for "vertical bars", "dots" and "lines"
+	if(preg_match("/^(1|3|4)$/", (string)$this->type)) { // Draw axis and background lines for "vertical bars", "dots" and "lines"
 		//--
 		if($this->legend_exists == true) {
 			$this->draw_legend();
@@ -847,7 +847,7 @@ private function draw_chart() {
 		$this->draw_img_string($this->size, 20, ($this->graphic_area_y1-20), $this->axis_x, $this->color['title']);
 		@imageline($this->img, $this->graphic_area_x1, $this->graphic_area_y1, $this->graphic_area_x1, $this->graphic_area_y2, $this->color['axis_line']);
 		//--
-	} elseif(@preg_match("/^(5|6)$/", (string)$this->type)) { // Draw legend box for "pie" or "donut"
+	} elseif(preg_match("/^(5|6)$/", (string)$this->type)) { // Draw legend box for "pie" or "donut"
 		//--
 		$this->draw_legend();
 		//--
@@ -938,7 +938,7 @@ private function draw_chart() {
 			//--
 		} //end foreach
 		//--
-	} elseif(@preg_match("/^(3|4)$/", (string)$this->type)) { // Draw graphic: DOTS or LINE
+	} elseif(preg_match("/^(3|4)$/", (string)$this->type)) { // Draw graphic: DOTS or LINE
 		//--
 		$x[0] = $this->graphic_area_x1+1;
 		//--
@@ -1016,7 +1016,7 @@ private function draw_chart() {
 			//--
 		} //end for
 		//--
-	} elseif(@preg_match("/^(5|6)$/", (string)$this->type)) { // Draw graphic: PIE or DONUT
+	} elseif(preg_match("/^(5|6)$/", (string)$this->type)) { // Draw graphic: PIE or DONUT
 		//--
 		$center_x = ($this->graphic_area_x1 + $this->graphic_area_x2) / 2;
 		$center_y = ($this->graphic_area_y1 + $this->graphic_area_y2) / 2;
@@ -1156,10 +1156,10 @@ private function draw_legend() {
 	$x = $x1 + 5;
 	$y = $y1 + 5;
 	//--
-	if(@preg_match("/^(1|2|3|4)$/", (string)$this->type)) { // Draw legend values for VERTICAL BARS, HORIZONTAL BARS, DOTS and LINES
+	if(preg_match("/^(1|2|3|4)$/", (string)$this->type)) { // Draw legend values for VERTICAL BARS, HORIZONTAL BARS, DOTS and LINES
 		//--
-		$color_1 = (@preg_match("/^(1|2)$/", (string)$this->type)) ? $this->color['bars']   : $this->color['line'];
-		$color_2 = (@preg_match("/^(1|2)$/", (string)$this->type)) ? $this->color['bars_2'] : $this->color['line_2'];
+		$color_1 = (preg_match("/^(1|2)$/", (string)$this->type)) ? $this->color['bars']   : $this->color['line'];
+		$color_2 = (preg_match("/^(1|2)$/", (string)$this->type)) ? $this->color['bars_2'] : $this->color['line_2'];
 		//--
 		imagefilledrectangle($this->img, $x, $y, ($x+10), ($y+10), $color_1);
 		imagerectangle($this->img, $x, $y, ($x+10), ($y+10), $this->color['wireframe']);
@@ -1173,7 +1173,7 @@ private function draw_legend() {
 		//--
 		$this->draw_img_string($this->size, ($x+15), ($y-2), $this->graphic_2, $this->color['axis_values']);
 		//--
-	} elseif(@preg_match("/^(5|6)$/", (string)$this->type)) { // Draw legend values for PIE or DONUT
+	} elseif(preg_match("/^(5|6)$/", (string)$this->type)) { // Draw legend values for PIE or DONUT
 		//--
 		if(!empty($this->axis_x)) {
 			$this->draw_img_string($this->size, ((($x1+$x2)/2) - (strlen($this->axis_x)*7/2)), $y, $this->axis_x, $this->color['wireframe']);
@@ -1403,15 +1403,15 @@ private function load_color_palette() {
 			$this->color['bg_lines'] 			= @imagecolorallocate($this->img, 236, 236, 236); // #ECECEC
 			$this->color['bg_legend'] 			= @imagecolorallocate($this->img, 246, 246, 246); // #F6F6F6
 			//--
-			if(@preg_match("/^(1|2)$/", (string)$this->type)) {
+			if(preg_match("/^(1|2)$/", (string)$this->type)) {
 				$this->color['bars'] 			= @imagecolorallocate($this->img, 102, 153,   0); // #669900
 				$this->color['bars_shadow'] 	= @imagecolorallocate($this->img,  51, 102,   0); // #336600
 				$this->color['bars_2'] 			= @imagecolorallocate($this->img,   0,  51, 102); // #003366
 				$this->color['bars_2_shadow'] 	= @imagecolorallocate($this->img,   0,  51, 153); // #003399
-			} elseif(@preg_match("/^(3|4)$/", (string)$this->type)) {
+			} elseif(preg_match("/^(3|4)$/", (string)$this->type)) {
 				$this->color['line'] 			= @imagecolorallocate($this->img, 255, 102,   0); // #FF6600
 				$this->color['line_2'] 			= @imagecolorallocate($this->img,   0,  51, 153); // #003399
-			} elseif(@preg_match("/^(5|6)$/", (string)$this->type)) {
+			} elseif(preg_match("/^(5|6)$/", (string)$this->type)) {
 				$this->color['arc_1'] 			= @imagecolorallocate($this->img, 255, 102,   0); // #FF6600
 				$this->color['arc_2'] 			= @imagecolorallocate($this->img,   0,  51, 153); // #003399
 				$this->color['arc_3'] 			= @imagecolorallocate($this->img, 150, 221,  76); // #96DD4C
@@ -1446,7 +1446,7 @@ private function color_alocate($y_color) {
 	//--
 	$y_color = trim((string)$y_color);
 	//--
-	if(@preg_match('/#[0-9a-fA-F]{6}/', (string)$y_color)) {
+	if(preg_match('/#[0-9a-fA-F]{6}/', (string)$y_color)) {
 		//--
 		$r = hexdec(substr($y_color, 1, 2));
 		$g = hexdec(substr($y_color, 3, 2));
@@ -1471,7 +1471,7 @@ private function number_preformated($number, $dec_size=1) {
 //======================================================================
 private function number_float($number) {
 	//--
-	return (float) @str_replace(',', '', $number);
+	return (float) str_replace(',', '', (string)$number);
 	//--
 } //END FUNCTION
 //======================================================================

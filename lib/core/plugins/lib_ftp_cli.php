@@ -189,7 +189,7 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		$res_data = @explode(" ", $this->_resp);
+		$res_data = (array) explode(" ", (string)$this->_resp);
 		//--
 		return $res_data[1];
 		//--
@@ -367,7 +367,7 @@ final class SmartFtpClient {
 		$this->_close_data_connection($sock_data);
 		//--
 		if((string)$this->debug_level == 'full') {
-			$this->_debug_print(@implode("\n", $list));
+			$this->_debug_print((string)implode("\n", (array)$list));
 		} //end if
 		//--
 		if(!$this->_ok()) {
@@ -411,7 +411,7 @@ final class SmartFtpClient {
 		} //end while
 		//--
 		if((string)$this->debug_level == 'full') {
-			$this->_debug_print(@implode("\n", $list));
+			$this->_debug_print((string)implode("\n", (array)$list));
 		} //end if
 		//--
 		$this->_close_data_connection($sock_data);
@@ -824,7 +824,7 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		$res_data = @explode(",", $ip_port);
+		$res_data = (array) explode(",", (string)$ip_port);
 		$ipaddr = $res_data[0].".".$res_data[1].".".$res_data[2].".".$res_data[3];
 		$port = $res_data[4]*256 + $res_data[5];
 		//--

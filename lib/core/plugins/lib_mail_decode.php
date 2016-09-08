@@ -133,10 +133,10 @@ public function separe_email_from_name($y_address) {
 	if(SmartUnicode::str_contains($y_address, '<')) {
 		//--
 		$tmp_expl = array();
-		$tmp_expl = @explode('<', $y_address);
+		$tmp_expl = (array) explode('<', (string)$y_address);
 		$tmp_name = trim($tmp_expl[0]);
-		$tmp_name = trim(@str_replace(array("'", '"', '`'), array('', '', ''), $tmp_name));
-		$tmp_expl = @explode('>', $tmp_expl[1]);
+		$tmp_name = trim(str_replace(array("'", '"', '`'), array('', '', ''), $tmp_name));
+		$tmp_expl = (array) explode('>', (string)$tmp_expl[1]);
 		$tmp_email = trim($tmp_expl[0]);
 		$tmp_expl = array();
 		//--
@@ -287,7 +287,7 @@ public function get_header($message) {
 	$arr_cc = array();
 	//--
 	if(SmartUnicode::str_contains($cc, ',')) {
-		$arr_cc = @explode(',', $cc);
+		$arr_cc = (array) explode(',', (string)$cc);
 	} else {
 		$arr_cc[] = (string) $cc;
 	} //end if else
@@ -304,8 +304,8 @@ public function get_header($message) {
 		//--
 	} //end for
 	//--
-	$export_cc_addr = @implode(', ', $export_cc_addr);
-	$export_cc_name = @implode(', ', $export_cc_name);
+	$export_cc_addr = implode(', ', $export_cc_addr);
+	$export_cc_name = implode(', ', $export_cc_name);
 	//--
 	$cc = '';
 	//--
@@ -379,7 +379,7 @@ public function get_header($message) {
 		$msguid = trim($headers['message-uid']);
 	} //end if else
 	//--
-	$msguid = trim(@str_replace(array('<', '>'), array('', ''), $msguid));
+	$msguid = trim(str_replace(array('<', '>'), array('', ''), (string)$msguid));
 	//--
 	$export_msguid = trim($msguid);
 	//--
@@ -396,7 +396,7 @@ public function get_header($message) {
 		$msgid = trim($headers['message-id']);
 	} //end if else
 	//--
-	$msgid = trim(@str_replace(array('<', '>'), array('', ''), $msgid));
+	$msgid = trim(str_replace(array('<', '>'), array('', ''), (string)$msgid));
 	//--
 	$export_msgid = trim($msgid);
 	//--
@@ -413,7 +413,7 @@ public function get_header($message) {
 		$inreplyto = trim($headers['in-reply-to']);
 	} //end if else
 	//--
-	$inreplyto = trim(@str_replace(array('<', '>'), array('', ''), $inreplyto));
+	$inreplyto = trim(str_replace(array('<', '>'), array('', ''), (string)$inreplyto));
 	//--
 	$export_inreplyto = trim($inreplyto);
 	//--
@@ -529,7 +529,7 @@ private function printarray($array, $part_id) {
 				$this->arr_heads[] = $value;
 				//--
 				if(trim($value['content-id']) != '') {
-					$this->last_cid = @str_replace(array(' ', '<', '>'), array('', '', ''), $value['content-id']);
+					$this->last_cid = str_replace(array(' ', '<', '>'), array('', '', ''), (string)$value['content-id']);
 				} //end if
 				//--
 			} //end if
@@ -910,7 +910,7 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 		//--
 	} else {
 		//--
-		$ctype = @explode('/', $default_ctype);
+		$ctype = (array) explode('/', (string)$default_ctype);
 		$return->ctype_primary   = $ctype[0];
 		$return->ctype_secondary = $ctype[1];
 		$this->_include_bodies ? $return->body = ($this->_decode_bodies ? $this->_decodeBody($body) : $body) : null;
@@ -1046,7 +1046,7 @@ private function _parseHeaderValue($input) {
 // @access private
 private function _boundarySplit($input, $boundary) {
 	//--
-	$tmp = @explode('--'.$boundary, $input);
+	$tmp = (array) explode('--'.$boundary, (string)$input);
 	//--
 	for($i=1; $i<Smart::array_size($tmp); $i++) {
 		$parts[] = $tmp[$i];
@@ -1095,11 +1095,11 @@ private function _decodeHeader($input) {
 				// as is
 		} //end switch
 		//--
-		$input = @str_replace($encoded, $text, $input);
+		$input = (string) str_replace($encoded, $text, $input);
 		//--
 	} //end while
 	//--
-	return $input;
+	return (string) $input;
 	//--
 } //END FUNCTION
 //================================================================

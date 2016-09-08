@@ -424,7 +424,7 @@ final class SmartCryptoMCryptCipher {
 			$key = SMART_FRAMEWORK_SECURITY_KEY;
 		} //end if
 		//--
-		$tmp_mode_crypto 	= @explode('/', $runmode); // Example: 'mcrypt/blowfish/CBC'
+		$tmp_mode_crypto 	= explode('/', (string)$runmode); // Example: 'mcrypt/blowfish/CBC'
 		$tmp_mcrypt_check 	= trim(strtolower($tmp_mode_crypto[0]));
 		$tmp_mcrypt_algo 	= trim(strtolower($tmp_mode_crypto[1]));
 		$tmp_mcrypt_method 	= trim(strtoupper($tmp_mode_crypto[2]));
@@ -1462,8 +1462,8 @@ final class SmartCryptoCipherHash {
 		$iv = Smart::random_number();
 		$iv .= Smart::unique_entropy();
 		$iv .= SmartUtils::get_visitor_tracking_uid();
-		$iv .= @implode("\r", (array)$_SERVER);
-		$iv .= @implode("\r", (array)$_COOKIES);
+		$iv .= implode("\r", (array)$_SERVER);
+		$iv .= implode("\r", (array)$_COOKIES);
 
 		return $this->_hash($iv);
 

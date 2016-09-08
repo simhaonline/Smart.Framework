@@ -147,7 +147,7 @@ public static function validate_mx_email_address($helo, $email, $y_smtp_port) {
 
 	//------------
 	$tmp_arr = array();
-	$tmp_arr = @explode('@', (string) $email);
+	$tmp_arr = (array) explode('@', (string)$email);
 	$domain = trim($tmp_arr[1]);
 	$tmp_arr = array();
 	//------------
@@ -397,12 +397,12 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 	//--
 
 	//--
-	$tmp_explode_arr = @explode('@', $send_from_addr);
+	$tmp_explode_arr = (array) explode('@', (string)$send_from_addr);
 	$tmp_name = trim($tmp_explode_arr[0]); // not used
 	$tmp_domain = trim($tmp_explode_arr[1]); // used for message ID
 	//--
-	$tmp_my_uid = @getmyuid();
-	$tmp_my_gid = @getmygid();
+	$tmp_my_uid = getmyuid();
+	$tmp_my_gid = getmygid();
 	//--
 
 	//-- Extra Mail Headers
@@ -457,7 +457,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 			//--
 			$tmp_original_img_link = trim($arr_links[$i][src]); // trim any possible spaces
 			//-- reverse the &amp; back to & (generated from JavaScript) ...
-			$tmp_imglink = @str_replace('&amp;', '&', $tmp_original_img_link);
+			$tmp_imglink = str_replace('&amp;', '&', (string)$tmp_original_img_link);
 			//--
 			$tmp_cid = 'img_'.sha1('SmartFramework eMail-Utils // CID Embedd // '.'@'.$tmp_imglink.'#'); // this should not vary by $i or others because if duplicate images are detected only the first is attached
 			//--
@@ -521,7 +521,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 					$tmp_fname = 'cid_'.$uniq_id.'__'.$tmp_cid.$tmp_img_ext;
 					//--
 					$mail->add_attachment($tmp_fcontent, $tmp_fname, $tmp_fmime, 'inline', $tmp_cid.$tmp_img_ext); // attachment
-					$message = @str_replace('src="'.$tmp_original_img_link.'"', 'src="cid:'.$tmp_cid.$tmp_img_ext.'"', $message);
+					$message = str_replace('src="'.$tmp_original_img_link.'"', 'src="cid:'.$tmp_cid.$tmp_img_ext.'"', $message);
 					//--
 					$uniq_id += 1;
 					//--
@@ -661,7 +661,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 			if((string)$y_mode == 'send-return') {
 				$mail->to = $tmp_send_to;
 				if(is_array($cc)) {
-					$mail->cc = (string) @implode(', ', $cc);
+					$mail->cc = (string) implode(', ', $cc);
 				} elseif((string)$cc != '') {
 					$mail->cc = (string) $cc;
 				} //end if else
@@ -796,7 +796,7 @@ public static function decode_mime_fileurl($y_enc_msg_file, $y_ctrl_key) {
 		(string)$y_enc_msg_file,
 		'SmartFramework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
 	));
-	$dec_arr = (array) @explode("\n", trim($decoded_link));
+	$dec_arr = (array) explode("\n", trim((string)$decoded_link));
 	//print_r($dec_arr);
 	//--
 	$arr['creation-time'] 	= trim((string)$dec_arr[0]);
@@ -1056,8 +1056,8 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 					if(strlen($head['cc_addr']) > 0) {
 						$out .= '<font size="2"><b>Cc:</b> ';
 						if(SmartUnicode::str_contains($head['cc_addr'], ',')) {
-							$arr_cc_addr = @explode(',', $head['cc_addr']);
-							$arr_cc_name = @explode(',', $head['cc_name']);
+							$arr_cc_addr = (array) explode(',', (string)$head['cc_addr']);
+							$arr_cc_name = (array) explode(',', (string)$head['cc_name']);
 							$out .= '[@]';
 							for($z=0; $z<Smart::array_size($arr_cc_addr); $z++) {
 								$out .= '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.Smart::escape_html(trim($arr_cc_addr[$z])).' &nbsp; <i>'.Smart::escape_html(trim($arr_cc_name[$z])).'</i>';

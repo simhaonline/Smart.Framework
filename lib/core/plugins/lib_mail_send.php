@@ -108,14 +108,14 @@ public function send($do_send, $raw_message='') {
 		$this->smtp_helo = '127.0.0.1';
 	} //end if
 	//--
-	$tmp_explode_arr = @explode('@', $this->from);
+	$tmp_explode_arr = (array) explode('@', (string)$this->from);
 	$tmp_name = trim($tmp_explode_arr[0]); // used for from name in the case it is empty
 	$tmp_domain = trim($tmp_explode_arr[1]); // used for message ID
 	//--
 	if(strlen($this->namefrom) > 0) {
 		$tmp_name = SmartUnicode::deaccent_str($this->namefrom);
 	} else {
-		$tmp_name = @ucwords(@str_replace(array('.', '-', '_'), array(' ', ' ', ' '), $tmp_name));
+		$tmp_name = ucwords(str_replace(array('.', '-', '_'), array(' ', ' ', ' '), (string)$tmp_name));
 	} //end if
 	//--
 	$this->mime_message = ''; // init
@@ -1290,7 +1290,7 @@ public function data_send($msg_data) {
 	// NOTE: this does not count towards are limit.
 	//-- normalize the line breaks so we know the explode works
 	$msg_data = str_replace(array("\r\n", "\r"), array("\n", "\n"), $msg_data); // replacing the CRLF to LF
-	$lines = @explode("\n", $msg_data);
+	$lines = (array) explode("\n", (string)$msg_data);
 	$msg_data = ''; // cleanup
 	//--
 	// We need to find a good way to determine if headers are in the msg_data or if it is a straight msg body.

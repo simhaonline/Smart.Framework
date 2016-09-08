@@ -233,7 +233,7 @@ public static function text_faxnums($string, $yaction='efax:', $ytarget='_blank'
  */
 public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $ytxtcolor='#000000', $ycolor='#FFFFFF', $ycolor_alt='#FFFFFF', $ybrdcolor='#CCCCCC', $y_style=' style="overflow: auto; height:200px;"') {
 	//--
-	if(strpos($ynotes, '-----<') === false) {
+	if(strpos((string)$ynotes, '-----<') === false) {
 		return $tbl_start.'<tr><td bgcolor="'.$ycolor.'" valign="top"><font size="1">'.Smart::nl_2_br(Smart::escape_html($ynotes)).'</font></td></tr>'.$tbl_end ; // not compatible notes, so we not parse them
 	} //end if
 	//--
@@ -242,8 +242,7 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
 	$tbl_start = '<table width="'.$y_tblsize.'" cellspacing="0" cellpadding="2" border="1" bordercolor="'.$ybrdcolor.'" style="border-style: solid; border-collapse: collapse;">'."\n";
 	$tbl_end = '</table>';
 	//--
-	$tmp_shnotes_arr = array();
-	$tmp_shnotes_arr = @explode('-----<', $ynotes);
+	$tmp_shnotes_arr = (array) explode('-----<', (string)$ynotes);
 	//--
 	$i_alt=0;
 	//--
@@ -254,21 +253,21 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
 		//--
 		for($i=0; $i<Smart::array_size($tmp_shnotes_arr); $i++) {
 			//--
-			$tmp_shnotes_arr[$i] = trim($tmp_shnotes_arr[$i]);
+			$tmp_shnotes_arr[$i] = (string) trim((string)$tmp_shnotes_arr[$i]);
 			//--
-			if(Smart::striptags(@str_replace('-----<', '', $tmp_shnotes_arr[$i])) != '') {
+			if(Smart::striptags(str_replace('-----<', '', (string)$tmp_shnotes_arr[$i])) != '') {
 				//--
-				$tmp_expld = @explode('>-----', $tmp_shnotes_arr[$i]);
+				$tmp_expld = (array) explode('>-----', (string)$tmp_shnotes_arr[$i]);
 				//--
-				$tmp_meta_expl = @explode('|', $tmp_expld[0]);
-				$tmp_meta_date = trim($tmp_meta_expl[0]);
-				if(strlen(trim($tmp_meta_expl[1])) > 0) {
+				$tmp_meta_expl = (array) explode('|', (string)$tmp_expld[0]);
+				$tmp_meta_date = trim((string)$tmp_meta_expl[0]);
+				if(strlen(trim((string)$tmp_meta_expl[1])) > 0) {
 					$tmp_metainfo = ' :: '.trim($tmp_meta_expl[1]);
 				} else {
 					$tmp_metainfo = '';
 				} //end if else
 				//--
-				if(strlen(trim($tmp_expld[1])) > 0) {
+				if(strlen(trim((string)$tmp_expld[1])) > 0) {
 					//--
 					$i_alt += 1;
 					//-- alternate
@@ -515,7 +514,7 @@ public static function validate_string($y_string, $y_mode) {
 	//--
 	$regex = self::regex_stringvalidation_expression($y_mode);
 	//--
-	if(@preg_match((string)$regex, (string)$y_string)) {
+	if(preg_match((string)$regex, (string)$y_string)) {
 		return true;
 	} else {
 		return false;
@@ -651,7 +650,7 @@ public static function validate_mime_type($y_type) {
 		return '';
 	} //end if
 	//--
-	if(@preg_match('/^[[:graph:]]+$/', $y_type)) { // mime types are only ISO-8859-1
+	if(preg_match('/^[[:graph:]]+$/', $y_type)) { // mime types are only ISO-8859-1
 		$type = $y_type;
 	} else {
 		$type = '';

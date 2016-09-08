@@ -413,9 +413,9 @@ private static function print_log_runtime() {
 		'Server Runtime: PHP' => [
 			'PHP OS' => (string) PHP_OS,
 			'PHP Version' => 'PHP '.PHP_VERSION.' / '.@php_sapi_name(),
-			'PHP Locales: ' => (string) @setlocale(LC_ALL, 0),
-			'PHP Encoding: Internal / MBString' => @ini_get('default_charset').' / '.@mb_internal_encoding(),
-			'PHP Memory' => (string) @ini_get('memory_limit'),
+			'PHP Locales: ' => (string) setlocale(LC_ALL, 0),
+			'PHP Encoding: Internal / MBString' => ini_get('default_charset').' / '.@mb_internal_encoding(),
+			'PHP Memory' => (string) ini_get('memory_limit'),
 			'PHP Loaded Modules' => (string) strtolower(implode(', ', (array)@get_loaded_extensions()))
 		],
 		'Server Domain Info' => [
