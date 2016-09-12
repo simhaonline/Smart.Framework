@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160827
+ * @version     v.160911
  * @package     Core
  *
  */
@@ -183,7 +183,7 @@ public static function base_name($y_path) {
 	//--
 	$y_path = trim((string)$y_path);
 	//--
-	$base_name = (string) basename($base_name);
+	$base_name = (string) basename($y_path);
 	//--
 	return (string) $base_name;
 	//--
