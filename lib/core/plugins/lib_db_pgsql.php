@@ -1532,7 +1532,7 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 	// version: 160915
 
 	//==
-	$y_connection = self::check_connection($y_connection, 'NEW-SAFE-ID');
+	$y_connection = self::check_connection($y_connection, 'PREPARE-PARAM-QUERY');
 	//==
 
 	//--
@@ -1670,13 +1670,13 @@ public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schem
 		//--
 		if(self::check_if_table_exists('_safe_id_records', 'smart_runtime', $y_connection) !== 1) {
 			if(self::check_if_schema_exists('smart_runtime', $y_connection) !== 1) {
-				self::write_data('CREATE SCHEMA "smart_runtime"');
+				self::write_data('CREATE SCHEMA "smart_runtime"', $y_connection);
 			} //end if
-			self::write_data((string)self::schema_safe_id_records_table());
+			self::write_data((string)self::schema_safe_id_records_table(), $y_connection);
 		} //end if
 		//--
 		if((int)Smart::random_number(0,99) == 1) { // 1% chance to run it for cleanup records older than 24 hours
-			self::write_data('DELETE FROM "smart_runtime"."_safe_id_records" WHERE ("date_time" < \''.self::escape_str(date('Y-m-d H:i:s', @strtotime('-1 day')), 'no', $y_connection).'\')', 'Safe ID Records Cleanup (OLDs)'); // cleanup olds
+			self::write_data('DELETE FROM "smart_runtime"."_safe_id_records" WHERE ("date_time" < \''.self::escape_str(date('Y-m-d H:i:s', @strtotime('-1 day')), 'no', $y_connection).'\')', 'Safe ID Records Cleanup (OLDs)', $y_connection); // cleanup olds
 		} //end if
 		//--
 	} //end if
@@ -1732,10 +1732,10 @@ public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schem
 			if($use_safe_id_record === true) { // with safety check against safe ID records table
 				//-- reserve this ID to bse sure will not be assigned to another instance
 				$uniqueness_mark = (string) $y_schema.'.'.$y_table_name.':'.$y_id_field;
-				$write_res = self::write_igdata('
-					INSERT INTO "smart_runtime"."_safe_id_records" ("id", "table_space", "date_time")
-					( SELECT \''.self::escape_str($new_id, 'no', $y_connection).'\', \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\', \''.self::escape_str(date('Y-m-d H:i:s'), 'no', $y_connection).'\' WHERE (NOT EXISTS ( SELECT 1 FROM "smart_runtime"."_safe_id_records" WHERE (("id" = \''.self::escape_str($new_id, 'no', $y_connection).'\') AND ("table_space" = \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\')) LIMIT 1 OFFSET 0 ) AND NOT EXISTS ('.$chk_uniqueness.') ) )',
-					'Safe Record of NEW ID of Table into Zone Control'
+				$write_res = self::write_igdata(
+					'INSERT INTO "smart_runtime"."_safe_id_records" ("id", "table_space", "date_time") ( SELECT \''.self::escape_str($new_id, 'no', $y_connection).'\', \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\', \''.self::escape_str(date('Y-m-d H:i:s'), 'no', $y_connection).'\' WHERE (NOT EXISTS ( SELECT 1 FROM "smart_runtime"."_safe_id_records" WHERE (("id" = \''.self::escape_str($new_id, 'no', $y_connection).'\') AND ("table_space" = \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\')) LIMIT 1 OFFSET 0 ) AND NOT EXISTS ('.$chk_uniqueness.') ) )',
+					'Safe Record of NEW ID of Table into Zone Control',
+					$y_connection
 				);
 				//--
 				if($write_res[1] === 1) {
@@ -1938,7 +1938,7 @@ private static function check_connection($y_connection, $y_description) {
 	//--
 	global $configs;
 	//--
-	if($y_connection === 'DEFAULT') { // just for the default connection !!!
+	if((string)$y_connection === 'DEFAULT') { // just for the default connection !!!
 		//--
 		if(!defined('SMART_FRAMEWORK_DB_LINK_PostgreSQL')) { // PostgreSQL default connection is exported as constant to avoid re-connection which can break transactions
 			//--
