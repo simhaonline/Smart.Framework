@@ -68,7 +68,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160827
+ * @version 	v.160915
  * @package 	Database:PostgreSQL
  *
  */
@@ -1528,6 +1528,13 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
  * @return STRING								:: The SQL processed (partial/full) Statement
  */
 public static function prepare_param_query($query, $replacements_arr, $y_connection='DEFAULT') { // {{{SYNC-SQL-PARAM-QUERY}}}
+
+	// version: 160915
+
+	//==
+	$y_connection = self::check_connection($y_connection, 'NEW-SAFE-ID');
+	//==
+
 	//--
 	if(!is_string($query)) {
 		self::error($y_connection, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), $replacements_arr);
@@ -1609,8 +1616,11 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 		//--
 	} //end if else
 	//--
+
+	//--
 	return (string) $out_query;
 	//--
+
 } //END FUNCTION
 //======================================================
 
@@ -1629,6 +1639,10 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
  */
 public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schema='public', $y_connection='DEFAULT') {
 
+	//==
+	$y_connection = self::check_connection($y_connection, 'NEW-SAFE-ID');
+	//==
+
 	//--
 	if(!self::validate_table_and_fields_names($y_id_field)) {
 		self::error($y_connection, 'NEW-SAFE-ID', 'Get New Safe ID', 'Invalid Field Name', $y_id_field.' / [Schema='.$y_schema.';Table='.$y_table_name.']');
@@ -1643,10 +1657,6 @@ public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schem
 		return '';
 	} //end if
 	//--
-
-	//==
-	$y_connection = self::check_connection($y_connection, 'NEW-SAFE-ID');
-	//==
 
 	//--
 	$use_safe_id_record = true;
@@ -2170,7 +2180,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160827
+ * @version 	v.160915
  * @package 	Database:PostgreSQL
  *
  */
