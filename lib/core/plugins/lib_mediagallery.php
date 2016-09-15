@@ -1361,7 +1361,7 @@ public static function apply_watermark($y_file, $y_watermark_file, $y_quality, $
 final class SmartGdImageProcess {
 
 	// ::
-	// v.160809
+	// v.160915
 
 //===========================================================================
 private static function check_gd_truecolor() {
@@ -1403,10 +1403,14 @@ public static function create_preview($imagePath, $newPath, $newW, $newH, $quali
 		$arr_imgsize = (array) @getimagesize($imagePath);
 		$imgW = (int) $arr_imgsize[0];
 		$imgH = (int) $arr_imgsize[1];
-		$t_img = (string) $arr_imgsize[2];
+		$t_img = (int) $arr_imgsize[2]; // OK
 		unset($arr_imgsize);
 		//-- detect image type
-		$t_img = @image_type_to_mime_type($t_img);
+		if($t_img <= 0) {
+			Smart::log_notice('Media Gallery // SmartGdImageProcess // Preview :: Unknown Type: '.$imagePath);
+			return 1; // not ok (unknown type)
+		} //end if
+		$t_img = (string) @image_type_to_mime_type((int)$t_img); // OK
 		//-- reading image from source
 		switch((string)$t_img) {
 			case 'image/png':
@@ -1425,7 +1429,7 @@ public static function create_preview($imagePath, $newPath, $newW, $newH, $quali
 				$source = @imagecreatefromjpeg($imagePath);
 				break;
 			default:
-				Smart::log_warning('Media Gallery // SmartGdImageProcess // Preview :: Unknown Type: '.$imagePath);
+				Smart::log_notice('Media Gallery // SmartGdImageProcess // Preview :: Unsupported Type (not PNG/GIF/JPEG ; Type='.$t_img.'): '.$imagePath);
 				return 1; // not ok (invalid type)
 		} //end switch
 		//--
@@ -1539,10 +1543,14 @@ public static function create_resized($imagePath, $newPath, $newW, $newH, $quali
 		$arr_imgsize = (array) @getimagesize($imagePath);
 		$imgW = (int) $arr_imgsize[0];
 		$imgH = (int) $arr_imgsize[1];
-		$t_img = (string) $arr_imgsize[2];
+		$t_img = (int) $arr_imgsize[2]; // OK
 		unset($arr_imgsize);
 		//--
-		$t_img = @image_type_to_mime_type($t_img);
+		if($t_img <= 0) {
+			Smart::log_notice('Media Gallery // SmartGdImageProcess // Resized :: Unknown Type: '.$imagePath);
+			return 1; // not ok (unknown type)
+		} //end if
+		$t_img = (string) @image_type_to_mime_type((int)$t_img); // OK
 		//-- reading image from source
 		switch((string)$t_img) {
 			case 'image/png':
@@ -1561,7 +1569,7 @@ public static function create_resized($imagePath, $newPath, $newW, $newH, $quali
 				$source = @imagecreatefromjpeg($imagePath);
 				break;
 			default:
-				Smart::log_warning('Media Gallery // SmartGdImageProcess // Resized :: Unknown Type: '.$imagePath);
+				Smart::log_notice('Media Gallery // SmartGdImageProcess // Resized :: Unsupported Type (not PNG/GIF/JPEG ; Type='.$t_img.'): '.$imagePath);
 				return 1; // not ok (invalid type)
 		} //end switch
 		//--
@@ -1697,10 +1705,14 @@ public static function apply_watermark($imagePath, $watermarkPath, $quality, $gr
 		$arr_imgsize = (array) @getimagesize($watermarkPath);
 		$wtmW = (int) $arr_imgsize[0];
 		$wtmH = (int) $arr_imgsize[1];
-		$t_wtm = (string) $arr_imgsize[2];
+		$t_wtm = (int) $arr_imgsize[2]; // OK
 		unset($arr_imgsize);
 		//--
-		$t_wtm = @image_type_to_mime_type($t_wtm);
+		if($t_wtm <= 0) {
+			Smart::log_notice('Media Gallery // SmartGdImageProcess // Watermark :: Unknown Type [W]: '.$watermarkPath);
+			return 1; // not ok (unknown type)
+		} //end if
+		$t_wtm = (string) @image_type_to_mime_type((int)$t_wtm); // OK
 		//--
 		switch((string)$t_wtm) {
 			case 'image/png':
@@ -1716,7 +1728,7 @@ public static function apply_watermark($imagePath, $watermarkPath, $quality, $gr
 				$watermark = @imagecreatefromjpeg($watermarkPath);
 				break;
 			default:
-				Smart::log_warning('Media Gallery // SmartGdImageProcess // Watermark :: Unknown Type (W): '.$watermarkPath);
+				Smart::log_notice('Media Gallery // SmartGdImageProcess // Watermark :: Unsupported Type [W] (not PNG/GIF/JPEG ; Type='.$t_wtm.'): '.$watermarkPath);
 				return 1; // not ok (invalid type)
 		} //end switch
 		//--
@@ -1730,10 +1742,14 @@ public static function apply_watermark($imagePath, $watermarkPath, $quality, $gr
 		$arr_imgsize = (array) @getimagesize($imagePath);
 		$imgW = (int) $arr_imgsize[0];
 		$imgH = (int) $arr_imgsize[1];
-		$t_img = (string) $arr_imgsize[2];
+		$t_img = (int) $arr_imgsize[2]; // OK
 		unset($arr_imgsize);
 		//--
-		$t_img = @image_type_to_mime_type($t_img);
+		if($t_img <= 0) {
+			Smart::log_notice('Media Gallery // SmartGdImageProcess // Watermark :: Unknown Type [I]: '.$imagePath);
+			return 3; // not ok (unknown type)
+		} //end if
+		$t_img = (string) @image_type_to_mime_type((int)$t_img); // OK
 		//--
 		switch((string)$t_img) {
 			case 'image/png':
@@ -1752,7 +1768,7 @@ public static function apply_watermark($imagePath, $watermarkPath, $quality, $gr
 				$source = @imagecreatefromjpeg($imagePath);
 				break;
 			default:
-				Smart::log_warning('Media Gallery // SmartGdImageProcess // Watermark :: Unknown Type (I): '.$imagePath);
+				Smart::log_notice('Media Gallery // SmartGdImageProcess // Watermark :: Unsupported Type [I] (not PNG/GIF/JPEG ; Type='.$t_img.'): '.$imagePath);
 				return 3; // not ok (invalid type)
 		} //end switch
 		//--
