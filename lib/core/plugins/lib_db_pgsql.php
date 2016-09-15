@@ -1670,9 +1670,9 @@ public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schem
 		//--
 		if(self::check_if_table_exists('_safe_id_records', 'smart_runtime', $y_connection) !== 1) {
 			if(self::check_if_schema_exists('smart_runtime', $y_connection) !== 1) {
-				self::write_data('CREATE SCHEMA "smart_runtime"', $y_connection);
+				self::write_data('CREATE SCHEMA "smart_runtime"', 'Initialize SafeID Schema', $y_connection);
 			} //end if
-			self::write_data((string)self::schema_safe_id_records_table(), $y_connection);
+			self::write_data((string)self::schema_safe_id_records_table(), 'Initialize SafeID Table', $y_connection);
 		} //end if
 		//--
 		if((int)Smart::random_number(0,99) == 1) { // 1% chance to run it for cleanup records older than 24 hours
