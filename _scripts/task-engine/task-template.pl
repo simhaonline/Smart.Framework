@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / TASK-Template :: Customize it ...]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160902
+# r.160916
 
 
 ###
@@ -96,6 +96,7 @@ if($url ne "") {
 
 ######################################## EVAL RESULT
 
+$task_output = 0 + ($task_output||0); # fix for non-integer comparison crash
 if($task_output == 200) {
 	print colored($clr_ok, "TASK.OK # ${id} : ".$task_name." COMPLETED SUCCESSFUL: ${task_output}");
 	print "\n";
