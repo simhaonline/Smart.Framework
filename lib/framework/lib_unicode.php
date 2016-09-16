@@ -150,7 +150,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.160827
+ * @version     v.160915
  * @package     Core
  *
  */
@@ -445,7 +445,7 @@ public static function convert_charset($ystr, $y_charset_from, $y_charset_to='',
 		if((string)SMART_FRAMEWORK_CHARSET == 'UTF-8') {
 			if((string)$y_charset_to != (string)SMART_FRAMEWORK_CHARSET) {
 				if($normalize) {
-					$ystr = (string) @utf8_encode($ystr); // fix: this is needed to normalize the strings into the framework's current charset
+					$ystr = (string) utf8_encode((string)$ystr); // fix: this is needed to normalize the strings into the framework's current charset
 				} //end if
 			} //end if
 		} //end if
@@ -491,9 +491,9 @@ public static function fix_charset($str) {
  */
 public static function utf8_to_iso($str, $normalize=true) {
 	//--
-	$str = (string) @utf8_decode((string)$str);
+	$str = (string) utf8_decode((string)$str);
 	if($normalize) {
-		$str = (string) @utf8_encode($str);
+		$str = (string) utf8_encode($str);
 	} //end if
 	return (string) $str;
 	//--
@@ -568,7 +568,7 @@ public static function word_wrap($str, $width=75, $break="\n", $cut=false) {
 		$cut = false; // default
 	} //end if
 	//--
-	$lines = explode($break, $str);
+	$lines = (array) explode((string)$break, (string)$str);
 	//--
 	foreach($lines as &$line) { // PHP7-CHECK:FOREACH-BY-VAL
 		//--

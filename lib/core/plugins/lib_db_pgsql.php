@@ -1938,7 +1938,7 @@ private static function check_connection($y_connection, $y_description) {
 	//--
 	global $configs;
 	//--
-	if((string)$y_connection === 'DEFAULT') { // just for the default connection !!!
+	if($y_connection === 'DEFAULT') { // just for the default connection !!!
 		//--
 		if(!defined('SMART_FRAMEWORK_DB_LINK_PostgreSQL')) { // PostgreSQL default connection is exported as constant to avoid re-connection which can break transactions
 			//--

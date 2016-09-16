@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160827
+ * @version 	v.160915
  * @package 	Mailer:Utility
  *
  */
@@ -675,7 +675,7 @@ private function printarray($array, $part_id) {
 final class SmartMailerMimeExtract {
 
 	// ->
-	// v.160827
+	// v.160915
 
 //================================================================
 	//--
@@ -1114,15 +1114,15 @@ private function _decodeHeader($input) {
 // @access private
 private function _decodeBody($input, $encoding='') {
 	//--
-	switch(strtolower($encoding)) {
+	switch(strtolower((string)$encoding)) {
 		case 'base64':
-			$input = base64_decode($input);
+			$input = (string) base64_decode((string)$input);
 			break;
 		case 'quoted-printable':
-			$input = quoted_printable_decode($input);
+			$input = (string) quoted_printable_decode((string)$input);
 			break;
 		case 'x-uuencode':
-			$input = $this->_uudecode($input);
+			$input = (string) convert_uudecode((string)$input);
 			break;
 		case '7bit':
 		case '8bit':
@@ -1133,91 +1133,6 @@ private function _decodeBody($input, $encoding='') {
 	// {{{SYNC-CHARSET-CONVERT}}} :: only text bodies will be converted using SmartUnicode::convert_charset(), but later as we do not know yet what they are really are
 	//--
 	return $input;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// Checks the input for uuencoded string and returns
-// the decoded files / array of files
-// It will check for the begin 666 ... end syntax
-// however and won't just blindly decode whatever you
-// pass it.
-// @param  string Input body to look for attahcments in
-// @return array  Decoded bodies, filenames and permissions
-// @access public
-private function _uudecode($input, $onlyfirst=true) {
-	//-- Find all uuencoded sections
-	preg_match_all("/begin ([0-7]{3}) (.+)\r?\n(.+)\r?\nend/Us", (string)$input, $matches);
-	//--
-	if($onlyfirst == true) {
-		$max = 1;
-		$files = '';
-	} else {
-		$max = Smart::array_size($matches[3]); // replaced count with Smart::array_size() (we cannot predict if string were used here)
-		$files = array();
-	} //end if else
-	//--
-	for($j=0; $j<$max; $j++) {
-		//--
-		$str = $matches[3][$j];
-		$filename = $matches[2][$j];
-		$fileperm = $matches[1][$j];
-		$file = '';
-		$str = preg_split("/\r?\n/", trim((string)$str));
-		//--
-		for($i=0; $i<Smart::array_size($str); $i++) {
-			//--
-			$pos = 1;
-			$d = 0;
-			$len = Smart::format_number_int(((ord(SmartUnicode::sub_str($str[$i],0,1)) -32) - ' ') & 077);
-			//--
-			while(($d + 3 <= $len) AND ($pos + 4 <= strlen($str[$i]))) {
-				//--
-				$c0 = (ord(SmartUnicode::sub_str($str[$i],$pos,1)) ^ 0x20);
-				$c1 = (ord(SmartUnicode::sub_str($str[$i],$pos+1,1)) ^ 0x20);
-				$c2 = (ord(SmartUnicode::sub_str($str[$i],$pos+2,1)) ^ 0x20);
-				$c3 = (ord(SmartUnicode::sub_str($str[$i],$pos+3,1)) ^ 0x20);
-				$file .= chr(((($c0 - ' ') & 077) << 2) | ((($c1 - ' ') & 077) >> 4));
-				$file .= chr(((($c1 - ' ') & 077) << 4) | ((($c2 - ' ') & 077) >> 2));
-				$file .= chr(((($c2 - ' ') & 077) << 6) |  (($c3 - ' ') & 077));
-				$pos += 4;
-				$d += 3;
-				//--
-			} //end while
-			//--
-			if(($d + 2 <= $len) && ($pos + 3 <= strlen($str[$i]))) {
-				//--
-				$c0 = (ord(SmartUnicode::sub_str($str[$i],$pos,1)) ^ 0x20);
-				$c1 = (ord(SmartUnicode::sub_str($str[$i],$pos+1,1)) ^ 0x20);
-				$c2 = (ord(SmartUnicode::sub_str($str[$i],$pos+2,1)) ^ 0x20);
-				$file .= chr(((($c0 - ' ') & 077) << 2) | ((($c1 - ' ') & 077) >> 4));
-				$file .= chr(((($c1 - ' ') & 077) << 4) | ((($c2 - ' ') & 077) >> 2));
-				$pos += 3;
-				$d += 2;
-				//--
-			} //end if
-			//--
-			if(($d + 1 <= $len) && ($pos + 2 <= strlen($str[$i]))) {
-				//--
-				$c0 = (ord(SmartUnicode::sub_str($str[$i],$pos,1)) ^ 0x20);
-				$c1 = (ord(SmartUnicode::sub_str($str[$i],$pos+1,1)) ^ 0x20);
-				$file .= chr(((($c0 - ' ') & 077) << 2) | ((($c1 - ' ') & 077) >> 4));
-				//--
-			} //end if
-			//--
-		} //end for
-		//--
-		if(is_array($files)) {
-			$files[] = array('filename' => $filename, 'fileperm' => $fileperm, 'filedata' => $file);
-		} else {
-			$files = $file ;
-		} //end if else
-		//--
-	} //end for
-	//--
-	return $files;
 	//--
 } //END FUNCTION
 //================================================================

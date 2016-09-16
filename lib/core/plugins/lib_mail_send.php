@@ -24,7 +24,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //===========================================================================
 // php class for sending mail messages (sendmail or SMTP w. SSL/TLS/STARTTLS)
-// send multipart e-mail (base64 or quoted-printable)
+// send multipart e-mail base64 encoded
 // added CID parts extractor and re-embedd
 //===========================================================================
 
@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160201
+ * @version 	v.160915
  * @package 	Mailer:Send
  *
  */
@@ -323,11 +323,7 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 				$disp = 'inline'; // default
 			} //end if
 			//--
-			//if($this->usealways_b64) {
-			$encode = 'base64';
-			//} else {
-			//	$encode = 'quoted-printable';
-			//} //end if else
+			$encode = 'base64'; // quoted-printable
 			//--
 			if((string)$disp == 'inline') {
 				$charset = SmartUnicode::str_toupper(trim($this->charset));
@@ -469,15 +465,17 @@ private function build_message($part) {
 	//--
 	if((string)$part['encode'] == '7bit') {
 		// leave as is
-	//} elseif((string)$part['encode'] == 'quoted-printable') {
-	//	$part['message'] = quoted_printable_encode((string)$part['message']);
+//	} elseif((string)$part['encode'] == 'quoted-printable') {
+//		$part['message'] = quoted_printable_encode((string)$part['message']);
+//	} elseif((string)$part['encode'] == 'uuencode') {
+//		$part['message'] = chunk_split(convert_uuencode((string)$part['message']), 76, "\r\n");
 	} else { // base64 encode
-		$part['encode'] = 'base64'; // rewrite this
-		$part['message'] = chunk_split(base64_encode($part['message']), 76, "\r\n"); // encode b64
+		$part['encode'] = 'base64'; // rewrite this for all other cases
+		$part['message'] = chunk_split(base64_encode((string)$part['message']), 76, "\r\n"); // encode b64
 	} //end if
 	//--
 	return 	'Content-Type: '.$part['ctype'].($part['charset'] ? '; charset='.$part['charset'] : '').($part['name'] ? '; name="'.$part['name'].'"' : '')."\r\n".
-			'Content-Transfer-Encoding: '.$part['encode']."\r\n".
+			'Content-Transfer-Encoding: '.strtoupper((string)$part['encode'])."\r\n".
 			($part['cid'] ? 'Content-ID: <'.$part['cid'].'>'."\r\n" : '').
 			'Content-Disposition: '.$part['disp'].';'.($part['filename'] ? ' filename="'.$part['filename'].'"' : '')."\r\n".
 			'Content-Decoded-Checksum-SHA1: '.$checksum."\r\n".
@@ -602,7 +600,7 @@ private function build_multipart() {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160122
+ * @version 	v.160915
  * @package 	Mailer:Send
  *
  */
