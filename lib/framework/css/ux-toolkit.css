@@ -298,8 +298,8 @@ there's a rowspan on the first cell. Case added to the tests. issue#432 */
 
 /*
 striping:
-   even - #fff (white)
-   odd  - #f2f2f2 (light gray)
+   even - #FFFFFF (white)
+   odd  - #F2F2F2 (light gray)
 */
 .ux-table td {
 	background-color: transparent;
@@ -312,15 +312,18 @@ striping:
 	background-color: #DDEEFF;
 }
 .ux-table .ux-tr-odd {
-	background-color: #f2f2f2;
+	background-color: #F2F2F2;
 }
 .ux-table .ux-tr-odd:hover {
 	background-color: #DDEEFF;
 }
 
 /* nth-child selector for modern browsers */
+.ux-table-striped tbody tr:nth-child(2n) {
+	background-color: #FFFFFF;
+}
 .ux-table-striped tbody tr:nth-child(2n-1) {
-	background-color: #f2f2f2;
+	background-color: #F2F2F2;
 }
 .ux-table-striped tbody tr:hover {
 	background-color: #DDEEFF;
