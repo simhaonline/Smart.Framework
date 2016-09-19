@@ -115,7 +115,7 @@ if(mb_substitute_character() !== 63) {
  *  //strtoupper()                  SmartUnicode::str_toupper()             [ok]        the PHP strtoupper() is not unicode safe and will not make upper case the accented characters
  *  //--
  *  //utf8_decode()                 SmartUnicode::utf8_to_iso()             [ok]        the PHP utf8_decode() breaks strings that are used in unicode environments thus the strings need to be re-encoded ; if not re-encoded back to unicode the regex \u will fail in strange modes ...
- *  //utf8_encode()                 -                                       [!!]        there is a risk to double encode the string and break it !!
+ *  //utf8_encode()                 -                                       [!!]        there is a risk to double encode the string and break it !! ; Fix: avoid do utf8 encode on an empty string (some PHP versions have a bug with exhaust memory)
  *  //wordwrap()                    SmartUnicode::word_wrap()               [ok]        the PHP wordwrap() is not unicode safe
  *  //strip_tags()                  Smart::striptags()                      [ok+]       the PHP strip_tags() will not replace some extra things like &nbsp; and much other html entities
  *  //--
@@ -150,7 +150,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.160915
+ * @version     v.160919
  * @package     Core
  *
  */
@@ -350,6 +350,10 @@ public static function stri_str($ystring, $ypart, $ybefore_needle=false) {
  */
 public static function str_contains($ystring, $ypart) {
 	//--
+	if(((string)$ystring == '') OR ((string)$ypart == '')) {
+		return false;
+	} //end if
+	//--
 	if(self::str_pos((string)$ystring, (string)$ypart) !== false) { // we don't need unicode here because not using the count, just return very fast if string contains or not the sub-string
 		return true;
 	} else {
@@ -371,6 +375,10 @@ public static function str_contains($ystring, $ypart) {
  */
 public static function str_icontains($ystring, $ypart) {
 	//--
+	if(((string)$ystring == '') OR ((string)$ypart == '')) {
+		return false;
+	} //end if
+	//--
 	if(self::str_ipos((string)$ystring, (string)$ypart) !== false) { // we don't need unicode here because not using the count, just return very fast if string contains or not the sub-string
 		return true;
 	} else {
@@ -391,6 +399,10 @@ public static function str_icontains($ystring, $ypart) {
  */
 public static function str_tolower($ystr) {
 	//--
+	if((string)$ystr == '') {
+		return '';
+	} //end if
+	//--
 	return (string) @mb_convert_case((string)$ystr, MB_CASE_LOWER, @mb_detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-2', true)); // much better than mb_strtolower($ystr);
 	//--
 } //END FUNCTION
@@ -406,6 +418,10 @@ public static function str_tolower($ystr) {
  * @return STRING				:: The processed string as uppercase string
  */
 public static function str_toupper($ystr) {
+	//--
+	if((string)$ystr == '') {
+		return '';
+	} //end if
 	//--
 	return (string) @mb_convert_case((string)$ystr, MB_CASE_UPPER, @mb_detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-2', true)); // much better than mb_strtoupper($ystr);
 	//--
@@ -427,6 +443,10 @@ public static function str_toupper($ystr) {
  */
 public static function convert_charset($ystr, $y_charset_from, $y_charset_to='', $normalize=true) {
 	//--
+	if((string)$ystr == '') {
+		return '';
+	} //end if
+	//--
 	if((string)$y_charset_from == '') { // if empty, try to detect it
 		$y_charset_from = @mb_detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-15, ISO-8859-2, ISO-8859-9, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-16, UTF-7, ASCII, SJIS, EUC-JP, JIS, ISO-2022-JP, EUC-CN, GB18030, ISO-2022-KR, KOI8-R, KOI8-U', true);
 	} //end if else
@@ -445,7 +465,9 @@ public static function convert_charset($ystr, $y_charset_from, $y_charset_to='',
 		if((string)SMART_FRAMEWORK_CHARSET == 'UTF-8') {
 			if((string)$y_charset_to != (string)SMART_FRAMEWORK_CHARSET) {
 				if($normalize) {
-					$ystr = (string) utf8_encode((string)$ystr); // fix: this is needed to normalize the strings into the framework's current charset
+					if((string)$ystr != '') { // Fix: avoid do utf8 encode on an empty string (some PHP versions have a bug with exhaust memory)
+						$ystr = (string) utf8_encode((string)$ystr); // fix: this is needed to normalize the strings into the framework's current charset
+					} //end if
 				} //end if
 			} //end if
 		} //end if
@@ -470,6 +492,10 @@ public static function convert_charset($ystr, $y_charset_from, $y_charset_to='',
  */
 public static function fix_charset($str) {
 	//--
+	if((string)$str == '') {
+		return '';
+	} //end if
+	//--
 	return (string) self::convert_charset((string)$str, '', (string)SMART_FRAMEWORK_CHARSET); // charset from is EMPTY to try to detect it
 	//--
 } //END FUNCTION
@@ -491,10 +517,18 @@ public static function fix_charset($str) {
  */
 public static function utf8_to_iso($str, $normalize=true) {
 	//--
-	$str = (string) utf8_decode((string)$str);
-	if($normalize) {
-		$str = (string) utf8_encode($str);
+	if((string)$str == '') {
+		return '';
 	} //end if
+	//--
+	$str = (string) utf8_decode((string)$str);
+	//--
+	if($normalize) {
+		if((string)$str != '') { // Fix: avoid do utf8 encode on an empty string (some PHP versions have a bug with exhaust memory)
+			$str = (string) utf8_encode($str);
+		} //end if
+	} //end if
+	//--
 	return (string) $str;
 	//--
 } //END FUNCTION
@@ -510,6 +544,10 @@ public static function utf8_to_iso($str, $normalize=true) {
  * @return STRING							:: The processed string
  */
 public static function deaccent_str($str) {
+	//--
+	if((string)$str == '') {
+		return '';
+	} //end if
 	//--
 	$accents = (array) self::accented_chars();
 	//--
@@ -528,6 +566,10 @@ public static function deaccent_str($str) {
  * @return STRING					:: The processed string
  */
 public static function html_entities($str) {
+	//--
+	if((string)$str == '') {
+		return '';
+	} //end if
 	//--
 	$html_accents = (array) self::accented_html_entities();
 	//--
@@ -550,6 +592,10 @@ public static function html_entities($str) {
  */
 public static function word_wrap($str, $width=75, $break="\n", $cut=false) {
 	//-- there is no mb_word_wrap, so this would be like ; an alternative but not well tested on unicode strings and may break them would be: return preg_replace('/([^\s]{'.(int)$width.'})(?=[^\s])/m', '$1` '.$break, (string)$str); // this needs the unicode modifier to avoid break characters
+	if((string)$str == '') {
+		return '';
+	} //end if
+	//--
 	$width = (int) $width;
 	if($width < 1) {
 		$width = 1; // min

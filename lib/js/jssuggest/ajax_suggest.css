@@ -1,8 +1,9 @@
 
-/* ajax_suggest.css :: v.2015.02.15 */
+/* ajax_suggest.css :: v.160919 */
 
 #AJX_suggest_container {
 	width: 100%;
+	font-size: 13px !important;
 }
 #AJX_suggest_container tr {
 	color: #000000;
@@ -10,9 +11,11 @@
 	border: 1px solid #ECECEC;
 }
 #AJX_suggest_container tr:hover {
-	color: #FFFFFF;
-	background-color: #778899;
+	background-color: #FAFAFA;
 	cursor: pointer;
+}
+#AJX_suggest_container td {
+	padding: 2px;
 }
 .AJX_suggest_load {
 	text-align: center;
@@ -31,17 +34,16 @@
 	position: absolute;
 	top: 25px;
 	left: 0px;
-	width: 600px;
+	width: 100%;
+	max-width: 600px;
 	height: auto;
 	max-height: 200px; /* sync with JS */
 	overflow: auto;
 	text-align: left;
 	background-color: #DDDDDD;
 	color: #000000;
-	font-weight: bold;
 	border: 1px solid #CCCCCC;
-	padding: 2px 4px 2px 4px;
-	border-radius: 4px;
+	border-radius: 3px;
 }
 .AJX_suggest_DIV hr {
 	border: none 0px;

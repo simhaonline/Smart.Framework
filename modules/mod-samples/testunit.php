@@ -333,6 +333,14 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				);
 				//--
 				break;
+			case 'testunit.autocomplete':
+				//--
+				$src = $this->RequestVarGet('src', '', 'string');
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = SmartTestSuite::test_sqlite3_json_autocomplete($src);
+				//--
+				break;
 			case 'testunit.main':
 				//--
 				$is_modal = false;

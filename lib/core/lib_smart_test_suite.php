@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160907
+	// v.160918
 
 
 //==================================================================
@@ -164,6 +164,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TEST-ELEMENTS.NORMAL-LIST-M' => $test_normal_list_m,
 			'TEST-ELEMENTS.CALENDAR' => 'Calendar Selector: '.SmartComponents::js_draw_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
 			'TEST-ELEMENTS.TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
+			'TEST-ELEMENTS.AUTOCOMPLETE-SINGLE' => 'AutoComplete: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;">'.SmartComponents::js_draw_ui_autocomplete_single('auto-complete-fld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').' &nbsp; '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;">'.SmartComponents::js_draw_ui_autocomplete_multi('auto-complete-mfld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);'),
 			'TEST-elements.Captcha' => SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captcha_form_name()),
 			'test-elements.limited-area' => 'Limited TextArea: '.SmartComponents::js_draw_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '100px'),
 			'POWERED-INFO' => SmartComponents::draw_powered_info('no'),
@@ -1281,7 +1282,32 @@ HTML;
 //==================================================================
 
 
-//============================================================
+//==================================================================
+public static function test_sqlite3_json_autocomplete($src) {
+	//--
+	$db = new SmartTestSQLite3Model();
+	$model = $db->getConnection();
+	//--
+	$where = '';
+	if((string)$src != '') {
+		$where = ' WHERE name LIKE \''.$model->escape_str((string)$src).'%\'';
+	} //end if else
+	//--
+	$rd = (array) $model->read_adata('SELECT iso, name FROM sample_countries'.$where.' ORDER BY name ASC LIMIT 25 OFFSET 0');
+	$arr = array();
+	for($i=0; $i<Smart::array_size($rd); $i++) {
+		$arr[] = [ 'id' => (string)($i), 'value' => (string)$rd[$i]['iso'], 'label' => $rd[$i]['name'] ];
+	} //end for
+	//--
+	unset($db); // close
+	//--
+	return Smart::json_encode((array)$arr);
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
 public static function test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sorttype, $src='') {
 
 	//--
@@ -1347,7 +1373,7 @@ public static function test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sor
 	//--
 
 } //END FUNCTION
-//============================================================
+//==================================================================
 
 
 //==================================================================
@@ -1996,7 +2022,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160829
+	// v.160918
 
 private $db;
 

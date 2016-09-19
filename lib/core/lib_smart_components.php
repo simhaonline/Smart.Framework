@@ -2342,34 +2342,6 @@ public static function js_init_away_page($y_question='') {
 //================================================================
 
 
-
-//================================================================
-// $y_arr_values = array( array(id=>Smart::escape_html(''), c1=>Smart::escape_html(''), ... , c#=>Smart::escape_html(''), ...), array(-||-) );
-// $y_src = Smart::escape_html($y_src) already
-/**
- * Function: JS Answer Ajax Suggest Selector
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_answer_suggest_ajx_selector($y_arr_values, $y_cols, $y_src) {
-	//--
-	if($y_cols < 0) {
-		$y_cols = 0;
-	} //end if
-	//--
-	$arr = array();
-	$arr['search_value'] = $y_src;
-	$arr['search_cols'] = $y_cols;
-	$arr['search_data'] = (array) $y_arr_values;
-	//--
-	return Smart::json_encode($arr);
-	//--
-} //END FUNCTION
-//================================================================
-
-
 //================================================================
 /**
  * Outputs the HTML Code to init the HTML (wysiwyg) Editor
@@ -2795,63 +2767,6 @@ public static function js_draw_limited_text_area($y_field_id, $y_var_name, $y_va
 			'WIDTH' 			=> (string) $y_css_w,
 			'HEIGHT' 			=> (string) $y_css_h,
 			'PLACEHOLDER-HTML' 	=> (string) $placeholder
-		],
-		'yes' // export to cache
-	);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Init Ajax Suggest Selector
- *
- */
-public static function js_init_suggest_ajx_selector() {
-//--
-$js = <<<'JS'
-<!-- AjaxSuggest -->
-<link rel="stylesheet" type="text/css" href="lib/js/jsjssuggest/ajax_suggest.css">
-<script type="text/javascript" src="lib/js/jsjssuggest/ajax_suggest.js"></script>
-<!-- END AjaxSuggest -->
-JS;
-//--
-return (string) $js;
-//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Draw Ajax Suggest Selector
- *
- */
-public static function js_draw_suggest_ajx_selector($y_width, $y_prefix, $y_suffix, $y_ajx_method, $y_ajx_url, $y_id_prefix, $y_form_hint, $y_form_var, $y_form_value='') {
-	//--
-	$ajx_div = $y_id_prefix.'_AJXSelector_DIV';
-	$ajx_txt = $y_id_prefix.'_AJXSelector_TXT';
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/js/jsjssuggest/ajax_suggest.inc.htm',
-		[
-			//-- passed as html
-			'WIDTH' 		=> Smart::escape_html((string)$y_width),
-			'DIV-HTML-ID' 	=> Smart::escape_html((string)$ajx_div),
-			'TXT-HTML-ID' 	=> Smart::escape_html((string)$ajx_txt),
-			'TXT-TITLE' 	=> Smart::escape_html((string)$y_form_hint),
-			'TXT-FORM-VAR' 	=> Smart::escape_html((string)$y_form_var),
-			'TXT-VALUE' 	=> Smart::escape_html((string)$y_form_value),
-			//-- passed to js
-			'DIV-JS-ID' 	=> Smart::escape_js((string)$ajx_div),
-			'TXT-JS-ID' 	=> Smart::escape_js((string)$ajx_txt),
-			'AJAX-METHOD' 	=> Smart::escape_js((string)$y_ajx_method),
-			'AJAX-URL' 		=> Smart::escape_js((string)$y_ajx_url),
-			//-- passed raw
-			'PREFIX' 		=> (string) $y_prefix, // this is preformatted HTML
-			'SUFFIX' 		=> (string) $y_suffix // this is preformatted HTML
-			//--
 		],
 		'yes' // export to cache
 	);
