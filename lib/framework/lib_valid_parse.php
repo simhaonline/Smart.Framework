@@ -83,15 +83,11 @@ public static function text_endpoints($ystr, $ylen, $y_cut_words=true, $y_dots='
  */
 public static function get_arr_urls($string) {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_textrecognition_expression('url');
-	if((string)$expr != '') {
-		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
-		$arr = array();
-		preg_match_all($regex, $string, $arr);
-		return (array) $arr[0];
-	} else {
-		return array();
-	} //end if else
+	$expr = SmartValidator::regex_stringvalidation_expression('url');
+	$regex = $expr.'iu'; // insensitive, with /u modifier for unicode strings
+	$arr = array();
+	preg_match_all($regex, $string, $arr);
+	return (array) $arr[0];
 } //END FUNCTION
 //================================================================
 
@@ -109,15 +105,13 @@ public static function get_arr_urls($string) {
  */
 public static function text_urls($string, $ytarget='_blank', $ypict='', $y_lentrim='100') {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_textrecognition_expression('url');
-	if((string)$expr != '') {
-		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
-		if((string)$ypict == '') {
-			$string = preg_replace_callback($regex, function($matches) use ($ytarget, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'</a>'; }, $string);
-		} else {
-			$string = preg_replace_callback($regex, function($matches) use ($ytarget, $ypict, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'"><img border="0" src="'.$ypict.'" width="32" height="32" align="absmiddle" alt="'.Smart::escape_html($matches[0]).'" title="'.Smart::escape_html($matches[0]).'"></a>&nbsp;'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'<br>'; }, $string);
-		} //end if else
-	} //end if
+	$expr = SmartValidator::regex_stringvalidation_expression('url');
+	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
+	if((string)$ypict == '') {
+		$string = preg_replace_callback($regex, function($matches) use ($ytarget, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'</a>'; }, $string);
+	} else {
+		$string = preg_replace_callback($regex, function($matches) use ($ytarget, $ypict, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'"><img border="0" src="'.$ypict.'" width="32" height="32" align="absmiddle" alt="'.Smart::escape_html($matches[0]).'" title="'.Smart::escape_html($matches[0]).'"></a>&nbsp;'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'<br>'; }, $string);
+	} //end if else
 	return (string) $string;
 } //END FUNCTION
 //================================================================
@@ -133,15 +127,11 @@ public static function text_urls($string, $ytarget='_blank', $ypict='', $y_lentr
  */
 public static function get_arr_emails($string) {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_textrecognition_expression('email');
-	if((string)$expr != '') {
-		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
-		$arr = array();
-		preg_match_all($regex, $string, $arr);
-		return (array) $arr[0];
-	} else {
-		return array();
-	} //end if else
+	$expr = SmartValidator::regex_stringvalidation_expression('email');
+	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
+	$arr = array();
+	preg_match_all($regex, $string, $arr);
+	return (array) $arr[0];
 } //END FUNCTION
 //================================================================
 
@@ -158,12 +148,10 @@ public static function get_arr_emails($string) {
  */
 public static function text_emails($string, $yaction='mailto:', $ytarget='') {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_textrecognition_expression('email');
-	if((string)$expr != '') {
-		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
-		$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eMail@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[0]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], 100)).'</a>'; }, $string);
-	} //end if
-	return $string;
+	$expr = SmartValidator::regex_stringvalidation_expression('email');
+	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
+	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eMail@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[0]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], 100)).'</a>'; }, $string);
+	return (string) $string;
 } //END FUNCTION
 //================================================================
 
@@ -178,15 +166,11 @@ public static function text_emails($string, $yaction='mailto:', $ytarget='') {
  */
 public static function get_arr_faxnums($string) {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_textrecognition_expression('fax');
-	if((string)$expr != '') {
-		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
-		$arr = array();
-		preg_match_all($regex, $string, $arr);
-		return (array) $arr[0];
-	} else {
-		return array();
-	} //end if
+	$expr = SmartValidator::regex_stringvalidation_expression('fax');
+	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
+	$arr = array();
+	preg_match_all($regex, $string, $arr);
+	return (array) $arr[0];
 } //END FUNCTION
 //================================================================
 
@@ -203,12 +187,10 @@ public static function get_arr_faxnums($string) {
  */
 public static function text_faxnums($string, $yaction='efax:', $ytarget='_blank') {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_textrecognition_expression('fax');
-	if((string)$expr != '') {
-		$regex = '{'.$expr.'}iu'; //insensitive, with /u modifier for unicode strings
-		$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eFax@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[2]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[2], 75)).'</a>'; }, $string);
-	} //end if
-	return $string;
+	$expr = SmartValidator::regex_stringvalidation_expression('fax');
+	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
+	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eFax@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[2]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[2], 75)).'</a>'; }, $string);
+	return (string) $string;
 } //END FUNCTION
 //================================================================
 
@@ -335,46 +317,13 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160817
+ * @version     v.160920
  * @package     Core
  *
  */
 final class SmartValidator {
 
 	// ::
-
-
-//=================================================================
-/**
- * Regex Expressions for Text Parsing of: URLs, eMail addresses and eFax Numbers
- *
- * @param 	STRING 	$y_mode 			:: The Regex mode to be returned ; valid modes: url, email, fax
- *
- * @return 	STRING						:: The Regex expression or empty if invalid mode is provided
- */
-public static function regex_textrecognition_expression($y_mode) {
-	//--
-	switch(strtolower((string)$y_mode)) {
-		//--
-		case 'url':
-			$regex = '(http|https)(:\/\/)([^\s<>\(\)\|]*)'; 		// url recognition in a text / html code :: fixed in html <>
-			break;
-		case 'email':
-			$regex = '[_a-z0-9\-\.]*+@+[_a-z0-9\-\.]*'; 		// email recognition in a text / html code
-			break;
-		case 'fax':
-			$regex = '(~)([0-9\-\+\.\(\)][^~]*)(~)'; 			// fax number recognition in a text / html code (must stay between ~)
-			break;
-		//--
-		default:
-			$regex = '';
-		//--
-	} //end switch
-	//--
-	return (string) $regex;
-	//--
-} //END FUNCTION
-//=================================================================
 
 
 //=================================================================
@@ -396,6 +345,8 @@ public static function regex_textrecognition_expression($y_mode) {
  */
 public static function regex_stringvalidation_expression($y_mode) {
 	//--
+	$regx_dom = '([a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}';
+	//--
 	switch(strtolower((string)$y_mode)) { // WARNING: Never use class modifiers like [:print:] with /u modifier as it fails with some versions of PHP / Regex / PCRE
 		//--
 		//== #EXTERNAL USE
@@ -415,14 +366,24 @@ public static function regex_stringvalidation_expression($y_mode) {
 			break;
 		//--
 		case 'ipv4':
-			$regex = '/^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'.'(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$/';
+			$regex = '/^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$/';
 			break;
 		case 'ipv6':
-			$regex = '/^(((?=(?>.*?(::))(?!.+3)))3?|([dA-F]{1,4}(3|:(?!$)|$)|2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1d|[1-9])?d)(.(?7)){3})z/i';
+			$regex = '/^(((?=(?>.*?(::))(?!.+3)))3?|([dA-Fa-f]{1,4}(3|:(?!$)|$)|2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1d|[1-9])?d)(.(?7)){3})z/';
 			break;
 		//--
+		case 'url':
+			$regex = '/(http|https)(:\/\/)([^\s<>\(\)\|]*)/'; // url recognition in a text / html code :: fixed in html <>
+			break;
+		case 'domain':
+			$regex = '/^'.$regx_dom.'$/'; // internet (subdomain.)domain.name
+			break;
 		case 'email':
-			$regex = '/^([a-z0-9])(([-a-z0-9._])*([a-z0-9]))*\@([a-z0-9])'.'(([a-z0-9-])*([a-z0-9]))+' . '(\.([a-z0-9])([-a-z0-9_-])?([a-z0-9])+)+$/i';
+			$regex = '/^'.'([_a-z0-9\-\.])*@'.$regx_dom.'$/'; // internet email@(subdomain.)domain.name :: [_a-z0-9\-\.]*+@+[_a-z0-9\-\.]*
+			break;
+		//--
+		case 'fax':
+			$regex = '/(~)([0-9\-\+\.\(\)][^~]*)(~)/'; // fax number recognition in a text / html code (must stay between ~)
 			break;
 		case 'phone-us':
 			$regex = '/^(?:1(?:[. -])?)?(?:\((?=\d{3}\)))?([2-9]\d{2})(?:(?<=\(\d{3})\))? ?(?:(?<=\d{3})[.-])?([2-9]\d{2})[. -]?(\d{4})(?: (?i:ext)\.? ?(\d{1,5}))?$/'; // Note: Only matches U.S. phone numbers

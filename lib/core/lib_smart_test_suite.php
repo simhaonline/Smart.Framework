@@ -1295,8 +1295,8 @@ public static function test_sqlite3_json_autocomplete($src) {
 	//--
 	$rd = (array) $model->read_adata('SELECT iso, name FROM sample_countries'.$where.' ORDER BY name ASC LIMIT 25 OFFSET 0');
 	$arr = array();
-	for($i=0; $i<Smart::array_size($rd); $i++) {
-		$arr[] = [ 'id' => (string)($i), 'value' => (string)$rd[$i]['iso'], 'label' => $rd[$i]['name'] ];
+	for($i=0; $i<Smart::array_size($rd); $i++) { // id is optional for display only
+		$arr[] = [ 'id' => '', 'value' => (string)$rd[$i]['iso'], 'label' => $rd[$i]['name'] ];
 	} //end for
 	//--
 	unset($db); // close

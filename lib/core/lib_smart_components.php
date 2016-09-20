@@ -2793,7 +2793,7 @@ public static function js_draw_ui_autocomplete_single($y_element_id, $y_script, 
 		$y_min_len = 255;
 	} //end if
 	//--
-	return '<script type="text/javascript">SmartJS_BrowserUIUtils.AutoComplete_Single(\''.Smart::escape_js($y_element_id).'\', \''.Smart::escape_js($y_script).'\', \''.Smart::escape_js($y_term_var).'\', '.$y_min_len.', \''.Smart::escape_js($y_eval_selector_js).'\');</script>';
+	return '<script type="text/javascript">SmartJS_BrowserUIUtils.AutoCompleteField(\'single\', \''.Smart::escape_js($y_element_id).'\', \''.Smart::escape_js($y_script).'\', \''.Smart::escape_js($y_term_var).'\', '.$y_min_len.', \''.Smart::escape_js($y_eval_selector_js).'\');</script>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2817,7 +2817,7 @@ public static function js_draw_ui_autocomplete_multi($y_element_id, $y_script, $
 		$y_min_len = 255;
 	} //end if
 	//--
-	return '<script type="text/javascript">SmartJS_BrowserUIUtils.AutoComplete_Multi(\''.Smart::escape_js($y_element_id).'\', \''.Smart::escape_js($y_script).'\', \''.Smart::escape_js($y_term_var).'\', '.$y_min_len.', \''.Smart::escape_js($y_eval_selector_js).'\');</script>';
+	return '<script type="text/javascript">SmartJS_BrowserUIUtils.AutoCompleteField(\'multilist\', \''.Smart::escape_js($y_element_id).'\', \''.Smart::escape_js($y_script).'\', \''.Smart::escape_js($y_term_var).'\', '.$y_min_len.', \''.Smart::escape_js($y_eval_selector_js).'\');</script>';
 	//--
 } //END FUNCTION
 //================================================================

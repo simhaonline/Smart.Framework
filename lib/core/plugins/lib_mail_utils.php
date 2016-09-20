@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.160827
+ * @version 	v.160920
  * @package 	Mailer:Utility
  *
  */
@@ -68,17 +68,13 @@ public static function check_email_address($email, $ycheckdomain='no', $helo='',
 	//--
 
 	//--
-	$regex = '{'.SmartValidator::regex_textrecognition_expression('email').'}i'; //insensitive
+	$regex = SmartValidator::regex_stringvalidation_expression('email').'i'; // insensitive, without /u modifier as it does not decodes to punnycode and must contain only ISO-8859-1 charset
 	//--
-	if(strlen($email) > 0) {
-		if(!preg_match('/^[_a-z0-9\-\.@]+$/', (string)$email)) { // check if email contains valid characters
-			$msg .= 'The e-mail address contains invalid characters !'."\n";
+	if((string)$email != '') {
+		if(!preg_match((string)$regex, (string)$email)) { // check if address is valid (match pattern 'email@domain.tld')
+			$msg .= 'The e-mail address does NOT match the pattern \'email@domain.tld\''."\n";
 		} else {
-			if(!preg_match((string)$regex, (string)$email)) { // check if address is valid (match pattern 'email@domain.tld')
-				$msg .= 'The e-mail address does NOT match the pattern \'email@domain.tld\''."\n";
-			} else {
-				$out = 'ok';
-			} //end if else
+			$out = 'ok';
 		} //end if else
 	} else {
 		$msg .= 'The e-mail address is empty !'."\n";

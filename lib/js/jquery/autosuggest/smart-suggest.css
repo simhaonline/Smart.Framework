@@ -1,0 +1,31 @@
+
+/* smart-suggest.css :: v.160919 */
+
+#Smart_Suggest_Container {
+	width: 100%;
+	font-size: 13px !important;
+	background: #FFFFFF;
+	border: 1px solid #ECECEC;
+	border-radius: 3px;
+}
+
+#Smart_Suggest_Container table tr {
+	color: #000000;
+	background-color: #FFFFFF;
+	border: 1px solid #ECECEC;
+}
+#Smart_Suggest_Container table tr:hover {
+	background-color: #FAFAFA;
+	cursor: pointer;
+}
+#Smart_Suggest_Container table td {
+	padding: 3px;
+	font-size: 13px !important;
+}
+#Smart_Suggest_Container table th {
+	padding: 3px;
+	font-size: 13px !important;
+	font-weight: bold !important;
+}
+
+/* END */
