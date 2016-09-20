@@ -83,7 +83,7 @@ public static function text_endpoints($ystr, $ylen, $y_cut_words=true, $y_dots='
  */
 public static function get_arr_urls($string) {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_stringvalidation_expression('url');
+	$expr = SmartValidator::regex_stringvalidation_expression('url', 'partial');
 	$regex = $expr.'iu'; // insensitive, with /u modifier for unicode strings
 	$arr = array();
 	preg_match_all($regex, $string, $arr);
@@ -105,7 +105,7 @@ public static function get_arr_urls($string) {
  */
 public static function text_urls($string, $ytarget='_blank', $ypict='', $y_lentrim='100') {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_stringvalidation_expression('url');
+	$expr = SmartValidator::regex_stringvalidation_expression('url', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
 	if((string)$ypict == '') {
 		$string = preg_replace_callback($regex, function($matches) use ($ytarget, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'</a>'; }, $string);
@@ -127,7 +127,7 @@ public static function text_urls($string, $ytarget='_blank', $ypict='', $y_lentr
  */
 public static function get_arr_emails($string) {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_stringvalidation_expression('email');
+	$expr = SmartValidator::regex_stringvalidation_expression('email', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
 	$arr = array();
 	preg_match_all($regex, $string, $arr);
@@ -148,7 +148,7 @@ public static function get_arr_emails($string) {
  */
 public static function text_emails($string, $yaction='mailto:', $ytarget='') {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_stringvalidation_expression('email');
+	$expr = SmartValidator::regex_stringvalidation_expression('email', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
 	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eMail@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[0]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], 100)).'</a>'; }, $string);
 	return (string) $string;
@@ -166,7 +166,7 @@ public static function text_emails($string, $yaction='mailto:', $ytarget='') {
  */
 public static function get_arr_faxnums($string) {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_stringvalidation_expression('fax');
+	$expr = SmartValidator::regex_stringvalidation_expression('fax', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
 	$arr = array();
 	preg_match_all($regex, $string, $arr);
@@ -187,7 +187,7 @@ public static function get_arr_faxnums($string) {
  */
 public static function text_faxnums($string, $yaction='efax:', $ytarget='_blank') {
 	$string = (string) $string;
-	$expr = SmartValidator::regex_stringvalidation_expression('fax');
+	$expr = SmartValidator::regex_stringvalidation_expression('fax', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
 	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eFax@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[2]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[2], 75)).'</a>'; }, $string);
 	return (string) $string;
@@ -341,63 +341,81 @@ final class SmartValidator {
  * 											phone-us 				:: US phone numbers
  * 											utf8-text 				:: Unicode (UTF-8) Text
  *
+ * @param 	ENUM 	$y_match 			:: Match Type: full / partial
+ *
  * @return 	STRING						:: The Regex expression or empty if invalid mode is provided
  */
-public static function regex_stringvalidation_expression($y_mode) {
+public static function regex_stringvalidation_expression($y_mode, $y_match='full') {
 	//--
-	$regx_dom = '([a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}';
+	switch((string)strtolower((string)$y_match)) {
+		case 'full':
+			$rxs = '^';
+			$rxe = '$';
+			break;
+		case 'partial':
+			$rxs = '';
+			$rxe = '';
+			break;
+		default:
+			Smart::raise_error(
+				'INVALID match type in function '.__CLASS__.'::'.__FUNCTION__.'(): '.$y_match,
+				'Validations Internal ERROR' // msg to display
+			);
+			die(''); 	// just in case
+			return '+'; // just in case
+	} //end switch
 	//--
 	switch(strtolower((string)$y_mode)) { // WARNING: Never use class modifiers like [:print:] with /u modifier as it fails with some versions of PHP / Regex / PCRE
 		//--
 		//== #EXTERNAL USE
 		//--
-		case 'number-integer': 						// strict validation
-			$regex = '/^(\-)?[0-9]+?$/'; 			// before was: '/^([0-9\-])+$/' but was not good enough as a strict rule
+		case 'number-integer': 										// strict validation
+			$regex = '/'.$rxs.'(\-)?[0-9]+?'.$rxe.'/'; 				// before was: '/([0-9\-])+/' but was not good enough as a strict rule
 			break;
-		case 'number-decimal': 						// strict validation ; must match also integer values ; {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}}
-			$regex = '/^(\-)?[0-9]+(\.[0-9]+)?$/'; 	// before was: '/^([0-9\-\.])+$/' but was not good enough as a strict rule
+		case 'number-decimal': 										// strict validation ; must match also integer values ; {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}}
+			$regex = '/'.$rxs.'(\-)?[0-9]+(\.[0-9]+)?'.$rxe.'/'; 	// before was: '/([0-9\-\.])+$/' but was not good enough as a strict rule
 			break;
 		//--
-		case 'number-list-integer': 				// flexible validation (since this is a list, it may contain any numbers and ;)
-			$regex = '/^([0-9\-\;])+$/'; 			// example: 1;2;30
+		case 'number-list-integer': 								// flexible validation (since this is a list, it may contain any numbers and ;)
+			$regex = '/'.$rxs.'([0-9\-\;])+'.$rxe.'/'; 				// example: 1;2;30
 			break;
-		case 'number-list-decimal': 				// flexible validation (since this is a list, it may contain any numbers and ;) ; must match also integer list values
-			$regex = '/^([0-9\-\.\;])+$/'; 			// example: 1.0;2;30.44
+		case 'number-list-decimal': 								// flexible validation (since this is a list, it may contain any numbers and ;) ; must match also integer list values
+			$regex = '/'.$rxs.'([0-9\-\.\;])+'.$rxe.'/'; 			// example: 1.0;2;30.44
 			break;
 		//--
 		case 'ipv4':
-			$regex = '/^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$/';
+			$regex = '/'.$rxs.'([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}'.$rxe.'/';
 			break;
 		case 'ipv6':
-			$regex = '/^(((?=(?>.*?(::))(?!.+3)))3?|([dA-Fa-f]{1,4}(3|:(?!$)|$)|2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1d|[1-9])?d)(.(?7)){3})z/';
+			$regex = '/'.$rxs.'s*((([0-9A-Fa-f]{1,4}\:){7}([0-9A-Fa-f]{1,4}|\:))|(([0-9A-Fa-f]{1,4}\:){6}(\:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|\:))|(([0-9A-Fa-f]{1,4}\:){5}(((\:[0-9A-Fa-f]{1,4}){1,2})|\:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|\:))|(([0-9A-Fa-f]{1,4}\:){4}(((\:[0-9A-Fa-f]{1,4}){1,3})|((\:[0-9A-Fa-f]{1,4})?\:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|\:))|(([0-9A-Fa-f]{1,4}\:){3}(((\:[0-9A-Fa-f]{1,4}){1,4})|((\:[0-9A-Fa-f]{1,4}){0,2}\:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|\:))|(([0-9A-Fa-f]{1,4}\:){2}(((\:[0-9A-Fa-f]{1,4}){1,5})|((\:[0-9A-Fa-f]{1,4}){0,3}\:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|\:))|(([0-9A-Fa-f]{1,4}\:){1}(((\:[0-9A-Fa-f]{1,4}){1,6})|((\:[0-9A-Fa-f]{1,4}){0,4}\:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|\:))|(\:(((\:[0-9A-Fa-f]{1,4}){1,7})|((\:[0-9A-Fa-f]{1,4}){0,5}\:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|\:)))(%.+)?s*'.$rxe.'/';
+			break;
+		case 'macaddr':
+			$regex = '/'.$rxs.'([0-9a-fA-F][0-9a-fA-F]\:){5}([0-9a-fA-F][0-9a-fA-F])|([0-9a-fA-F][0-9a-fA-F]\-){5}([0-9a-fA-F][0-9a-fA-F])'.$rxe.'/';
 			break;
 		//--
 		case 'url':
-			$regex = '/(http|https)(:\/\/)([^\s<>\(\)\|]*)/'; // url recognition in a text / html code :: fixed in html <>
+			$regex = '/'.$rxs.'(http|https)(:\/\/)([^\s<>\(\)\|]*)'.$rxe.'/'; // url recognition in a text / html code :: fixed in html <>
 			break;
 		case 'domain':
-			$regex = '/^'.$regx_dom.'$/'; // internet (subdomain.)domain.name
+			$regex = '/'.$rxs.'([a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}'.$rxe.'/'; // internet (subdomain.)domain.name
 			break;
 		case 'email':
-			$regex = '/^'.'([_a-z0-9\-\.])*@'.$regx_dom.'$/'; // internet email@(subdomain.)domain.name :: [_a-z0-9\-\.]*+@+[_a-z0-9\-\.]*
+			$regex = '/'.$rxs.'([_a-z0-9\-\.]){1,63}@'.'[a-z0-9\-\.]{3,63}'.$rxe.'/'; // internet email@(subdomain.)domain.name :: [_a-z0-9\-\.]*+@+[_a-z0-9\-\.]*
 			break;
 		//--
 		case 'fax':
-			$regex = '/(~)([0-9\-\+\.\(\)][^~]*)(~)/'; // fax number recognition in a text / html code (must stay between ~)
-			break;
-		case 'phone-us':
-			$regex = '/^(?:1(?:[. -])?)?(?:\((?=\d{3}\)))?([2-9]\d{2})(?:(?<=\(\d{3})\))? ?(?:(?<=\d{3})[.-])?([2-9]\d{2})[. -]?(\d{4})(?: (?i:ext)\.? ?(\d{1,5}))?$/'; // Note: Only matches U.S. phone numbers
+			$regex = '/'.$rxs.'(~)([0-9\-\+\.\(\)][^~]*)(~)'.$rxe.'/'; // fax number recognition in a text / html code (must stay between ~)
 			break;
 		//--
 		//== #ERROR: INVALID
 		//--
 		default:
-			$regex = '+';
 			Smart::raise_error(
 				'INVALID mode in function '.__CLASS__.'::'.__FUNCTION__.'(): '.$y_mode,
 				'Validations Internal ERROR' // msg to display
 			);
-			die(''); // just in case
+			die(''); 	// just in case
+			return '+'; // just in case
 		//--
 		//== #END
 		//--
@@ -464,7 +482,7 @@ public static function regex_stringvalidation_segment($y_mode) {
 
 //=================================================================
 /**
- * Validate a string using SmartValidator::regex_stringvalidation_expression()
+ * Validate a string using SmartValidator::regex_stringvalidation_expression(), Full Match
  *
  * @param 	STRING		$y_string			:: The String to be validated
  * @param 	ENUM 		$y_mode 			:: The Regex mode to use for validation ; see reference for SmartValidator::regex_stringvalidation_expression()
@@ -473,7 +491,7 @@ public static function regex_stringvalidation_segment($y_mode) {
  */
 public static function validate_string($y_string, $y_mode) {
 	//--
-	$regex = self::regex_stringvalidation_expression($y_mode);
+	$regex = self::regex_stringvalidation_expression((string)$y_mode, 'full');
 	//--
 	if(preg_match((string)$regex, (string)$y_string)) {
 		return true;
@@ -496,11 +514,7 @@ public static function validate_numeric_integer_or_decimal_values($val) { // {{{
 	//--
 	$val = (string) $val; // do not use TRIM as it may strip out null or weird characters that may inject security issues if not trimmed outside (MUST VALIDATE THE REAL STRING !!!)
 	//--
-	$regex_decimal = (string) self::regex_stringvalidation_expression('number-decimal');
-	if((string)$regex_decimal == '') {
-		Smart::log_warning('EMPTY Regex for in function '.__CLASS__.'::'.__FUNCTION__.'()');
-		return false; // ERROR (MUST RETURN NOT VALID)
-	} //end if
+	$regex_decimal = (string) self::regex_stringvalidation_expression('number-decimal', 'full');
 	//--
 	if(((string)$val != '') AND (is_numeric($val)) AND (preg_match((string)$regex_decimal, (string)$val))) { // detect numbers: 0..9 - .
 		return true; // VALID

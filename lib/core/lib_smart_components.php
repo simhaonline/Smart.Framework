@@ -23,12 +23,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartHTMLCalendar::
 //	* SmartTextTranslations::
 // REQUIRED JS LIBS:
-//	* js/framework [arch-utils, browser-check, browser-utils, core-utils, crypt-utils, ifmodalbox, validate-input, page-away-control.inc]
-//	* js/jquery [carousel, cleditor, dialog, growl, imgfx, listselect, pager, ratingstars, slickgrid, slimbox, timepicker, tree, ui, cookie, easing, event-drag, event-drop, idle, metadata, number, placeholder, simulate, smart.compat, smartframework.ui, sparkline, tinyscrollbar, qunit]
-//	* js/jscharts [core, bar, doughnut, line, polararea, radar, stackedbar, stem]
+//	* js-base.inc.htm
+//	* js-ui.inc.htm / js-ui-alt.inc.htm
+//	* js/jsedithtml [cleditor]
 //	* js/jseditcode [codemirror]
-//	* js/jskeyboard
-//	* js/jssuggest
 // REQUIRED CSS:
 //	* notifications.css
 //	* activetable.css
