@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.160907
+ * @version 	v.160920
  * @package 	Components:Framework
  *
  */
@@ -234,7 +234,7 @@ public static function http_error_message($y_title, $y_message, $y_extra_message
 
 
 //================================================================
-// 400 Bad Request (The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing))
+// 400 Bad Request :: The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
 public static function http_message_400_badrequest($y_message, $y_extra_message='') {
 	//--
 	global $configs;
@@ -257,7 +257,7 @@ public static function http_message_400_badrequest($y_message, $y_extra_message=
 
 
 //================================================================
-// 401 Unauthorized (Similar to 403 Forbidden, but specifically for use when authentication is required and has failed or has not yet been provided. The response must include a WWW-Authenticate header field containing a challenge applicable to the requested resource. See Basic access authentication and Digest access authentication)
+// 401 Unauthorized :: Similar to 403 Forbidden, but specifically for use when authentication is required and has failed or has not yet been provided. The response must include a WWW-Authenticate header field containing a challenge applicable to the requested resource. See Basic access authentication and Digest access authentication.
 public static function http_message_401_unauthorized($y_message, $y_extra_message='') {
 	//--
 	global $configs;
@@ -280,7 +280,7 @@ public static function http_message_401_unauthorized($y_message, $y_extra_messag
 
 
 //================================================================
-// 403 Forbidden (The request was a valid request, but the server is refusing to respond to it. Unlike a 401 Unauthorized response, authenticating will make no difference)
+// 403 Forbidden :: The request was a valid request, but the server is refusing to respond to it. Unlike a 401 Unauthorized response, authenticating will make no difference.
 public static function http_message_403_forbidden($y_message, $y_extra_message='') {
 	//--
 	global $configs;
@@ -303,7 +303,7 @@ public static function http_message_403_forbidden($y_message, $y_extra_message='
 
 
 //================================================================
-// 404 Not Found (The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible)
+// 404 Not Found :: The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
 public static function http_message_404_notfound($y_message, $y_extra_message='') {
 	//--
 	global $configs;
@@ -326,7 +326,30 @@ public static function http_message_404_notfound($y_message, $y_extra_message=''
 
 
 //================================================================
-// 500 Internal Server Error (A generic error message, given when an unexpected condition was encountered and no more specific message is suitable)
+// 429 Too Many Requests :: The user has sent too many requests in a given amount of time. Intended for use with rate-limiting schemes.
+public static function http_message_429_toomanyrequests($y_message, $y_extra_message='') {
+	//--
+	global $configs;
+	//--
+	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
+		//--
+		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'429.php')) {
+			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'429.php');
+			if(function_exists('custom_http_message_429_toomanyrequests')) {
+				return custom_http_message_429_toomanyrequests($y_message, $y_extra_message);
+			} //end if
+		} //end if
+		//--
+	} //end if
+	//--
+	return self::http_error_message('429 Too Many Requests', $y_message, $y_extra_message);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// 500 Internal Server Error :: A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.
 public static function http_message_500_internalerror($y_message, $y_extra_message='') {
 	//--
 	global $configs;
@@ -349,7 +372,30 @@ public static function http_message_500_internalerror($y_message, $y_extra_messa
 
 
 //================================================================
-// 503 Service Unavailable (The server is currently unavailable (because it is overloaded or down for maintenance). Generally, this is a temporary state)
+// 502 Bad Gateway :: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
+public static function http_message_502_badgateway($y_message, $y_extra_message='') {
+	//--
+	global $configs;
+	//--
+	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
+		//--
+		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'502.php')) {
+			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'502.php');
+			if(function_exists('custom_http_message_502_badgateway')) {
+				return custom_http_message_502_badgateway($y_message, $y_extra_message);
+			} //end if
+		} //end if
+		//--
+	} //end if
+	//--
+	return self::http_error_message('502 Bad Gateway', $y_message, $y_extra_message);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// 503 Service Unavailable :: The server is currently unavailable (because it is overloaded or down for maintenance). Generally, this is a temporary state.
 public static function http_message_503_serviceunavailable($y_message, $y_extra_message='') {
 	//--
 	global $configs;
@@ -366,6 +412,29 @@ public static function http_message_503_serviceunavailable($y_message, $y_extra_
 	} //end if
 	//--
 	return self::http_error_message('503 Service Unavailable', $y_message, $y_extra_message);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// 504 Gateway Timeout :: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
+public static function http_message_504_gatewaytimeout($y_message, $y_extra_message='') {
+	//--
+	global $configs;
+	//--
+	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
+		//--
+		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'504.php')) {
+			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'504.php');
+			if(function_exists('custom_http_message_504_gatewaytimeout')) {
+				return custom_http_message_504_gatewaytimeout($y_message, $y_extra_message);
+			} //end if
+		} //end if
+		//--
+	} //end if
+	//--
+	return self::http_error_message('504 Gateway Timeout', $y_message, $y_extra_message);
 	//--
 } //END FUNCTION
 //================================================================

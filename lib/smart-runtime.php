@@ -1168,7 +1168,7 @@ public static function DebugRequestLog($y_message) {
  * @access 		private
  * @internal
  *
- * @version		160831
+ * @version		160920
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -1286,6 +1286,20 @@ final public static function Raise404Error($y_msg) {
 
 
 //======================================================================
+final public static function Raise429Error($y_msg) {
+	//--
+	if(!headers_sent()) {
+		http_response_code(429);
+	} else {
+		Smart::log_warning('Headers Already Sent before 429 ...');
+	} //end if else
+	die(SmartComponents::http_message_429_toomanyrequests(Smart::escape_html((string)$y_msg)));
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
 final public static function Raise500Error($y_msg) {
 	//--
 	if(!headers_sent()) {
@@ -1300,6 +1314,20 @@ final public static function Raise500Error($y_msg) {
 
 
 //======================================================================
+final public static function Raise502Error($y_msg) {
+	//--
+	if(!headers_sent()) {
+		http_response_code(502);
+	} else {
+		Smart::log_warning('Headers Already Sent before 502 ...');
+	} //end if else
+	die(SmartComponents::http_message_502_badgateway(Smart::escape_html((string)$y_msg)));
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
 final public static function Raise503Error($y_msg) {
 	//--
 	if(!headers_sent()) {
@@ -1308,6 +1336,20 @@ final public static function Raise503Error($y_msg) {
 		Smart::log_warning('Headers Already Sent before 503 ...');
 	} //end if else
 	die(SmartComponents::http_message_503_serviceunavailable(Smart::escape_html((string)$y_msg)));
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+final public static function Raise504Error($y_msg) {
+	//--
+	if(!headers_sent()) {
+		http_response_code(504);
+	} else {
+		Smart::log_warning('Headers Already Sent before 504 ...');
+	} //end if else
+	die(SmartComponents::http_message_504_gatewaytimeout(Smart::escape_html((string)$y_msg)));
 	//--
 } //END FUNCTION
 //======================================================================

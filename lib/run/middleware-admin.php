@@ -30,7 +30,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.5.3');
  * @access 		private
  * @internal
  *
- * @version		160831
+ * @version		160920
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -300,13 +300,25 @@ public static function Run() {
 			self::Raise404Error((string)$appSettings['error']);
 			return;
 			break;
+		case 429:
+			self::Raise429Error((string)$appSettings['error']);
+			return;
+			break;
 		//-- server errors
 		case 500:
 			self::Raise500Error((string)$appSettings['error']);
 			return;
 			break;
+		case 502:
+			self::Raise502Error((string)$appSettings['error']);
+			return;
+			break;
 		case 503:
 			self::Raise503Error((string)$appSettings['error']);
+			return;
+			break;
+		case 504:
+			self::Raise504Error((string)$appSettings['error']);
 			return;
 			break;
 		//-- extended 2xx statuses: NOTICE / WARNING / ERROR that can be used for REST / API
