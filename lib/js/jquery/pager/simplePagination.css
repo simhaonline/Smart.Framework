@@ -1,10 +1,10 @@
-/**
+/*
 * CSS themes for simplePagination.js
 * Author: Flavius Matis - http://flaviusmatis.github.com/
 * URL: https://github.com/flaviusmatis/simplePagination.js
 *
-* modified by unixman 150721
-*
+* (c) 2016 unix-world.org
+* modified by unixman 160920
 */
 
 ul.simple-pagination {
@@ -29,6 +29,14 @@ ul.simple-pagination {
 	padding: 0;
 	margin: 0;
 	float: left;
+}
+
+span.ellipse.clickable {
+	cursor: pointer;
+}
+
+.ellipse input {
+	width: 55px;
 }
 
 /*------------------------------------*\
@@ -58,7 +66,7 @@ ul.simple-pagination {
 }
 
 .compact-theme a:hover {
-	text-decoration: none;
+	text-decoration: none; /* unixman */
 	background: #efefef; /* Old browsers */
 	background: -moz-linear-gradient(top, #efefef 0%, #bbbbbb 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#efefef), color-stop(100%,#bbbbbb)); /* Chrome,Safari4+ */
@@ -122,7 +130,7 @@ ul.simple-pagination {
 }
 
 .light-theme a:hover {
-	text-decoration: none;
+	text-decoration: none; /* unixman */
 	background: #FCFCFC;
 }
 
@@ -171,7 +179,7 @@ ul.simple-pagination {
 }
 
 .dark-theme a:hover {
-	text-decoration: none;
+	text-decoration: none; /* unixman */
 	background: #444;
 }
 
@@ -183,7 +191,7 @@ ul.simple-pagination {
 	cursor: default;
 }
 
-.dark-theme .ellipse {
+.dark-theme .ellipse { /* unixman */
 	background: none;
 	border: none;
 	border-radius: 0;
