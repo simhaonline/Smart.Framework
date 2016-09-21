@@ -35,8 +35,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160202
- * @package     Core
+ * @version     v.160921
+ * @package     Base
  *
  */
 final class SmartParser {
@@ -317,8 +317,8 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160920
- * @package     Core
+ * @version     v.160921
+ * @package     Base
  *
  */
 final class SmartValidator {

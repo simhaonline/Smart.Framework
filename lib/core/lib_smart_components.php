@@ -135,7 +135,9 @@ public static function parse_settings($arr_base_settings, $arr_local_settings) {
  *
  */
 public static function lock_file() {
+	//--
 	return '____SMART-FRAMEWORK_SingleUser_Mode__Enabled';
+	//--
 } //END FUNCTION
 //================================================================
 

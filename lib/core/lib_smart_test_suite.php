@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160918
+	// v.160921
 
 
 //==================================================================
@@ -131,9 +131,6 @@ public static function main_screen($tab, $frm, $testformdata) {
 	//--
 
 	//--
-	//$path_var = 'lib/core/templates/testunit/test-unit-tab-misc.htm';
-	$path_var = '@/test-unit-tab-misc.htm';
-	//--
 	return SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/testunit/test-unit.htm',
 		array(
@@ -141,7 +138,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 				'test-unit-tab-tests.htm' 			=> 'lib/core/templates/testunit/', 						// dir with trailing slash
 				'test-unit-tab-interractions.htm' 	=> 'lib/core/templates/testunit', 						// empty, expects the same dir as parent
 				'test-unit-tab-ui.htm' 				=> '@', 												// @ (self) path, assumes the same dir
-				'%test-unit-tab-misc%'				=> $path_var											// variable, with full path
+				'%test-unit-tab-misc%'				=> '@/test-unit-tab-misc.htm'							// variable, with full path, using self @/sub-dir/ instead of lib/core/templates/testunit/test-unit-tab-misc.htm
 			],
 			'TESTUNIT_BASE_URL' => SMART_FRAMEWORK_TESTUNIT_BASE_URL,
 			'NO-CACHE-TIME' => time(),
@@ -2119,7 +2116,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160918
+	// v.160921
 
 private $db;
 

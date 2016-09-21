@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160904
+ * @version 	v.160921
  * @package 	Templating:Engines
  *
  */
@@ -758,7 +758,7 @@ private static function detect_subtemplates($mtemplate) {
 		} //end if
 		//--
 		$arr_matched_sub_templates = array();
-		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/]*)@@@@\]}', (string)$mtemplate, $arr_matched_sub_templates);
+		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!]*)@@@@\]}', (string)$mtemplate, $arr_matched_sub_templates);
 		//print_r($arr_matched_sub_templates);
 		//--
 		if(Smart::array_size($arr_matched_sub_templates) > 0) {
@@ -818,7 +818,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 			$key = (string) $key;
 			$val = (string) $val;
 			//--
-			if(((string)$key != '') AND (strpos($key, '..') === false) AND (strpos($val, '..') === false) AND (preg_match('/^[a-zA-Z0-9_\-\.\/%]+$/', $key))) {
+			if(((string)$key != '') AND (strpos($key, '..') === false) AND (strpos($val, '..') === false) AND (preg_match('/^[a-zA-Z0-9_\-\.\/\!%]+$/', $key))) {
 				//--
 				if((string)$val == '') {
 					//--
@@ -837,18 +837,26 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					//--
 				} else {
 					//--
-					if((substr($key, 0, 1) == '%') AND (substr($key, -1, 1) == '%')) { // variable, full path to the template file is specified
-						if(substr($val, 0, 2) == '@/') {
-							$val = (string) SmartFileSysUtils::add_dir_last_slash((string)$y_base_path).substr($val, 2); // if no path is specified, assume the same directory as parent
+					if((substr($key, 0, 1) == '%') AND (substr($key, -1, 1) == '%')) { // variable, only can be set programatically, full path to the template file is specified
+						if(substr($val, 0, 2) == '@/') { // use a path suffix relative path to parent template, starting with @/ ; otherwise the full relative path is expected
+							$val = (string) SmartFileSysUtils::add_dir_last_slash((string)$y_base_path).substr($val, 2);
 						} //end if
 						$stpl_path = (string) $val;
+					} elseif(strpos($key, '%') !== false) { // % is not valid in other circumstances
+						Smart::log_warning('Invalid Markers-Sub-Template Syntax [%] as: '.$key);
+						return 'Invalid Markers-Sub-Template Syntax. See the ErrorLog for Details.';
+					} elseif((substr($key, 0, 1) == '!') AND (substr($key, -1, 1) == '!')) { // path override: use this relative path instead of parent relative referenced path ; Ex: [@@@@SUB-TEMPLATE:!etc/templates/default/js-base.inc.htm!@@@@]
+						$stpl_path = (string) substr($key, 1, -1);
+					} elseif(strpos($key, '!') !== false) { // ! is not valid in other circumstances
+						Smart::log_warning('Invalid Markers-Sub-Template Syntax [!] as: '.$key);
+						return 'Invalid Markers-Sub-Template Syntax. See the ErrorLog for Details.';
 					} else {
-						if((string)$val == '@') { // in this case can be the @ (self) path which assumes the same dir or a dir path
-							$val = (string) $y_base_path; // if no path is specified, assume the same directory as parent
-						} elseif(substr($val, 0, 2) == '@/') {
-							$val = (string) SmartFileSysUtils::add_dir_last_slash((string)$y_base_path).substr($val, 2); // if no path is specified, assume the same directory as parent
+						if((string)$val == '@') { // use the same dir as parent
+							$val = (string) $y_base_path;
+						} elseif(substr($val, 0, 2) == '@/') { // use a path suffix relative to parent template, starting with @/
+							$val = (string) SmartFileSysUtils::add_dir_last_slash((string)$y_base_path).substr($val, 2);
 						} //end if
-						$stpl_path = (string) SmartFileSysUtils::add_dir_last_slash($val).$key; // fix trailing slash
+						$stpl_path = (string) SmartFileSysUtils::add_dir_last_slash($val).$key;
 					} //end if else
 					//--
 					if(!is_file((string)$stpl_path)) {

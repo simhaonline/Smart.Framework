@@ -1,0 +1,61 @@
+			<!-- Templating Loop Tests -->
+			<table class="ux-table" style="width:550px;">
+				<tr style="background:#778899; color:#FFFFFF;">
+					<th colspan="3" align="center">
+						Templating Test / Syntax: Legend
+					</th>
+				</tr>
+			[%%%%LOOP:LOOPTEST-VAR1%%%%]
+				[%%%%IF:IF2TEST:!=5%%%%]
+				<tr style="background:[%%%%IF:IFTEST:==1%%%%]#666699[%%%%ELSE:IFTEST%%%%]#003366[%%%%/IF:IFTEST%%%%]; color:#FFFFFF;" title="This line is displayed conditional using a templating IF syntax ; Values = [[####IFTEST|html####]] / [[####IF2TEST|html####]] ...">
+				[%%%%ELSE:IF2TEST%%%%]
+				<tr style="background:#FFCC00; color:#000000;" title="This line is displayed conditional using a templating IF syntax ; Values = [[####IFTEST|html####]] / [[####IF2TEST|html####]] ...">
+				[%%%%/IF:IF2TEST%%%%]
+					<td width="33%">[####LOOPTEST-VAR1.D1####]</td>
+					<td width="33%">[####LOOPTEST-VAR1.D2####]</td>
+					<td width="33%">[####LOOPTEST-VAR1.D3####]</td>
+				</tr>
+			[%%%%/LOOP:LOOPTEST-VAR1%%%%]
+			</table>
+			<table class="ux-table ux-table-striped" style="width:550px;">
+			[%%%%LOOP:LOOPTEST-VAR2%%%%]
+				<tr>
+					[%%%%IF:LOOPTEST-VAR2.C2:==a%%%%]
+						[%%%%IF:LOOPTEST-VAR2.C1:<1%%%%]
+							<td width="33%" style="color:#FF3300;">[####LOOPTEST-VAR2.C1|html####] [ &lt; 1 ; C2 = a ]</td>
+						[%%%%ELSE:LOOPTEST-VAR2.C1%%%%]
+							<td width="33%" style="color:#003399;">[####LOOPTEST-VAR2.C1|html####] [ &gt;= 1 ; C2 = a ]</td>
+						[%%%%/IF:LOOPTEST-VAR2.C1%%%%]
+					[%%%%ELSE:LOOPTEST-VAR2.C2%%%%]
+						<td width="33%">[####LOOPTEST-VAR2.C1|html####]</td>
+					[%%%%/IF:LOOPTEST-VAR2.C2%%%%]
+					<td width="33%">[####LOOPTEST-VAR2.C2|js####]</td>
+					<td width="33%">[####LOOPTEST-VAR2.C3|url####]</td>
+				</tr>
+			[%%%%/LOOP:LOOPTEST-VAR2%%%%]
+			</table>
+			<table class="ux-table" style="width:550px;">
+				<tr align="center">
+					<td>[####STR-NUM|num####] * [####NUM-NUM|num####] (Numeric Escape)</td>
+				</tr>
+			</table>
+			<!-- #END# Templating Loop Tests -->
+			<!-- Some hidden tests for Marker escaping -->
+			<!-- Hidden Test {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}}: VALID Escaping Sequences for a Marker (below):
+			[####MARKER####]						MARKER
+			[####MARKER|num####]					MARKER|num
+				[####MARKER|num|url####]			MARKER|num|url
+				[####MARKER|num|js####]				MARKER|num|js
+				[####MARKER|num|html####]			MARKER|num|html
+				[####MARKER|num|url|js####]			MARKER|num|url|js
+				[####MARKER|num|url|html####]		MARKER|num|url|html
+				[####MARKER|num|js|html####]		MARKER|num|js|html
+				[####MARKER|num|url|js|html####]	MARKER|num|url|js|html
+			[####MARKER|url####]					MARKER|url
+			[####MARKER|url|js####]					MARKER|url|js
+			[####MARKER|url|html####]				MARKER|url|html
+			[####MARKER|url|js|html####]			MARKER|url|js|html
+			[####MARKER|js####]						MARKER|js
+			[####MARKER|js|html####]				MARKER|js|html
+			[####MARKER|html####]					MARKER|html
+			-->

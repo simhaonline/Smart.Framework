@@ -48,8 +48,8 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.160827
- * @package 	Core
+ * @version 	v.160921
+ * @package 	Base
  *
  */
 final class SmartUtils {

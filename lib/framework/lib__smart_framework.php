@@ -29,7 +29,7 @@ define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.2.3'); // required for fram
 //#####################################################################################
 //----------------------------------------------------
 require('lib/framework/lib_unicode.php'); 		// smart unicode support
-require('lib/framework/lib_core.php'); 			// smart core utils
+require('lib/framework/lib_smart.php'); 		// smart (base)
 require('lib/framework/lib_valid_parse.php');	// smart validators and parsers
 require('lib/framework/lib_caching.php');		// smart (non-persistent) cache
 require('lib/framework/lib_crypto.php');		// smart crypto utils

@@ -1,5 +1,5 @@
 <?php
-// [LIB - SmartFramework / Core]
+// [LIB - SmartFramework / Base]
 // (c) 2006-2016 unix-world.org - all rights reserved
 // v.2.3.5.3 r.2016.08.23 / smart.framework.v.2.3
 
@@ -11,7 +11,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //======================================================
-// Smart-Framework - Core
+// Smart-Framework - Base
 // DEPENDS:
 //  * SmartUnicode::
 // DEPENDS-PHP: 5.4.7 or later
@@ -22,13 +22,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //================================================================
 if((!function_exists('json_encode')) OR (!function_exists('json_decode'))) {
-	die('ERROR: The PHP JSON Extension is required for the SmartFramework / Core');
+	die('ERROR: The PHP JSON Extension is required for the SmartFramework / Base');
 } //end if
 if(!function_exists('hex2bin')) {
-	die('ERROR: The PHP hex2bin Function is required for SmartFramework / Core');
+	die('ERROR: The PHP hex2bin Function is required for SmartFramework / Base');
 } //end if
 if(!function_exists('bin2hex')) {
-	die('ERROR: The PHP bin2hex Function is required for SmartFramework / Core');
+	die('ERROR: The PHP bin2hex Function is required for SmartFramework / Base');
 } //end if
 //================================================================
 
@@ -56,7 +56,7 @@ if((string)$var == 'some-string') {
 
 
 /**
- * Class: Smart (Core Functions) - provides the core methods for an easy and secure development with SmartFramework and PHP.
+ * Class: Smart (Base Functions) - provides the base methods for an easy and secure development with SmartFramework and PHP.
  *
  * <code>
  * // Usage example:
@@ -68,8 +68,8 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160911
- * @package     Core
+ * @version     v.160921
+ * @package     Base
  *
  */
 final class Smart {
@@ -1741,7 +1741,7 @@ public static function registerInternalCacheToDebugLog() {
 	if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			SmartFrameworkRegistry::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [
-				'title' => 'Smart (Core) // Internal Cache',
+				'title' => 'Smart (Base) // Internal Cache',
 				'data' => 'Dump of Cfgs:'."\n".print_r(self::$Cfgs,1)
 			]);
 		} //end if

@@ -150,8 +150,8 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.160919
- * @package     Core
+ * @version     v.160921
+ * @package     Base
  *
  */
 final class SmartUnicode {
