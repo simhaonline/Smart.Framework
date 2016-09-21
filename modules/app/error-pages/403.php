@@ -1,6 +1,6 @@
 <?php
 // [CUSTOM 403 Status Code Page]
-// v.150619
+// v.2.3.7.1 r.2016.09.21 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application

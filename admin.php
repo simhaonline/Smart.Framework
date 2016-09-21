@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Runtime / Admin
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.5.3 r.2016.08.23 / smart.framework.v.2.3
+// v.2.3.7.1 r.2016.09.21 / smart.framework.v.2.3
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !

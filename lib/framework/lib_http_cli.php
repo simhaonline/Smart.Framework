@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / HTTP(S) Client]
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.5.3 r.2016.08.23 / smart.framework.v.2.3
+// v.2.3.7.1 r.2016.09.21 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
@@ -195,8 +195,8 @@ final class SmartHttpClient {
 		if(!$success) {
 			if($this->debug) {
 				$this->log .= '[ERR] Robot Browser Failed !'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL // Robot Browser Failed ... '.$url);
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL // Robot Browser Failed ... '.$url);
 			$this->close_connection();
 			return 0;
 		} //end if
@@ -207,8 +207,8 @@ final class SmartHttpClient {
 			//--
 			if($this->debug) {
 				$this->log .= '[ERR] Premature connection end (2.1)'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.1) ...'.$url);
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.1) ...'.$url);
 			$this->close_connection();
 			return 0;
 			//--
@@ -225,10 +225,13 @@ final class SmartHttpClient {
 			$is_unauth = true;
 			//--
 			if($this->debug) {
-				$this->log .= '[ERR] HTTP Authentication Failed for URL [User='.$user.']: '.$url."\n";
-			} //end if
-			if((string)$user != '') {
-				Smart::log_notice('LibHTTP // GetFromURL // HTTP Authentication Failed for URL: '.$url);
+				if((string)$user != '') {
+					$this->log .= '[ERR] HTTP Authentication Failed for URL: [User='.$user.']: '.$url."\n";
+					Smart::log_notice('LibHTTP // GetFromURL // HTTP Authentication Failed for URL: [User='.$user.']: '.$url);
+				} else {
+					$this->log .= '[ERR] HTTP Authentication is Required for URL: '.$url."\n";
+					Smart::log_notice('LibHTTP // GetFromURL // HTTP Authentication is Required for URL: '.$url);
+				} //end if
 			} //end if
 			//--
 		} //end if
@@ -241,8 +244,8 @@ final class SmartHttpClient {
 				//--
 				if($this->debug) {
 					$this->log .= '[ERR] Premature connection end (2.2)'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.2) ... '.$url);
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.2) ... '.$url);
 				$this->close_connection();
 				return 0;
 				//--
@@ -261,8 +264,8 @@ final class SmartHttpClient {
 			//--
 			if($this->debug) {
 				$this->log .= '[ERR] Premature connection end (2.3)'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.3) ... '.$url);
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.3) ... '.$url);
 			$this->close_connection();
 			return 0;
 			//--
@@ -278,8 +281,8 @@ final class SmartHttpClient {
 				//--
 				if($this->debug) {
 					$this->log .= '[ERR] Premature connection end (2.4)'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.4) ... '.$url);
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (2.4) ... '.$url);
 				$this->close_connection();
 				return 0;
 				//--
@@ -476,8 +479,8 @@ final class SmartHttpClient {
 		if(!is_resource($this->socket)) {
 			if($this->debug) {
 				$this->log .= '[ERR] Could not open connection. Error : '.$errno.': '.$errstr."\n";
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Could not open connection. Error : '.$errno.': '.$errstr.' #');
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Could not open connection. Error : '.$errno.': '.$errstr.' #');
 			return 0;
 		} //end if
 		//--
@@ -497,8 +500,8 @@ final class SmartHttpClient {
 			if(stripos($chk_crypto['stream_type'], '/ssl') === false) { // will return something like: tcp_socket/ssl
 				if($this->debug) {
 					$this->log .= '[ERR] Connection CRYPTO CHECK Failed ...'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Connection CRYPTO CHECK Failed ...');
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Connection CRYPTO CHECK Failed ...');
 				return 0;
 			} //end if
 		} //end if
@@ -603,8 +606,8 @@ final class SmartHttpClient {
 			//--
 			if($this->debug) {
 				$this->log .= '[ERR] Premature connection end (1.1)'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.1) ... '.$url);
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.1) ... '.$url);
 			return 0;
 			//--
 		} //end if
@@ -614,8 +617,8 @@ final class SmartHttpClient {
 		if(@fwrite($this->socket, $request) === false) {
 			if($this->debug) {
 				$this->log .= '[ERR] Error writing Request type to socket'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing Request type to socket ...');
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing Request type to socket ...');
 			return 0;
 		} //end if
 		//--
@@ -625,8 +628,8 @@ final class SmartHttpClient {
 			//--
 			if($this->debug) {
 				$this->log .= '[ERR] Premature connection end (1.2)'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.2) ... '.$url);
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.2) ... '.$url);
 			return 0;
 			//--
 		} //end if
@@ -635,8 +638,8 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $key.": ".$value."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing Raw-Headers to socket'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing Raw-Headers to socket ...');
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing Raw-Headers to socket ...');
 				return 0;
 			} //end if
 		} //end foreach
@@ -647,8 +650,8 @@ final class SmartHttpClient {
 			//--
 			if($this->debug) {
 				$this->log .= '[ERR] Premature connection end (1.3)'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.3) ... '.$url);
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.3) ... '.$url);
 			return 0;
 			//--
 		} //end if
@@ -656,8 +659,8 @@ final class SmartHttpClient {
 		if(@fwrite($this->socket, "\r\n") === false) {
 			if($this->debug) {
 				$this->log .= '[ERR] Error writing End-Of-Line to socket'."\n";
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing End-Of-Line to socket ...');
 			} //end if
-			Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing End-Of-Line to socket ...');
 			return 0;
 		} //end if
 		//--
@@ -669,8 +672,8 @@ final class SmartHttpClient {
 				//--
 				if($this->debug) {
 					$this->log .= '[ERR] Premature connection end (1.4)'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.4) ... '.$url);
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.4) ... '.$url);
 				return 0;
 				//--
 			} //end if
@@ -678,8 +681,8 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $this->jsonrequest."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing JSON Request data to socket'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing JSON Request data to socket ...');
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing JSON Request data to socket ...');
 				return 0;
 			} //end if
 			//--
@@ -689,8 +692,8 @@ final class SmartHttpClient {
 				//--
 				if($this->debug) {
 					$this->log .= '[ERR] Premature connection end (1.5)'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.5) ... '.$url);
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.5) ... '.$url);
 				return 0;
 				//--
 			} //end if
@@ -698,8 +701,8 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $this->xmlrequest."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing XML Request data to socket'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing XML Request data to socket ...');
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing XML Request data to socket ...');
 				return 0;
 			} //end if
 			//--
@@ -709,8 +712,8 @@ final class SmartHttpClient {
 				//--
 				if($this->debug) {
 					$this->log .= '[ERR] Premature connection end (1.6)'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.6) ... '.$url);
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL // Premature connection end (1.6) ... '.$url);
 				return 0;
 				//--
 			} //end if
@@ -718,8 +721,8 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $post_string."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing POST data to socket'."\n";
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing POST data to socket ...');
 				} //end if
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing POST data to socket ...');
 				return 0;
 			} //end if
 			//--
@@ -728,7 +731,10 @@ final class SmartHttpClient {
 
 		//-- NOTICE: is this necessary ??? appears that not (it was tested a long time without and appear to be faster) ...
 		//if(@fwrite($this->socket, "\r\n") === false) {
-		//	Smart::log_notice('LibHTTP // GetFromURL ('.$conex_info.') // Error writing EOL ...'); // FIX: the final \r\n
+		//	if($this->debug) {
+		//		$this->log .= '[ERR] Error writing EOL to socket'."\n";
+		//		Smart::log_notice('LibHTTP // GetFromURL ('.$conex_info.') // Error writing EOL ...'); // FIX: the final \r\n
+		//	} //end if
 		//} //end if
 		//--
 
