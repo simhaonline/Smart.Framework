@@ -1086,8 +1086,8 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 	$yhtmlcode = (string) preg_replace('/&?([0-9a-z]+);/i', ' ', (string)$yhtmlcode); // prev was '~&?([0-9a-zA-Z]+);~i'
 	//-- cleanup multiple spaces with just one space
 	$yhtmlcode = (string) preg_replace('/[ \\t]+/', ' ', (string)$yhtmlcode); // replace any horizontal whitespace character ' since PHP 5.2.4 can be /[\h]+/
-	$yhtmlcode = (string) preg_replace('/^\s*[\n]/m', "\n", (string)$yhtmlcode); // replace multiple lines with optional *only* leading spaces
-	$yhtmlcode = (string) preg_replace('/[^\S\r\n]+$/m', '', (string)$yhtmlcode); // remove trailing spaces
+	$yhtmlcode = (string) preg_replace('/^\s*[\n]{2,}/m', '', (string)$yhtmlcode); // fix: replace multiple consecutive lines that may also contain before optional leading spaces
+	$yhtmlcode = (string) preg_replace('/[^\S\r\n]+$/m', '', (string)$yhtmlcode); // remove trailing spaces on each line
 	//--
 	return (string) trim((string)$yhtmlcode);
 	//--
