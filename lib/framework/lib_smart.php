@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160921
+ * @version     v.160922
  * @package     Base
  *
  */
@@ -1047,11 +1047,12 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 		' '
 	);
 	$yhtmlcode = (string) preg_replace((array)$html_regex_h, (array)$html_regex_r, (string)$yhtmlcode);
+	$yhtmlcode = str_replace(["\r\n", "\r", "\t", "\f"], ["\n", "\n", ' ', ' '], $yhtmlcode);
 	//-- replace new line tags
 	if((string)$ynewline == 'yes') {
-		$yhtmlcode = (string) str_ireplace('<br>', "\n", (string)$yhtmlcode);
+		$yhtmlcode = (string) str_ireplace(['<br>', '</br>'], ["\n", ''], (string)$yhtmlcode);
 	} else {
-		$yhtmlcode = (string) str_ireplace('<br>', ' ', (string)$yhtmlcode);
+		$yhtmlcode = (string) str_ireplace(['<br>', '</br>'], [' ', ''], (string)$yhtmlcode);
 	} //end if else
 	//-- strip the tags
 	$yhtmlcode = (string) strip_tags((string)$yhtmlcode);
@@ -1084,7 +1085,9 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 	//-- clean any other remaining html entities
 	$yhtmlcode = (string) preg_replace('/&?([0-9a-z]+);/i', ' ', (string)$yhtmlcode); // prev was '~&?([0-9a-zA-Z]+);~i'
 	//-- cleanup multiple spaces with just one space
-	$yhtmlcode = (string) preg_replace('/[ \t]+/', ' ', (string)$yhtmlcode); // replace any horizontal whitespace character ' since PHP 5.2.4 can be /[\h]+/
+	$yhtmlcode = (string) preg_replace('/[ \\t]+/', ' ', (string)$yhtmlcode); // replace any horizontal whitespace character ' since PHP 5.2.4 can be /[\h]+/
+	$yhtmlcode = (string) preg_replace('/^\s*[\n]/m', "\n", (string)$yhtmlcode); // replace multiple lines with optional *only* leading spaces
+	$yhtmlcode = (string) preg_replace('/[^\S\r\n]+$/m', '', (string)$yhtmlcode); // remove trailing spaces
 	//--
 	return (string) trim((string)$yhtmlcode);
 	//--
@@ -1551,7 +1554,7 @@ public static function separe_url_parts($y_url) {
 	$tmp_arr = (array) explode('?', (string)$path);
 	$scriptname = trim((string)$tmp_arr[0]);
 	//--
-	return array('protocol' => $protocol, 'server' => $server, 'port' => $port, 'path' => $path, 'scriptname' => $scriptname);
+	return array('protocol' => $protocol, 'server' => $server, 'port' => $port, 'path' => $path, 'scriptname' => $scriptname); // script must be compatible with: SmartUtils::get_server_current_full_script() as they may be used as comparation for security purposes
 	//--
 } //END FUNCTION
 //================================================================
