@@ -390,6 +390,8 @@ so we can ignore the csslint warning.
 .ux-form textarea,
 .ux-form select,
 .ux-field {
+	background-color: #FFFFFF;
+	color: #222222;
 	font-weight: normal !important;
 	font-size: 13px !important;
 	padding: 3px !important;

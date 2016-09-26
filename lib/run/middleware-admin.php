@@ -30,7 +30,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.1');
  * @access 		private
  * @internal
  *
- * @version		160920
+ * @version		160925
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -165,8 +165,15 @@ public static function Run() {
 	if(strpos($page, '.') !== false) { // page can be as module.controller / module.controller.(html|stml|json) / module.controller.some-indexing-words-for-spiders.(html|stml|json)
 		//--
 		$arr = (array) explode('.', (string)$page, 3); // separe 1st and 2nd from the rest
+		//--
+		//#
+		//#
 		$arr[0] = trim(strtolower((string)$arr[0])); // module
 		$arr[1] = trim(strtolower((string)$arr[1])); // controller
+		//#
+		//# Admin will NOT integrate with friendly URLs SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE
+		//# that feature is just for Index
+		//#
 		//--
 	} elseif((string)$configs['app']['admin-default-module'] != '') {
 		//--
@@ -189,6 +196,11 @@ public static function Run() {
 	if((!preg_match('/^[a-z0-9_\-]+$/', (string)$arr[0])) OR (!preg_match('/^[a-z0-9_\-]+$/', (string)$arr[1]))) {
 		if((string)$err404 == '') {
 			$err404 = 'Invalid Page (Invalid Characters in the URL Page Segments): '.$page;
+		} //end if
+	} //end if
+	if(((string)$arr[1] == 'html') OR ((string)$arr[1] == 'stml') OR ((string)$arr[1] == 'json')) {
+		if((string)$err404 == '') {
+			$err404 = 'Invalid Page (Reserved Page Segments Name): '.$page;
 		} //end if
 	} //end if
 	//--

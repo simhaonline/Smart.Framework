@@ -150,7 +150,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.160923
+ * @version     v.160926
  * @package     Base
  *
  */
@@ -433,10 +433,11 @@ public static function str_toupper($ystr) {
 /**
  * Convert the CharSet Encoding of a String
  * NOTICE: If the charset to is different than UTF-8 (unicode) if using the string in this framework it must be re-converted
+ * NOTICE: If used to convert to HTML-ENTITIES charset this function will consume a lot of memory and may run out of memory for large strings > 10% of memory_limit set in init.php
  *
  * @param STRING 	$ystr			:: The string
  * @param ENUM 		$ychar_from		:: Empty to detect / Select one of the: UTF-8, ISO-8859-1, ISO-8859-15, ISO-8859-2, ISO-8859-9, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-16, UTF-7, ASCII, SJIS, EUC-JP, JIS, ISO-2022-JP, EUC-CN, ISO-2022-KR, KOI8-R, KOI8-U
- * @param ENUM 		$ychar_to		:: Empty to use the framework internal charset defined in SMART_FRAMEWORK_CHARSET / Select one of the: UTF-8 or another valid charset
+ * @param ENUM 		$ychar_to		:: Empty to use the framework internal charset defined in SMART_FRAMEWORK_CHARSET / Select one of the: UTF-8, HTML-ENTITIES or another valid charset
  * @param BOOLEAN	$normalize		:: Normalize (Default is TRUE) - will normalize the string into the default framework charset else the string will be incompatible with the current encoding ... ; Using this to false must be use with very much attention !!!
  *
  * @return STRING					:: The processed string
@@ -446,6 +447,8 @@ public static function convert_charset($ystr, $y_charset_from='', $y_charset_to=
 	if((string)$ystr == '') {
 		return '';
 	} //end if
+	//--
+	$ystr = (string) SmartFrameworkSecurity::FilterUnsafeString((string)$ystr); // Fix: remove unsafe characters from original string
 	//--
 	if((string)$y_charset_from == '') { // if empty, try to detect it
 		$y_charset_from = @mb_detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-15, ISO-8859-2, ISO-8859-9, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-16, UTF-7, ASCII, SJIS, EUC-JP, JIS, ISO-2022-JP, EUC-CN, GB18030, ISO-2022-KR, KOI8-R, KOI8-U', true);
@@ -520,6 +523,8 @@ public static function utf8_to_iso($str, $normalize=true) {
 	if((string)$str == '') {
 		return '';
 	} //end if
+	//--
+	$str = (string) SmartFrameworkSecurity::FilterUnsafeString((string)$str); // Fix: remove unsafe characters from original string
 	//--
 	$str = (string) utf8_decode((string)$str);
 	//--
