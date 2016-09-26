@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160922
+ * @version     v.160926
  * @package     Base
  *
  */
@@ -1083,7 +1083,7 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 	$html_accents = (array) SmartUnicode::accented_html_entities();
 	$yhtmlcode = (string) str_replace((array)array_values($html_accents), (array)array_keys($html_accents), (string)$yhtmlcode);
 	//-- clean any other remaining html entities
-	$yhtmlcode = (string) preg_replace('/&?([0-9a-z]+);/i', ' ', (string)$yhtmlcode); // prev was '~&?([0-9a-zA-Z]+);~i'
+	$yhtmlcode = (string) preg_replace('/&\#?([0-9a-z]+);/i', ' ', (string)$yhtmlcode);
 	//-- cleanup multiple spaces with just one space
 	$yhtmlcode = (string) preg_replace('/[ \\t]+/', ' ', (string)$yhtmlcode); // replace any horizontal whitespace character ' since PHP 5.2.4 can be /[\h]+/
 	$yhtmlcode = (string) preg_replace('/^\s*[\n]{2,}/m', '', (string)$yhtmlcode); // fix: replace multiple consecutive lines that may also contain before optional leading spaces
