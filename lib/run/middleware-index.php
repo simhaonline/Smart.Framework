@@ -30,7 +30,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.7.1');
  * @access 		private
  * @internal
  *
- * @version		160925
+ * @version		160926
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -153,6 +153,8 @@ public static function Run() {
 	//--
 	//== LOAD THE MODULE (OR DEFAULT MODULE)
 	//--
+	$reserved_controller_names = [ 'php', 'html', 'stml', 'css', 'js', 'json', 'xml', 'rss', 'txt', 'csv', 'sql', 'png', 'gif', 'jpg', 'pdf', 'svg', 'zip', '7z', 'netarch' ]; // these are reserved extensions and cannot be used as controller names because they need to be used also with friendly URLs as the 2nd param if module is missing from URL page param
+	//--
 	$err404 = '';
 	$arr = array();
 	//--
@@ -162,11 +164,11 @@ public static function Run() {
 		$page = (string) $configs['app']['index-home'];
 	} //end if
 	//--
-	if(strpos($page, '.') !== false) { // page can be as module.controller / module.controller.(html|stml|json) / module.controller.some-indexing-words-for-spiders.(html|stml|json)
+	if(strpos($page, '.') !== false) { // page can be as (module.)controller / (module.)controller(.php|html|stml|css|js|json|xml|rss|txt|csv|sql|png|gif|jpg|pdf|svg|zip|7z|netarch) / module.controller.some-indexing-words-for-better-seo(.php|html|stml|css|js|json|xml|rss|txt|csv|sql|png|gif|jpg|pdf|svg|zip|7z|netarch)
 		//--
 		$arr = (array) explode('.', (string)$page, 3); // separe 1st and 2nd from the rest
 		//--
-		if((Smart::array_size($arr) == 2) AND (((string)$arr[1] == 'html') OR ((string)$arr[1] == 'stml') OR ((string)$arr[1] == 'json'))) {
+		if(in_array((string)$arr[1], (array)$reserved_controller_names)) {
 			// Fix to integrate with friendly URLs SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE, if just controller.(html|stml|json) has been provided
 			$arr[1] = trim(strtolower((string)$arr[0])); // controller
 			$arr[0] = trim(strtolower((string)$configs['app']['index-default-module'])); // get default module
@@ -198,9 +200,9 @@ public static function Run() {
 			$err404 = 'Invalid Page (Invalid Characters in the URL Page Segments): '.$page;
 		} //end if
 	} //end if
-	if(((string)$arr[1] == 'html') OR ((string)$arr[1] == 'stml') OR ((string)$arr[1] == 'json')) {
+	if(in_array((string)$arr[1], (array)$reserved_controller_names)) {
 		if((string)$err404 == '') {
-			$err404 = 'Invalid Page (Reserved Page Segments Name): '.$page;
+			$err404 = 'Invalid Page (Reserved Page Controller Name): ['.$arr[1].'] in: '.$page;
 		} //end if
 	} //end if
 	//--
