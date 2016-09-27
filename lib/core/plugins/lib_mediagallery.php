@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Plugins / MediaGallery]
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.7.1 r.2016.09.21 / smart.framework.v.2.3
+// v.2.3.7.2 r.2016.09.27 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
@@ -597,7 +597,7 @@ final class SmartMediaGalleryPlayers {
 public static function movie_player($y_url, $y_title, $y_movie, $y_type, $y_width='720', $y_height='404') {
 
 //--
-$player_title = Smart::escape_html($y_title);
+$player_title = (string) Smart::escape_html($y_title);
 //--
 
 //--
@@ -605,16 +605,9 @@ if((string)$y_url == '') {
 	$y_url = SmartUtils::get_server_current_url();
 } //end if
 //--
-$player_movie = $y_url.$y_movie;
+$player_movie = (string) $y_url.$y_movie;
 //--
-
-//--
-$tmp_swf_player = 'lib/flv-player/unixworld-flv-player.swf';
-$tmp_swf_vars = '&mov='.rawurlencode($player_movie);
-//--
-$tmp_movie_id = 'unixworld_movie_player_'.sha1($player_movie);
-//--
-$tmp_swf_bg_color = '#000000';
+$tmp_movie_id = 'smartframework_movie_player_'.sha1($player_movie);
 //--
 
 //--
@@ -625,7 +618,7 @@ $tmp_color = '#FFFFFF';
 //--
 
 //--
-if(((string)$y_type == 'ogv') OR ((string)$y_type == 'webm')) { // {{{SYNC-MOVIE-TYPE}}}
+if(((string)$y_type == 'ogv') OR ((string)$y_type == 'webm') OR ((string)$y_type == 'mp4')) { // {{{SYNC-MOVIE-TYPE}}}
 //--
 if((string)$y_type == 'webm') {
 	$tmp_vtype = 'type="video/webm; codecs=&quot;vp8.0, vorbis&quot;"';
@@ -649,33 +642,10 @@ $html = <<<HTML_CODE
 </div>
 <br>
 HTML_CODE;
-//--
 } else {
-//--
-$html = <<<HTML_CODE
-<div align="center" style="padding-top:4px;">
-<div style="z-index:1; background-color:{$tmp_bgcolor}; padding:2px; width:725px;">
-<!-- start FLV Player v.100822 -->
-<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0" width="{$y_width}" height="{$y_height}" id="{$tmp_movie_id}" align="middle">
-<param name="movie" value="{$tmp_swf_player}">
-<param name="flashvars" value="{$tmp_swf_vars}">
-<param name="menu" value="false">
-<param name="quality" value="high">
-<param name="allowFullScreen" value="true">
-<param name="SeamlessTabbing" value="false">
-<param name="bgcolor" value="{$tmp_swf_bg_color}">
-<embed src="{$tmp_swf_player}" flashvars="{$tmp_swf_vars}" menu="false" quality="high" allowFullScreen="true" SeamlessTabbing="false" bgcolor="{$tmp_swf_bg_color}" width="{$y_width}" height="{$y_height}" name="{$tmp_movie_id}" align="middle" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">
-</object>
-<br>
-<h2 style="color:{$tmp_color}">{$player_title}</h2>
-</div>
-<!-- end FLV Player -->
-</div>
-</div>
-<br>
-HTML_CODE;
-//--
+	$html = SmartComponents::operation_notice('Invalid Media Type / Video: '.Smart::escape_html((string)$y_type), '725px');
 } //end if else
+
 
 //--
 return $html ;
@@ -710,7 +680,7 @@ return $html ;
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP GD Extension (w. TrueColor support) ; executables: imageMagick Utility (can replace PHP GD), FFMpeg (for movies) ; classes: Smart, SmartUtils, SmartFileSystem
- * @version 	v.160809
+ * @version 	v.160927
  * @package 	MediaGallery
  *
  */
@@ -1195,7 +1165,7 @@ private function mov_draw_box($y_dir, $y_video_file, $y_type) {
 	//--
 
 	//--
-	if(((string)$y_type == 'ogv') OR ((string)$y_type == 'webm')) { // {{{SYNC-MOVIE-TYPE}}}
+	if(((string)$y_type == 'ogv') OR ((string)$y_type == 'webm') OR ((string)$y_type == 'mp4')) { // {{{SYNC-MOVIE-TYPE}}}
 		$link = $this->url_player_mov.$the_video;
 	} else { // mp4, mov, flv
 		//if((string)self::get_server_current_protocol() == 'https://'){} // needs fix: the Flash player do not work with mixing http/https

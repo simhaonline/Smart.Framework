@@ -1,5 +1,5 @@
 
-### Smart.Framework sample .htaccess for Apache 2.2 / 2.4
+### Smart.Framework .htaccess sample for Apache 2.2 / 2.4
 ### For the most basic version, just uncomment the 7 lines that start with the # as first character.
 
 php_value default_mimetype		text/html
@@ -21,7 +21,7 @@ php_flag zend.multibyte			Off
 
 #<IfModule mod_rewrite.c>
 
-	#v.160731#
+	#v.160927#
 
 	###
 #	RewriteEngine 		On

@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Plugins / Captcha]
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.7.1 r.2016.09.21 / smart.framework.v.2.3
+// v.2.3.7.2 r.2016.09.27 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
@@ -49,7 +49,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP XML ; classes: Smart
- * @version 	v.160205
+ * @version 	v.160927
  * @package 	Components:Captcha
  *
  */
@@ -60,7 +60,7 @@ final class SmartCaptchaFormCheck {
 
 
 //================================================================
-public static function captcha_image($y_form_name, $y_store, $y_mode='hashed', $y_pool='0123456789', $y_noise='200', $y_chars='5', $y_width='170', $y_height='50', $y_format='png', $y_font_file='lib/fonts/liberation-mono-italic.ttf', $y_font_size='24', $y_char_space='20', $y_char_xvary='20', $y_char_yvary='10', $y_char_colors=array(0x111111, 0x333333, 0x778899, 0x666699, 0x003366, 0x669966, 0x006600, 0xFF3300), $y_noise_colors=array(0x888888, 0x999999, 0xAAAAAA, 0xBBBBBB, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE, 0x8080C0)) {
+public static function captcha_image($y_form_name, $y_store, $y_mode='hashed', $y_pool='0123456789', $y_noise='200', $y_chars='5', $y_width='170', $y_height='50', $y_format='png', $y_font_file='lib/core/plugins/fonts/liberation-mono-italic.ttf', $y_font_size='24', $y_char_space='20', $y_char_xvary='20', $y_char_yvary='10', $y_char_colors=array(0x111111, 0x333333, 0x778899, 0x666699, 0x003366, 0x669966, 0x006600, 0xFF3300), $y_noise_colors=array(0x888888, 0x999999, 0xAAAAAA, 0xBBBBBB, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE, 0x8080C0)) {
 	//--
 	$captcha = new SmartCaptchaImageDraw();
 	$captcha->store = (string) $y_store;
@@ -323,7 +323,7 @@ public static function cookiename($y_form_name) {
 final class SmartCaptchaImageDraw {
 
 	// ->
-	// v.160205
+	// v.160927
 
 
 //================================================================
@@ -743,7 +743,7 @@ $captcha->width = 100;
 $captcha->height = 50;
 $captcha->noise = 500;
 $captcha->chars = 5;
-$captcha->charfont = 'lib/fonts/aftershock.gdf';
+$captcha->charfont = 'lib/core/plugins/fonts/adventure.gdf';
 $captcha->charspace = 18;
 $captcha->charxvar = 11;
 $captcha->charyvar = 22;

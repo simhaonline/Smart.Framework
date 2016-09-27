@@ -2,7 +2,7 @@
 // [Smart-Framework]
 // (c) 2006-2016 unix-world.org - all rights reserved
 // this should be loaded from app web root only
-// v.2.3.7.1 r.2016.09.21 / smart.framework.v.2.3
+// v.2.3.7.2 r.2016.09.27 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
