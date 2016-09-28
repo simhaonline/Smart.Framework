@@ -178,15 +178,14 @@ set_exception_handler(function($exception) { // no type for EXCEPTION to be PHP 
 ini_set('ignore_repeated_source', '0'); // do not ignore repeated errors if in different files
 if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) {
 	ini_set('ignore_repeated_errors', '1'); // ignore repeated errors in the same file on the same line
-	ini_set('html_errors', '0'); // display errors in TEXT format
 	ini_set('log_errors_max_len', 2048); // max size of one error to log 2k (in production environments this is costly)
 } else { // dev
 	ini_set('ignore_repeated_errors', '0'); // do not ignore repeated errors
-	ini_set('html_errors', '1'); // display errors in HTML format
 	ini_set('error_prepend_string', '<style type="text/css">* { font-family: verdana,tahoma,arial,sans-serif; font-smooth: always; }</style> &nbsp; <font size="7" color="#4E5A92"><b>Code Execution ERROR <img src="lib/framework/img/sign_error.png"> PHP '.PHP_VERSION.'</b></font><div><hr size="1">');
 	ini_set('error_append_string', '</div><br><div>'.'<small>'.date('Y-m-d H:i:s O').'</small>'.'<hr size="1"></div><span title="Powered by Smart.Framework"><img src="lib/framework/img/powered_by_smart_framework.png"></span><span title="PHP Version: '.PHP_VERSION.'"><img src="lib/framework/img/php_logo_small_trans.png" align="right"></span>');
 	ini_set('log_errors_max_len', 16384); // max size of one error to log 16k
 } //end if else
+ini_set('html_errors', '0'); // display errors in TEXT format
 ini_set('log_errors', '1'); // log always the errors
 ini_set('error_log', (string)SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE); // error log file
 //==
