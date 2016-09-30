@@ -226,7 +226,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160831
+ * @version 	v.160929
  * @package 	Application
  *
  */
@@ -723,6 +723,22 @@ abstract class SmartAbstractAppController {
 			} //end if
 			$this->pageview[(string)$param] .= (string)$value; // append
 		} //end if
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Reset all variables for the current controller into PageView Vars.
+	 *
+	 * @return 	BOOL							:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewResetVars() {
+		//--
+		$this->pageview = array();
 		//--
 		return true;
 		//--
