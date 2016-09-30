@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160827
+ * @version 	v.160930
  * @package 	Exporters
  *
  */
@@ -33,7 +33,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	const version = 'v.1.5.4-r.160827@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
+	private $mkdw_version = 'v.1.5.4-r.160827@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
 
 	//===================================
 
@@ -180,7 +180,7 @@ final class SmartMarkdownToHTML {
 			$info_entities = 'E:1';
 		} //end if else
 		//-- it always add tags ...
-		return $markup = "\n".'<!--  HTML/Markdown # ( '.Smart::escape_html($info_linebreaks.' '.$info_markup.' '.$info_urls.' '.$info_entities.' T:'.date('ymdHi')).' )  -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!--  # HTML/Markdown # '.Smart::escape_html((string)self::version).' #  -->'."\n"; // if parsed and contain HTML Tags, add div and comments
+		return $markup = "\n".'<!--  HTML/Markdown # ( '.Smart::escape_html($info_linebreaks.' '.$info_markup.' '.$info_urls.' '.$info_entities.' T:'.date('ymdHi')).' )  -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!--  # HTML/Markdown # '.Smart::escape_html((string)$this->mkdw_version).' #  -->'."\n"; // if parsed and contain HTML Tags, add div and comments
 		//--
 	} //END FUNCTION
 

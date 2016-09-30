@@ -13,6 +13,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //--
 // #PLUGINS# :: they can be loaded always (require) or as dependency injection (require_once)
 //--
+require_once('lib/core/plugins/lib_idn_punycode.php'); 		// idn punnycode converter
+//--
 require_once('lib/core/plugins/lib_mail_send.php');			// mail send client (sendmail, smtp)
 require_once('lib/core/plugins/lib_mail_get.php'); 			// mail get client (pop3, imap4)
 require_once('lib/core/plugins/lib_mail_decode.php'); 		// mail message decoder (mime)

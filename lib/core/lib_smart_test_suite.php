@@ -525,6 +525,11 @@ public static function test_strings() {
 	//--
 	$unicode_text = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド';
 	//--
+	$idn_domain_unicode = 'jösefsson.tßst123.org';
+	$idn_domain_iso = 'xn--jsefsson-n4a.xn--tst123-bta.org';
+	$idn_email_unicode = 'räksmörgås@jösefsson.tßst123.org';
+	$idn_email_iso = 'xn--rksmrgs@jsefsson-vnbx43ag.xn--tst123-bta.org';
+	//--
 
 	//--
 	$err = '';
@@ -770,6 +775,38 @@ public static function test_strings() {
 		$tests[] = $the_test;
 		if(SmartUtils::cache_variable_unarchive(SmartUtils::cache_variable_archive($the_random_unicode_text)) !== (string)$the_random_unicode_text) {
 			$err = 'ERROR: '.$the_test.' FAILED ...'.' ['.$the_random_unicode_text.']';
+		} //end if
+	} //end if
+	//--
+
+	//--
+	if((string)$err == '') {
+		$the_test = 'IDN: Domain Punycode Encode UTF-8 to ISO';
+		$tests[] = $the_test;
+		if((string)(new SmartPunycode())->encode($idn_domain_unicode) != (string)$idn_domain_iso) {
+			$err = 'ERROR: '.$the_test.' FAILED ...'.' ['.$idn_domain_unicode.' -> '.$idn_domain_iso.']';
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$the_test = 'IDN: Domain Punycode Decode ISO to UTF-8';
+		$tests[] = $the_test;
+		if((string)(new SmartPunycode())->decode($idn_domain_iso) != (string)$idn_domain_unicode) {
+			$err = 'ERROR: '.$the_test.' FAILED ...'.' ['.$idn_domain_iso.' -> '.$idn_domain_unicode.']';
+		} //end if
+	} //end if
+	//--
+	if((string)$err == '') {
+		$the_test = 'IDN: Email Punycode Encode UTF-8 to ISO';
+		$tests[] = $the_test;
+		if((string)(new SmartPunycode())->encode($idn_email_unicode) != (string)$idn_email_iso) {
+			$err = 'ERROR: '.$the_test.' FAILED ...'.' ['.$idn_email_unicode.' -> '.$idn_email_iso.']';
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$the_test = 'IDN: Email Punycode Decode ISO to UTF-8';
+		$tests[] = $the_test;
+		if((string)(new SmartPunycode())->decode($idn_email_iso) != (string)$idn_email_unicode) {
+			$err = 'ERROR: '.$the_test.' FAILED ...'.' ['.$idn_email_iso.' -> '.$idn_email_unicode.']';
 		} //end if
 	} //end if
 	//--

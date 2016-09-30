@@ -29,6 +29,10 @@ function autoload__SmartFrameworkPlugins($classname) {
 	} //end if
 	//--
 	switch((string)$classname) {
+		//-- idn
+		case 'SmartPunycode':
+			require_once('lib/core/plugins/lib_idn_punycode.php'); 		// idn punnycode converter
+			break;
 		//-- mail
 		case 'SmartMailerSend':
 		case 'SmartMailerSmtpClient':
