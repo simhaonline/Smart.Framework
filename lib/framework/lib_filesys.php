@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.160512
+ * @version 	v.161001
  * @package 	Filesystem
  *
  */
@@ -124,6 +124,16 @@ public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='ye
  *
  */
 public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path='yes') {
+	//--
+	if((string)trim((string)$y_path) == '') {
+		//--
+		Smart::raise_error(
+			'SmartFramework // FileSystemUtils // Check Valid Path // EMPTY PATH IS DISALLOWED',
+			'FileSysUtils: EMPTY PATH IS DISALLOWED !' // msg to display
+		);
+		die(''); // just in case
+		//--
+	} //end if
 	//--
 	if(self::test_valid_path($y_path) !== 1) {
 		//--
@@ -235,20 +245,22 @@ private static function test_absolute_path($y_path) {
  */
 public static function add_dir_last_slash($y_path) {
 	//--
-	$y_path = (string) Smart::fix_path_separator(trim((string)$y_path));
+	$y_path = (string) trim((string)Smart::fix_path_separator(trim((string)$y_path)));
 	//--
-	if((string)$y_path == '') {
-		Smart::log_warning('SmartFramework // FileSystemUtils // Add Last Dir Slash: Empty Path, Returned TMP/INVALID/');
-		return 'tmp/invalid/'; // Security Fix: avoid make the path as root: / (if the path is empty, adding a trailing slash is a huge security risk)
+	if(((string)$y_path == '') OR ((string)$y_path == '.') OR ((string)$y_path == './')) {
+		return './'; // this is a mandatory security fix for the cases when used with dirname() which may return empty or just .
 	} //end if
-	if(strpos($y_path, '\\') !== false) {
-		Smart::log_warning('SmartFramework // FileSystemUtils // Add Last Dir Slash: Invalid Path, containing: \\, Returned TMP/INVALID/');
+	//--
+	if(((string)$y_path == '/') OR ((string)trim((string)str_replace(['/', '.'], ['', ''], (string)$y_path)) == '') OR (strpos($y_path, '\\') !== false)) {
+		Smart::log_warning('SmartFramework // FileSystemUtils // Add Last Dir Slash: Invalid Path: ['.$y_path.'] ; Returned TMP/INVALID/');
 		return 'tmp/invalid/'; // Security Fix: avoid make the path as root: / (if the path is empty, adding a trailing slash is a huge security risk)
 	} //end if
 	//--
 	if(substr($y_path, -1, 1) != '/') {
 		$y_path = $y_path.'/';
 	} //end if
+	//--
+	self::raise_error_if_unsafe_path($y_path);
 	//--
 	return (string) $y_path;
 	//--
@@ -945,7 +957,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160512
+ * @version 	v.161001
  * @package 	Filesystem
  *
  */

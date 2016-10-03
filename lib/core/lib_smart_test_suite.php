@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.160921
+	// v.161001
 
 
 //==================================================================
@@ -949,9 +949,6 @@ HTML;
 //==================================================================
 
 
-
-
-
 //==================================================================
 private static function pack_test_archive($y_exclusions_arr='') {
 	//--
@@ -983,7 +980,6 @@ private static function pack_test_archive($y_exclusions_arr='') {
 	//--
 } //END FUNCTION
 //==================================================================
-
 
 
 //==================================================================
@@ -1527,9 +1523,9 @@ public static function test_fs() {
 
 	//--
 	if((string)DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
-		$tests[] = '##### FS OPERATIONS / TESTS - ALL: #####';
+		$tests[] = '##### FileSystem OPERATIONS / TESTS - ALL: #####';
 	} else {
-		$tests[] = '##### FS OPERATIONS / TESTS *** PARTIAL SUPPORT ONLY ***: #####';
+		$tests[] = '##### FileSystem OPERATIONS / TESTS *** PARTIAL SUPPORT ONLY (BY PLATFORM) ***: #####';
 	} //end if else
 	//--
 
@@ -1563,9 +1559,9 @@ public static function test_fs() {
 	//--
 
 	//--
-	$tests[] = 'PREV-FOLDER: '.$get_folder;
-	$tests[] = 'FOLDER: '.$the_folder;
-	$tests[] = 'FILE: '.$the_file;
+	$tests[] = 'INITIAL-FOLDER: '.$get_folder;
+	$tests[] = 'NEW-FOLDER: '.$the_folder;
+	$tests[] = 'NEW-FILE: '.$the_file;
 	//--
 
 	//--
@@ -1627,6 +1623,43 @@ public static function test_fs() {
 			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 		} //end if
 	} //end if
+	//--
+
+	//--
+	if((string)$err == '') {
+		$parent_folder = SmartFileSysUtils::add_dir_last_slash('');
+		$the_test = 'Check Add Dir Last (trailing) Slash: Empty Folder Name';
+		$tests[] = $the_test;
+		if((string)$parent_folder != './') {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$parent_folder = SmartFileSysUtils::add_dir_last_slash('.');
+		$the_test = 'Check Add Dir Last (trailing) Slash: Dot Folder Name: '.$parent_folder;
+		$tests[] = $the_test;
+		if((string)$parent_folder != './') {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$parent_folder = SmartFileSysUtils::add_dir_last_slash('./');
+		$the_test = 'Check Add Dir Last (trailing) Slash: DotSlash Folder Name: '.$parent_folder;
+		$tests[] = $the_test;
+		if((string)$parent_folder != './') {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	if((string)$err == '') {
+		$parent_folder = SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($the_base_folder));
+		$the_test = 'Check Parent Dir Name with Add Dir Last (trailing) Slash: '.$parent_folder.' # from: '.$the_base_folder;
+		$tests[] = $the_test;
+		if((string)$parent_folder != 'tmp/') {
+			$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+		} //end if
+	} //end if
+	//--
+
 	//--
 	if((string)$err == '') {
 		if(is_dir($get_folder)) {
@@ -2153,7 +2186,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.160921
+	// v.161001
 
 private $db;
 

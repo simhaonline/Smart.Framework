@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.160921
+ * @version 	v.161001
  * @package 	Base
  *
  */
@@ -1650,11 +1650,8 @@ public static function get_server_current_path() {
 		//--
 		$current_path = '/'; // this is default
 		if((string)self::get_server_current_full_script() != '') {
-			$current_path = Smart::dir_name(self::get_server_current_full_script());
-			if((string)$current_path == '') {
-				$current_path = '/';
-			} //end if
-			if((string)$current_path == '//') {
+			$current_path = Smart::dir_name(self::get_server_current_full_script()); // may return '' or .
+			if(((string)$current_path == '') OR ((string)$current_path == '.') OR ((string)$current_path == '//')) {
 				$current_path = '/';
 			} //end if
 			if(substr($current_path, 0, 1) != '/') {

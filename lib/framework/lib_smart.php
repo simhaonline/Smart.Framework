@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.160926
+ * @version     v.161001
  * @package     Base
  *
  */
@@ -157,7 +157,7 @@ public static function real_path($y_path) {
  *
  * @param 	STRING 	$y_path 			:: The path name from to extract dirname()
  *
- * @return 	STRING						:: The dirname
+ * @return 	STRING						:: The dirname or . or empty string
  */
 public static function dir_name($y_path) {
 	//--
