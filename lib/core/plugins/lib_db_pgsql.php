@@ -68,7 +68,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160915
+ * @version 	v.161003
  * @package 	Database:PostgreSQL
  *
  */
@@ -1375,18 +1375,18 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 
 //======================================================
 /**
- * Create Escaped Write SQL Statements from Data - to be used with PgSQL for: INSERT ; INSERT-SUBSELECT ; UPDATE ; IN-SELECT
+ * Create Escaped Write SQL Statements from Data - to be used with PgSQL for: INSERT ; INSERT-SUBSELECT ; UPDATE ; IN-SELECT ; DATA-ARRAY
  * To be used with: write_data() or write_igdata() to build an INSERT / INSERT (SELECT) / UPDATE / SELECT IN query from an associative array
  *
  * @param ARRAY-associative $arrdata			:: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
- * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select'
+ * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select', 'data-array'
  * @param RESOURCE $y_connection 				:: the connection to pgsql server
  * @return STRING								:: The SQL partial Statement
  *
  */
 public static function prepare_write_statement($arrdata, $mode, $y_connection='DEFAULT') {
 
-	// version: 160527
+	// version: 161003
 
 	//==
 	$y_connection = self::check_connection($y_connection, 'PREPARE-WRITE-STATEMENT');
@@ -1411,6 +1411,9 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 		case 'in-select':
 			$mode = 'in-select';
 			break;
+		case 'data-array':
+			$mode = 'data-array';
+			break;
 		default:
 			self::error($y_connection, 'PREPARE-WRITE-STATEMENT', 'Invalid Mode', '', $mode);
 			return '';
@@ -1432,8 +1435,8 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 		foreach($arrdata as $key => $val) {
 			//-- check for SQL INJECTION
 			$key = trim(str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
-			//-- except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
-			if((string)$mode == 'in-select') { // in-select
+			//-- except [ in-select | 'data-array' ], do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
+			if(((string)$mode == 'in-select') OR ((string)$mode == 'data-array')) { // in-select, data-array
 				$key = (int) $key; // force int keys
 			} else {
 				if(!self::validate_table_and_fields_names($key)) { // no unicode modifier
@@ -1466,7 +1469,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 				//--
 			} //end if else
 			//--
-			if((string)$mode == 'in-select') { // in-select
+			if(((string)$mode == 'in-select') OR ((string)$mode == 'data-array')) { // in-select, data-array
 				$tmp_query_w .= $val_x.',';
 			} elseif((string)$mode == 'update') { // update
 				$tmp_query_x .= self::escape_identifier($key, $y_connection).'='.$val_x.',';
@@ -1486,7 +1489,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 	//--
 
 	//-- eliminate last comma
-	if((string)$mode == 'in-select') { // in-select
+	if(((string)$mode == 'in-select') OR ((string)$mode == 'data-array')) { // in-select, data-array
 		$tmp_query_w = rtrim($tmp_query_w, ' ,');
 	} elseif((string)$mode == 'update') { // update
 		$tmp_query_x = rtrim($tmp_query_x, ' ,');
@@ -1499,6 +1502,8 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 	//--
 	if((string)$mode == 'in-select') { // in-select
 		$tmp_query = ' IN ('.$tmp_query_w.') ';
+	} elseif((string)$mode == 'data-array') { // data-array
+		$tmp_query = ' ARRAY ['.$tmp_query_w.'] ';
 	} elseif((string)$mode == 'update') { // update
 		$tmp_query = ' SET '.$tmp_query_x.' ';
 	} elseif((string)$mode == 'insert-subselect') { // (upsert) insert-subselect
@@ -2180,7 +2185,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.160915
+ * @version 	v.161003
  * @package 	Database:PostgreSQL
  *
  */

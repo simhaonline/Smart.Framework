@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.161001
+	// v.161003
 
 
 //==================================================================
@@ -1198,6 +1198,9 @@ public static function test_pgsqlserver() {
 		SmartPgsqlDb::write_data('BEGIN');
 		//--
 		$tests[] = 'Create a Temporary Table for this Test, after transaction to test DDL';
+		if(SmartPgsqlDb::check_if_table_exists('_test_unit_db_server_tests', 'public') == 1) {
+			SmartPgsqlDb::write_data('DROP TABLE "public"."_test_unit_db_server_tests"');
+		} //end if
 		SmartPgsqlDb::write_data('CREATE TABLE "public"."_test_unit_db_server_tests" ( "variable" character varying(100) NOT NULL, "value" character varying(16384) DEFAULT \'\'::character varying, "comments" text DEFAULT \'\'::text NOT NULL, CONSTRAINT _test_unit_db_server_tests__check__variable CHECK ((char_length((variable)::text) >= 1)), CONSTRAINT _test_unit_db_server_tests__uniq__variable UNIQUE(variable) )');
 		//--
 		$variable = '"'.'Ș'."'".substr(SmartPgsqlDb::new_safe_id('uid10seq', 'variable', '_test_unit_db_server_tests', 'public'), 3, 7);
@@ -1276,13 +1279,24 @@ public static function test_pgsqlserver() {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Read [ IN (ARRAY) ]';
-			$quer_str = 'SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" '.SmartPgsqlDb::prepare_write_statement(array('a', 'b', '3', $variable, '@?%'), 'in-select').') LIMIT 100 OFFSET 0';
+			$tests[] = 'Read [ IN (SELECT) ]';
+			$quer_str = 'SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" '.SmartPgsqlDb::prepare_write_statement(array('\'a', '"b"', '3^$', $variable, '@?%'), 'in-select').') LIMIT 100 OFFSET 0';
 			$data = SmartPgsqlDb::read_adata($quer_str);
 			if(Smart::array_size($data) !== 1) {
-				$err = 'Read IN Test Failed, should return 1 row but returned: '.Smart::array_size($data).' rows ...';
+				$err = 'Read IN SELECT Test Failed, should return 1 row but returned: '.Smart::array_size($data).' rows ...';
 			} //end if
 		} //end if
+		//--
+
+		if((string)$err == '') {
+			$tests[] = 'Read [ (DATA) ARRAY[] ]';
+			$quer_str = 'SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" = ANY('.SmartPgsqlDb::prepare_write_statement(array('\'a', '"b"', '3^$', $variable, '@?%'), 'data-array').')) LIMIT 100 OFFSET 0';
+			$data = SmartPgsqlDb::read_adata($quer_str);
+			if(Smart::array_size($data) !== 1) {
+				$err = 'Read (DATA) ARRAY[] Test Failed, should return 1 row but returned: '.Smart::array_size($data).' rows ...';
+			} //end if
+		} //end if
+
 		//--
 		$quer_str = 'SELECT "comments" FROM "public"."_test_unit_db_server_tests" WHERE ("variable" = $1) LIMIT 1 OFFSET 0';
 		//--
@@ -1351,7 +1365,7 @@ public static function test_pgsqlserver() {
 			$data = $pgsql2->check_if_table_exists('_test_unit_db_server_tests', 'public');
 			$pgsql2->prepare_param_query('SELECT ?', array('\'1"'));
 			unset($pgsql2);
-			if($data === 1) {
+			if($data == 1) {
 				$err = 'Table Drop FAILED ... Table still exists ...';
 			} //end if
 		} //end if
@@ -2186,7 +2200,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.161001
+	// v.161003
 
 private $db;
 
