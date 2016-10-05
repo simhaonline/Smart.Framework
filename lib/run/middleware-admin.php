@@ -29,6 +29,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.2');
  *
  * @access 		private
  * @internal
+ * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @version		160927
  *

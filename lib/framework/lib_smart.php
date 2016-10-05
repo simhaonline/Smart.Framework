@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.161001
+ * @version     v.161005
  * @package     Base
  *
  */
@@ -662,7 +662,7 @@ public static function unseryalize($y_json) {
 public static function format_number_int($y_number, $y_signed='') {
 	//--
 	if((string)$y_signed == '+') { // unsigned integer
-		if($y_number < 0) {
+		if($y_number < 0) { // {{{SYNC-SMART-INT+}}}
 			$y_number = 0; // it must be zero if negative for the all logic in this framework
 		} //end if
 	} //end if
@@ -687,7 +687,7 @@ public static function format_number_int($y_number, $y_signed='') {
  */
 public static function format_number_dec($y_number, $y_decimals=0, $y_sep_decimals='.', $y_sep_thousands='') {
 	//-- by default number_format() returns string, so enforce string as output to keep decimals
-	return (string) number_format(((float)$y_number), self::format_number_int($y_decimals,'+'), (string)$y_sep_decimals, (string)$y_sep_thousands);
+	return (string) number_format(((float)$y_number), self::format_number_int($y_decimals,'+'), (string)$y_sep_decimals, (string)$y_sep_thousands); // {{{SYNC-SMART-DECIMAL}}}
 	//--
 } //END FUNCTION
 //================================================================

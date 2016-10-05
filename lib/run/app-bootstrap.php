@@ -139,6 +139,7 @@ define('SMART_SOFTWARE_APP_NAME', 'smart.framework.app'); // software version fo
  *
  * @access 		private
  * @internal
+ * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  */
 final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
@@ -213,7 +214,9 @@ final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
 
 
 /**
- * Class: SmartAppInfo - provides some methods for integration between the Smart.Framework App/Modules.
+ * Class: SmartAppInfo
+ *
+ * Provides some methods for integration between the Smart.Framework App/Modules.
  *
  * <code>
  * // Usage example:

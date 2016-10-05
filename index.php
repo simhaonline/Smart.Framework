@@ -30,6 +30,7 @@ setlocale(LC_ALL, 'C'); // DON'T CHANGE THIS !!! THIS IS COMPATIBLE WILL ALL UTF
 require('lib/smart-error-handler.php'); 									// Smart Error Handler
 require('lib/smart-runtime.php'); 											// Smart Runtime
 require('etc/config-index.php'); 											// Index Config
+require('lib/run/middleware.php'); 											// Service Handler Definition
 require('lib/run/middleware-index.php'); 									// Index Service Handler
 //--
 //==

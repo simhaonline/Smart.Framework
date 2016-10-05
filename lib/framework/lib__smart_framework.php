@@ -55,7 +55,7 @@ require('lib/framework/lib_translate.php');		// smart (text) translate
  * @access 		private
  * @internal
  *
- * @version 	v.160213
+ * @version 	v.161005
  *
  */
 interface SmartInterfaceAppBootstrap {
@@ -104,7 +104,7 @@ interface SmartInterfaceAppBootstrap {
  * @access 		private
  * @internal
  *
- * @version 	v.160213
+ * @version 	v.161005
  *
  */
 interface SmartInterfaceAppInfo {
@@ -226,7 +226,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160929
+ * @version 	v.161005
  * @package 	Application
  *
  */
@@ -478,82 +478,15 @@ abstract class SmartAbstractAppController {
 	/**
 	 * Get a Request Variable (GET/POST) in a controller
 	 *
-	 * @param 	STRING 		$param			:: The name of the GET or POST variable (if the variable is set in both GET and POST, the GPC as set in PHP.INI sequence will overwrite the GET with POST, thus the POST value will be get).
+	 * @param 	STRING 		$key			:: The name (key) of the GET or POST variable (if the variable is set in both GET and POST, the GPC as set in PHP.INI sequence will overwrite the GET with POST, thus the POST value will be get).
 	 * @param	MIXED		$defval			:: The default value (if a type is set must be the same type) of that variable in the case was not set in the Request (GET/POST). By default it is set to null.
-	 * @param	ENUM		$type			:: The type of the variable ; Default is '' (no enforcing). This can be used to enforce a type for the variable as: ['enum', 'list', 'of', 'allowed', 'values'], 'array', 'string', 'boolean', 'integer', 'integer+', 'decimal1', 'decimal2', 'decimal3', 'decimal4', 'numeric'.
+	 * @param	ENUM		$type			:: The type of the variable ; Default is '' (no enforcing). This can be used to enforce a type for the variable as: ['enum', 'list', 'of', 'allowed', 'values'], 'array', 'string', 'boolean', 'integer', 'integer+', 'integer-', 'decimal1', 'decimal2', 'decimal3', 'decimal4', 'numeric'.
 	 *
 	 * @return 	MIXED						:: The value of the choosen Request (GET/POST) variable
 	 */
-	final public function RequestVarGet($param, $defval=null, $type='') {
+	final public function RequestVarGet($key, $defval=null, $type='') { // {{{SYNC-REQUEST-DEF-PARAMS}}}
 		//--
-		if(SmartFrameworkRegistry::issetRequestVar((string)$param) === true) {
-			$val = SmartFrameworkRegistry::getRequestVar((string)$param); // use the value from request :: mixed
-		} else {
-			$val = $defval; // init with the default value :: mixed
-		} //end if
-		//--
-		if(is_array($type)) { // # if $type is array, it must contain an array with all allowed values (enum list) #
-			//--
-			if(((string)$val != '') AND (in_array((string)$val, (array)$type))) {
-				$val = (string) $val; // force string
-			} elseif(((string)$defval != '') AND (in_array((string)$defval, (array)$type))) {
-				$val = (string) $defval; // force string from $defval
-			} else {
-				$val = ''; // set as empty string
-			} //end if else
-			//--
-		} else { // # else $type must be a string with one of the following cases #
-			//--
-			switch(strtolower((string)$type)) {
-				case 'array':
-					if(!is_array($val)) {
-						$val = array(); // set as empty array
-					} else {
-						$val = (array) $val; // force array
-					} //end if else
-					break;
-				case 'string':
-					$val = (string) $val;
-					break;
-				case 'boolean':
-					$val = (bool) $val;
-					break;
-				case 'integer':
-					$val = Smart::format_number_int($val);
-					break;
-				case 'integer+':
-					$val = Smart::format_number_int($val, '+');
-					break;
-				case 'decimal1':
-					$val = Smart::format_number_dec($val, 1);
-					break;
-				case 'decimal2':
-					$val = Smart::format_number_dec($val, 2);
-					break;
-				case 'decimal3':
-					$val = Smart::format_number_dec($val, 3);
-					break;
-				case 'decimal4':
-					$val = Smart::format_number_dec($val, 4);
-					break;
-				case 'numeric':
-					$val = 0 + (float) $val;
-					break;
-				case 'mixed': // mixed variable types, can vary by context
-				case 'raw': // raw (leave as is ...)
-				case '': // no explicit format (take as raw / mixed)
-					// return as is, but dissalow objects here ... (in this case extra validations have to be done explicit in the controller)
-					if(is_object($val)) {
-						$val = '';
-					} //end if
-					break;
-				default:
-					Smart::log_warning('Controller::RequestVarGet() // Invalid Request Variable Type: '.$type);
-			} //end switch
-			//--
-		} //end if else
-		//--
-		return $val; // mixed
+		return SmartFrameworkRegistry::getRequestVar($key, $defval, $type); // mixed
 		//--
 	} //END FUNCTION
 	//=====
