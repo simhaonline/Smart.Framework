@@ -1,15 +1,13 @@
 <?php
 // [APP - Authenticate / Admin]
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.7.2 r.2016.09.27 / smart.framework.v.2.3
+// v.2.3.7.3 r.2016.10.05 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
 	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
-
-// v.160219 / Sample Auth based on Basic HTTP Authentication (for Admin Area, overall)
 
 //======================================================
 // App Authenticate Middleware / Admin Area (admin.php)
@@ -32,6 +30,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // This sample can be extended to read the authentication from a database or to use session in combination with SmartAuth.
 // The best way to integrate with framework's authentication is using the SmartAuth:: object.
 //-------------------------------------------
+// v.160219 / Sample Auth based on Basic HTTP Authentication (for Admin Area, overall)
 if(((string)$_SERVER['PHP_AUTH_USER'] == 'admin') AND ((string)$_SERVER['PHP_AUTH_PW'] == 'pass')) {
 	//-- OK, loggen in
 	SmartAuth::set_login_data(

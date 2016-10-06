@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Middleware / Index
 // (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.7.2 r.2016.09.27 / smart.framework.v.2.3
+// v.2.3.7.3 r.2016.10.05 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -15,7 +15,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.7.2');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.7.3');
 
 
 //==================================================================================
@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.7.2');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		160927
+ * @version		161005
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
