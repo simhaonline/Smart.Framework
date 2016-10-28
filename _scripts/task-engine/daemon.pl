@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Daemon]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160902
+# r.161028
 
 # Main Runtime - Daemon (Press CTRL+C to break/stop) !
 
@@ -74,14 +74,15 @@ my $dir = getcwd;
 my $the_master_pid = $dir."/master-semaphore.pid";
 
 # Catch CTRL+C
-$SIG{INT} = sub { exit; };
+my $shutdown = "";
+$SIG{INT} = sub { $shutdown = "stop"; exit; };
 
 # Info
 print colored($clr_info, "Smart.Task.Engine // DAEMON: Starting daemon.pl wrapper for master.pl with interval [".$sleep_time." seconds]");
 print "\n";
 
 # Main Loop
-while(1) {
+while($shutdown eq "") {
 	# if master.pid semaphore exists, wait to exit
 	if(-e $the_master_pid) {
 		print colored($clr_error, "DAEMON.ERR: the daemon.pl process is spawning the master.pl too fast, try to adjust the sleep time in daemon.pl ... skiping the run of master.pl until next cycle ...");

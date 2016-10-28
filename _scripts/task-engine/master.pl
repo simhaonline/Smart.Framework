@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Master]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160902
+# r.161028
 
 # Fetch the Batch URL (will spawn the number of childs in $max_threads, fetching the Distribution URL: $url_get)
 # This can be used in the run.pl (daemon) or can be run via a cron job each minute
@@ -119,7 +119,8 @@ if(-e $the_master_pid) {
 }
 
 # Catch CTRL+C
-$SIG{INT} = sub { system("rm ".$the_master_pid); exit; };
+my $shutdown = "";
+$SIG{INT} = sub { print colored($clr_notice, "MASTER.INF: STOP SIGNAL received ... please wait ..."); print "\n"; $shutdown = "stop"; };
 
 # Create Semaphores Directory in the current directory of this script
 system("mkdir -p ".$dir."/child-semaphores");
@@ -130,6 +131,24 @@ if(-d $dir."/child-semaphores") {
 	print "\n";
 	exit;
 }
+
+# Cleanup Old Semaphores
+my $expmis = 10;
+print colored($clr_notice, "MASTER.INF: Cleaning up expired child pids, older than ${expmis} minutes ...");
+print "\n";
+my $cleanup = `find ./child-semaphores/ -type f -name "*.pid" -mmin +${expmis} -exec ls {} \\;`;
+foreach my $cline (split /[\r\n]+/, $cleanup) {
+	if($cline ne "") {
+		if(-e $cline) {
+			print "MASTER.INF: Removing expired child PID: ".$cline;
+			print "\n";
+			system("rm ".$cline); # remove the master semaphore if exists
+		}
+	}
+}
+print colored($clr_notice, "MASTER.INF: Initializing Data Pool ...");
+print "\n";
+sleep(5);
 
 # Build the URL Request to get the Task List Batch
 $url_get = str_single_quotes_escapeshellarg($url_get);
@@ -228,7 +247,7 @@ if(-e $the_master_pid) {
 if($arr_len > 2) {
 	my $running_childs = 0;
 	my $i = 0;
-	while($i < $arr_len) {
+	while(($i < $arr_len) && ($shutdown eq "")) { # check also for the shutdown handler
 		# trim each line
 		$arr_lines[$i] =~ s/^\s+|\s+$//g;
 		# skip first line
@@ -321,6 +340,9 @@ sub str_begins_with {
 }
 
 ######################################## EXIT
+
+print colored($clr_notice, "[ MASTER.INF: SCRIPT TERMINATED ]");
+print "\n";
 
 exit 0;
 

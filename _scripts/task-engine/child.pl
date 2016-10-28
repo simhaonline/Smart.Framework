@@ -2,7 +2,7 @@
 
 # [SmartFramework / Task Engine / Child]
 # (c) 2006-2016 unix-world.org - all rights reserved
-# r.160902
+# r.161028
 
 ######################################## PERL MODULES
 
@@ -92,6 +92,24 @@ if(-e $the_child_pid) {
 	print "\n";
 	exit;
 }
+END {
+	# remove the semaphore if exists
+	if(-e $the_child_pid) {
+		system("rm ".$the_child_pid);
+		if(-e $the_child_pid) {
+			print colored($clr_error, "CHILD.ERR: FAILED to Unlock the Semaphore ... [ID=".$the_task_id."]");
+			print "\n";
+		} else {
+			if($task_verbose ne "no") {
+				print colored($clr_ok, "CHILD.INF: Task DONE [ID=".$the_task_id."]");
+				print "\n";
+			}
+		}
+	} else {
+		print colored($clr_error, "CHILD.ERR: FAILED to Find the Semaphore for Unlocking ... [ID=".$the_task_id."]");
+		print "\n";
+	}
+}
 
 # Run Task script (if empty run a test only)
 if($task_script eq "") {
@@ -106,23 +124,6 @@ if($task_script eq "") {
 	}
 	system($task_script." ".$the_task_id); # RUN REAL TASK
 	Time::HiRes::sleep(0.5);
-}
-
-# remove the semaphore if exists
-if(-e $the_child_pid) {
-	system("rm ".$the_child_pid);
-	if(-e $the_child_pid) {
-		print colored($clr_error, "CHILD.ERR: FAILED to Unlock the Semaphore ... [ID=".$the_task_id."]");
-		print "\n";
-	} else {
-		if($task_verbose ne "no") {
-			print colored($clr_ok, "CHILD.INF: Task DONE [ID=".$the_task_id."]");
-			print "\n";
-		}
-	}
-} else {
-	print colored($clr_error, "CHILD.ERR: FAILED to Find the Semaphore for Unlocking ... [ID=".$the_task_id."]");
-	print "\n";
 }
 
 ######################################## EXIT
