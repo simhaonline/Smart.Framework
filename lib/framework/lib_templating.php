@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.160921
+ * @version 	v.161128
  * @package 	Templating:Engines
  *
  */
@@ -270,7 +270,9 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 	//-- process markers until the last one detected
 	foreach((array)$y_arr_vars as $key => $val) {
 		if(self::have_marker((string)$mtemplate) === true) {
-			$mtemplate = (string) self::replace_marker((string)$mtemplate, (string)$key, (string)$val);
+			if(!is_array($val)) { // fix
+				$mtemplate = (string) self::replace_marker((string)$mtemplate, (string)$key, (string)$val);
+			} //end if
 		} else {
 			break;
 		} //end if else
@@ -287,6 +289,19 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 			'title' => '[TPL-Parsing:Render.DONE] :: Markers-Templating / Processing ; Time = '.$bench.' sec.',
 			'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
 		]);
+	} //end if
+	//--
+	if(SmartValidator::validate_html_or_xml_code((string)$mtemplate) === true) {
+		$arr_spaces_cleanup = array( // {{{SYNC-CLEAN-MULTISPACES-HTML}}}
+			//shorten multiple tabs and spaces
+			'/([\t ])+/si' => ' ',
+			//remove leading and trailing spaces and tabs
+			'/^([\t ])+/mi' => '',
+			'/([\t ])+$/mi' => '',
+			//remove empty lines (sequence of line-end and white-space characters)
+			'/[\r\n]+([\t ]?[\r\n]+)+/si' => "\n"
+		);
+		$mtemplate = (string) preg_replace((array)array_keys((array)$arr_spaces_cleanup), (array)array_values((array)$arr_spaces_cleanup), (string)$mtemplate);
 	} //end if
 	//--
 	return (string) $mtemplate;

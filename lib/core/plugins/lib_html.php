@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160902
+ * @version 	v.161128
  * @package 	DATA:HTML
  *
  */
@@ -220,7 +220,7 @@ private function standardize_html() {
 	//--
 
 	//-- standardize spaces and new lines
-	$arr_spaces_cleanup = array(
+	$arr_spaces_cleanup = array( // {{{SYNC-CLEAN-MULTISPACES-HTML}}}
 		//shorten multiple tabs and spaces
 		'/([\t ])+/si' => ' ',
 		//remove leading and trailing spaces and tabs
