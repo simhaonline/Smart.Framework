@@ -220,7 +220,7 @@ private function standardize_html() {
 	//--
 
 	//-- standardize spaces and new lines
-	$arr_spaces_cleanup = array( // {{{SYNC-CLEAN-MULTISPACES-HTML}}}
+	$arr_spaces_cleanup = array(
 		//shorten multiple tabs and spaces
 		'/([\t ])+/si' => ' ',
 		//remove leading and trailing spaces and tabs

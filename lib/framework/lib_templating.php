@@ -291,18 +291,15 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 		]);
 	} //end if
 	//--
+	/* Don't use this, it may affect <pre></pre> code ...
 	if(SmartValidator::validate_html_or_xml_code((string)$mtemplate) === true) {
-		$arr_spaces_cleanup = array( // {{{SYNC-CLEAN-MULTISPACES-HTML}}}
-			//shorten multiple tabs and spaces
-			'/([\t ])+/si' => ' ',
-			//remove leading and trailing spaces and tabs
-			'/^([\t ])+/mi' => '',
-			'/([\t ])+$/mi' => '',
-			//remove empty lines (sequence of line-end and white-space characters)
-			'/[\r\n]+([\t ]?[\r\n]+)+/si' => "\n"
+		$mtemplate = (string) preg_replace( // fix: remove multiple empty lines from HTML / XML
+			'/^\s*[\r\n]/m',
+			'',
+			(string) $mtemplate
 		);
-		$mtemplate = (string) preg_replace((array)array_keys((array)$arr_spaces_cleanup), (array)array_values((array)$arr_spaces_cleanup), (string)$mtemplate);
 	} //end if
+	*/
 	//--
 	return (string) $mtemplate;
 	//--
