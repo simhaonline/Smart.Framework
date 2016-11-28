@@ -272,6 +272,8 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 		if(self::have_marker((string)$mtemplate) === true) {
 			if(!is_array($val)) { // fix
 				$mtemplate = (string) self::replace_marker((string)$mtemplate, (string)$key, (string)$val);
+			} else {
+				Smart::log_warning('Undefined Marker value (array) detected for key: '.$key.' in Template:'."\n".self::log_template($mtemplate));
 			} //end if
 		} else {
 			break;
