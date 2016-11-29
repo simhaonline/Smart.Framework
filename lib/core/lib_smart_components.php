@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.161128
+ * @version 	v.161129
  * @package 	Components:Framework
  *
  */
@@ -1663,17 +1663,17 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 	//--
 	$styles = '';
 	//--
-	if(((string)$configs['nav']['pager'] == 'arrows') OR ((string)$configs['nav']['pager'] == 'custom-arrows')) {
-		if((string)$configs['nav']['pager'] == 'custom-arrows') { // custom-arrows
-			$tpl = 'etc/visual/toolkit/nav-box.inc.htm';
+	if(((string)$configs['nav']['pager'] == 'arrows') OR (strpos((string)$configs['nav']['pager'], 'custom-arrows:') === 0)) {
+		if((string)$configs['nav']['pager'] != 'arrows') { // custom-arrows
+			$tpl = trim((string)substr((string)$configs['nav']['pager'], 14));
 		} else { // arrows
 			$styles = '<!-- require: navbox.css -->'."\n";
 			$tpl = 'lib/core/templates/nav-box.inc.htm';
 		} //end if else
 		return $styles.self::arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents);
 	} else {
-		if((string)$configs['nav']['pager'] == 'custom-pager') { // custom-pager
-			$tpl = 'etc/visual/toolkit/nav-pager.inc.htm';
+		if(strpos((string)$configs['nav']['pager'], 'custom-pager:') === 0) { // custom-pager:path/to/nav-pager.inc.htm
+			$tpl = trim((string)substr((string)$configs['nav']['pager'], 13));
 		} else { // pager
 			$styles = '<!-- require: navbox.css -->'."\n";
 			$tpl = 'lib/core/templates/nav-pager.inc.htm';
@@ -1927,7 +1927,10 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 			'PREV-PAGE' => (string) $txt_prev,
 			'PREV-LINK' => (string) $lnk_prev,
 			'NEXT-PAGE' => (string) $txt_next,
-			'NEXT-LINK' => (string) $lnk_next
+			'NEXT-LINK' => (string) $lnk_next,
+			'TOTAL'		=> (int) $total,
+			'LIMIT' 	=> (int) $limit,
+			'CURRENT' 	=> (int) $current
 		],
 		'yes' // export to cache
 	);
