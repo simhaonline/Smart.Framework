@@ -257,8 +257,12 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 // This function uses static read from filesystem and if (memory) persistent cache is available will cache it and all future reads until key expire will be done from memory instead of overloading the file system
 /**
  * Read a Marker File Template from FileSystem or from Persistent (Memory) Cache if exists
+ * !!! This is intended for very special usage ... !!! This is used automatically by the render_file_template() and used in combination with render_mixed_template() may produce the same results ... it make non-sense using it with render_template() as this should be used for internal (php) templates as all external templates should be loaded with render_file_template()
  *
- * @param 	STRING 		$y_file_path 					:: The relative path to the file markers template (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+ * @access 		private
+ * @internal
+ *
+ * @param 	STRING 		$y_file_path 					:: The relative path to the file markers template
  *
  * @return 	STRING										:: The template string
  *
