@@ -18,6 +18,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartParser::
 //	* SmartFileSystem::
 //	* SmartFileSysUtils::
+//	* SmartPersistentCache::
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -44,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.161128
+ * @version 	v.161207
  * @package 	Templating:Engines
  *
  */
@@ -246,6 +247,61 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 	} //end if
 	//--
 	return (string) self::template_renderer((string)$mtemplate, (array)$y_arr_vars);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+
+//================================================================
+// This function uses static read from filesystem and if (memory) persistent cache is available will cache it and all future reads until key expire will be done from memory instead of overloading the file system
+/**
+ * Read a Marker File Template from FileSystem or from Persistent (Memory) Cache if exists
+ *
+ * @param 	STRING 		$y_file_path 					:: The relative path to the file markers template (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+ *
+ * @return 	STRING										:: The template string
+ *
+ */
+public static function read_template_file($y_file_path) {
+	//--
+	$use_pcache = false;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		if(defined('SMART_SOFTWARE_MKTPL_PCACHETIME')) {
+			if(is_int(SMART_SOFTWARE_MKTPL_PCACHETIME)) {
+				if(((int)SMART_SOFTWARE_MKTPL_PCACHETIME >= 0) AND ((int)SMART_SOFTWARE_MKTPL_PCACHETIME <= 31622400)) { // 0 unlimited ; 1 sec .. 366 days
+					$use_pcache = true;
+				} //end if
+			} //end if
+		} //end if
+	} //end if
+	if(($use_pcache === true) AND SmartPersistentCache::isActive() AND SmartPersistentCache::isMemoryBased()) {
+		$the_cache_key = 'tpl__'.Smart::safe_pathname((string)Smart::base_name((string)$y_file_path)).'__'.sha1((string)$y_file_path);
+	} else {
+		$the_cache_key = '';
+	} //end if else
+	//--
+	$tpl = '';
+	//--
+	if((string)$the_cache_key != '') {
+		if(SmartPersistentCache::keyExists('smart-markers-templating', (string)$the_cache_key)) {
+			$tpl = (string) SmartPersistentCache::getKey('smart-markers-templating', (string)$the_cache_key);
+			if((string)$tpl != '') {
+				//Smart::log_notice('TPL found in cache: '.$y_file_path);
+				return (string) $tpl; // return from persistent cache
+			} //end if
+		} //end if
+	} //end if
+	//--
+	$tpl = (string) SmartFileSystem::staticread((string)$y_file_path);
+	if((string)$the_cache_key != '') {
+		if((string)$tpl != '') {
+			SmartPersistentCache::setKey('smart-markers-templating', (string)$the_cache_key.'__path', (string)$y_file_path, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
+			SmartPersistentCache::setKey('smart-markers-templating', (string)$the_cache_key, (string)$tpl, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
+		} //end if
+	} //end if
+	//--
+	return (string) $tpl; // return from fs read
 	//--
 } //END FUNCTION
 //================================================================
@@ -946,9 +1002,9 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 	if(array_key_exists((string)$cached_key, (array)self::$MkTplCache)) {
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Includding a Sub-Template from CACHE';
+			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Includding a Sub-Template from VCache';
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
-				'title' => '[TPL-ReadFileTemplate-From-CACHE] :: Markers-Templating / File-Read ; Serving from Cache the File Template: '.$y_file_path.' ; Caching: '.$y_use_caching,
+				'title' => '[TPL-ReadFileTemplate-From-VCache] :: Markers-Templating / File-Read ; Serving from VCache the File Template: '.$y_file_path.' ; VCacheFlag: '.$y_use_caching,
 				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
 			]);
 		} //end if
@@ -963,12 +1019,12 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 	//--
 	if((string)$y_use_caching == 'yes') {
 		//--
-		self::$MkTplCache[(string)$cached_key] = (string) SmartFileSystem::staticread($y_file_path);
+		self::$MkTplCache[(string)$cached_key] = (string) self::read_template_file($y_file_path);
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FILESYSTEM and REGISTER IN CACHE';
+			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FS and REGISTER in VCache';
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
-				'title' => '[TPL-ReadFileTemplate-From-FILESYSTEM-Register-In-Cache] :: Markers-Templating / Registering to internal cache the File Template: '.$y_file_path.' ;',
+				'title' => '[TPL-ReadFileTemplate-From-FS-Register-In-VCache] :: Markers-Templating / Registering to VCache the File Template: '.$y_file_path.' ;',
 				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
 			]);
 		} //end if
@@ -977,12 +1033,12 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 		//--
 	} else {
 		//--
-		$mtemplate = (string) SmartFileSystem::staticread($y_file_path);
+		$mtemplate = (string) self::read_template_file($y_file_path);
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FILESYSTEM (CACHE DISABLED)';
+			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FS  ; VCacheFlag: '.$y_use_caching;
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
-				'title' => '[TPL-ReadFileTemplate-From-FILESYSTEM] :: Markers-Templating / File-Read ; Serving from FileSystem the File Template: '.$y_file_path.' ;',
+				'title' => '[TPL-ReadFileTemplate-From-FS] :: Markers-Templating / File-Read ; Serving from FS the File Template: '.$y_file_path.' ;',
 				'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
 			]);
 		} //end if

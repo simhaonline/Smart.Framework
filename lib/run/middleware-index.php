@@ -527,7 +527,7 @@ public static function Run() {
 		return;
 	} //end if
 	//--
-	$the_template_content = trim(SmartFileSystem::staticread($the_template_path.$the_template_file));
+	$the_template_content = trim(SmartMarkersTemplating::read_template_file($the_template_path.$the_template_file));
 	if((string)$the_template_content == '') {
 		Smart::log_warning('Page Template File is Empty or cannot be read: '.$the_template_path.$the_template_file);
 		self::Raise500Error('Page Template File is Empty or cannot be read. See the error log !');
@@ -576,7 +576,10 @@ public static function Run() {
 		//--
 	} //end if else
 	//--
-	echo "\n".'<!-- Smart.Framework スマート.フレームワーク :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.$the_midmark.' :: '.SMART_FRAMEWORK_RELEASE_URL.' -->'."\n".'<!-- Resources リソース: ['.Smart::format_number_dec($res_time, 13, '.', '').' sec.] / ['.Smart::format_number_dec($res_memory, 0, '.', ' ').' by.]'.' -->'."\n";
+	if(SMART_SOFTWARE_DISABLE_STATUS_POWERED !== true) {
+		echo "\n".'<!-- Smart.Framework スマート.フレームワーク :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.$the_midmark.' :: '.SMART_FRAMEWORK_RELEASE_URL.' -->';
+	} //end if
+	echo "\n".'<!-- Resources: ['.Smart::format_number_dec($res_time, 13, '.', '').' sec.] / ['.Smart::format_number_dec($res_memory, 0, '.', ' ').' by.]'.' -->'."\n";
 	//--
 } //END FUNCTION
 //====================================================================
