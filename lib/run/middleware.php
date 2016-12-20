@@ -33,7 +33,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		161005
+ * @version		161220
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -69,13 +69,14 @@ final public static function HeadersCacheExpire($expiration, $modified=0) {
 	//--
 	if(!headers_sent()) {
 		//--
-		$expiration = (int) $expiration; // expire in seconds
+		$expiration = (int) $expiration; // expire time, in seconds, since now
 		if($expiration < 60) {
 			$expiration = 60;
 		} //end if
 		$expires = (int) time() + $expiration;
-		$modified = (int) $modified; // last modification of the contents in seconds
-		if($modified <= 0) {
+		//--
+		$modified = (int) $modified; // last modification timestamp of the contents, in seconds, must be > 0 <= now
+		if(($modified <= 0) OR ($modified > time())) {
 			$modified = (int) time();
 		} //end if
 		//--

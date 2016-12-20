@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.161005
+ * @version 	v.161220
  * @package 	Application
  *
  */
@@ -247,8 +247,16 @@ abstract class SmartAbstractAppController {
 	private $urlpage;
 	private $controller;
 	//--
-	private $pagesettings;
-	private $pageview;
+	private $pagesettings; 		// will allow keys just from $availsettings
+	private $availsettings = [ 	// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
+		'error', 'redirect-url', 			// error message for return non 2xx codes ; redirect url for return 3xx codes
+		'expires', 'modified',				// expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now
+		'template-path', 'template-file',	// template path (@ for self module path or a relative path) ; template filename (ex: template.htm)
+		'rawpage', 'rawmime', 'rawdisp',	// raw page (yes/no) ; raw mime (any valid mime type, ex: image/png) ; raw disposition (ex: inline / attachment / attachment; filename="somefile.pdf")
+		'download-packet', 'download-key' 	// download packet ; download key
+	];
+	//--
+	private $pageview; 			// will allow any key since they are markers
 	//--
 
 
@@ -547,7 +555,7 @@ abstract class SmartAbstractAppController {
 		if((is_array($param)) OR (is_object($param)) OR (is_array($value)) OR (is_object($value))) {
 			return false;
 		} //end if
-		//-- TODO: validate the param by a fixed list: look in middlewares to see complete list
+		//--
 		$param = strtolower((string)$param);
 		//--
 		if((string)$param != '') {
@@ -558,7 +566,11 @@ abstract class SmartAbstractAppController {
 					$value = ''; // false
 				} //end if else
 			} //end if
-			$this->pagesettings[(string)$param] = (string)$value;
+			if(in_array((string)$param, (array)$this->availsettings)) {
+				$this->pagesettings[(string)$param] = (string)$value;
+			} else {
+				Smart::log_warning('SmartAbstractAppController / PageViewSetCfg: Invalid Parameter: '.$param);
+			} //end if else
 		} //end if
 		//--
 		return true;
