@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / ERRORS MANAGEMENT]
-// this should be loaded from app web root only
-// v.2.3.7.3 r.2016.10.05 / smart.framework.v.2.3
+// (c) 2006-2017 unix-world.org - all rights reserved
+// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -9,6 +9,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
+// this should be loaded from app web root only
 
 // ===== NOTICE =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES

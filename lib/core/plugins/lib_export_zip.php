@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Plugins / ZIP Archive]
-// (c) 2006-2016 unix-world.org - all rights reserved
-// v.2.3.7.3 r.2016.10.05 / smart.framework.v.2.3
+// (c) 2006-2017 unix-world.org - all rights reserved
+// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
@@ -35,7 +35,7 @@ if(!function_exists('gzcompress')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP ZLIB
- * @version 	v.150107
+ * @version 	v.170105
  * @package 	Archivers
  *
  */
@@ -84,9 +84,9 @@ public function add_file($name, $data, $time = 0) {
 
 	//--
 	$hexdtime = '\x'.$dtime[6].$dtime[7].
-                  '\x'.$dtime[4].$dtime[5].
-                  '\x'.$dtime[2].$dtime[3].
-                  '\x'.$dtime[0].$dtime[1];
+				'\x'.$dtime[4].$dtime[5].
+				'\x'.$dtime[2].$dtime[3].
+				'\x'.$dtime[0].$dtime[1];
 	//--
 	eval('$hexdtime = "'.$hexdtime.'";');
 	//--
@@ -169,11 +169,11 @@ public function output() {
 
 	//--
 	return $data.$ctrldir.$this->eof_ctrl_dir.
-		pack('v', sizeof($this->ctrl_dir)) .  // total # of entries "on this disk"
-		pack('v', sizeof($this->ctrl_dir)) .  // total # of entries overall
-		pack('V', strlen($ctrldir)) .         // size of central dir
-		pack('V', strlen($data)) .            // offset to start of central dir
-		"\x00\x00";                           // .zip file comment length
+		pack('v', sizeof($this->ctrl_dir)).  // total # of entries "on this disk"
+		pack('v', sizeof($this->ctrl_dir)).  // total # of entries overall
+		pack('V', strlen($ctrldir)).         // size of central dir
+		pack('V', strlen($data)).            // offset to start of central dir
+		"\x00\x00";                          // .zip file comment length
 	//--
 
 } //END FUNCTION
@@ -217,12 +217,12 @@ private function unix_2_dos_time($unixtime = 0) {
 } //END CLASS
 
 
-/******** SAMPLE USAGE
+/*** SAMPLE USAGE
 $zip = new SmartZipArchive();
 $zip->add_file('file1.txt', $file1);
 $zip->add_file('file2.xml', $file2);
 echo $zip->output();
-********/
+***/
 
 //=====================================================================================
 //===================================================================================== CLASS END

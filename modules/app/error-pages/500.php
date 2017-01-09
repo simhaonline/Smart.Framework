@@ -1,6 +1,6 @@
 <?php
 // [CUSTOM 500 Status Code Page]
-// v.2.3.7.3 r.2016.10.05 / smart.framework.v.2.3
+// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application

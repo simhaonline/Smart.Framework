@@ -21,7 +21,7 @@ php_flag zend.multibyte			Off
 
 #<IfModule mod_rewrite.c>
 
-	#v.160927#
+	#v.170109#
 
 	###
 #	RewriteEngine 		On
