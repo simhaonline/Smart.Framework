@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160930
+ * @version 	v.170120
  * @package 	Exporters
  *
  */
@@ -33,7 +33,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.160827@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman
+	private $mkdw_version = 'v.1.5.4-r.170120@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -135,6 +135,8 @@ final class SmartMarkdownToHTML {
 
 
 	public function text($text) {
+		//-- Fix broking curly quotes: ‘ = &lsquo; [0145] ; ’ = &rsquo; [0146] ; “ = &ldquo; [0147] ; ” = &rdquo; [0148]
+		$text = (string) str_replace(['‘', '’', '“', '”'], ['\'', '\'', '"', '"'], (string)$text); // bug fix (special apostrophes will break the UTF-8 markdown ... don't know why !? but need fixing ; perhaps they are interpreted different in UTF-16 context !!!)
 		//-- make sure no definitions are set
 		$this->DefinitionData = array();
 		//-- standardize line breaks
@@ -149,6 +151,8 @@ final class SmartMarkdownToHTML {
 		$markup = trim($markup, "\n");
 		//--
 		$markup = $this->prepareHTML($markup);
+		//--
+		$markup = (string) SmartUnicode::fix_charset((string)$markup); // fix by unixman (in case that broken UTF-8 characters are detected just try to fix them to avoid break JSON)
 		//--
 		return (string) $markup;
 		//--
@@ -1074,8 +1078,8 @@ final class SmartMarkdownToHTML {
 
 	//-- # Inline Elements
 
-
-	public function line($text) { // fixed from v.1.5.4
+	//public function line($text) { // fixed from v.1.5.4
+	private function line($text) { // fixed from v.1.5.4 ; marked as private
 		/*
 		//--
 		$markup = '';
@@ -1186,7 +1190,7 @@ final class SmartMarkdownToHTML {
 		//--
 		$markup .= $this->unmarkedText($text);
 		//--
-		return $markup;
+		return (string) $markup;
 		//--
 	} //END FUNCTION
 

@@ -27,7 +27,9 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
 // Tested and Stable on PgSQL versions:
 // 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x
 // Tested and Stable with PgPool-II versions:
-// 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x
+// 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x / 3.5.x
+// Tested and Stable with PgBouncer:
+// all versions
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -68,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.161003
+ * @version 	v.170120
  * @package 	Database:PostgreSQL
  *
  */
@@ -455,7 +457,12 @@ private static function escape_arr_params($arr_params) {
  */
 public static function json_encode($y_mixed_content) {
 	//--
-	return @json_encode($y_mixed_content, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+	$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); // Fix: must return a string
+	if((string)$json == '') {
+		$json = '{}'; // FIX: in PostgreSQL JSON/JSON-B fields cannot be empty !!!
+	} //end if
+	//--
+	return (string) $json;
 	//--
 } //END FUNCTION
 //======================================================
@@ -2185,7 +2192,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.161003
+ * @version 	v.170120
  * @package 	Database:PostgreSQL
  *
  */
