@@ -51,7 +51,7 @@
 [%%%%IF:TEST2:==3%%%%]
 	[%%%%IF:DATA._-ITERATOR-_:<=0(1)%%%%]
 		<tr style="background:#003399;color:#FFFFFF;">
-			<td colspan="4"><b>[####DATA._-VAL-_|html####]</b></td>
+			<td colspan="5"><b>[####DATA._-VAL-_|html####]</b></td>
 		</tr>
 	[%%%%ELSE:DATA._-ITERATOR-_(1)%%%%]
 		[%%%%IF:DATA._-ITERATOR-_:%2(2)%%%%]
@@ -71,6 +71,7 @@
 			[%%%%ELSE:DATA.IS_VOWEL%%%%]
 				<td>Consonant: [[####DATA.IS_VOWEL|html####]]</td>
 			[%%%%/IF:DATA.IS_VOWEL%%%%]
+			<td>[%%%%LOOP:DATA.ARR%%%%]<span>[####DATA.ARR._-VAL-_|html####]; </span>[%%%%/LOOP:DATA.ARR%%%%]</td>
 		</tr>
 		[%%%%IF:DATA.ID:%2%%%%]
 		<!-- Data ID is % 2 -->
@@ -96,7 +97,7 @@
 	[%%%%ELSE:DAT2._-KEY-_%%%%]
 	<tr style="background:#FFFFCC;">
 		<td>[####DAT2._-KEY-_|html####]</td>
-		<td>[####DAT2.ID|html####] / [####DAT2.NAME|html####]</td>
+		<td>[%%%%LOOP:DAT2.KEY1%%%%]<span>[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]</td>
 	</tr>
 	[%%%%/IF:DAT2._-KEY-_%%%%]
 [%%%%/LOOP:DAT2%%%%]

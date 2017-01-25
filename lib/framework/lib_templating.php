@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.161207
+ * @version 	v.170125
  * @package 	Templating:Engines
  *
  */
@@ -716,6 +716,19 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								(string) $bind_var_key // context
 							);
 						} //end if
+						//-- ## TEST: process 2nd Level LOOP inside LOOP for non-Associative Array
+						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($y_arr_vars[(string)$bind_var_key][$j]))) {
+							foreach($y_arr_vars[(string)$bind_var_key][$j] as $qk => $qv) {
+								if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'(') !== false)) AND (is_array($qv))) {
+									//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$qk).'] = '.print_r($qv,1)."\n\n";
+									$mks_line = (string) self::process_loop_syntax(
+										(string) $mks_line,
+										[ $bind_var_key.'.'.strtoupper((string)$qk) => (array)$qv ]
+									);
+								} //end if
+							} //end foreach
+						} //end if
+						//-- ## END.TEST
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
@@ -770,6 +783,17 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								(string) $bind_var_key // context
 							);
 						} //end if
+						//-- ## TEST: process 2nd Level LOOP inside LOOP for Associative Array
+						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($zval))) {
+							if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'(') !== false)) AND (is_array($zval))) {
+								//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$zkey).'] = '.print_r($zval,1)."\n\n";
+								$mks_line = (string) self::process_loop_syntax(
+									(string) $mks_line,
+									[ $bind_var_key.'.'.strtoupper((string)$zkey) => (array)$zval ]
+								);
+							} //end if
+						} //end if
+						//-- ## END.TEST
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
