@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170125
+ * @version 	v.170126
  * @package 	Templating:Engines
  *
  */
@@ -666,7 +666,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 
 
 //================================================================
-// process the template LOOP syntax (only one level, not nested ; will process IF syntax inside it also)
+// process the template LOOP syntax (added nested Level Loop (2nd++) ; will process IF syntax inside it also)
 private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 	//--
 	if(strpos((string)$mtemplate, '[%%%%LOOP:') !== false) {
@@ -716,7 +716,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								(string) $bind_var_key // context
 							);
 						} //end if
-						//-- ## TEST: process 2nd Level LOOP inside LOOP for non-Associative Array
+						//-- ## NEW-FEATURE: process 2nd Level LOOP inside LOOP for non-Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($y_arr_vars[(string)$bind_var_key][$j]))) {
 							foreach($y_arr_vars[(string)$bind_var_key][$j] as $qk => $qv) {
 								if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'(') !== false)) AND (is_array($qv))) {
@@ -728,7 +728,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								} //end if
 							} //end foreach
 						} //end if
-						//-- ## END.TEST
+						//-- ## END.NEW-FEATURE
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
@@ -783,7 +783,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								(string) $bind_var_key // context
 							);
 						} //end if
-						//-- ## TEST: process 2nd Level LOOP inside LOOP for Associative Array
+						//-- ## NEW-FEATURE: process 2nd Level LOOP inside LOOP for Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($zval))) {
 							if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'(') !== false)) AND (is_array($zval))) {
 								//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$zkey).'] = '.print_r($zval,1)."\n\n";
@@ -793,7 +793,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								);
 							} //end if
 						} //end if
-						//-- ## END.TEST
+						//-- ## END.NEW-FEATURE
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,

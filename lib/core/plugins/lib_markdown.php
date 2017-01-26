@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.170120
+ * @version 	v.170126
  * @package 	Exporters
  *
  */
@@ -33,7 +33,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.170120@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
+	private $mkdw_version = 'v.1.5.4-r.170126@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -215,7 +215,8 @@ final class SmartMarkdownToHTML {
 				//--
 				foreach($parts as $z => $part) {
 					//--
-					$shortage = 4 - SmartUnicode::str_len($line) % 4;
+				//	$shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+					$shortage = 4 - SmartUnicode::str_len($line) % 4; // Unicode compliant Fix by Unixman
 					//--
 					$line .= str_repeat(' ', $shortage);
 					$line .= $part;
@@ -230,7 +231,7 @@ final class SmartMarkdownToHTML {
 				$indent ++;
 			} //end while
 			//--
-			$text = $indent > 0 ? SmartUnicode::sub_str($line, $indent) : $line;
+			$text = $indent > 0 ? substr($line, $indent) : $line;
 			//--
 			$Line = array('body' => $line, 'indent' => $indent, 'text' => $text);
 			//--
@@ -354,7 +355,7 @@ final class SmartMarkdownToHTML {
 		//--
 		if($Line['indent'] >= 4) {
 			//--
-			$text = SmartUnicode::sub_str($Line['body'], 4);
+			$text = substr($Line['body'], 4);
 			//--
 			$Block = array(
 				'element' => array(
@@ -388,7 +389,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$Block['element']['text']['text'] .= "\n";
 			//--
-			$text = SmartUnicode::sub_str($Line['body'], 4);
+			$text = substr($Line['body'], 4);
 			//--
 			$Block['element']['text']['text'] .= $text;
 			//--
@@ -511,7 +512,7 @@ final class SmartMarkdownToHTML {
 		//--
 		if(preg_match('/^'.$Block['char'].'{3,}[ ]*$/', $Line['text'])) {
 			//--
-			$Block['element']['text']['text'] = SmartUnicode::sub_str($Block['element']['text']['text'], 1);
+			$Block['element']['text']['text'] = substr($Block['element']['text']['text'], 1);
 			$Block['complete'] = true;
 			//--
 			return $Block;
@@ -782,7 +783,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$length = strlen($matches[0]);
 			//--
-			$remainder = SmartUnicode::sub_str($Line['text'], $length);
+			$remainder = substr($Line['text'], $length);
 			//--
 			if(trim($remainder) === '') {
 				//--
@@ -911,7 +912,7 @@ final class SmartMarkdownToHTML {
 					$alignment = 'left';
 				} //end if
 				//--
-				if(SmartUnicode::sub_str($dividerCell, - 1) === ':') {
+				if(substr($dividerCell, - 1) === ':') {
 					$alignment = $alignment === 'left' ? 'center' : 'right';
 				} //end if
 				//--
@@ -942,7 +943,7 @@ final class SmartMarkdownToHTML {
 						$HeaderElement['attributes'] = array();
 					} //end if
 					$HeaderElement['attributes'] += $this->parseAttributeData($matches[1]);
-					$headerCell = trim(SmartUnicode::sub_str($headerCell, 0, (SmartUnicode::str_len($headerCell) - SmartUnicode::str_len($matches[1]) - 2)));
+					$headerCell = trim(substr($headerCell, 0, (strlen($headerCell) - strlen($matches[1]) - 2)));
 				} //end if
 				//-- # end unixman
 				$HeaderElement['text'] = $headerCell;
@@ -1026,7 +1027,7 @@ final class SmartMarkdownToHTML {
 						$Element['attributes'] = array();
 					} //end if
 					$Element['attributes'] += $this->parseAttributeData($matches[1]);
-					$cell = trim(SmartUnicode::sub_str($cell, 0, (SmartUnicode::str_len($cell) - SmartUnicode::str_len($matches[1]) - 2)));
+					$cell = trim(substr($cell, 0, (strlen($cell) - strlen($matches[1]) - 2)));
 				} //end if
 				//-- # end unixman
 				$Element['text'] = $cell;
@@ -1092,7 +1093,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$marker = $excerpt[0];
 			//--
-			$markerPosition += SmartUnicode::str_pos($unexaminedText, $marker); // because it uses safe unicode strlen this is used to calculate string intervals and must be unicode safe strpos
+			$markerPosition += strpos($unexaminedText, $marker); // because it uses safe unicode strlen this is used to calculate string intervals and must be unicode safe strpos
 			//--
 			$Excerpt = array('text' => $excerpt, 'context' => $text);
 			//--
@@ -1112,12 +1113,12 @@ final class SmartMarkdownToHTML {
 					$Inline['position'] = $markerPosition;
 				} //end if
 				//--
-				$unmarkedText = SmartUnicode::sub_str($text, 0, $Inline['position']);
+				$unmarkedText = substr($text, 0, $Inline['position']);
 				//--
 				$markup .= $this->unmarkedText($unmarkedText);
 				$markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
 				//--
-				$text = SmartUnicode::sub_str($text, $Inline['position'] + $Inline['extent']);
+				$text = substr($text, $Inline['position'] + $Inline['extent']);
 				//--
 				$unexaminedText = $text;
 				//--
@@ -1127,7 +1128,7 @@ final class SmartMarkdownToHTML {
 				//--
 			} //end foreach
 			//--
-			$unexaminedText = SmartUnicode::sub_str($excerpt, 1);
+			$unexaminedText = substr($excerpt, 1);
 			//--
 			$markerPosition ++;
 			//--
@@ -1143,8 +1144,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$marker = $excerpt[0];
 			//--
-			//$markerPosition = strpos($text, $marker);
-			$markerPosition = SmartUnicode::str_pos($text, $marker); // fix by unixman :: because it uses safe unicode strlen this is used to calculate string intervals and must be unicode safe strpos
+			$markerPosition = strpos($text, $marker);
 			//--
 			$Excerpt = array('text' => $excerpt, 'context' => $text);
 			//--
@@ -1164,27 +1164,23 @@ final class SmartMarkdownToHTML {
 					$Inline['position'] = $markerPosition;
 				} //end if
 				//-- the text that comes before the inline
-				//$unmarkedText = substr($text, 0, $Inline['position']);
-				$unmarkedText = SmartUnicode::sub_str($text, 0, $Inline['position']); // fix by unixman
+				$unmarkedText = substr($text, 0, $Inline['position']);
 				//-- compile the unmarked text
 				$markup .= $this->unmarkedText($unmarkedText);
 				//-- compile the inline
 				$markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
 				//-- remove the examined text
-				//$text = substr($text, $Inline['position'] + $Inline['extent']);
-				$text = SmartUnicode::sub_str($text, $Inline['position'] + $Inline['extent']); // fix by unixman
+				$text = substr($text, $Inline['position'] + $Inline['extent']);
 				//--
 				continue 2;
 				//--
 			} //end foreach
 			//-- the marker does not belong to an inline
-			//$unmarkedText = substr($text, 0, $markerPosition + 1);
-			$unmarkedText = SmartUnicode::sub_str($text, 0, $markerPosition + 1); // fix by unixman
+			$unmarkedText = substr($text, 0, $markerPosition + 1);
 			//--
 			$markup .= $this->unmarkedText($unmarkedText);
 			//--
-			//$text = substr($text, $markerPosition + 1);
-			$text = SmartUnicode::sub_str($text, $markerPosition + 1); // fix by unixman
+			$text = substr($text, $markerPosition + 1);
 			//--
 		} //end while
 		//--
@@ -1297,7 +1293,7 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//--
-		$Excerpt['text']= SmartUnicode::sub_str($Excerpt['text'], 1);
+		$Excerpt['text']= substr($Excerpt['text'], 1);
 		//--
 		$Link = $this->inlineLink($Excerpt);
 		//--
@@ -1351,7 +1347,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$extent += strlen($matches[0]);
 			//--
-			$remainder = SmartUnicode::sub_str($remainder, $extent);
+			$remainder = substr($remainder, $extent);
 			//--
 		} else {
 			//--
@@ -1365,7 +1361,7 @@ final class SmartMarkdownToHTML {
 			$Element['attributes']['href'] = $matches[1];
 			//--
 			if(isset($matches[2])) {
-				$Element['attributes']['title'] = SmartUnicode::sub_str($matches[2], 1, -1);
+				$Element['attributes']['title'] = substr($matches[2], 1, -1);
 			} //end if
 			//--
 			$extent += strlen($matches[0]);
@@ -1667,18 +1663,18 @@ final class SmartMarkdownToHTML {
 	} //END FUNCTION
 
 
-	private function li($lines) {
+	private function li($lines) { // Fixed: No Unicode String Functions here !!!
 		//--
 		$markup = $this->lines($lines);
 		//--
 		$trimmedMarkup = trim($markup);
 		//--
-		if(!in_array('', $lines) AND SmartUnicode::sub_str($trimmedMarkup, 0, 3) === '<p>') {
+		if(!in_array('', $lines) AND substr($trimmedMarkup, 0, 3) === '<p>') {
 			//--
 			$markup = $trimmedMarkup;
-			$markup = SmartUnicode::sub_str($markup, 3);
+			$markup = substr($markup, 3);
 			//--
-			$position = SmartUnicode::str_pos($markup, '</p>');
+			$position = (int) strpos($markup, '</p>');
 			//--
 			$markup = substr_replace($markup, '', $position, 4);
 			//--
@@ -1704,11 +1700,11 @@ final class SmartMarkdownToHTML {
 			//--
 			if($attribute[0] === '@') { // @
 				$tmp_arr = explode('=', $attribute);
-				$Data[trim(SmartUnicode::sub_str(trim($tmp_arr[0]),1))] = trim(str_replace(array(',', '$'), array('.', ' '), trim($tmp_arr[1])));
+				$Data[trim(substr(trim($tmp_arr[0]),1))] = trim(str_replace(array(',', '$'), array('.', ' '), trim($tmp_arr[1])));
 			} elseif($attribute[0] === '#') { // #
-				$Data['id'] = SmartUnicode::sub_str($attribute, 1);
+				$Data['id'] = substr($attribute, 1);
 			} else { // .
-				$classes[]= SmartUnicode::sub_str($attribute, 1);
+				$classes[] = substr($attribute, 1);
 			} //end if else
 			//--
 		} //end foreach
