@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Middleware / Admin
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
+// v.2.3.7.6 r.2017.02.02 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -15,7 +15,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.5');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.6');
 
 
 //==================================================================================
@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.5');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		161005
+ * @version		170131
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -267,7 +267,7 @@ public static function Run() {
 	//--
 	//== RUN THE MODULE
 	//--
-	$appModule = new SmartAppAdminController($the_path_to_module, $base_script, $base_full_path, $base_full_url, $page, $the_controller_name);
+	$appModule = new SmartAppAdminController('admin', $the_path_to_module, $base_script, $base_full_path, $base_full_url, $page, $the_controller_name);
 	//--
 	if(SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
 		ob_start();
@@ -444,9 +444,9 @@ public static function Run() {
 	if((string)$rawpage == 'yes') {
 		//-- {{{SYNC-RESOURCES}}}
 		if(function_exists('memory_get_peak_usage')) {
-			$res_memory = @memory_get_peak_usage(false);
+			$res_memory = (int) @memory_get_peak_usage(false);
 		} else {
-			$res_memory = 'unknown';
+			$res_memory = -1; // unknown
 		} //end if else
 		$res_time = (float) (microtime(true) - (float)SMART_FRAMEWORK_RUNTIME_READY);
 		//-- #END-SYNC
@@ -561,9 +561,9 @@ public static function Run() {
 	echo SmartMarkersTemplating::render_mixed_template((string)$the_template_content, (array)$appData, (string)$appData['template-path'], 'no', 'no');
 	//-- {{{SYNC-RESOURCES}}}
 	if(function_exists('memory_get_peak_usage')) {
-		$res_memory = @memory_get_peak_usage(false);
+		$res_memory = (int) @memory_get_peak_usage(false);
 	} else {
-		$res_memory = 'unknown';
+		$res_memory = -1; // unknown
 	} //end if else
 	$res_time = (float) (microtime(true) - (float)SMART_FRAMEWORK_RUNTIME_READY);
 	//-- #END-SYNC

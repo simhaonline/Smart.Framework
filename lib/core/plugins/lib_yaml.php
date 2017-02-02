@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / YAML Parser]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
+// v.2.3.7.6 r.2017.02.02 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.2.3')) {
@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Based on Spyc v.0.5 with fixes from 0.5.1
 // (c) 2005-2006 Chris Wanstrath, 2006-2011 Vlad Andersen under the MIT License
 //
-// (c) 2014-2016 unix-world.org, fixes and modifications by unixman (iradu@unix-world.org)
+// (c) 2014-2017 unix-world.org, fixes and modifications by unixman (iradu@unix-world.org)
 // includes many fixes and modification to be unicode compliant and some bug fixes
 // [REGEX-SAFE-OK]
 //--

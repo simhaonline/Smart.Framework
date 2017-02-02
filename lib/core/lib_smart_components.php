@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Smart Components]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
+// v.2.3.7.6 r.2017.02.02 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.161129
+ * @version 	v.170201
  * @package 	Components:Framework
  *
  */
@@ -1659,26 +1659,26 @@ public static function table_ncolumns($arr_data, $ycols, $ytitle='', $y_counter=
  */
 public static function navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
 	//--
-	global $configs;
-	//--
 	$styles = '';
 	//--
-	if(((string)$configs['nav']['pager'] == 'arrows') OR (strpos((string)$configs['nav']['pager'], 'custom-arrows:') === 0)) {
-		if((string)$configs['nav']['pager'] != 'arrows') { // custom-arrows
-			$tpl = trim((string)substr((string)$configs['nav']['pager'], 14));
+	$navpager_mode = (string) Smart::get_from_config('nav.pager');
+	//--
+	if(((string)$navpager_mode == 'arrows') OR (strpos((string)$navpager_mode, 'custom-arrows:') === 0)) {
+		if((string)$navpager_mode != 'arrows') { // custom-arrows
+			$tpl = trim((string)substr((string)$navpager_mode, 14));
 		} else { // arrows
 			$styles = '<!-- require: navbox.css -->'."\n";
 			$tpl = 'lib/core/templates/nav-box.inc.htm';
 		} //end if else
-		return $styles.self::arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents);
+		return $styles.self::arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
 	} else {
-		if(strpos((string)$configs['nav']['pager'], 'custom-pager:') === 0) { // custom-pager:path/to/nav-pager.inc.htm
-			$tpl = trim((string)substr((string)$configs['nav']['pager'], 13));
+		if(strpos((string)$navpager_mode, 'custom-pager:') === 0) { // custom-pager:path/to/nav-pager.inc.htm
+			$tpl = trim((string)substr((string)$navpager_mode, 13));
 		} else { // pager
 			$styles = '<!-- require: navbox.css -->'."\n";
 			$tpl = 'lib/core/templates/nav-pager.inc.htm';
 		} //end if else
-		return $styles.self::numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents);
+		return $styles.self::numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
 	} //end if else
 	//--
 } //END FUNCTION
@@ -1690,6 +1690,12 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 private static function arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
 	//--
 	$link = (string) $link;
+	//--
+	$options = (array) $options;
+	$opt_zerolink = '';
+	if((string)$options['zero-link'] != '') {
+		$opt_zerolink = (string) $options['zero-link'];
+	} //end if
 	//--
 	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts');
 	//--
@@ -1746,8 +1752,16 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 			//-- REW
 			$tmp_firstpage = 0;
 			//--
-			$tmp_link_nav_start = (string) str_replace('{{{offset}}}', $tmp_firstpage, $link);
-			$tmp_link_nav_prev = (string) str_replace('{{{offset}}}', $dys_prev, $link);
+			if((string)$opt_zerolink != '') {
+				$tmp_link_nav_start = (string) $opt_zerolink;
+			} else {
+				$tmp_link_nav_start = (string) str_replace('{{{offset}}}', $tmp_firstpage, $link);
+			} //end if else
+			if(((string)$opt_zerolink != '') AND ($dys_prev <= 0)) {
+				$tmp_link_nav_prev = (string) $opt_zerolink;
+			} else {
+				$tmp_link_nav_prev = (string) str_replace('{{{offset}}}', $dys_prev, $link);
+			} //end if else
 			$tmp_link_nav_next = (string) str_replace('{{{offset}}}', $dys_next, $link);
 			$tmp_link_nav_end = (string) str_replace('{{{offset}}}', $tmp_lastpage, $link);
 			//--
@@ -1823,6 +1837,12 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 	$current = Smart::format_number_int($current, '+');
 	$adjacents = Smart::format_number_int($adjacents, '+');
 	//--
+	$options = (array) $options;
+	$opt_zerolink = '';
+	if((string)$options['zero-link'] != '') {
+		$opt_zerolink = (string) $options['zero-link'];
+	} //end if
+	//--
 	if($limit <= 0) {
 		return (string) '<!-- Navigation Pager (2) -->[ ERROR: Invalid Navigation Pager (2): Limit is ZERO ]<!-- #END# Navigation Pager -->';
 	} //end if
@@ -1863,7 +1883,11 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 		$lnk_prev = '';
 	} else {
 		$txt_prev = (string) $translator_core_nav_texts->text('prev');
-		$lnk_prev = (string) str_replace('{{{offset}}}', (int)(($prev-1)*$limit), (string)$link);
+		if(((string)$opt_zerolink != '') AND (((int)(($prev-1)*$limit)) <= 0)) {
+			$lnk_prev = (string) $opt_zerolink;
+		} else {
+			$lnk_prev = (string) str_replace('{{{offset}}}', (int)(($prev-1)*$limit), (string)$link);
+		} //end if else
 	} //end if
 	$next = $crr + 1;
 	if($next > $max) {
@@ -1894,7 +1918,11 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 		if((int)$min === (int)$crr) {
 			$data[(string)$min] = 'SELECTED';
 		} else {
-			$data[(string)$min] = (string) str_replace('{{{offset}}}', (int)(($min-1)*$limit), (string)$link);
+			if((string)$opt_zerolink != '') {
+				$data[(string)$min] = (string) $opt_zerolink;
+			} else {
+				$data[(string)$min] = (string) str_replace('{{{offset}}}', (int)(($min-1)*$limit), (string)$link);
+			} //end if else
 		} //end if else
 		if(($max > ($adjacents + 1)) AND ((string)$arr[(string)($min+1)] == '')) {
 			$data['.'] = 'DOTS';
@@ -1997,9 +2025,7 @@ private static function window_mode_init_protection_to_smartmodal() {
  */
 public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_question='') {
 	//--
-	global $configs;
-	//--
-	if((string)$configs['js']['notifications'] == 'growl') {
+	if((string)Smart::get_from_config('js.notifications') == 'growl') {
 		$tmp_use_growl = 'yes';
 	} else {
 		$tmp_use_growl = 'no';
@@ -2699,19 +2725,17 @@ public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px
  */
 public static function js_draw_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', $y_extra_options=array(), $yjs_custom='') {
 	//-- v.160306
-	global $configs;
-	//--
 	if((string)$yvalue != '') {
 		$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
 	} //end if
 	//--
-	if($configs['regional']['calendar-week-start'] == 1) {
+	if((int)Smart::get_from_config('regional.calendar-week-start') == 1) {
 		$the_first_day = 1; // Calendar Start on Monday
 	} else {
 		$the_first_day = 0; // Calendar Start on Sunday
 	} //end if else
 	//--
-	$the_altdate_format = self::get_date_format_for_js((string)$configs['regional']['calendar-date-format-client']);
+	$the_altdate_format = self::get_date_format_for_js((string)Smart::get_from_config('regional.calendar-date-format-client'));
 	//--
 	if(!is_array($y_extra_options)) {
 		$y_extra_options = array();

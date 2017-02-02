@@ -1,4 +1,4 @@
-# Smart.Framework
+# Smart.Framework (PHP / Javascript)
 (c) 2009 - 2017 unix-world.org
 License: BSD
 
@@ -12,9 +12,15 @@ Smart.Framework - A High Performance PHP / Javascript Framework for Web Projects
 The primary goal of Smart.Framework is to provide a very fast and responsive web framework.
 Thus, Smart.Framework provides the best balance between acceptable coding and performance.
 
-So, it is a very light and fast PHP / Javascript web framework.
-The paradox is that it have more built-in features than the well-known frameworks like Zend Framework 2 or Symfony 2
-but is 2x ... 9x faster in the terms of requests / second, so it can serve many million users per day.
+So, it is a very light, fast and reach featured PHP / Javascript web framework.
+The ultra high level software architecture of this web framework allows it to deliver a paradox:
+* it have more default built-in features than the well-known frameworks compared with Zend Framework, Symfony or Laravel
+* it delivers much more performance being between 3x to 9x faster (as requests / second) compared with Zend Framework, Symfony or Laravel
+Thus this is a web framework that can really serve many million users per day with a single server !
+When used with SQL / Non-SQL Databases and combined with In-Memory DB like Redis or Memcache it beats Varnish in many aspects:
+* delivers ~ the same speed as Varnish but allows granulary level caching policy of zones in controllers
+* works also with HTTPS (Varnish does not)
+* caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
 
 #### Demo:
 http://demo.unix-world.org/smart-framework/
@@ -25,18 +31,18 @@ http://sourceforge.net/projects/warp-cms/files/smart-framework/
 #### Benchmark scenario:
 Using a the same basic page for all tested frameworks, just a simple text: "Benchmark Test".
 Benchmark was running with Apache Benchmark suite with the command:
-ab -n 1200 -c 150 http://{localhost}/{framework}/{web-root}
-Using a regular server as hardware platform:
-* 2 x CPU AMD Opteron 2384 @ 2.7 GHz quad core 64-bit (Total: 8 cores / 8 threads)
-* 24 GB RAM, DDR2 @ 667 ECC
-* HDD 2 x 1TB Hitachi 7200rpm
+ab -n 1500 -c 150 http://{localhost}/{framework}/{web-root}
+Using a regular server as hardware platform (Supermicro):
+* 2 x Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz 64-bit (Total: 24 cores / 48 threads)
+* 128 GB RAM, DDR4 ECC @ 2133 MHz
+* HDD 2 x 1TB SSD
 Software:
-* OS: Linux, kernel 3.x
-* Apps: Apache 2.4.17, PHP 5.5.30 with Zend Opcache 7.0.5
+* OS: Debian 8 Linux, 64-bit
+* Apps: Apache 2.4.23, PHP 5.6.29 (with Zend Opcache 7.0.6)
 
-#### Benchmark Results of PHP Frameworks:
-* Smart.Framework r.160221: ~ 2677 requests / second
-* Zend Framework 2.4.7: ~ 391 requests / second ( 9x slower than Smart.Framework )
-* Symfony 2.7.3: ~ 799 requests / second ( 7x slower than Smart.Framework )
-* Silex 1.2.4: ~ 1981 requests / second ( 2x slower than Smart.Framework )
-* Laravel 5.0 ~ 568 requests / second ( 5x slower than Smart.Framework )
+#### Benchmark Results of PHP Frameworks (with a simple controller that Outputs: "Hello World" ; no Memcache or Redis):
+* Smart.Framework v.2.3.7.6 (2017.02.02): ~ 21.3K (21377) requests / second
+* Silex 2.0.4: ~ 7.2K (7223) requests / second ( 3x slower than Smart.Framework )
+* Symfony 3.2.2: ~ 3.3K (3318) requests / second ( 6x slower than Smart.Framework )
+* Laravel 5.4.3 ~ 3.0K (3012) requests / second ( 7x slower than Smart.Framework )
+* Zend Framework 2.4.11: ~ 2.5K (2579) requests / second ( 9x slower than Smart.Framework )

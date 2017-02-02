@@ -1,7 +1,7 @@
 <?php
 // [Smart-Framework]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
+// v.2.3.7.6 r.2017.02.02 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -222,12 +222,12 @@ interface SmartInterfaceAppInfo {
  *
  * </code>
  *
- * @usage  		static object: Class::method() - This class provides only STATIC methods
+ * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  * @hints		needs to be extended as: SmartAppIndexController (as a controller of index.php) or SmartAppAdminController (as a controller of admin.php)
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.161220
+ * @version 	v.170129
  * @package 	Application
  *
  */
@@ -265,13 +265,9 @@ abstract class SmartAbstractAppController {
 	 * Class constructor.
 	 * This is marked as FINAL and cannot be customized.
 	 */
-	final public function __construct($y_module_path, $y_url_script, $y_url_path, $y_url_addr, $y_url_page, $y_controller) {
+	final public function __construct($y_area, $y_module_path, $y_url_script, $y_url_path, $y_url_addr, $y_url_page, $y_controller) {
 		//--
-		if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-			$this->modulearea = 'admin';
-		} else {
-			$this->modulearea = 'index';
-		} //end if else
+		$this->modulearea = (string) $y_area; // index, admin, plugin
 		//--
 		$this->modulepath = (string) $y_module_path;
 		$this->modulename = (string) Smart::base_name($y_module_path);

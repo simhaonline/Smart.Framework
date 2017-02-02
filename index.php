@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Runtime / Index
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.5 r.2017.01.09 / smart.framework.v.2.3
+// v.2.3.7.6 r.2017.02.02 / smart.framework.v.2.3
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
