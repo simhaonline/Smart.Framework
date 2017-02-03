@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170201
+ * @version 	v.170203
  * @package 	Components:Framework
  *
  */
@@ -1846,8 +1846,10 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 	if($limit <= 0) {
 		return (string) '<!-- Navigation Pager (2) -->[ ERROR: Invalid Navigation Pager (2): Limit is ZERO ]<!-- #END# Navigation Pager -->';
 	} //end if
-	if(($total <= 0) OR ($total <= $limit)) {
-		return (string) '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
+	if($display_if_empty !== true) {
+		if(($total <= 0) OR ($total <= $limit)) {
+			return (string) '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
+		} //end if
 	} //end if
 	//--
 	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts');
