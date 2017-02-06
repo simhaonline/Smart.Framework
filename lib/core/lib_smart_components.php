@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170203
+ * @version 	v.170204
  * @package 	Components:Framework
  *
  */
@@ -1779,17 +1779,25 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 				$tmp_box_nav_end = $txt_end;
 			} //end if
 			//--
-			$html = (string) SmartMarkersTemplating::render_file_template(
-				(string) $tpl,
-				[
-					'NAV-START' => $tmp_box_nav_start,
-					'NAV-PREV' => $tmp_box_nav_prev,
-					'NAV-NEXT' => $tmp_box_nav_next,
-					'NAV-END' => $tmp_box_nav_end,
-					'NAV-INFO' => $tmp_nfo
-				],
-				'yes' // export to cache
-			);
+			if(($total > $limit) OR ($display_if_empty === true)) {
+				//--
+				$html = (string) SmartMarkersTemplating::render_file_template(
+					(string) $tpl,
+					[
+						'NAV-START' => $tmp_box_nav_start,
+						'NAV-PREV' => $tmp_box_nav_prev,
+						'NAV-NEXT' => $tmp_box_nav_next,
+						'NAV-END' => $tmp_box_nav_end,
+						'NAV-INFO' => $tmp_nfo
+					],
+					'yes' // export to cache
+				);
+				//--
+			} else {
+				//--
+				$html = '<!-- Navigation Pager (3) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
+				//--
+			} //end if else
 			//--
 		} else {
 			//--
@@ -1809,7 +1817,7 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 				//--
 			} else {
 				//--
-				$html = '<!-- Navigation Pager (1) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
+				$html = '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
 				//--
 			} //end if
 			//--
