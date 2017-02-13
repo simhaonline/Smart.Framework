@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.161001
+ * @version 	v.170208
  * @package 	Base
  *
  */
@@ -82,134 +82,107 @@ public static function url_hex_decode($y_enc_val) {
 //================================================================ Display a localized number
 // WARNING: Do not use when you do calculations, because will break calculations
 // Use it just for display (a local formated number)
-// The number to format must come in US format as 1,234.56
+// The number to format must come in US format as 1234.56 or -1234.56 or 1,234.56 or 1 234.56 or -1,234.56 or -1 234.56
 // [-1] will place auto decimals
-// [-2] will place auto decimals but trimmed (will keep the same number of decimals only if have decimals, otherwise will remove them)
-public static function local_display_number($y_number, $y_decimals=-1) {
+// [-2] will place auto decimals but force as min as .0
+public static function local_display_number($y_number, $y_decimals=-1, $y_usethousandsep=true) {
 	//--
-	global $configs;
+	$y_number = (string) trim((string)$y_number);
+	//--
+	if(!preg_match('/^[0-9\-\.\, ]+$/', (string)$y_number)) {
+		Smart::log_warning('Invalid Number to convert to local (invalid characters): '.$y_number);
+		return (string) '!'.$y_number.'!';
+	} //end if
 	//--
 	$y_decimals = Smart::format_number_int($y_decimals);
+	if($y_decimals > 4) {
+		$y_decimals = 4;
+	} elseif($y_decimals < -2) {
+		$y_decimals = -2;
+	} //end if else
+	//--
+	$separator_dec = (string) Smart::get_from_config('regional.decimal-separator');
+	$separator_thd = (string) Smart::get_from_config('regional.thousands-separator');
+	//--
+	$sign = '';
+	if((string)substr((string)$y_number, 0, 1) == '-') {
+		$sign = '-';
+	} //end if
 	//--
 	$localnum = '0';
 	//--
-	if(strlen($y_number) >= 14) { // cannot handle numbers greater than 14 precision
+	$tmp_arr = explode('.', (string)$y_number);
+	//--
+	$int_part = (string) trim(str_replace(['.', ',', ' ', '-', $separator_dec, $separator_thd], ['', '', '', '', '', ''], (string)$tmp_arr[0]));
+	$dec_part = (string) trim(str_replace(['.', ',', ' ', '-', $separator_dec, $separator_thd], ['', '', '', '', '', ''], (string)$tmp_arr[1]));
+	//--
+	$intx_part = strrev(chunk_split(strrev($int_part), 3, $separator_thd));
+	$intx_part = trim(substr($intx_part, 1));
+	//--
+	if($y_usethousandsep === false) {
+		$intx_part = (string) $int_part;
+	} //end if
+	//--
+	if(count($tmp_arr) > 2) { // invalid
 		//--
-		$tmp_arr = explode('.', (string)$y_number);
-		//--
-		if(count($tmp_arr) > 2) {
-			//--
-			$localnum = str_replace('.', $configs['regional']['decimal-separator'], $y_number); // something is wrong ... it has more than one . character it means it may be the thousands separator
-			//--
-		} else {
-			//--
-			$int_part = trim($tmp_arr[0]);
-			$dec_part = trim($tmp_arr[1]);
-			//--
-			$intx_part = strrev(chunk_split(strrev($int_part), 3, $configs['regional']['thousands-separator']));
-			$intx_part = substr($intx_part, 1);
-			$intx_part = trim($intx_part);
-			//--
-			if($y_decimals < 0) {
-				//--
-				if($y_decimals == -2) {
-					//-- case -2
-					$y_number = $intx_part.$configs['regional']['decimal-separator'].$dec_part;
-					//--
-				} elseif($y_decimals == -1) {
-					//-- case -1
-					$y_number = $int_part.$configs['regional']['decimal-separator'].$dec_part;
-					//--
-				} else {
-					// display as is
-				} //end if else
-				//--
-			} else {
-				//--
-				if($y_decimals == 0) {
-					$y_number = $intx_part;
-				} else {
-					$y_number = $intx_part.$configs['regional']['decimal-separator'].substr($dec_part, 0, $y_decimals);
-				} //end if else
-				//--
-			} //end if else
-			//--
-			$localnum = $y_number;
-			//--
-		} //end if else
+		Smart::log_warning('Invalid Number to convert to local (have too many decimal parts): '.$y_number);
+		return (string) '!'.$y_number.'!';
 		//--
 	} else {
 		//--
-		$thousand_sep = (string) $configs['regional']['thousands-separator'];
+		switch((string)$y_decimals) {
+			case '0': // no decimals
+				$localnum = (string) $intx_part;
+				break;
+			case '1': // fixed number of decimal: 1
+			case '2': // fixed number of decimal: 2
+			case '3': // fixed number of decimal: 3
+			case '4': // fixed number of decimal: 4
+				$localnum = (string) $intx_part.$separator_dec.str_pad(substr((string)(int)$dec_part, 0, (int)$y_decimals), (int)$y_decimals, '0');
+				break;
+			case '-2': // auto decimals but force at least one
+				$autodec = (int) 0 + $dec_part;
+				$localnum = (string) $intx_part.$separator_dec.$autodec;
+				break;
+			case '-1': // auto decimals (zero or more)
+			default:
+				$autodec = (int) 0 + $dec_part;
+				if((int)$autodec > 0) {
+					$localnum = (string) $intx_part.$separator_dec.$autodec;
+				} else {
+					$localnum = (string) $intx_part;
+				} //end if else
+		} //end switch
 		//--
-		if($y_decimals < 0) {
-			//-- Auto Place Decimals
-			if($y_decimals == -2) {
-				//-- case -2
-				$y_number = 0+$y_number;
-				//--
-			} elseif($y_decimals == -1) {
-				//-- case -1
-				$y_number = 0+$y_number;
-				$thousand_sep = '';
-				//--
-			} else {
-				//-- display as is
-				//--
-			} //end if else
-			//--
-			$arr = (array) explode('.', (string)$y_number);
-			$int_part = $arr[0];
-			$dec_part = $arr[1];
-			//--
-			$number = $y_number; // $int_part.'.'.$dec_part;
-			//--
-			if(strlen($dec_part) > 0) {
-				$decimals = strlen($dec_part);
-			} else {
-				$decimals = 0;
-			} //end if else
-			//--
-		} else {
-			//--
-			$number = $y_number;
-			//--
-			$decimals = $y_decimals;
-			//--
-		} //end if else
-		//--
-		$localnum = Smart::format_number_dec($number, $decimals, $configs['regional']['decimal-separator'], $thousand_sep);
-		//--
-	} //end if
+	} //end if else
 	//--
-	return $localnum;
+	return (string) $sign.$localnum;
 	//--
 } //END FUNCTION
 //================================================================
 
 
 //================================================================
-// Reverse the SIGN for a localized number (like localnum * -1)
+// Reverse (Inverse) the SIGN for a localized number (like localnum * -1)
 // The Number will be treated as STRING, as it may be huge to avoid break it
 public static function local_number_sign_reverse($y_number) {
 	//--
-	global $configs;
+	$separator_dec = (string) Smart::get_from_config('regional.decimal-separator');
+	$separator_thd = (string) Smart::get_from_config('regional.thousands-separator');
 	//-- test if zero
-	$tmp_number = str_replace(array('.', ',', ' ', $configs['regional']['decimal-separator'], $configs['regional']['thousands-separator']), array('', '', '', '', ''), $y_number); // remove garbage characters
-	//--
+	$tmp_number = str_replace(['.', ',', ' ', $separator_dec, $separator_thd], ['', '', '', '', ''], (string)$y_number); // remove garbage characters
 	if((0+$tmp_number) == 0) {
-		return $y_number; // it is zero, so no sign should be used
+		return (string) $y_number; // it is zero, so no sign should be used
 	} //end if
-	//--
-	$y_number = trim($y_number);
-	//--
+	//-- inverse the sign
+	$y_number = (string) trim((string)$y_number);
 	if(substr($y_number, 0, 1) == '-') {
 		$y_number = trim(substr($y_number, 1)); // remove the minus sign -
 	} else {
 		$y_number = '-'.$y_number; // add the minus sign -
 	} //end if
 	//--
-	return $y_number;
+	return (string) $y_number;
 	//--
 } //END FUNCTION
 //================================================================
