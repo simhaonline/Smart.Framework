@@ -656,6 +656,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						break;
 					default:
 						// invalid syntax
+						Smart::log_warning('Invalid Marker Template IF Syntax: ['.$sign_not[$i].'] / Template: '.$mtemplate);
 				} //end switch
 				//--
 				$mtemplate = (string) str_replace((string)$orig_part[$i], (string)$line, (string)$mtemplate);
