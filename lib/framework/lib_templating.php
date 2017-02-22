@@ -540,7 +540,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 	//--
 	if(strpos((string)$mtemplate, '[%%%%IF:') !== false) {
 		//--
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|@\=|@\!)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
