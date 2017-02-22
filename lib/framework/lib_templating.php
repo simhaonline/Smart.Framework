@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170126
+ * @version 	v.170222
  * @package 	Templating:Engines
  *
  */
@@ -640,8 +640,15 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
-					case '%': // modulo
+					case '%': // modulo (true/false)
 						if((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+					case '%!': // not modulo (false/true)
+						if(!((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i])) { // if variable evaluates to false keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
