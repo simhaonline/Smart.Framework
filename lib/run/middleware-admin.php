@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Middleware / Admin
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.6 r.2017.02.02 / smart.framework.v.2.3
+// v.2.3.7.7 r.2017.02.22 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -15,7 +15,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.6');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.7');
 
 
 //==================================================================================
@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.6');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170131
+ * @version		170222
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -286,6 +286,9 @@ public static function Run() {
 	} //end if else
 	//--
 	$appSettings = (array) $appModule->PageViewGetCfgs();
+	if(array_key_exists('status-code', $appSettings)) {
+		$appStatusCode = (int) $appSettings['status-code'];
+	} //end if
 	//--
 	//== CACHE CONTROL
 	//--

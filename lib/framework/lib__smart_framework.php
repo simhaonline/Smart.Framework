@@ -1,7 +1,7 @@
 <?php
 // [Smart-Framework]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.6 r.2017.02.02 / smart.framework.v.2.3
+// v.2.3.7.7 r.2017.02.22 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170129
+ * @version 	v.170222
  * @package 	Application
  *
  */
@@ -253,7 +253,8 @@ abstract class SmartAbstractAppController {
 		'expires', 'modified',				// expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now
 		'template-path', 'template-file',	// template path (@ for self module path or a relative path) ; template filename (ex: template.htm)
 		'rawpage', 'rawmime', 'rawdisp',	// raw page (yes/no) ; raw mime (any valid mime type, ex: image/png) ; raw disposition (ex: inline / attachment / attachment; filename="somefile.pdf")
-		'download-packet', 'download-key' 	// download packet ; download key
+		'download-packet', 'download-key', 	// download packet ; download key
+		'status-code'						// HTTP Status Code
 	];
 	//--
 	private $pageview; 			// will allow any key since they are markers
