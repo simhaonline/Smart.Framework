@@ -185,7 +185,7 @@ final class SmartCache {
 abstract class SmartAbstractPersistentCache {
 
 	// :: ABSTRACT
-	// v.160224
+	// v.170223
 
 
 	/**
@@ -271,6 +271,46 @@ abstract class SmartAbstractPersistentCache {
 	public static function unsetKey($y_realm, $y_key) {
 		//--
 		return false;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Validate persistent Cache Realm (can be empty or must comply with Smart::safe_pathname() charset)
+	 *
+	 * @param STRING 	$y_realm	The Cache Realm
+	 *
+	 * @return BOOLEAN	Returns True if the realm is valid or False if not
+	 */
+	public static function validateRealm($y_realm) {
+		//--
+		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]*$/', (string)$y_realm)) { // {{{SYNC-WITH-Smart::safe_pathname()}}} + allow empty * instead of +
+			return true;
+		} else {
+			return false;
+		} //end if else
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Validate persistent Cache Realm (cannot be empty and must comply with Smart::safe_pathname() charset)
+	 *
+	 * @param STRING 	$y_key		The Cache Key ; Use * for All Keys in that Realm
+	 *
+	 * @return BOOLEAN	Returns True if the key is valid or False if not
+	 */
+	public static function validateKey($y_key) {
+		//--
+		if((string)$y_key == '') {
+			return false;
+		} //end if
+		//--
+		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_key)) { // {{{SYNC-WITH-Smart::safe_pathname()}}}
+			return true;
+		} else {
+			return false;
+		} //end if else
 		//--
 	} //END FUNCTION
 

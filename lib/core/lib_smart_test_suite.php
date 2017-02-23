@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.161003
+	// v.170223
 
 
 //==================================================================
@@ -1035,7 +1035,7 @@ public static function test_redisserver() {
 			$redis_set_key = SmartPersistentCache::setKey(
 				'redis-server-tests',
 				$redis_test_key,
-				(string)$redis_test_value['unicode-test'],
+				(string) $redis_test_value['unicode-test'],
 				3 // expire it after 3 seconds
 			);
 			if($redis_set_key !== true) {
@@ -1068,6 +1068,19 @@ public static function test_redisserver() {
 			$tests[] = 'Check if Redis Key exists (after set)';
 			if(!SmartPersistentCache::keyExists('redis-server-tests', $redis_test_key)) {
 				$err = 'Redis Key does not exists: '."\n".$redis_test_key;
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Set a Redis Key with Empty Realm (will expire after 30 seconds)';
+			$redis_set_rxkey = SmartPersistentCache::setKey(
+				'',
+				'No-Realm-'.$redis_test_key,
+				date('Y-m-d H:i:s'),
+				30
+			);
+			if($redis_set_rxkey !== true) {
+				$err = 'Redis SetKey with Empty Realm returned a non-true result: '."\n".'No-Realm-'.$redis_test_key;
 			} //end if
 		} //end if
 		//--
@@ -2200,7 +2213,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.161003
+	// v.170223
 
 private $db;
 

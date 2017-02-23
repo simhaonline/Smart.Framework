@@ -35,7 +35,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160827
+ * @version 	v.170223
  * @package 	Caching
  *
  */
@@ -288,28 +288,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 		} //end if
 		//--
 		return true;
-		//--
-	} //END FUNCTION
-
-
-	private static function validateRealm($y_str) {
-		//--
-		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]*$/', (string)$y_str)) {
-			return true;
-		} else {
-			return false;
-		} //end if else
-		//--
-	} //END FUNCTION
-
-
-	private static function validateKey($y_str) {
-		//--
-		if((string)$y_str == '') {
-			return false;
-		} //end if
-		//--
-		return self::validateRealm((string)$y_str);
 		//--
 	} //END FUNCTION
 
