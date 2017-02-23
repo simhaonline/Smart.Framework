@@ -276,7 +276,7 @@ abstract class SmartAbstractPersistentCache {
 
 
 	/**
-	 * Validate persistent Cache Realm (can be empty or must comply with Smart::safe_pathname() charset)
+	 * Validate persistent Cache Realm (can be empty or must comply with self::safeKey() charset)
 	 *
 	 * @param STRING 	$y_realm	The Cache Realm
 	 *
@@ -284,7 +284,7 @@ abstract class SmartAbstractPersistentCache {
 	 */
 	public static function validateRealm($y_realm) {
 		//--
-		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]*$/', (string)$y_realm)) { // {{{SYNC-WITH-Smart::safe_pathname()}}} + allow empty * instead of +
+		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]*$/', (string)$y_realm)) { // {{{SYNC-WITH-self::safeKey()}}} + allow empty * instead of +
 			return true;
 		} else {
 			return false;
@@ -294,9 +294,9 @@ abstract class SmartAbstractPersistentCache {
 
 
 	/**
-	 * Validate persistent Cache Realm (cannot be empty and must comply with Smart::safe_pathname() charset)
+	 * Validate persistent Cache Realm (cannot be empty and must comply with self::safeKey() charset)
 	 *
-	 * @param STRING 	$y_key		The Cache Key ; Use * for All Keys in that Realm
+	 * @param STRING 	$y_key		The Cache Key
 	 *
 	 * @return BOOLEAN	Returns True if the key is valid or False if not
 	 */
@@ -306,11 +306,25 @@ abstract class SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_key)) { // {{{SYNC-WITH-Smart::safe_pathname()}}}
+		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_key)) { // {{{SYNC-WITH-self::safeKey()}}}
 			return true;
 		} else {
 			return false;
 		} //end if else
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Prepare a persistent Cache SAFE Key or Realm
+	 *
+	 * @param STRING 	$y_key_or_realm		The Cache Key or Realm
+	 *
+	 * @return STRING	Returns the safe prepared Key or Realm
+	 */
+	public static function safeKey($y_key_or_realm) {
+		//--
+		return (string) Smart::safe_pathname((string)$y_key_or_realm);
 		//--
 	} //END FUNCTION
 

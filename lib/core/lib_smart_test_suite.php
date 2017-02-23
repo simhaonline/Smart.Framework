@@ -998,7 +998,7 @@ public static function test_redisserver() {
 		//--
 		$redis_big_content = self::pack_test_archive(); // CREATE THE Test Archive (time not counted)
 		//--
-		$redis_test_key = 'redis-test-key_'.Smart::uuid_10_num().'-'.Smart::uuid_36().'-'.Smart::uuid_45();
+		$redis_test_key = 'redis-test-key_'.SmartPersistentCache::safeKey(Smart::uuid_10_num().'-'.Smart::uuid_36().'-'.Smart::uuid_45());
 		$redis_test_value = array(
 			'unicode-test' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド', // unicode value
 			'big-key-test' => (string) $redis_big_content, // a big key

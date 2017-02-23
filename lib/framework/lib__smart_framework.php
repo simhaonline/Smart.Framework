@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170222
+ * @version 	v.170223
  * @package 	Application
  *
  */
@@ -725,7 +725,22 @@ abstract class SmartAbstractAppController {
 	 */
 	final public function PageCacheisActive() {
 		//--
-		return SmartPersistentCache::isActive();
+		return (bool) SmartPersistentCache::isActive();
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Prepare a Page Cache SAFE Key or Realm.
+	 * This is based on PersistentCache.
+	 *
+	 * @return 	STRING								:: The safe prepared Key or Realm
+	 */
+	final public function PageCacheSafeKey($y_key_or_realm) {
+		//--
+		return (string) SmartPersistentCache::safeKey((string)$y_key_or_realm);
 		//--
 	} //END FUNCTION
 	//=====
