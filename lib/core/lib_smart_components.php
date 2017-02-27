@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170204
+ * @version 	v.170227
  * @package 	Components:Framework
  *
  */
@@ -1851,12 +1851,17 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 		$opt_zerolink = (string) $options['zero-link'];
 	} //end if
 	//--
+	$opt_emptydiv = '<div>&nbsp;</div>';
+	if(array_key_exists('empty-div', $options)) {
+		$opt_emptydiv = (string) $options['empty-div'];
+	} //end if
+	//--
 	if($limit <= 0) {
 		return (string) '<!-- Navigation Pager (2) -->[ ERROR: Invalid Navigation Pager (2): Limit is ZERO ]<!-- #END# Navigation Pager -->';
 	} //end if
 	if($display_if_empty !== true) {
 		if(($total <= 0) OR ($total <= $limit)) {
-			return (string) '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
+			return (string) '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' -->'.$opt_emptydiv.'<!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
 		} //end if
 	} //end if
 	//--
