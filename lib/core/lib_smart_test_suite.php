@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.170223
+	// v.170227
 
 
 //==================================================================
@@ -1264,7 +1264,7 @@ public static function test_pgsqlserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Read [ LIKE / Literal Escape +% ]';
-			$data = SmartPgsqlDb::read_adata('SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" LIKE '.SmartPgsqlDb::escape_literal('%'.$variable.'_%', 'yes').')');
+			$data = SmartPgsqlDb::read_adata('SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" LIKE '.SmartPgsqlDb::escape_literal('%'.$variable.'_%', 'likes').')');
 			if(Smart::array_size($data) !== 0) {
 				$err = 'Read Like / Literal-Escape +% Test Failed, should return 0 rows but returned: '.Smart::array_size($data);
 			} //end if
@@ -1278,7 +1278,7 @@ public static function test_pgsqlserver() {
 		} //end if
 		if((string)$err == '') {
 			$tests[] = 'Read [ LIKE / Str Escape +% ]';
-			$data = SmartPgsqlDb::read_adata('SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" ILIKE \''.SmartPgsqlDb::escape_str('%'.$variable.'_%', 'yes').'\')');
+			$data = SmartPgsqlDb::read_adata('SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" ILIKE \''.SmartPgsqlDb::escape_str('%'.$variable.'_%', 'likes').'\')');
 			if(Smart::array_size($data) !== 0) {
 				$err = 'Read Like / Str-Escape +% Test Failed, should return 0 rows but returned: '.Smart::array_size($data);
 			} //end if
@@ -2213,7 +2213,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.170223
+	// v.170227
 
 private $db;
 

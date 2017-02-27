@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170120
+ * @version 	v.170227
  * @package 	Database:PostgreSQL
  *
  */
@@ -316,24 +316,27 @@ public static function server_connect($yhost, $yport, $ydb, $yuser, $ypass, $yti
  * This function WILL NOT ADD the SINGLE QUOTES (') arround the string, but just will just escape it to be safe.
  *
  * @param STRING $y_string						:: A String or a Number to be Escaped
- * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @param ENUM $y_mode							:: '' = default ; 'likes' = Escape LIKE / ILIKE / SIMILAR Syntax (% _) ; :: '' = default ; 'regex' = Escape ~ ~* !~ !~* Syntax
  * @param RESOURCE $y_connection				:: the connection
  * @return STRING 								:: The Escaped String / Number
  *
  */
-public static function escape_str($y_string, $y_escape_likes='no', $y_connection='DEFAULT') {
+public static function escape_str($y_string, $y_mode='', $y_connection='DEFAULT') {
 
 	//==
-	$y_connection = self::check_connection($y_connection, 'ESCAPE-STR');
+	$y_connection = self::check_connection($y_connection, 'ESCAPE-STR:['.$y_mode.']');
 	//==
 
 	//-- Fix
 	$y_string = (string) SmartUnicode::fix_charset((string)$y_string);
+	$y_mode = (string) trim((string)strtolower((string)$y_mode));
 	//--
 
 	//--
-	if((string)$y_escape_likes == 'yes') { // extra special escape: _ = \_ ; % = \%
-		$y_string = str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
+	if((string)$y_mode == 'likes') { // escape for LIKE / ILIKE / SIMILAR: extra special escape: _ = \_ ; % = \%
+		$y_string = (string) str_replace(['_', '%'], ['\\_', '\\%'], (string)$y_string);
+	} elseif((string)$y_mode == 'regex') { // escape for regex: ~ ~* !~ !~*
+		$y_string = (string) preg_quote((string)str_replace(['\\'], [''], (string)$y_string));
 	} //end if else
 	//--
 	$y_string = (string) @pg_escape_string($y_connection, (string)$y_string); // [CONN]
@@ -354,24 +357,27 @@ public static function escape_str($y_string, $y_escape_likes='no', $y_connection
  * This is the preferred way to escape variables inside PostgreSQL SQL Statements, and is better than escape_str().
  *
  * @param STRING $y_string						:: A String or a Number to be Escaped
- * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @param ENUM $y_mode							:: '' = default ; 'likes' = Escape LIKE / ILIKE / SIMILAR Syntax (% _) ; :: '' = default ; 'regex' = Escape ~ ~* !~ !~* Syntax
  * @param RESOURCE $y_connection				:: the connection
  * @return STRING 								:: The Escaped String / Number
  *
  */
-public static function escape_literal($y_string, $y_escape_likes='no', $y_connection='DEFAULT') {
+public static function escape_literal($y_string, $y_mode='', $y_connection='DEFAULT') {
 
 	//==
-	$y_connection = self::check_connection($y_connection, 'ESCAPE-LITERAL');
+	$y_connection = self::check_connection($y_connection, 'ESCAPE-LITERAL:['.$y_mode.']');
 	//==
 
 	//-- Fix
 	$y_string = (string) SmartUnicode::fix_charset((string)$y_string);
+	$y_mode = (string) trim((string)strtolower((string)$y_mode));
 	//--
 
 	//--
-	if((string)$y_escape_likes == 'yes') { // extra special escape: _ = \_ ; % = \%
-		$y_string = str_replace(array('_', '%'), array('\\_', '\\%'), $y_string);
+	if((string)$y_mode == 'likes') { // escape for LIKE / ILIKE / SIMILAR: extra special escape: _ = \_ ; % = \%
+		$y_string = (string) str_replace(['_', '%'], ['\\_', '\\%'], (string)$y_string);
+	} elseif((string)$y_mode == 'regex') { // escape for regex: ~ ~* !~ !~*
+		$y_string = (string) preg_quote((string)str_replace(['\\'], [''], (string)$y_string));
 	} //end if else
 	//--
 	$y_string = (string) @pg_escape_literal($y_connection, (string)$y_string); // [CONN]
@@ -484,7 +490,7 @@ public static function check_if_schema_exists($y_schema, $y_connection='DEFAULT'
 	//==
 
 	//--
-	$arr_data = self::read_data('SELECT "nspname" FROM "pg_namespace" WHERE ("nspname" = \''.self::escape_str($y_schema, 'no', $y_connection).'\')', 'Check if Schema Exists', $y_connection);
+	$arr_data = self::read_data('SELECT "nspname" FROM "pg_namespace" WHERE ("nspname" = \''.self::escape_str($y_schema, '', $y_connection).'\')', 'Check if Schema Exists', $y_connection);
 	//--
 	if((string)$arr_data[0] == (string)$y_schema) {
 		$out = 1;
@@ -522,7 +528,7 @@ public static function check_if_table_exists($y_table, $y_schema='public', $y_co
 	//--
 
 	//--
-	$arr_data = self::read_data('SELECT "tablename", "schemaname" FROM "pg_tables" WHERE (("schemaname" = \''.self::escape_str($y_schema, 'no', $y_connection).'\') AND ("tablename" = \''.self::escape_str($y_table, 'no', $y_connection).'\'))', 'Check if Table Exists', $y_connection);
+	$arr_data = self::read_data('SELECT "tablename", "schemaname" FROM "pg_tables" WHERE (("schemaname" = \''.self::escape_str($y_schema, '', $y_connection).'\') AND ("tablename" = \''.self::escape_str($y_table, '', $y_connection).'\'))', 'Check if Table Exists', $y_connection);
 	//--
 	if((string)$arr_data[0] == (string)$y_table) {
 		$out = 1;
@@ -1456,7 +1462,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 			//--
 			if(is_array($val)) { // array (this is a special case, and always escape data)
 				//--
-				$val_x = (string) self::escape_literal((string)Smart::array_to_list($val), 'no', $y_connection); // array values will be always escaped and converted to: <val1>, <val2>, ...
+				$val_x = (string) self::escape_literal((string)Smart::array_to_list($val), '', $y_connection); // array values will be always escaped and converted to: <val1>, <val2>, ...
 				//--
 			} elseif($val === null) { // emulate the SQL: NULL
 				//--
@@ -1472,7 +1478,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 				//--
 			} else { // string, number or other cases
 				//--
-				$val_x = (string) self::escape_literal($val, 'no', $y_connection);
+				$val_x = (string) self::escape_literal($val, '', $y_connection);
 				//--
 			} //end if else
 			//--
@@ -1587,7 +1593,7 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 					break;
 				} //end if
 				//-- {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}} :: for PostgreSQL IS IMPOSSIBLE TO KNOW OUT OF CONTEXT TO PASS A PURE NUMERIC OR A STRING VALUE BECAUSE OF ERRORS ; THUS IS SAFE TO USE ESCAPE LITERAL WHICH ALWAYS ADDS QUOTES ARROUND VALUES (INCL. NUMERIC) ; ERROR EXAMPLE: DO A QUERY WHERE A VALUE = NUMERIC WHERE COLUMN IS TEXT
-				$out_query .= (string) self::escape_literal((string)$replacements_arr[$i], 'no', $y_connection);
+				$out_query .= (string) self::escape_literal((string)$replacements_arr[$i], '', $y_connection);
 				//--
 			} //end if
 			//--
@@ -1616,7 +1622,7 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 					break;
 				} //end if
 				//-- {{{SYNC-DETECT-PURE-NUMERIC-INT-OR-DECIMAL-VALUES}}} :: for PostgreSQL IS IMPOSSIBLE TO KNOW OUT OF CONTEXT TO PASS A PURE NUMERIC OR A STRING VALUE BECAUSE OF ERRORS ; THUS IS SAFE TO USE ESCAPE LITERAL WHICH ALWAYS ADDS QUOTES ARROUND VALUES (INCL. NUMERIC) ; ERROR EXAMPLE: DO A QUERY WHERE A VALUE = NUMERIC WHERE COLUMN IS TEXT
-				$out_query .= (string) self::escape_literal((string)$replacements_arr[$crr_key], 'no', $y_connection);
+				$out_query .= (string) self::escape_literal((string)$replacements_arr[$crr_key], '', $y_connection);
 				//--
 			} //end if
 			//--
@@ -1688,7 +1694,7 @@ public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schem
 		} //end if
 		//--
 		if((int)Smart::random_number(0,99) == 1) { // 1% chance to run it for cleanup records older than 24 hours
-			self::write_data('DELETE FROM "smart_runtime"."_safe_id_records" WHERE ("date_time" < \''.self::escape_str(date('Y-m-d H:i:s', @strtotime('-1 day')), 'no', $y_connection).'\')', 'Safe ID Records Cleanup (OLDs)', $y_connection); // cleanup olds
+			self::write_data('DELETE FROM "smart_runtime"."_safe_id_records" WHERE ("date_time" < \''.self::escape_str(date('Y-m-d H:i:s', @strtotime('-1 day')), '', $y_connection).'\')', 'Safe ID Records Cleanup (OLDs)', $y_connection); // cleanup olds
 		} //end if
 		//--
 	} //end if
@@ -1734,7 +1740,7 @@ public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schem
 		} //end switch
 		//--
 		$result_arr = array();
-		$chk_uniqueness = 'SELECT '.self::escape_identifier($y_id_field, $y_connection).' FROM '.self::escape_identifier($y_schema, $y_connection).'.'.self::escape_identifier($y_table_name, $y_connection).' WHERE ('.self::escape_identifier($y_id_field, $y_connection).' = '.self::escape_literal($new_id, 'no', $y_connection).') LIMIT 1 OFFSET 0';
+		$chk_uniqueness = 'SELECT '.self::escape_identifier($y_id_field, $y_connection).' FROM '.self::escape_identifier($y_schema, $y_connection).'.'.self::escape_identifier($y_table_name, $y_connection).' WHERE ('.self::escape_identifier($y_id_field, $y_connection).' = '.self::escape_literal($new_id, '', $y_connection).') LIMIT 1 OFFSET 0';
 		$result_arr = self::read_data($chk_uniqueness, 'Safe Check if NEW ID Exists into Table', $y_connection);
 		$tmp_result = (string) trim((string)$result_arr[0]);
 		$result_arr = array();
@@ -1745,7 +1751,7 @@ public static function new_safe_id($y_mode, $y_id_field, $y_table_name, $y_schem
 				//-- reserve this ID to bse sure will not be assigned to another instance
 				$uniqueness_mark = (string) $y_schema.'.'.$y_table_name.':'.$y_id_field;
 				$write_res = self::write_igdata(
-					'INSERT INTO "smart_runtime"."_safe_id_records" ("id", "table_space", "date_time") ( SELECT \''.self::escape_str($new_id, 'no', $y_connection).'\', \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\', \''.self::escape_str(date('Y-m-d H:i:s'), 'no', $y_connection).'\' WHERE (NOT EXISTS ( SELECT 1 FROM "smart_runtime"."_safe_id_records" WHERE (("id" = \''.self::escape_str($new_id, 'no', $y_connection).'\') AND ("table_space" = \''.self::escape_str($uniqueness_mark, 'no', $y_connection).'\')) LIMIT 1 OFFSET 0 ) AND NOT EXISTS ('.$chk_uniqueness.') ) )',
+					'INSERT INTO "smart_runtime"."_safe_id_records" ("id", "table_space", "date_time") ( SELECT \''.self::escape_str($new_id, '', $y_connection).'\', \''.self::escape_str($uniqueness_mark, '', $y_connection).'\', \''.self::escape_str(date('Y-m-d H:i:s'), '', $y_connection).'\' WHERE (NOT EXISTS ( SELECT 1 FROM "smart_runtime"."_safe_id_records" WHERE (("id" = \''.self::escape_str($new_id, '', $y_connection).'\') AND ("table_space" = \''.self::escape_str($uniqueness_mark, '', $y_connection).'\')) LIMIT 1 OFFSET 0 ) AND NOT EXISTS ('.$chk_uniqueness.') ) )',
 					'Safe Record of NEW ID of Table into Zone Control',
 					$y_connection
 				);
@@ -1792,7 +1798,7 @@ public static function list_db_tables($y_schema, $y_connection='DEFAULT') {
 	//==
 
 	//--
-	$arr_data = self::read_data('SELECT "schemaname", "tablename" FROM "pg_tables" WHERE ("schemaname" = \''.self::escape_str($y_schema, 'no', $y_connection).'\') ORDER BY "tablename" ASC', 'List DB Tables', $y_connection);
+	$arr_data = self::read_data('SELECT "schemaname", "tablename" FROM "pg_tables" WHERE ("schemaname" = \''.self::escape_str($y_schema, '', $y_connection).'\') ORDER BY "tablename" ASC', 'List DB Tables', $y_connection);
 	//--
 
 	//--
@@ -2192,7 +2198,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170120
+ * @version 	v.170227
  * @package 	Database:PostgreSQL
  *
  */
@@ -2275,13 +2281,13 @@ public function getConnection() {
  * This function will not add the (single) quotes arround the string, but just will just escape it to be safe.
  *
  * @param STRING $y_string						:: A String or a Number to be Escaped
- * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @param ENUM $y_mode							:: '' = default ; 'likes' = Escape LIKE / ILIKE / SIMILAR Syntax (% _) ; :: '' = default ; 'regex' = Escape ~ ~* !~ !~* Syntax
  * @return STRING 								:: The Escaped String / Number
  *
  */
-public function escape_str($y_string, $y_escape_likes='no') {
+public function escape_str($y_string, $y_mode='') {
 	//--
-	return SmartPgsqlDb::escape_str($y_string, $y_escape_likes, $this->connection);
+	return SmartPgsqlDb::escape_str($y_string, $y_mode, $this->connection);
 	//--
 } //END FUNCTION
 
@@ -2292,13 +2298,13 @@ public function escape_str($y_string, $y_escape_likes='no') {
  * This is the preferred way to escape variables inside PostgreSQL SQL Statements, and is better than escape_str().
  *
  * @param STRING $y_string						:: A String or a Number to be Escaped
- * @param YES/NO $y_escape_likes				:: Escape LIKE / ILIKE Syntax (% _) ; Default is NO
+ * @param ENUM $y_mode							:: '' = default ; 'likes' = Escape LIKE / ILIKE / SIMILAR Syntax (% _) ; :: '' = default ; 'regex' = Escape ~ ~* !~ !~* Syntax
  * @return STRING 								:: The Escaped String / Number
  *
  */
-public function escape_literal($y_string, $y_escape_likes='no') {
+public function escape_literal($y_string, $y_mode='') {
 	//--
-	return SmartPgsqlDb::escape_literal($y_string, $y_escape_likes, $this->connection);
+	return SmartPgsqlDb::escape_literal($y_string, $y_mode, $this->connection);
 	//--
 } //END FUNCTION
 
