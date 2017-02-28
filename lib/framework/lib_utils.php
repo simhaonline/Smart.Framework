@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170208
+ * @version 	v.170228
  * @package 	Base
  *
  */
@@ -789,7 +789,7 @@ public static function extract_keywords($ytxt, $y_count=97) {
 	$cnt = 0;
 	$out = '';
 	for($i=0; $i<Smart::array_size($arr); $i++) {
-		$tmp_word = trim($arr[$i]);
+		$tmp_word = (string) trim(str_replace(['.', '_', ';', '"', '<', '>', '[', ']', '{', '}', '!', '?', '^', '|', '/', '\\'], ' ', (string)$arr[$i]));
 		if((string)$tmp_word != '') {
 			$out .= $tmp_word.', ';
 			$cnt++;
