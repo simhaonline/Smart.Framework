@@ -525,7 +525,7 @@ private static function process_comments_syntax($mtemplate) {
 	if(strpos((string)$mtemplate, '[%%%%COMMENT') !== false) {
 		//--
 		//$pattern = '{\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]}sU';
-		$pattern = '{\s?\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]\s?}sU'; // Fix: trim parts (#170301)
+		$pattern = '{\s?\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]\s?}sU'; // Fix: trim parts (#170301) [OK]
 		$mtemplate = (string) preg_replace($pattern, '', (string)$mtemplate);
 		//--
 	} //end if
@@ -567,9 +567,9 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				} //end if
 				//--
 				$line = '';
-				//-- Fix: trim parts (#170301)
-				$if_part[$i] 	= (string) trim((string)$if_part[$i]);
-				$else_part[$i] 	= (string) trim((string)$else_part[$i]);
+				//-- Fix: trim parts (#170301) [OK]
+				$if_part[$i] 	= (string) trim((string)$if_part[$i],   "\t\n\r\0\x0B");
+				$else_part[$i] 	= (string) trim((string)$else_part[$i], "\t\n\r\0\x0B");
 				//-- recursive process if in pieces of if or else
 				if(strpos((string)$if_part[$i], '[%%%%IF:') !== false) {
 					$if_part[$i] = (string) self::process_if_syntax((string)$if_part[$i], (array)$y_arr_vars, (string)$y_context);
@@ -702,7 +702,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 				} //end if
 				//--
 				//$loop_orig = (string) rtrim((string)$loop_part[$i]);
-				$loop_orig = (string) trim((string)$loop_part[$i]); // Fix: trim parts (#170301)
+				$loop_orig = (string) trim((string)$loop_part[$i], "\t\n\r\0\x0B"); // Fix: trim parts (#170301) [OK]
 				//--
 				$line = '';
 				//--
