@@ -31,6 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // INFO: This template engine is 100% safe against un-predictable recursion patterns !
 // It does support: MARKERS, IF/ELSE, LOOP, INCLUDES syntax.
 // It does not currently support: nested identic IF/ELSE or nested identic LOOP syntax.
+// Nested identic IF/ELSE or nested identic LOOP syntax must be separed with unique numbers such as: (1), (2), ...
 //#####
 // Because the recursion patterns are un-predictable, as a template can be rendered in other template in controllers or libs,
 // the str_replace() is used internally instead of strtr()
@@ -45,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170222
+ * @version 	v.170301
  * @package 	Templating:Engines
  *
  */
@@ -523,7 +524,8 @@ private static function process_comments_syntax($mtemplate) {
 	//--
 	if(strpos((string)$mtemplate, '[%%%%COMMENT') !== false) {
 		//--
-		$pattern = '{\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]}sU';
+		//$pattern = '{\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]}sU';
+		$pattern = '{\s?\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]\s?}sU'; // Fix: trim parts (#170301)
 		$mtemplate = (string) preg_replace($pattern, '', (string)$mtemplate);
 		//--
 	} //end if
@@ -565,6 +567,9 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				} //end if
 				//--
 				$line = '';
+				//-- Fix: trim parts (#170301)
+				$if_part[$i] 	= (string) trim((string)$if_part[$i]);
+				$else_part[$i] 	= (string) trim((string)$else_part[$i]);
 				//-- recursive process if in pieces of if or else
 				if(strpos((string)$if_part[$i], '[%%%%IF:') !== false) {
 					$if_part[$i] = (string) self::process_if_syntax((string)$if_part[$i], (array)$y_arr_vars, (string)$y_context);
@@ -696,7 +701,8 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 					self::$MkTplVars['%LOOP:'.$bind_var_key][] = 'Processing LOOP Syntax: '.Smart::array_size($y_arr_vars[(string)$bind_var_key]);
 				} //end if
 				//--
-				$loop_orig = (string) rtrim((string)$loop_part[$i]);
+				//$loop_orig = (string) rtrim((string)$loop_part[$i]);
+				$loop_orig = (string) trim((string)$loop_part[$i]); // Fix: trim parts (#170301)
 				//--
 				$line = '';
 				//--
@@ -704,12 +710,15 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 				//--
 				if($arrtype === 1) { // 1: non-associative
 					//--
-					for($j=0; $j<Smart::array_size($y_arr_vars[(string)$bind_var_key]); $j++) {
+					$the_max = Smart::array_size($y_arr_vars[(string)$bind_var_key]);
+					//--
+					for($j=0; $j<$the_max; $j++) {
 						//-- operate on a copy of original
 						$mks_line = (string) $loop_orig;
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
 						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $the_max;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $j;
 							if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
 								foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
@@ -724,7 +733,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								(string) $bind_var_key // context
 							);
 						} //end if
-						//-- ## NEW-FEATURE: process 2nd Level LOOP inside LOOP for non-Associative Array
+						//-- process 2nd Level LOOP inside LOOP for non-Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($y_arr_vars[(string)$bind_var_key][$j]))) {
 							foreach($y_arr_vars[(string)$bind_var_key][$j] as $qk => $qv) {
 								if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'(') !== false)) AND (is_array($qv))) {
@@ -736,8 +745,12 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								} //end if
 							} //end foreach
 						} //end if
-						//-- ## END.NEW-FEATURE
 						//-- process the loop replacements
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) strtoupper($bind_var_key.'._-MAXCOUNT-_'),
+							(string) $the_max
+						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
 							(string) strtoupper($bind_var_key.'._-ITERATOR-_'),
@@ -766,6 +779,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 				} elseif($arrtype === 2) { // 2: associative
 					//--
 					$j=0;
+					$the_max = Smart::array_size($y_arr_vars[(string)$bind_var_key]);
 					//--
 					foreach($y_arr_vars[(string)$bind_var_key] as $zkey => $zval) {
 						//-- operate on a copy of original
@@ -776,6 +790,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
 						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $the_max;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $ziterator;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-KEY-_')] = (string) $zkey;
 							if(is_array($zval)) {
@@ -791,7 +806,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								(string) $bind_var_key // context
 							);
 						} //end if
-						//-- ## NEW-FEATURE: process 2nd Level LOOP inside LOOP for Associative Array
+						//-- process 2nd Level LOOP inside LOOP for Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($zval))) {
 							if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'(') !== false)) AND (is_array($zval))) {
 								//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$zkey).'] = '.print_r($zval,1)."\n\n";
@@ -801,8 +816,12 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								);
 							} //end if
 						} //end if
-						//-- ## END.NEW-FEATURE
 						//-- process the loop replacements
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) strtoupper($bind_var_key.'._-MAXCOUNT-_'),
+							(string) $the_max
+						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
 							(string) strtoupper($bind_var_key.'._-ITERATOR-_'),

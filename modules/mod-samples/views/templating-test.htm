@@ -1,6 +1,6 @@
 [%%%%COMMENT%%%%]
 	!!! This is a comment, it must not be shown ... !!!
-[%%%%/COMMENT%%%%]
+[%%%%/COMMENT%%%%][%%%%COMMENT%%%%]Another Comment[%%%%/COMMENT%%%%]<!-- comments removed -->
 <h1>[####TITLE####]</h1>
 [%%%%COMMENT%%%%]
 	!!! This is another comment, it must not be shown ... !!!
@@ -49,6 +49,7 @@
 <table width="550" cellpadding="4">
 [%%%%LOOP:DATA(1)%%%%]
 [%%%%IF:TEST2:==3%%%%]
+	<!-- Max Data Count: [####DATA._-MAXCOUNT-_|html####] -->
 	[%%%%IF:DATA._-ITERATOR-_:<=0(1)%%%%]
 		<tr style="background:#003399;color:#FFFFFF;">
 			<td colspan="5"><b>[####DATA._-VAL-_|html####]</b></td>
@@ -78,13 +79,16 @@
 		[%%%%/IF:DATA.ID%%%%]
 	[%%%%/IF:DATA._-ITERATOR-_(1)%%%%]
 [%%%%ELSE:TEST2%%%%]
-	<tr><td>Test 2 is not 3, not showing real data ...</td></tr>
+	[%%%%IF:DATA._-ITERATOR-_:<=0(3)%%%%]
+	<tr><td style="background:#FF3300;color:#FFFFFF;"><b>Test 2 is not 3, not showing real data ...</b></td></tr>
+	[%%%%/IF:DATA._-ITERATOR-_(3)%%%%]
 [%%%%/IF:TEST2%%%%]
 [%%%%/LOOP:DATA(1)%%%%]
 </table>
 <hr>
 <table width="550" cellpadding="4">
 [%%%%LOOP:DAT2%%%%]
+	<!-- Max Data2 Count: [####DAT2._-MAXCOUNT-_|html####] -->
 	[%%%%IF:DAT2._-KEY-_:!=key1%%%%]
 		[%%%%IF:DAT2._-ITERATOR-_:%2%%%%]
 		<tr style="background:#FFFFFF;">
