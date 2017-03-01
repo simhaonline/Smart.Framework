@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170301
+ * @version 	v.170301r3
  * @package 	Templating:Engines
  *
  */
@@ -506,7 +506,9 @@ private static function process_syntax($mtemplate, $y_arr_vars) {
 	$mtemplate = (string) self::process_if_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any IF Syntax
 	//-- 2nd process loop syntax
 	$mtemplate = (string) self::process_loop_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any LOOP Syntax
-	//-- 3rd, if any garbage syntax is detected log warning
+	//-- 3rd, process special characters: \r \n \t SPACE syntax
+	$mtemplate = (string) self::process_rntspace_syntax($mtemplate);
+	//-- 4th, finally if any garbage syntax is detected log warning
 	if(self::have_syntax((string)$mtemplate) === true) {
 		Smart::log_warning('Undefined Marker Syntax detected in Template:'."\n".self::log_template($mtemplate));
 		$mtemplate = (string) str_replace(array('[%%%%', '%%%%]'), array('(%%%%-', '-%%%%)'), (string)$mtemplate); // finally protect against invalid loops (may have not bind to an existing var or invalid syntax)
@@ -527,6 +529,36 @@ private static function process_comments_syntax($mtemplate) {
 		//$pattern = '{\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]}sU';
 		$pattern = '{\s?\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]\s?}sU'; // Fix: trim parts (#170301) [OK]
 		$mtemplate = (string) preg_replace($pattern, '', (string)$mtemplate);
+		//--
+	} //end if
+	//--
+	return (string) $mtemplate;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// process the template \r \n \t SPACE syntax to preserve special characters if required
+private static function process_rntspace_syntax($mtemplate) {
+	//--
+	if(strpos((string)$mtemplate, '[%%%%|') !== false) {
+		//--
+		$mtemplate = (string) str_replace(
+			[
+				'[%%%%|R%%%%]',
+				'[%%%%|N%%%%]',
+				'[%%%%|T%%%%]',
+				'[%%%%|SPACE%%%%]'
+			],
+			[
+				"\r",
+				"\n",
+				"\t",
+				' '
+			],
+			(string) $mtemplate
+		);
 		//--
 	} //end if
 	//--
