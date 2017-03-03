@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170222
+ * @version		170302
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -553,6 +553,8 @@ public static function Run() {
 	$appData['title'] = (string) $appData['title'];
 	$appData['main'] = (string) $appData['main'];
 	$appData['lang'] = SmartTextTranslations::getLanguage();
+	//--
+	//# {{{SYNC-TEMPLATE-APPDATA-BASE}}}
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--

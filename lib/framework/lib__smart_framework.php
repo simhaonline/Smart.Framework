@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170223
+ * @version 	v.170302
  * @package 	Application
  *
  */
@@ -526,7 +526,7 @@ abstract class SmartAbstractAppController {
 			return false; // $params must be array
 		} //end if
 		//--
-		$params = array_change_key_case($params, CASE_LOWER); // make all keys lower
+		$params = (array) array_change_key_case((array)$params, CASE_LOWER); // make all keys lower
 		//--
 		foreach($params as $key => $val) {
 			$this->PageViewSetCfg($key, $val);
@@ -604,7 +604,7 @@ abstract class SmartAbstractAppController {
 			return false; // $params must be array
 		} //end if
 		//--
-		$params = array_change_key_case($params, CASE_LOWER); // make all keys lower
+		$params = (array) array_change_key_case((array)$params, CASE_LOWER); // make all keys lower
 		//--
 		foreach($params as $key => $val) {
 			$this->PageViewSetVar($key, $val);

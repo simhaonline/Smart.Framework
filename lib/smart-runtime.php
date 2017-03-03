@@ -774,7 +774,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		161005
+ * @version		170302
  * @package 	Application
  *
  */
@@ -1258,6 +1258,54 @@ public static function SetVisitorEntropyIDCookie() {
 	} //end if
 	//-- #end# sync
 	define('SMART_APP_VISITOR_COOKIE', (string)$cookie); // empty or cookie ID
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// Basic Render an App Template
+public static function RenderAppTemplate($template_path, $template_file, $arr_data) {
+	//--
+	$template_path = (string) Smart::safe_pathname((string)SmartFileSysUtils::add_dir_last_slash((string)trim((string)$template_path)));
+	$template_file = (string) Smart::safe_filename((string)trim((string)$template_file));
+	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower
+	//--
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		$the_area = 'admin';
+		$use_protect = true;
+	} else {
+		$the_area = 'index';
+		$use_protect = false;
+	} //end if else
+	//--
+	$appData = [ // {{{SYNC-TEMPLATE-APPDATA-BASE}}}
+		//--
+		'base-path' 		=> (string) SmartUtils::get_server_current_path(),
+		'base-url' 			=> (string) SmartUtils::get_server_current_url(),
+		'app-domain' 		=> (string) Smart::get_from_config('app.'.$the_area.'-domain'),
+		'template-file' 	=> (string) $template_path.$template_file,
+		'template-path' 	=> (string) $template_path,
+		'js.settings' 		=> (string) SmartComponents::js_inc_settings((string)Smart::get_from_config('js.popup-mode'), (bool)$use_protect, (bool)SMART_APP_VISITOR_COOKIE),
+		//--
+		'title' 			=> '', // external
+		'head-meta' 		=> '<!-- Head Meta -->', // external
+		'main' 				=> '', // external
+		//--
+		'lang' 				=> (string) SmartTextTranslations::getLanguage(),
+		//--
+	];
+	//--
+	foreach($arr_data as $key => $val) {
+		if((!array_key_exists((string)$key, (array)$appData)) OR (in_array((string)$key, ['title', 'head-meta', 'main']))) {
+			$appData[(string)$key] = (string) $val;
+		} //end if
+	} //end foreach
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		(string) $template_path.$template_file,
+		(array) $appData
+	);
 	//--
 } //END FUNCTION
 //======================================================================
