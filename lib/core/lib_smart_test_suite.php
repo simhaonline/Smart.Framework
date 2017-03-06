@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.170227
+	// v.170306
 
 
 //==================================================================
@@ -80,7 +80,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 	//--
 
 	//-- AJAX POST FORM
-	$btnop = '<button class="ux-button ux-button-large ux-button-highlight" onClick="'.SmartComponents::post_form_by_ajax('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>').' return false;">Submit this Test Form by AJAX &nbsp; <span class="fa fa-send"></span></button>';
+	$btnop = '<button class="ux-button ux-button-large ux-button-highlight" onClick="'.SmartComponents::post_form_by_ajax('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#smart__CaptchaFrm__img\').click();').' return false;">Submit this Test Form by AJAX &nbsp; <span class="fa fa-send"></span></button>';
 	//-- END
 
 	//-- lists with one element
@@ -343,6 +343,8 @@ public static function post__answer__by__ajax($tab, $frm) {
 	//--
 
 	//--
+	$evcode = '';
+	//--
 	if(strlen($frm['date']) > 0) {
 		//--
 		if($captcha_ok !== true) {
@@ -361,6 +363,7 @@ public static function post__answer__by__ajax($tab, $frm) {
 			$desc = 'Form sent successful:'.$tmp_data;
 			//--
 			if(strlen($frm['text_area_1']) <= 0) {
+				$evcode = 'alert(\'The page will be redirected shortly (because the request answer set it - custom action) ...\');';
 				$redir = SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.main&time='.time().'&tab='.rawurlencode($tab);
 				$div_id = '';
 				$div_htm = '';
@@ -393,7 +396,7 @@ public static function post__answer__by__ajax($tab, $frm) {
 	//--
 
 	//--
-	$out = SmartComponents::post_answer_by_ajax($code, $title, $desc, $redir, $div_id, $div_htm);
+	$out = SmartComponents::post_answer_by_ajax($code, $title, $desc, $redir, $div_id, $div_htm, $evcode);
 	//--
 
 	//--

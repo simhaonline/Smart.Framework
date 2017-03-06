@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170227
+ * @version 	v.170306
  * @package 	Components:Framework
  *
  */
@@ -2035,10 +2035,13 @@ private static function window_mode_init_protection_to_smartmodal() {
  * @param $y_form_id 			HTML form ID (Example: myForm)
  * @param $y_script_url 		the php script to post to (Example: admin.php)
  * @param $y_confirm_question 	if not empty will ask a confirmation question
+ * @param $y_evcode				if not empty, JS to execute on Success (before anything else)
  *
  * @return STRING				[javascript code]
  */
-public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_question='') {
+public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_question='', $y_evcode='') {
+	//--
+	$y_evcode = (string) trim((string)$y_evcode);
 	//--
 	if((string)Smart::get_from_config('js.notifications') == 'growl') {
 		$tmp_use_growl = 'yes';
@@ -2046,7 +2049,7 @@ public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_q
 		$tmp_use_growl = 'no';
 	} //end if else
 	//--
-	$js_post = 'SmartJS_BrowserUtils.Submit_Form_By_Ajax(\''.Smart::escape_js($y_form_id).'\', \''.Smart::escape_js($y_script_url).'\', \''.Smart::escape_js($tmp_use_growl).'\');';
+	$js_post = 'SmartJS_BrowserUtils.Submit_Form_By_Ajax(\''.Smart::escape_js($y_form_id).'\', \''.Smart::escape_js($y_script_url).'\', \''.Smart::escape_js($tmp_use_growl).'\', \''.Smart::escape_js($y_evcode).'\');';
 	//--
 	if(strlen($y_confirm_question) > 0) {
 		$js_post = self::js_draw_html_confirm_dialog($y_confirm_question, $js_post);
@@ -2070,15 +2073,16 @@ public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_q
  *
  * @param 	$y_status 			OK / ERROR
  * @param 	$y_title 			Dialog Title
- * @param 	$y_message 			Dialog Message (Optional in the case of OK)
- * @param 	$y_redirect_url 	**OPTIONAL** URL to redirect in the case of OK
- * @param 	$y_replace_div 		**OPTIONAL** The ID of the DIV to Replace
- * @param 	$y_replace_html 	**OPTIONAL** the HTML Code to replace in DIV
+ * @param 	$y_message 			Dialog Message (Optional in the case of Success)
+ * @param 	$y_redirect_url 	**OPTIONAL** URL to redirect on either Success or Error
+ * @param 	$y_replace_div 		**OPTIONAL** The ID of the DIV to Replace on Success
+ * @param 	$y_replace_html 	**OPTIONAL** the HTML Code to replace in DIV on Success
+ * @param 	$y_js_evcode 		**OPTIONAL** the JS EvCode to be executed on either Success or Error (before redirect or Div Replace)
  *
  * @return STRING				[javascript code]
  *
  */
-public static function post_answer_by_ajax($y_status, $y_title, $y_message, $y_redirect_url='', $y_replace_div='', $y_replace_html='') {
+public static function post_answer_by_ajax($y_status, $y_title, $y_message, $y_redirect_url='', $y_replace_div='', $y_replace_html='', $y_js_evcode='') {
 	//--
 	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
 	//--
@@ -2094,7 +2098,17 @@ public static function post_answer_by_ajax($y_status, $y_title, $y_message, $y_r
 		$y_redirect_url = ''; // avoid redirect if DEBUG IS ON to catch the debug messages ...
 	} //end if
 	//--
-	return Smart::json_encode(array('completed'=>'DONE', 'status'=>$y_status, 'action'=>$button_text, 'title'=>$y_title, 'message'=>base64_encode($y_message), 'redirect'=>$y_redirect_url, 'replace_div'=>$y_replace_div, 'replace_html'=>base64_encode($y_replace_html)));
+	return Smart::json_encode([
+		'completed'			=> 'DONE',
+		'status'			=> (string) $y_status,
+		'action'			=> (string) $button_text,
+		'title'				=> (string) $y_title,
+		'message'			=> (string) $y_message,
+		'js_evcode' 		=> (string) $y_js_evcode,
+		'redirect'			=> (string) $y_redirect_url,
+		'replace_div'		=> (string) $y_replace_div,
+		'replace_html'		=> (string) $y_replace_html
+	]);
 	//--
 } //END FUNCTION
 //================================================================
