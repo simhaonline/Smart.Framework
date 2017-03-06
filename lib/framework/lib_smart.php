@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.161005
+ * @version     v.170305
  * @package     Base
  *
  */
@@ -511,7 +511,7 @@ public static function url_add_anchor($y_url, $y_anchor) {
  */
 public static function escape_url($y_string) {
 	//--
-	return rawurlencode((string)$y_string);
+	return (string) rawurlencode((string)$y_string);
 	//--
 } //END FUNCTION
 //================================================================
@@ -533,7 +533,7 @@ public static function escape_html($y_string) {
 	// keep the ENT_COMPAT (replace only < > ") and not replace '
 	// add ENT_SUBSTITUTE to avoid discard the entire invalid string (with UTF-8 charset) but substitute dissalowed characters with ?
 	//--
-	return htmlspecialchars((string)$y_string,  ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, SMART_FRAMEWORK_CHARSET); // use charset from INIT (to prevent XSS attacks)
+	return (string) htmlspecialchars((string)$y_string,  ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, SMART_FRAMEWORK_CHARSET); // use charset from INIT (to prevent XSS attacks)
 	//--
 } //END FUNCTION
 //================================================================
@@ -561,7 +561,7 @@ public static function escape_js($str) {
 	//-- the above will provide a json encoded string as: "mystring" ; we get just what's between double quotes as: mystring
 	$between_quotes = substr(trim($encoded), 1, -1);
 	//--
-	return $between_quotes;
+	return (string) $between_quotes;
 	//--
 } //END FUNCTION
 //================================================================
@@ -606,7 +606,7 @@ public static function json_encode($data, $prettyprint=false, $unescaped_unicode
  * @param 	BOOLEAN		$y_ret_array	:: When TRUE, returned objects will be converted into associative arrays (default to TRUE)
  * @param	INTEGER 	$y_depth		:: Recursion depth (default to 1024)
  *
- * @return 	MIXED						:: The PHP native Variable
+ * @return 	MIXED						:: The PHP native Variable: NULL ; INT ; NUMERIC ; STRING ; ARRAY
  */
 public static function json_decode($y_json, $y_ret_array=true, $y_depth=1024) {
 	//-- decode json v.160224
@@ -1285,7 +1285,7 @@ public static function check_int_number_overflow_max($y_number) {
 		$out = false;
 	} //end if else
 	//--
-	return $out;
+	return (bool) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1311,7 +1311,7 @@ public static function check_dec_number_overflow_max($y_number) {
 		$out = false;
 	} //end if else
 	//--
-	return $out;
+	return (bool) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1361,25 +1361,25 @@ public static function unique_entropy($y_suffix='') {
 /**
  * Generates a random string (base36) UUID of 10 characters [0..9A..Z] ; Example: 0G1G74W362 .
  * Intended usage: Medium scale / Sequential / Non-Repeating (never repeats in a period cycle of 1000 years).
- * This is sequential, date and time with miliseconds and a randomizer factor to ensure an ~ unique ID.
+ * This is sequential, date and time based with miliseconds and a randomizer factor to ensure an ~ unique ID.
  * Duplicate values can occur just in the same milisecond (1000 miliseconds = 1 second) with a chance of ~ 3%
  * Values: 34k / sec ; 200k / min ; 120 mil / hour .
  *
- * Advantages: This is one of the most powerful UUID systems as the ID will never repeat in a huge period of time.
- * Compared with the classic autoincremental IDs this is much better as on the next cycle will try to fill up
- * available values but also because the next cycle occur after so many time there is no risk to re-use some IDs
- * which were deactivated prior and generating confusions with previous records.
- * The classic autoincremental systems can NOT do this and more, once the max ID is reached the DB table is blocked
+ * Advantages: This is one of the most powerful UUID system as the ID will never repeat in a huge period of time.
+ * Compared with the classic autoincremental IDs this UUID is much better as on the next cycle can fill up unallocated
+ * values and more, because the next cycle occur after so many time there is no risk to re-use some IDs if they were
+ * previous deleted or deactivated in terms of generating confusions with previous records.
+ * The classic autoincremental systems can NOT do this and also, once the max ID is reached the DB table is blocked
  * as autoincremental records reach the max ID !!!
  *
- * Disadvantages: The database libraries before alocating such ID must be able to retry within a cycle with double check,
- * and using a pre-alocation table since the IDs are time based and if in the same milisecond more than 1 inserts are
- * allocated they can conflict each other when more than one will generate the same ID !
+ * Disadvantages: The database connectors require more complexity and must be able to retry within a cycle with
+ * double check before alocating, such UUIDs and must use a pre-alocation table since the UUIDs are time based and if
+ * in the same milisecond more than 1 inserts is allocated they can conflict each other without such pre-alocation !
  *
  * Smart.Framework implements the retry + cycle + pre-alocating table as a standard feature
- * in the PostgreSQL library (plugin) bundled as PostgreSQL can do DDLs in transactions.
- * Using such ID with MySQL would be tricky as DDLs will break the transactions ;-).
- * And for SQLite it does not make sense since SQLite is designed for small DBs not need such high scalability ...
+ * in the bundled PostgreSQL library (connector/plugin) as PostgreSQL can do DDLs in transactions.
+ * Using such functionality with MySQL would be tricky as DDLs will break the transactions ;-).
+ * And for SQLite it does not make sense since SQLite is designed for small DBs thus no need for such high scalability ...
  *
  * @return STRING 						:: the UUID
  */
@@ -1397,7 +1397,7 @@ public static function uuid_10_seq() { // v7
 	$b10_microseconds = (int) substr(trim($microtime[1]), 0, 3); // 000 .. 999
 	$b36_microseconds = sprintf('%02s', base_convert($b10_microseconds, 10, 36));
 	//-- 1 .. Z
-	if(($b10_thousands_year == 0) AND ($b10_second_of_year == 0) AND ($b10_microseconds ==0)) {
+	if(($b10_thousands_year == 0) AND ($b10_second_of_year == 0) AND ($b10_microseconds == 0)) {
 		$rand = self::random_number(1,35); // avoid 0000000000
 	} else {
 		$rand = self::random_number(0,35);
@@ -1552,7 +1552,7 @@ public static function separe_url_parts($y_url) {
 	} //end if
 	//-- script name
 	$tmp_arr = (array) explode('?', (string)$path);
-	$scriptname = trim((string)$tmp_arr[0]);
+	$scriptname = (string) trim((string)$tmp_arr[0]);
 	//--
 	return array('protocol' => $protocol, 'server' => $server, 'port' => $port, 'path' => $path, 'scriptname' => $scriptname); // script must be compatible with: SmartUtils::get_server_current_full_script() as they may be used as comparation for security purposes
 	//--
