@@ -28,17 +28,25 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
 //####################
 
-//==
-if(Smart::array_size($configs['redis']) > 0) {
+//== Persistent-Cache Adapter
+if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM) >= 5) AND (is_file((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM))) {
+	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM);
+	require((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM); // custom persistent cache
+} elseif(is_array($configs['redis'])) {
 	require('lib/app/persistent-cache-redis.php'); // load the redis based persistent cache
 } else {
 	require('lib/app/persistent-cache-x-blackhole.php'); // load the blackhole (x-none) persistent cache which will implement nothing but definitions and is required for compatibility
-} //end if
-//==
-require('lib/app/translations-adapter-yaml.php'); // text translations (YAML based adapter)
-//==
+} //end if else
+//== Text Translations Adapter (depends on Persistent-Cache)
+if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND (substr((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM) >= 5) AND (is_file((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM))) {
+	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
+	require((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
+} else {
+	require('lib/app/translations-adapter-yaml.php'); // text translations (YAML based adapter)
+} //end if else
+//== Custom-Session Adapter
 if((string)SMART_FRAMEWORK_SESSION_HANDLER === 'redis') {
-	if(Smart::array_size($configs['redis']) > 0) {
+	if(is_array($configs['redis'])) {
 		require('lib/app/custom-session-redis.php'); // use custom session based on Redis
 	} else {
 		Smart::raise_error(
@@ -47,6 +55,11 @@ if((string)SMART_FRAMEWORK_SESSION_HANDLER === 'redis') {
 		);
 		die('');
 	} //end if else
+} elseif(((string)SMART_FRAMEWORK_SESSION_HANDLER === 'custom') AND (defined('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER') AND (substr((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER) >= 5) AND (is_file((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER)))) {
+	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
+	require((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
+} else { // files
+	// do nothing (this is built-in)
 } //end if
 //==
 
@@ -145,7 +158,7 @@ define('SMART_SOFTWARE_APP_NAME', 'smart.framework.app'); // software version fo
 final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
 
 	// ::
-	// v.160120
+	// v.170307
 
 	private static $isRunning 		= false;
 	private static $authCompleted 	= false;

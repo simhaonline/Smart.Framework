@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170228
+ * @version 	v.170307
  * @package 	Base
  *
  */
@@ -235,6 +235,55 @@ public static function data_max_size() {
 
 
 //================================================================
+// Archive data (string) to B64/Zlib-Raw/Hex
+public static function data_archive($y_str) {
+	//-- if empty data, return empty string
+	if((string)$y_str == '') {
+		return '';
+	} //end if
+	//-- checksum of original data
+	$chksum = SmartHashCrypto::sha1((string)$y_str);
+	//-- prepare data and add checksum
+	$y_str = trim(strtoupper(bin2hex((string)$y_str))).'#CHECKSUM-SHA1#'.$chksum;
+	$out = @gzdeflate($y_str, 6, ZLIB_ENCODING_RAW); // deflate (default compression of zlib is 6)
+	//-- check for possible deflate errors
+	if(($out === false) OR ((string)$out == '')) {
+		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
+		return '';
+	} //end if
+	$len_data = strlen((string)$y_str);
+	$len_arch = strlen((string)$out);
+	if(($len_data > 0) AND ($len_arch > 0)) {
+		$ratio = $len_data / $len_arch;
+	} else {
+		$ratio = 0;
+	} //end if
+	if($ratio <= 0) { // check for empty input / output !
+		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is zero ! ...');
+		return '';
+	} //end if
+	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZDEFLATE-ERR-CHECK}}}
+		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is higher than 32768 ! ...');
+		return '';
+	} //end if
+	//--
+	$y_str = ''; // free mem
+	//-- add signature
+	$out = trim(base64_encode((string)$out))."\n".'PHP.SF.151129/B64.ZLibRaw.HEX';
+	//-- test unarchive
+	$unarch_checksum = SmartHashCrypto::sha1(self::data_unarchive($out));
+	if((string)$chksum != (string)$unarch_checksum) { // check: if this is a very serious bug with ZLib or PHP so we can't tolerate
+		Smart::log_warning('SmartFramework Utils / Data Archive :: Data Encode Check Failed ! ...');
+		return '';
+	} //end if
+	//-- if all test pass, return archived data
+	return (string) $out;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 // Unarchive data (string) from B64/Zlib-Raw/Hex
 public static function data_unarchive($y_enc_data) {
 	//--
@@ -294,119 +343,6 @@ public static function data_unarchive($y_enc_data) {
 	} //end if
 	//--
 	return (string) $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// Archive data (string) to B64/Zlib-Raw/Hex
-public static function data_archive($y_str) {
-	//-- if empty data, return empty string
-	if((string)$y_str == '') {
-		return '';
-	} //end if
-	//-- checksum of original data
-	$chksum = SmartHashCrypto::sha1($y_str);
-	//-- prepare data and add checksum
-	$y_str = trim(strtoupper(bin2hex((string)$y_str))).'#CHECKSUM-SHA1#'.$chksum;
-	$out = @gzdeflate($y_str, 6, ZLIB_ENCODING_RAW); // deflate (default compression of zlib is 6)
-	//-- check for possible deflate errors
-	if(($out === false) OR ((string)$out == '')) {
-		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
-		return '';
-	} //end if
-	$len_data = strlen((string)$y_str);
-	$len_arch = strlen((string)$out);
-	if(($len_data > 0) AND ($len_arch > 0)) {
-		$ratio = $len_data / $len_arch;
-	} else {
-		$ratio = 0;
-	} //end if
-	if($ratio <= 0) { // check for empty input / output !
-		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is zero ! ...');
-		return '';
-	} //end if
-	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZDEFLATE-ERR-CHECK}}}
-		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is higher than 32768 ! ...');
-		return '';
-	} //end if
-	//--
-	$y_str = ''; // free mem
-	//-- add signature
-	$out = trim(base64_encode((string)$out))."\n".'PHP.SF.151129/B64.ZLibRaw.HEX';
-	//-- test unarchive
-	$unarch_checksum = SmartHashCrypto::sha1(self::data_unarchive($out));
-	if((string)$chksum != (string)$unarch_checksum) { // check: if this is a very serious bug with ZLib or PHP so we can't tolerate
-		Smart::log_warning('SmartFramework Utils / Data Archive :: Data Encode Check Failed ! ...');
-		return '';
-	} //end if
-	//-- if all test pass, return archived data
-	return (string) $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function cache_variable_unarchive($y_cache_arch_var) {
-	//--
-	if((string)$y_cache_arch_var == '') {
-		return null; // no data to unarchive, return empty string
-	} //end if
-	//--
-	$raw_str = @base64_decode((string)$y_cache_arch_var);
-	$y_cache_arch_var = ''; // free mem
-	if(($raw_str === false) OR (trim((string)$raw_str) == '')) { // use trim, the deflated string can't contain only spaces
-		return null; // something went wrong after b64 decoding ...
-	} //end if
-	//--
-	$raw_str = @gzuncompress((string)$raw_str);
-	if(($raw_str === false) OR (trim((string)$raw_str) == '')) { // use trim, the string before unseryalize can't contain only spaces
-		return null;
-	} //end if
-	//--
-	return Smart::unseryalize((string)$raw_str); // mixed
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// Archive a MIXED variable (array / string / number) to a cache archive B64/Zlib-Deflate
-public static function cache_variable_archive($y_var) {
-	//--
-	$raw_data = (string) Smart::seryalize($y_var);
-	$y_var = ''; // free mem
-	if((string)$raw_data == '') {
-		return '';
-	} //end if
-	//-- compress
-	$arch_data = @gzcompress((string)$raw_data, 6, ZLIB_ENCODING_DEFLATE); // zlib compress (default compression of zlib is 6)
-	//-- check for possible compress errors
-	if(($arch_data === false) OR ((string)$arch_data == '')) {
-		Smart::log_warning('SmartFramework Utils / Cache Variable Archive :: ZLib Compress ERROR ! ...');
-		return '';
-	} //end if
-	$len_data = strlen((string)$raw_data);
-	$len_arch = strlen((string)$arch_data);
-	if(($len_data > 0) AND ($len_arch > 0)) {
-		$ratio = $len_data / $len_arch;
-	} else {
-		$ratio = 0;
-	} //end if
-	if($ratio <= 0) { // check for empty input / output !
-		Smart::log_warning('SmartFramework Utils / Cache Variable Archive :: ZLib Data Ratio is zero ! ...');
-		return '';
-	} //end if
-	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZDEFLATE-ERR-CHECK}}}
-		Smart::log_warning('SmartFramework Utils / Cache Variable Archive :: ZLib Data Ratio is higher than 32768 ! ...');
-		return '';
-	} //end if
-	//--
-	$raw_data = ''; // free mem
-	//--
-	return (string) base64_encode((string)$arch_data);
 	//--
 } //END FUNCTION
 //================================================================

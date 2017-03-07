@@ -12,8 +12,12 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // OPTIONAL ; [REGEX-SAFE-OK]
 
 //--
-if(Smart::array_size($configs['redis']) <= 0) {
-	die('ERROR: Redis Custom Session requires the Redis server Configuration to be set in SmartFramework');
+if(!is_array($configs['redis'])) {
+	Smart::raise_error(
+		'ERROR: Redis Custom Session requires the Redis server Configuration to be set in SmartFramework ...',
+		'ERROR: Invalid Settings for App Session Handler. See the Error Log for more details ...'
+	);
+	die('');
 } //end if
 //--
 
@@ -35,7 +39,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 final class SmartCustomSession extends SmartAbstractCustomSession {
 
 	// ->
-	// v.160827
+	// v.170307
 	// Redis Custom Session [OPTIONAL]
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 
@@ -52,23 +56,23 @@ private $redis;
 //==================================================
 public function open() {
 	//--
-	global $configs;
-	//--
 	if((defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) AND (SMART_SOFTWARE_MEMDB_FATAL_ERR === true)) {
 		$ignore_conn_errs = false;
 	} else {
 		$ignore_conn_errs = true; // default
 	} //end if
 	//--
+	$redis_cfg = (array) Smart::get_from_config('redis');
+	//--
 	$this->redis = new SmartRedisDb(
-		$configs['redis']['server-host'],
-		$configs['redis']['server-port'],
-		$configs['redis']['dbnum'],
-		$configs['redis']['password'],
-		$configs['redis']['timeout'],
-		$configs['redis']['slowtime'],
+		(string) $redis_cfg['server-host'],
+		(string) $redis_cfg['server-port'],
+		(string) $redis_cfg['dbnum'],
+		(string) $redis_cfg['password'],
+		(string) $redis_cfg['timeout'],
+		(string) $redis_cfg['slowtime'],
 		'SmartCustomSession',
-		$ignore_conn_errs
+		(bool) $ignore_conn_errs
 	);
 	//--
 } //END FUNCTION
@@ -87,7 +91,7 @@ public function close() {
 //==================================================
 public function write($id, $data) {
 	//--
-	$key = (string) 'smart-'.$this->sess_area.'-'.str_replace(':', '', $this->sess_ns).':'.str_replace(':', '-', $id);
+	$key = (string) SmartPersistentCache::safeKey((string)$this->sess_area).':'.SmartPersistentCache::safeKey($id.'_'.$this->sess_ns);
 	//--
 	$result = $this->redis->set((string)$key, (string)$data);
 	//--
@@ -109,7 +113,7 @@ public function write($id, $data) {
 //==================================================
 public function read($id) {
 	//--
-	$key = (string) $this->sess_area.':'.str_replace(':', '-', $id.'-'.$this->sess_ns);
+	$key = (string) SmartPersistentCache::safeKey((string)$this->sess_area).':'.SmartPersistentCache::safeKey($id.'_'.$this->sess_ns);
 	//--
 	$data = $this->redis->get((string)$key);
 	//--
@@ -126,7 +130,7 @@ public function read($id) {
 //==================================================
 public function destroy($id) {
 	//--
-	$key = (string) $this->sess_area.':'.str_replace(':', '-', $id.'-'.$this->sess_ns);
+	$key = (string) SmartPersistentCache::safeKey((string)$this->sess_area).':'.SmartPersistentCache::safeKey($id.'_'.$this->sess_ns);
 	//--
 	$ok = $this->redis->del((string)$key);
 	//--

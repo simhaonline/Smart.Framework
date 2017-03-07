@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.160224
+ * @version 	v.170307
  * @package 	Application
  *
  */
@@ -458,7 +458,7 @@ final class SmartTextTranslations {
 				//--
 				$rdata = SmartPersistentCache::getKey('smart-regional-texts', (string)$the_cache_key);
 				if($rdata) { // here evaluates if non-false
-					$rdata = Smart::unseryalize((string)$rdata);
+					$rdata = SmartPersistentCache::varDecode((string)$rdata);
 				} //end if
 				if(Smart::array_size($rdata) > 0) {
 					$arr = (array) $rdata;
@@ -481,7 +481,7 @@ final class SmartTextTranslations {
 		//--
 		if(SmartPersistentCache::isActive() AND SmartPersistentCache::isMemoryBased()) {
 			if(Smart::array_size($y_data_arr) > 0) {
-				SmartPersistentCache::setKey('smart-regional-texts', (string)$the_cache_key, (string)Smart::seryalize((array)$y_data_arr));
+				SmartPersistentCache::setKey('smart-regional-texts', (string)$the_cache_key, (string)SmartPersistentCache::varEncode((array)$y_data_arr));
 			} //end if
 		} //end if
 		//--
@@ -507,7 +507,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.160215
+ * @version 	v.170307
  *
  * @access 		private
  * @internal

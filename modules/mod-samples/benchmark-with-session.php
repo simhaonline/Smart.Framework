@@ -25,7 +25,12 @@ class SmartAppAdminController extends SmartAbstractAppController {
 	public function Run() {
 
 		//-- Session will be started also by set
-		SmartSession::set('Samples_Benchmark_WithSession (just for admin)', true);
+		$sess_key = 'Samples_Benchmark_WithSession (just-for-admin)';
+		$sess_test = (string) SmartSession::get($sess_key);
+		if((string)$sess_test == '') {
+			SmartSession::set($sess_key, date('Y-m-d H:i:s'));
+			$sess_test = (string) SmartSession::get($sess_key);
+		} //end if
 		//--
 
 		//--
@@ -44,7 +49,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 			SmartMarkersTemplating::render_file_template(
 				$this->ControllerGetParam('module-path').'views/benchmark.htm',
 				[
-					'BENCHMARK-TITLE' => '[ Benchmark Test URL with PHP Session ]<br>use this URL to run a benchmark of this PHP framework with the PHP Session started ...'
+					'BENCHMARK-TITLE' => '[ Benchmark Test URL with PHP Session ]<br>use this URL to run a benchmark of this PHP framework with the PHP Session started ...<br>(Session Value = \''.Smart::escape_html($sess_test).'\')'
 				]
 			)
 		);

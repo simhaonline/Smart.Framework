@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.170306
+	// v.170307
 
 
 //==================================================================
@@ -774,9 +774,17 @@ public static function test_strings() {
 	} //end if
 	//--
 	if((string)$err == '') {
-		$the_test = 'Cache: Archive / Unarchive';
+		$the_test = 'CacheVar: Compress / Uncompress';
 		$tests[] = $the_test;
-		if(SmartUtils::cache_variable_unarchive(SmartUtils::cache_variable_archive($the_random_unicode_text)) !== (string)$the_random_unicode_text) {
+		if(SmartPersistentCache::varUncompress(SmartPersistentCache::varCompress(['Test:Encode/Decode'=>$the_random_unicode_text])) !== (array)['Test:Encode/Decode'=>$the_random_unicode_text]) {
+			$err = 'ERROR: '.$the_test.' FAILED ...'.' ['.$the_random_unicode_text.']';
+		} //end if
+	} //end if
+	//--
+	if((string)$err == '') {
+		$the_test = 'CacheVar: Encode / Decode';
+		$tests[] = $the_test;
+		if(SmartPersistentCache::varDecode(SmartPersistentCache::varEncode(['Test:Encode/Decode'=>$the_random_unicode_text])) !== (array)['Test:Encode/Decode'=>$the_random_unicode_text]) {
 			$err = 'ERROR: '.$the_test.' FAILED ...'.' ['.$the_random_unicode_text.']';
 		} //end if
 	} //end if
@@ -1008,7 +1016,7 @@ public static function test_redisserver() {
 			'random-key' => Smart::uuid_10_str().'.'.Smart::random_number(1000,9999)
 		);
 		$redis_test_checkum = sha1(implode("\n", (array)$redis_test_value));
-		$redis_test_arch_content = SmartUtils::cache_variable_archive($redis_test_value);
+		$redis_test_arch_content = SmartPersistentCache::varCompress($redis_test_value);
 		$redis_test_arch_checksum = sha1($redis_test_arch_content);
 		//--
 		$tests = array();
@@ -1089,7 +1097,7 @@ public static function test_redisserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Get Redis Key';
-			$redis_cached_value = SmartUtils::cache_variable_unarchive(SmartPersistentCache::getKey('redis-server-tests', $redis_test_key));
+			$redis_cached_value = SmartPersistentCache::varUncompress(SmartPersistentCache::getKey('redis-server-tests', $redis_test_key));
 			if(Smart::array_size($redis_cached_value) > 0) {
 				$tests[] = 'Check if Redis Key is valid (array-keys)';
 				if(((string)$redis_cached_value['unicode-test'] != '') AND ((string)$redis_cached_value['big-key-test'] != '')) {
@@ -2216,7 +2224,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.170227
+	// v.170307
 
 private $db;
 

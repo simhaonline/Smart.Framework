@@ -774,7 +774,7 @@ abstract class SmartAbstractAppController {
 			return null;
 		} //end if
 		//--
-		return SmartUtils::cache_variable_unarchive($cache); // mixed (number / string / array)
+		return SmartPersistentCache::varUncompress($cache); // mixed (number / string / array)
 		//--
 	} //END FUNCTION
 	//=====
@@ -801,7 +801,7 @@ abstract class SmartAbstractAppController {
 			return false;
 		} //end if
 		//--
-		$cache = SmartUtils::cache_variable_archive($content); // mixed (number / string / array)
+		$cache = SmartPersistentCache::varCompress($content); // mixed (number / string / array)
 		if((string)$cache == '') {
 			return false;
 		} //end if

@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170301r3
+ * @version 	v.170307
  * @package 	Templating:Engines
  *
  */
@@ -281,7 +281,7 @@ public static function read_template_file($y_file_path) {
 		} //end if
 	} //end if
 	if(($use_pcache === true) AND SmartPersistentCache::isActive() AND SmartPersistentCache::isMemoryBased()) {
-		$the_cache_key = 'tpl__'.Smart::safe_pathname((string)Smart::base_name((string)$y_file_path)).'__'.sha1((string)$y_file_path);
+		$the_cache_key = SmartPersistentCache::safeKey('tpl__'.Smart::base_name((string)$y_file_path).'__'.sha1((string)$y_file_path));
 	} else {
 		$the_cache_key = '';
 	} //end if else

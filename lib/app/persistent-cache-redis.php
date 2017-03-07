@@ -35,7 +35,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170223
+ * @version 	v.170307
  * @package 	Caching
  *
  */
@@ -60,7 +60,7 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 			return (bool) self::$is_active;
 		} //end if
 		//--
-		if(Smart::array_size($configs['redis']) > 0) {
+		if(is_array($configs['redis'])) {
 			self::$is_active = true;
 		} else {
 			self::$is_active = false;
@@ -119,6 +119,9 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	/**
 	 * Get a Key from the persistent Cache
 	 *
+	 * By default only numbers and strings can be stored as flat values in Redis.
+	 * To retrieve complex variables like Arrays, use SmartPersistentCache::varUncompress() after using this function.
+	 *
 	 * @param STRING	$y_realm	The Cache Realm
 	 * @param STRING	$y_key		The Cache Key
 	 *
@@ -152,6 +155,9 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 
 	/**
 	 * Set a Key into the persistent Cache
+	 *
+	 * By default only numbers and strings can be stored as flat values in Redis.
+	 * To store complex variables like Arrays, use SmartPersistentCache::varCompress() before using this function.
 	 *
 	 * @param STRING 	$y_realm		The Cache Realm
 	 * @param STRING 	$y_key			The Cache Key
@@ -260,8 +266,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 
 	private static function initCacheManager() {
 		//--
-		global $configs;
-		//--
 		if((is_object(self::$redis)) AND (self::$redis instanceof SmartRedisDb)) {
 			//--
 			// OK, already connected ...
@@ -274,13 +278,15 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 				$ignore_conn_errs = true; // default
 			} //end if
 			//--
+			$redis_cfg = (array) Smart::get_from_config('redis');
+			//--
 			self::$redis = new SmartRedisDb(
-				(string) $configs['redis']['server-host'],
-				(string) $configs['redis']['server-port'],
-				(string) $configs['redis']['dbnum'],
-				(string) $configs['redis']['password'],
-				(string) $configs['redis']['timeout'],
-				(string) $configs['redis']['slowtime'],
+				(string) $redis_cfg['server-host'],
+				(string) $redis_cfg['server-port'],
+				(string) $redis_cfg['dbnum'],
+				(string) $redis_cfg['password'],
+				(string) $redis_cfg['timeout'],
+				(string) $redis_cfg['slowtime'],
 				'SmartPersistentCache',
 				(bool) $ignore_conn_errs
 			);

@@ -14,6 +14,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Session
 // DEPENDS:
 //	* Smart::
+//	* SmartHashCrypto::
+//	* SmartFileSystem::
 //	* SmartUtils::
 // DEPENDS-EXT: PHP Session Module
 //======================================================
@@ -60,7 +62,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.160204
+ * @version 	v.170307
  * @package 	Application
  *
  */
@@ -319,6 +321,8 @@ public static function start() {
 		$_SESSION['SoftwareFramework_SessionMode'] = (string) $sf_sess_mode; // session mode
 		$_SESSION['website_ID'] = (string) SMART_SOFTWARE_NAMESPACE; // the website ID
 		$_SESSION['uniqbrowser_ID'] = (string) $the_sess_client_uuid; // a true unique browser ID (this is a protection against sessionID forgers)
+		$_SESSION['session_AREA'] = (string) $sf_sess_area; // session area
+		$_SESSION['session_NS'] = (string) $sf_sess_ns; // session namespace
 		$_SESSION['session_ID'] = (string) @session_id(); // read current session ID
 		$_SESSION['session_STARTED'] = (string) date('Y-m-d H:i:s O'); // read current session ID
 		//--
@@ -378,7 +382,7 @@ public static function start() {
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.160120
+	// v.170307
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

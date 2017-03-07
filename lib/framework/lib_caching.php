@@ -178,14 +178,15 @@ final class SmartCache {
  *
  * It must contain ONLY public functions to avoid late state binding (self:: vs static::)
  *
- * @access 		private
- * @internal
+ * @access 		PUBLIC
+ * @depends 	-
+ * @version 	v.170223
+ * @package 	Caching
  *
  */
 abstract class SmartAbstractPersistentCache {
 
 	// :: ABSTRACT
-	// v.170223
 
 
 	/**
@@ -325,6 +326,122 @@ abstract class SmartAbstractPersistentCache {
 	public static function safeKey($y_key_or_realm) {
 		//--
 		return (string) Smart::safe_pathname((string)$y_key_or_realm);
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Encode a MIXED variable (array / string / number) to be stored in Persistent Cache
+	 * To reverse encoding use varDecode()
+	 *
+	 * By default only numbers and strings can be stored as flat values.
+	 * To store complex variables like Arrays, use this function before setKey() which will serialize the var as Json standard.
+	 *
+	 * @param MIXED 	$y_var				The Variable to be encoded
+	 *
+	 * @return STRING	Returns the safe serialized variable content
+	 */
+	public static function varEncode($y_var) {
+		//--
+		return (string) Smart::seryalize($y_var);
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Decode a previous encoded MIXED variable (array / string / number) that was stored in Persistent Cache
+	 * To be used for variables previous encoded using varEncode()
+	 *
+	 * By default only numbers and strings can be stored as flat values.
+	 * To retrieve complex variables like Arrays, use this function after getKey() which will unserialize the var from Json standard.
+	 *
+	 * @param STRING 	$y_encoded_var		The encoded variable
+	 *
+	 * @return MIXED	Returns the original restored type and value of that variable
+	 */
+	public static function varDecode($y_encoded_var) {
+		//--
+		return Smart::unseryalize((string)$y_encoded_var); // mixed
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Compress + Encode a MIXED variable (array / string / number) to be stored in Persistent Cache
+	 * To reverse the compressing + encoding use varUncompress()
+	 *
+	 * Use this function to store any type of variables: numbers, strings or arrays in a safe encoded + compressed format.
+	 * By default the variable will be: encoded (serialized as Json), compressed (gzcompress/6/deflate) and finally B64-Encoded.
+	 *
+	 * @param MIXED 	$y_var			The Variable to be encoded + compressed
+	 *
+	 * @return STRING	Returns the safe serialized + compressed variable content
+	 */
+	public static function varCompress($y_var) {
+		//--
+		$raw_data = (string) Smart::seryalize($y_var);
+		$y_var = ''; // free mem
+		if((string)$raw_data == '') {
+			return '';
+		} //end if
+		//-- compress
+		$len_data = strlen((string)$raw_data);
+		$arch_data = @gzcompress((string)$raw_data, 6, ZLIB_ENCODING_DEFLATE); // zlib compress (default compression of zlib is 6)
+		$raw_data = ''; // free mem
+		//-- check for possible compress errors
+		if(($arch_data === false) OR ((string)$arch_data == '')) {
+			Smart::log_warning('SmartPersistentCache / Cache Variable Compress :: ZLib Compress ERROR ! ...');
+			return '';
+		} //end if
+		$len_arch = strlen((string)$arch_data);
+		if(($len_data > 0) AND ($len_arch > 0)) {
+			$ratio = $len_data / $len_arch;
+		} else {
+			$ratio = 0;
+		} //end if
+		if($ratio <= 0) { // check for empty input / output !
+			Smart::log_warning('SmartPersistentCache / Cache Variable Compress :: ZLib Data Ratio is zero ! ...');
+			return '';
+		} //end if
+		if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZDEFLATE-ERR-CHECK}}}
+			Smart::log_warning('SmartPersistentCache / Cache Variable Compress :: ZLib Data Ratio is higher than 32768 ! ...');
+			return '';
+		} //end if
+		//--
+		return (string) base64_encode((string)$arch_data);
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Uncompress + Decode a MIXED variable (array / string / number) to be stored in Persistent Cache
+	 *
+	 * Use this function to retrieve any type of variables: numbers, strings or arrays that were previous safe encoded + compressed.
+	 * By default the variable will be: B64-Decoded, uncompressed (gzcompress/inflate) and finally decoded (unserialized from Json).
+	 *
+	 * @param STRING 	$y_cache_arch_var		The compressed + encoded variable
+	 *
+	 * @return MIXED	Returns the original restored type and value of that variable
+	 */
+	public static function varUncompress($y_cache_arch_var) {
+		//--
+		$y_cache_arch_var = (string) trim((string)$y_cache_arch_var);
+		//--
+		if((string)$y_cache_arch_var == '') {
+			return null; // no data to unarchive, return empty string
+		} //end if
+		//--
+		$y_cache_arch_var = @base64_decode((string)$y_cache_arch_var);
+		if(($y_cache_arch_var === false) OR (trim((string)$y_cache_arch_var) == '')) { // use trim, the deflated string can't contain only spaces
+			return null; // something went wrong after b64 decoding ...
+		} //end if
+		//--
+		$y_cache_arch_var = @gzuncompress((string)$y_cache_arch_var);
+		if(($y_cache_arch_var === false) OR (trim((string)$y_cache_arch_var) == '')) { // use trim, the string before unseryalize can't contain only spaces
+			return null;
+		} //end if
+		//--
+		return Smart::unseryalize((string)$y_cache_arch_var); // mixed
 		//--
 	} //END FUNCTION
 
