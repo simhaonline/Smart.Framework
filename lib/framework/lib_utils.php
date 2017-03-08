@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170307
+ * @version 	v.170308
  * @package 	Base
  *
  */
@@ -622,33 +622,26 @@ public static function calc_percent($number, $maxnumber) {
 // extract HTML title (must not exceed 128 characters ; recommended is max 65)
 public static function extract_title($ytxt, $y_limit=65) {
 	//--
-	$ytxt = (string) $ytxt;
+	$ytxt = (string) trim((string)str_replace(["\r\n", "\r", "\n", "\t"], [' ', ' ', ' ', ' '], (string)$ytxt));
 	if((string)$ytxt == '') {
 		return '';
 	} //end if
 	//--
 	$y_limit = Smart::format_number_int($y_limit, '+');
-	if($y_limit < 1) {
-		$y_limit = 1;
-	} //end if
-	if($y_limit > 128) {
+	if($y_limit < 10) {
+		$y_limit = 10;
+	} elseif($y_limit > 128) {
 		$y_limit = 128;
 	} //end if
 	//--
-	$arr = self::extract_words_from_text_html((string)$ytxt);
+	$y_limit = (int) $y_limit + 1; // fix
 	//--
-	$out = '';
-	for($i=0; $i<Smart::array_size($arr); $i++) {
-		$tmp_word = trim($arr[$i]);
-		if((string)$tmp_word != '') {
-			$out .= $tmp_word.' ';
-		} //end if
-		if(SmartUnicode::str_len($out) >= $y_limit) {
-			break;
-		} //end if
-	} //end for
+	if(\SmartUnicode::str_len($ytxt) > $y_limit) {
+		$ytxt = (string) \SmartUnicode::sub_str($ytxt, 0, $y_limit);
+		$ytxt = (string) \SmartUnicode::sub_str($ytxt, 0, \SmartUnicode::str_rpos($ytxt, ' '));
+	} //end if
 	//--
-	return trim($out);
+	return (string) $ytxt;
 	//--
 } //END FUNCTION
 //================================================================
@@ -658,14 +651,14 @@ public static function extract_title($ytxt, $y_limit=65) {
 // extract HTML meta description (must not exceed 256 characters ; recommended is max 155 characters)
 public static function extract_description($ytxt, $y_limit=155) {
 	//--
-	$ytxt = (string) $ytxt;
+	$ytxt = (string) trim((string)str_replace(["\r\n", "\r", "\n", "\t"], [' ', ' ', ' ', ' '], (string)$ytxt));
 	if((string)$ytxt == '') {
 		return '';
 	} //end if
 	//--
 	$y_limit = Smart::format_number_int($y_limit, '+');
-	if($y_limit < 1) {
-		$y_limit = 1;
+	if($y_limit < 10) {
+		$y_limit = 10;
 	} //end if
 	if($y_limit > 256) {
 		$y_limit = 256;
@@ -702,14 +695,14 @@ public static function extract_description($ytxt, $y_limit=155) {
 // We add Strategy: Max 2% up to 7% of keywords from existing text (SEO req.)
 public static function extract_keywords($ytxt, $y_count=97) {
 	//--
-	$ytxt = (string) $ytxt;
+	$ytxt = (string) trim((string)str_replace(["\r\n", "\r", "\n", "\t"], [' ', ' ', ' ', ' '], (string)$ytxt));
 	if((string)$ytxt == '') {
 		return '';
 	} //end if
 	//--
 	$y_count = Smart::format_number_int($y_count, '+');
-	if($y_count < 1) {
-		$y_count = 1;
+	if($y_count < 10) {
+		$y_count = 10;
 	} //end if
 	if($y_count > 128) {
 		$y_count = 128;
