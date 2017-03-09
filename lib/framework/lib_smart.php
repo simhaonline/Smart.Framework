@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170305
+ * @version     v.170309
  * @package     Base
  *
  */
@@ -1268,6 +1268,23 @@ public static function safe_varname($y_name) {
 
 //================================================================
 /**
+ * Normalize Spaces
+ * This will replace: "\r", "\n", "\t", "\x0B", "\0", "\f" with normal space ' '
+ *
+ * @param STRING 		$y_txt			:: Text to be normalized
+ *
+ * @return STRING 						:: The normalized text
+ */
+public static function normalize_spaces($y_txt) {
+	//--
+	return (string) str_replace(["\r\n", "\r", "\n", "\t", "\x0B", "\0", "\f"], ' ', (string)$y_txt);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
  * Check if an integer number overflows the maximum safe int
  * All numbers over this must use special operators from BCMath to avoid floating point precision issues
  * On 32-bit platforms the INTEGER is between 		   -2147483648 		to 				 2147483647
@@ -1650,7 +1667,7 @@ public static function list_to_array($y_list) {
 public static function log_info($title, $message) {
 	//--
 	if((defined('SMART_FRAMEWORK_INFO_LOG')) AND (is_dir(dirname((string)SMART_FRAMEWORK_INFO_LOG)))) {
-		@file_put_contents((string)SMART_FRAMEWORK_INFO_LOG, '[INF]'."\t".date('Y-m-d H:i:s O')."\t".str_replace(array("\r\n", "\n", "\t"), array(' ', ' ', ' '), $title)."\t".str_replace(array("\r\n", "\n", "\t"), array(' ', ' ', ' '), $message)."\n", FILE_APPEND | LOCK_EX);
+		@file_put_contents((string)SMART_FRAMEWORK_INFO_LOG, '[INF]'."\t".date('Y-m-d H:i:s O')."\t".self::normalize_spaces($title)."\t".self::normalize_spaces($message)."\n", FILE_APPEND | LOCK_EX);
 	} else {
 		self::log_notice('INFO-LOG NOT SET :: Logging to Notices ... # Message: '.$title."\n".$message);
 	} //end if else
