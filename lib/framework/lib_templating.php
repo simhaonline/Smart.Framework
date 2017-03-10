@@ -604,7 +604,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 	//--
 	if(strpos((string)$mtemplate, '[%%%%IF:') !== false) {
 		//--
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
@@ -647,6 +647,20 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				//print_r($y_arr_vars);
 				//-- do last if / else processing
 				switch((string)$sign_not[$i]) {
+					case '@+': // array count >
+						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) > (int)$compare_val[$i]) {
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+					case '@-': // array count <
+						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) < (int)$compare_val[$i]) {
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
 					case '@=': // in array
 						$tmp_compare_arr = (array) explode('|', (string)$compare_val[$i]);
 						if(in_array((string)$y_arr_vars[(string)$bind_var_key], (array)$tmp_compare_arr)) { // if in array

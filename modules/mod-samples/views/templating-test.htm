@@ -55,6 +55,16 @@
 	This also appears when TEST2 is 3<br>
 [%%%%/IF:TEST2(2)%%%%]
 <hr>
+[%%%%IF:DATA:@+0(1)%%%%]
+<!-- Count of DATA is > 0 -->
+[%%%%ELSE:DATA(1)%%%%]
+<!-- Count of DATA is < 0 -->
+[%%%%/IF:DATA(1)%%%%]
+[%%%%IF:DATA:@-100000(2)%%%%]
+<!-- Count of DATA is < 100000 -->
+[%%%%ELSE:DATA(2)%%%%]
+<!-- Count of DATA is > 100000 -->
+[%%%%/IF:DATA(2)%%%%]
 <table width="550" cellpadding="4">
 [%%%%LOOP:DATA(1)%%%%]
 [%%%%IF:TEST2:==3%%%%]
