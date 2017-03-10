@@ -478,10 +478,19 @@ private static function replace_marker($mtemplate, $key, $val) {
 						$xnum = 65535;
 					} //end if
 					$xlen = SmartUnicode::str_len((string)$val);
-					$val = (string) SmartUnicode::sub_str((string)$val, 0, (int)$xnum);
+					if($xlen > $xnum) {
+						$val = (string) SmartUnicode::sub_str((string)$val, 0, (int)$xnum);
+					} else {
+						$val = (string) $val;
+					} //end if
 					if(substr((string)$matches[1], 0, 7) == '|subtxt') {
 						if($xlen > $xnum) {
-							$val .= ' ...'; // if text is longer for subtxt add ...
+							$xpos = SmartUnicode::str_rpos((string)$val, ' ');
+							if((int)$xpos > (int)ceil($xnum / 1.5)) { // if there is a space in the last 1/3 or there are spaces {{{SYNC-CUT-BACKWARD-STR-BY-SPACE}}}
+								$val = (string) SmartUnicode::sub_str((string)$val, 0, (int)$xpos); // cut backward until last space
+							} //end if
+							$val .= '...'; // if text is longer for subtxt add ...
+							unset($xpos);
 						} //end if
 					} //end if
 					unset($xlen);

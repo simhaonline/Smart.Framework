@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170309
+ * @version 	v.170310
  * @package 	Base
  *
  */
@@ -640,8 +640,13 @@ public static function extract_title($ytxt, $y_limit=65) {
 	$y_limit = (int) $y_limit + 1; // fix
 	//--
 	if(\SmartUnicode::str_len($ytxt) > $y_limit) {
-		$ytxt = (string) \SmartUnicode::sub_str($ytxt, 0, $y_limit);
-		$ytxt = (string) \SmartUnicode::sub_str($ytxt, 0, \SmartUnicode::str_rpos($ytxt, ' '));
+		$ytxt = (string) \SmartUnicode::sub_str((string)$ytxt, 0, $y_limit);
+		$space_pos = \SmartUnicode::str_rpos((string)$ytxt, ' ');
+		if((int)$space_pos > (int)ceil($y_limit / 1.5)) { // if there is a space in the last 1/3 or there are spaces {{{SYNC-CUT-BACKWARD-STR-BY-SPACE}}}
+			$ytxt = (string) \SmartUnicode::sub_str((string)$ytxt, 0, (int)$space_pos); // cut backward until last space
+		} else {
+			$ytxt .= '...';
+		} //end if
 	} //end if
 	//--
 	return (string) $ytxt;
