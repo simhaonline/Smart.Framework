@@ -66,7 +66,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'TEST-STR' => 'a-\'b\'_"c" <d>',
 						'TEST-URL' => 'http://some-url/',
 						'TEST-TXT' => 'this is line one'."\n".'this is line <two>',
-						'TEST-UNISTR' => '"ăĂîÎâÂșȘțȚ"ȚțȘșÂâÎîĂă'
+						'TEST-UNISTR' => 'ăĂîÎâÂșȘțȚ ȚțȘșÂâÎîĂă'
 					]
 				)
 		]);
