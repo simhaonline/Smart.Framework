@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170307
+ * @version 	v.170310
  * @package 	Templating:Engines
  *
  */
@@ -427,6 +427,8 @@ private static function have_subtemplate($mtemplate) {
 	[####MARKER|json|url|html####]
 	[####MARKER|json|js|html####] 		** not necessary unless special purpose **
 	[####MARKER|json|url|js|html####] 	** not necessary unless special purpose **
+[####MARKER|substr1|html####]
+[####MARKER|subtxt65535|html####]
 [####MARKER|url####]
 [####MARKER|url|js####]
 [####MARKER|url|html####]
@@ -434,12 +436,13 @@ private static function have_subtemplate($mtemplate) {
 [####MARKER|js####]
 [####MARKER|js|html####] 				** not necessary unless special purpose **
 [####MARKER|html####]
+[####MARKER|html|nl2br####]
 */
 private static function replace_marker($mtemplate, $key, $val) {
 	//--
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|num|\|htmid|\|jsvar|\|json)?(\|url)?(\|js)?(\|html)?(\|nl2br)?'.'####\]/';
+		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js)?(\|html)?(\|nl2br)?'.'####\]/';
 		//--
 		if((string)$val != '') {
 			$val = (string) str_replace(
@@ -452,33 +455,51 @@ private static function replace_marker($mtemplate, $key, $val) {
 		$mtemplate = (string) preg_replace_callback(
 			(string) $regex,
 			function($matches) use ($val) {
-				//-- Format
-				if((string)$matches[1] == '|num') { // Number
-					$val = (string) (float) $val;
-				} elseif((string)$matches[1] == '|bool') { // Boolean
+				//-- #1 Format
+				if((string)$matches[1] == '|bool') { // Boolean
 					if($val) {
 						$val = 'true';
 					} else {
 						$val = 'false';
 					} //end if else
+				} elseif((string)$matches[1] == '|num') { // Number
+					$val = (string) (float) $val;
 				} elseif((string)$matches[1] == '|htmid') { // HTML ID
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$val));
 				} elseif((string)$matches[1] == '|jsvar') { // JS Variable
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
 				} elseif((string)$matches[1] == '|json') { // Json Data (!!! DO NOT ENCLOSE IN ' or " as it can contain them as well as it can be [] or {} ... this is pure JSON !!!)
 					$val = (string) Smart::json_encode($val, false, false); // no pretty print, escape unicode as it is served inline !
+				} elseif((substr((string)$matches[1], 0, 7) == '|substr') OR (substr((string)$matches[1], 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
+					$xnum = Smart::format_number_int((int)substr((string)$matches[1], 7), '+');
+					if($xnum < 1) {
+						$xnum = 1;
+					} elseif($xnum > 65535) {
+						$xnum = 65535;
+					} //end if
+					$xlen = SmartUnicode::str_len((string)$val);
+					$val = (string) SmartUnicode::sub_str((string)$val, 0, (int)$xnum);
+					if(substr((string)$matches[1], 0, 7) == '|subtxt') {
+						if($xlen > $xnum) {
+							$val .= ' ...'; // if text is longer for subtxt add ...
+						} //end if
+					} //end if
+					unset($xlen);
+					unset($xnum);
 				} //end if
-				//-- Escape
+				//-- #2 Escape URL
 				if((string)$matches[2] == '|url') {
 					$val = (string) Smart::escape_url((string)$val);
 				} //end if
+				//-- #3 Escape JS
 				if((string)$matches[3] == '|js') {
 					$val = (string) Smart::escape_js((string)$val);
 				} //end if
+				//-- #4 Escape HTML
 				if((string)$matches[4] == '|html') {
 					$val = (string) Smart::escape_html((string)$val);
 				} //end if
-				//--
+				//-- #5 NL2BR
 				if((string)$matches[5] == '|nl2br') {
 					$val = (string) Smart::nl_2_br((string)$val);
 				} //end if

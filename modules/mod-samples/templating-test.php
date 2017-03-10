@@ -33,7 +33,6 @@ class SmartAppIndexController extends SmartAbstractAppController {
 					[
 						'TITLE' => $title,
 						'TEST-COMPARE' => 'a',
-						'TESTURL' => 'a"b\'c',
 						'DATA' => [
 							// id        slug         name                is_vowel         arr of numbers
 							'This is a sample table',
@@ -62,7 +61,12 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'TEST1' => 3,
 						'TEST2' => Smart::random_number(2,3),
 						'TEST3' => 3,
-						'STATUS' => (string) $test_switch_arr[Smart::random_number(0,3)]
+						'STATUS' => (string) $test_switch_arr[Smart::random_number(0,3)],
+						'TEST-NUM' => rand(0,2),
+						'TEST-STR' => 'a-\'b\'_"c" <d>',
+						'TEST-URL' => 'http://some-url/',
+						'TEST-TXT' => 'this is line one'."\n".'this is line <two>',
+						'TEST-UNISTR' => '"ăĂîÎâÂșȘțȚ"ȚțȘșÂâÎîĂă'
 					]
 				)
 		]);
