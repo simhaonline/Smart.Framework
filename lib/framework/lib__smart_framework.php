@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170302
+ * @version 	v.170313
  * @package 	Application
  *
  */
@@ -241,13 +241,14 @@ abstract class SmartAbstractAppController {
 	private $modulearea;
 	private $modulepath;
 	private $modulename;
+	private $module;
+	private $action;
+	private $controller;
 	private $urlscript;
 	private $urlpath;
 	private $urladdr;
 	private $urlpage;
-	private $controller;
 	//--
-	private $pagesettings; 		// will allow keys just from $availsettings
 	private $availsettings = [ 	// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
 		'error', 'redirect-url', 			// error message for return non 2xx codes ; redirect url for return 3xx codes
 		'expires', 'modified',				// expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now
@@ -256,6 +257,7 @@ abstract class SmartAbstractAppController {
 		'download-packet', 'download-key', 	// download packet ; download key
 		'status-code'						// HTTP Status Code
 	];
+	private $pagesettings; 		// will allow keys just from $availsettings
 	//--
 	private $pageview; 			// will allow any key since they are markers
 	//--
@@ -268,18 +270,21 @@ abstract class SmartAbstractAppController {
 	 */
 	final public function __construct($y_area, $y_module_path, $y_url_script, $y_url_path, $y_url_addr, $y_url_page, $y_controller) {
 		//--
-		$this->modulearea = (string) $y_area; // index, admin, plugin
+		$ctrl_arr = (array) explode('.', (string)$y_controller);
 		//--
-		$this->modulepath = (string) $y_module_path;
-		$this->modulename = (string) Smart::base_name($y_module_path);
-		$this->urlscript = (string) $y_url_script;
-		$this->urlpath = (string) $y_url_path;
-		$this->urladdr = (string) $y_url_addr;
-		$this->urlpage = (string) $y_url_page;
-		$this->controller = (string) $y_controller;
+		$this->modulearea 	= (string) $y_area; 							// index | admin
+		$this->modulepath 	= (string) $y_module_path; 						// modules/mod-something/
+		$this->modulename 	= (string) Smart::base_name($y_module_path); 	// mod-something
+		$this->module 		= (string) $ctrl_arr[0]; 						// something
+		$this->action 		= (string) $ctrl_arr[1]; 						// someaction
+		$this->controller 	= (string) $y_controller; 						// something.someaction
+		$this->urlscript 	= (string) $y_url_script; 						// index.php | admin.php
+		$this->urlpath 		= (string) $y_url_path; 						// /frameworks/smart-framework/
+		$this->urladdr 		= (string) $y_url_addr; 						// http(s)://127.0.0.1/frameworks/smart-framework/
+		$this->urlpage 		= (string) $y_url_page; 						// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
 		//--
 		$this->pagesettings = array();
-		$this->pageview = array();
+		$this->pageview 	= array();
 		//--
 	} //END FUNCTION
 	//=====
@@ -437,6 +442,12 @@ abstract class SmartAbstractAppController {
 				break;
 			case 'module-lib-path':
 				$out = $this->modulepath.'libs/';
+				break;
+			case 'module':
+				$out = $this->module;
+				break;
+			case 'action':
+				$out = $this->action;
 				break;
 			case 'controller':
 				$out = $this->controller;
