@@ -39,6 +39,10 @@ div#Smart-Captcha-Area > div {
 	position: relative;
 }
 
+div#Smart-Captcha-Area * {
+	font-size: 0.96em !important;
+}
+
 /* ----------------------------- */
 
 /* -- CSS End -- */
