@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.160920
+ * @version 	v.170315
  * @package 	Mailer:Utility
  *
  */
@@ -111,7 +111,7 @@ public static function check_email_address($email, $ycheckdomain='no', $helo='',
 	//--
 
 	//--
-	return array('status'=>$out, 'message'=>$msg);
+	return array('status'=>(string)$out, 'message'=>(string)$msg);
 	//--
 
 } //END FUNCTION
@@ -144,7 +144,7 @@ public static function validate_mx_email_address($helo, $email, $y_smtp_port) {
 	//------------
 	$tmp_arr = array();
 	$tmp_arr = (array) explode('@', (string)$email);
-	$domain = trim($tmp_arr[1]);
+	$domain = (string) trim((string)$tmp_arr[1]);
 	$tmp_arr = array();
 	//------------
 	if(function_exists('getmxrr')) {
@@ -213,7 +213,7 @@ public static function validate_mx_email_address($helo, $email, $y_smtp_port) {
 	//------------
 
 	//--
-	return array('status'=>$out, 'message'=>$msg);
+	return array('status'=>(string)$out, 'message'=>(string)$msg);
 	//--
 
 } //END FUNCTION
@@ -222,47 +222,57 @@ public static function validate_mx_email_address($helo, $email, $y_smtp_port) {
 
 //==================================================================
 /**
- * Send Email Mime Message from SmartFramework to a destination
+ * Send Email Mime Message from SmartFramework to a destination with optional log of sent messages to a specific directory
+ * It will use the default server settings from configs: $configs['sendmail'][]
  *
- * @param STRING 		$to				To:
- * @param STRING 		$bcc			'' | BCc:
- * @param STRING 		$subj			Subject:
- * @param STRING 		$message		Body/Message:
- * @param TRUE/FALSE 	$is_html		* Format: Html or Text/Plain
- * @param ARRAY 		$attachments	* $attachments = array('file1.txt'=>'This is the file 1 content', ...);
- * @param ENUM			$charset		* charset
- * @param ENUM			$priority		* 1=Low ; 3=Normal ; 5=High
- * @param STRING		$logsend_dir	'' | path/to/log/messages
- * @param STRING		$cc				'' | Cc:
- * @param STRING		$inreplyto		'' | In-Reply-To:
+ * @param STRING 		$logsend_dir 		A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'
+ * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
+ * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
+ * @param STRING 		$bcc				Bcc: '' | bcc@addr
+ * @param STRING 		$subj				Subject: Your Subject
+ * @param STRING 		$message			Message: The body of the message
+ * @param TRUE/FALSE 	$is_html			Format: FALSE = Text/Plain ; TRUE = HTML
+ * @param ARRAY 		$attachments		* Attachments array: [] | ['file1.txt'=>'This is the file 1 content', ...] :: default is []
+ * @param STRING 		$replytoaddr 		* Reply To Addr: '' | reply-to@addr :: default is ''
+ * @param STRING 		$inreplyto			* In Reply To: '' | the ID of message that is replying to :: default is ''
+ * @param ENUM			$priority			* Priority: 1=High ; 3=Normal ; 5=Low :: default is 3
+ * @param ENUM			$charset			* charset :: default is UTF-8
  * @return TRUE/FALSE	OPERATION RESULT [0 / 1]
  */
-public static function send_email($to, $bcc, $subj, $message, $is_html, $attachments=array(), $charset='UTF-8', $priority='3', $logsend_dir='', $cc='', $inreplyto='', $replytoaddr='') {
-	//--
-	global $configs;
+public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority='3', $charset='UTF-8') {
+
+	//-- Get Default SMTP from configs
+	$def_cfg_smtp = (array) Smart::get_from_config('sendmail');
 	//-- SMTP connection vars
-	$server_settings = array(
-		'server_name' => $configs['sendmail']['server-host'],
-		'server_port' => $configs['sendmail']['server-port'],
-		'server_sslmode' => $configs['sendmail']['server-ssl'],
-		'server_auth_user' => $configs['sendmail']['auth-user'],
-		'server_auth_pass' => $configs['sendmail']['auth-password'],
-		'send_from_addr' => $configs['sendmail']['from-address'],
-		'send_from_name' => $configs['sendmail']['from-name'],
-		'smtp_mxdomain' => $configs['sendmail']['server-mx-domain']
-	);
+	$server_settings = [
+		'server_name' 		=> (string) $def_cfg_smtp['server-host'],
+		'server_port' 		=> (string) $def_cfg_smtp['server-port'],
+		'server_sslmode' 	=> (string) $def_cfg_smtp['server-ssl'],
+		'server_auth_user' 	=> (string) $def_cfg_smtp['auth-user'],
+		'server_auth_pass' 	=> (string) $def_cfg_smtp['auth-password'],
+		'send_from_addr' 	=> (string) $def_cfg_smtp['from-address'],
+		'send_from_name' 	=> (string) $def_cfg_smtp['from-name'],
+		'smtp_mxdomain' 	=> (string) $def_cfg_smtp['server-mx-domain']
+	];
+	//--
+
 	//--
 	$stmp_y = date('Y');
 	$stmp_m = date('m');
 	$stmp_d = date('d');
 	$stmp_time = date('His');
 	//--
-	$logsend_dir = trim($logsend_dir);
+	if((string)$def_cfg_smtp['log-messages'] != 'yes') { // no
+		$logsend_dir = '';
+	} else { // yes
+		$logsend_dir = (string) trim((string)$logsend_dir);
+	} //end if else
 	//--
-	if(strlen($logsend_dir) > 0) {
+	if((string)$logsend_dir != '') {
 		//--
-		$logsend_dir = SmartFileSysUtils::add_dir_last_slash($logsend_dir); // if the last / is not present will add it
-		$logsend_dir .= $stmp_y.'/'.$stmp_y.'-'.$stmp_m.'/'.$stmp_y.'-'.$stmp_m.'-'.$stmp_d.'/';
+		$logsend_dir = SmartFileSysUtils::add_dir_last_slash($logsend_dir); // if the last / if not present
+		$logsend_dir .= $stmp_y.'/'.$stmp_y.'-'.$stmp_m.'/'.$stmp_y.'-'.$stmp_m.'-'.$stmp_d; // add the time stamps
+		$logsend_dir = SmartFileSysUtils::add_dir_last_slash($logsend_dir); // add the last slash finally
 		//--
 		SmartFileSystem::dir_recursive_create($logsend_dir);
 		//--
@@ -274,21 +284,43 @@ public static function send_email($to, $bcc, $subj, $message, $is_html, $attachm
 		//--
 	} //end if else
 	//--
-	$arr_send_result = self::send_extended_email($server_settings, $tmp_send_mode, $to, $cc, $subj, $message, $is_html, $attachments, $charset, $priority, $inreplyto, $bcc, $replytoaddr);
+	$arr_send_result = (array) self::send_extended_email(
+		(array) $server_settings, 	// arr server settings
+		(string) $tmp_send_mode, 	// send mode
+		$to, // to@addr : MIXED(STRING / ARRAY)
+		$cc, // cc@addr : MIXED(STRING / ARRAY)
+		(string) $bcc, // bcc@addr
+		(string) $subj, // subject
+		(string) $message, // message
+		(bool) $is_html, // format: is-html ? TRUE : FALSE
+		(array) $attachments, // array of attachments
+		(string) $replytoaddr, // reply-to@addr
+		(string) $inreplyto, // in reply to Msg-Id
+		(int) $priority, // msg priority: 1 / 3 / 5
+		(string) $charset // msg charset: UTF-8 | ISO-8859-1 | ...
+	);
 	//--
-	if(strlen($logsend_dir) > 0) {
+	if((string)$logsend_dir != '') {
+		//--
 		if(is_dir($logsend_dir)) {
+			//--
 			if(is_array($to)) {
 				$mark_to = '@multi@';
 			} else {
 				$mark_to = (string) $to;
 			} //end if else
-			SmartFileSystem::write($logsend_dir.$stmp_y.$stmp_m.$stmp_d.'_'.$stmp_time.'__'.Smart::safe_validname($mark_to).'__'.sha1($to.$cc.$subj.$message).'.eml', $arr_send_result['message']);
+			//--
+			SmartFileSystem::write($logsend_dir.$stmp_y.$stmp_m.$stmp_d.'_'.$stmp_time.'__'.Smart::safe_validname($mark_to).'__'.sha1($to.$cc.$subj.$message).'.eml', (string)$arr_send_result['message']);
+			//--
 		} //end if
+		//--
 	} //end if
 	//--
-	return $arr_send_result['result']; // only return the result as 0 for error and 1 for success
+
 	//--
+	return (int) $arr_send_result['result']; // only return the result as 0 for error and 1 for success
+	//--
+
 } // END FUNCTION
 //==================================================================
 
@@ -296,21 +328,28 @@ public static function send_email($to, $bcc, $subj, $message, $is_html, $attachm
 //==================================================================
 /**
  * Send Email Mime Message from custom MailBox to a destination
+ * It can use custom server settings
  *
- * @param ARRAY			$y_server_settings	arr = [ server_name, server_port, server_sslmode, server_auth_user, server_auth_pass, send_from_addr, send_from_name, smtp_mxdomain ]
- * @param ENUM			$y_mode				'send' = do send | 'send-return' = do send + return | 'return' = return mime formated mail
- * @param STRING 		$to					To:
- * @param STRING 		$cc					Cc: | empty
- * @param STRING 		$subj				Subject:
- * @param STRING 		$message			Body/Message:
- * @param TRUE/FALSE 	$is_html			* Format: Html or Text/Plain
- * @param ARRAY 		$attachments		* $attachments = array('file1.txt'=>'This is the file 1 content', ...);
- * @param ENUM			$charset			* charset
- * @param ENUM			$priority			* 1=High ; 3=Normal ; 5=Low
- * @param STRING 		$inreplyto			'' | the ID of message that is replying to
- * @return ARRAY							OPERATION RESULT, ERROR, MIME MESSAGE
+ * @param ARRAY			$y_server_settings	config array: [ server_name, server_port, server_sslmode, server_auth_user, server_auth_pass, send_from_addr, send_from_name, smtp_mxdomain ]
+ * @param ENUM			$y_mode				mode: 'send' = do send | 'send-return' = do send + return | 'return' = return mime formated mail
+ * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
+ * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
+ * @param STRING 		$bcc				Bcc: '' | bcc@addr
+ * @param STRING 		$subj				Subject: Your Subject
+ * @param STRING 		$message			Message: The body of the message
+ * @param TRUE/FALSE 	$is_html			Format: FALSE = Text/Plain ; TRUE = HTML
+ * @param ARRAY 		$attachments		* Attachments array: [] | ['file1.txt'=>'This is the file 1 content', ...] :: default is []
+ * @param STRING 		$replytoaddr 		* Reply To Addr: '' | reply-to@addr :: default is ''
+ * @param STRING 		$inreplyto			* In Reply To: '' | the ID of message that is replying to :: default is ''
+ * @param ENUM			$priority			* Priority: 1=High ; 3=Normal ; 5=Low :: default is 3
+ * @param ENUM			$charset			* charset :: default is UTF-8
+ * @return ARRAY							OPERATION-RESULT, ERROR, LOG, MIME-MESSAGE
  */
-public static function send_extended_email($y_server_settings, $y_mode, $to, $cc, $subj, $message, $is_html, $attachments, $charset, $priority, $inreplyto, $bcc='', $replytoaddr='') {
+public static function send_extended_email($y_server_settings, $y_mode, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority=3, $charset='UTF-8') {
+
+	//--
+	$y_server_settings = (array) $y_server_settings;
+	//--
 
 	//-- SMTP Hello
 	$server_helo = trim($y_server_settings['smtp_mxdomain']);
@@ -422,7 +461,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 	//--
 
 	//--
-	$mail->priority = $priority; // high=1 | low=5 | normal=3
+	$mail->priority = Smart::format_number_int($priority, '+'); // high=1 | low=5 | normal=3
 	//--
 
 	//-- from
@@ -574,7 +613,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 			$mail->cc = '';
 			//-- only return mime formated message
 			$mail->send('no');
-			return array('result' => 1, 'error' => '', 'message' => $mail->mime_message);
+			return array('result' => 1, 'error' => '', 'log' => '', 'message' => $mail->mime_message);
 			//--
 			break;
 		case 'send-return':
@@ -620,7 +659,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 					if(((string)$mail->method == 'mail') OR ((string)$mail->method == 'smtp')) {
 						$err = $mail->send('yes');
 						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-							SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', 'Send eMail Log #'.($i+1).': '.$mail->log);
+							SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', '[##### Send eMail Log #'.($i+1).': '.date('Y-m-d H:i:s').' #####]');
 						} //end if
 					} else {
 						$err = 'WARNING: SMTP Server or Mail Method IS NOT SET in CONFIG. Send eMail - Operation ABORTED !';
@@ -655,6 +694,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 			} //end if
 			//--
 			if((string)$y_mode == 'send-return') {
+				//--
 				$mail->to = $tmp_send_to;
 				if(is_array($cc)) {
 					$mail->cc = (string) implode(', ', $cc);
@@ -663,9 +703,12 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 				} //end if else
 				$mail->add_attachment($tmp_send_log, 'smart-email-send.log', 'text/plain', 'inline');
 				$mail->send('no');
-				return array('result' => $out, 'error' => $err, 'log' => $tmp_send_log, 'message' => $mail->mime_message);
+				return array('result' => (int)$out, 'error' => (string)$err, 'log' => (string)$tmp_send_log, 'message' => (string)$mail->mime_message);
+				//--
 			} else {
-				return array('result' => $out, 'error' => $err, 'log' => $tmp_send_log, 'message' => ''); // skip returning the message
+				//--
+				return array('result' => (int)$out, 'error' => (string)$err, 'log' => (string)$tmp_send_log, 'message' => ''); // skip returning the message
+				//--
 			} //end if else
 			//--
 	} //end switch

@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.160827
+ * @version 	v.170315
  *
  */
 final class SmartDebugProfiler {
@@ -159,7 +159,7 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 			if(SmartAuth::check_login() === true) {
 				$arr['auth-data'] = array('is_auth' => true, 'login_data' => (array)SmartAuth::get_login_data(), '#login-pass#', SmartAuth::get_login_password());
 			} else {
-				$arr['auth-data'] = array('is_auth' => false, 'login_data' => array());
+				$arr['auth-data'] = array('is_auth' => false, 'login_data' => []);
 			} //end if else
 			foreach((array)SmartFrameworkRegistry::getDebugMsgs('optimizations') as $key => $val) {
 				$arr['log-optimizations'][(string)$key] = base64_encode(Smart::seryalize((array)$val));
@@ -170,7 +170,11 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 			foreach((array)SmartFrameworkRegistry::getDebugMsgs('db') as $key => $val) {
 				$arr['log-db'][(string)$key] = base64_encode(Smart::seryalize((array)$val));
 			} //end foreach
-			$arr['log-mail'] = base64_encode(Smart::seryalize((array)SmartFrameworkRegistry::getDebugMsgs('mail')));
+			if(Smart::array_size((array)SmartFrameworkRegistry::getDebugMsgs('mail')) > 0) {
+				$arr['log-mail'] = base64_encode(Smart::seryalize((array)SmartFrameworkRegistry::getDebugMsgs('mail')));
+			} else {
+				$arr['log-mail'] = '';
+			} //end if else
 			foreach((array)SmartFrameworkRegistry::getDebugMsgs('modules') as $key => $val) {
 				$arr['log-modules'][(string)$key] = base64_encode(Smart::seryalize((array)$val));
 			} //end foreach
@@ -268,7 +272,7 @@ public static function print_debug_info($y_area, $y_debug_token) {
 			} //end foreach
 		} //end if
 		//--
-		if(is_array($arr[$i]['log-mail'])) {
+		if((string)$arr[$i]['log-mail'] != '') {
 			$debug_mail .= $txt_main.$txt_url.$txt_token.self::print_log_mail(Smart::unseryalize(base64_decode($arr[$i]['log-mail']))).'<hr>';
 		} //end if
 		//--
@@ -369,8 +373,10 @@ private static function print_log_mail($log_mail_arr) {
 			//--
 			$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Operation: <b>'.strtoupper((string)$key).'</b></div>';
 			$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:#000000;">';
-			if(is_array($val['log'])) {
-				$log .= '<pre style="font-size:11px; color:#000000;">'.Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)self::print_value_by_type($val['log'])))).'</pre>';
+			if(is_array($val)) {
+				$log .= '<pre style="font-size:11px; color:#000000;">'.Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)implode("\n\n##########\n\n", $val)))).'</pre>';
+			} else {
+				$log .= '<pre style="font-size:11px; color:#000000;">'.Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)self::print_value_by_type($val)))).'</pre>';
 			} //end if else
 			$log .= '</div>';
 			//--
