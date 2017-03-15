@@ -17,6 +17,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartUtils::
 //	* SmartFileSystem::
 // DEPENDS-EXT: PHP GD with TrueColor or ImageMagick
+// REQUIRED CSS:
+//	* mediagallery.css
 //======================================================
 
 

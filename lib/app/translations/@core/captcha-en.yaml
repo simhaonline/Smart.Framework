@@ -1,0 +1,14 @@
+# Language File: EN / CORE / Captcha
+TRANSLATIONS:
+  @language: EN
+  @area: core
+  @version: 2017-03-15
+  captcha:
+    error: |
+      The Captcha session expired ...
+      Click on Captcha image to get a new one and try to re-enter the new code.
+      If the problem persist please contact the website administrator !
+    confirm: 'Confirm you are not a robot'
+    verify: 'Verification Code'
+    click: 'Click to Refresh Image'
+#END

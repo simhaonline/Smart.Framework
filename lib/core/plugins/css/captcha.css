@@ -1,0 +1,44 @@
+
+/* -- CSS Start :: SmartFramework / Captcha :: v.2.3.7.7 r.2017.02.22 / smart.framework.v.2.3 -- */
+
+/* ----------------------------- */
+
+div#Smart-Captcha-Area {
+	border-width: 1px;
+	border-spacing: 1px;
+	border-style: dashed;
+	border-color: #CCCCCC;
+	padding: 5px;
+	overflow: hidden;
+	display: table;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+div#Smart-Captcha-Area div#Smart-Captcha-Img {
+	display: inline-block;
+	vertical-align: top;
+	cursor: pointer;
+}
+
+div#Smart-Captcha-Area div#Smart-Captcha-Input {
+	display: inline-block;
+	vertical-align: top;
+	text-align: center;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+div#Smart-Captcha-Area div#Smart-Captcha-Input span {
+	font-weight: bold;
+}
+
+div#Smart-Captcha-Area > div {
+	position: relative;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */

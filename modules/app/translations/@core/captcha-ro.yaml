@@ -1,0 +1,14 @@
+# Language File: RO / CORE / Captcha
+TRANSLATIONS:
+  @language: RO
+  @area: core
+  @version: 2017-03-15
+  captcha:
+    error: |
+      Sesiunea Captcha a expirat ...
+      Apăsați Click pe imaginea Captcha pentru a o re-încărca și încercați să re-introduceți codul.
+      Dacă problema persistă contactați administratorul website-ului !
+    confirm: 'Confirmați că nu sunteți robot'
+    verify: 'Cod Verificare'
+    click: 'Click pentru a re-încărca Imaginea'
+#END

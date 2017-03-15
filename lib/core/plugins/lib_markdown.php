@@ -13,6 +13,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //======================================================
 // Markdown Parser - Output HTML5 Code
 // DEPENDS: SmartFramework
+// REQUIRED CSS:
+//	* markdown.css
 //======================================================
 
 
