@@ -4,26 +4,37 @@
 /* ----------------------------- */
 
 div#Smart-Captcha-Area {
-	border-width: 1px;
-	border-spacing: 1px;
-	border-style: dashed;
-	border-color: #CCCCCC;
-	padding: 5px;
+	background-color: #FFFFFF;
+	padding: 0px !important;
 	overflow: hidden;
 	display: table;
 	height: auto;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+	border: 0px !important;
 }
 
-div#Smart-Captcha-Area div#Smart-Captcha-Img {
+div#Smart-Captcha-Area * {
+	font-size: 0.96em !important;
+}
+
+div#Smart-Captcha-Area div#Smart-Captcha-Container {
+	position: relative;
+	padding: 5px !important;
+	border-width: 1px;
+	border-spacing: 1px;
+	border-style: dashed;
+	border-color: #CCCCCC;
+}
+
+div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Img {
 	display: inline-block;
 	vertical-align: top;
 	cursor: pointer;
 }
 
-div#Smart-Captcha-Area div#Smart-Captcha-Input {
+div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Input {
 	display: inline-block;
 	vertical-align: top;
 	text-align: center;
@@ -31,16 +42,14 @@ div#Smart-Captcha-Area div#Smart-Captcha-Input {
 	margin-right: 5px;
 }
 
-div#Smart-Captcha-Area div#Smart-Captcha-Input span {
+div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Input span {
+	color: #333333 !important;
 	font-weight: bold;
 }
 
-div#Smart-Captcha-Area > div {
-	position: relative;
-}
-
-div#Smart-Captcha-Area * {
-	font-size: 0.96em !important;
+div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Input input {
+	color: #333333 !important;
+	text-align: center;
 }
 
 /* ----------------------------- */
