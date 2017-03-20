@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170310
+ * @version 	v.170320
  * @package 	Templating:Engines
  *
  */
@@ -599,12 +599,12 @@ private static function process_rntspace_syntax($mtemplate) {
 
 
 //================================================================
-// process the template IF syntax, nested ... on n+ levels
+// process the template IF syntax, nested ... on n+ levels ; compare values are compared as binary (not unicode as the regex is bind to binary mode) ; if more than these # a-z A-Z 0-9 _ - . | have to be used, it can use a ####COMPARISON-MARKER#### instead
 private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context='') {
 	//--
 	if(strpos((string)$mtemplate, '[%%%%IF:') !== false) {
 		//--
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
@@ -640,7 +640,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 					$else_part[$i] = (string) self::process_if_syntax((string)$else_part[$i], (array)$y_arr_vars, (string)$y_context);
 				} //end if
 				//--
-				if((substr((string)$compare_val[$i], 0, 4) == '####') AND (substr((string)$compare_val[$i], -4, 4) == '####')) { // compare with variable instead of static value
+				if((substr((string)$compare_val[$i], 0, 4) == '####') AND (substr((string)$compare_val[$i], -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
 					$compare_val[$i] = (string) $y_arr_vars[str_replace('#', '', (string)$compare_val[$i])];
 				} //end if
 				//echo 'Context: '.$y_context."\n";
@@ -648,14 +648,14 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				//-- do last if / else processing
 				switch((string)$sign_not[$i]) {
 					case '@+': // array count >
-						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) > (int)$compare_val[$i]) {
+						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) > (int)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '@-': // array count <
-						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) < (int)$compare_val[$i]) {
+						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) < (int)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
@@ -663,7 +663,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						break;
 					case '@=': // in array
 						$tmp_compare_arr = (array) explode('|', (string)$compare_val[$i]);
-						if(in_array((string)$y_arr_vars[(string)$bind_var_key], (array)$tmp_compare_arr)) { // if in array
+						if(in_array((string)$y_arr_vars[(string)$bind_var_key], (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
@@ -672,64 +672,108 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						break;
 					case '@!': // not in array
 						$tmp_compare_arr = (array) explode('|', (string)$compare_val[$i]);
-						if(!in_array((string)$y_arr_vars[(string)$bind_var_key], (array)$tmp_compare_arr)) { // if in array
+						if(!in_array((string)$y_arr_vars[(string)$bind_var_key], (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						$tmp_compare_arr = array();
 						break;
+
+					case '^~': // if variable starts with part, case sensitive
+						if(SmartUnicode::str_pos((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+					case '^*': // if variable starts with part, case insensitive
+						if(SmartUnicode::str_ipos((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+					case '~~': // if variable contains part, case sensitive
+						if(SmartUnicode::str_contains((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i])) { // if evaluate to true keep the inner content
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+					case '~*': // if variable contains part, case insensitive
+						if(SmartUnicode::str_icontains((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i])) { // if evaluate to true keep the inner content
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+					case '$~': // if variable ends with part, case sensitive
+						if(SmartUnicode::sub_str((string)$y_arr_vars[(string)$bind_var_key], (-1 * SmartUnicode::str_len((string)$compare_val[$i])), SmartUnicode::str_len((string)$compare_val[$i])) == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+					case '$*': // if variable ends with part, case insensitive ### !!! Expensive in Execution !!! ###
+						if((SmartUnicode::str_tolower(SmartUnicode::sub_str((string)$y_arr_vars[(string)$bind_var_key], (-1 * SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i])))) == (string)SmartUnicode::str_tolower((string)$compare_val[$i])) OR (SmartUnicode::str_toupper(SmartUnicode::sub_str((string)$y_arr_vars[(string)$bind_var_key], (-1 * SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i])))) == (string)SmartUnicode::str_toupper((string)$compare_val[$i]))) { // if evaluate to true keep the inner content
+							$line .= (string) $if_part[$i]; // if part
+						} else {
+							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+						} //end if else
+						break;
+
 					case '==':
-						if((string)$y_arr_vars[(string)$bind_var_key] == (string)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+						if((string)$y_arr_vars[(string)$bind_var_key] == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '!=':
-						if((string)$y_arr_vars[(string)$bind_var_key] != (string)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+						if((string)$y_arr_vars[(string)$bind_var_key] != (string)$compare_val[$i]) { // if evaluate to false keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '<=':
-						if((float)$y_arr_vars[(string)$bind_var_key] <= (float)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+						if((float)$y_arr_vars[(string)$bind_var_key] <= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '<':
-						if((float)$y_arr_vars[(string)$bind_var_key] < (float)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+						if((float)$y_arr_vars[(string)$bind_var_key] < (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '>=':
-						if((float)$y_arr_vars[(string)$bind_var_key] >= (float)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+						if((float)$y_arr_vars[(string)$bind_var_key] >= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '>':
-						if((float)$y_arr_vars[(string)$bind_var_key] > (float)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+						if((float)$y_arr_vars[(string)$bind_var_key] > (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '%': // modulo (true/false)
-						if((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i]) { // if variable evaluates to true keep the inner content
+						if((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '%!': // not modulo (false/true)
-						if(!((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i])) { // if variable evaluates to false keep the inner content
+						if(!((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i])) { // if evaluate to false keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
