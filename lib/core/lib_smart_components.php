@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170306
+ * @version 	v.170320
  * @package 	Components:Framework
  *
  */
@@ -2908,11 +2908,9 @@ public static function js_draw_limited_text_area($y_field_id, $y_var_name, $y_va
 	//--
 	if(strlen($y_field_id) > 0) {
 		$field = (string) $y_field_id;
-		$counter = '__Fld_COUNTER__'.$field.'_'.Smart::uuid_10_str().'__Id__';
 	} else {
 		$fldhash = sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'_'.Smart::uuid_10_str();
 		$field = '__Fld_TEXTAREA__'.$fldhash.'__NO_Id__';
-		$counter = '__Fld_COUNTER__'.$fldhash.'__NO_Id__';
 	} //end if else
 	//--
 	$placeholder = '';
@@ -2928,7 +2926,6 @@ public static function js_draw_limited_text_area($y_field_id, $y_var_name, $y_va
 			'VAR-AREA' 			=> (string) $y_var_name,
 			'VAL-AREA-HTML' 	=> (string) $y_var_value, // this is pre-escaped if not raw
 			'WRAP-MODE' 		=> (string) $y_wrap,
-			'ID-COUNTER' 		=> (string) $counter,
 			'WIDTH' 			=> (string) $y_css_w,
 			'HEIGHT' 			=> (string) $y_css_h,
 			'PLACEHOLDER-HTML' 	=> (string) $placeholder

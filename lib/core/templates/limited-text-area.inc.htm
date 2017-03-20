@@ -1,6 +1,6 @@
 <!-- Partial Template: Core.LimitedTextArea -->
-<div style="position:relative;">
-	<textarea id="[####ID-AREA|htmid|html####]" name="[####VAR-AREA|html####]" wrap="[####WRAP-MODE|html####]" maxlength="[####LIMIT-CHARS|num####]" onClick="SmartJS_BrowserUtils.textArea_Limit('[####ID-AREA|htmid|js####]', '[####ID-COUNTER|htmid|js####]', [####LIMIT-CHARS|num####]);" onBlur="SmartJS_BrowserUtils.textArea_Limit('[####ID-AREA|htmid|js####]', '[####ID-COUNTER|htmid|js####]', [####LIMIT-CHARS|num####]);" onKeyDown="SmartJS_BrowserUtils.textArea_Limit('[####ID-AREA|htmid|js####]', '[####ID-COUNTER|htmid|js####]', [####LIMIT-CHARS|num####]);" onKeyUp="SmartJS_BrowserUtils.textArea_Limit('[####ID-AREA|htmid|js####]', '[####ID-COUNTER|htmid|js####]', [####LIMIT-CHARS|num####]);" style="width:[####WIDTH|html####]; height:[####HEIGHT|html####];"[####PLACEHOLDER-HTML####]>[####VAL-AREA-HTML####]</textarea>
-	<input title="Max Chars Limit: [####LIMIT-CHARS|num####]" type="text" readonly disabled id="[####ID-COUNTER|htmid|html####]" size="5" maxlength="4" value="[####LIMIT-CHARS|num####]" style="padding:1px!important; font-size:10px!important; text-align:center!important; position:absolute; left:5px; bottom:5px; opacity:0.5;">
-</div>
+<textarea id="[####ID-AREA|htmid|html####]" name="[####VAR-AREA|html####]" wrap="[####WRAP-MODE|html####]" maxlength="[####LIMIT-CHARS|num####]" style="width:[####WIDTH|html####]; height:[####HEIGHT|html####];"[####PLACEHOLDER-HTML####]>[####VAL-AREA-HTML####]</textarea>
+<script type="text/javascript">
+	SmartJS_BrowserUtils.textArea_addLimit('[####ID-AREA|htmid|js####]', [####LIMIT-CHARS|num####]);
+</script>
 <!-- #END :: Partial Template: Core.LimitedTextArea -->
