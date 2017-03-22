@@ -123,9 +123,7 @@
 	[%%%%ELSE:DAT2._-KEY-_%%%%]
 	<tr style="background:#FFFFCC;">
 		<td>[####DAT2._-KEY-_|html####]</td>
-		<td>
-			[%%%%LOOP:DAT2.KEY1%%%%]<span style="[%%%%IF:DAT2.KEY1.ID:==val1%%%%]font-weight:bold;[%%%%ELSE:DAT2.KEY1.ID%%%%][%%%%/IF:DAT2.KEY1.ID%%%%]">[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]<hr>
-		</td>
+		<td>[%%%%LOOP:DAT2.KEY1%%%%]<span style="[%%%%IF:DAT2.KEY1.ID:==val1%%%%]font-weight:bold;[%%%%ELSE:DAT2.KEY1.ID%%%%][%%%%/IF:DAT2.KEY1.ID%%%%]">[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]</td>
 	</tr>
 	[%%%%/IF:DAT2._-KEY-_%%%%]
 [%%%%/LOOP:DAT2%%%%]
