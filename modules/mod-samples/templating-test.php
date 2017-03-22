@@ -53,7 +53,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 							['id'=>15, 'slug'=>'o', 'name'=>'Letter O', 'is_vowel'=>true,  'arr' => [6,3,8]]
 						],
 						'DAT2' => [
-							'key1' => [ 'id' => 'val1', 'name' => 'Value 1' ],
+							'key1' => [ 'id' => 'val'.rand(0,1), 'name' => 'Value 1' ],
 							'key2' => 'val2',
 							'key3' => 'val3',
 							'key4' => 'val4',

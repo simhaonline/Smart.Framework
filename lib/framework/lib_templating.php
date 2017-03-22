@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170320
+ * @version 	v.170322
  * @package 	Templating:Engines
  *
  */
@@ -841,7 +841,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $the_max;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $j;
 							if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
-								foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
+								foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) { // expects associative array
 									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$key)] = $val;
 								} //end foreach
 							} else {
@@ -860,7 +860,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 									//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$qk).'] = '.print_r($qv,1)."\n\n";
 									$mks_line = (string) self::process_loop_syntax(
 										(string) $mks_line,
-										[ $bind_var_key.'.'.strtoupper((string)$qk) => (array)$qv ]
+										[ (string) strtoupper($bind_var_key.'.'.(string)$qk) => (array) $qv ]
 									);
 								} //end if
 							} //end foreach
@@ -877,7 +877,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 							(string) $j
 						);
 						if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
-							foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) {
+							foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) { // expects associative array
 								$mks_line = (string) self::replace_marker(
 									(string) $mks_line,
 									(string) strtoupper($bind_var_key.'.'.$key),
@@ -914,8 +914,8 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $ziterator;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-KEY-_')] = (string) $zkey;
 							if(is_array($zval)) {
-								foreach($zval as $key => $val) {
-									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$key)] = $val;
+								foreach($zval as $key => $val) { // expects associative array
+									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$zkey.'.'.$key)] = $val; // fix: 170322
 								} //end foreach
 							} else {
 								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-VAL-_')] = (string) $zval;
@@ -932,7 +932,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 								//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$zkey).'] = '.print_r($zval,1)."\n\n";
 								$mks_line = (string) self::process_loop_syntax(
 									(string) $mks_line,
-									[ $bind_var_key.'.'.strtoupper((string)$zkey) => (array)$zval ]
+									[ (string) strtoupper($bind_var_key.'.'.(string)$zkey) => (array) $zval ]
 								);
 							} //end if
 						} //end if
@@ -953,10 +953,10 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 							(string) $zkey
 						);
 						if(is_array($zval)) {
-							foreach($zval as $key => $val) {
+							foreach($zval as $key => $val) { // expects associative array
 								$mks_line = (string) self::replace_marker(
 									(string) $mks_line,
-									(string) strtoupper($bind_var_key.'.'.$key),
+									(string) strtoupper($bind_var_key.'.'.$zkey.'.'.$key), // fix: 170322
 									(string) $val
 								);
 							} //end for
