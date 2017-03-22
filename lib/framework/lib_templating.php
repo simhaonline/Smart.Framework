@@ -831,6 +831,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 				if($arrtype === 1) { // 1: non-associative
 					//--
 					$the_max = Smart::array_size($y_arr_vars[(string)$bind_var_key]);
+					$mxcnt = (int) ($the_max - 1);
 					//--
 					for($j=0; $j<$the_max; $j++) {
 						//-- operate on a copy of original
@@ -838,7 +839,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
 						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $the_max;
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $mxcnt;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $j;
 							if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
 								foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) { // expects associative array
@@ -869,7 +870,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
 							(string) strtoupper($bind_var_key.'._-MAXCOUNT-_'),
-							(string) $the_max
+							(string) $mxcnt
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
@@ -900,6 +901,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 					//--
 					$j=0;
 					$the_max = Smart::array_size($y_arr_vars[(string)$bind_var_key]);
+					$mxcnt = (int) ($the_max - 1);
 					//--
 					foreach($y_arr_vars[(string)$bind_var_key] as $zkey => $zval) {
 						//-- operate on a copy of original
@@ -910,7 +912,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
 						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $the_max;
+							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $mxcnt;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $ziterator;
 							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-KEY-_')] = (string) $zkey;
 							if(is_array($zval)) {
@@ -940,7 +942,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
 							(string) strtoupper($bind_var_key.'._-MAXCOUNT-_'),
-							(string) $the_max
+							(string) $mxcnt
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,

@@ -68,7 +68,7 @@
 <table width="550" cellpadding="4">
 [%%%%LOOP:DATA(1)%%%%]
 [%%%%IF:TEST2:==3%%%%]
-	<!-- Max Data Count: [####DATA._-MAXCOUNT-_|html####] -->
+	<!-- Max Data MaxCount for Iterator: [####DATA._-MAXCOUNT-_|html####] / [####DATA._-ITERATOR-_|html####] -->
 	[%%%%IF:DATA._-ITERATOR-_:<=0(1)%%%%]
 		<tr style="background:#003399;color:#FFFFFF;">
 			<td colspan="5"><b>[####DATA._-VAL-_|html####]</b></td>
@@ -107,7 +107,7 @@
 <hr>
 <table width="550" cellpadding="4">
 [%%%%LOOP:DAT2%%%%]
-	<!-- Max Data2 Count: [####DAT2._-MAXCOUNT-_|html####] -->
+	<!-- Max Data2 MaxCount for Iterator: [####DAT2._-MAXCOUNT-_|html####] / [####DATA._-ITERATOR-_|html####] -->
 	[%%%%IF:DAT2._-KEY-_:!=key1%%%%]
 		[%%%%IF:DAT2._-ITERATOR-_:%2%%%%]
 		<tr style="background:#FFFFFF;">
