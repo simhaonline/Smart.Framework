@@ -613,8 +613,10 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 		//--
 		for($i=0; $i<Smart::array_size($orig_part); $i++) {
 			//--
+			$cx_pfx = '';
 			$bind_var_key = (string) $var_part[$i];
 			if(((string)$y_context != '') AND (substr($bind_var_key, strlen((string)$y_context), 1) == '.')) {
+				$cx_pfx = '$$$$';
 				$bind_var_key = (string) '$$$$'.$bind_var_key; // if context var appears as '$$$$CONTEXT.VAR123' instead of 'CONTEXT.VAR123'
 			} //end if
 			//--
@@ -641,7 +643,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				} //end if
 				//--
 				if((substr((string)$compare_val[$i], 0, 4) == '####') AND (substr((string)$compare_val[$i], -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
-					$compare_val[$i] = (string) $y_arr_vars[str_replace('#', '', (string)$compare_val[$i])];
+					$compare_val[$i] = (string) $y_arr_vars[str_replace('#', '', (string)$cx_pfx.$compare_val[$i])]; // fix: 170322
 				} //end if
 				//echo 'Context: '.$y_context."\n";
 				//print_r($y_arr_vars);

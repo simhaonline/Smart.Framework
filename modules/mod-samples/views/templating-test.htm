@@ -102,12 +102,15 @@
 	<tr><td style="background:#FF3300;color:#FFFFFF;"><b>Test 2 is not 3, not showing real data ...</b></td></tr>
 	[%%%%/IF:DATA._-ITERATOR-_(3)%%%%]
 [%%%%/IF:TEST2%%%%]
+[%%%%IF:DATA._-ITERATOR-_:==####DATA._-MAXCOUNT-_####(4)%%%%]
+	<!-- Nested IF by LOOP Test @ Last Row from Loop: Iterator=[####DATA._-ITERATOR-_|html####] ; MaxCount=[####DATA._-MAXCOUNT-_|html####] -->
+[%%%%/IF:DATA._-ITERATOR-_(4)%%%%]
 [%%%%/LOOP:DATA(1)%%%%]
 </table>
 <hr>
 <table width="550" cellpadding="4">
 [%%%%LOOP:DAT2%%%%]
-	<!-- Max Data2 MaxCount for Iterator: [####DAT2._-MAXCOUNT-_|html####] / [####DATA._-ITERATOR-_|html####] -->
+	<!-- Max Data2 MaxCount for Iterator: [####DAT2._-MAXCOUNT-_|html####] / [####DAT2._-ITERATOR-_|html####] -->
 	[%%%%IF:DAT2._-KEY-_:!=key1%%%%]
 		[%%%%IF:DAT2._-ITERATOR-_:%2%%%%]
 		<tr style="background:#FFFFFF;">
