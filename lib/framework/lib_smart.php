@@ -68,7 +68,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170309
+ * @version     v.170322
  * @package     Base
  *
  */
@@ -559,9 +559,7 @@ public static function escape_js($str) {
 	//-- encode as json
 	$encoded = (string) @json_encode((string)$str, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); // encode the string includding unicode chars, with all possible: <tag>, ' " &
 	//-- the above will provide a json encoded string as: "mystring" ; we get just what's between double quotes as: mystring
-	$between_quotes = substr(trim($encoded), 1, -1);
-	//--
-	return (string) $between_quotes;
+	return (string) substr(trim((string)$encoded), 1, -1);
 	//--
 } //END FUNCTION
 //================================================================
