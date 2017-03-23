@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170313
+ * @version 	v.170323
  * @package 	Application
  *
  */
@@ -248,6 +248,7 @@ abstract class SmartAbstractAppController {
 	private $urlpath;
 	private $urladdr;
 	private $urlpage;
+	private $urlquery;
 	//--
 	private $availsettings = [ 	// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
 		'error', 'redirect-url', 			// error message for return non 2xx codes ; redirect url for return 3xx codes
@@ -280,8 +281,9 @@ abstract class SmartAbstractAppController {
 		$this->controller 	= (string) $y_controller; 						// something.someaction
 		$this->urlscript 	= (string) $y_url_script; 						// index.php | admin.php
 		$this->urlpath 		= (string) $y_url_path; 						// /frameworks/smart-framework/
-		$this->urladdr 		= (string) $y_url_addr; 						// http(s)://127.0.0.1/frameworks/smart-framework/
+		$this->urladdr 		= (string) $y_url_addr; 						// http(s)://127.0.0.1:8008/frameworks/smart-framework/
 		$this->urlpage 		= (string) $y_url_page; 						// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
+		$this->urlquery 	= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; // the query URL if any ...
 		//--
 		$this->pagesettings = array();
 		$this->pageview 	= array();
@@ -463,6 +465,9 @@ abstract class SmartAbstractAppController {
 				break;
 			case 'url-page':
 				$out = $this->urlpage;
+				break;
+			case 'url-query':
+				$out = $this->urlquery;
 				break;
 			default:
 				Smart::log_warning('SmartAbstractAppController / ControllerGetParam: Invalid Parameter: '.$param);

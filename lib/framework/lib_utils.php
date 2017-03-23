@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170310
+ * @version 	v.170323
  * @package 	Base
  *
  */
@@ -1592,7 +1592,7 @@ public static function get_server_current_path() {
 
 
 //================================================================
-// Ex: http(s)://domain/sites/test/
+// Ex: http(s)://domain(:port)/sites/test/
 public static function get_server_current_url() {
 	//--
 	$xout = (string) self::$cache['get_server_current_url'];
