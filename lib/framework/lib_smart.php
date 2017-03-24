@@ -47,6 +47,8 @@ if((string)$var == 'some-string') {
 } //end if
 //#####
 
+// never use break; return ...; // return will never get executed !! :: # pcregrep -rM 'break;\s*return' .
+
 *****/
 
 
@@ -68,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170322
+ * @version     v.170324
  * @package     Base
  *
  */
@@ -837,6 +839,55 @@ public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separa
 	} //end if
 	//--
 	return $y_arr; // mixed
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Array Test if Key Exist By Path
+ *
+ * @param ARRAY 		$y_arr 					:: The input array
+ * @param STRING 		$y_key_path 			:: The composed key path by levels (Ex: key1.key2)
+ * @param STRING 		$y_path_separator 		:: The key path separator (Example: .)
+ *
+ * @return BOOL 								:: TRUE if Key Exist / FALSE if NOT
+ */
+public static function array_test_key_by_path_exists($y_arr, $y_key_path, $y_path_separator) {
+	//--
+	if(self::array_size($y_arr) <= 0) {
+		return false;
+	} //end if
+	//--
+	$y_key_path = (string) trim((string)$y_key_path);
+	$y_path_separator = (string) trim((string)$y_path_separator);
+	//--
+	if((string)$y_key_path == '') {
+		return false; // dissalow empty key path
+	} //end if
+	//--
+	if(strlen($y_path_separator) != 1) {
+		return false; // dissalow empty separator
+	} //end if
+	//--
+	$arr = (array) explode((string)$y_path_separator, (string)$y_key_path);
+	$max = count($arr);
+	$tarr = (array) $y_arr;
+	for($i=0; $i<$max; $i++) {
+		$arr[$i] = (string) trim((string)$arr[$i]);
+		if((string)$arr[$i] != '') {
+			if(!is_array($tarr)) {
+				return false;
+			} //end if
+			if(!array_key_exists((string)$arr[$i], (array)$tarr)) {
+				return false;
+			} //end if
+			$tarr = $tarr[(string)$arr[$i]];
+		} //end if
+	} //end for
+	//--
+	return true;
 	//--
 } //END FUNCTION
 //================================================================

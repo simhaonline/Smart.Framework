@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170322
+ * @version 	v.170325
  * @package 	Templating:Engines
  *
  */
@@ -557,7 +557,7 @@ private static function process_comments_syntax($mtemplate) {
 	if(strpos((string)$mtemplate, '[%%%%COMMENT') !== false) {
 		//--
 		//$pattern = '{\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]}sU';
-		$pattern = '{\s?\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]\s?}sU'; // Fix: trim parts (#170301) [OK]
+		$pattern = '{\s?\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]\s?}sU'; // Fix: trim parts
 		$mtemplate = (string) preg_replace($pattern, '', (string)$mtemplate);
 		//--
 	} //end if
@@ -600,9 +600,22 @@ private static function process_rntspace_syntax($mtemplate) {
 
 //================================================================
 // process the template IF syntax, nested ... on n+ levels ; compare values are compared as binary (not unicode as the regex is bind to binary mode) ; if more than these # a-z A-Z 0-9 _ - . | have to be used, it can use a ####COMPARISON-MARKER#### instead
-private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context='') {
+// values in $y_arr_vars have precedence over values in $y_arr_context ; to use $y_arr_context a non-empty $y_context is required ; $y_arr_context will hold contextual values for the current loop
+private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context='', $y_arr_context=[]) {
 	//--
 	if(strpos((string)$mtemplate, '[%%%%IF:') !== false) {
+		//--
+		if(!is_array($y_arr_vars)) {
+			Smart::log_warning('Marker Template LOOP: Invalid Array Passed ...');
+			$y_arr_vars = [];
+		} //end if
+		if((string)$y_context == '') {
+			$y_arr_context = []; // don't allow context var without explicit context
+		} //end if
+		if(!is_array($y_arr_context)) {
+			Smart::log_warning('Marker Template LOOP: Invalid Context Array Passed ...');
+			$y_arr_context = [];
+		} //end if
 		//--
 		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
 		$matches = array();
@@ -613,14 +626,16 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 		//--
 		for($i=0; $i<Smart::array_size($orig_part); $i++) {
 			//--
-			$cx_pfx = '';
 			$bind_var_key = (string) $var_part[$i];
-			if(((string)$y_context != '') AND (substr($bind_var_key, strlen((string)$y_context), 1) == '.')) {
-				$cx_pfx = '$$$$';
-				$bind_var_key = (string) '$$$$'.$bind_var_key; // if context var appears as '$$$$CONTEXT.VAR123' instead of 'CONTEXT.VAR123'
+			//--
+			$detect_var = 0;
+			if(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$bind_var_key, '.')) {
+				$detect_var = 1; // exist in original arr
+			} elseif(array_key_exists((string)$bind_var_key, (array)$y_arr_context)) {
+				$detect_var = 2; // exist in context arr
 			} //end if
 			//--
-			if(((string)$bind_var_key != '') AND (array_key_exists((string)$bind_var_key, (array)$y_arr_vars))) { // if the IF is binded to a non-empty KEY and an existing (which is mandatory to avoid mixing levels which will break this syntax in complex blocks !!!)
+			if(((string)$bind_var_key != '') AND ($detect_var == 1 OR $detect_var == 2)) { // if the IF is binded to a non-empty KEY and an existing (which is mandatory to avoid mixing levels which will break this syntax in complex blocks !!!)
 				//--
 				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 					if((string)$y_context != '') {
@@ -631,33 +646,43 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				} //end if
 				//--
 				$line = '';
-				//-- Fix: trim parts (#170301) [OK]
+				//-- Fix: trim parts
 				$if_part[$i] 	= (string) trim((string)$if_part[$i],   "\t\n\r\0\x0B");
 				$else_part[$i] 	= (string) trim((string)$else_part[$i], "\t\n\r\0\x0B");
 				//-- recursive process if in pieces of if or else
 				if(strpos((string)$if_part[$i], '[%%%%IF:') !== false) {
-					$if_part[$i] = (string) self::process_if_syntax((string)$if_part[$i], (array)$y_arr_vars, (string)$y_context);
+					$if_part[$i] = (string) self::process_if_syntax((string)$if_part[$i], (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
 				} //end if
 				if(strpos((string)$else_part[$i], '[%%%%IF:') !== false) {
-					$else_part[$i] = (string) self::process_if_syntax((string)$else_part[$i], (array)$y_arr_vars, (string)$y_context);
+					$else_part[$i] = (string) self::process_if_syntax((string)$else_part[$i], (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
 				} //end if
 				//--
 				if((substr((string)$compare_val[$i], 0, 4) == '####') AND (substr((string)$compare_val[$i], -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
-					$compare_val[$i] = (string) $y_arr_vars[str_replace('#', '', (string)$cx_pfx.$compare_val[$i])]; // fix: 170322
+					$compare_val[$i] = (string) strtoupper(str_replace('#', '', (string)$compare_val[$i]));
+					if(Smart::array_test_key_by_path_exists((array)$y_arr_context, (string)$compare_val[$i], '.')) {
+						$compare_val[$i] = $y_arr_context[(string)$compare_val[$i]]; // exist in context arr
+					} elseif(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$compare_val[$i], '.')) {
+						$compare_val[$i] = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$compare_val[$i], '.'); // exist in original arr
+					} else {
+						$compare_val[$i] = ''; // if not found, consider empty string
+					} //end if
 				} //end if
-				//echo 'Context: '.$y_context."\n";
-				//print_r($y_arr_vars);
 				//-- do last if / else processing
+				if($detect_var == 2) { // exist in context arr
+					$tmp_the_arr = $y_arr_context[(string)$bind_var_key]; // mixed
+				} else { // exist in original arr
+					$tmp_the_arr = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$bind_var_key, '.'); // mixed
+				} //end if else
 				switch((string)$sign_not[$i]) {
 					case '@+': // array count >
-						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) > (int)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if(Smart::array_size($tmp_the_arr) > (int)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '@-': // array count <
-						if(Smart::array_size($y_arr_vars[(string)$bind_var_key]) < (int)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if(Smart::array_size($tmp_the_arr) < (int)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
@@ -665,7 +690,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						break;
 					case '@=': // in array
 						$tmp_compare_arr = (array) explode('|', (string)$compare_val[$i]);
-						if(in_array((string)$y_arr_vars[(string)$bind_var_key], (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
+						if(in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
@@ -674,108 +699,106 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						break;
 					case '@!': // not in array
 						$tmp_compare_arr = (array) explode('|', (string)$compare_val[$i]);
-						if(!in_array((string)$y_arr_vars[(string)$bind_var_key], (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
+						if(!in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						$tmp_compare_arr = array();
 						break;
-
 					case '^~': // if variable starts with part, case sensitive
-						if(SmartUnicode::str_pos((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
+						if(SmartUnicode::str_pos((string)$tmp_the_arr, (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '^*': // if variable starts with part, case insensitive
-						if(SmartUnicode::str_ipos((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
+						if(SmartUnicode::str_ipos((string)$tmp_the_arr, (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '~~': // if variable contains part, case sensitive
-						if(SmartUnicode::str_contains((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i])) { // if evaluate to true keep the inner content
+						if(SmartUnicode::str_contains((string)$tmp_the_arr, (string)$compare_val[$i])) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '~*': // if variable contains part, case insensitive
-						if(SmartUnicode::str_icontains((string)$y_arr_vars[(string)$bind_var_key], (string)$compare_val[$i])) { // if evaluate to true keep the inner content
+						if(SmartUnicode::str_icontains((string)$tmp_the_arr, (string)$compare_val[$i])) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '$~': // if variable ends with part, case sensitive
-						if(SmartUnicode::sub_str((string)$y_arr_vars[(string)$bind_var_key], (-1 * SmartUnicode::str_len((string)$compare_val[$i])), SmartUnicode::str_len((string)$compare_val[$i])) == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len((string)$compare_val[$i])), SmartUnicode::str_len((string)$compare_val[$i])) == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '$*': // if variable ends with part, case insensitive ### !!! Expensive in Execution !!! ###
-						if((SmartUnicode::str_tolower(SmartUnicode::sub_str((string)$y_arr_vars[(string)$bind_var_key], (-1 * SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i])))) == (string)SmartUnicode::str_tolower((string)$compare_val[$i])) OR (SmartUnicode::str_toupper(SmartUnicode::sub_str((string)$y_arr_vars[(string)$bind_var_key], (-1 * SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i])))) == (string)SmartUnicode::str_toupper((string)$compare_val[$i]))) { // if evaluate to true keep the inner content
+						if((SmartUnicode::str_tolower(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i])))) == (string)SmartUnicode::str_tolower((string)$compare_val[$i])) OR (SmartUnicode::str_toupper(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i])))) == (string)SmartUnicode::str_toupper((string)$compare_val[$i]))) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
-
 					case '==':
-						if((string)$y_arr_vars[(string)$bind_var_key] == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if((string)$tmp_the_arr == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '!=':
-						if((string)$y_arr_vars[(string)$bind_var_key] != (string)$compare_val[$i]) { // if evaluate to false keep the inner content
+						if((string)$tmp_the_arr != (string)$compare_val[$i]) { // if evaluate to false keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '<=':
-						if((float)$y_arr_vars[(string)$bind_var_key] <= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if((float)$tmp_the_arr <= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '<':
-						if((float)$y_arr_vars[(string)$bind_var_key] < (float)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if((float)$tmp_the_arr < (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '>=':
-						if((float)$y_arr_vars[(string)$bind_var_key] >= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if((float)$tmp_the_arr >= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '>':
-						if((float)$y_arr_vars[(string)$bind_var_key] > (float)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if((float)$tmp_the_arr > (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '%': // modulo (true/false)
-						if((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if((float)$tmp_the_arr % (float)$compare_val[$i]) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '%!': // not modulo (false/true)
-						if(!((float)$y_arr_vars[(string)$bind_var_key] % (float)$compare_val[$i])) { // if evaluate to false keep the inner content
+						if(!((float)$tmp_the_arr % (float)$compare_val[$i])) { // if evaluate to false keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
@@ -801,10 +824,21 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 
 
 //================================================================
-// process the template LOOP syntax (added nested Level Loop (2nd++) ; will process IF syntax inside it also)
-private static function process_loop_syntax($mtemplate, $y_arr_vars) {
+// process the template LOOP syntax ; support nested Loop (2nd-level) ; allow max 2 loop levels ; will process IF syntax inside it also)
+private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
+	//--
+	$level++;
+	if($level > 2) {
+		Smart::log_warning('Invalid Marker Template LOOP Level: ['.$level.'] / Template: '.$mtemplate);
+		return (string) $mtemplate;
+	} //end if
 	//--
 	if(strpos((string)$mtemplate, '[%%%%LOOP:') !== false) {
+		//--
+		if(!is_array($y_arr_vars)) {
+			Smart::log_warning('Marker Template LOOP: Invalid Array Passed ...');
+			$y_arr_vars = [];
+		} //end if
 		//--
 		$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\](.*)?\[%%%%\/LOOP\:\1\2%%\]}sU';
 		$matches = array();
@@ -815,7 +849,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 		//--
 		for($i=0; $i<Smart::array_size($orig_part); $i++) {
 			//--
-			$bind_var_key = (string) $var_part[$i];
+			$bind_var_key = strtoupper((string) $var_part[$i]);
 			//--
 			if(((string)$bind_var_key != '') AND (is_array($y_arr_vars[(string)$bind_var_key]))) { // if the LOOP is binded to an existing Array Variable and a non-empty KEY
 				//--
@@ -824,7 +858,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 				} //end if
 				//--
 				//$loop_orig = (string) rtrim((string)$loop_part[$i]);
-				$loop_orig = (string) trim((string)$loop_part[$i], "\t\n\r\0\x0B"); // Fix: trim parts (#170301) [OK]
+				$loop_orig = (string) trim((string)$loop_part[$i], "\t\n\r\0\x0B"); // Fix: trim parts
 				//--
 				$line = '';
 				//--
@@ -841,29 +875,33 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
 						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $mxcnt;
-							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $j;
+							$tmp_arr_context = [];
+							$tmp_arr_context[(string)$bind_var_key.'.'.'_-MAXCOUNT-_'] = (string) $mxcnt;
+							$tmp_arr_context[(string)$bind_var_key.'.'.'_-ITERATOR-_'] = (string) $j;
 							if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
+								$tmp_arr_context[(string)$bind_var_key.'.'.'_-VAL-_'] = (array) $y_arr_vars[(string)$bind_var_key][$j];
 								foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) { // expects associative array
-									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$key)] = $val;
+									$tmp_arr_context[(string)$bind_var_key.'.'.strtoupper((string)$key)] = $val; // the context here is PARENT.CHILD instead of PARENT.i.CHILD (non-associative)
 								} //end foreach
 							} else {
-								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-VAL-_')] = (string) $y_arr_vars[(string)$bind_var_key][$j];
+								$tmp_arr_context[(string)$bind_var_key.'.'.'_-VAL-_'] = (string) $y_arr_vars[(string)$bind_var_key][$j];
 							} //end if else
 							$mks_line = (string) self::process_if_syntax(
 								(string) $mks_line,
-								(array) array_merge((array)$y_arr_vars, (array)$tmp_arr_context),
-								(string) $bind_var_key // context
+								(array)  $y_arr_vars,
+								(string) $bind_var_key,
+								(array)  $tmp_arr_context
 							);
 						} //end if
 						//-- process 2nd Level LOOP inside LOOP for non-Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($y_arr_vars[(string)$bind_var_key][$j]))) {
 							foreach($y_arr_vars[(string)$bind_var_key][$j] as $qk => $qv) {
-								if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$qk).'(') !== false)) AND (is_array($qv))) {
+								if(((strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$qk).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$qk).'(') !== false)) AND (is_array($qv))) {
 									//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$qk).'] = '.print_r($qv,1)."\n\n";
 									$mks_line = (string) self::process_loop_syntax(
 										(string) $mks_line,
-										[ (string) strtoupper($bind_var_key.'.'.(string)$qk) => (array) $qv ]
+										[ (string) $bind_var_key.'.'.strtoupper((string)$qk) => (array) $qv ],
+										(int) $level
 									);
 								} //end if
 							} //end foreach
@@ -871,26 +909,26 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) strtoupper($bind_var_key.'._-MAXCOUNT-_'),
+							(string) (string)$bind_var_key.'.'.'_-MAXCOUNT-_',
 							(string) $mxcnt
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) strtoupper($bind_var_key.'._-ITERATOR-_'),
+							(string) (string)$bind_var_key.'.'.'_-ITERATOR-_',
 							(string) $j
 						);
-						if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
+						if(is_array($y_arr_vars[(string)$bind_var_key][$j]) AND (Smart::array_type_test($y_arr_vars[(string)$bind_var_key][$j]) === 2)) {
 							foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) { // expects associative array
 								$mks_line = (string) self::replace_marker(
 									(string) $mks_line,
-									(string) strtoupper($bind_var_key.'.'.$key),
+									(string) $bind_var_key.'.'.strtoupper((string)$key),
 									(string) $val
 								);
-							} //end for
+							} //end foreach
 						} else {
 							$mks_line = (string) self::replace_marker(
 								(string) $mks_line,
-								(string) strtoupper($bind_var_key.'._-VAL-_'),
+								(string) (string)$bind_var_key.'.'.'_-VAL-_',
 								(string) $y_arr_vars[(string)$bind_var_key][$j]
 							);
 						} //end if else
@@ -914,60 +952,70 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars) {
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
 						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-MAXCOUNT-_')] = (string) $mxcnt;
-							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-ITERATOR-_')] = (string) $ziterator;
-							$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-KEY-_')] = (string) $zkey;
+							$tmp_arr_context[(string)$bind_var_key.'.'.'_-MAXCOUNT-_'] = (string) $mxcnt;
+							$tmp_arr_context[(string)$bind_var_key.'.'.'_-ITERATOR-_'] = (string) $ziterator;
+							$tmp_arr_context[(string)$bind_var_key.'.'.'_-KEY-_'] = (string) $zkey;
 							if(is_array($zval)) {
+								$tmp_arr_context[(string)$bind_var_key.'.'.'_-VAL-_'] = (array) $zval;
+								$tmp_arr_context[(string)$bind_var_key.'.'.strtoupper((string)$zkey)] = (array) $zval;
 								foreach($zval as $key => $val) { // expects associative array
-									$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'.'.$zkey.'.'.$key)] = $val; // fix: 170322
+									$tmp_arr_context[(string)$bind_var_key.'.'.'_-VAL-_'.'.'.strtoupper((string)$key)] = $val;
+									$tmp_arr_context[(string)$bind_var_key.'.'.strtoupper((string)$zkey.'.'.(string)$key)] = $val;
 								} //end foreach
 							} else {
-								$tmp_arr_context[strtoupper('$$$$'.$bind_var_key.'._-VAL-_')] = (string) $zval;
+								$tmp_arr_context[(string)$bind_var_key.'.'.'_-VAL-_'] = (string) $zval;
 							} //end if else
 							$mks_line = (string) self::process_if_syntax(
 								(string) $mks_line,
-								(array) array_merge((array)$y_arr_vars, (array)$tmp_arr_context),
-								(string) $bind_var_key // context
+								(array)  $y_arr_vars,
+								(string) $bind_var_key,
+								(array)  $tmp_arr_context
 							);
 						} //end if
 						//-- process 2nd Level LOOP inside LOOP for Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($zval))) {
-							if(((strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.$bind_var_key.'.'.strtoupper((string)$zkey).'(') !== false)) AND (is_array($zval))) {
+							if(((strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$zkey).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$zkey).'(') !== false)) AND (is_array($zval))) {
 								//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$zkey).'] = '.print_r($zval,1)."\n\n";
 								$mks_line = (string) self::process_loop_syntax(
 									(string) $mks_line,
-									[ (string) strtoupper($bind_var_key.'.'.(string)$zkey) => (array) $zval ]
+									[ (string) $bind_var_key.'.'.strtoupper((string)$zkey) => (array) $zval ],
+									(int) $level
 								);
 							} //end if
 						} //end if
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) strtoupper($bind_var_key.'._-MAXCOUNT-_'),
+							(string) (string)$bind_var_key.'.'.'_-MAXCOUNT-_',
 							(string) $mxcnt
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) strtoupper($bind_var_key.'._-ITERATOR-_'),
+							(string) (string)$bind_var_key.'.'.'_-ITERATOR-_',
 							(string) $ziterator
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) strtoupper($bind_var_key.'._-KEY-_'),
+							(string) (string)$bind_var_key.'.'.'_-KEY-_',
 							(string) $zkey
 						);
-						if(is_array($zval)) {
+						if(is_array($zval) AND (Smart::array_type_test($zval) === 2)) {
 							foreach($zval as $key => $val) { // expects associative array
 								$mks_line = (string) self::replace_marker(
 									(string) $mks_line,
-									(string) strtoupper($bind_var_key.'.'.$zkey.'.'.$key), // fix: 170322
+									(string) $bind_var_key.'.'.'_-VAL-_'.'.'.strtoupper((string)$key),
 									(string) $val
 								);
-							} //end for
+								$mks_line = (string) self::replace_marker(
+									(string) $mks_line,
+									(string) $bind_var_key.'.'.strtoupper((string)$zkey.'.'.(string)$key),
+									(string) $val
+								);
+							} //end foreach
 						} else {
 							$mks_line = (string) self::replace_marker(
 								(string) $mks_line,
-								(string) strtoupper($bind_var_key.'._-VAL-_'),
+								(string) (string)$bind_var_key.'.'.'_-VAL-_',
 								(string) $zval
 							);
 						} //end if else
