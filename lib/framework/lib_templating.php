@@ -629,11 +629,11 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 			$bind_var_key = (string) $var_part[$i];
 			//--
 			$detect_var = 0;
-			if(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$bind_var_key, '.')) {
-				$detect_var = 1; // exist in original arr
-			} elseif(array_key_exists((string)$bind_var_key, (array)$y_arr_context)) {
+			if(((string)$y_context != '') AND (array_key_exists((string)$bind_var_key, (array)$y_arr_context))) { // check first in the smallest array (optimization)
 				$detect_var = 2; // exist in context arr
-			} //end if
+			} elseif(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$bind_var_key, '.')) {
+				$detect_var = 1; // exist in original arr
+			} //end if else
 			//--
 			if(((string)$bind_var_key != '') AND ($detect_var == 1 OR $detect_var == 2)) { // if the IF is binded to a non-empty KEY and an existing (which is mandatory to avoid mixing levels which will break this syntax in complex blocks !!!)
 				//--
@@ -665,7 +665,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						$compare_val[$i] = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$compare_val[$i], '.'); // exist in original arr
 					} else {
 						$compare_val[$i] = ''; // if not found, consider empty string
-					} //end if
+					} //end if else
 				} //end if
 				//-- do last if / else processing
 				if($detect_var == 2) { // exist in context arr
