@@ -411,7 +411,7 @@ private static function have_subtemplate($mtemplate) {
 
 
 //================================================================
-// do replacements (and escapings) for one marker
+// do replacements (and escapings) for one marker ; a marker can contain: A-Z 0-9 _ - (and the dot . which is reserved as array level separator)
 /* {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}}
 <!-- INFO: The VALID Escaping Sequences for a Marker are all below ; If other escaping sequences are used or the escaping order is invalid, the Marker will not be detected and replaced ... -->
 [####MARKER####]

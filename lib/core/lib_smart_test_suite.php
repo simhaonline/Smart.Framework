@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.170307
+	// v.170324
 
 
 //==================================================================
@@ -143,27 +143,27 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TESTUNIT_BASE_URL' => SMART_FRAMEWORK_TESTUNIT_BASE_URL,
 			'NO-CACHE-TIME' => time(),
 			'CURRENT-DATE-TIME' => date('Y-m-d H:i:s O'),
-			'TEST-JS_SCRIPTS.Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')), // .SmartComponents::js_ajx_tabs_activate('tabs_draw', false),
-			'Test-Buttons.AJAX-POST' => $btnop,
+			'TEST-JS_SCRIPTS_Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')), // .SmartComponents::js_ajx_tabs_activate('tabs_draw', false),
+			'Test-Buttons_AJAX-POST' => $btnop,
 			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: '.$info_adm.' // Test Suite</div>',
-			'TEST-ELEMENTS.DIALOG' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
-			'TEST-ELEMENTS.ALERT' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
-			'TEST-ELEMENTS.SEND-CONFIRM-MODAL' => $basic_form_start.$basic_form_send_modal.$basic_form_end,
-			'TEST-ELEMENTS.SEND-CONFIRM-POPUP' => $basic_form_start.$basic_form_send_popup.$basic_form_end,
+			'TEST-ELEMENTS_DIALOG' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
+			'TEST-ELEMENTS_ALERT' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
+			'TEST-ELEMENTS_SEND-CONFIRM-MODAL' => $basic_form_start.$basic_form_send_modal.$basic_form_end,
+			'TEST-ELEMENTS_SEND-CONFIRM-POPUP' => $basic_form_start.$basic_form_send_popup.$basic_form_end,
 			'TEST-ELEMENTS-WND-INTERRACTIONS-MODAL' => self::bttn_open_modal(true, 'test_interractions_modal_start'),
 			'TEST-ELEMENTS-WND-INTERRACTIONS-POPUP' => self::bttn_open_popup(true, 'test_interractions_popup_start'),
-			'TEST-ELEMENTS.SINGLE-SELECT' => 'SingleSelect DropDown List without Blank: '.$one_single_select,
-			'TEST-ELEMENTS.SINGLE-BLANK-SELECT' => 'SingleSelect DropDown List (from Multi): '.$one_single_with_blank_select,
-			'TEST-ELEMENTS.SINGLE-SEARCH-SELECT' => 'SingleSelect DropDown List with Search: '.$elem_single_select,
-			'TEST-ELEMENTS.MULTI-SELECT' => 'MultiSelect DropDown List: '.$elem_multi_select,
-			'TEST-ELEMENTS.MULTIBOX-SELECT' => 'MultiSelect CheckBoxes:<br>'.$elem_multi_boxes,
-			'TEST-ELEMENTS.NORMAL-LIST-S' => $test_normal_list_s,
-			'TEST-ELEMENTS.NORMAL-LIST-M' => $test_normal_list_m,
-			'TEST-ELEMENTS.CALENDAR' => 'Calendar Selector: '.SmartComponents::js_draw_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
-			'TEST-ELEMENTS.TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
-			'TEST-ELEMENTS.AUTOCOMPLETE-SINGLE' => 'AutoComplete: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;">'.SmartComponents::js_draw_ui_autocomplete_single('auto-complete-fld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').' &nbsp; '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;">'.SmartComponents::js_draw_ui_autocomplete_multi('auto-complete-mfld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);'),
-			'TEST-elements.Captcha' => SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captcha_form_name()),
-			'test-elements.limited-area' => 'Limited TextArea: '.SmartComponents::js_draw_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '100px'),
+			'TEST-ELEMENTS_SINGLE-SELECT' => 'SingleSelect DropDown List without Blank: '.$one_single_select,
+			'TEST-ELEMENTS_SINGLE-BLANK-SELECT' => 'SingleSelect DropDown List (from Multi): '.$one_single_with_blank_select,
+			'TEST-ELEMENTS_SINGLE-SEARCH-SELECT' => 'SingleSelect DropDown List with Search: '.$elem_single_select,
+			'TEST-ELEMENTS_MULTI-SELECT' => 'MultiSelect DropDown List: '.$elem_multi_select,
+			'TEST-ELEMENTS_MULTIBOX-SELECT' => 'MultiSelect CheckBoxes:<br>'.$elem_multi_boxes,
+			'TEST-ELEMENTS_NORMAL-LIST-S' => $test_normal_list_s,
+			'TEST-ELEMENTS_NORMAL-LIST-M' => $test_normal_list_m,
+			'TEST-ELEMENTS_CALENDAR' => 'Calendar Selector: '.SmartComponents::js_draw_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
+			'TEST-ELEMENTS_TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
+			'TEST-ELEMENTS_AUTOCOMPLETE-SINGLE' => 'AutoComplete: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;">'.SmartComponents::js_draw_ui_autocomplete_single('auto-complete-fld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').' &nbsp; '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;">'.SmartComponents::js_draw_ui_autocomplete_multi('auto-complete-mfld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);'),
+			'TEST-elements_Captcha' => SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captcha_form_name()),
+			'test-elements_limited-area' => 'Limited TextArea: '.SmartComponents::js_draw_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '100px'),
 			'POWERED-INFO' => SmartComponents::draw_powered_info('no'),
 			'STR-NUM' => '1abc', // this will be converted to num !!
 			'NUM-NUM' => '0.123456789',
