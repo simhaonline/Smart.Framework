@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Abstract Middleware
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.2.3.7.7 r.2017.02.22 / smart.framework.v.2.3
+// v.2.3.7.8 r.2017.03.27 / smart.framework.v.2.3
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -33,7 +33,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170219
+ * @version		170327
  *
  */
 abstract class SmartAbstractAppMiddleware {
