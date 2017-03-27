@@ -84,12 +84,12 @@
 			<td>[####DATA.NAME|html####]</td>
 			[%%%%IF:DATA.IS_VOWEL:==1%%%%]
 				[%%%%IF:DATA.SLUG:==####TEST-COMPARE####%%%%]
-				<td>First*** Vowel: [[####DATA.IS_VOWEL|html####]]</td>
+				<td>First*** Vowel: [[####DATA.IS_VOWEL|bool|html####]]</td>
 				[%%%%ELSE:DATA.SLUG%%%%]
-				<td>Vowel: [[####DATA.IS_VOWEL|html####]]</td>
+				<td>Vowel: [[####DATA._-VAL-_.IS_VOWEL|bool|html####]]</td>
 				[%%%%/IF:DATA.SLUG%%%%]
 			[%%%%ELSE:DATA.IS_VOWEL%%%%]
-				<td>Consonant: [[####DATA.IS_VOWEL|html####]]</td>
+				<td>Consonant: [[####DATA.IS_VOWEL|bool|html####]]</td>
 			[%%%%/IF:DATA.IS_VOWEL%%%%]
 			<td>[%%%%LOOP:DATA.ARR%%%%]<span>[####DATA.ARR._-VAL-_|html####]; </span>[%%%%/LOOP:DATA.ARR%%%%]</td>
 		</tr>

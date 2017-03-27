@@ -31,7 +31,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // INFO: This template engine is 100% safe against un-predictable recursion patterns !
 // It does support: MARKERS, IF/ELSE, LOOP, INCLUDES syntax.
 // It does not currently support: nested identic IF/ELSE or nested identic LOOP syntax.
-// Nested identic IF/ELSE or nested identic LOOP syntax must be separed with unique numbers such as: (1), (2), ...
+// Nested identic IF/ELSE or nested identic LOOP syntax must be separed with unique terminators such as: (1), (2), ...
+// For nested LOOP it only supports max 2 levels: only 1 LOOP inside other LOOP, as combining more would be unefficient
+// because of the exponential structure complexity of context data, such as metadata context that must be replicated:
+// 		_-MAXCOUNT-_ 		The max iterator of array: arraysize-1
+// 		_-ITERATOR-_		The current array iterator: 0..(arraysize-1)
+// 		_-VAL-_				The current loop value
+// 		_-KEY-_				* Only for Associative Arrays * The current loop key
 //#####
 // Because the recursion patterns are un-predictable, as a template can be rendered in other template in controllers or libs,
 // the str_replace() is used internally instead of strtr()
@@ -90,7 +96,7 @@ public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_emp
 		Smart::log_warning('Invalid Markers-Template Data-Set for Template: '.$mtemplate);
 	} //end if
 	//-- make all keys upper
-	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER);
+	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper (only 1st level, not nested)
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
@@ -138,7 +144,7 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 	//--
 	$y_use_caching = (string) $y_use_caching;
 	//--
-	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper
+	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper (only 1st level, not nested)
 	//--
 	$mtemplate = (string) self::read_template_or_subtemplate_file((string)$y_file_path, (string)$y_use_caching);
 	if((string)$mtemplate == '') {
@@ -223,7 +229,7 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 		return '{#### Empty Base Path for Mixed Markers-Template Content. See the ErrorLog for Details. ####}';
 	} //end if
 	//-- make all keys upper
-	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER);
+	$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper (only 1st level, not nested)
 	//-- process sub-templates if any
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
@@ -921,7 +927,12 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 							foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) { // expects associative array
 								$mks_line = (string) self::replace_marker(
 									(string) $mks_line,
-									(string) $bind_var_key.'.'.strtoupper((string)$key),
+									(string) $bind_var_key.'.'.'_-VAL-_'.'.'.strtoupper((string)$key),
+									(string) $val
+								);
+								$mks_line = (string) self::replace_marker(
+									(string) $mks_line,
+									(string) $bind_var_key.'.'.strtoupper((string)$key), // a shortcut for _-VAL-_.KEY
 									(string) $val
 								);
 							} //end foreach
