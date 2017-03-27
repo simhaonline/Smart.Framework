@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170324
+ * @version     v.170327
  * @package     Base
  *
  */
@@ -788,10 +788,10 @@ public static function array_shuffle($y_arr) {
 
 //================================================================
 /**
- * Array Get By Key Path
+ * Array Get (value) By Key Path (case sensitive)
  *
  * @param ARRAY 		$y_arr 					:: The input array
- * @param STRING 		$y_key_path 			:: The composed key path by levels (Ex: key1.key2)
+ * @param STRING 		$y_key_path 			:: The composed key path by levels (Ex: key1.key2) :: case-sensitive
  * @param STRING 		$y_path_separator 		:: The key path separator (Example: .)
  *
  * @return MIXED [ NUMERIC / STRING / ARRAY ] 	:: The array value of the specified key path
@@ -846,10 +846,10 @@ public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separa
 
 //================================================================
 /**
- * Array Test if Key Exist By Path
+ * Array Test if Key Exist By (Key) Path (case sensitive)
  *
  * @param ARRAY 		$y_arr 					:: The input array
- * @param STRING 		$y_key_path 			:: The composed key path by levels (Ex: key1.key2)
+ * @param STRING 		$y_key_path 			:: The composed key path by levels (Ex: key1.key2) :: case-sensitive
  * @param STRING 		$y_path_separator 		:: The key path separator (Example: .)
  *
  * @return BOOL 								:: TRUE if Key Exist / FALSE if NOT
