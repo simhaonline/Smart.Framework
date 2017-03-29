@@ -23,6 +23,16 @@ class SmartAppIndexController extends SmartAbstractAppController {
 	public function Run() {
 
 		//--
+		/*
+		die(
+		SmartMarkersTemplating::analyze_debug_file_template(
+				$this->ControllerGetParam('module-path').'views/templating-test.htm'
+			));
+		return;
+		*/
+		//--
+
+		//--
 		$title = 'Extended Markers Template Test';
 		//--
 		$test_switch_arr = ['a', 'b', 'c', 'd'];

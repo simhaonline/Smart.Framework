@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170327
+ * @version 	v.170328
  * @package 	Templating:Engines
  *
  */
@@ -66,8 +66,135 @@ final class SmartMarkersTemplating {
 
 
 //================================================================
-// returns the prepared marker template from a string
-// the replacement of sub-templates is made before injecting variables to avoid security issues
+/**
+ * Render Marker File Template (incl. Sub-Templates from Files if any)
+ * This is intended for DEBUG ONLY
+ *
+ * @param 	STRING 		$y_file_path 					:: The relative path to the file markers template (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+ * @param 	ARRAY 		$y_arr_sub_templates 			:: *Optional* The associative array with the sub-template variables ( @SUB-TEMPLATES@ ) if any
+ *
+ * @return 	STRING										:: The parsed and rendered template
+ *
+ */
+public static function analyze_debug_file_template($y_file_path, $y_arr_sub_templates=[]) {
+	//--
+	$y_file_path = (string) $y_file_path;
+	if(!is_file($y_file_path)) {
+		return '<h1>{#### ERROR: Invalid Markers-Template File ['.Smart::escape_html($y_file_path).'] ####}</h1>';
+	} //end if
+	$mtemplate = (string) SmartFileSystem::staticread((string)$y_file_path);
+	//--
+	$arr_sub_templates = array();
+	if(Smart::array_size($y_arr_sub_templates) > 0) { // if(is_array($y_arr_sub_templates)) { // if supplied then use it (preffered), never mix supplied with detection else results would be unpredictable ...
+		$arr_sub_templates = (array) $y_arr_sub_templates;
+	} else { // if not supplied, try to detect
+		$arr_sub_templates = (array) self::detect_subtemplates($mtemplate);
+	} //end if else
+	if(Smart::array_size($arr_sub_templates) > 0) {
+		$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
+		$mtemplate = (string) self::load_subtemplates('no', $tpl_basepath, $mtemplate, $arr_sub_templates); // load sub-templates before template processing and use caching also for sub-templates if set
+	} //end if
+	$arr_sub_templates = array();
+	//--
+	//return $mtemplate;
+	return (string) self::analyze_debug_template($mtemplate, 'TPL-File: '.$y_file_path);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Analyze a Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
+ * This is intended for DEBUG ONLY
+ *
+ * @param 	STRING 		$mtemplate 						:: The markers template (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+ *
+ * @return 	STRING										:: The analyze info HTML
+ *
+ */
+public static function analyze_debug_template($mtemplate, $y_info='') {
+	//-- input vars
+	$mtemplate = (string) $mtemplate;
+	$y_info = (string) trim((string)$y_info);
+	//-- calculate hash
+	$hash = (string) sha1($y_info.$mtemplate);
+	//-- inits
+	$html = '<!-- START: Markers Template Analyze @ '.Smart::escape_html($hash).' # -->'."\n";
+	$html .= '<div align="center">';
+	$html .= '<h1>Markers Template Analyze</h1>';
+	if((string)$y_info != '') {
+		$html .= '<h2>'.Smart::escape_html($y_info).'</h2>';
+	} //end if
+	$html .= '<hr>';
+	//-- main table
+	$html .= '<table width="100%"><tr valign="top" align="center">';
+	//-- marker vars
+	$arr_marks = array();
+	$matches = array();
+	preg_match_all('/####([A-Z0-9_\-\.]+)/', (string)$mtemplate, $matches);
+	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
+	list($orig_part, $var_part) = (array) $matches;
+	for($i=0; $i<Smart::array_size($var_part); $i++) {
+		$var_part[$i] = (string) trim((string)$var_part[$i]);
+		if((string)$var_part[$i] != '') {
+			$arr_marks[(string)strtoupper((string)$var_part[$i])] += 1;
+		} //end if
+	} //end for
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="550"><tr align="center"><th>{#### MARKER:VARIABLES ####}</th><th>#</th></tr>';
+	ksort($arr_marks);
+	foreach($arr_marks as $key => $val) {
+		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
+	} //end for
+	$html .= '</table></td>';
+	//-- if vars
+	$arr_ifs = array();
+	$matches = array();
+	preg_match_all('{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:}sU', (string)$mtemplate, $matches);
+	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
+	list($orig_part, $var_part) = (array) $matches;
+	for($i=0; $i<Smart::array_size($var_part); $i++) {
+		$var_part[$i] = (string) trim((string)$var_part[$i]);
+		if((string)$var_part[$i] != '') {
+			$arr_ifs[(string)strtoupper((string)$var_part[$i])] += 1;
+		} //end if
+	} //end for
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="550"><tr align="center"><th>{%%%% IF:VARIABLES %%%%}</th><th>#</th></tr>';
+	ksort($arr_ifs);
+	foreach($arr_ifs as $key => $val) {
+		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
+	} //end for
+	$html .= '</td></table>';
+	//-- loop vars
+	$arr_loops = array();
+	$matches = array();
+	preg_match_all('{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\]}sU', (string)$mtemplate, $matches);
+	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
+	list($orig_part, $var_part) = (array) $matches;
+	for($i=0; $i<Smart::array_size($var_part); $i++) {
+		$var_part[$i] = (string) trim((string)$var_part[$i]);
+		if((string)$var_part[$i] != '') {
+			$arr_loops[(string)strtoupper((string)$var_part[$i])] += 1;
+		} //end if
+	} //end for
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="550"><tr align="center"><th>{%%%% LOOP:VARIABLES %%%%}</th><th>#</th></tr>';
+	ksort($arr_loops);
+	foreach($arr_loops as $key => $val) {
+		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
+	} //end for
+	$html .= '</td></table>';
+	//-- end main table
+	$html .= '</tr></table><hr>';
+	//-- ending
+	$html .= '</div><h2>TPL Data:</h2><pre style="background:#ECECEC;" id="'.'__marker__template__analyzer-tpl_'.Smart::escape_html($hash).'"></pre><hr><script>try{document.getElementById(\''.'__marker__template__analyzer-tpl_'.Smart::escape_js($hash).'\').innerHTML = decodeURIComponent(\''.Smart::escape_js(Smart::escape_url(Smart::escape_html($mtemplate))).'\');}catch(err){ console.log(\'Errors rendering: '.'__marker__template__analyzer-tpl_'.Smart::escape_js($hash).' ...\'); }</script>'."\n".'<!-- #END: Markers Template Analyze @ '.Smart::escape_html($hash).' -->';
+	//-- return
+	return (string) $html;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 /**
  * Parse Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
  *
@@ -116,9 +243,6 @@ public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_emp
 
 
 //================================================================
-// it can *optional* use caching to avoid read a file template (or it's sub-templates) more than once per execution
-// if using the cache the template and also sub-templates (if any) are cached internally to avoid re-read them from filesystem
-// the replacement of sub-templates is made before injecting variables to avoid security issues
 /**
  * Render Marker File Template (incl. Sub-Templates from Files if any)
  *
@@ -130,6 +254,10 @@ public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_emp
  *
  */
 public static function render_file_template($y_file_path, $y_arr_vars, $y_use_caching='no') {
+	//--
+	// it can *optional* use caching to avoid read a file template (or it's sub-templates) more than once per execution
+	// if using the cache the template and also sub-templates (if any) are cached internally to avoid re-read them from filesystem
+	// the replacement of sub-templates is made before injecting variables to avoid security issues
 	//--
 	$y_file_path = (string) $y_file_path;
 	if(!is_file($y_file_path)) {
@@ -188,9 +316,6 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 
 
 //================================================================
-// it can *optional* use caching to avoid read the sub-templates (if any) more than once per execution
-// if using the cache the sub-templates (if any) are cached internally to avoid re-read them from filesystem
-// the replacement of sub-templates is made before injecting variables to avoid security issues
 /**
  * Parse Mixed Marker Template (String Template + Sub-Templates from Files if any)
  * If no-subtemplates are available is better to use render_template() instead of this one.
@@ -209,6 +334,10 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
  *
  */
 public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_templates_base_path, $y_ignore_if_empty='no', $y_use_caching='no') {
+	//--
+	// it can *optional* use caching to avoid read the sub-templates (if any) more than once per execution
+	// if using the cache the sub-templates (if any) are cached internally to avoid re-read them from filesystem
+	// the replacement of sub-templates is made before injecting variables to avoid security issues
 	//--
 	$mtemplate = (string) trim((string)$mtemplate);
 	//--
@@ -261,7 +390,6 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 
 
 //================================================================
-// This function uses static read from filesystem and if (memory) persistent cache is available will cache it and all future reads until key expire will be done from memory instead of overloading the file system
 /**
  * Read a Marker File Template from FileSystem or from Persistent (Memory) Cache if exists
  * !!! This is intended for very special usage ... !!! This is used automatically by the render_file_template() and used in combination with render_mixed_template() may produce the same results ... it make non-sense using it with render_template() as this should be used for internal (php) templates as all external templates should be loaded with render_file_template()
@@ -275,6 +403,8 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
  *
  */
 public static function read_template_file($y_file_path) {
+	//--
+	// This function uses static read from filesystem and if (memory) persistent cache is available will cache it and all future reads until key expire will be done from memory instead of overloading the file system
 	//--
 	$use_pcache = false;
 	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
@@ -626,7 +756,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
-		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
+		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
 		//--
 		list($orig_part, $var_part, $sign_not, $compare_val, $opt_uniqid, $opt_uniqix, $if_part, $else_all, $else_part) = (array) $matches;
 		//--
@@ -849,7 +979,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 		$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\](.*)?\[%%%%\/LOOP\:\1\2%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
-		//echo '<pre>'.htmlspecialchars(print_r($matches,1)).'</pre>'; die();
+		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
 		//--
 		list($orig_part, $var_part, $opt_uniqid, $opt_uniqix, $loop_part) = (array) $matches;
 		//--
