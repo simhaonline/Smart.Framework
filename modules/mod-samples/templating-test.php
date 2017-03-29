@@ -23,7 +23,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 	public function Run() {
 
 		//--
-		/*
+		/* Uncomment this to see a Marker Template Analysis (DEBUG ONLY !!! Never use this in real production environments, it is intended for Development Only)
 		die(
 		SmartMarkersTemplating::analyze_debug_file_template(
 				$this->ControllerGetParam('module-path').'views/templating-test.htm'

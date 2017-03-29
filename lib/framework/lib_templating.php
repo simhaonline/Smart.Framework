@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170328
+ * @version 	v.170329
  * @package 	Templating:Engines
  *
  */
@@ -68,7 +68,7 @@ final class SmartMarkersTemplating {
 //================================================================
 /**
  * Render Marker File Template (incl. Sub-Templates from Files if any)
- * This is intended for DEBUG ONLY
+ * This is intended for DEVELOPMENT / DEBUG ONLY (never use this in production environments !)
  *
  * @param 	STRING 		$y_file_path 					:: The relative path to the file markers template (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
  * @param 	ARRAY 		$y_arr_sub_templates 			:: *Optional* The associative array with the sub-template variables ( @SUB-TEMPLATES@ ) if any
@@ -108,7 +108,7 @@ public static function analyze_debug_file_template($y_file_path, $y_arr_sub_temp
 //================================================================
 /**
  * Analyze a Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
- * This is intended for DEBUG ONLY
+ * This is intended for DEVELOPMENT / DEBUG ONLY (never use this in production environments !)
  *
  * @param 	STRING 		$mtemplate 						:: The markers template (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
  *
