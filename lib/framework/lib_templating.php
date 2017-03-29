@@ -96,6 +96,8 @@ public static function analyze_debug_file_template($y_file_path, $y_arr_sub_temp
 	} //end if
 	$arr_sub_templates = array();
 	//--
+	$mtemplate = str_replace(array('(@@@@-', '-@@@@)'), array('[@@@@', '@@@@]'), (string)$mtemplate); // FIX: revert protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+	//--
 	//return $mtemplate;
 	return (string) self::analyze_debug_template($mtemplate, 'TPL-File: '.$y_file_path);
 	//--
@@ -128,11 +130,31 @@ public static function analyze_debug_template($mtemplate, $y_info='') {
 	} //end if
 	$html .= '<hr>';
 	//-- main table
-	$html .= '<table width="100%"><tr valign="top" align="center">';
+	$html .= '<table width="100%">';
+	$html .= '<tr valign="top" align="center">';
+	//-- sub-tpls
+	$arr_subtpls = array();
+	$matches = array();
+	preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!%]*)@@@@\]}', (string)$mtemplate, $matches); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
+	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
+	list($orig_part, $var_part) = (array) $matches;
+	for($i=0; $i<Smart::array_size($var_part); $i++) {
+		$var_part[$i] = (string) trim((string)$var_part[$i]);
+		if((string)$var_part[$i] != '') {
+			$arr_subtpls[(string)$var_part[$i]] += 1; // no strtoupper in this case !! (must preserve case)
+		} //end if
+	} //end for
+	$html .= '<td colspan="3" align="center"><table id="'.'__marker__template__analyzer-subtpls_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="550"><tr align="center"><th>{@@@@ SUB-TEMPLATES @@@@}</th><th>#</th></tr>';
+	ksort($arr_subtpls);
+	foreach($arr_subtpls as $key => $val) {
+		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
+	} //end for
+	$html .= '</td></table><hr>';
+	$html .= '<tr valign="top" align="center">';
 	//-- marker vars
 	$arr_marks = array();
 	$matches = array();
-	preg_match_all('/####([A-Z0-9_\-\.]+)/', (string)$mtemplate, $matches);
+	preg_match_all('/####([A-Z0-9_\-\.]+)/', (string)$mtemplate, $matches); // {{{SYNC-TPL-EXPR-MARKER}}} :: start part only :: - [ - ] (can be in IF)
 	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
 	list($orig_part, $var_part) = (array) $matches;
 	for($i=0; $i<Smart::array_size($var_part); $i++) {
@@ -147,28 +169,10 @@ public static function analyze_debug_template($mtemplate, $y_info='') {
 		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
 	} //end for
 	$html .= '</table></td>';
-	//-- if vars
-	$arr_ifs = array();
-	$matches = array();
-	preg_match_all('{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:}sU', (string)$mtemplate, $matches);
-	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
-	list($orig_part, $var_part) = (array) $matches;
-	for($i=0; $i<Smart::array_size($var_part); $i++) {
-		$var_part[$i] = (string) trim((string)$var_part[$i]);
-		if((string)$var_part[$i] != '') {
-			$arr_ifs[(string)strtoupper((string)$var_part[$i])] += 1;
-		} //end if
-	} //end for
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="550"><tr align="center"><th>{%%%% IF:VARIABLES %%%%}</th><th>#</th></tr>';
-	ksort($arr_ifs);
-	foreach($arr_ifs as $key => $val) {
-		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
-	} //end for
-	$html .= '</td></table>';
 	//-- loop vars
 	$arr_loops = array();
 	$matches = array();
-	preg_match_all('{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\]}sU', (string)$mtemplate, $matches);
+	preg_match_all('{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\]}sU', (string)$mtemplate, $matches); // {{{SYNC-TPL-EXPR-LOOP}}}
 	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
 	list($orig_part, $var_part) = (array) $matches;
 	for($i=0; $i<Smart::array_size($var_part); $i++) {
@@ -180,6 +184,24 @@ public static function analyze_debug_template($mtemplate, $y_info='') {
 	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="550"><tr align="center"><th>{%%%% LOOP:VARIABLES %%%%}</th><th>#</th></tr>';
 	ksort($arr_loops);
 	foreach($arr_loops as $key => $val) {
+		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
+	} //end for
+	$html .= '</td></table>';
+	//-- if vars
+	$arr_ifs = array();
+	$matches = array();
+	preg_match_all('{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:}sU', (string)$mtemplate, $matches); // {{{SYNC-TPL-EXPR-IF}}} :: start part only
+	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
+	list($orig_part, $var_part) = (array) $matches;
+	for($i=0; $i<Smart::array_size($var_part); $i++) {
+		$var_part[$i] = (string) trim((string)$var_part[$i]);
+		if((string)$var_part[$i] != '') {
+			$arr_ifs[(string)strtoupper((string)$var_part[$i])] += 1;
+		} //end if
+	} //end for
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="550"><tr align="center"><th>{%%%% IF:VARIABLES %%%%}</th><th>#</th></tr>';
+	ksort($arr_ifs);
+	foreach($arr_ifs as $key => $val) {
 		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
 	} //end for
 	$html .= '</td></table>';
@@ -575,7 +597,7 @@ private static function have_subtemplate($mtemplate) {
 [####MARKER|html|nl2br####]
 */
 private static function replace_marker($mtemplate, $key, $val) {
-	//--
+	//-- {{{SYNC-TPL-EXPR-MARKER}}}
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
 		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js)?(\|html)?(\|nl2br)?'.'####\]/';
@@ -752,7 +774,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 			Smart::log_warning('Marker Template LOOP: Invalid Context Array Passed ...');
 			$y_arr_context = [];
 		} //end if
-		//--
+		//-- {{{SYNC-TPL-EXPR-IF}}}
 		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*)((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
@@ -976,7 +998,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 			$y_arr_vars = [];
 		} //end if
 		//--
-		$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\](.*)?\[%%%%\/LOOP\:\1\2%%\]}sU';
+		$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\](.*)?\[%%%%\/LOOP\:\1\2%%\]}sU'; // {{{SYNC-TPL-EXPR-LOOP}}}
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
@@ -1194,7 +1216,7 @@ private static function detect_subtemplates($mtemplate) {
 		} //end if
 		//--
 		$arr_matched_sub_templates = array();
-		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!]*)@@@@\]}', (string)$mtemplate, $arr_matched_sub_templates);
+		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!]*)@@@@\]}', (string)$mtemplate, $arr_matched_sub_templates); // {{{SYNC-TPL-EXPR-SUBTPL}}}
 		//print_r($arr_matched_sub_templates);
 		//--
 		if(Smart::array_size($arr_matched_sub_templates) > 0) {
@@ -1309,7 +1331,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 							$cycles += $num_sub_sub_templates;
 						} //end if
 					} //end if
-					$stemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates
+					$stemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 					$mtemplate = str_replace('[@@@@SUB-TEMPLATE:'.$key.'@@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
 					$arr_sub_sub_templates = array();
 					$num_sub_sub_templates = 0;
@@ -1351,7 +1373,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 	//--
 	if(self::have_subtemplate((string)$mtemplate) === true) {
 		Smart::log_warning('Undefined Marker Sub-Templates detected in Template:'."\n".self::log_template($mtemplate));
-		$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$mtemplate); // finally protect against undefined sub-templates
+		$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 	} //end if
 	//--
 	return (string) $mtemplate;
