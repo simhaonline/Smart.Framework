@@ -1,27 +1,29 @@
 <!-- Partial Template: Core.NavPager -->
 <div id="nav-pager-box">
-[%%%%COMMENT%%%%]
-	!!! Uncomment this to show Prev !!!
-	[%%%%IF:PREV-PAGE:!=%%%%]
-	<a id="nav-pager-item" href="[####PREV-LINK|html####]">[####PREV-PAGE####]</a>
-	[%%%%/IF:PREV-PAGE%%%%]
-[%%%%/COMMENT%%%%]
-[%%%%LOOP:DATA-ARR%%%%]
-	[%%%%IF:DATA-ARR._-VAL-_:==SELECTED(1)%%%%]
-		<span id="nav-pager-current">[####DATA-ARR._-KEY-_|html####]</span>
-	[%%%%ELSE:DATA-ARR._-VAL-_(1)%%%%]
-		[%%%%IF:DATA-ARR._-VAL-_:==DOTS(2)%%%%]
-			<span id="nav-pager-dots">...</span>
-		[%%%%ELSE:DATA-ARR._-VAL-_(2)%%%%]
-			<a id="nav-pager-item" href="[####DATA-ARR._-VAL-_|html####]">[####DATA-ARR._-KEY-_|html####]</a>
-		[%%%%/IF:DATA-ARR._-VAL-_(2)%%%%]
-	[%%%%/IF:DATA-ARR._-VAL-_(1)%%%%]
-[%%%%/LOOP:DATA-ARR%%%%]
-[%%%%COMMENT%%%%]
-	!!! Uncomment this to show Next !!!
-	[%%%%IF:NEXT-PAGE:!=%%%%]
-	<a id="nav-pager-item" href="[####NEXT-LINK|html####]">[####NEXT-PAGE####]</a>
-	[%%%%/IF:NEXT-PAGE%%%%]
-[%%%%/COMMENT%%%%]
+[%%%%IF:NO-RESULTS:!=%%%%]
+	<span id="nav-pager-current">[####NO-RESULTS####]</span>
+[%%%%ELSE:NO-RESULTS%%%%]
+	[%%%%IF:SHOW-FIRST:!=no%%%%]
+		[%%%%IF:PREV-PAGE:!=%%%%]
+		<a id="nav-pager-item" href="[####PREV-LINK|html####]" title="[####PREV-PAGE####]"><i class="fa fa-arrow-left"></i></a>
+		[%%%%/IF:PREV-PAGE%%%%]
+	[%%%%/IF:SHOW-FIRST%%%%]
+	[%%%%LOOP:DATA-ARR%%%%]
+		[%%%%IF:DATA-ARR._-VAL-_:==SELECTED(1)%%%%]
+			<span id="nav-pager-current">[####DATA-ARR._-KEY-_|html####]</span>
+		[%%%%ELSE:DATA-ARR._-VAL-_(1)%%%%]
+			[%%%%IF:DATA-ARR._-VAL-_:==DOTS(2)%%%%]
+				<span id="nav-pager-dots">...</span>
+			[%%%%ELSE:DATA-ARR._-VAL-_(2)%%%%]
+				<a id="nav-pager-item" href="[####DATA-ARR._-VAL-_|html####]">[####DATA-ARR._-KEY-_|html####]</a>
+			[%%%%/IF:DATA-ARR._-VAL-_(2)%%%%]
+		[%%%%/IF:DATA-ARR._-VAL-_(1)%%%%]
+	[%%%%/LOOP:DATA-ARR%%%%]
+	[%%%%IF:SHOW-LAST:!=no%%%%]
+		[%%%%IF:NEXT-PAGE:!=%%%%]
+		<a id="nav-pager-item" href="[####NEXT-LINK|html####]" title="[####NEXT-PAGE####]"><i class="fa fa-arrow-right"></i></a>
+		[%%%%/IF:NEXT-PAGE%%%%]
+	[%%%%/IF:SHOW-LAST%%%%]
+[%%%%/IF:NO-RESULTS%%%%]
 </div>
 <!-- #END :: Partial Template: Core.NavPager -->

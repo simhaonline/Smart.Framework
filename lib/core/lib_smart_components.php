@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170320
+ * @version 	v.170330
  * @package 	Components:Framework
  *
  */
@@ -1663,22 +1663,28 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 	//--
 	$navpager_mode = (string) Smart::get_from_config('nav.pager');
 	//--
-	if(((string)$navpager_mode == 'arrows') OR (strpos((string)$navpager_mode, 'custom-arrows:') === 0)) {
-		if((string)$navpager_mode != 'arrows') { // custom-arrows
-			$tpl = trim((string)substr((string)$navpager_mode, 14));
+	if(((string)$navpager_mode == 'arrows') OR (strpos((string)$navpager_mode, 'arrows:') === 0)) {
+		//--
+		if((string)$navpager_mode != 'arrows') { // arrows:path/to/nav-box.inc.htm
+			$tpl = trim((string)substr((string)$navpager_mode, 7));
 		} else { // arrows
 			$styles = '<!-- require: navbox.css -->'."\n";
 			$tpl = 'lib/core/templates/nav-box.inc.htm';
 		} //end if else
-		return $styles.self::arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
+		//--
+		return (string) $styles.self::arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
+		//--
 	} else {
-		if(strpos((string)$navpager_mode, 'custom-pager:') === 0) { // custom-pager:path/to/nav-pager.inc.htm
-			$tpl = trim((string)substr((string)$navpager_mode, 13));
+		//--
+		if(strpos((string)$navpager_mode, 'numeric:') === 0) { // numeric:path/to/nav-pager.inc.htm
+			$tpl = trim((string)substr((string)$navpager_mode, 8));
 		} else { // pager
 			$styles = '<!-- require: navbox.css -->'."\n";
 			$tpl = 'lib/core/templates/nav-pager.inc.htm';
 		} //end if else
-		return $styles.self::numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
+		//--
+		return (string) $styles.self::numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
+		//--
 	} //end if else
 	//--
 } //END FUNCTION
@@ -1689,19 +1695,49 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 // $link = 'some-script.php?ofs={{{offset}}}';
 private static function arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
 	//--
+	$tpl = (string) $tpl;
 	$link = (string) $link;
-	//--
+	$total = Smart::format_number_int($total, '+');
+	$limit = Smart::format_number_int($limit, '+');
+	$current = Smart::format_number_int($current, '+');
+	$display_if_empty = (bool) $display_if_empty;
+	$adjacents = Smart::format_number_int($adjacents, '+');
 	$options = (array) $options;
+	//--
+	if($limit <= 0) {
+		Smart::log_warning('NavBox ERROR: Limit is ZERO in: '.__CLASS__.'::'.__FUNCTION__.'()');
+		return (string) '<!-- Navigation Pager (1) -->[ ERROR: Invalid Navigation Pager: Limit is ZERO ]<!-- #END# Navigation Pager -->';
+	} //end if
+	//--
+	if((string)$options['nav-mode'] == 'pages') { // navigate by page number instead of offset
+		$total = Smart::format_number_int(ceil($total / $limit), '+');
+		$current = Smart::format_number_int(ceil($current / $limit), '+');
+		$limit = (int) 1;
+	} //end if
 	$opt_zerolink = '';
 	if((string)$options['zero-link'] != '') {
 		$opt_zerolink = (string) $options['zero-link'];
 	} //end if
+	$opt_emptydiv = '<div>&nbsp;</div>';
+	if(array_key_exists('empty-div', $options)) {
+		$opt_emptydiv = (string) $options['empty-div'];
+	} //end if
+	$showfirst = true;
+	if((string)$options['show-first'] === false) {
+		$showfirst = false;
+	} //end if
+	$showlast = true;
+	if((string)$options['show-last'] === false) {
+		$showlast = false;
+	} //end if
+	//--
+	if($display_if_empty !== true) {
+		if(($total <= 0) OR ($total <= $limit)) {
+			return (string) '<!-- Navigation Pager (1) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' -->'.$opt_emptydiv.'<!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
+		} //end if
+	} //end if
 	//--
 	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts');
-	//--
-	$limit = Smart::format_number_int($limit, '+');
-	$current = Smart::format_number_int($current, '+');
-	$total = Smart::format_number_int($total, '+');
 	//--
 	$txt_start 	= '<div class="nav_box_start" title="'.$translator_core_nav_texts->text('start').'"></div>';
 	$txt_prev 	= '<div class="nav_box_prev" title="'.$translator_core_nav_texts->text('prev').'"></div>';
@@ -1712,120 +1748,110 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 	$txt_empty = (string) $translator_core_nav_texts->text('empty'); // No Results
 	$txt_of = (string) $translator_core_nav_texts->text('of'); // of
 	//--
-	if($limit > 0) {
+	if($total > 0) {
 		//--
-		if($total > 0) {
-			//--
-			$tmp_lst_min = $current + 1;
-			$tmp_lst_max = $current + $limit;
-			//--
-			$dys_next = $current + $limit;
-			$dys_prev = $current - $limit;
-			//--
-			if($dys_prev < 0) {
-				$dys_prev = 0;
-			} //end if
-			if($dys_prev > $total) {
-				$dys_prev = $total;
-			} //end if
-			//--
-			if($dys_next < 0) {
-				$dys_next = 0;
-			} //end if
-			if($dys_next > $total) {
-				$dys_next = $total;
-			} //end if
-			if($dys_next == 0) {
-				$dys_prev = 0;
-				$tmp_lst_min = 0;
-				$tmp_lst_max = 0;
-			} //end if
-			//-- Fix max nav
-			if($tmp_lst_max > $total) {
-				$tmp_lst_max = $total;
-			} //end if
-			//-- info
-			$tmp_nfo = '<div title="'.Smart::escape_html($tmp_lst_min.'-'.$tmp_lst_max.' / '.$total).'">&nbsp;&nbsp;'.$txt_listed.'&nbsp;'.ceil($tmp_lst_max / $limit).'&nbsp;'.$txt_of.'&nbsp;'.ceil($total / $limit).'&nbsp;&nbsp;</div>';
-			//-- FFW
-			$tmp_last_calc_pages = @floor((($total - 1) / $limit));
-			$tmp_lastpage = $tmp_last_calc_pages * $limit;
-			//-- REW
-			$tmp_firstpage = 0;
-			//--
-			if((string)$opt_zerolink != '') {
-				$tmp_link_nav_start = (string) $opt_zerolink;
-			} else {
-				$tmp_link_nav_start = (string) str_replace('{{{offset}}}', $tmp_firstpage, $link);
-			} //end if else
-			if(((string)$opt_zerolink != '') AND ($dys_prev <= 0)) {
-				$tmp_link_nav_prev = (string) $opt_zerolink;
-			} else {
-				$tmp_link_nav_prev = (string) str_replace('{{{offset}}}', $dys_prev, $link);
-			} //end if else
-			$tmp_link_nav_next = (string) str_replace('{{{offset}}}', $dys_next, $link);
-			$tmp_link_nav_end = (string) str_replace('{{{offset}}}', $tmp_lastpage, $link);
-			//--
-			$tmp_box_nav_start = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_start).'">'.$txt_start.'</a>';
-			$tmp_box_nav_prev = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_prev).'">'.$txt_prev.'</a>';
-			$tmp_box_nav_next = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_next).'">'.$txt_next.'</a>';
-			$tmp_box_nav_end = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_end).'">'.$txt_end.'</a>';
-			//--
-			if($current <= 0) { // is at start
-				$tmp_box_nav_start = $txt_start;
-				$tmp_box_nav_prev = $txt_prev;
-			} //end if
-			if($tmp_lst_max >= $total) { // is at end
-				$tmp_box_nav_next = $txt_next;
-				$tmp_box_nav_end = $txt_end;
-			} //end if
-			//--
-			if(($total > $limit) OR ($display_if_empty === true)) {
-				//--
-				$html = (string) SmartMarkersTemplating::render_file_template(
-					(string) $tpl,
-					[
-						'NAV-START' => $tmp_box_nav_start,
-						'NAV-PREV' => $tmp_box_nav_prev,
-						'NAV-NEXT' => $tmp_box_nav_next,
-						'NAV-END' => $tmp_box_nav_end,
-						'NAV-INFO' => $tmp_nfo
-					],
-					'yes' // export to cache
-				);
-				//--
-			} else {
-				//--
-				$html = '<!-- Navigation Pager (3) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
-				//--
-			} //end if else
-			//--
+		$tmp_lst_min = $current + 1;
+		$tmp_lst_max = $current + $limit;
+		//--
+		$dys_next = $current + $limit;
+		$dys_prev = $current - $limit;
+		//--
+		if($dys_prev < 0) {
+			$dys_prev = 0;
+		} //end if
+		if($dys_prev > $total) {
+			$dys_prev = $total;
+		} //end if
+		//--
+		if($dys_next < 0) {
+			$dys_next = 0;
+		} //end if
+		if($dys_next > $total) {
+			$dys_next = $total;
+		} //end if
+		if($dys_next == 0) {
+			$dys_prev = 0;
+			$tmp_lst_min = 0;
+			$tmp_lst_max = 0;
+		} //end if
+		//-- Fix max nav
+		if($tmp_lst_max > $total) {
+			$tmp_lst_max = $total;
+		} //end if
+		//-- info
+		$tmp_nfo = '<div title="'.Smart::escape_html($tmp_lst_min.'-'.$tmp_lst_max.' / '.$total).'">&nbsp;&nbsp;'.$txt_listed.'&nbsp;'.ceil($tmp_lst_max / $limit).'&nbsp;'.$txt_of.'&nbsp;'.ceil($total / $limit).'&nbsp;&nbsp;</div>';
+		//-- FFW
+		$tmp_last_calc_pages = @floor((($total - 1) / $limit));
+		$tmp_lastpage = $tmp_last_calc_pages * $limit;
+		//-- REW
+		$tmp_firstpage = 0;
+		//--
+		if((string)$opt_zerolink != '') {
+			$tmp_link_nav_start = (string) $opt_zerolink;
 		} else {
-			//--
-			if($display_if_empty !== false) {
-				//--
-				$html = (string) SmartMarkersTemplating::render_file_template(
-					(string) $tpl,
-					[
-						'NAV-START' => $txt_start,
-						'NAV-PREV' => $txt_prev,
-						'NAV-NEXT' => $txt_next,
-						'NAV-END' => $txt_end,
-						'NAV-INFO' => '<div title="'.Smart::escape_html('0-0 / 0').'">&nbsp;&nbsp;'.$txt_empty.'&nbsp;&nbsp;</div>'
-					],
-					'yes' // export to cache
-				);
-				//--
-			} else {
-				//--
-				$html = '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' --><div>&nbsp;</div><!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
-				//--
-			} //end if
-			//--
+			$tmp_link_nav_start = (string) str_replace('{{{offset}}}', $tmp_firstpage, $link);
 		} //end if else
+		if(((string)$opt_zerolink != '') AND ($dys_prev <= 0)) {
+			$tmp_link_nav_prev = (string) $opt_zerolink;
+		} else {
+			$tmp_link_nav_prev = (string) str_replace('{{{offset}}}', $dys_prev, $link);
+		} //end if else
+		$tmp_link_nav_next = (string) str_replace('{{{offset}}}', $dys_next, $link);
+		$tmp_link_nav_end = (string) str_replace('{{{offset}}}', $tmp_lastpage, $link);
+		//--
+		$tmp_box_nav_start = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_start).'">'.$txt_start.'</a>';
+		$tmp_box_nav_prev = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_prev).'">'.$txt_prev.'</a>';
+		$tmp_box_nav_next = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_next).'">'.$txt_next.'</a>';
+		$tmp_box_nav_end = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_end).'">'.$txt_end.'</a>';
+		//--
+		if($current <= 0) { // is at start
+			$tmp_box_nav_start = $txt_start;
+			$tmp_box_nav_prev = $txt_prev;
+		} //end if
+		if($tmp_lst_max >= $total) { // is at end
+			$tmp_box_nav_next = $txt_next;
+			$tmp_box_nav_end = $txt_end;
+		} //end if
+		//--
+		if($showfirst === false) {
+			$tmp_box_nav_start = '&nbsp;';
+		} //end if
+		if($showlast === false) {
+			$tmp_box_nav_end = '&nbsp;';
+		} //end if
+		//--
+		$html = (string) SmartMarkersTemplating::render_file_template(
+			(string) $tpl,
+			[
+				'NAV-START' 	=> (string) $tmp_box_nav_start,
+				'NAV-PREV' 		=> (string) $tmp_box_nav_prev,
+				'NAV-NEXT' 		=> (string) $tmp_box_nav_next,
+				'NAV-END' 		=> (string) $tmp_box_nav_end,
+				'NAV-INFO' 		=> (string) $tmp_nfo
+			],
+			'yes' // export to cache
+		);
 		//--
 	} else {
 		//--
-		$html = '[ ERROR: Invalid Navigation Pager (1): Limit is ZERO ]';
+		if($showfirst === false) {
+			$txt_start = '&nbsp;';
+		} //end if
+		if($showlast === false) {
+			$txt_end = '&nbsp;';
+		} //end if
+		//--
+		$html = (string) SmartMarkersTemplating::render_file_template(
+			(string) $tpl,
+			[
+				'NAV-START' 	=> (string) $txt_start,
+				'NAV-PREV' 		=> (string) $txt_prev,
+				'NAV-NEXT' 		=> (string) $txt_next,
+				'NAV-END' 		=> (string) $txt_end,
+				'NAV-INFO' 		=> '<div title="'.Smart::escape_html('0-0 / 0').'">&nbsp;&nbsp;'.$txt_empty.'&nbsp;&nbsp;</div>'
+			],
+			'yes' // export to cache
+		);
 		//--
 	} //end if else
 	//--
@@ -1839,26 +1865,42 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 // $link = 'some-script.php?ofs={{{offset}}}';
 private static function numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
 	//--
+	$tpl = (string) $tpl;
 	$link = (string) $link;
 	$total = Smart::format_number_int($total, '+');
 	$limit = Smart::format_number_int($limit, '+');
 	$current = Smart::format_number_int($current, '+');
+	$display_if_empty = (bool) $display_if_empty;
 	$adjacents = Smart::format_number_int($adjacents, '+');
-	//--
 	$options = (array) $options;
+	//--
+	if($limit <= 0) {
+		Smart::log_warning('NavBox ERROR: Limit is ZERO in: '.__CLASS__.'::'.__FUNCTION__.'()');
+		return (string) '<!-- Navigation Pager (2) -->[ ERROR: Invalid Navigation Pager: Limit is ZERO ]<!-- #END# Navigation Pager -->';
+	} //end if
+	//--
+	if((string)$options['nav-mode'] == 'pages') { // navigate by page number instead of offset
+		$total = Smart::format_number_int(ceil($total / $limit), '+');
+		$current = Smart::format_number_int(ceil($current / $limit), '+');
+		$limit = (int) 1;
+	} //end if
 	$opt_zerolink = '';
 	if((string)$options['zero-link'] != '') {
 		$opt_zerolink = (string) $options['zero-link'];
 	} //end if
-	//--
 	$opt_emptydiv = '<div>&nbsp;</div>';
 	if(array_key_exists('empty-div', $options)) {
 		$opt_emptydiv = (string) $options['empty-div'];
 	} //end if
-	//--
-	if($limit <= 0) {
-		return (string) '<!-- Navigation Pager (2) -->[ ERROR: Invalid Navigation Pager (2): Limit is ZERO ]<!-- #END# Navigation Pager -->';
+	$showfirst = false;
+	if((string)$options['show-first'] === true) {
+		$showfirst = true;
 	} //end if
+	$showlast = false;
+	if((string)$options['show-last'] === true) {
+		$showlast = true;
+	} //end if
+	//--
 	if($display_if_empty !== true) {
 		if(($total <= 0) OR ($total <= $limit)) {
 			return (string) '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' -->'.$opt_emptydiv.'<!-- hidden, all results are shown (just one page) --><!-- #END# Navigation Pager -->'; // total is zero or lower than limit ; no pagination in this case
@@ -1867,116 +1909,143 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 	//--
 	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts');
 	//--
-	if($adjacents <= 0) {
-		$adjacents = 2; // fix
-	} //end if
-	//--
-	$min = 1;
-	//--
-	$max = ceil($total / $limit);
-	if($max < 1) {
-		$max = 1;
-	} //end if
-	//--
-	$info_current = $current;
-	$info_max = ($current + $limit);
-	if($info_max > $total) {
-		$info_max = $total;
-	} //end if
-	//--
-	$crr = ceil($current / $limit) + 1;
-	if($crr < $min) {
-		$crr = $min;
-	} //end if
-	if($crr > $max) {
-		$crr = $max;
-	} //end if
-	//--
-	$prev = $crr - 1;
-	if($prev <= 0) {
-		$txt_prev = '';
-		$lnk_prev = '';
-	} else {
-		$txt_prev = (string) $translator_core_nav_texts->text('prev');
-		if(((string)$opt_zerolink != '') AND (((int)(($prev-1)*$limit)) <= 0)) {
-			$lnk_prev = (string) $opt_zerolink;
+	if($total > 0) {
+		//--
+		if($adjacents <= 0) {
+			$adjacents = 2; // fix
+		} //end if
+		//--
+		$min = 1;
+		//--
+		$max = ceil($total / $limit);
+		if($max < 1) {
+			$max = 1;
+		} //end if
+		//--
+		$info_current = $current;
+		$info_max = ($current + $limit);
+		if($info_max > $total) {
+			$info_max = $total;
+		} //end if
+		//--
+		$crr = ceil($current / $limit) + 1;
+		if($crr < $min) {
+			$crr = $min;
+		} //end if
+		if($crr > $max) {
+			$crr = $max;
+		} //end if
+		//--
+		$prev = $crr - 1;
+		if($prev <= 0) {
+			$txt_prev = '';
+			$lnk_prev = '';
 		} else {
-			$lnk_prev = (string) str_replace('{{{offset}}}', (int)(($prev-1)*$limit), (string)$link);
-		} //end if else
-	} //end if
-	$next = $crr + 1;
-	if($next > $max) {
-		$txt_next = '';
-		$lnk_next = '';
-	} else {
-		$txt_next = (string) $translator_core_nav_texts->text('next');
-		$lnk_next = (string) str_replace('{{{offset}}}', (int)(($next-1)*$limit), (string)$link);
-	} //end if
-	//--
-	$backmin = $crr - $adjacents;
-	if($backmin < $min) {
-		$backmin = $min;
-	} //end if
-	$backmax = $crr + $adjacents;
-	if($backmax > $max) {
-		$backmax = $max;
-	} //end if
-	//--
-	$arr = array();
-	for($i=($backmin+1); $i<$backmax; $i++) {
-		$arr[(string)$i] = $i;
-	} //end for
-	//--
-	$data = array();
-	//--
-	if((string)$arr[(string)$min] == '') {
-		if((int)$min === (int)$crr) {
-			$data[(string)$min] = 'SELECTED';
-		} else {
-			if((string)$opt_zerolink != '') {
-				$data[(string)$min] = (string) $opt_zerolink;
+			$txt_prev = (string) $translator_core_nav_texts->text('prev');
+			if(((string)$opt_zerolink != '') AND (((int)(($prev-1)*$limit)) <= 0)) {
+				$lnk_prev = (string) $opt_zerolink;
 			} else {
-				$data[(string)$min] = (string) str_replace('{{{offset}}}', (int)(($min-1)*$limit), (string)$link);
+				$lnk_prev = (string) str_replace('{{{offset}}}', (int)(($prev-1)*$limit), (string)$link);
 			} //end if else
-		} //end if else
-		if(($max > ($adjacents + 1)) AND ((string)$arr[(string)($min+1)] == '')) {
-			$data['.'] = 'DOTS';
-		} //end if else
-	} //end if
-	//--
-	foreach($arr as $key => $val) {
-		if((int)$val === (int)$crr) {
-			$data[(string)$key] = 'SELECTED';
+		} //end if
+		$next = $crr + 1;
+		if($next > $max) {
+			$txt_next = '';
+			$lnk_next = '';
 		} else {
-			$data[(string)$key] = (string) str_replace('{{{offset}}}', (int)(($val-1)*$limit), (string)$link);
-		} //end if else
-	} //end foreach
-	//--
-	if((string)$arr[(string)$max] == '') {
-		if(($max > ($adjacents + 1)) AND ((string)$arr[(string)($max-1)] == '')) {
-			$data['..'] = 'DOTS';
-		} //end if else
-		if((int)$max === (int)$crr) {
-			$data[(string)$max] = 'SELECTED';
-		} else {
-			$data[(string)$max] = (string) str_replace('{{{offset}}}', (int)(($max-1)*$limit), (string)$link);
-		} //end if else
-	} //end if
-	//--
-	$html = (string) SmartMarkersTemplating::render_file_template(
-		(string) $tpl,
-		[
-			'DATA-ARR' 	=> (array) $data,
-			'PREV-PAGE' => (string) $txt_prev,
-			'PREV-LINK' => (string) $lnk_prev,
-			'NEXT-PAGE' => (string) $txt_next,
-			'NEXT-LINK' => (string) $lnk_next,
-			'TOTAL'		=> (int) $total,
-			'LIMIT' 	=> (int) $limit,
-			'CURRENT' 	=> (int) $current
-		],
-		'yes' // export to cache
-	);
+			$txt_next = (string) $translator_core_nav_texts->text('next');
+			$lnk_next = (string) str_replace('{{{offset}}}', (int)(($next-1)*$limit), (string)$link);
+		} //end if
+		//--
+		$backmin = $crr - $adjacents;
+		if($backmin < $min) {
+			$backmin = $min;
+		} //end if
+		$backmax = $crr + $adjacents;
+		if($backmax > $max) {
+			$backmax = $max;
+		} //end if
+		//--
+		$arr = array();
+		for($i=($backmin+1); $i<$backmax; $i++) {
+			$arr[(string)$i] = $i;
+		} //end for
+		//--
+		$data = array();
+		//--
+		if((string)$arr[(string)$min] == '') {
+			if((int)$min === (int)$crr) {
+				$data[(string)$min] = 'SELECTED';
+			} else {
+				if((string)$opt_zerolink != '') {
+					$data[(string)$min] = (string) $opt_zerolink;
+				} else {
+					$data[(string)$min] = (string) str_replace('{{{offset}}}', (int)(($min-1)*$limit), (string)$link);
+				} //end if else
+			} //end if else
+			if(($max > ($adjacents + 1)) AND ((string)$arr[(string)($min+1)] == '')) {
+				$data['.'] = 'DOTS';
+			} //end if else
+		} //end if
+		//--
+		foreach($arr as $key => $val) {
+			if((int)$val === (int)$crr) {
+				$data[(string)$key] = 'SELECTED';
+			} else {
+				$data[(string)$key] = (string) str_replace('{{{offset}}}', (int)(($val-1)*$limit), (string)$link);
+			} //end if else
+		} //end foreach
+		//--
+		if((string)$arr[(string)$max] == '') {
+			if(($max > ($adjacents + 1)) AND ((string)$arr[(string)($max-1)] == '')) {
+				$data['..'] = 'DOTS';
+			} //end if else
+			if((int)$max === (int)$crr) {
+				$data[(string)$max] = 'SELECTED';
+			} else {
+				$data[(string)$max] = (string) str_replace('{{{offset}}}', (int)(($max-1)*$limit), (string)$link);
+			} //end if else
+		} //end if
+		//--
+		$html = (string) SmartMarkersTemplating::render_file_template(
+			(string) $tpl,
+			[
+				'DATA-ARR' 		=> (array) $data,
+				'PREV-PAGE' 	=> (string) $txt_prev,
+				'PREV-LINK' 	=> (string) $lnk_prev,
+				'NEXT-PAGE' 	=> (string) $txt_next,
+				'NEXT-LINK' 	=> (string) $lnk_next,
+				'TOTAL'			=> (int) $total,
+				'LIMIT' 		=> (int) $limit,
+				'CURRENT' 		=> (int) $current,
+				'SHOW-FIRST' 	=> (string) ($showfirst ? 'yes' : 'no'),
+				'SHOW-LAST' 	=> (string) ($showlast ? 'yes' : 'no'),
+				'NO-RESULTS' 	=> '' // must be empty in this case
+			],
+			'yes' // export to cache
+		);
+		//--
+	} else {
+		//--
+		$html = (string) SmartMarkersTemplating::render_file_template(
+			(string) $tpl,
+			[
+				'DATA-ARR' 		=> [],
+				'PREV-PAGE' 	=> '',
+				'PREV-LINK' 	=> '',
+				'NEXT-PAGE' 	=> '',
+				'NEXT-LINK' 	=> '',
+				'TOTAL'			=> 0,
+				'LIMIT' 		=> 0,
+				'CURRENT' 		=> 0,
+				'SHOW-FIRST' 	=> 'no',
+				'SHOW-LAST' 	=> 'no',
+				'NO-RESULTS' 	=> (string) $translator_core_nav_texts->text('empty') // must be non-empty in this case
+			],
+			'yes' // export to cache
+		);
+		//--
+	} //end if else
 	//--
 	return (string) '<!-- Navigation Pager (2) '.'T='.Smart::escape_html($total).' ; '.'L='.Smart::escape_html($limit).' ; '.'C='.Smart::escape_html($current).' -->'.$html.'<!-- #END# Navigation Pager -->';
 	//--
