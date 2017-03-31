@@ -2,12 +2,13 @@
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2016-02-15
+  @version: 2017-03-31
   nav_texts:
     asort: 'Sort Ascending [^]'
     dsort: 'Sort Descending [v]'
     xsort: 'Clear Sorting [*]'
     listed: 'Page'
+    res: 'Results'
     empty: 'No results'
     of: 'of'
     start: '&laquo; Start'

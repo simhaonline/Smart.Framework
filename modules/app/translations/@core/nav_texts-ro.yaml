@@ -2,12 +2,13 @@
 TRANSLATIONS:
   @language: RO
   @area: core
-  @version: 2016-02-15
+  @version: 2017-03-31
   nav_texts:
     asort: 'Sortează Crescător [^]'
     dsort: 'Sortează Descrescător [v]'
     xsort: 'Anulează Sortarea [*]'
     listed: 'Pagina'
+    res: 'Rezultate'
     empty: 'Nu există \'rezultate\''
     of: 'din'
     start: '&laquo; Început'

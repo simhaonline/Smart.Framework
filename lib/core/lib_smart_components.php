@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170330
+ * @version 	v.170331
  * @package 	Components:Framework
  *
  */
@@ -1709,7 +1709,11 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 		return (string) '<!-- Navigation Pager (1) -->[ ERROR: Invalid Navigation Pager: Limit is ZERO ]<!-- #END# Navigation Pager -->';
 	} //end if
 	//--
+	$is_paging = false;
+	$orig_total = $total;
+	$orig_limit = $limit;
 	if((string)$options['nav-mode'] == 'pages') { // navigate by page number instead of offset
+		$is_paging = true;
 		$total = Smart::format_number_int(ceil($total / $limit), '+');
 		$current = Smart::format_number_int(ceil($current / $limit), '+');
 		$limit = (int) 1;
@@ -1739,35 +1743,35 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 	//--
 	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts');
 	//--
-	$txt_start 	= '<div class="nav_box_start" title="'.$translator_core_nav_texts->text('start').'"></div>';
-	$txt_prev 	= '<div class="nav_box_prev" title="'.$translator_core_nav_texts->text('prev').'"></div>';
-	$txt_next 	= '<div class="nav_box_next" title="'.$translator_core_nav_texts->text('next').'"></div>';
-	$txt_end 	= '<div class="nav_box_end" title="'.$translator_core_nav_texts->text('end').'"></div>';
-	//--
+	$txt_start 	= (string) $translator_core_nav_texts->text('start');
+	$txt_prev 	= (string) $translator_core_nav_texts->text('prev');
+	$txt_next 	= (string) $translator_core_nav_texts->text('next');
+	$txt_end 	= (string) $translator_core_nav_texts->text('end');
 	$txt_listed = (string) $translator_core_nav_texts->text('listed'); // Page
-	$txt_empty = (string) $translator_core_nav_texts->text('empty'); // No Results
-	$txt_of = (string) $translator_core_nav_texts->text('of'); // of
+	$txt_res 	= (string) $translator_core_nav_texts->text('res'); // Results
+	$txt_empty 	= (string) $translator_core_nav_texts->text('empty'); // No Results
+	$txt_of 	= (string) $translator_core_nav_texts->text('of'); // of
 	//--
 	if($total > 0) {
 		//--
-		$tmp_lst_min = $current + 1;
-		$tmp_lst_max = $current + $limit;
+		$tmp_lst_min = (int) $current + 1;
+		$tmp_lst_max = (int) $current + $limit;
 		//--
-		$dys_next = $current + $limit;
-		$dys_prev = $current - $limit;
+		$dys_next = (int) $current + $limit;
+		$dys_prev = (int) $current - $limit;
 		//--
 		if($dys_prev < 0) {
 			$dys_prev = 0;
 		} //end if
 		if($dys_prev > $total) {
-			$dys_prev = $total;
+			$dys_prev = (int) $total;
 		} //end if
 		//--
 		if($dys_next < 0) {
 			$dys_next = 0;
 		} //end if
 		if($dys_next > $total) {
-			$dys_next = $total;
+			$dys_next = (int) $total;
 		} //end if
 		if($dys_next == 0) {
 			$dys_prev = 0;
@@ -1776,13 +1780,11 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 		} //end if
 		//-- Fix max nav
 		if($tmp_lst_max > $total) {
-			$tmp_lst_max = $total;
+			$tmp_lst_max = (int) $total;
 		} //end if
-		//-- info
-		$tmp_nfo = '<div title="'.Smart::escape_html($tmp_lst_min.'-'.$tmp_lst_max.' / '.$total).'">&nbsp;&nbsp;'.$txt_listed.'&nbsp;'.ceil($tmp_lst_max / $limit).'&nbsp;'.$txt_of.'&nbsp;'.ceil($total / $limit).'&nbsp;&nbsp;</div>';
 		//-- FFW
-		$tmp_last_calc_pages = @floor((($total - 1) / $limit));
-		$tmp_lastpage = $tmp_last_calc_pages * $limit;
+		$tmp_last_calc_pages = (int) floor((($total - 1) / $limit));
+		$tmp_lastpage = (int) $tmp_last_calc_pages * $limit;
 		//-- REW
 		$tmp_firstpage = 0;
 		//--
@@ -1799,35 +1801,58 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 		$tmp_link_nav_next = (string) str_replace('{{{offset}}}', $dys_next, $link);
 		$tmp_link_nav_end = (string) str_replace('{{{offset}}}', $tmp_lastpage, $link);
 		//--
-		$tmp_box_nav_start = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_start).'">'.$txt_start.'</a>';
-		$tmp_box_nav_prev = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_prev).'">'.$txt_prev.'</a>';
-		$tmp_box_nav_next = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_next).'">'.$txt_next.'</a>';
-		$tmp_box_nav_end = '<a class="nav_box_link" href="'.Smart::escape_html($tmp_link_nav_end).'">'.$txt_end.'</a>';
+		$tmp_box_nav_start = (string) $tmp_link_nav_start;
+		$tmp_box_nav_prev = (string) $tmp_link_nav_prev;
+		$tmp_box_nav_next = (string) $tmp_link_nav_next;
+		$tmp_box_nav_end = (string) $tmp_link_nav_end;
 		//--
 		if($current <= 0) { // is at start
-			$tmp_box_nav_start = $txt_start;
-			$tmp_box_nav_prev = $txt_prev;
+			$tmp_box_nav_start = '';
+			$tmp_box_nav_prev = '';
 		} //end if
 		if($tmp_lst_max >= $total) { // is at end
-			$tmp_box_nav_next = $txt_next;
-			$tmp_box_nav_end = $txt_end;
+			$tmp_box_nav_next = '';
+			$tmp_box_nav_end = '';
 		} //end if
 		//--
-		if($showfirst === false) {
-			$tmp_box_nav_start = '&nbsp;';
-		} //end if
-		if($showlast === false) {
-			$tmp_box_nav_end = '&nbsp;';
-		} //end if
+		$tmp_pg_min = ceil($tmp_lst_max / $limit);
+		$tmp_pg_max = ceil($total / $limit);
+		//--
+		if($is_paging) {
+			$tmp_res_total 	= (int) $orig_total;
+			$tmp_res_min 	= (int) (($tmp_lst_min - 1) * $orig_limit) + 1;
+			$tmp_res_max 	= (int) $tmp_lst_min * $orig_limit;
+			if($tmp_res_max > $tmp_res_total) {
+				$tmp_res_max = $tmp_res_total;
+			} //end if
+		} else {
+			$tmp_res_total 	= (int) $total;
+			$tmp_res_min 	= (int) $tmp_lst_min;
+			$tmp_res_max 	= (int) $tmp_lst_max;
+		} //end if else
 		//--
 		$html = (string) SmartMarkersTemplating::render_file_template(
 			(string) $tpl,
 			[
-				'NAV-START' 	=> (string) $tmp_box_nav_start,
-				'NAV-PREV' 		=> (string) $tmp_box_nav_prev,
-				'NAV-NEXT' 		=> (string) $tmp_box_nav_next,
-				'NAV-END' 		=> (string) $tmp_box_nav_end,
-				'NAV-INFO' 		=> (string) $tmp_nfo
+				'NAV-LNK-START' 	=> (string) $tmp_box_nav_start,
+				'NAV-LNK-PREV' 		=> (string) $tmp_box_nav_prev,
+				'NAV-LNK-NEXT' 		=> (string) $tmp_box_nav_next,
+				'NAV-LNK-END' 		=> (string) $tmp_box_nav_end,
+				'NAV-TXT-START' 	=> (string) $txt_start,
+				'NAV-TXT-PREV' 		=> (string) $txt_prev,
+				'NAV-TXT-NEXT' 		=> (string) $txt_next,
+				'NAV-TXT-END' 		=> (string) $txt_end,
+				'NAV-TXT-LISTED' 	=> (string) $txt_listed,
+				'NAV-TXT-EMPTY' 	=> (string) $txt_empty,
+				'NAV-TXT-OF' 		=> (string) $txt_of,
+				'NAV-TXT-RES' 		=> (string) $txt_res,
+				'NAV-RES-MIN' 		=> (string) $tmp_res_min,
+				'NAV-RES-MAX' 		=> (string) $tmp_res_max,
+				'NAV-RES-TOTAL' 	=> (string) $tmp_res_total,
+				'NAV-PG-MIN' 		=> (string) $tmp_pg_min,
+				'NAV-PG-MAX' 		=> (string) $tmp_pg_max,
+				'NAV-SHOW-FIRST' 	=> (string) ($showfirst ? 'yes' : 'no'),
+				'NAV-SHOW-LAST' 	=> (string) ($showlast ? 'yes' : 'no'),
 			],
 			'yes' // export to cache
 		);
@@ -1844,11 +1869,25 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 		$html = (string) SmartMarkersTemplating::render_file_template(
 			(string) $tpl,
 			[
-				'NAV-START' 	=> (string) $txt_start,
-				'NAV-PREV' 		=> (string) $txt_prev,
-				'NAV-NEXT' 		=> (string) $txt_next,
-				'NAV-END' 		=> (string) $txt_end,
-				'NAV-INFO' 		=> '<div title="'.Smart::escape_html('0-0 / 0').'">&nbsp;&nbsp;'.$txt_empty.'&nbsp;&nbsp;</div>'
+				'NAV-LNK-START' 	=> '',
+				'NAV-LNK-PREV' 		=> '',
+				'NAV-LNK-NEXT' 		=> '',
+				'NAV-LNK-END' 		=> '',
+				'NAV-TXT-START' 	=> (string) $txt_start,
+				'NAV-TXT-PREV' 		=> (string) $txt_prev,
+				'NAV-TXT-NEXT' 		=> (string) $txt_next,
+				'NAV-TXT-END' 		=> (string) $txt_end,
+				'NAV-TXT-LISTED' 	=> (string) $txt_listed,
+				'NAV-TXT-EMPTY' 	=> (string) $txt_empty,
+				'NAV-TXT-OF' 		=> (string) $txt_of,
+				'NAV-TXT-RES' 		=> (string) $txt_res,
+				'NAV-RES-MIN' 		=> (string) 0,
+				'NAV-RES-MAX' 		=> (string) 0,
+				'NAV-RES-TOTAL' 	=> (string) 0,
+				'NAV-PG-MIN' 		=> (string) 0,
+				'NAV-PG-MAX' 		=> (string) 0,
+				'NAV-SHOW-FIRST' 	=> (string) ($showfirst ? 'yes' : 'no'),
+				'NAV-SHOW-LAST' 	=> (string) ($showlast ? 'yes' : 'no'),
 			],
 			'yes' // export to cache
 		);

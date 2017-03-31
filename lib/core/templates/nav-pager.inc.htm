@@ -1,10 +1,10 @@
 <!-- Partial Template: Core.NavPager -->
 <div id="nav-pager-box">
-[%%%%IF:NO-RESULTS:!=%%%%]
+[%%%%IF:NO-RESULTS:!=;%%%%]
 	<span id="nav-pager-current">[####NO-RESULTS####]</span>
 [%%%%ELSE:NO-RESULTS%%%%]
 	[%%%%IF:SHOW-FIRST:!=no%%%%]
-		[%%%%IF:PREV-PAGE:!=%%%%]
+		[%%%%IF:PREV-PAGE:!=;%%%%]
 		<a id="nav-pager-item" href="[####PREV-LINK|html####]" title="[####PREV-PAGE####]"><i class="fa fa-arrow-left"></i></a>
 		[%%%%/IF:PREV-PAGE%%%%]
 	[%%%%/IF:SHOW-FIRST%%%%]
@@ -20,7 +20,7 @@
 		[%%%%/IF:DATA-ARR._-VAL-_(1)%%%%]
 	[%%%%/LOOP:DATA-ARR%%%%]
 	[%%%%IF:SHOW-LAST:!=no%%%%]
-		[%%%%IF:NEXT-PAGE:!=%%%%]
+		[%%%%IF:NEXT-PAGE:!=;%%%%]
 		<a id="nav-pager-item" href="[####NEXT-LINK|html####]" title="[####NEXT-PAGE####]"><i class="fa fa-arrow-right"></i></a>
 		[%%%%/IF:NEXT-PAGE%%%%]
 	[%%%%/IF:SHOW-LAST%%%%]

@@ -2,11 +2,55 @@
 <div style="padding-top:5px; padding-bottom:5px;">
 <table cellspacing="0" class="nav_box">
 	<tr valign="middle">
-		<td align="left">[####NAV-START####]</td>
-		<td align="left">[####NAV-PREV####]</td>
-		<td align="center">[####NAV-INFO####]</td>
-		<td align="right">[####NAV-NEXT####]</td>
-		<td align="right">[####NAV-END####]</td>
+	<!-- First -->
+	[%%%%IF:NAV-SHOW-FIRST:!=no%%%%]
+		<td align="left">
+		[%%%%IF:NAV-LNK-START:!=;(1)%%%%]
+			<a class="nav_box_link" href="[####NAV-LNK-START|html####]">
+		[%%%%/IF:NAV-LNK-START(1)%%%%]
+		<div class="nav_box_start" title="[####NAV-TXT-START####]"></div>
+		[%%%%IF:NAV-LNK-START:!=;(2)%%%%]
+		</a>
+		[%%%%/IF:NAV-LNK-START(2)%%%%]
+		</td>
+	[%%%%/IF:NAV-SHOW-FIRST%%%%]
+	<!-- Prev -->
+		<td align="left">
+		[%%%%IF:NAV-LNK-PREV:!=;(1)%%%%]
+			<a class="nav_box_link" href="[####NAV-LNK-PREV|html####]">
+		[%%%%/IF:NAV-LNK-PREV(1)%%%%]
+		<div class="nav_box_prev" title="[####NAV-TXT-PREV####]"></div>
+		[%%%%IF:NAV-LNK-PREV:!=;(2)%%%%]
+		</a>
+		[%%%%/IF:NAV-LNK-PREV(2)%%%%]
+		</td>
+	<!-- Info -->
+		<td align="center">
+			<div title="[####NAV-TXT-RES####]: [####NAV-RES-MIN|html####] - [####NAV-RES-MAX|html####] / [####NAV-RES-TOTAL|html####]">&nbsp;&nbsp;[####NAV-TXT-LISTED####]&nbsp;[####NAV-PG-MIN|html####]&nbsp;[####NAV-TXT-OF####]&nbsp;[####NAV-PG-MAX|html####]&nbsp;&nbsp;</div>
+		</td>
+	<!-- Next -->
+		<td align="left">
+		[%%%%IF:NAV-LNK-NEXT:!=;(1)%%%%]
+			<a class="nav_box_link" href="[####NAV-LNK-NEXT|html####]">
+		[%%%%/IF:NAV-LNK-NEXT(1)%%%%]
+		<div class="nav_box_next" title="[####NAV-TXT-NEXT####]"></div>
+		[%%%%IF:NAV-LNK-NEXT:!=;(2)%%%%]
+		</a>
+		[%%%%/IF:NAV-LNK-NEXT(2)%%%%]
+		</td>
+	<!-- Last -->
+	[%%%%IF:NAV-SHOW-LAST:!=no%%%%]
+		<td align="left">
+		[%%%%IF:NAV-LNK-END:!=;(1)%%%%]
+			<a class="nav_box_link" href="[####NAV-LNK-END|html####]">
+		[%%%%/IF:NAV-LNK-END(1)%%%%]
+		<div class="nav_box_end" title="[####NAV-TXT-END####]"></div>
+		[%%%%IF:NAV-LNK-END:!=;(2)%%%%]
+		</a>
+		[%%%%/IF:NAV-LNK-END(2)%%%%]
+		</td>
+	[%%%%/IF:NAV-SHOW-LAST%%%%]
+
 	</tr>
 </table>
 </div>
