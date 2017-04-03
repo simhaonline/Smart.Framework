@@ -61,7 +61,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * 		'active' => 1,
  * 		'name' => 'Test Record'
  * );
- * $insert = (array) SmartPgsqlDb::write_data('INSERT INTO "table" '.SmartPgsqlDb::prepare_write_statement($arr_insert, 'insert'));
+ * $insert = (array) SmartPgsqlDb::write_data('INSERT INTO "table" '.SmartPgsqlDb::prepare_statement($arr_insert, 'insert'));
  * $prepared_sql = SmartPgsqlDb::prepare_param_query('SELECT * FROM "table" WHERE "id" = $1', [99]);
  *
  * </code>
@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170228
+ * @version 	v.170403
  * @package 	Database:PostgreSQL
  *
  */
@@ -1421,46 +1421,47 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 //======================================================
 /**
  * Create Escaped Write SQL Statements from Data - to be used with PgSQL for: INSERT ; INSERT-SUBSELECT ; UPDATE ; IN-SELECT ; DATA-ARRAY
- * To be used with: write_data() or write_igdata() to build an INSERT / INSERT (SELECT) / UPDATE / SELECT IN query from an associative array
+ * Can be used with: write_data() or write_igdata() to build INSERT / INSERT (SELECT) / UPDATE queries from an associative array
+ * or can be used with read_data(), read_adata(), read_asdata(), count_data() to build IN-SELECT / DATA-ARRAY queries from a non-associative array
  *
- * @param ARRAY-associative $arrdata			:: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
+ * @param ARRAY-associative $arrdata			:: associative array: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100; | non-associative array $arr[] = 'some value'; $arr[] = 'other-value', ...
  * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select', 'data-array'
  * @param RESOURCE $y_connection 				:: the connection to pgsql server
  * @return STRING								:: The SQL partial Statement
  *
  */
-public static function prepare_write_statement($arrdata, $mode, $y_connection='DEFAULT') {
+public static function prepare_statement($arrdata, $mode, $y_connection='DEFAULT') {
 
-	// version: 161003
+	// version: 170403
 
 	//==
-	$y_connection = self::check_connection($y_connection, 'PREPARE-WRITE-STATEMENT');
+	$y_connection = self::check_connection($y_connection, 'PREPARE-STATEMENT');
 	//==
 
 	//--
 	$mode = strtolower((string)$mode);
 	//--
 	switch((string)$mode) {
+		//-- associative array
 		case 'insert':
-		case 'new':
 			$mode = 'insert';
 			break;
 		case 'insert-subselect':
-		case 'new-subselect':
 			$mode = 'insert-subselect';
 			break;
 		case 'update':
-		case 'edit':
 			$mode = 'update';
 			break;
+		//-- non-associative array
 		case 'in-select':
 			$mode = 'in-select';
 			break;
 		case 'data-array':
 			$mode = 'data-array';
 			break;
+		//-- invalid
 		default:
-			self::error($y_connection, 'PREPARE-WRITE-STATEMENT', 'Invalid Mode', '', $mode);
+			self::error($y_connection, 'PREPARE-STATEMENT', 'Invalid Mode', '', $mode);
 			return '';
 	} //end switch
 	//--
@@ -1485,7 +1486,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 				$key = (int) $key; // force int keys
 			} else {
 				if(!self::validate_table_and_fields_names($key)) { // no unicode modifier
-					self::error($y_connection, 'PREPARE-WRITE-STATEMENT', 'Invalid KEY', '', $key);
+					self::error($y_connection, 'PREPARE-STATEMENT', 'Invalid KEY', '', $key);
 					return '';
 				} //end if
 			} //end if
@@ -1527,7 +1528,7 @@ public static function prepare_write_statement($arrdata, $mode, $y_connection='D
 		//--
 	} else {
 		//--
-		self::error($y_connection, 'PREPARE-WRITE-STATEMENT', 'The first argument must be array !', '', '');
+		self::error($y_connection, 'PREPARE-STATEMENT', 'The first argument must be array !', '', '');
 		return '';
 		//--
 	} //end if else
@@ -2230,7 +2231,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170228
+ * @version 	v.170403
  * @package 	Database:PostgreSQL
  *
  */
@@ -2534,17 +2535,18 @@ public function write_igdata($queryval, $params_or_title='') {
 
 
 /**
- * Create Escaped Write SQL Statements from Data - to be used with PgSQL for: INSERT ; INSERT-SUBSELECT ; UPDATE ; IN-SELECT
- * To be used with: write_data() or write_igdata() to build an INSERT / INSERT (SELECT) / UPDATE / SELECT IN query from an associative array
+ * Create Escaped Write SQL Statements from Data - to be used with PgSQL for: INSERT ; INSERT-SUBSELECT ; UPDATE ; IN-SELECT ; DATA-ARRAY
+ * Can be used with: write_data() or write_igdata() to build INSERT / INSERT (SELECT) / UPDATE queries from an associative array
+ * or can be used with read_data(), read_adata(), read_asdata(), count_data() to build IN-SELECT / DATA-ARRAY queries from a non-associative array
  *
- * @param ARRAY-associative $arrdata			:: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
- * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select'
+ * @param ARRAY-associative $arrdata			:: associative array: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100; | non-associative array $arr[] = 'some value'; $arr[] = 'other-value', ...
+ * @param ENUM $mode							:: mode: 'insert' | 'insert-subselect' | 'update' | 'in-select', 'data-array'
  * @return STRING								:: The SQL partial Statement
  *
  */
-public function prepare_write_statement($arrdata, $mode) {
+public function prepare_statement($arrdata, $mode) {
 	//--
-	return SmartPgsqlDb::prepare_write_statement($arrdata, $mode, $this->connection);
+	return SmartPgsqlDb::prepare_statement($arrdata, $mode, $this->connection);
 	//--
 } //END FUNCTION
 

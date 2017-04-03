@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * 		'active' => 1,
  * 		'name' => 'Test Record'
  * );
- * $sq_ins = (array) $db->write_data('INSERT INTO "other_table" '.$db->prepare_write_statement($arr_insert, 'insert'));
+ * $sq_ins = (array) $db->write_data('INSERT INTO "other_table" '.$db->prepare_statement($arr_insert, 'insert'));
  * $sq_upd = (array) $db->write_data('UPDATE "other_table" SET "active" = 0 WHERE ("id" = ?)', array(100));
  * $prepared_sql = $db->prepare_param_query('SELECT * FROM "table" WHERE "id" = ?', [99]);
  * $db->close(); // optional, but safe
@@ -54,7 +54,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160827
+ * @version 	v.170403
  * @package 	Database:SQLite
  *
  */
@@ -271,15 +271,16 @@ public function write_data($query, $params_or_title='') {
 //--
 /**
  * Create Escaped Write SQL Statements from Data - to be used with SQLite for: INSERT ; UPDATE ; IN-SELECT
- * To be used with: write_data() to build an INSERT / UPDATE / SELECT IN query from an associative array
+ * Can be used with: write_data() to build INSERT / UPDATE queries from an associative array
+ * or can be used with read_data(), read_adata(), read_asdata(), count_data() to build IN-SELECT queries from a non-associative array
  *
- * @param ARRAY $arrdata 						:: The associative array as of: $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100;
+ * @param ARRAY $arrdata 						:: associative array: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100; | non-associative array $arr[] = 'some value'; $arr[] = 'other-value', ...
  * @param ENUM $mode							:: mode: 'insert' | 'update' | 'in-select'
  * @return STRING								:: The SQL partial Statement
  */
-public function prepare_write_statement($arrdata, $mode) {
+public function prepare_statement($arrdata, $mode) {
 	$this->check_opened();
-	return SmartSQliteUtilDb::prepare_write_statement($this->db, $arrdata, $mode);
+	return SmartSQliteUtilDb::prepare_statement($this->db, $arrdata, $mode);
 } //END FUNCTION
 //--
 
@@ -422,7 +423,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.160827
+ * @version 	v.170403
  * @package 	Database:SQLite
  *
  */
@@ -1098,27 +1099,28 @@ public static function escape_str($db, $y_string) {
 
 
 //======================================================
-public static function prepare_write_statement($db, $arrdata, $mode) {
+public static function prepare_statement($db, $arrdata, $mode) {
 
-	// version: 160527
+	// version: 170403
 
 	//--
 	$mode = strtolower((string)$mode);
 	//--
 	switch((string)$mode) {
+		//-- associative array
 		case 'insert':
-		case 'new':
 			$mode = 'insert';
 			break;
 		case 'update':
-		case 'edit':
 			$mode = 'update';
 			break;
+		//-- non-associative array
 		case 'in-select':
 			$mode = 'in-select';
 			break;
+		//-- invalid
 		default:
-			self::error($db, 'PREPARE-WRITE-STATEMENT', 'Invalid Mode', '', $mode);
+			self::error($db, 'PREPARE-STATEMENT', 'Invalid Mode', '', $mode);
 			return '';
 	} //end switch
 	//--
@@ -1143,7 +1145,7 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 				$key = (int) $key; // force int keys
 			} else {
 				if(!self::validate_table_and_fields_names($key)) { // no unicode modifier
-					self::error($db, 'PREPARE-WRITE-STATEMENT', 'Invalid KEY', '', $key);
+					self::error($db, 'PREPARE-STATEMENT', 'Invalid KEY', '', $key);
 					return '';
 				} //end if
 			} //end if
@@ -1189,7 +1191,7 @@ public static function prepare_write_statement($db, $arrdata, $mode) {
 		//--
 	} else {
 		//--
-		self::error($db, 'PREPARE-WRITE-STATEMENT', 'The second argument must be array !', '', '');
+		self::error($db, 'PREPARE-STATEMENT', 'The second argument must be array !', '', '');
 		return '';
 		//--
 	} //end if else

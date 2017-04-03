@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.170324
+	// v.170403
 
 
 //==================================================================
@@ -1239,7 +1239,7 @@ public static function test_pgsqlserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Write [ Insert ]';
-			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert');
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert');
 			$data = SmartPgsqlDb::write_data($quer_str);
 			if($data[1] !== 1) {
 				$err = 'Write / Insert Test Failed, should return 1 but returned: '.$data[1];
@@ -1248,7 +1248,7 @@ public static function test_pgsqlserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Write [ Insert if not exists, with Insert-SubSelect ]';
-			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert-subselect');
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert-subselect');
 			$data = SmartPgsqlDb::write_igdata($quer_str);
 			if($data[1] !== 0) {
 				$err = 'Write / Insert if not exists with insert-subselect Test Failed, should return 0 but returned: '.$data[1];
@@ -1304,7 +1304,7 @@ public static function test_pgsqlserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Read [ IN (SELECT) ]';
-			$quer_str = 'SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" '.SmartPgsqlDb::prepare_write_statement(array('\'a', '"b"', '3^$', $variable, '@?%'), 'in-select').') LIMIT 100 OFFSET 0';
+			$quer_str = 'SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" '.SmartPgsqlDb::prepare_statement(array('\'a', '"b"', '3^$', $variable, '@?%'), 'in-select').') LIMIT 100 OFFSET 0';
 			$data = SmartPgsqlDb::read_adata($quer_str);
 			if(Smart::array_size($data) !== 1) {
 				$err = 'Read IN SELECT Test Failed, should return 1 row but returned: '.Smart::array_size($data).' rows ...';
@@ -1314,7 +1314,7 @@ public static function test_pgsqlserver() {
 
 		if((string)$err == '') {
 			$tests[] = 'Read [ (DATA) ARRAY[] ]';
-			$quer_str = 'SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" = ANY('.SmartPgsqlDb::prepare_write_statement(array('\'a', '"b"', '3^$', $variable, '@?%'), 'data-array').')) LIMIT 100 OFFSET 0';
+			$quer_str = 'SELECT * FROM "public"."_test_unit_db_server_tests" WHERE ("variable" = ANY('.SmartPgsqlDb::prepare_statement(array('\'a', '"b"', '3^$', $variable, '@?%'), 'data-array').')) LIMIT 100 OFFSET 0';
 			$data = SmartPgsqlDb::read_adata($quer_str);
 			if(Smart::array_size($data) !== 1) {
 				$err = 'Read (DATA) ARRAY[] Test Failed, should return 1 row but returned: '.Smart::array_size($data).' rows ...';
@@ -1363,7 +1363,7 @@ public static function test_pgsqlserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Write Ignore Duplicates [ Insert Ignore Positive ]';
-			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('variable'=>$variable, 'value'=>null, 'comments'=>$comments), 'insert');
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_statement(array('variable'=>$variable, 'value'=>null, 'comments'=>$comments), 'insert');
 			$data = SmartPgsqlDb::write_igdata($quer_str);
 			if($data[1] !== 1) {
 				$err = 'Write / Insert Ignore Positive Test Failed, should return 1 but returned: '.$data[1];
@@ -1372,7 +1372,7 @@ public static function test_pgsqlserver() {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Write Ignore Duplicates [ Insert Ignore Negative ]';
-			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_write_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert');
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.SmartPgsqlDb::prepare_statement(array('variable'=>$variable, 'value'=>$value, 'comments'=>$comments), 'insert');
 			$data = SmartPgsqlDb::write_igdata($quer_str);
 			if($data[1] !== 0) {
 				$err = 'Write / Insert Ignore Negative Test Failed, should return 0 but returned: '.$data[1];
@@ -2224,7 +2224,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.170307
+	// v.170403
 
 private $db;
 
@@ -3492,10 +3492,10 @@ private function init_table_samples_countries() {
 	$this->db->write_data('BEGIN'); // start transaction
 	$this->db->create_table('sample_countries', "iso character varying(2) PRIMARY KEY NOT NULL, name character varying(100) NOT NULL, iso3 character varying(3) NOT NULL, numcode integer NOT NULL");
 	foreach($rows as $key => $row) {
-		$this->db->write_data('INSERT INTO sample_countries '.$this->db->prepare_write_statement($row, 'insert'));
+		$this->db->write_data('INSERT INTO sample_countries '.$this->db->prepare_statement($row, 'insert'));
 	} //end foreach
-	$this->db->write_data('UPDATE sample_countries '.$this->db->prepare_write_statement($rows[0], 'update').' WHERE (iso IS NULL)'); // test
-	$this->db->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->db->prepare_write_statement(array('US', 7, null), 'in-select').')');
+	$this->db->write_data('UPDATE sample_countries '.$this->db->prepare_statement($rows[0], 'update').' WHERE (iso IS NULL)'); // test
+	$this->db->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->db->prepare_statement(array('US', 7, null), 'in-select').')');
 	$this->db->write_data('COMMIT');
 	//--
 
