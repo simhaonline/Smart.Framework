@@ -1614,8 +1614,8 @@ public static function test_fs() {
 	if((string)$err == '') {
 		$the_test = 'CHECK TEST ABSOLUTE / BACKWARD PATHS ...';
 		$tests[] = $the_test;
-		if((!SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/../backward/path'))) {
-			$err = 'ERROR: CHECK TEST ABSOLUTE / BACKWARD PATHS ... FAILED !!!';
+		if((!SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/../backward/path')) OR (SmartFileSysUtils::check_file_or_dir_name('../backward/path')) OR (SmartFileSysUtils::check_file_or_dir_name('#this/is/protected', 'yes', 'no')) OR (!SmartFileSysUtils::check_file_or_dir_name('#this/is/protected', 'yes', 'yes'))) {
+			$err = 'ERROR: CHECK TEST ABSOLUTE / BACKWARD / PROTECTED PATHS ... FAILED !!!';
 		} //end if
 	} //end if
 	//--

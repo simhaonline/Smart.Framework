@@ -453,15 +453,24 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	global $configs;
 	//-- check if available
 	self::check_is_available();
-	//-- path protection
-	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
 	//--
-	if(strlen($file_name) <= 1) {
-		self::error((string)$file_name, 'OPEN', 'ERROR: DB name is empty !', '', '');
+	if((string)$file_name == '') {
+		self::error((string)$file_name, 'OPEN', 'ERROR: DB path is empty !', '', '');
 		return;
 	} //end if
 	//--
-	$dir_of_db = Smart::dir_name($file_name);
+	if(SmartFileSysUtils::check_file_or_dir_name((string)$file_name, 'yes', 'yes') != 1) { // deny absolute path access ; allow protected path access (starting with #)
+		self::error((string)$file_name, 'OPEN', 'ERROR: DB path is invalid !', '', '');
+		return;
+	} //end if
+	SmartFileSysUtils::raise_error_if_unsafe_path((string)$file_name, 'yes', 'yes'); // deny absolute path access ; allow protected path access (starting with #)
+	//--
+	$dir_of_db = (string) Smart::dir_name((string)$file_name);
+	//--
+	if((string)$dir_of_db == '') {
+		self::error((string)$file_name, 'OPEN', 'ERROR: DB folder not defined !', '', '');
+		return;
+	} //end if
 	//--
 	if(!is_dir($dir_of_db)) {
 		self::error((string)$file_name, 'OPEN', 'ERROR: DB folder does not exists !', '', '');
@@ -475,13 +484,13 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	//-- open DB connection
 	try {
 		//--
-		$db = @new SQLite3($file_name, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+		$db = @new SQLite3((string)$file_name, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
 		//--
 		$db->busyTimeout((int)$timeout_busy_sec * 1000); // $timeout_busy_sec is in seconds ; we set a busy timeout in miliseconds
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			//--
-			$arr_version = @$db->version();
+			$arr_version = @$db->version(); // mixed
 			//--
 			if(!is_array($arr_version)) {
 				$arr_version = array();

@@ -64,6 +64,33 @@ SELECT COALESCE(
 , 0)
 $_$;
 
+-- Aggregate Functions: FIRST() and LAST() :: https://wiki.postgresql.org/wiki/First/last_(aggregate) ; This aggregate functions return the value from the first or last input row in each group, ignoring NULL rows. (NULLs are ignored automatically by the STRICT declaration, documented here: http://www.postgresql.org/docs/current/static/sql-createaggregate.html
+
+CREATE OR REPLACE FUNCTION smart_agg_first (anyelement, anyelement) RETURNS anyelement
+	LANGUAGE SQL IMMUTABLE STRICT
+	AS $$ -- Create a function that always returns the first non-NULL item, to be used with GROUP BY agg_smart_first() aggregate (v.170403)
+SELECT $1;
+$$;
+CREATE AGGREGATE agg_smart_first (
+	sfunc 		= smart_agg_first,
+	basetype 	= anyelement,
+	stype 		= anyelement
+);
+COMMENT ON AGGREGATE agg_smart_first(anyelement) IS 'Use this aggregate to return the first non-NULL item on a GROUP BY statement ; needs the smart_agg_first() function (v.170403)';
+
+
+CREATE OR REPLACE FUNCTION smart_agg_last (anyelement, anyelement) RETURNS anyelement
+	LANGUAGE SQL IMMUTABLE STRICT
+	AS $$ -- Create a function that always returns the last non-NULL item, to be used with GROUP BY agg_smart_last() aggregate (v.170403)
+SELECT $2;
+$$;
+CREATE AGGREGATE agg_smart_last (
+	sfunc 		= smart_agg_last,
+	basetype 	= anyelement,
+	stype 		= anyelement
+);
+COMMENT ON AGGREGATE agg_smart_last(anyelement) IS 'Use this aggregate to return the last non-NULL item on a GROUP BY statement ; needs the smart_agg_last() function (v.170403)';
+
 -- JsonB Array Functions #####
 
 CREATE OR REPLACE FUNCTION smart_jsonb_arr_delete(data jsonb, rval text)

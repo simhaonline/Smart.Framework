@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.161001
+ * @version 	v.170403
  * @package 	Filesystem
  *
  */
@@ -78,31 +78,42 @@ public static function max_upload_size() {
 /**
  * Check a Filename or a Dirname if contain valid characters (to avoid security injections)
  *
- * @param 	STRING 	$y_path 					:: The path (dir or file) to validate
- * @param 	YES/NO 	$y_deny_absolute_path 		:: *Optional* If YES will dissalow absolute paths
+ * @param 	STRING 	$y_path 								:: The path (dir or file) to validate
+ * @param 	YES/NO 	$y_deny_absolute_path 					:: *Optional* If YES will dissalow absolute paths
+ * @param 	YES/NO 	$y_allow_protected_relative_paths 		:: *Optional* ! This is for very special case usage only so don't set it to YES except if you know what you are really doing ! If set to YES will allow access to special protected paths of this framework which may have impact on security ... ; this parameter is intended just for relative paths only (not absolute paths) as: #dir/.../file.ext ; #file.ext
  *
- * @return 	0/1									:: returns 1 if VALID ; 0 if INVALID
+ * @return 	0/1												:: returns 1 if VALID ; 0 if INVALID
  */
-public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='yes') {
-	//--
-	if((string)$y_path == '') { // dissalow empty paths
+public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='yes', $y_allow_protected_relative_paths='no') { // {{{SYNC-FS-PATHS-CHECK}}}
+	//-- dissalow empty paths
+	if((string)trim((string)$y_path) == '') {
 		return 0;
 	} //end if else
-	//--
+	//-- test valid path
 	if(self::test_valid_path($y_path) !== 1) {
 		return 0;
 	} //end if
-	//--
+	//-- test backward path
 	if(self::test_backward_path($y_path) !== 1) {
 		return 0;
 	} //end if
-	//--
+	//-- test absolute path and protected path
 	if((string)$y_deny_absolute_path != 'no') {
+		//-- test absolute path
 		if(self::test_absolute_path($y_path) !== 1) {
 			return 0;
 		} //end if
+		//-- test protected path
+		if((string)$y_allow_protected_relative_paths != 'yes') {
+			//--
+			if(self::test_special_path($y_path) !== 1) { // check protected path only if deny absolute path access, otherwise n/a
+				return 0;
+			} //end if
+			//--
+		} //end if
+		//--
 	} //end if
-	//--
+	//-- test max path length
 	if(strlen($y_path) > 1024) {
 		return 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
 	} //end if
@@ -116,15 +127,18 @@ public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='ye
 //================================================================ CHECK ABSOLUTE PATH ACCESS
 /**
  * Function: Raise Error if Unsafe Path.
- *
  * Security: implements protection if unsafe paths are accessed.
+ *
+ * @param 	STRING 	$y_path 								:: The path (dir or file) to validate
+ * @param 	YES/NO 	$y_deny_absolute_path 					:: *Optional* If YES will dissalow absolute paths
+ * @param 	YES/NO 	$y_allow_protected_relative_paths 		:: *Optional* ! This is for very special case usage only so don't set it to YES except if you know what you are really doing ! If set to YES will allow access to special protected paths of this framework which may have impact on security ... ; this parameter is intended just for relative paths only (not absolute paths) as: #dir/.../file.ext ; #file.ext
  *
  * @access 		private
  * @internal
  *
  */
-public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path='yes') {
-	//--
+public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path='yes', $y_allow_protected_relative_paths='no') { // {{{SYNC-FS-PATHS-CHECK}}}
+	//-- dissalow empty paths
 	if((string)trim((string)$y_path) == '') {
 		//--
 		Smart::raise_error(
@@ -134,7 +148,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 		die(''); // just in case
 		//--
 	} //end if
-	//--
+	//-- test valid path
 	if(self::test_valid_path($y_path) !== 1) {
 		//--
 		Smart::raise_error(
@@ -144,7 +158,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 		die(''); // just in case
 		//--
 	} //end if
-	//--
+	//-- test backward path
 	if(self::test_backward_path($y_path) !== 1) {
 		//--
 		Smart::raise_error(
@@ -154,8 +168,9 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 		die(''); // just in case
 		//--
 	} //end if
-	//--
+	//-- test absolute path and protected path
 	if((string)$y_deny_absolute_path != 'no') {
+		//-- test absolute path
 		if(self::test_absolute_path($y_path) !== 1) {
 			//--
 			Smart::raise_error(
@@ -165,7 +180,41 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 			die(''); // just in case
 			//--
 		} //end if
+		//-- test protected path
+		if((string)$y_allow_protected_relative_paths != 'yes') {
+			if(self::test_special_path($y_path) !== 1) { // check protected path only if deny absolute path access, otherwise n/a
+				Smart::raise_error(
+					'SmartFramework // FileSystemUtils // Check Protected Path // ACCESS DENIED to invalid path: '.$y_path,
+					'FileSysUtils: PROTECTED PATH ACCESS IS DISALLOWED !' // msg to display
+				);
+				die(''); // just in case
+			} //end if
+		} //end if
+		//--
 	} //end if
+	//-- test max path length
+	if(strlen($y_path) > 1024) {
+		Smart::raise_error(
+			'SmartFramework // FileSystemUtils // Check Max Path Length (1024) // ACCESS DENIED to invalid path: '.$y_path,
+			'FileSysUtils: PATH LENGTH IS EXCEEDING THE MAX ALLOWED LENGTH !' // msg to display
+		);
+		die(''); // just in case
+	} //end if
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================ TEST IF SPECIAL PATH
+// special protected paths (only relative) start with '#'
+// returns 1 if OK
+private static function test_special_path($y_path) {
+	//--
+	if((string)substr((string)$y_path, 0, 1) == '#') {
+		return 0;
+	} //end if
+	//--
+	return 1; // valid
 	//--
 } //END FUNCTION
 //================================================================
@@ -175,7 +224,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 // test if path is valid
 // path should contain just these characters _ a-z A-Z 0-9 - . @ # /
 // path should not contain \ or SPACE
-// path should not be equalt with / . ..
+// path should not be equalt with / . | ..
 // returns 1 if OK
 private static function test_valid_path($y_path) {
 	//--
@@ -957,7 +1006,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.161001
+ * @version 	v.170403
  * @package 	Filesystem
  *
  */
