@@ -24,7 +24,7 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 @import url("../../../lib/core/css/notifications.css");
 
 /* optional, required just for Components / NavPager */
-@import url("../../../lib/core/css/navbox.css");
+@import url("../../../lib/core/css/navpager.css");
 
 /* optional, required just for Components / ActiveTable */
 @import url("../../../lib/core/css/activetable.css");

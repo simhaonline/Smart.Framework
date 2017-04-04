@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170331
+ * @version 	v.170404
  * @package 	Components:Framework
  *
  */
@@ -1665,22 +1665,22 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 	//--
 	if(((string)$navpager_mode == 'arrows') OR (strpos((string)$navpager_mode, 'arrows:') === 0)) {
 		//--
-		if((string)$navpager_mode != 'arrows') { // arrows:path/to/nav-box.inc.htm
+		if((string)$navpager_mode != 'arrows') { // arrows:path/to/navpager-arrows.inc.htm
 			$tpl = trim((string)substr((string)$navpager_mode, 7));
 		} else { // arrows
-			$styles = '<!-- require: navbox.css -->'."\n";
-			$tpl = 'lib/core/templates/nav-box.inc.htm';
+			$styles = '<!-- require: navpager.css -->'."\n";
+			$tpl = 'lib/core/templates/navpager-arrows.inc.htm';
 		} //end if else
 		//--
 		return (string) $styles.self::arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
 		//--
 	} else {
 		//--
-		if(strpos((string)$navpager_mode, 'numeric:') === 0) { // numeric:path/to/nav-pager.inc.htm
+		if(strpos((string)$navpager_mode, 'numeric:') === 0) { // numeric:path/to/navpager-numeric.inc.htm
 			$tpl = trim((string)substr((string)$navpager_mode, 8));
 		} else { // pager
-			$styles = '<!-- require: navbox.css -->'."\n";
-			$tpl = 'lib/core/templates/nav-pager.inc.htm';
+			$styles = '<!-- require: navpager.css -->'."\n";
+			$tpl = 'lib/core/templates/navpager-numeric.inc.htm';
 		} //end if else
 		//--
 		return (string) $styles.self::numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
@@ -1726,12 +1726,12 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 	if(array_key_exists('empty-div', $options)) {
 		$opt_emptydiv = (string) $options['empty-div'];
 	} //end if
-	$showfirst = true;
-	if((string)$options['show-first'] === false) {
+	$showfirst = true; // show go first
+	if($options['show-first'] === false) {
 		$showfirst = false;
 	} //end if
-	$showlast = true;
-	if((string)$options['show-last'] === false) {
+	$showlast = true; // show go last
+	if($options['show-last'] === false) {
 		$showlast = false;
 	} //end if
 	//--
@@ -1931,13 +1931,13 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 	if(array_key_exists('empty-div', $options)) {
 		$opt_emptydiv = (string) $options['empty-div'];
 	} //end if
-	$showfirst = false;
-	if((string)$options['show-first'] === true) {
-		$showfirst = true;
+	$showfirst = true; // show go prev-next
+	if($options['show-first'] === false) {
+		$showfirst = false;
 	} //end if
-	$showlast = false;
-	if((string)$options['show-last'] === true) {
-		$showlast = true;
+	$showlast = true; // show go last
+	if($options['show-last'] === false) {
+		$showlast = false;
 	} //end if
 	//--
 	if($display_if_empty !== true) {
@@ -2058,7 +2058,7 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 				'LIMIT' 		=> (int) $limit,
 				'CURRENT' 		=> (int) $current,
 				'SHOW-FIRST' 	=> (string) ($showfirst ? 'yes' : 'no'),
-				'SHOW-LAST' 	=> (string) ($showlast ? 'yes' : 'no'),
+				'SHOW-LAST' 	=> (string) (($showlast || ($current >= ($total - $adjacents - 1))) ? 'yes' : 'no'),
 				'NO-RESULTS' 	=> '' // must be empty in this case
 			],
 			'yes' // export to cache

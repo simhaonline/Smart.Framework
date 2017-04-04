@@ -1,9 +1,9 @@
 
-/* -- CSS Start :: SmartFramework / Components / NavBox :: v.2.3.7.8 r.2017.03.27 / smart.framework.v.2.3 -- */
+/* -- CSS Start :: SmartFramework / Components / NavPager :: v.2.3.7.8 r.2017.03.27 / smart.framework.v.2.3 -- */
 
 /* ----------------------------- */
 
-/* NavPager */
+/* NavBox Pager */
 
 #nav-pager-box {
 	margin-top: 5px;
@@ -38,7 +38,7 @@
 	display: inline-block;
 	margin-right: 5px;
 	margin-bottom: 5px;
-	background: #656565;
+	background: #555555;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	padding-left: 9px;
@@ -46,47 +46,59 @@
 	border: 1px solid #BBBBBB;
 	border-radius: 3px;
 }
-#nav-pager-box span#nav-pager-dots {
-	color: #333333;
+#nav-pager-box span#nav-pager-dots, #nav-pager-box span#nav-pager-dsbl-item {
+/*	color: #333333;
 	font-weight: normal;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	padding-left: 0px;
 	padding-right: 0px;
+	margin-right: 5px; */
+	color: #333333;
+	text-decoration: none;
+	display: inline-block;
 	margin-right: 5px;
+	margin-bottom: 5px;
+	background: #FCFCFC;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 9px;
+	padding-right: 9px;
+	border: 1px solid #BBBBBB;
+	border-radius: 3px;
 	cursor: default;
 }
 
-/* NavBox */
-table.nav_box {
+/* NavBox Arrows */
+table.nav-arrows-tbl {
 	margin-top: 5px;
 }
-table.nav_box td {
+table.nav-arrows-tbl td {
 	background: #FFFFFF;
 	color: #333333;
 	padding: 4px;
 }
-a.nav_box_link {
+a.nav-arrows-link {
 	cursor: pointer;
 	text-decoration: none;
 /*	border-bottom: dotted 1px #666666; */
 }
-div.nav_box_start {
+div.nav-arrows-start {
 	width: 21px;
 	height: 13px;
 	background: url(img/navbox/nav_start.png) no-repeat left top;
 }
-div.nav_box_prev {
+div.nav-arrows-prev {
 	width: 13px;
 	height: 13px;
 	background: url(img/navbox/nav_prev.png) no-repeat left top;
 }
-div.nav_box_next {
+div.nav-arrows-next {
 	width: 13px;
 	height: 13px;
 	background: url(img/navbox/nav_next.png) no-repeat left top;
 }
-div.nav_box_end {
+div.nav-arrows-end {
 	width: 21px;
 	height: 13px;
 	background: url(img/navbox/nav_end.png) no-repeat left top;

@@ -1,29 +1,37 @@
-<!-- Partial Template: Core.NavPager -->
+<!-- Partial Template: Core.NavPager.Numeric -->
+<nav id="nav-pager-area">
 <div id="nav-pager-box">
 [%%%%IF:NO-RESULTS:!=;%%%%]
-	<span id="nav-pager-current">[####NO-RESULTS####]</span>
+	<span id="nav-pager-dsbl-item">[####NO-RESULTS####]</span>
 [%%%%ELSE:NO-RESULTS%%%%]
-	[%%%%IF:SHOW-FIRST:!=no%%%%]
+	[%%%%IF:SHOW-FIRST:!=no(1)%%%%]
 		[%%%%IF:PREV-PAGE:!=;%%%%]
 		<a id="nav-pager-item" href="[####PREV-LINK|html####]" title="[####PREV-PAGE####]"><i class="fa fa-arrow-left"></i></a>
 		[%%%%/IF:PREV-PAGE%%%%]
-	[%%%%/IF:SHOW-FIRST%%%%]
+	[%%%%/IF:SHOW-FIRST(1)%%%%]
 	[%%%%LOOP:DATA-ARR%%%%]
 		[%%%%IF:DATA-ARR._-VAL-_:==SELECTED(1)%%%%]
 			<span id="nav-pager-current">[####DATA-ARR._-KEY-_|html####]</span>
 		[%%%%ELSE:DATA-ARR._-VAL-_(1)%%%%]
 			[%%%%IF:DATA-ARR._-VAL-_:==DOTS(2)%%%%]
-				<span id="nav-pager-dots">...</span>
+				<span id="nav-pager-dots" title="...">&hellip;</span>
 			[%%%%ELSE:DATA-ARR._-VAL-_(2)%%%%]
-				<a id="nav-pager-item" href="[####DATA-ARR._-VAL-_|html####]">[####DATA-ARR._-KEY-_|html####]</a>
+				[%%%%IF:DATA-ARR._-ITERATOR-_:>=####DATA-ARR._-MAXCOUNT-_####;(1)%%%%]
+					[%%%%IF:SHOW-LAST:!=no(1)%%%%]
+					<a id="nav-pager-item" href="[####DATA-ARR._-VAL-_|html####]">[####DATA-ARR._-KEY-_|html####]</a>
+					[%%%%/IF:SHOW-LAST(1)%%%%]
+				[%%%%ELSE:DATA-ARR._-ITERATOR-_(1)%%%%]
+					<a id="nav-pager-item" href="[####DATA-ARR._-VAL-_|html####]">[####DATA-ARR._-KEY-_|html####]</a>
+				[%%%%/IF:DATA-ARR._-ITERATOR-_(1)%%%%]
 			[%%%%/IF:DATA-ARR._-VAL-_(2)%%%%]
 		[%%%%/IF:DATA-ARR._-VAL-_(1)%%%%]
 	[%%%%/LOOP:DATA-ARR%%%%]
-	[%%%%IF:SHOW-LAST:!=no%%%%]
+	[%%%%IF:SHOW-FIRST:!=no(2)%%%%]
 		[%%%%IF:NEXT-PAGE:!=;%%%%]
 		<a id="nav-pager-item" href="[####NEXT-LINK|html####]" title="[####NEXT-PAGE####]"><i class="fa fa-arrow-right"></i></a>
 		[%%%%/IF:NEXT-PAGE%%%%]
-	[%%%%/IF:SHOW-LAST%%%%]
+	[%%%%/IF:SHOW-FIRST(2)%%%%]
 [%%%%/IF:NO-RESULTS%%%%]
 </div>
-<!-- #END :: Partial Template: Core.NavPager -->
+</nav>
+<!-- #END :: Partial Template: Core.NavPager.Numeric -->

@@ -170,6 +170,20 @@ public function escape_str($string) {
 
 //--
 /**
+ * Registers a PHP function for use as an SQL scalar function with SQLite.
+ *
+ * @param STRING $func 							:: A PHP or custom Function Name
+ * @param INTEGER $args 						:: The number of required args ; If this parameter is -1, then the SQL function may take any number of arguments
+ */
+public static function register_sql_function($func, $args) {
+	$this->check_opened();
+	SmartSQliteUtilDb::register_sql_function($this->db, $func, $args);
+} //END FUNCTION
+//--
+
+
+//--
+/**
  * Check if a Table exists in the current SQLite DataBase
  *
  * @param STRING $table_name					:: The Table Name
@@ -545,6 +559,14 @@ public static function open($file_name, $timeout_busy_sec=60) {
 			'data' => 'Open SQLite Database: '.$file_name
 		]);
 	} //end if
+	//-- register basic user functions
+	$ext_functions = [
+		'md5' => 1, 'sha1' => 1, 'time' => 0, 'strtotime' => 1,
+		'strip_tags' => -1 // can have 1 or 2 args
+	];
+	foreach($ext_functions as $func => $args) {
+		self::register_sql_function($db, $func, $args);
+	} //end foreach
 	//-- create the first time table to record the sqlite version
 	if(!self::check_if_table_exists($db, '_smartframework_metadata')) {
 		self::create_table($db, '_smartframework_metadata', 'id VARCHAR(255) PRIMARY KEY UNIQUE, description TEXT');
@@ -600,6 +622,17 @@ public static function check_connection($db) {
 		self::error($db, 'CHECK-CONNECTION', 'DB-Object is not an instance of SQLite3 !', '', '');
 		return;
 	} //end if else
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+public static function register_sql_function($db, $func, $args) {
+	//--
+	self::check_connection($db);
+	//--
+	$db->createFunction((string)$func, (string)$func, (int)$args);
 	//--
 } //END FUNCTION
 //======================================================

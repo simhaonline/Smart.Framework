@@ -2275,6 +2275,33 @@ private function init_table_main_samples() {
 	$this->db->create_table('table_main_sample', "id character varying(10) NOT NULL, name character varying(100) NOT NULL, description text NOT NULL");
 	//--
 
+	//-- Test Custom Default Registered Functions
+	$test = (array) $this->db->read_asdata('SELECT md5(?) AS test', ['abc']);
+	if((string)$test['test'] != (string)md5('abc')) {
+		Smart::log_warning('Invalid SQLite3 Test: MD5()');
+	} //end if
+	//--
+	$test = (array) $this->db->read_asdata('SELECT sha1(?) AS test', ['abc']);
+	if((string)$test['test'] != (string)sha1('abc')) {
+		Smart::log_warning('Invalid SQLite3 Test: SHA1()');
+	} //end if
+	//--
+	$test = (array) $this->db->read_asdata('SELECT time() AS test');
+	if((string)$test['test'] == '') {
+		Smart::log_warning('Invalid SQLite3 Test: TIME()');
+	} //end if
+	//--
+	$test = (array) $this->db->read_asdata('SELECT strtotime(?) AS test', [(string)date('Y-m-d')]);
+	if((string)$test['test'] != (string)strtotime((string)date('Y-m-d'))) {
+		Smart::log_warning('Invalid SQLite3 Test: STRTOTIME()');
+	} //end if
+	//--
+	$test = (array) $this->db->read_asdata('SELECT strip_tags(?, ?) AS test', ['<a><b>abc</b></a>', '<a>']);
+	if((string)$test['test'] != (string)strip_tags('<a><b>abc</b></a>', '<a>')) {
+		Smart::log_warning('Invalid SQLite3 Test: STRIP_TAGS()');
+	} //end if
+	//--
+
 } //END FUNCTION
 //============================================================
 

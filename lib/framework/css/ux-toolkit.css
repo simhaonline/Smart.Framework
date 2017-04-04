@@ -100,11 +100,14 @@ License: BSD
 .ux-g-col-1 {
 	width: 8.33333333%;
 }
+
 @media all and (max-width:767px) {
+
 	.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
 		width: 99% !important;
 		display: block !important;
 	}
+
 }
 
 /*** Buttons :: modified ***/
@@ -255,6 +258,15 @@ License: BSD
 	font-size: 185% !important;
 }
 
+@media all and (max-width:767px) {
+
+	.ux-button {
+		width: 98% !important;
+		margin: 0.7em 0 0;
+	}
+
+}
+
 /*** Tables ***/
 
 .ux-table {
@@ -363,6 +375,35 @@ striping:
 	text-align: left;
 	vertical-align: top;
 }
+
+/* TABLE REFLOW (by Unixman) */
+
+@media all and (max-width:767px) {
+
+	.ux-reflow-table {
+		width: 98%;
+	}
+
+	.ux-reflow-table td,
+	.ux-reflow-table th,
+	.ux-reflow-table tbody th,
+	.ux-reflow-table tbody td,
+	.ux-reflow-table thead td,
+	.ux-reflow-table thead th {
+		display: block !important;
+		margin: 0 !important;
+		border: 0 !important;
+	}
+
+	.ux-reflow-table tr,
+	.ux-reflow-table tbody tr,
+	.ux-reflow-table thead tr {
+		display: block !important;
+		border-bottom: 1px dotted #AAAAAA !important;
+	}
+
+}
+
 
 /*** Forms ***/
 
@@ -707,10 +748,9 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	color: #999999;
 }
 
-/*** Forms / Responsive (Example) ***/
+/*** Forms / Responsive ***/
 
-/*
-@media only screen and (max-width : 480px) {
+@media all and (max-width:767px) {
 
 	.ux-form button[type="submit"] {
 		margin: 0.7em 0 0;
@@ -731,9 +771,13 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	.ux-form input[type="search"],
 	.ux-form input[type="tel"],
 	.ux-form input[type="color"],
-	.ux-form label {
+	.ux-form label,
+	.ux-form textarea,
+	.ux-form select,
+	.ux-field {
 		margin-bottom: 0.3em;
 		display: block;
+		width: 98% !important;
 	}
 
 	.ux-group input:not([type]),
@@ -750,8 +794,13 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	.ux-group input[type="number"],
 	.ux-group input[type="search"],
 	.ux-group input[type="tel"],
-	.ux-group input[type="color"] {
+	.ux-group input[type="color"],
+	.ux-form label,
+	.ux-form textarea,
+	.ux-form select,
+	.ux-field {
 		margin-bottom: 0;
+		width: 98% !important;
 	}
 
 	.ux-form-aligned .ux-control-group label {
@@ -774,7 +823,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	}
 
 }
-*/
+
 
 /*** Menus ***/
 

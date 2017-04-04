@@ -1,14 +1,15 @@
-<!-- Partial Template: Core.NavBox -->
-<div style="padding-top:5px; padding-bottom:5px;">
-<table cellspacing="0" class="nav_box">
+<!-- Partial Template: Core.NavPager.Arrows -->
+<nav id="nav-arrows-area">
+<div id="nav-arrows-box" style="padding-top:5px; padding-bottom:5px;">
+<table cellspacing="0" class="nav-arrows-tbl">
 	<tr valign="middle">
 	<!-- First -->
 	[%%%%IF:NAV-SHOW-FIRST:!=no%%%%]
 		<td align="left">
 		[%%%%IF:NAV-LNK-START:!=;(1)%%%%]
-			<a class="nav_box_link" href="[####NAV-LNK-START|html####]">
+			<a class="nav-arrows-link" href="[####NAV-LNK-START|html####]">
 		[%%%%/IF:NAV-LNK-START(1)%%%%]
-		<div class="nav_box_start" title="[####NAV-TXT-START####]"></div>
+		<div class="nav-arrows-start" title="[####NAV-TXT-START####]"></div>
 		[%%%%IF:NAV-LNK-START:!=;(2)%%%%]
 		</a>
 		[%%%%/IF:NAV-LNK-START(2)%%%%]
@@ -17,9 +18,9 @@
 	<!-- Prev -->
 		<td align="left">
 		[%%%%IF:NAV-LNK-PREV:!=;(1)%%%%]
-			<a class="nav_box_link" href="[####NAV-LNK-PREV|html####]">
+			<a class="nav-arrows-link" href="[####NAV-LNK-PREV|html####]">
 		[%%%%/IF:NAV-LNK-PREV(1)%%%%]
-		<div class="nav_box_prev" title="[####NAV-TXT-PREV####]"></div>
+		<div class="nav-arrows-prev" title="[####NAV-TXT-PREV####]"></div>
 		[%%%%IF:NAV-LNK-PREV:!=;(2)%%%%]
 		</a>
 		[%%%%/IF:NAV-LNK-PREV(2)%%%%]
@@ -31,9 +32,9 @@
 	<!-- Next -->
 		<td align="left">
 		[%%%%IF:NAV-LNK-NEXT:!=;(1)%%%%]
-			<a class="nav_box_link" href="[####NAV-LNK-NEXT|html####]">
+			<a class="nav-arrows-link" href="[####NAV-LNK-NEXT|html####]">
 		[%%%%/IF:NAV-LNK-NEXT(1)%%%%]
-		<div class="nav_box_next" title="[####NAV-TXT-NEXT####]"></div>
+		<div class="nav-arrows-next" title="[####NAV-TXT-NEXT####]"></div>
 		[%%%%IF:NAV-LNK-NEXT:!=;(2)%%%%]
 		</a>
 		[%%%%/IF:NAV-LNK-NEXT(2)%%%%]
@@ -42,9 +43,9 @@
 	[%%%%IF:NAV-SHOW-LAST:!=no%%%%]
 		<td align="left">
 		[%%%%IF:NAV-LNK-END:!=;(1)%%%%]
-			<a class="nav_box_link" href="[####NAV-LNK-END|html####]">
+			<a class="nav-arrows-link" href="[####NAV-LNK-END|html####]">
 		[%%%%/IF:NAV-LNK-END(1)%%%%]
-		<div class="nav_box_end" title="[####NAV-TXT-END####]"></div>
+		<div class="nav-arrows-end" title="[####NAV-TXT-END####]"></div>
 		[%%%%IF:NAV-LNK-END:!=;(2)%%%%]
 		</a>
 		[%%%%/IF:NAV-LNK-END(2)%%%%]
@@ -54,4 +55,5 @@
 	</tr>
 </table>
 </div>
-<!-- #END :: Partial Template: Core.NavBox -->
+</nav>
+<!-- #END :: Partial Template: Core.NavPager.Arrows -->

@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170331
+ * @version 	v.170404
  * @package 	Templating:Engines
  *
  */
@@ -866,7 +866,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				//--
 				if((substr((string)$compare_val[$i], 0, 4) == '####') AND (substr((string)$compare_val[$i], -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
 					$compare_val[$i] = (string) strtoupper(str_replace('#', '', (string)$compare_val[$i]));
-					if(Smart::array_test_key_by_path_exists((array)$y_arr_context, (string)$compare_val[$i], '.')) {
+					if(array_key_exists((string)$compare_val[$i], (array)$y_arr_context)) {
 						$compare_val[$i] = $y_arr_context[(string)$compare_val[$i]]; // exist in context arr
 					} elseif(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$compare_val[$i], '.')) {
 						$compare_val[$i] = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$compare_val[$i], '.'); // exist in original arr
