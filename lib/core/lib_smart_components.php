@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170404
+ * @version 	v.170405
  * @package 	Components:Framework
  *
  */
@@ -2094,50 +2094,6 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 
 //================================================================
 /**
- * Function: Window PopUp Init
- * NOTICE: If mixing http:// with https:// to avoid errors will force the PopUp instead of modal !!
- *
- * @access 		private
- * @internal
- *
- */
-private static function window_mode_init_smartpopup() {
-	return '<script type="text/javascript">SmartJS_BrowserUtils_Use_iFModalBox_Active = 0;</script>';
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Window Modal Init
- * NOTICE: If mixing http:// with https:// to avoid errors will force the PopUp instead of modal !!
- *
- * @access 		private
- * @internal
- *
- */
-private static function window_mode_init_smartmodal() {
-	return '<script type="text/javascript">SmartJS_BrowserUtils_Use_iFModalBox_Active = 1; SmartJS_BrowserUtils.Control_ModalCascading();</script>';
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Window Modal Protection Init
- *
- * @access 		private
- * @internal
- *
- */
-private static function window_mode_init_protection_to_smartmodal() {
-	return '<script type="text/javascript">SmartJS_BrowserUtils_Use_iFModalBox_Protection = 1;</script>';
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
  * Post Form by Ajax
  *
  * @param $y_form_id 			HTML form ID (Example: myForm)
@@ -2437,46 +2393,6 @@ public static function js_draw_checkbox_checkall($y_form_name) {
 	return 'SmartJS_BrowserUtils.checkAll_CkBoxes(\''.Smart::escape_js($y_form_name).'\');';
 	//--
 } //END FORM
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Include Settings
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_inc_settings($y_popup_mode, $y_use_protection=false, $y_use_test_browser=false) {
-	//--
-	switch((string)$y_popup_mode) {
-		case 'popup':
-			$the_popup_mode = 'popup';
-			break;
-		case 'modal':
-		default:
-			$the_popup_mode = 'modal';
-	} //end if else
-	//--
-	$js_settings = '';
-	//--
-	if($y_use_test_browser === true) {
-		$js_settings .= '<script type="text/javascript">Test_Browser_Compliance.checkCookies();</script>';
-	} //end if
-	//--
-	if((string)$the_popup_mode == 'popup') { // popup
-		$js_settings .= self::window_mode_init_smartpopup();
-	} else { // modal (default)
-		$js_settings .= self::window_mode_init_smartmodal();
-		if($y_use_protection === true) {
-			$js_settings .= self::window_mode_init_protection_to_smartmodal();
-		} //end if
-	} //end if else
-	//--
-	return (string) '<!-- JS Settings -->'.$js_settings.'<!-- JS Settings :: END -->';
-	//--
-} //END FUNCTION
 //================================================================
 
 
@@ -3666,6 +3582,68 @@ public static function draw_powered_info($y_show_versions, $y_software_name='', 
 	//--
 } //END FUNCTION
 //================================================================
+
+
+//======================================================================
+public static function render_app_template($template_path, $template_file, $arr_data, $use_caching='no') {
+	//--
+	$template_path = (string) Smart::safe_pathname((string)SmartFileSysUtils::add_dir_last_slash((string)trim((string)$template_path)));
+	$template_file = (string) Smart::safe_filename((string)trim((string)$template_file));
+	//--
+	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower (only 1st level, not nested)
+	//--
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		$the_area = 'admin';
+		$the_realm = 'ADM';
+	} else {
+		$the_area = 'index';
+		$the_realm = 'IDX';
+	} //end if else
+	//--
+	$arr_data['title'] 			= (string) $arr_data['title'];
+	$arr_data['head-meta'] 		= (string) $arr_data['head-meta'];
+	$arr_data['head-css'] 		= (string) $arr_data['head-css'];
+	$arr_data['head-js'] 		= (string) $arr_data['head-js'];
+	$arr_data['main'] 			= (string) $arr_data['main'];
+	//--
+	$arr_data['template-file'] 	= (string) $template_file;
+	$arr_data['template-path'] 	= (string) $template_path;
+	$arr_data['base-url'] 		= (string) SmartUtils::get_server_current_url();
+	$arr_data['base-path'] 		= (string) SmartUtils::get_server_current_path();
+	$arr_data['app-domain'] 	= (string) Smart::get_from_config('app.'.$the_area.'-domain');
+	$arr_data['app-realm'] 		= (string) $the_realm;
+	$arr_data['app-cli-os'] 	= (string) SmartUtils::get_os_browser_ip('os');
+	$arr_data['lang'] 			= (string) SmartTextTranslations::getLanguage();
+	//--
+	$tpl = (string) trim((string)SmartMarkersTemplating::read_template_file((string)$template_path.$template_file));
+	if((string)$tpl == '') {
+		Smart::raise_error(
+			'#SMART-FRAMEWORK-RENDER-MAIN-TEMPLATE#'."\n".'The Template File is either: Empty / Does not Exists / Cannot be Read: '.$template_path.$template_file,
+			'Main Template Render ERROR :: (See Error Log for More Details)'
+		);
+		die();
+		return;
+	} //end if
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(class_exists('SmartDebugProfiler')) {
+			if((stripos((string)$tpl, '</head>') !== false) AND (stripos((string)$tpl, '</body>') !== false)) {
+				$tpl = (string) str_ireplace('</head>', "\n".SmartDebugProfiler::js_headers_debug(Smart::escape_url($the_area).'.php?smartframeworkservice=debug')."\n".'</head>', (string)$tpl);
+				$tpl = (string) str_ireplace('</body>', "\n".SmartDebugProfiler::div_main_debug()."\n".'</body>', (string)$tpl);
+			} //end if
+		} //end if
+	} //end if
+	//--
+	return (string) SmartMarkersTemplating::render_main_template(
+		(string) $tpl,				// tpl string
+		(array)  $arr_data, 		// tpl vars
+		(string) $template_path, 	// tpl base path (for sub-templates, if any)
+		'no',						// ignore if empty
+		(string) $use_caching		// use caching
+	);
+	//--
+} //END FUNCTION
+//======================================================================
 
 
 } //END CLASS

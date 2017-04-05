@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.2.3.7.8');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170327
+ * @version		170405
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -369,10 +369,6 @@ public static function Run() {
 	//--
 	//== PREPARE THE OUTPUT
 	//--
-	if(stripos((string)$configs['js']['popup-override-mobiles'], '<'.SmartUtils::get_os_browser_ip('os').'>') !== false) {
-		$configs['js']['popup-mode'] = 'popup'; // particular os settings for mobiles
-	} //end if
-	//--
 	$rawpage = '';
 	if(isset($appSettings['rawpage'])) {
 		$rawpage = strtolower((string)$appSettings['rawpage']);
@@ -401,9 +397,6 @@ public static function Run() {
 	} //end if else
 	//--
 	$appData = (array) $appModule->PageViewGetVars();
-	//--
-	$appData['base-path'] = (string) $base_full_path;
-	$appData['base-url'] = (string) $base_full_url;
 	//--
 	//== REDIRECTION HANDLER (this can be set only explicit from Controllers)
 	//--
@@ -530,32 +523,6 @@ public static function Run() {
 		return;
 	} //end if
 	//--
-	$the_template_content = trim(SmartMarkersTemplating::read_template_file($the_template_path.$the_template_file));
-	if((string)$the_template_content == '') {
-		Smart::log_warning('Page Template File is Empty or cannot be read: '.$the_template_path.$the_template_file);
-		self::Raise500Error('Page Template File is Empty or cannot be read. See the error log !');
-		return;
-	} //end if
-	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-		$the_template_content = str_ireplace('</head>', "\n".SmartDebugProfiler::js_headers_debug('index.php?smartframeworkservice=debug')."\n".'</head>', $the_template_content);
-		$the_template_content = str_ireplace('</body>', "\n".SmartDebugProfiler::div_main_debug()."\n".'</body>', $the_template_content);
-	} //end if
-	//--
-	$appData['app-domain'] = (string) $configs['app']['index-domain'];
-	$appData['template-file'] = $the_template_path.$the_template_file;
-	$appData['template-path'] = $the_template_path;
-	$appData['js.settings'] = SmartComponents::js_inc_settings((string)$configs['js']['popup-mode'], false, (bool)SMART_APP_VISITOR_COOKIE);
-	$appData['head-meta'] = (string) $appData['head-meta'];
-	if((string)$appData['head-meta'] == '') {
-		$appData['head-meta'] = '<!-- Head Meta -->';
-	} //end if
-	$appData['title'] = (string) $appData['title'];
-	$appData['main'] = (string) $appData['main'];
-	$appData['lang'] = SmartTextTranslations::getLanguage();
-	//--
-	//# {{{SYNC-TEMPLATE-APPDATA-BASE}}}
-	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--
 		$the_debug_cookie = 'idx-'.Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str();
@@ -563,7 +530,7 @@ public static function Run() {
 		//--
 	} //end if
 	//--
-	echo SmartMarkersTemplating::render_mixed_template((string)$the_template_content, (array)$appData, (string)$appData['template-path'], 'no', 'no');
+	echo SmartComponents::render_app_template((string)$the_template_path, (string)$the_template_file, (array)$appData, 'no');
 	//-- {{{SYNC-RESOURCES}}}
 	if(function_exists('memory_get_peak_usage')) {
 		$res_memory = (int) @memory_get_peak_usage(false);

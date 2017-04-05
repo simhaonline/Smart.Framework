@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170404
+ * @version 	v.170405
  * @package 	Templating:Engines
  *
  */
@@ -134,7 +134,7 @@ public static function analyze_debug_file_template($y_file_path, $y_arr_sub_temp
 
 //================================================================
 /**
- * Parse Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
+ * Render Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
  *
  * @param 	STRING 		$mtemplate 						:: The markers template string (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
  * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
@@ -255,9 +255,9 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 
 //================================================================
 /**
- * Parse Mixed Marker Template (String Template + Sub-Templates from Files if any)
+ * Render Main Marker Template (String Template + Sub-Templates from Files if any)
  * If no-subtemplates are available is better to use render_template() instead of this one.
- * !!! This is intended for very special usage (ex: main app template) since it does not support caching (and is not optimal to reload sub-templates several times) ... !!!
+ * !!! This is intended for very special usage since it does not support defining @SUB-TEMPLATES@ in the data array and require the sub-templates base path !!!
  *
  * @access 		private
  * @internal
@@ -271,7 +271,7 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
  * @return 	STRING										:: The parsed template
  *
  */
-public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_templates_base_path, $y_ignore_if_empty='no', $y_use_caching='no') {
+public static function render_main_template($mtemplate, $y_arr_vars, $y_sub_templates_base_path, $y_ignore_if_empty='no', $y_use_caching='no') {
 	//--
 	// it can *optional* use caching to avoid read the sub-templates (if any) more than once per execution
 	// if using the cache the sub-templates (if any) are cached internally to avoid re-read them from filesystem
@@ -304,13 +304,12 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 			'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
 		]);
 	} //end if
+	//-- dissalow the use of sub-templates array
+	if(array_key_exists('@SUB-TEMPLATES@', (array)$y_arr_vars)) {
+		unset($y_arr_vars['@SUB-TEMPLATES@']);
+	} //end if
 	//--
-	$arr_sub_templates = array();
-	if(is_array($y_arr_vars['@SUB-TEMPLATES@'])) { // if supplied use it (preffered), never mix supplied with detection else results would be unpredictable ...
-		$arr_sub_templates = (array) $y_arr_vars['@SUB-TEMPLATES@'];
-	} else { // if not supplied, try to detect
-		$arr_sub_templates = (array) self::detect_subtemplates($mtemplate);
-	} //end if else
+	$arr_sub_templates = (array) self::detect_subtemplates($mtemplate);
 	if(Smart::array_size($arr_sub_templates) > 0) {
 		$mtemplate = (string) self::load_subtemplates((string)$y_use_caching, (string)$y_sub_templates_base_path, (string)$mtemplate, (array)$arr_sub_templates); // load sub-templates before template processing
 	} //end if
@@ -330,7 +329,7 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
 //================================================================
 /**
  * Read a Marker File Template from FileSystem or from Persistent (Memory) Cache if exists
- * !!! This is intended for very special usage ... !!! This is used automatically by the render_file_template() and used in combination with render_mixed_template() may produce the same results ... it make non-sense using it with render_template() as this should be used for internal (php) templates as all external templates should be loaded with render_file_template()
+ * !!! This is intended for very special usage ... !!! This is used automatically by the render_file_template() and used in combination with render_main_template() may produce the same results ... it make non-sense using it with render_template() as this should be used for internal (php) templates as all external templates should be loaded with render_file_template()
  *
  * @access 		private
  * @internal

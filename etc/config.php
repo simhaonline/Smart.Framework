@@ -89,8 +89,6 @@ $languages = array('en' => '[EN]', 'ro' => '[RO]');							// associative array o
 
 //----------------------------------------
 $configs['js']['notifications']					= 'growl'; 					// 'growl' = Sticky Notifications (Jquery) ;  'dialog' = JQueryUI Dialog
-$configs['js']['popup-mode']					= 'modal';					// 'modal' | 'popup'
-$configs['js']['popup-override-mobiles'] 		= '<ios>,<and>,<mlx>,<mgo>,<nsy>,<bby>,<wce>,<plm>'; // Override Modal with PopUp mode for Mobile Operating Systems: ios = iPhone ; ipd = ios iPad ; and = Android ; mlx = Mobile Linux ; mgo = Meego ; nsy = Nokia Symbian ; wce = Windows CE / Windows Mobile ; plm = Palm / WebOS
 //----------------------------------------
 
 //--------------------------------------- MEDIA GALLERY

@@ -56,7 +56,7 @@ require('lib/framework/lib_translate.php');		// smart (text) translate
  * @access 		private
  * @internal
  *
- * @version 	v.161005
+ * @version 	v.170405
  *
  */
 interface SmartInterfaceAppBootstrap {
@@ -105,7 +105,7 @@ interface SmartInterfaceAppBootstrap {
  * @access 		private
  * @internal
  *
- * @version 	v.161005
+ * @version 	v.170405
  *
  */
 interface SmartInterfaceAppInfo {
@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170323
+ * @version 	v.170405
  * @package 	Application
  *
  */

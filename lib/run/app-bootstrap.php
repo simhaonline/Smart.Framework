@@ -154,11 +154,12 @@ define('SMART_SOFTWARE_APP_NAME', 'smart.framework.app'); // software version fo
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
+ * @version 	v.170405
+ *
  */
 final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
 
 	// ::
-	// v.170307
 
 	private static $isRunning 		= false;
 	private static $authCompleted 	= false;
@@ -174,6 +175,7 @@ final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
 		if(self::$isRunning !== false) {
 			http_response_code(500);
 			die(SmartComponents::http_message_500_internalerror('App Boostrap is already running ...'));
+			return;
 		} //end if
 		self::$isRunning = true;
 		//--
@@ -191,6 +193,7 @@ final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
 		if(self::$authCompleted !== false) {
 			http_response_code(500);
 			die(SmartComponents::http_message_500_internalerror('App Boostrap Auth already loaded ...'));
+			return;
 		} //end if
 		self::$authCompleted = true;
 		//--
@@ -240,7 +243,7 @@ final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160122
+ * @version 	v.170405
  * @package 	Application
  *
  */

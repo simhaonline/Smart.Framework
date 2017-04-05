@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170323
+ * @version 	v.170404
  * @package 	Base
  *
  */
@@ -1513,21 +1513,29 @@ public static function get_server_current_domain_name() {
 // get main domain without sub-domain
 public static function get_server_current_basedomain_name() {
 	//--
-	$domain = (string) self::get_server_current_domain_name();
+	$xout = (string) self::$cache['get_server_current_basedomain_name'];
 	//--
-	if(preg_match('/^[0-9\.]+$/', $domain) OR (strpos($domain, ':') !== false)) { // if IPv4 or IPv6
-		$out = $domain;
-	} else { // assume is domain
-		if(strpos($domain, '.') !== false) { // ex: subdomain.domain.ext or subdomain.domain
-			$domain = explode('.', $domain);
-			$domain = array_reverse($domain);
-			$out = (string) $domain[1].'.'.$domain[0];
-		} else { // ex: localhost
-			$out = $domain;
-		} //end if else
+	if((string)$xout == '') {
+		//--
+		$domain = (string) self::get_server_current_domain_name();
+		//--
+		if(preg_match('/^[0-9\.]+$/', $domain) OR (strpos($domain, ':') !== false)) { // if IPv4 or IPv6
+			$xout = (string) $domain;
+		} else { // assume is domain
+			if(strpos($domain, '.') !== false) { // ex: subdomain.domain.ext or subdomain.domain
+				$domain = (array) explode('.', (string)$domain);
+				$domain = (array) array_reverse($domain);
+				$xout = (string) $domain[1].'.'.$domain[0];
+			} else { // ex: localhost
+				$xout = (string) $domain;
+			} //end if else
+		} //end if
+		//--
+		self::$cache['get_server_current_basedomain_name'] = (string) $xout;
+		//--
 	} //end if
 	//--
-	return (string) $out;
+	return (string) $xout;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1598,8 +1606,6 @@ public static function get_server_current_url() {
 	$xout = (string) self::$cache['get_server_current_url'];
 	//--
 	if((string)$xout == '') {
-		//--
-
 		//--
 		$current_port = self::get_server_current_port();
 		if((string)$current_port == '') {

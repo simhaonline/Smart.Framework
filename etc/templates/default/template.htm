@@ -1,19 +1,11 @@
 <!DOCTYPE html>
-<!-- [####TEMPLATE-FILE####] -->
+<!-- [####TEMPLATE-PATH|html####][####TEMPLATE-FILE|html####] -->
+<!-- App Domain is: [####APP-DOMAIN|html####] -->
+<!-- Base URL is: [####BASE-URL|html####] -->
+<!-- Base Path is: [####BASE-PATH|html####] -->
 <html>
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!-- App Domain is: [####APP-DOMAIN####] -->
-<!-- Base URL is: [####BASE-URL####] -->
-<!-- Base Path is: [####BASE-PATH####] -->
-<title>[####TITLE####]</title>
-[####HEAD-META####]
-[@@@@SUB-TEMPLATE:css-app.inc.htm@@@@]
-<!-- Template Styles --><link rel="stylesheet" type="text/css" href="[####TEMPLATE-PATH####]styles.css">
-[@@@@SUB-TEMPLATE:js-base.inc.htm@@@@]
-[@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
-[####JS.SETTINGS####]
+[@@@@SUB-TEMPLATE:tpl-head.inc.htm@@@@]
 </head>
 <body>
 [@@@@SUB-TEMPLATE:partial-template-loader.inc.htm@@@@]

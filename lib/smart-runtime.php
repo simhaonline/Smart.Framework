@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.2.3.7.8'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.04'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.05'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -206,9 +206,6 @@ $languages = array();
 
 //--------------------------------------- LOAD CONFIGS
 require('etc/config.php'); // load the main configuration, after GET/POST registration
-if((string)$configs['js']['popup-mode'] != 'popup') {
-	$configs['js']['popup-mode'] = 'modal'; // default
-} //end if else
 if((string)$configs['js']['notifications'] != 'dialog') {
 	$configs['js']['notifications'] = 'growl'; // default
 } //end if
@@ -774,7 +771,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		170302
+ * @version		170405
  * @package 	Application
  *
  */
@@ -968,6 +965,7 @@ public static function High_Load_Monitor() {
 					Smart::log_notice('#SMART-FRAMEWORK-HIGH-LOAD-PROTECT#'."\n".'SmartFramework // Web :: System Overload Protection: The System is Too Busy ... Try Again Later. The Load Averages reached the maximum allowed value by current settings ... ['.$tmp_sysload_avg[0].' of '.$tmp_max_load.']');
 				} //end if else
 				die(SmartComponents::http_message_503_serviceunavailable('<h1>503 Service Unavailable - Too busy, try again later</h1><br><b>SmartFramework // Web :: System Overload Protection</b><br>The Load Averages reached the maximum allowed value by current settings ...'));
+				return array();
 			} //end if
 		} //end if
 	} //end if
@@ -986,6 +984,7 @@ public static function Create_Required_Dirs() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
 		die('Smart Runtime // Create Required Dirs :: Requires SmartFramework to be loaded ...');
+		return;
 	} //end if
 	//--
 	if(self::$RequiredDirsCreated !== false) {
@@ -1021,6 +1020,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (Temporary Folder is Not Writable)' // this must be also as message !!!
 		);
 		die();
+		return;
 	} //end if
 	if(!is_file($dir.'.htaccess')) {
 		Smart::raise_error(
@@ -1028,6 +1028,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//-- tmp locks dir
 	$dir = 'tmp/locks/';
@@ -1041,6 +1042,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//-- tmp cache dir
 	$dir = 'tmp/cache/';
@@ -1054,6 +1056,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//-- tmp logs dir
 	$dir = 'tmp/logs/';
@@ -1067,6 +1070,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (Error Log Folder is Not Writable)' // this must be also as message !!!
 		);
 		die();
+		return;
 	} //end if
 	//-- tmp logs/admin dir
 	$dir = 'tmp/logs/adm/';
@@ -1080,6 +1084,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//-- tmp logs/idx dir
 	$dir = 'tmp/logs/idx/';
@@ -1093,6 +1098,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//-- tmp sessions dir
 	$dir = 'tmp/sessions/';
@@ -1106,6 +1112,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//-- wpub dir
 	$dir = 'wpub/'; // {{{SYNC-WPUB-DIR}}}
@@ -1125,6 +1132,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	if(!is_file($ctrlfile)) {
 		Smart::raise_error(
@@ -1132,6 +1140,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	if(!is_file($htfile)) {
 		Smart::raise_error(
@@ -1139,6 +1148,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//-- wpub/webapps-content
 	$dir = 'wpub/webapps-content/'; // {{{SYNC-WEBAPPS-DIR}}}
@@ -1152,6 +1162,7 @@ public static function Create_Required_Dirs() {
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
+		return;
 	} //end if
 	//--
 } //END FUNCTION
@@ -1164,6 +1175,7 @@ public static function Redirection_Monitor() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
 		die('Smart Runtime // Redirection Monitor :: Requires SmartFramework to be loaded ...');
+		return;
 	} //end if
 	//--
 	if(self::$RedirectionMonitorStarted !== false) {
@@ -1178,6 +1190,7 @@ public static function Redirection_Monitor() {
 	//--
 	if((SMART_SOFTWARE_FRONTEND_ENABLED === false) AND (SMART_SOFTWARE_BACKEND_ENABLED === false)) { // both frontend and backend are disabled
 		die('FATAL ERROR: The FRONTEND but also the BACKEND of this application are DISABLED ! ...');
+		return;
 	} //end if
 	if((SMART_SOFTWARE_FRONTEND_ENABLED === false) AND ((string)$the_current_script == 'index.php')) {
 		$url_redirect = $the_current_url.'admin.php';
@@ -1215,9 +1228,10 @@ public static function Redirection_Monitor() {
 		</html>
 	';
 	//--
-	if(strlen($url_redirect) > 0) {
+	if(strlen((string)$url_redirect) > 0) {
 		@header('Location: '.$url_redirect);
-		die($gopage);
+		die((string)$gopage);
+		return;
 	} //end if
 	//--
 } //END FUNCTION
@@ -1230,10 +1244,12 @@ public static function SetVisitorEntropyIDCookie() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
 		die('Smart Runtime // Set Visitor Entropy ID Cookie :: Requires SmartFramework to be loaded ...');
+		return;
 	} //end if
 	//--
 	if(defined('SMART_APP_VISITOR_COOKIE')) {
 		die('SetVisitorEntropyIDCookie :: SMART_APP_VISITOR_COOKIE must not be re-defined ...');
+		return;
 	} //end if
 	//--
 	$cookie = '';
@@ -1258,54 +1274,6 @@ public static function SetVisitorEntropyIDCookie() {
 	} //end if
 	//-- #end# sync
 	define('SMART_APP_VISITOR_COOKIE', (string)$cookie); // empty or cookie ID
-	//--
-} //END FUNCTION
-//======================================================================
-
-
-//======================================================================
-// Basic Render an App Template
-public static function RenderAppTemplate($template_path, $template_file, $arr_data) {
-	//--
-	$template_path = (string) Smart::safe_pathname((string)SmartFileSysUtils::add_dir_last_slash((string)trim((string)$template_path)));
-	$template_file = (string) Smart::safe_filename((string)trim((string)$template_file));
-	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower
-	//--
-	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-		$the_area = 'admin';
-		$use_protect = true;
-	} else {
-		$the_area = 'index';
-		$use_protect = false;
-	} //end if else
-	//--
-	$appData = [ // {{{SYNC-TEMPLATE-APPDATA-BASE}}}
-		//--
-		'base-path' 		=> (string) SmartUtils::get_server_current_path(),
-		'base-url' 			=> (string) SmartUtils::get_server_current_url(),
-		'app-domain' 		=> (string) Smart::get_from_config('app.'.$the_area.'-domain'),
-		'template-file' 	=> (string) $template_path.$template_file,
-		'template-path' 	=> (string) $template_path,
-		'js.settings' 		=> (string) SmartComponents::js_inc_settings((string)Smart::get_from_config('js.popup-mode'), (bool)$use_protect, (bool)SMART_APP_VISITOR_COOKIE),
-		//--
-		'title' 			=> '', // external
-		'head-meta' 		=> '<!-- Head Meta -->', // external
-		'main' 				=> '', // external
-		//--
-		'lang' 				=> (string) SmartTextTranslations::getLanguage(),
-		//--
-	];
-	//--
-	foreach($arr_data as $key => $val) {
-		if((!array_key_exists((string)$key, (array)$appData)) OR (in_array((string)$key, ['title', 'head-meta', 'main']))) {
-			$appData[(string)$key] = (string) $val;
-		} //end if
-	} //end foreach
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		(string) $template_path.$template_file,
-		(array) $appData
-	);
 	//--
 } //END FUNCTION
 //======================================================================
