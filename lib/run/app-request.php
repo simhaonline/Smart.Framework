@@ -34,8 +34,8 @@ SmartFrameworkRuntime::Extract_Filtered_Request_Get_Post_Vars((array)$_GET, 'GET
 SmartFrameworkRuntime::Extract_Filtered_Request_Get_Post_Vars((array)$_POST, 'POST'); 	// extract and filter $_POST
 SmartFrameworkRuntime::Lock_Request_Processing(); 										// prevent re-processing Request variables after they were processed 1st time (this is mandatory from security point of view)
 //--
-// $_COOKIE will not be processed, use $_COOKIE['cookie_name'] for any purpose
-// $_SERVER will not be processed, use $_SERVER['some-key'] for any purpose
+// $_COOKIE will not be processed, use $_COOKIE['cookie_name'] for reading cookies
+// $_SERVER will not be processed, use $_SERVER['some-key'] for reading server variables
 //--
 
 // end of php code
