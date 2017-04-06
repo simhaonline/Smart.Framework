@@ -231,7 +231,7 @@ interface SmartInterfaceAppInfo {
  * @package 	Application
  *
  */
-abstract class SmartAbstractAppController {
+abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	// -> ABSTRACT
 

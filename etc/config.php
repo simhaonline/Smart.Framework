@@ -38,7 +38,7 @@ $configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugg
 
 //--------------------------------------- Redis related configuration (used for Persistent Memory Cache but also for Redis Based Sessions)
 /*
-$configs['redis']['server-host']	= 'localhost';							// redis host
+$configs['redis']['server-host']	= '127.0.0.1';							// redis host
 $configs['redis']['server-port']	= '6379';								// redis port
 $configs['redis']['dbnum']			= 5;									// redis db number 0..15
 $configs['redis']['password']		= '';									// redis Base64-Encoded password ; by default is empty

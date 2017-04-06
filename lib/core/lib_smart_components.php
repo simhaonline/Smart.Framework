@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170405
+ * @version 	v.170406
  * @package 	Components:Framework
  *
  */
@@ -948,7 +948,14 @@ public static function format_css_dimension($y_w_or_h) {
 	//--
 	if(strpos($y_w_or_h, '%') !== false) {
 		//--
-		$css_w_or_h = (string) Smart::escape_html(str_replace(array(':', ';'), array('', ''), (string)$y_w_or_h)); // Ex: 100% and dissalow styles separators : ;
+		$css_w_or_h = (int) str_replace([':', ';', '-', '%'], ['', '', '', ''], (string)$y_w_or_h); // Ex: 100% and dissalow styles separators : ;
+		if($y_w_or_h < 1) {
+			$y_w_or_h = 1;
+		} //end if
+		if($y_w_or_h > 100) {
+			$y_w_or_h = 100;
+		} //end if
+		$css_w_or_h = (string) $css_w_or_h.'%';
 		//--
 	} elseif(strlen($y_w_or_h) > 0) {
 		//--
@@ -965,7 +972,7 @@ public static function format_css_dimension($y_w_or_h) {
 		//--
 	} else {
 		//--
-		$css_w_or_h = ''; // default
+		$css_w_or_h = ''; // default / empty
 		//--
 	} //end if else
 	//--
@@ -977,21 +984,21 @@ public static function format_css_dimension($y_w_or_h) {
 
 //================================================================
 /**
- * Function: Notifications Message Template v.160329
+ * Function: Notifications Message Template
  *
  * @access 		private
  * @internal
  *
  */
-private static function notifications_template($y_html, $y_style, $y_width) {
+private static function notifications_template($y_html, $y_idcss, $y_width) {
 	//--
-	$y_width = self::format_css_dimension($y_width);
+	$y_width = (string) self::format_css_dimension($y_width);
 	//--
-	if(((string)$y_width == '100%') OR ((string)$y_width == '99%') OR ((string)$y_width == '98%')) {
+	if(in_array((string)$y_width, ['100%', '99%', '98%'])) {
 		$y_width = '97%'; // correction because of the margin
 	} //end if
 	//--
-	return '<!-- require: notifications.css --><div id="'.$y_style.'" style="width:'.$y_width.'!important;">'.$y_html.'</div>';
+	return '<!-- require: notifications.css --><div id="'.Smart::escape_html($y_idcss).'" style="width:'.Smart::escape_html($y_width).'!important;">'.$y_html.'</div>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2424,7 +2431,7 @@ public static function js_draw_growl($y_title, $y_text, $y_image, $y_time=6000, 
 	//--
 	$y_time = (int) $y_time;
 	if($y_time < 1) {
-		$y_time = 1; //miliseconds
+		$y_time = 1; // miliseconds
 	} //end if
 	//--
 	return 'SmartJS_BrowserUtils.GrowlNotificationAdd('.$y_title.', '.$y_text.', \''.Smart::escape_js($y_image).'\', '.$y_time.', '.$y_sticky.', \''.Smart::escape_js($y_class).'\');';
@@ -2590,9 +2597,9 @@ public static function js_draw_html_area($yid, $yvarname, $yvalue='', $ywidth='7
 			'TXT-AREA-WIDTH' 				=> (string) $ywidth, // 100px or 100%
 			'TXT-AREA-HEIGHT' 				=> (string) $yheight, // 100px or 100%
 			'TXT-AREA-CONTENT' 				=> (string) $yvalue,
-			'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool) $y_allow_scripts, // boolean
-			'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool) $y_allow_script_src, // boolean
-			'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed
+			'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool)   $y_allow_scripts, // boolean
+			'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool)   $y_allow_script_src, // boolean
+			'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed, will be json encoded in tpl
 			'CLEANER-MODE-TAGS' 			=> (string) $y_cleaner_mode,
 			'TXT-AREA-TOOLBAR' 				=> (string) $y_toolbar_ctrls
 		],
@@ -2617,7 +2624,7 @@ public static function js_callback_html_area($yurl, $is_popup=false) {
 	return (string) str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/html-editor-callback.inc.htm',
 		[
-			'IS_POPUP' 	=> (int) $is_popup,
+			'IS_POPUP' 	=> (int)    $is_popup,
 			'URL' 		=> (string) $yurl
 		],
 		'yes' // export to cache
@@ -2725,9 +2732,9 @@ public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 			'TXT-AREA-ID' 		=> (string) $yid,
 			'WIDTH' 			=> (string) $y_width,
 			'HEIGHT' 			=> (string) $y_height,
-			'SHOW-LINE-NUM' 	=> (bool) $y_line_numbers,
-			'READ-ONLY' 		=> (bool) $is_readonly,
-			'BLINK-CURSOR' 		=> Smart::format_number_int($cursor_blinking,'+'),
+			'SHOW-LINE-NUM' 	=> (bool)   $y_line_numbers,
+			'READ-ONLY' 		=> (bool)   $is_readonly,
+			'BLINK-CURSOR' 		=> (int)    Smart::format_number_int($cursor_blinking,'+'),
 			'CODE-TYPE' 		=> (string) $the_mode,
 			'THEME' 			=> (string) $theme,
 			'TXT-AREA-VAR-NAME' => (string) $yvarname,
@@ -2751,7 +2758,7 @@ public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px
 			'WIDTH' 		=> (string) $y_width,
 			'HEIGHT' 		=> (string) $y_height,
 			'SANDBOX' 		=> (string) $y_sandbox,
-			'MAXIMIZED' 	=> (bool) $y_maximized,
+			'MAXIMIZED' 	=> (bool)   $y_maximized,
 			'CONTENT' 		=> (string) $y_contents
 		],
 		'yes' // export to cache
@@ -2824,7 +2831,7 @@ public static function js_draw_date_field($y_id, $y_var, $yvalue, $y_text_select
 			'TEXT-SELECT' 		=> (string) $y_text_select,
 			'ALT-DATE-FORMAT' 	=> (string) $the_altdate_format,
 			'STYLE-SIZE' 		=> (string) $the_option_size,
-			'FDOW' 				=> (int) $the_first_day, // of week
+			'FDOW' 				=> (int)    $the_first_day, // of week
 			'DATE-MIN' 			=> (string) $yjs_mindate,
 			'DATE-MAX' 			=> (string) $yjs_maxdate,
 			'EVAL-JS' 			=> (string) $yjs_custom
@@ -2894,12 +2901,12 @@ public static function js_draw_time_field($y_id, $y_var, $yvalue, $y_text_select
 			'THE-VALUE' 	=> (string) $yvalue,
 			'TEXT-SELECT' 	=> (string) $y_text_select,
 			'STYLE-SIZE' 	=> (string) $the_option_size,
-			'H-START' 		=> (int) $prep_hstart,
-			'H-END' 		=> (int) $prep_hend,
-			'MIN-START'		=> (int) $prep_istart,
-			'MIN-END' 		=> (int) $prep_iend,
-			'MIN-INTERVAL' 	=> (int) $prep_iinterv,
-			'DISPLAY-ROWS' 	=> (int) $prep_rows,
+			'H-START' 		=> (int)    $prep_hstart,
+			'H-END' 		=> (int)    $prep_hend,
+			'MIN-START'		=> (int)    $prep_istart,
+			'MIN-END' 		=> (int)    $prep_iend,
+			'MIN-INTERVAL' 	=> (int)    $prep_iinterv,
+			'DISPLAY-ROWS' 	=> (int)    $prep_rows,
 			'EVAL-JS' 		=> (string) $yjs_custom
 		],
 		'yes' // export to cache
@@ -2918,11 +2925,9 @@ public static function js_draw_limited_text_area($y_field_id, $y_var_name, $y_va
 	//--
 	$y_limit = (int) $y_limit; // max characters :: between 100 and 99999
 	//--
-	if((int)$y_limit < 50) {
+	if($y_limit < 50) {
 		$y_limit = 50;
-	} //end if
-	//--
-	if((int)$y_limit > 99999) {
+	} elseif($y_limit > 99999) {
 		$y_limit = 99999;
 	} //end if
 	//--
@@ -2974,8 +2979,7 @@ public static function js_draw_ui_autocomplete_single($y_element_id, $y_script, 
 	$y_min_len = Smart::format_number_int($y_min_len, '+');
 	if($y_min_len < 1) {
 		$y_min_len = 1;
-	} //end if
-	if($y_min_len > 255) {
+	} elseif($y_min_len > 255) {
 		$y_min_len = 255;
 	} //end if
 	//--
@@ -2998,8 +3002,7 @@ public static function js_draw_ui_autocomplete_multi($y_element_id, $y_script, $
 	$y_min_len = Smart::format_number_int($y_min_len, '+');
 	if($y_min_len < 1) {
 		$y_min_len = 1;
-	} //end if
-	if($y_min_len > 255) {
+	} elseif($y_min_len > 255) {
 		$y_min_len = 255;
 	} //end if
 	//--
@@ -3068,7 +3071,7 @@ public static function js_ajx_wait_complete($y_div_id, $y_html_code, $y_url, $y_
 	//--
 	$div_id = 'AJX_requester_DIV_'.$y_div_id;
 	//--
-	return '<div id="'.$div_id.'">'.$y_html_code.'</div><script type="text/javascript">SmartJS_BrowserUtils.Load_Div_Content_By_Ajax(\''.$div_id.'\', \'lib/core/img/busy_timer.gif\', \''.Smart::escape_js($y_url).'\', \''.Smart::escape_js($y_method).'\', \'html\');</script>';
+	return '<div id="'.Smart::escape_html($div_id).'">'.$y_html_code.'</div><script type="text/javascript">SmartJS_BrowserUtils.Load_Div_Content_By_Ajax(\''.Smart::escape_js($div_id).'\', \'lib/core/img/busy_timer.gif\', \''.Smart::escape_js($y_url).'\', \''.Smart::escape_js($y_method).'\', \'html\');</script>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -3333,6 +3336,8 @@ if((string)$y_val == 'n') {
 	$tmpx_code = $txt_no;
 } //end if
 //--
+$y_var = Smart::escape_html((string)$y_var);
+//--
 $code = <<<HTML_CODE
   {$txt_yes}<input name="{$y_var}" type="radio" value="y" {$tmp_m}>
   &nbsp; &nbsp;
@@ -3377,6 +3382,8 @@ if((string)$y_val == '1') {
 	$tmpx_code = $txt_false;
 } //end if
 //--
+$y_var = Smart::escape_html((string)$y_var);
+//--
 $code = <<<HTML_CODE
   {$txt_true}<input name="{$y_var}" type="radio" value="1" {$tmp_m}>
   &nbsp; &nbsp;
@@ -3404,11 +3411,11 @@ public static function html_form_vars($y_var, $y_html_var) {
 		if(is_array($y_var)) { // SYNC VARS
 			foreach($y_var as $key => $val) {
 				if(((string)$key != '') AND (preg_match((string)$regex_var, (string)$key))) {
-					$out .= '<input type="hidden" name="'.$y_html_var.'['.$key.']" value="'.Smart::escape_html((string)$val).'">'."\n";
+					$out .= '<input type="hidden" name="'.Smart::escape_html((string)$y_html_var).'['.Smart::escape_html((string)$key).']" value="'.Smart::escape_html((string)$val).'">'."\n";
 				} //end if
 			} //end for
 		} elseif((string)$y_var != '') {
-			$out .= '<input type="hidden" name="'.$y_html_var.'" value="'.Smart::escape_html((string)$y_var).'">'."\n";
+			$out .= '<input type="hidden" name="'.Smart::escape_html((string)$y_html_var).'" value="'.Smart::escape_html((string)$y_var).'">'."\n";
 		} //end if else
 	} //end if
 	//--
@@ -3585,12 +3592,19 @@ public static function draw_powered_info($y_show_versions, $y_software_name='', 
 
 
 //======================================================================
-public static function render_app_template($template_path, $template_file, $arr_data, $use_caching='no') {
+public static function render_app_template($template_path, $template_file, $arr_data, $use_caching='no') { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
+
 	//--
 	$template_path = (string) Smart::safe_pathname((string)SmartFileSysUtils::add_dir_last_slash((string)trim((string)$template_path)));
 	$template_file = (string) Smart::safe_filename((string)trim((string)$template_file));
 	//--
-	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower (only 1st level, not nested)
+	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower (only 1st level, not nested), to comply with SmartAbstractAppController handling mode
+	//--
+	if((string)$use_caching !== 'yes') {
+		$use_caching = 'no';
+	} //end if
+	//--
+
 	//--
 	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 		$the_area = 'admin';
@@ -3600,21 +3614,36 @@ public static function render_app_template($template_path, $template_file, $arr_
 		$the_realm = 'IDX';
 	} //end if else
 	//--
-	$arr_data['title'] 			= (string) $arr_data['title'];
-	$arr_data['head-meta'] 		= (string) $arr_data['head-meta'];
-	$arr_data['head-css'] 		= (string) $arr_data['head-css'];
-	$arr_data['head-js'] 		= (string) $arr_data['head-js'];
-	$arr_data['main'] 			= (string) $arr_data['main'];
+	$os_bw = (array) SmartUtils::get_os_browser_ip();
 	//--
-	$arr_data['template-file'] 	= (string) $template_file;
-	$arr_data['template-path'] 	= (string) $template_path;
-	$arr_data['base-url'] 		= (string) SmartUtils::get_server_current_url();
-	$arr_data['base-path'] 		= (string) SmartUtils::get_server_current_path();
-	$arr_data['app-domain'] 	= (string) Smart::get_from_config('app.'.$the_area.'-domain');
-	$arr_data['app-realm'] 		= (string) $the_realm;
-	$arr_data['app-cli-os'] 	= (string) SmartUtils::get_os_browser_ip('os');
-	$arr_data['lang'] 			= (string) SmartTextTranslations::getLanguage();
+
+	//-- external TPL vars
+	$arr_data['title'] 				= (string) $arr_data['title'];
+	$arr_data['head-meta'] 			= (string) $arr_data['head-meta'];
+	$arr_data['head-css'] 			= (string) $arr_data['head-css'];
+	$arr_data['head-js'] 			= (string) $arr_data['head-js'];
+	$arr_data['main'] 				= (string) $arr_data['main'];
+	//-- internal TPL vars
+	$arr_data['template-path'] 		= (string) $template_path; 											// current template path (ex: etc/templates/default/)
+	$arr_data['template-file'] 		= (string) $template_file; 											// current template file (ex: template.htm | template-modal.htm | ...)
+	$arr_data['lang'] 				= (string) SmartTextTranslations::getLanguage(); 					// current set language (ex: en)
+	$arr_data['client-browser'] 	= (string) $os_bw['bw']; 											// client browser OS (ex: bsd)
+	$arr_data['client-os'] 			= (string) $os_bw['os']; 											// client browser ID (ex: fox)
+	$arr_data['app-realm'] 			= (string) $the_realm; 												// IDX (for index.php area) ; ADM (for admin.php area)
+	$arr_data['app-domain'] 		= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by realm: $configs['app']['index-domain'] | $configs['app']['admin-domain']
+	$arr_data['base-url'] 			= (string) SmartUtils::get_server_current_url(); 					// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
+	$arr_data['base-path'] 			= (string) SmartUtils::get_server_current_path(); 					// / | /sites/frameworks/smart-framework/
+	$arr_data['base-domain'] 		= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP
+	$arr_data['srv-domain'] 		= (string) SmartUtils::get_server_current_domain_name(); 			// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
+	$arr_data['srv-proto'] 			= (string) SmartUtils::get_server_current_protocol(); 				// http:// | https://
+	$arr_data['srv-port'] 			= (string) SmartUtils::get_server_current_port(); 					// 80 | 443 | ...
+	$arr_data['srv-script'] 		= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
+	$arr_data['srv-urlquery'] 		= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
+	$arr_data['srv-requri'] 		= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
+	$arr_data['debug-mode'] 		= (string) SMART_FRAMEWORK_DEBUG_MODE; 								// yes | no
 	//--
+
+	//-- read TPL
 	$tpl = (string) trim((string)SmartMarkersTemplating::read_template_file((string)$template_path.$template_file));
 	if((string)$tpl == '') {
 		Smart::raise_error(
@@ -3624,7 +3653,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 		die();
 		return;
 	} //end if
-	//--
+	//-- add debug support in TPL
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		if(class_exists('SmartDebugProfiler')) {
 			if((stripos((string)$tpl, '</head>') !== false) AND (stripos((string)$tpl, '</body>') !== false)) {
@@ -3634,6 +3663,8 @@ public static function render_app_template($template_path, $template_file, $arr_
 		} //end if
 	} //end if
 	//--
+
+	//-- render TPL
 	return (string) SmartMarkersTemplating::render_main_template(
 		(string) $tpl,				// tpl string
 		(array)  $arr_data, 		// tpl vars
@@ -3642,6 +3673,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 		(string) $use_caching		// use caching
 	);
 	//--
+
 } //END FUNCTION
 //======================================================================
 

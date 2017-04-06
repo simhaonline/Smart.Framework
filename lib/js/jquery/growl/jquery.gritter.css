@@ -5,10 +5,10 @@
 	position: fixed;
 	top: 10px;
 	right: 10px;
-	min-width: 300px;
-	max-width: 450px;
+	min-width: 300px !important;
+	max-width: 92% !important;
 	opacity: 0.95;
-	max-height: 96%;
+	max-height: 96% !important;
 	overflow-y: auto;
 	overflow-x: hidden;
 }

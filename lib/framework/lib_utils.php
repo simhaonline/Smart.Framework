@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170404
+ * @version 	v.170406
  * @package 	Base
  *
  */
@@ -1500,7 +1500,7 @@ public static function get_server_current_ip() {
 
 
 //================================================================
-// Ex: localhost
+// Ex: localhost or IP
 public static function get_server_current_domain_name() {
 	//--
 	return (string) trim((string)$_SERVER['SERVER_NAME']);
@@ -1542,7 +1542,7 @@ public static function get_server_current_basedomain_name() {
 
 
 //================================================================
-// Ex: /sites/test/script.php?param=
+// Ex: /sites/test/script.php?param= | /page.html (rewrited to some-script.php?var=val&ofs=...) ; it includes the current path
 public static function get_server_current_request_uri() {
 	//--
 	return (string) trim((string)$_SERVER['REQUEST_URI']);

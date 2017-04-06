@@ -1,3 +1,21 @@
+<!-- :: TPL MISC. VARIABLES :: -->
+<!-- Template Path:   [####TEMPLATE-PATH|html####] -->
+<!-- Template File:   [####TEMPLATE-FILE|html####] -->
+<!-- (Set) Language:  [####LANG|html####] -->
+<!-- App Realm:       [####APP-REALM|html####] -->
+<!-- App Domain:      [####APP-DOMAIN|html####] -->
+<!-- Client-Browser:  [####CLIENT-BROWSER|html####] -->
+<!-- Client-OS:       [####CLIENT-OS|html####] -->
+<!-- Base URL:        [####BASE-URL|html####] -->
+<!-- Base Path:       [####BASE-PATH|html####] -->
+<!-- Base-Domain:     [####BASE-DOMAIN|html####] -->
+<!-- Srv Domain:      [####SRV-DOMAIN|html####] -->
+<!-- Srv Proto:       [####SRV-PROTO|html####] -->
+<!-- Srv Port:        [####SRV-PORT|html####] -->
+<!-- Srv Script:      [####SRV-SCRIPT|html####] -->
+<!-- Srv UrlQuery:    [####SRV-URLQUERY|html####] -->
+<!-- Srv ReqUri:      [####SRV-REQURI|html####] -->
+<!-- Debug Mode:      [####DEBUG-MODE|html####] -->
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>[####TITLE|html####]</title>
@@ -9,7 +27,11 @@
 [####HEAD-CSS####]
 <!-- Scripts -->
 [@@@@SUB-TEMPLATE:js-base.inc.htm@@@@]
+[%%%%IF:APP-REALM:==IDX;%%%%]
+[@@@@SUB-TEMPLATE:js-ui-alt.inc.htm@@@@]
+[%%%%ELSE:APP-REALM%%%%]
 [@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
+[%%%%/IF:APP-REALM%%%%]
 [@@@@SUB-TEMPLATE:js-settings.inc.htm@@@@]
 [####HEAD-JS####]
 <!-- #.# -->

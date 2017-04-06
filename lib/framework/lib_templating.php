@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170405
+ * @version 	v.170406
  * @package 	Templating:Engines
  *
  */
@@ -366,7 +366,11 @@ public static function read_template_file($y_file_path) {
 			$tpl = (string) SmartPersistentCache::getKey('smart-markers-templating', (string)$the_cache_key);
 			if((string)$tpl != '') {
 				//Smart::log_notice('TPL found in cache: '.$y_file_path);
-				return (string) $tpl; // return from persistent cache
+				$tpl = (string) SmartPersistentCache::varUncompress((string)$tpl);
+				if((string)$tpl != '') {
+					//Smart::log_notice('TPL from cache is OK: '.$y_file_path);
+					return (string) $tpl; // return from persistent cache
+				} //end if
 			} //end if
 		} //end if
 	} //end if
@@ -374,8 +378,14 @@ public static function read_template_file($y_file_path) {
 	$tpl = (string) SmartFileSystem::staticread((string)$y_file_path);
 	if((string)$the_cache_key != '') {
 		if((string)$tpl != '') {
-			SmartPersistentCache::setKey('smart-markers-templating', (string)$the_cache_key.'__path', (string)$y_file_path, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
-			SmartPersistentCache::setKey('smart-markers-templating', (string)$the_cache_key, (string)$tpl, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
+			//Smart::log_notice('TPL fs-read OK: '.$y_file_path);
+			$atpl = (string) SmartPersistentCache::varCompress((string)$tpl);
+			if((string)$atpl != '') {
+				//Smart::log_notice('TPL saved in cache: '.$y_file_path);
+				SmartPersistentCache::setKey('smart-markers-templating', (string)$the_cache_key.'__path', (string)$y_file_path, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
+				SmartPersistentCache::setKey('smart-markers-templating', (string)$the_cache_key, (string)$atpl, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
+			} //end if
+			$atpl = '';
 		} //end if
 	} //end if
 	//--
