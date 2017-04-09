@@ -1,4 +1,4 @@
-# Smart.Framework (PHP / Javascript)
+# Smart.Framework, a PHP / Javascript Web Framework
 (c) 2009 - 2017 unix-world.org
 License: BSD
 
