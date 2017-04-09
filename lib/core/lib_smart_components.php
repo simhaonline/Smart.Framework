@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* js/jseditcode [codemirror]
 // REQUIRED CSS:
 //	* notifications.css
-//	* activetable.css
+//	* navpager.css
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170406
+ * @version 	v.170408
  * @package 	Components:Framework
  *
  */
@@ -62,7 +62,7 @@ final class SmartComponents {
  * @internal
  *
  */
-public static function parse_settings($arr_base_settings, $arr_local_settings) {
+public static function get_by_language_parsed_settings($arr_base_settings, $arr_local_settings) {
 	//--
 	$the_lang = SmartTextTranslations::getLanguage();
 	//--
@@ -120,7 +120,71 @@ public static function parse_settings($arr_base_settings, $arr_local_settings) {
 		//--
 	} //end if
 	//--
-	return $arr_base_settings;
+	return $arr_base_settings; // mixed
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// the allowed date formats for Javascript (just for display reasons)
+public static function get_date_format_for_js($y_format) {
+	//-- yy = year with 4 digits, mm = month 01..12, dd = day 01..31
+	$format = 'yy-mm-dd'; // the default format
+	//--
+	switch((string)$y_format) {
+		//--
+		case 'yy.mm.dd':
+		case 'yy-mm-dd':
+		case 'yy mm dd':
+		//--
+		case 'dd.mm.yy':
+		case 'dd-mm-yy':
+		case 'dd mm yy':
+		//--
+		case 'mm.dd.yy':
+		case 'mm-dd-yy':
+		case 'mm dd yy':
+		//--
+			$format = $y_format;
+			break;
+		default:
+			// nothing
+	} //end switch
+	//--
+	return (string) $format;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// the allowed date formats for PHP (just for display reasons)
+public static function get_date_format_for_php($y_format) {
+	//-- Y = year with 4 digits, m = month 01..12, d = day 01..31
+	$format = 'Y-m-d'; // the default format
+	//--
+	switch((string)$y_format) {
+		//--
+		case 'Y.m.d':
+		case 'Y-m-d':
+		case 'Y m d':
+		//--
+		case 'd.m.Y':
+		case 'd-m-Y':
+		case 'd m Y':
+		//--
+		case 'm.d.Y':
+		case 'm-d-Y':
+		case 'm d Y':
+		//--
+			$format = $y_format;
+			break;
+		default:
+			// nothing
+	} //end switch
+	//--
+	return (string) $format;
 	//--
 } //END FUNCTION
 //================================================================
@@ -128,29 +192,13 @@ public static function parse_settings($arr_base_settings, $arr_local_settings) {
 
 //================================================================
 /**
- * Function: Lock File Name
+ * Compose an App Error Message
  *
  * @access 		private
  * @internal
  *
  */
-public static function lock_file() {
-	//--
-	return '____SMART-FRAMEWORK_SingleUser_Mode__Enabled';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: DB Error Message
- *
- * @access 		private
- * @internal
- *
- */
-public static function db_error_message($y_title, $y_name, $y_mode, $y_type, $y_logo, $y_width, $y_area, $y_errmsg, $y_params, $y_statement) {
+public static function app_error_message($y_title, $y_name, $y_mode, $y_type, $y_logo, $y_width, $y_area, $y_errmsg, $y_area_one, $y_area_two) {
 	//--
 	$y_width = (int) $y_width;
 	if($y_width < 550) {
@@ -160,11 +208,11 @@ public static function db_error_message($y_title, $y_name, $y_mode, $y_type, $y_
 	} //end if
 	//--
 	$y_area = (string) trim((string)$y_area); // if this is empty will simply not be displayed
-	$y_params = (string) trim((string)$y_params); // if this is empty will display: DEBUG OFF
-	$y_statement = (string) trim((string)$y_statement); // if this is empty will display: View App Log for more details ...
+	$y_area_one = (string) trim((string)$y_area_one); // if this is empty will display: DEBUG OFF
+	$y_area_two = (string) trim((string)$y_area_two); // if this is empty will display: View App Log for more details ...
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/db-message-error.inc.htm',
+		'lib/core/templates/app-error-message.inc.htm',
 		[
 			'WIDTH' 	=> (int) $y_width,
 			'TITLE' 	=> (string) $y_title,
@@ -174,8 +222,8 @@ public static function db_error_message($y_title, $y_name, $y_mode, $y_type, $y_
 			'MODE' 		=> (string) $y_mode,
 			'TYPE' 		=> (string) $y_type,
 			'ERR-MSG' 	=> (string) $y_errmsg,
-			'PARAMS' 	=> (string) $y_params,
-			'STATEMENT' => (string) $y_statement,
+			'AREA-ONE' 	=> (string) $y_area_one,
+			'AREA-TWO' 	=> (string) $y_area_two,
 		],
 		'no'
 	);
@@ -443,33 +491,250 @@ public static function http_message_504_gatewaytimeout($y_message, $y_extra_mess
 
 
 //================================================================
+public static function operation_question($y_html, $y_width='500') {
+	//--
+	return self::notifications_template($y_html, 'operation_question', $y_width); // question
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function operation_notice($y_html, $y_width='500') {
+	//--
+	return self::notifications_template($y_html, 'operation_notice', $y_width); // notice
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function operation_ok($y_html, $y_width='500') {
+	//--
+	return self::notifications_template($y_html, 'operation_info', $y_width); // info (ok)
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function operation_warn($y_html, $y_width='500') {
+	//--
+	return self::notifications_template($y_html, 'operation_warn', $y_width); // warn
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function operation_error($y_html, $y_width='500') {
+	//--
+	return self::notifications_template($y_html, 'operation_error', $y_width); // error
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 /**
- * Check if Single-User Mode is Enabled
+ * Function: Notifications Message Template
  *
  * @access 		private
  * @internal
  *
- * @return 0/1
  */
-public static function check_single_user() {
+private static function notifications_template($y_html, $y_idcss, $y_width) {
 	//--
-	$lock_file = (string) self::lock_file();
+	$y_width = (string) self::format_css_dimension($y_width);
 	//--
-	$out = 0;
-	//--
-	if(SmartFileSystem::file_or_link_exists($lock_file)) {
-		//--
-		$lock_content = SmartFileSystem::read($lock_file);
-		$chk_arr = explode("\n", trim($lock_content));
-		$tmp_time = Smart::format_number_dec((($chk_arr[1] - time()) / 60), 0, '.', '');
-		//--
-		if($tmp_time <= 0) {
-			$out = 1; // TOTAL LOCKED (if greater or equal than ZERO it only warns) !
-		} //end if
-		//--
+	if(in_array((string)$y_width, ['100%', '99%', '98%'])) {
+		$y_width = '97%'; // correction because of the margin
 	} //end if
 	//--
-	return $out;
+	return '<!-- require: notifications.css --><div id="'.Smart::escape_html($y_idcss).'" style="width:'.Smart::escape_html($y_width).'!important;">'.$y_html.'</div>';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: Format CSS Width or Height
+ * Format the CSS Width: Passed number (550) or percent (100%) and return the correct CSS3 format as 550px or 100%
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+private static function format_css_dimension($y_w_or_h) {
+	//--
+	if(strpos($y_w_or_h, '%') !== false) {
+		//--
+		$css_w_or_h = (int) str_replace([':', ';', '-', '%'], ['', '', '', ''], (string)$y_w_or_h); // Ex: 100% and dissalow styles separators : ;
+		if($y_w_or_h < 1) {
+			$y_w_or_h = 1;
+		} //end if
+		if($y_w_or_h > 100) {
+			$y_w_or_h = 100;
+		} //end if
+		$css_w_or_h = (string) $css_w_or_h.'%';
+		//--
+	} elseif(strlen($y_w_or_h) > 0) {
+		//--
+		$y_w_or_h = (int) $y_w_or_h;
+		//--
+		if($y_w_or_h < 1) {
+			$y_w_or_h = 1;
+		} //end if
+		if($y_w_or_h > 3200) {
+			$y_w_or_h = 3200;
+		} //end if
+		//--
+		$css_w_or_h = (string) $y_w_or_h.'px'; // Ex: 750px
+		//--
+	} else {
+		//--
+		$css_w_or_h = ''; // default / empty
+		//--
+	} //end if else
+	//--
+	return (string) $css_w_or_h;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: HTML Form Vars
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function html_hidden_formvars($y_var, $y_html_var) {
+	//--
+	$out = '';
+	//--
+	$regex_var = '/^([_a-zA-Z0-9])+$/';
+	//--
+	if(((string)$y_html_var != '') AND (preg_match((string)$regex_var, (string)$y_html_var))) {
+		if(is_array($y_var)) { // SYNC VARS
+			foreach($y_var as $key => $val) {
+				if(((string)$key != '') AND (preg_match((string)$regex_var, (string)$key))) {
+					$out .= '<input type="hidden" name="'.Smart::escape_html((string)$y_html_var).'['.Smart::escape_html((string)$key).']" value="'.Smart::escape_html((string)$val).'">'."\n";
+				} //end if
+			} //end for
+		} elseif((string)$y_var != '') {
+			$out .= '<input type="hidden" name="'.Smart::escape_html((string)$y_html_var).'" value="'.Smart::escape_html((string)$y_var).'">'."\n";
+		} //end if else
+	} //end if
+	//--
+	return (string) $out;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * HTML Selector: YES / NO
+ * Display Yes=y/No=n Selector
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param STRING $y_var			:: HTML Var Name
+ * @param STRING $y_val			:: '' | 'y' | 'n'
+ * @return STRING				:: HTML Code
+ */
+public static function html_selector_yes_no($y_var, $y_val) {
+	//--
+	$y_var = (string) trim((string)$y_var);
+	$y_val = (string) strtolower(trim((string)$y_val));
+	//--
+	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
+	//--
+	$txt_y = (string) $translator_core_messages->text('yes');
+	$txt_n = (string) $translator_core_messages->text('no');
+	//--
+	$code = '?';
+	$sel_y = '';
+	$sel_n = '';
+	if((string)$y_val == 'y') {
+		$code = (string) $txt_y;
+		$sel_y = ' checked';
+	} else{ // 'n' | ''
+		$code = (string) $txt_n;
+		$sel_n = ' checked';
+	} //end if
+	//--
+	if((string)$y_var != '') { // if var is non empty, show radio buttons else show just Yes or No
+		$code = SmartMarkersTemplating::render_template(
+			'[####TXT-YES####]<input type="radio" name="[####THE-VAR####]" value="y"[####SEL-YES####]>  &nbsp;&nbsp; [####TXT-NO####]<input type="radio" name="[####THE-VAR####]" value="n"[####SEL-NO####]>',
+			[
+				'TXT-YES' 	=> (string) $txt_y,
+				'TXT-NO' 	=> (string) $txt_n,
+				'THE-VAR' 	=> (string) Smart::escape_html((string)$y_var),
+				'SEL-YES' 	=> (string) $sel_y,
+				'SEL-NO' 	=> (string) $sel_n
+			]
+		);
+	} //end if else
+	//--
+	return (string) $code;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * HTML Selector: TRUE / FALSE
+ * Display True=1/False=0 Selector
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param STRING $y_var			:: HTML Var Name
+ * @param STRING $y_val			:: '' | '0' | '1'
+ * @return STRING				:: HTML Code
+ */
+public static function html_selector_true_false($y_var, $y_val) {
+	//--
+	$y_var = (string) trim((string)$y_var);
+	$y_val = (string) strtolower(trim((string)$y_val));
+	//--
+	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
+	//--
+	$txt_y = (string) $translator_core_messages->text('yes');
+	$txt_n = (string) $translator_core_messages->text('no');
+	//--
+	$code = '?';
+	$sel_y = '';
+	$sel_n = '';
+	if((string)$y_val == '1') {
+		$code = (string) $txt_y;
+		$sel_y = ' checked';
+	} else{ // '0' | ''
+		$code = (string) $txt_n;
+		$sel_n = ' checked';
+	} //end if
+	//--
+	if((string)$y_var != '') { // if var is non empty, show radio buttons else show just Yes or No
+		$code = SmartMarkersTemplating::render_template(
+			'[####TXT-YES####]<input type="radio" name="[####THE-VAR####]" value="1"[####SEL-YES####]>  &nbsp;&nbsp; [####TXT-NO####]<input type="radio" name="[####THE-VAR####]" value="0"[####SEL-NO####]>',
+			[
+				'TXT-YES' 	=> (string) $txt_y,
+				'TXT-NO' 	=> (string) $txt_n,
+				'THE-VAR' 	=> (string) Smart::escape_html((string)$y_var),
+				'SEL-YES' 	=> (string) $sel_y,
+				'SEL-NO' 	=> (string) $sel_n
+			]
+		);
+	} //end if else
+	//--
+	return (string) $code;
 	//--
 } //END FUNCTION
 //================================================================
@@ -492,7 +757,7 @@ public static function check_single_user() {
  *
  * @return HTMLCode
  */
-public static function html_single_select_list($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_dimensions='150/0', $y_custom_js='', $y_raw='no', $y_allowblank='yes', $y_extrastyle='') {
+public static function html_select_list_single($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_dimensions='150/0', $y_custom_js='', $y_raw='no', $y_allowblank='yes', $y_extrastyle='') {
 
 	//-- fix associative array
 	$arr_type = Smart::array_type_test($yarr_data);
@@ -679,7 +944,7 @@ public static function html_single_select_list($y_id, $y_selected_value, $y_mode
  *
  * @return HTMLCode
  */
-public static function html_multi_select_list($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_draw='list', $y_sync_values='no', $y_dimensions='300/0', $y_custom_js='', $y_extrastyle='#JS-UI-FILTER#') {
+public static function html_select_list_multi($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_draw='list', $y_sync_values='no', $y_dimensions='300/0', $y_custom_js='', $y_extrastyle='#JS-UI-FILTER#') {
 
 	//-- fix associative array
 	$arr_type = Smart::array_type_test($yarr_data);
@@ -900,762 +1165,6 @@ public static function html_multi_select_list($y_id, $y_selected_value, $y_mode,
 
 //================================================================
 /**
- * Draw a rounded table in CSS3
- *
- * @param STRING $htmlcode		HTML Code to display within table
- * @param STRING $class			CSS Class for rounded table
- * @param STRING $y_width		Table width (px / %)
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[HTML Code]
- */
-public static function rounded_table($htmlcode, $class, $y_width='100%', $y_bgcolor='', $y_valign='middle', $y_height='') {
-	//--
-	if((string)$y_width == '100%') {
-		$y_width = '99%'; // fix
-	} //end if
-	//--
-	if(substr($y_bgcolor, 0, 1) == '#') {
-		$color = ' class="rounded" bgcolor="'.$y_bgcolor.'"';
-	} else {
-		$color = ' class="rounded '.$class.'"';
-	} //end if
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/rounded-table.inc.htm',
-		[
-			'WIDTH' => $y_width,
-			'HEIGHT' => $y_height,
-			'STYLE-BGCOLOR' => $color,
-			'V-ALIGN' => $y_valign,
-			'HTML-CONTENT' => $htmlcode
-		],
-		'yes' // export to cache
-	);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Format CSS Width or Height
- * Format the CSS Width: Passed number (550) or percent (100%) and return the correct CSS3 format as 550px or 100%
- */
-public static function format_css_dimension($y_w_or_h) {
-	//--
-	if(strpos($y_w_or_h, '%') !== false) {
-		//--
-		$css_w_or_h = (int) str_replace([':', ';', '-', '%'], ['', '', '', ''], (string)$y_w_or_h); // Ex: 100% and dissalow styles separators : ;
-		if($y_w_or_h < 1) {
-			$y_w_or_h = 1;
-		} //end if
-		if($y_w_or_h > 100) {
-			$y_w_or_h = 100;
-		} //end if
-		$css_w_or_h = (string) $css_w_or_h.'%';
-		//--
-	} elseif(strlen($y_w_or_h) > 0) {
-		//--
-		$y_w_or_h = (int) $y_w_or_h;
-		//--
-		if($y_w_or_h < 1) {
-			$y_w_or_h = 1;
-		} //end if
-		if($y_w_or_h > 3200) {
-			$y_w_or_h = 3200;
-		} //end if
-		//--
-		$css_w_or_h = (string) $y_w_or_h.'px'; // Ex: 750px
-		//--
-	} else {
-		//--
-		$css_w_or_h = ''; // default / empty
-		//--
-	} //end if else
-	//--
-	return (string) $css_w_or_h;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Notifications Message Template
- *
- * @access 		private
- * @internal
- *
- */
-private static function notifications_template($y_html, $y_idcss, $y_width) {
-	//--
-	$y_width = (string) self::format_css_dimension($y_width);
-	//--
-	if(in_array((string)$y_width, ['100%', '99%', '98%'])) {
-		$y_width = '97%'; // correction because of the margin
-	} //end if
-	//--
-	return '<!-- require: notifications.css --><div id="'.Smart::escape_html($y_idcss).'" style="width:'.Smart::escape_html($y_width).'!important;">'.$y_html.'</div>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function operation_question($y_html, $y_width='500') {
-	//--
-	return self::notifications_template($y_html, 'operation_question', $y_width); // question
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function operation_notice($y_html, $y_width='500') {
-	//--
-	return self::notifications_template($y_html, 'operation_notice', $y_width); // notice
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function operation_ok($y_html, $y_width='500') {
-	//--
-	return self::notifications_template($y_html, 'operation_info', $y_width); // info (ok)
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function operation_warn($y_html, $y_width='500') {
-	//--
-	return self::notifications_template($y_html, 'operation_warn', $y_width); // warn
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function operation_error($y_html, $y_width='500') {
-	//--
-	return self::notifications_template($y_html, 'operation_error', $y_width); // error
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Return JavaScripting for <tr> table ROW as: title="" id="" onClick="" onMouseOver="" onMouseOut=""
- * The above <tr> params must not be used in conjunction with this function to avoid unexpected results
- *
- * @param #css_style $y_bg_color		:: ID css name BG Color
- * @param #css_style $y_hover_color		:: ID css name Hover Color
- * @param #css_style $y_click_color		:: ID css name Click Color
- * @param ENUM $y_selected				:: '' = not selected | '*' = selected
- *
- * @access 		private
- * @internal
- *
- * @return STRING		HTML code as JavaScript for Active Table Row
- *
- */
-public static function table_active_row($y_bg_color, $y_hover_color, $y_click_color, $y_selected='') {
-	//-- [v.150105]
-	if(strlen($y_selected) > 0) {
-		$y_selected = '*';
-	} //end if
-	//--
-	return 'title="" id="'.Smart::escape_html($y_bg_color).'" onClick="if(this.title==\'\') { this.title=\'*\'; this.id=\''.Smart::escape_js($y_click_color).'\'; } else { this.title=\'\'; }" onMouseOver="this.id=\''.Smart::escape_js($y_hover_color).'\';" onMouseOut="if(this.title==\'\') { this.id=\''.Smart::escape_js($y_bg_color).'\'; } else { this.id=\''.Smart::escape_js($y_click_color).'\'; }"';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Create an active table
- *
- * @access 		private
- * @internal
- *
- * @param STRING $y_size		[the table size px / %]
- * @param STRING $y_title		[the table title]
- * @param ARRAY $y_arr_addlink	[associative, 'link', 'title'] :: REPLACEMENTS {{{id}}}
- * @param ARRAY $y_arr_edtlink	[associative, 'link', 'title'] :: REPLACEMENTS {{{id}}}
- * @param ARRAY $y_arr_dellink	[associative, 'link', 'title'] :: REPLACEMENTS {{{id}}}
- * @param ARRAY $y_arr_fields	[non-associative, fields]
- * @param ARRAY $y_arr_process	[non-associative array(0, 1, 2, ...), process ($tmp_id / $value) | associative array( 'objects' => array(0, 1, 2, ...), 'handlers' => array('obj1' => $obj1, obj2=>$obj2, ...) )]
- * @param ARRAY $y_arr_data		[non-associative, data]
- *
- * @return STRING				[html code]
- */
-public static function table($y_size, $y_title, $y_arr_addlink, $y_arr_edtlink, $y_arr_dellink, $y_arr_fields, $y_arr_process, $y_arr_data, $y_arr_align=array(), $y_arr_width=array(), $y_form_action=array(), $y_form_actoptions=array(), $y_wnd_js='', $y_form_name='smart_table_form', $y_arr_styles=array('heading'=>'smart_active_table_heading', 'subheading'=>'smart_active_table_subheading', 'hilite'=>'smart_active_table_row_hilite', 'alt1'=>'smart_active_table_row_alt1', 'alt2'=>'smart_active_table_row_alt2', 'click'=>'smart_active_table_row_click')) {
-
-	// [v.150105]
-	// now can handle passed objects
-
-	//$y_form_actoptions = array(array('button_img'=>'lib/core/img/op_insert.png', 'button_act'=>'action2', 'button_title'=>'Some Action'), array('button_img'=>'lib/core/img/op_edit.png', 'button_act'=>'eeee', 'button_title'=>'Some Other Action'));
-
-	//-- protection
-	if(Smart::array_size($y_arr_fields) <= 0) {
-		return self::operation_error('WARNING: Build Table has been invoked with a Zero Fields Array !');
-	} //end if
-	//--
-
-	//-- transform the $y_arr_process for handle objects
-	// ths $y_arr_process can be either:
-	// DEFAULT: array(0, 1, 2, ...) // non associative
-	// ADVANCED: array(
-	//				'objects' => array(0, 1, 2, ...), // non associative
-	//				'handlers' => array('obj1' => $obj1, obj2=>$obj2, ...)
-	//			)
-	//--
-	if(is_array($y_arr_process)) {
-		//--
-		if((is_array($y_arr_process['handlers'])) OR (is_array($y_arr_process['objects']))) {
-			//--
-			if(is_array($y_arr_process['handlers'])) {
-				$the_arr_process = (array) $y_arr_process['handlers'];
-			} else {
-				$the_arr_process = array();
-			} //end if else
-			//--
-			if(is_array($y_arr_process['objects'])) {
-				//--
-				foreach($y_arr_process['objects'] as $key => $val) {
-					eval("\n".'$obj__'.$key.' = &$val;'."\n"); // register local objects
-				} //end foreach
-				//--
-			} //end if else
-			//-- restore back
-			$y_arr_process = array();
-			$y_arr_process = (array) $the_arr_process;
-			//--
-		} //end if
-		//--
-	} else {
-		//--
-		$y_arr_process = array();
-		//--
-	} //end if
-	//--
-
-	//--
-	if(((string)$y_wnd_js == '') OR ((string)$y_wnd_js == 'smart_table_detail')) {
-		$y_wnd_js = 'smart_table_detail_'.sha1($y_title);
-	} else {
-		$y_wnd_js = (string) $y_wnd_js;
-	} //end if else
-	//--
-
-	//-------------------------------------------------------- INITS
-	//--
-	$color_title 		= $y_arr_styles['heading'];		// #ECECEC
-	$color_subtitle		= $y_arr_styles['subheading'];	// #FFFFFF
-	$bgcolor_highlight 	= $y_arr_styles['hilite'];		// #DDEEFF
-	$alt_color_one 		= $y_arr_styles['alt1']; 		// #FAFAFA
-	$alt_color_two 		= $y_arr_styles['alt2'];		// #F3F3F3
-	$click_color 		= $y_arr_styles['click'];		// #FFCC00
-	//--
-	//--------------------------------------------------------
-	$out = '';
-	//-------------------------------------------------------- START
-	$tbl_plus_cols = 2;
-	//--
-	$translator_core_window = SmartTextTranslations::getTranslator('@core', 'window');
-	//--
-	if(Smart::array_size($y_form_action) > 0) {
-		//--
-		if((string)$y_form_action['method'] == '') {
-			$y_form_action['method'] = 'post';
-			$y_form_action['enctype'] = 'multipart/form-data';
-		} //end if
-		//-
-		if((string)$y_form_action['target'] == '') {
-			$y_form_action['target'] = '_self';
-		} //end if
-		//--
-		if((string)$y_form_action['jscript'] == '') {
-			$y_form_action['jscript'] = 'onClick=" '.self::js_draw_html_confirm_form_submit($translator_core_window->text('confirm_action')).' "';
-		} //end if
-		//--
-		if((string)$y_form_action['button_img'] == '') {
-			$y_form_action['button_img'] = 'lib/core/img/op_delete.png';
-		} //end if
-		//--
-		$out .= '<form class="ux-form" name="'.Smart::escape_html($y_form_name).'" action="'.Smart::escape_html($y_form_action['action']).'" method="'.Smart::escape_html($y_form_action['method']).'" enctype="'.Smart::escape_html($y_form_action['enctype']).'" target="'.Smart::escape_html($y_form_action['target']).'">'."\n";
-		//--
-	} //end if else
-	//--
-	if(Smart::array_size($y_arr_dellink) <= 0) {
-		$tbl_plus_cols = $tbl_plus_cols - 1;
-	} //end if
-	if(Smart::array_size($y_arr_edtlink) <= 0) {
-		$tbl_plus_cols = $tbl_plus_cols - 1;
-	} //end if
-	if(Smart::array_size($y_arr_addlink) > 0) {
-		if((Smart::array_size($y_arr_dellink) > 0) AND (Smart::array_size($y_arr_edtlink) > 0)) {
-			$tbl_plus_cols = 2; // fix again
-		} else {
-			$tbl_plus_cols = 1; // fix again
-		} //end if else
-	} //end if
-	//--
-	$out .= '<!-- require: activetable.css -->'."\n";
-	$out .= '<div style="width:100%;">'."\n"; // style += overflow:auto;
-	$out .= '<script type="text/javascript">var Smart_Table_Notification_ID;</script>'."\n";
-	$out .= '<table id="'.Smart::escape_html($color_subtitle).'" align="center" width="'.Smart::escape_html($y_size).'" border="0" cellspacing="1" cellpadding="2" title="'.Smart::escape_html(Smart::striptags($y_title, 'no')).'">'."\n";
-	//-------------------------------------------------------- TITLE
-	$out .= '<tr id="'.Smart::escape_html($color_title).'">'."\n";
-	//--
-	if(Smart::array_size($y_arr_addlink) > 0) {
-		//--
-		if((Smart::array_size($y_arr_dellink) > 0) AND (Smart::array_size($y_arr_edtlink) > 0)) {
-			$out .= '<td valign="middle" align="center" colspan="2">'."\n";
-		} else {
-			$out .= '<td valign="middle" align="center">'."\n";
-		} //end if else
-		//--
-		if((string)$y_arr_addlink['target'] != '') {
-			$new_tgt = $y_arr_addlink['target'];
-		} else {
-			$new_tgt = $y_wnd_js;
-		} //end if else
-		//--
-		if(strlen($y_arr_addlink['custom_picture']) > 0) {
-			eval("\n".$y_arr_addlink['custom_picture']."\n");
-			$the_add_pict = $add_custom_picture;
-		} else {
-			$the_add_pict = 'lib/core/img/op_insert.png';
-		} //end if else
-		//--
-		if((Smart::format_number_int($y_arr_addlink['width']) > 0) AND (Smart::format_number_int($y_arr_addlink['height']) > 0)) {
-			$the_onclick = 'SmartJS_BrowserUtils.PopUpLink(this.href, this.target, '.Smart::format_number_int($y_arr_addlink['width']).', '.Smart::format_number_int($y_arr_addlink['height']).', 0, 1);';
-		} else {
-			$the_onclick = 'SmartJS_BrowserUtils.PopUpLink(this.href, this.target);';
-		} //end if else
-		//--
-		$out .= '<a href="'.Smart::escape_html(str_replace('{{{id}}}', '', $y_arr_addlink['link'])).'" target="'.Smart::escape_html($new_tgt).'" onClick="'.$the_onclick.' return false;"><img src="'.Smart::escape_html($the_add_pict).'" border="0" title="'.$y_arr_addlink['title'].'" alt="'.$y_arr_addlink['title'].'"></a>';
-		//--
-		$out .= '</td>'."\n";
-		//--
-	} else {
-		//--
-		if((int)$tbl_plus_cols > 0) {
-			//--
-			if((int)$tbl_plus_cols > 1) {
-				$out .= '<td valign="middle" align="center" colspan="'.$tbl_plus_cols.'">'."\n";
-			} else {
-				$out .= '<td valign="middle" align="center">'."\n";
-			} //end if else
-			$out .= '&nbsp;';
-			$out .= '</td>'."\n";
-		} //end if
-		//--
-	} //end if else
-	//--
-	$out .= '<td width="99%" align="left" valign="middle" colspan="'.(Smart::array_size($y_arr_fields)).'">'."\n";
-	//--
-	if(strpos($y_title, '<') !== false) {
-		$out .= $y_title; // is html
-	} elseif((string)$y_title != '') {
-		$out .= '<h1>&nbsp; '.$y_title.' &nbsp;</h1>';
-	} //end if else
-	//--
-	$out .= '</td>'."\n";
-	$out .= '</tr>'."\n";
-	//-------------------------------------------------------- EXTRA BUTTONS
-	$extra_bttns = '';
-	if(Smart::array_size($y_form_action) > 0) {
-		$extra_bttns .= '<td><table width="50%" cellpadding="0" cellspacing="0">';
-		if(Smart::array_size($y_form_actoptions) > 0) {
-			$extra_bttns .= '<tr>'."\n";
-			$extra_bttns .= '<td align="left" valign="middle" colspan="'.(Smart::array_size($y_arr_fields)).'">'."\n";
-			for($i=0; $i<Smart::array_size($y_form_actoptions); $i++) {
-				$the_actopts_arr = $y_form_actoptions[$i];
-				if((string)$the_actopts_arr['jscript'] == '') {
-					$the_actopts_arr['jscript'] = 'onClick=" '.self::js_draw_html_confirm_form_submit($translator_core_window->text('confirm_action')).' "';
-				} //end if
-				$extra_bttns .= '<input type="image" id="bttn_f_action'.$i.'" name="bttn_f_action" value="'.Smart::escape_html($the_actopts_arr['button_act']).'" src="'.Smart::escape_html($the_actopts_arr['button_img']).'" '.$the_actopts_arr['jscript'].' style="border:none" title="'.$the_actopts_arr['button_title'].'" alt="'.$the_actopts_arr['button_title'].'">&nbsp;';
-			} //end for
-			$extra_bttns .= '</td>'."\n";
-			$extra_bttns .= '</tr>'."\n";
-		} //end if
-		$extra_bttns .= '</table></td>';
-		//--
-		$the_hd_size_del = '32';
-		$the_hd_size_edt = '32';
-		//--
-	} else {
-		//--
-		if(Smart::array_size($y_arr_dellink) > 0) {
-			$the_hd_size_del = '32';
-		} else {
-			$the_hd_size_del = '1';
-		} //end if else
-		//--
-		if(Smart::array_size($y_arr_edtlink) > 0) {
-			$the_hd_size_edt = '32';
-		} else {
-			$the_hd_size_edt = '1';
-		} //end if else
-		//--
-	} //end if else
-	//-------------------------------------------------------- HEADING
-	$out .= '<tr>'."\n";
-	if(Smart::array_size($y_form_action) > 0) {
-		$out .= '<td width="'.Smart::format_number_int($the_hd_size_del+$the_hd_size_edt).'" align="center" colspan="2">'."\n";
-		$out .= '<table border="0" cellspacing="0" cellpadding="2"><tr>';
-		$out .= '<td width="'.Smart::format_number_int($the_hd_size_del).'"><input type="checkbox" name="'.Smart::escape_html($y_form_name).'_toggle" value="" onClick="this.checked=!this.checked;'.self::js_draw_checkbox_checkall($y_form_name).'">'.'</td>'."\n";
-		$out .= '<td width="'.Smart::format_number_int($the_hd_size_edt).'"><input type="image" id="bttn_f_action" name="bttn_f_action" value="'.Smart::escape_html($y_form_action['button_act']).'" src="'.Smart::escape_html($y_form_action['button_img']).'" '.$y_form_action['jscript'].' style="border:none" title="'.$y_form_action['button_title'].'" alt="'.$y_form_action['button_title'].'"></td>'."\n";
-		$out .= '</tr></table>';
-		$out .= '</td>'."\n";
-	} else {
-		if((Smart::array_size($y_arr_dellink) > 0) AND (Smart::array_size($y_arr_edtlink) > 0)) {
-			$out .= '<td width="'.Smart::format_number_int($the_hd_size_del+$the_hd_size_edt).'" align="center" colspan="2">'."\n";
-			$out .= '';
-			$out .= '</td>'."\n";
-		} elseif(Smart::array_size($y_arr_dellink) > 0) {
-			$out .= '<td width="'.Smart::format_number_int($the_hd_size_del).'" align="center">'."\n";
-			$out .= '';
-			$out .= '</td>'."\n";
-		} elseif(Smart::array_size($y_arr_edtlink) > 0) {
-			$out .= '<td width="'.Smart::format_number_int($the_hd_size_edt).'" align="center">'."\n";
-			$out .= '';
-			$out .= '</td>'."\n";
-		} else {
-			// nothing
-		} //end if else
-	} //end if else
-	//--
-	for($i=0; $i<Smart::array_size($y_arr_fields); $i++) {
-		$out .= '<td align="center" valign="middle" width="'.Smart::escape_html($y_arr_width[$i]).'">'."\n";
-		$out .= '<table width="100%" border="0"><tr>';
-		if($i==0) {
-			if(Smart::array_size($y_form_action) > 0) {
-				$out .= $extra_bttns;
-			} //end if
-		} //end if
-		$out .= '<td align="center"><b>'.$y_arr_fields[$i].'</b></td>';
-		$out .= '</tr></table>';
-		$out .= '</td>'."\n";
-	} //end for
-	//--
-	$out .= '</tr>'."\n";
-	//-------------------------------------------------------- DATA
-	$the_alt_cnt = 0;
-	for($n=0; $n<Smart::array_size($y_arr_data); $n++) {
-		//--
-		$the_alt_cnt += 1;
-		if($the_alt_cnt % 2) {
-			$the_alt_color = $alt_color_two;
-		} else {
-			$the_alt_color = $alt_color_one;
-		} //end else
-		//--
-		$tmp_id = $y_arr_data[$n]; // the id must be get first
-		//--
-		$out .= '<tr valign="top" '.self::table_active_row($the_alt_color, $bgcolor_highlight, $click_color).'>'."\n";
-		//--
-		if(Smart::array_size($y_form_action) > 0) {
-			//--
-			$out .= '<td align="center" width="'.Smart::format_number_int($the_hd_size_del).'">'."\n";
-			$out .= '<input type="checkbox" name="id[]" value="'.Smart::escape_html($tmp_id).'">';
-			$out .= '</td>'."\n";
-			//--
-		} else {
-			//--
-			if(Smart::array_size($y_arr_dellink) > 0) {
-				//--
-				$out .= '<td align="center" width="'.Smart::format_number_int($the_hd_size_del).'" onClick="this.parentNode.title=\'**\';">'."\n";
-				//--
-				if(strlen($y_arr_dellink['custom_picture']) > 0) {
-					eval("\n".$y_arr_dellink['custom_picture']."\n");
-					$the_del_pict = $delete_custom_picture;
-				} else {
-					$the_del_pict = 'lib/core/img/op_delete.png';
-				} //end if else
-				//--
-				if((Smart::format_number_int($y_arr_dellink['width']) > 0) AND (Smart::format_number_int($y_arr_dellink['height']) > 0)) {
-					$the_onclick = 'SmartJS_BrowserUtils.PopUpLink(this.href, this.target, '.Smart::format_number_int($y_arr_dellink['width']).', '.Smart::format_number_int($y_arr_dellink['height']).', 0, 1);';
-				} else {
-					$the_onclick = 'SmartJS_BrowserUtils.PopUpLink(this.href, this.target);';
-				} //end if else
-				//--
-				$out .= '<a href="'.Smart::escape_html(str_replace('{{{id}}}', rawurlencode($tmp_id), $y_arr_dellink['link'])).'" target="'.'del__'.Smart::escape_html($y_wnd_js).'" onClick="'.$the_onclick.' return false;"><img src="'.Smart::escape_html($the_del_pict).'" border="0" title="'.$y_arr_dellink['title'].'" alt="'.$y_arr_dellink['title'].'"></a>';
-				//--
-				$out .= '</td>'."\n";
-				//--
-			} //end if
-			//--
-		} //end if else
-		//--
-		if(Smart::array_size($y_arr_edtlink) > 0) {
-			//--
-			$out .= '<td align="center" width="'.Smart::format_number_int($the_hd_size_edt).'" onClick="this.parentNode.title=\'**\';">'."\n"; // disable onclick for parent row (fix)
-			//--
-			if(strlen($y_arr_edtlink['custom_picture']) > 0) {
-				eval("\n".$y_arr_edtlink['custom_picture']."\n");
-				$the_edt_pict = $edit_custom_picture;
-			} else {
-				$the_edt_pict = 'lib/core/img/op_edit.png';
-			} //end if else
-			//--
-			if((Smart::format_number_int($y_arr_edtlink['width']) > 0) AND (Smart::format_number_int($y_arr_edtlink['height']) > 0)) {
-				$the_onclick = 'SmartJS_BrowserUtils.PopUpLink(this.href, this.target, '.Smart::format_number_int($y_arr_edtlink['width']).', '.Smart::format_number_int($y_arr_edtlink['height']).', 0, 1);';
-			} else {
-				$the_onclick = 'SmartJS_BrowserUtils.PopUpLink(this.href, this.target);';
-			} //end if else
-			//--
-			$out .= '<a href="'.Smart::escape_html(str_replace('{{{id}}}', rawurlencode($tmp_id), $y_arr_edtlink['link'])).'" target="'.'edt__'.Smart::escape_html($y_wnd_js).'_'.sha1(date('Y-m-d H:i:s').$tmp_id).'" onClick="'.$the_onclick.' return false;"><img src="'.Smart::escape_html($the_edt_pict).'" border="0" title="'.$y_arr_edtlink['title'].'" alt="'.$y_arr_edtlink['title'].'"></a>';
-			//--
-			$out .= '</td>'."\n";
-			//--
-		} //end if
-		//--
-		$a = 0;
-		for($i=0; $i<Smart::array_size($y_arr_fields); $i++) {
-			//--
-			$the_align = 'center';
-			if((string)$y_arr_align[$a] != '') {
-				$the_align = $y_arr_align[$a];
-			} // end if
-			//--
-			$a += 1;
-			//--
-			$kk = $i + $n;
-			$value = $y_arr_data[$kk];
-			//--
-			$out .= '<td align="'.$the_align.'">'."\n";
-			if((string)$y_arr_process[$i] == '') {
-				$out .= Smart::escape_html($value);
-			} else {
-				eval("\n".$y_arr_process[$i]."\n");
-				$out .= $value;
-			} //end if else
-			//--
-			$out .= '</td>'."\n";
-			//--
-		} //end for
-		//--
-		$out .= '</tr>'."\n";
-		//--
-		$n += (Smart::array_size($y_arr_fields)-1); // salt
-		//--
-	} //end for
-	//-------------------------------------------------------- END LINE
-	$out .= '<tr id="'.$color_title.'">'."\n";
-	//--
-	if((int)$tbl_plus_cols > 0) {
-		//--
-		if((int)$tbl_plus_cols > 1) {
-			$out .= '<td valign="middle" align="center" colspan="'.$tbl_plus_cols.'">'."\n";
-		} else {
-			$out .= '<td valign="middle" align="center">'."\n";
-		} //end if else
-		$out .= '<font size="1">&nbsp;</font>';
-		$out .= '</td>'."\n";
-		//--
-	} else {
-		// nothing
-	} //end if else
-	//--
-	$out .= '<td width="99%" align="center" valign="middle" colspan="'.(Smart::array_size($y_arr_fields)).'">'."\n";
-	$out .= '<font size="1">&nbsp;</font>';
-	$out .= '</td>'."\n";
-	$out .= '</tr>'."\n";
-	//-------------------------------------------------------- END
-	$out .= '</table>'."\n";
-	$out .= '</div>'."\n";
-	//--
-	if(Smart::array_size($y_form_action) > 0) {
-		$out .= '</form>'."\n";
-	} //end if
-	//--------------------------------------------------------
-
-	//--
-	return $out;
-	//--
-
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Create a static table
- *
- * @access 		private
- * @internal
- *
- * @return STRING		HTML code
- *
- */
-public static function table_ncolumns($arr_data, $ycols, $ytitle='', $y_counter='no', $y_width='', $y_cellspacing='8', $y_align='center', $y_firstisheader='no', $y_bgcolors='') {
-
-	// v.141009.0945
-
-	// $y_counter :: yes / no / full
-
-	//-- $y_bgcolors ::
-	//		''
-	//		array(
-	//			'bg' => '#FCFCFC',
-	//			'text-head-color' => '#FFFFFF',
-	//			'header' => '#778899',
-	//			'text-color' => '#000000',
-	//			'color1' => '#ECECEC',
-	//			'color2' => '#CCCCCC'
-	//		)
-	//--
-
-	//--
-	if(!is_array($arr_data)) {
-		return '';
-	} else {
-		$arr_data = array_values($arr_data);
-	} //end if else
-	//--
-
-	//--
-	$bg_color = '';
-	//--
-	if(is_array($y_bgcolors)) {
-		if((string)$y_bgcolors['bg'] != '') {
-			$bg_color = 'bgcolor="'.$y_bgcolors['bg'].'" ';
-		} //end if
-	} //end if
-	//--
-
-	//--
-	$ycols = (int) 0 + $ycols;
-	//--
-	if($ycols < 1) {
-		$ycols = 1;
-	} //end if
-	//--
-	$tmp_cell_w_percent = floor((1 / $ycols) * 100).'%';
-	//--
-	$max_loops = count($arr_data);
-	//--
-
-	//--
-	$out = "\n".'<!-- START nColumns TABLE -->'."\n";
-	$out .= '<table '.$bg_color.'border="0" align="'.$y_align.'" width="'.$y_width.'" cellpadding="4" cellspacing="0">';
-	//--
-	if(strlen($ytitle) > 0) {
-		$out .= '<tr><th><div align="left">'.$ytitle.'</div></th></tr>';
-	} //end if
-	//--
-	$out .= '<tr><td>'."\n";
-	//--
-
-	//--
-	$alt_cols = 0;
-	//--
-	if($max_loops > 0) {
-		//--
-		$out .= '<table width="100%" border="0" cellpadding="2" cellspacing="'.$y_cellspacing.'" align="'.$y_align.'">'."\n";
-		//--
-		for($i=0;$i<$max_loops; $i++) {
-			//-- start row
-			if(($i % $ycols) == 0) {
-				//-- alternate color
-				if(is_array($y_bgcolors)) {
-					//--
-					$tmp_text_color = '#000000'; // in the case it is not defined
-					//--
-					if((string)$y_bgcolors['text-color'] != '') {
-						$tmp_text_color = (string) $y_bgcolors['text-color'];
-					} //end if
-					//--
-					if((string)$y_firstisheader == 'yes') {
-						//--
-						if($alt_cols <= 0) { // header
-							if((string)$y_bgcolors['text-head-color'] != '') {
-								$tmp_text_color = (string) $y_bgcolors['text-head-color'];
-							} //end if
-							$tmp_alt_color = (string) $y_bgcolors['header'];
-						} else {
-							if($alt_cols % 2) {
-								$tmp_alt_color = (string) $y_bgcolors['color1'];
-							} else {
-								$tmp_alt_color = (string) $y_bgcolors['color2'];
-							} //end if else
-						} //end if else
-						//--
-					} else {
-						//--
-						if($alt_cols % 2) {
-							$tmp_alt_color = (string) $y_bgcolors['color2'];
-						} else {
-							$tmp_alt_color = (string) $y_bgcolors['color1'];
-						} //end if else
-						//--
-					} //end if else
-					//--
-				} else {
-					//--
-					$tmp_alt_color = '';
-					//--
-				} //end if
-				//--
-				$out .= '<!-- row -->';
-				//--
-				if(((string)$tmp_alt_color == '') OR ((string)$tmp_text_color == '')) {
-					$out .= "\n".'<tr title="#'.($alt_cols+1).'" valign="top">'."\n";
-				} else {
-					$out .= "\n".'<tr title="#'.($alt_cols+1).'" valign="top" style="color:'.$tmp_text_color.'; background-color:'.$tmp_alt_color.';">'."\n";
-				} //end if else
-				//--
-				$alt_cols++;
-				//--
-			} //end if
-			//--
-			$out .= '<td width="'.$tmp_cell_w_percent.'">';
-			$out .= $arr_data[$i]."\n";
-			$out .= '</td>'."\n";
-			//-- end row
-			if((($i+1) % $ycols) == 0) {
-				$out .= '</tr>'."\n"; // end of row
-			} //end if
-			//--
-		} //end for
-		//--
-		$out .= '</table>'."\n";
-		//--
-	} //end if
-	//--
-
-	//--
-	$out .= '</td></tr>'."\n";
-	//--
-	if((string)$y_counter == 'yes') {
-		$out .= '<tr><td colspan="'.$ycols.'" title="#'.Smart::escape_html($max_loops).'">&nbsp;</td></tr>'."\n";
-	} elseif((string)$y_counter == 'full') {
-		$out .= '<tr><td colspan="'.$ycols.'" align="center">'.'<b>#'.Smart::escape_html($max_loops).'</b></td></tr>'."\n";
-	} //end if
-	//--
-	$out .= '</table>'."\n";
-	$out .= '<!-- END nColumns TABLE -->'."\n";
-	//--
-
-	//--
-	return $out;
-	//--
-
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
  * Creates a navigation pager
  * The style of the pager can be set overall in: $configs['nav']['pager'], and can be: arrows or numeric
  *
@@ -1664,7 +1173,7 @@ public static function table_ncolumns($arr_data, $ycols, $ytitle='', $y_counter=
  * @return HTML Code
  *
  */
-public static function navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
+public static function html_navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
 	//--
 	$styles = '';
 	//--
@@ -1679,7 +1188,7 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 			$tpl = 'lib/core/templates/navpager-arrows.inc.htm';
 		} //end if else
 		//--
-		return (string) $styles.self::arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
+		return (string) $styles.self::html_navpager_type_arrows($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
 		//--
 	} else {
 		//--
@@ -1690,7 +1199,7 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 			$tpl = 'lib/core/templates/navpager-numeric.inc.htm';
 		} //end if else
 		//--
-		return (string) $styles.self::numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
+		return (string) $styles.self::html_navpager_type_numeric($tpl, $link, $total, $limit, $current, $display_if_empty, $adjacents, $options);
 		//--
 	} //end if else
 	//--
@@ -1700,7 +1209,7 @@ public static function navpager($link, $total, $limit, $current, $display_if_emp
 
 //================================================================
 // $link = 'some-script.php?ofs={{{offset}}}';
-private static function arrows_navpager($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
+private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
 	//--
 	$tpl = (string) $tpl;
 	$link = (string) $link;
@@ -1909,7 +1418,7 @@ private static function arrows_navpager($tpl, $link, $total, $limit, $current, $
 
 //================================================================
 // $link = 'some-script.php?ofs={{{offset}}}';
-private static function numeric_navpager($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
+private static function html_navpager_type_numeric($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
 	//--
 	$tpl = (string) $tpl;
 	$link = (string) $link;
@@ -2101,34 +1610,76 @@ private static function numeric_navpager($tpl, $link, $total, $limit, $current, 
 
 //================================================================
 /**
- * Post Form by Ajax
+ * Draws a HTML JS-UI Date Selector Field
  *
- * @param $y_form_id 			HTML form ID (Example: myForm)
- * @param $y_script_url 		the php script to post to (Example: admin.php)
- * @param $y_confirm_question 	if not empty will ask a confirmation question
- * @param $y_evcode				if not empty, JS to execute on Success (before anything else)
+ * @param STRING 	$y_id					[HTML page ID for field (unique) ; used foor JavaScript]
+ * @param STRING 	$y_var					[HTML Variable Name or empty if no necessary]
+ * @param DATE 		$yvalue					[DATE, empty or formated as YYYY-MM-DD]
+ * @param STRING 	$y_text_select			[The text as title: 'Select Date']
+ * @param JS-Date 	$yjs_mindate			[JS Expression, Min Date] :: new Date(1937, 1 - 1, 1) or '-1y -1m -1d'
+ * @param JS-Date 	$yjs_maxdate			[JS Expression, Max Date] :: new Date(2037, 12 - 1, 31) or '1y 1m 1d'
+ * @param ARRAY 	$y_extra_options		[Options Array[width, ...] for for datePicker]
+ * @param JS-Code 	$y_js_evcode			[JS Code to execute on Select(date)]
  *
- * @return STRING				[javascript code]
+ * @return STRING 							[HTML Code]
  */
-public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_question='', $y_evcode='') {
+public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', $y_extra_options=array(), $y_js_evcode='') {
+	//-- v.160306
+	if((string)$yvalue != '') {
+		$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
+	} //end if
 	//--
-	$y_evcode = (string) trim((string)$y_evcode);
+	$y_js_evcode = (string) trim((string)$y_js_evcode);
 	//--
-	if((string)Smart::get_from_config('js.notifications') == 'growl') {
-		$tmp_use_growl = 'yes';
+	if((int)Smart::get_from_config('regional.calendar-week-start') == 1) {
+		$the_first_day = 1; // Calendar Start on Monday
 	} else {
-		$tmp_use_growl = 'no';
+		$the_first_day = 0; // Calendar Start on Sunday
 	} //end if else
 	//--
-	$js_post = 'SmartJS_BrowserUtils.Submit_Form_By_Ajax(\''.Smart::escape_js($y_form_id).'\', \''.Smart::escape_js($y_script_url).'\', \''.Smart::escape_js($tmp_use_growl).'\', \''.Smart::escape_js($y_evcode).'\');';
+	$the_altdate_format = self::get_date_format_for_js((string)Smart::get_from_config('regional.calendar-date-format-client'));
 	//--
-	if(strlen($y_confirm_question) > 0) {
-		$js_post = self::js_draw_html_confirm_dialog($y_confirm_question, $js_post);
+	if(!is_array($y_extra_options)) {
+		$y_extra_options = array();
+	} //end if
+	if((string)$y_extra_options['width'] == '') {
+		$the_option_size = '85';
 	} else {
-		$js_post = $js_post;
+		$the_option_size = (string) $y_extra_options['width'];
+	} //end if
+	$the_option_size = 0 + $the_option_size;
+	if($the_option_size >= 1) {
+		$the_option_size = ' width:'.((int)$the_option_size).'px;';
+	} elseif($the_option_size > 0) {
+		$the_option_size = ' width:'.($the_option_size * 100).'%;';
+	} else {
+		$the_option_size = '';
 	} //end if else
 	//--
-	return $js_post;
+	if((string)$yjs_mindate == '') {
+		$yjs_mindate = 'null';
+	} //end if
+	if((string)$yjs_maxdate == '') {
+		$yjs_maxdate = 'null';
+	} //end if
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/ui-picker-date.inc.htm',
+		[
+			'LANG' 				=> (string) SmartTextTranslations::getLanguage(),
+			'THE-ID' 			=> (string) $y_id,
+			'THE-VAR' 			=> (string) $y_var,
+			'THE-VALUE' 		=> (string) $yvalue,
+			'TEXT-SELECT' 		=> (string) $y_text_select,
+			'ALT-DATE-FORMAT' 	=> (string) $the_altdate_format,
+			'STYLE-SIZE' 		=> (string) $the_option_size,
+			'FDOW' 				=> (int)    $the_first_day, // of week
+			'DATE-MIN' 			=> (string) $yjs_mindate,
+			'DATE-MAX' 			=> (string) $yjs_maxdate,
+			'EVAL-JS' 			=> (string) $y_js_evcode
+		],
+		'yes' // export to cache
+	);
 	//--
 } //END FUNCTION
 //================================================================
@@ -2136,7 +1687,215 @@ public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_q
 
 //================================================================
 /**
- * Answer Post Form by Ajax
+ * Draws a HTML JS-UI Time Selector Field
+ *
+ * @param STRING 	$y_id					[HTML page ID for field (unique) ; used foor JavaScript]
+ * @param STRING 	$y_var					[HTML Variable Name]
+ * @param HH:ii 	$yvalue					[TIME, pre-definned value, formated as 24h HH:ii]
+ * @param STRING 	$y_text_select			[The text for 'Select Time']
+ * @param 0..22 	$y_h_st					[Starting Time]
+ * @param 1..23 	$y_h_end				[Ending Time]
+ * @param 0..58 	$y_i_st					[Starting Minute]
+ * @param 1..59 	$y_i_end				[Ending Minute]
+ * @param 1..30 	$y_i_step				[Step of Minutes]
+ * @param INTEGER 	$y_rows 				[Default is 2]
+ * @param JS-Code 	$y_extra_options		[Options Array[width, ...] for timePicker]
+ * @param JS-Code 	$y_js_evcode			[JS Code to execute on Select(time)]
+ *
+ * @return STRING 							[HTML Code]
+ */
+public static function html_js_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', $y_extra_options=array(), $y_js_evcode='') {
+	//-- v.160306
+	if((string)$yvalue != '') {
+		$yvalue = date('H:i', @strtotime(date('Y-m-d').' '.$yvalue)); // enforce this time format for internals and be sure is valid
+	} //end if
+	//--
+	$y_js_evcode = (string) trim((string)$y_js_evcode);
+	//--
+	$prep_hstart = Smart::format_number_int($y_h_st, '+');
+	$prep_hend = Smart::format_number_int($y_h_end, '+');
+	$prep_istart = Smart::format_number_int($y_i_st, '+');
+	$prep_iend = Smart::format_number_int($y_i_end, '+');
+	$prep_iinterv = Smart::format_number_int($y_i_step, '+');
+	$prep_rows = Smart::format_number_int($y_rows, '+');
+	//--
+	if(!is_array($y_extra_options)) {
+		$y_extra_options = array();
+	} //end if
+	if((string)$y_extra_options['width'] == '') {
+		$the_option_size = '50';
+	} else {
+		$the_option_size = (string) $y_extra_options['width'];
+	} //end if
+	$the_option_size = 0 + $the_option_size;
+	if($the_option_size >= 1) {
+		$the_option_size = ' width:'.((int)$the_option_size).'px;';
+	} elseif($the_option_size > 0) {
+		$the_option_size = ' width:'.($the_option_size * 100).'%;';
+	} else {
+		$the_option_size = '';
+	} //end if else
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/ui-picker-time.inc.htm',
+		[
+			'LANG' 			=> (string) SmartTextTranslations::getLanguage(),
+			'THE-ID' 		=> (string) $y_id,
+			'THE-VAR' 		=> (string) $y_var,
+			'THE-VALUE' 	=> (string) $yvalue,
+			'TEXT-SELECT' 	=> (string) $y_text_select,
+			'STYLE-SIZE' 	=> (string) $the_option_size,
+			'H-START' 		=> (int)    $prep_hstart,
+			'H-END' 		=> (int)    $prep_hend,
+			'MIN-START'		=> (int)    $prep_istart,
+			'MIN-END' 		=> (int)    $prep_iend,
+			'MIN-INTERVAL' 	=> (int)    $prep_iinterv,
+			'DISPLAY-ROWS' 	=> (int)    $prep_rows,
+			'EVAL-JS' 		=> (string) $y_js_evcode
+		],
+		'yes' // export to cache
+	);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: Draw Limited Text Area
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function html_js_limited_text_area($y_field_id, $y_var_name, $y_var_value, $y_limit, $y_css_w='125px', $y_css_h='50px', $y_placeholder='', $y_wrap='physical', $y_rawval='no') {
+	//--
+	$y_limit = (int) $y_limit; // max characters :: between 100 and 99999
+	//--
+	if($y_limit < 50) {
+		$y_limit = 50;
+	} elseif($y_limit > 99999) {
+		$y_limit = 99999;
+	} //end if
+	//--
+	if($y_rawval != 'yes') {
+		$y_var_value = Smart::escape_html($y_var_value);
+	} //end if
+	//--
+	if((string)$y_field_id != '') {
+		$field = (string) $y_field_id;
+	} else { //  no ID, generate a hash
+		$fldhash = sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'_'.Smart::uuid_10_str();
+		$field = '__Fld_TEXTAREA__'.$fldhash.'__NO_Id__';
+	} //end if else
+	//--
+	$placeholder = '';
+	if((string)$y_placeholder != '') {
+		$placeholder = ' placeholder="'.Smart::escape_html($y_placeholder).'"';
+	} //end if
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/limited-text-area.inc.htm',
+		[
+			'LIMIT-CHARS' 		=> (int) $y_limit,
+			'ID-AREA' 			=> (string) $field,
+			'VAR-AREA' 			=> (string) $y_var_name,
+			'VAL-AREA-HTML' 	=> (string) $y_var_value, // this is pre-escaped if not raw
+			'WRAP-MODE' 		=> (string) $y_wrap,
+			'WIDTH' 			=> (string) $y_css_w,
+			'HEIGHT' 			=> (string) $y_css_h,
+			'PLACEHOLDER-HTML' 	=> (string) $placeholder
+		],
+		'yes' // export to cache
+	);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Refresh Parent
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_code_wnd_refresh_parent($y_redir_url='') {
+	//--
+	$y_redir_url = (string) $y_redir_url;
+	if((string)$y_redir_url != '') {
+		return 'SmartJS_BrowserUtils.RefreshParent(\''.Smart::escape_js((string)$y_redir_url).'\');';
+	} else {
+		return 'SmartJS_BrowserUtils.RefreshParent();';
+	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * (Delayed) close Pop-Up / Modal
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_code_wnd_close_modal_popup($y_delay=-1) {
+	//--
+	$y_delay = (int) $y_delay; // microseconds
+	if($y_delay > 0) {
+		return 'SmartJS_BrowserUtils.CloseDelayedModalPopUp('.(int)$y_delay.');';
+	} else {
+		return 'SmartJS_BrowserUtils.CloseDelayedModalPopUp();';
+	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Return the JS Code to Submit a HTML Form by Ajax
+ * Expects a standardized (json) reply created with SmartComponents::js_ajax_replyto_html_form()
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
+ *
+ * @param $y_form_id 			HTML form ID (Example: myForm)
+ * @param $y_script_url 		the php script to post to (Example: admin.php)
+ * @param $y_confirm_question 	if not empty will ask a confirmation question
+ * @param $y_js_evcode			if not empty, JS to execute on Success (before anything else)
+ *
+ * @return STRING				[javascript code]
+ */
+public static function js_ajax_submit_html_form($y_form_id, $y_script_url, $y_confirm_question='', $y_js_evcode='') {
+	//--
+	$y_js_evcode = (string) trim((string)$y_js_evcode);
+	//--
+	if((string)Smart::get_from_config('js.notifications') == 'growl') {
+		$tmp_use_growl = 'yes';
+	} else {
+		$tmp_use_growl = 'no';
+	} //end if else
+	//--
+	$js_post = 'SmartJS_BrowserUtils.Submit_Form_By_Ajax(\''.Smart::escape_js($y_form_id).'\', \''.Smart::escape_js($y_script_url).'\', \''.Smart::escape_js($tmp_use_growl).'\', \''.Smart::escape_js($y_js_evcode).'\');';
+	//--
+	if(strlen($y_confirm_question) > 0) {
+		$js_post = (string) self::js_code_ui_confirm_dialog($y_confirm_question, (string)$js_post);
+	} else {
+		$js_post = (string) $js_post;
+	} //end if else
+	//--
+	return (string) $js_post;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Reply back to the HTML Form submited by Ajax by returning a Json answer
+ * Creates a standardized (json) reply for SmartComponents::js_ajax_submit_html_form()
  *
  * NOTICE:
  * - if OK: and redirect URL have been provided, the replace div is not handled
@@ -2153,7 +1912,7 @@ public static function post_form_by_ajax($y_form_id, $y_script_url, $y_confirm_q
  * @return STRING				[javascript code]
  *
  */
-public static function post_answer_by_ajax($y_status, $y_title, $y_message, $y_redirect_url='', $y_replace_div='', $y_replace_html='', $y_js_evcode='') {
+public static function js_ajax_replyto_html_form($y_status, $y_title, $y_message, $y_redirect_url='', $y_replace_div='', $y_replace_html='', $y_js_evcode='') {
 	//--
 	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
 	//--
@@ -2187,26 +1946,29 @@ public static function post_answer_by_ajax($y_status, $y_title, $y_message, $y_r
 
 //================================================================
 /**
- * Draw Close Window Button with Confirmation or Not by JavaScript
+ * Function: JS Escape Mixed JS Code
  *
  * @access 		private
  * @internal
  *
- * @return STRING				[javascript code]
  */
-public static function draw_btn_close_confirm_window($y_bttn_id, $y_confirm_close='no') {
+public static function escape_js_mixed_type_code($y_jscode) {
 	//--
-	$translator_core_window = SmartTextTranslations::getTranslator('@core', 'window');
+	$y_jscode = (string) trim((string)$y_jscode);
 	//--
-	if((string)$y_confirm_close == 'yes') {
-		$action = self::js_draw_html_confirm_dialog($translator_core_window->text('confirm_action'), 'SmartJS_BrowserUtils_PageAway=true; SmartJS_BrowserUtils.CloseModalPopUp();');
-	} else {
-		$action = 'SmartJS_BrowserUtils.CloseModalPopUp();';
+	$iscode = false;
+	if(substr($y_jscode, 0, 11) == 'javascript:') {
+		$iscode = true;
+		$y_jscode = (string) trim((string)substr((string)$y_jscode, 11)); // javascript explicit prefixed executable code (ex: javascript: some code) ; need to remove out the javascript: part
+	} elseif(preg_match('/^\s?function\s?\(/i', (string)$y_jscode)) {
+		$iscode = true;
+		$y_jscode = (string) $y_jscode; // javascript variable function (ex: function(){ ...})
 	} //end if else
+	if(($iscode === false) OR ((string)$y_jscode == '')) {
+		$y_jscode = (string) "'".Smart::escape_js($y_jscode)."'"; // text or eval code
+	} //end if
 	//--
-	$out = '<input type="button" id="'.Smart::escape_html($y_bttn_id).'" value="'.$translator_core_window->text('button_modal_close').'" onClick="'.$action.' return false;">';
-	//--
-	return $out;
+	return (string) $y_jscode;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2214,216 +1976,17 @@ public static function draw_btn_close_confirm_window($y_bttn_id, $y_confirm_clos
 
 //================================================================
 /**
- * Scroll Down Window by JavaScript
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[html code]
- */
-public static function scroll_down_window($y_offset) {
-	//-- if offset is -1 will gotoEnd
-	return '<script type="text/javascript">SmartJS_BrowserUtils.windwScrollDown(window, '.intval($y_offset).');</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Refresh Parent Window by JavaScript
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[html code]
- */
-public static function close_window($y_timeout=750) {
-	//--
-	$y_timeout = (int) $y_timeout;
-	if($y_timeout < 1) {
-		$y_timeout = 1;
-	} //end if
-	if($y_timeout > 10000) {
-		$y_timeout = 10000;
-	} //end if
-	//--
-	$out = '';
-	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
-		$out = '<script type="text/javascript">SmartJS_BrowserUtils.CloseDelayedModalPopUp('.intval($y_timeout).');</script>';
-	} //end if
-	//--
-	return $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * AutoRefresh Window by JavaScript
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[html code]
- */
-public static function autorefresh($y_link, $y_miliseconds='10000') {
-	//--
-	$y_miliseconds = (int) $y_miliseconds;
-	if($y_miliseconds < 1) {
-		$y_miliseconds = 1;
-	} //end if
-	if($y_miliseconds > 3600000) {
-		$y_miliseconds = 3600000;
-	} //end if
-	//-- we wish to disable modal in this case to avoid losing modal window by refresh
-	return '<script type="text/javascript">SmartJS_BrowserUtils_Use_iFModalBox_Active = 0; SmartJS_BrowserUtils.RedirectDelayedToURL(\''.Smart::escape_js($y_link).'\', '.intval($y_miliseconds).');</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Refresh Parent Window by JavaScript
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[html code]
- */
-public static function refresh_parent($y_custom_url='') {
-	//--
-	if((string)$y_custom_url != '') {
-		$out = '<script type="text/javascript">SmartJS_BrowserUtils.RefreshParent(\''.Smart::escape_js($y_custom_url).'\');</script>';
-	} else {
-		$out = '<script type="text/javascript">SmartJS_BrowserUtils.RefreshParent();</script>';
-	} //end if else
-	//--
-	return $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Redirect Parent Window by JavaScript
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[html code]
- */
-public static function redirect_parent($y_custom_url) {
-	//--
-	return '<script type="text/javascript">SmartJS_BrowserUtils.RedirectParent(\''.Smart::escape_js($y_custom_url).'\');</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Redirect Parent Window by JavaScript
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[html code]
- */
-public static function redirect_btn_parent($y_custom_url) {
-	//--
-	return 'SmartJS_BrowserUtils.RedirectParent(\''.Smart::escape_js($y_custom_url).'\');';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Redirect a Page by JavaScript
- *
- * @access 		private
- * @internal
- *
- * @param STRING $y_location (URL to redirect :: ABSOLUTE or RELATIVE)
- * @param INTEGER $y_timeout (time in miliseconds :: 1000 ms = 1 s)
- * @return HTML code
- */
-public static function redirect_page($y_location, $y_timeout='1000') {
-	//--
-	$y_timeout = (int) $y_timeout;
-	if($y_timeout < 1) {
-		$y_timeout = 1;
-	} //end if
-	if($y_timeout > 10000) {
-		$y_timeout = 10000;
-	} //end if
-	//--
-	return '<script type="text/javascript">SmartJS_BrowserUtils.RedirectDelayedToURL(\''.Smart::escape_js($y_location).'\', '.intval($y_timeout).');</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Javascript to Redirect a Window by Button
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[html code]
- */
-public static function redirect_btn_page($y_location) {
-	//--
-	return 'SmartJS_BrowserUtils.RedirectToURL(\''.Smart::escape_js($y_location).'\');';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Javascript to Check All Checkboxes
- *
- * @access 		private
- * @internal
- *
- * @return STRING				[js code]
- */
-public static function js_draw_checkbox_checkall($y_form_name) {
-	//--
-	return 'SmartJS_BrowserUtils.checkAll_CkBoxes(\''.Smart::escape_js($y_form_name).'\');';
-	//--
-} //END FORM
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Draw a Growl Notification
+ * Returns the JS Code to add (raise) a Growl Notification (sticky or not)
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_draw_growl($y_title, $y_text, $y_image, $y_time=6000, $y_sticky='false', $y_class='') {
+public static function js_code_notification_add($y_title, $y_text, $y_image, $y_time=6000, $y_sticky='false', $y_class='') {
 	//--
-	if(substr($y_title, 0, 11) == 'javascript:') {
-		$y_title = substr($y_title, 11);
-	} else {
-		$y_title = "'".Smart::escape_js($y_title)."'";
-	} //end if
-	//--
-	if(substr($y_text, 0, 11) == 'javascript:') {
-		$y_text = substr($y_text, 11);
-	} else {
-		$y_text = "'".Smart::escape_js($y_text)."'";
-	} //end if
+	$y_title 	= (string) self::escape_js_mixed_type_code($y_title);
+	$y_text 	= (string) self::escape_js_mixed_type_code($y_text);
 	//--
 	if((string)$y_sticky != 'true') {
 		$y_sticky = 'false';
@@ -2434,7 +1997,7 @@ public static function js_draw_growl($y_title, $y_text, $y_image, $y_time=6000, 
 		$y_time = 1; // miliseconds
 	} //end if
 	//--
-	return 'SmartJS_BrowserUtils.GrowlNotificationAdd('.$y_title.', '.$y_text.', \''.Smart::escape_js($y_image).'\', '.$y_time.', '.$y_sticky.', \''.Smart::escape_js($y_class).'\');';
+	return 'SmartJS_BrowserUtils.GrowlNotificationAdd('.$y_title.', '.$y_text.', \''.Smart::escape_js($y_image).'\', '.(int)$y_time.', '.(string)$y_sticky.', \''.Smart::escape_js((string)$y_class).'\');';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2442,13 +2005,14 @@ public static function js_draw_growl($y_title, $y_text, $y_image, $y_time=6000, 
 
 //================================================================
 /**
- * Function: JS Clear a Growl Notification
+ * Returns the JS Code to remove a Growl Notification (sticky or not)
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_cleanup_growl($y_id='') {
+public static function js_code_notification_remove($y_id='') {
 	//-- here we take it as raw as this is the name of a JS variable ...
 	$y_id = trim((string)$y_id); // (no prepare js string)
 	if(!preg_match('/^[a-zA-Z0-9_]+$/', (string)$y_id)) {
@@ -2463,15 +2027,16 @@ public static function js_cleanup_growl($y_id='') {
 
 //================================================================
 /**
- * Function: JS Draw a Notification Dialog
+ * Return the JS Code to init a JS-UI Confirm Dialog
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_draw_html_confirm_dialog($y_question_html, $y_ok_jscript_function='', $y_width='550', $y_height='225', $y_title='?') {
+public static function js_code_ui_confirm_dialog($y_question_html, $y_ok_jscript_function='', $y_width='550', $y_height='225', $y_title='?') {
 	//--
-	return 'SmartJS_BrowserUtils.confirm_Dialog(\''.Smart::escape_js($y_question_html).'\', \''.Smart::escape_js($y_ok_jscript_function).'\', \''.Smart::escape_js($y_title).'\', '.intval($y_width).', '.intval($y_height).');';
+	return 'SmartJS_BrowserUtils.confirm_Dialog(\''.Smart::escape_js($y_question_html).'\', \''.Smart::escape_js($y_ok_jscript_function).'\', \''.Smart::escape_js($y_title).'\', '.(int)$y_width.', '.(int)$y_height.');';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2479,15 +2044,16 @@ public static function js_draw_html_confirm_dialog($y_question_html, $y_ok_jscri
 
 //================================================================
 /**
- * Function: JS Draw a Notification Alert
+ * Return the JS Code to init a JS-UI Alert Dialog
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_draw_html_alert($y_message, $y_ok_jscript_function='', $y_width='', $y_height='', $y_title='!') {
+public static function js_code_ui_alert_dialog($y_message, $y_ok_jscript_function='', $y_width='', $y_height='', $y_title='!') {
 	//--
-	return 'SmartJS_BrowserUtils.alert_Dialog(\''.Smart::escape_js($y_message).'\', \''.Smart::escape_js($y_ok_jscript_function).'\', \''.Smart::escape_js($y_title).'\', '.intval($y_width).', '.intval($y_height).');';
+	return 'SmartJS_BrowserUtils.alert_Dialog(\''.Smart::escape_js($y_message).'\', \''.Smart::escape_js($y_ok_jscript_function).'\', \''.Smart::escape_js($y_title).'\', '.(int)$y_width.', '.(int)$y_height.');';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2495,13 +2061,14 @@ public static function js_draw_html_alert($y_message, $y_ok_jscript_function='',
 
 //================================================================
 /**
- * Function: JS Confirm Form Submit
+ * Return the JS Code to Confirm Form Submit by raising a Dialog / Notification (depend on global settings)
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_draw_html_confirm_form_submit($y_question, $y_popuptarget='', $y_width='', $y_height='', $y_force_popup='', $y_force_dims='') {
+public static function js_code_confirm_form_submit($y_question, $y_popuptarget='', $y_width='', $y_height='', $y_force_popup='', $y_force_dims='') {
 	//--
 	if((string)$y_width != '') {
 		$y_width = Smart::format_number_int((0+$y_width), '+');
@@ -2523,7 +2090,15 @@ public static function js_draw_html_confirm_form_submit($y_question, $y_popuptar
 
 
 //================================================================
-public static function js_init_away_page($y_question='') {
+/**
+ * Return the JS Code to Init Page-Away Confirmation when trying to leave a page
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_code_init_away_page($y_question='') {
 	//--
 	$translator_core_js_messages = SmartTextTranslations::getTranslator('@core', 'js_messages');
 	//--
@@ -2534,7 +2109,7 @@ public static function js_init_away_page($y_question='') {
 		$y_question = 'Do you want to leave this page ?';
 	} //end if else
 	//--
-	return '<script type="text/javascript">SmartJS_BrowserUtils.PageAwayControl(\''.Smart::escape_js($y_question).'\');</script>';
+	return 'SmartJS_BrowserUtils.PageAwayControl(\''.Smart::escape_js($y_question).'\');';
 	//--
 } //END FUNCTION
 //================================================================
@@ -2542,66 +2117,116 @@ public static function js_init_away_page($y_question='') {
 
 //================================================================
 /**
- * Outputs the HTML Code to init the HTML (wysiwyg) Editor
+ * Returns the JS Code to Init an Input Field with AutoComplete Single
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
  *
- * @param $y_filebrowser_link STRING 		URL to Image Browser (Example: script.php?op=image-gallery&type=images)
- *
- * @return STRING							[HTML Code]
- */
-public static function js_init_html_area($y_filebrowser_link='') {
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/html-editor-init.inc.htm',
-		[
-			'LANG' => (string) SmartTextTranslations::getLanguage(),
-			'FILE-BROWSER-CALLBACK-URL' => (string) $y_filebrowser_link
-		],
-		'yes' // export to cache
-	);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Draw a TextArea with a built-in javascript HTML (wysiwyg) Editor
- *
- * @param STRING $yid					[Unique HTML Page Element ID]
- * @param STRING $yvarname				[HTML Form Variable Name]
- * @param STRING $yvalue				[HTML Data]
- * @param INTEGER+ $ywidth				[Area Width: (Example) 720px or 75%]
- * @param INTEGER+ $yheight				[Area Height (Example) 480px or 50%]
- * @param BOOLEAN $y_allow_scripts		[Allow JavaScripts]
- * @param BOOLEAN $y_allow_script_src	[Allow JavaScript SRC attribute]
- * @param MIXED $y_cleaner_deftags 		['' or array of HTML Tags to be allowed / dissalowed by the cleaner ... see HTML Cleaner Documentation]
- * @param ENUM $y_cleaner_mode 			[HTML Cleaner mode for defined tags: ALLOW / DISALLOW]
- * @param STRING $y_toolbar_ctrls		[Toolbar Controls: ... see CLEditor Documentation]
- *
- * @return STRING						[HTML Code]
+ * @access 		private
+ * @internal
  *
  */
-public static function js_draw_html_area($yid, $yvarname, $yvalue='', $ywidth='720px', $yheight='480px', $y_allow_scripts=false, $y_allow_script_src=false, $y_cleaner_deftags='', $y_cleaner_mode='', $y_toolbar_ctrls='') {
+public static function js_code_init_select_autocomplete_single($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_js_evcode='') {
 	//--
-	if((string)$y_cleaner_mode != '') {
-		if((string)$y_cleaner_mode !== 'DISALLOW') {
-			$y_cleaner_mode = 'ALLOW';
-		} //end if
+	$y_min_len = Smart::format_number_int($y_min_len, '+');
+	if($y_min_len < 1) {
+		$y_min_len = 1;
+	} elseif($y_min_len > 255) {
+		$y_min_len = 255;
 	} //end if
 	//--
+	$y_js_evcode = (string) trim((string)$y_js_evcode);
+	//--
+	return 'try { SmartJS_BrowserUIUtils.AutoCompleteField(\'single\', \''.Smart::escape_js((string)$y_element_id).'\', \''.Smart::escape_js((string)$y_script).'\', \''.Smart::escape_js((string)$y_term_var).'\', '.(int)$y_min_len.', \''.Smart::escape_js((string)$y_js_evcode).'\'); } catch(e) { console.log(\'Failed to initialize JS-UI AutoComplete-Single: \' + e); }';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Returns the JS Code to Init an Input Field with AutoComplete Multi
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_code_init_select_autocomplete_multi($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_js_evcode='') {
+	//--
+	$y_min_len = Smart::format_number_int($y_min_len, '+');
+	if($y_min_len < 1) {
+		$y_min_len = 1;
+	} elseif($y_min_len > 255) {
+		$y_min_len = 255;
+	} //end if
+	//--
+	$y_js_evcode = (string) trim((string)$y_js_evcode);
+	//--
+	return 'try { SmartJS_BrowserUIUtils.AutoCompleteField(\'multilist\', \''.Smart::escape_js((string)$y_element_id).'\', \''.Smart::escape_js((string)$y_script).'\', \''.Smart::escape_js((string)$y_term_var).'\', '.(int)$y_min_len.', \''.Smart::escape_js((string)$y_js_evcode).'\'); } catch(e) { console.log(\'Failed to initialize JS-UI AutoComplete-Multi: \' + e); }';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Returns the JS Code to Init a JS-UI Tabs Element
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_code_uitabs_init($y_id_of_tabs, $y_selected=0, $y_prevent_reload=false) {
+	//--
+	$y_selected = Smart::format_number_int($y_selected, '+');
+	//--
+	if($y_prevent_reload === true) {
+		$prevreload = 'true';
+	} else {
+		$prevreload = 'false';
+	} //end if else
+	//--
+	return 'try { SmartJS_BrowserUIUtils.Tabs_Init(\''.Smart::escape_js($y_id_of_tabs).'\', '.$y_selected.', '.$prevreload.'); } catch(e) { console.log(\'Failed to initialize JS-UI Tabs: \' + e); }';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Returns the JS Code to Activate/Deactivate JS-UI Tabs Element
+ * Must be enclosed in a <script type="text/javascript">...</script> html tag or can be used for a JS action (ex: onClick="...")
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_code_uitabs_activate($y_id_of_tabs, $y_activate) {
+	//--
+	if($y_activate === false) {
+		$activate = 'false';
+	} else {
+		$activate = 'true';
+	} //end if else
+	//--
+	return 'try { SmartJS_BrowserUIUtils.Tabs_Activate(\''.Smart::escape_js($y_id_of_tabs).'\', '.$activate.'); } catch(e) { console.log(\'Failed to activate JS-UI Tabs: \' + e); }';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function html_js_preview_iframe($yid, $y_contents, $y_width='720px', $y_height='300px', $y_maximized=false, $y_sandbox='allow-popups') {
+	//--
 	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/html-editor-draw.inc.htm',
+		'lib/core/templates/preview-iframe-draw.inc.htm',
 		[
-			'TXT-AREA-ID' 					=> (string) $yid, // HTML or JS ID
-			'TXT-AREA-VAR-NAME' 			=> (string) $yvarname, // HTML variable name
-			'TXT-AREA-WIDTH' 				=> (string) $ywidth, // 100px or 100%
-			'TXT-AREA-HEIGHT' 				=> (string) $yheight, // 100px or 100%
-			'TXT-AREA-CONTENT' 				=> (string) $yvalue,
-			'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool)   $y_allow_scripts, // boolean
-			'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool)   $y_allow_script_src, // boolean
-			'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed, will be json encoded in tpl
-			'CLEANER-MODE-TAGS' 			=> (string) $y_cleaner_mode,
-			'TXT-AREA-TOOLBAR' 				=> (string) $y_toolbar_ctrls
+			'IFRM-ID' 		=> (string) $yid,
+			'WIDTH' 		=> (string) $y_width,
+			'HEIGHT' 		=> (string) $y_height,
+			'SANDBOX' 		=> (string) $y_sandbox,
+			'MAXIMIZED' 	=> (bool)   $y_maximized,
+			'CONTENT' 		=> (string) $y_contents
 		],
 		'yes' // export to cache
 	);
@@ -2612,35 +2237,12 @@ public static function js_draw_html_area($yid, $yvarname, $yvalue='', $ywidth='7
 
 //================================================================
 /**
- * CallBack Mapping for HTML (wysiwyg) Editor - FileBrowser Integration
- *
- * @param STRING $yurl					The Callback URL
- * @param BOOLEAN $is_popup 			Set to True if Popup (incl. Modal)
- *
- * @return STRING						[JS Code]
- */
-public static function js_callback_html_area($yurl, $is_popup=false) {
-	//--
-	return (string) str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/html-editor-callback.inc.htm',
-		[
-			'IS_POPUP' 	=> (int)    $is_popup,
-			'URL' 		=> (string) $yurl
-		],
-		'yes' // export to cache
-	));
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Init the Code Editor (Edit Area)
+ * Return the HTML / Javascript code to Load the required Javascripts for the Code Editor (Edit Area).
+ * Should be called just once, before calling one or many ::html_js_editarea()
  *
  * @return STRING						[HTML Code]
  */
-public static function js_init_editarea() {
+public static function html_jsload_editarea() {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/code-editor-init.inc.htm',
@@ -2656,7 +2258,7 @@ public static function js_init_editarea() {
 
 //================================================================
 /**
- * Draw a TextArea with a built-in javascript Code Editor (Edit Area).
+ * Return the HTML / Javascript code with a special TextArea with a built-in javascript Code Editor (Edit Area).
  * Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL, PHP, Text (default).
  *
  * @param STRING $yid					[Unique HTML Page Element ID]
@@ -2671,7 +2273,7 @@ public static function js_init_editarea() {
  * @return STRING						[HTML Code]
  *
  */
-public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='text', $y_editable=true, $y_width='720px', $y_height='300px', $y_line_numbers=true) {
+public static function html_js_editarea($yid, $yvarname, $yvalue='', $y_mode='text', $y_editable=true, $y_width='720px', $y_height='300px', $y_line_numbers=true) {
 	//--
 	$the_lang = SmartTextTranslations::getLanguage();
 	//--
@@ -2749,17 +2351,20 @@ public static function js_draw_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 
 
 //================================================================
-public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px', $y_height='300px', $y_maximized=false, $y_sandbox='allow-popups') {
+/**
+ * Outputs the HTML Code to init the HTML (wysiwyg) Editor
+ *
+ * @param $y_filebrowser_link STRING 		URL to Image Browser (Example: script.php?op=image-gallery&type=images)
+ *
+ * @return STRING							[HTML Code]
+ */
+public static function html_jsload_htmlarea($y_filebrowser_link='') {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/preview-iframe-draw.inc.htm',
+		'lib/core/templates/html-editor-init.inc.htm',
 		[
-			'IFRM-ID' 		=> (string) $yid,
-			'WIDTH' 		=> (string) $y_width,
-			'HEIGHT' 		=> (string) $y_height,
-			'SANDBOX' 		=> (string) $y_sandbox,
-			'MAXIMIZED' 	=> (bool)   $y_maximized,
-			'CONTENT' 		=> (string) $y_contents
+			'LANG' => (string) SmartTextTranslations::getLanguage(),
+			'FILE-BROWSER-CALLBACK-URL' => (string) $y_filebrowser_link
 		],
 		'yes' // export to cache
 	);
@@ -2770,71 +2375,43 @@ public static function js_draw_preview_iframe($yid, $y_contents, $y_width='720px
 
 //================================================================
 /**
- * Draws a JS-Date-Box Field with Calendar
+ * Draw a TextArea with a built-in javascript HTML (wysiwyg) Editor
  *
- * @param STRING 	$y_id					[HTML page ID for field (unique) ; used foor JavaScript]
- * @param STRING 	$y_var					[HTML Variable Name or empty if no necessary]
- * @param DATE 		$yvalue					[DATE, empty or formated as YYYY-MM-DD]
- * @param STRING 	$y_text_select			[The text as title: 'Select Date']
- * @param JS-Date 	$yjs_mindate			[JS Expression, Min Date] :: new Date(1937, 1 - 1, 1) or '-1y -1m -1d'
- * @param JS-Date 	$yjs_maxdate			[JS Expression, Max Date] :: new Date(2037, 12 - 1, 31) or '1y 1m 1d'
- * @param ARRAY 	$y_extra_options		[Options Array[width, ...] for for datePicker]
- * @param JS-Code 	$yjs_custom				[JS Code to execute on Select(date)]
+ * @param STRING $yid					[Unique HTML Page Element ID]
+ * @param STRING $yvarname				[HTML Form Variable Name]
+ * @param STRING $yvalue				[HTML Data]
+ * @param INTEGER+ $ywidth				[Area Width: (Example) 720px or 75%]
+ * @param INTEGER+ $yheight				[Area Height (Example) 480px or 50%]
+ * @param BOOLEAN $y_allow_scripts		[Allow JavaScripts]
+ * @param BOOLEAN $y_allow_script_src	[Allow JavaScript SRC attribute]
+ * @param MIXED $y_cleaner_deftags 		['' or array of HTML Tags to be allowed / dissalowed by the cleaner ... see HTML Cleaner Documentation]
+ * @param ENUM $y_cleaner_mode 			[HTML Cleaner mode for defined tags: ALLOW / DISALLOW]
+ * @param STRING $y_toolbar_ctrls		[Toolbar Controls: ... see CLEditor Documentation]
  *
- * @return STRING 							[HTML Code]
+ * @return STRING						[HTML Code]
+ *
  */
-public static function js_draw_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', $y_extra_options=array(), $yjs_custom='') {
-	//-- v.160306
-	if((string)$yvalue != '') {
-		$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
-	} //end if
+public static function html_js_htmlarea($yid, $yvarname, $yvalue='', $ywidth='720px', $yheight='480px', $y_allow_scripts=false, $y_allow_script_src=false, $y_cleaner_deftags='', $y_cleaner_mode='', $y_toolbar_ctrls='') {
 	//--
-	if((int)Smart::get_from_config('regional.calendar-week-start') == 1) {
-		$the_first_day = 1; // Calendar Start on Monday
-	} else {
-		$the_first_day = 0; // Calendar Start on Sunday
-	} //end if else
-	//--
-	$the_altdate_format = self::get_date_format_for_js((string)Smart::get_from_config('regional.calendar-date-format-client'));
-	//--
-	if(!is_array($y_extra_options)) {
-		$y_extra_options = array();
-	} //end if
-	if((string)$y_extra_options['width'] == '') {
-		$the_option_size = '85';
-	} else {
-		$the_option_size = (string) $y_extra_options['width'];
-	} //end if
-	$the_option_size = 0 + $the_option_size;
-	if($the_option_size >= 1) {
-		$the_option_size = ' width:'.((int)$the_option_size).'px;';
-	} elseif($the_option_size > 0) {
-		$the_option_size = ' width:'.($the_option_size * 100).'%;';
-	} else {
-		$the_option_size = '';
-	} //end if else
-	//--
-	if((string)$yjs_mindate == '') {
-		$yjs_mindate = 'null';
-	} //end if
-	if((string)$yjs_maxdate == '') {
-		$yjs_maxdate = 'null';
+	if((string)$y_cleaner_mode != '') {
+		if((string)$y_cleaner_mode !== 'DISALLOW') {
+			$y_cleaner_mode = 'ALLOW';
+		} //end if
 	} //end if
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/ui-picker-date.inc.htm',
+		'lib/core/templates/html-editor-draw.inc.htm',
 		[
-			'LANG' 				=> (string) SmartTextTranslations::getLanguage(),
-			'THE-ID' 			=> (string) $y_id,
-			'THE-VAR' 			=> (string) $y_var,
-			'THE-VALUE' 		=> (string) $yvalue,
-			'TEXT-SELECT' 		=> (string) $y_text_select,
-			'ALT-DATE-FORMAT' 	=> (string) $the_altdate_format,
-			'STYLE-SIZE' 		=> (string) $the_option_size,
-			'FDOW' 				=> (int)    $the_first_day, // of week
-			'DATE-MIN' 			=> (string) $yjs_mindate,
-			'DATE-MAX' 			=> (string) $yjs_maxdate,
-			'EVAL-JS' 			=> (string) $yjs_custom
+			'TXT-AREA-ID' 					=> (string) $yid, // HTML or JS ID
+			'TXT-AREA-VAR-NAME' 			=> (string) $yvarname, // HTML variable name
+			'TXT-AREA-WIDTH' 				=> (string) $ywidth, // 100px or 100%
+			'TXT-AREA-HEIGHT' 				=> (string) $yheight, // 100px or 100%
+			'TXT-AREA-CONTENT' 				=> (string) $yvalue,
+			'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool)   $y_allow_scripts, // boolean
+			'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool)   $y_allow_script_src, // boolean
+			'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed, will be json encoded in tpl
+			'CLEANER-MODE-TAGS' 			=> (string) $y_cleaner_mode,
+			'TXT-AREA-TOOLBAR' 				=> (string) $y_toolbar_ctrls
 		],
 		'yes' // export to cache
 	);
@@ -2845,684 +2422,64 @@ public static function js_draw_date_field($y_id, $y_var, $yvalue, $y_text_select
 
 //================================================================
 /**
- * Draws a JS-Time-Box Field with Times
+ * Returns HTML / JS code for CallBack Mapping for HTML (wysiwyg) Editor - FileBrowser Integration
  *
- * @param STRING 	$y_id					[HTML page ID for field (unique) ; used foor JavaScript]
- * @param STRING 	$y_var					[HTML Variable Name]
- * @param HH:ii 	$yvalue					[TIME, pre-definned value, formated as 24h HH:ii]
- * @param STRING 	$y_text_select			[The text for 'Select Time']
- * @param 0..22 	$y_h_st					[Starting Time]
- * @param 1..23 	$y_h_end				[Ending Time]
- * @param 0..58 	$y_i_st					[Starting Minute]
- * @param 1..59 	$y_i_end				[Ending Minute]
- * @param 1..30 	$y_i_step				[Step of Minutes]
- * @param INTEGER 	$y_rows 				[Default is 2]
- * @param JS-Code 	$y_extra_options		[Options Array[width, ...] for timePicker]
- * @param JS-Code 	$yjs_custom				[JS Code to execute on Select(time)]
+ * @param STRING $yurl					The Callback URL
+ * @param BOOLEAN $is_popup 			Set to True if Popup (incl. Modal)
  *
- * @return STRING 							[HTML Code]
+ * @return STRING						[JS Code]
  */
-public static function js_draw_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', $y_extra_options=array(), $yjs_custom='') {
-	//-- v.160306
-	if((string)$yvalue != '') {
-		$yvalue = date('H:i', @strtotime(date('Y-m-d').' '.$yvalue)); // enforce this time format for internals and be sure is valid
-	} //end if
+public static function html_js_htmlarea_fm_callback($yurl, $is_popup=false) {
 	//--
-	$prep_hstart = Smart::format_number_int($y_h_st, '+');
-	$prep_hend = Smart::format_number_int($y_h_end, '+');
-	$prep_istart = Smart::format_number_int($y_i_st, '+');
-	$prep_iend = Smart::format_number_int($y_i_end, '+');
-	$prep_iinterv = Smart::format_number_int($y_i_step, '+');
-	$prep_rows = Smart::format_number_int($y_rows, '+');
-	//--
-	if(!is_array($y_extra_options)) {
-		$y_extra_options = array();
-	} //end if
-	if((string)$y_extra_options['width'] == '') {
-		$the_option_size = '50';
-	} else {
-		$the_option_size = (string) $y_extra_options['width'];
-	} //end if
-	$the_option_size = 0 + $the_option_size;
-	if($the_option_size >= 1) {
-		$the_option_size = ' width:'.((int)$the_option_size).'px;';
-	} elseif($the_option_size > 0) {
-		$the_option_size = ' width:'.($the_option_size * 100).'%;';
-	} else {
-		$the_option_size = '';
-	} //end if else
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/ui-picker-time.inc.htm',
+	return (string) str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/html-editor-fm-callback.inc.htm',
 		[
-			'LANG' 			=> (string) SmartTextTranslations::getLanguage(),
-			'THE-ID' 		=> (string) $y_id,
-			'THE-VAR' 		=> (string) $y_var,
-			'THE-VALUE' 	=> (string) $yvalue,
-			'TEXT-SELECT' 	=> (string) $y_text_select,
-			'STYLE-SIZE' 	=> (string) $the_option_size,
-			'H-START' 		=> (int)    $prep_hstart,
-			'H-END' 		=> (int)    $prep_hend,
-			'MIN-START'		=> (int)    $prep_istart,
-			'MIN-END' 		=> (int)    $prep_iend,
-			'MIN-INTERVAL' 	=> (int)    $prep_iinterv,
-			'DISPLAY-ROWS' 	=> (int)    $prep_rows,
-			'EVAL-JS' 		=> (string) $yjs_custom
+			'IS_POPUP' 	=> (int)    $is_popup,
+			'URL' 		=> (string) $yurl
 		],
 		'yes' // export to cache
-	);
+	));
 	//--
 } //END FUNCTION
 //================================================================
 
 
-//================================================================
-/**
- * Function: JS Draw Limited Text Area
- *
- */
-public static function js_draw_limited_text_area($y_field_id, $y_var_name, $y_var_value, $y_limit, $y_css_w='125px', $y_css_h='50px', $y_placeholder='', $y_wrap='physical', $y_rawval='no') {
-	//--
-	$y_limit = (int) $y_limit; // max characters :: between 100 and 99999
-	//--
-	if($y_limit < 50) {
-		$y_limit = 50;
-	} elseif($y_limit > 99999) {
-		$y_limit = 99999;
-	} //end if
-	//--
-	if($y_rawval != 'yes') {
-		$y_var_value = Smart::escape_html($y_var_value);
-	} //end if
-	//--
-	if(strlen($y_field_id) > 0) {
-		$field = (string) $y_field_id;
-	} else {
-		$fldhash = sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'_'.Smart::uuid_10_str();
-		$field = '__Fld_TEXTAREA__'.$fldhash.'__NO_Id__';
-	} //end if else
-	//--
-	$placeholder = '';
-	if((string)$y_placeholder != '') {
-		$placeholder = ' placeholder="'.Smart::escape_html($y_placeholder).'"';
-	} //end if
-	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/limited-text-area.inc.htm',
-		[
-			'LIMIT-CHARS' 		=> (int) $y_limit,
-			'ID-AREA' 			=> (string) $field,
-			'VAR-AREA' 			=> (string) $y_var_name,
-			'VAL-AREA-HTML' 	=> (string) $y_var_value, // this is pre-escaped if not raw
-			'WRAP-MODE' 		=> (string) $y_wrap,
-			'WIDTH' 			=> (string) $y_css_w,
-			'HEIGHT' 			=> (string) $y_css_h,
-			'PLACEHOLDER-HTML' 	=> (string) $placeholder
-		],
-		'yes' // export to cache
-	);
-	//--
-} //END FUNCTION
-//================================================================
+//### END CHECK
 
 
 //================================================================
 /**
- * Function: JS-UI Draw AutoComplete Single
+ * Function: Draw App Powered Info
  *
  * @access 		private
  * @internal
  *
  */
-public static function js_draw_ui_autocomplete_single($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_eval_selector_js='') {
-	//--
-	$y_min_len = Smart::format_number_int($y_min_len, '+');
-	if($y_min_len < 1) {
-		$y_min_len = 1;
-	} elseif($y_min_len > 255) {
-		$y_min_len = 255;
-	} //end if
-	//--
-	return '<script type="text/javascript">SmartJS_BrowserUIUtils.AutoCompleteField(\'single\', \''.Smart::escape_js($y_element_id).'\', \''.Smart::escape_js($y_script).'\', \''.Smart::escape_js($y_term_var).'\', '.$y_min_len.', \''.Smart::escape_js($y_eval_selector_js).'\');</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS-UI Draw AutoComplete Multi
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_draw_ui_autocomplete_multi($y_element_id, $y_script, $y_term_var, $y_min_len=1, $y_eval_selector_js='') {
-	//--
-	$y_min_len = Smart::format_number_int($y_min_len, '+');
-	if($y_min_len < 1) {
-		$y_min_len = 1;
-	} elseif($y_min_len > 255) {
-		$y_min_len = 255;
-	} //end if
-	//--
-	return '<script type="text/javascript">SmartJS_BrowserUIUtils.AutoCompleteField(\'multilist\', \''.Smart::escape_js($y_element_id).'\', \''.Smart::escape_js($y_script).'\', \''.Smart::escape_js($y_term_var).'\', '.$y_min_len.', \''.Smart::escape_js($y_eval_selector_js).'\');</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Init JS-UI Tabs
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_ajx_tabs_init($y_id_of_tabs, $y_selected=0, $y_prevent_reload=false) {
-	//--
-	$y_selected = Smart::format_number_int($y_selected, '+');
-	//--
-	if($y_prevent_reload === true) {
-		$prevreload = 'true';
-	} else {
-		$prevreload = 'false';
-	} //end if else
-	//--
-	return '<script type="text/javascript">try { SmartJS_BrowserUIUtils.Tabs_Init(\''.Smart::escape_js($y_id_of_tabs).'\', '.$y_selected.', '.$prevreload.'); } catch(e) { console.log(\'Failed to initialize JS-UI Tabs: \' + e); }</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Activate/Deactivate JS-UI Tabs
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_ajx_tabs_activate($y_id_of_tabs, $y_activate) {
-	//--
-	if($y_activate === false) {
-		$activate = 'false';
-	} else {
-		$activate = 'true';
-	} //end if else
-	//--
-	return '<script type="text/javascript">try { SmartJS_BrowserUIUtils.Tabs_Activate(\''.Smart::escape_js($y_id_of_tabs).'\', '.$activate.'); } catch(e) { console.log(\'Failed to activate JS-UI Tabs: \' + e);</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Ajax Wait for Complete
- * used just for reports (only once per page to avoid conflicts
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_ajx_wait_complete($y_div_id, $y_html_code, $y_url, $y_method='GET') {
-	//--
-	$div_id = 'AJX_requester_DIV_'.$y_div_id;
-	//--
-	return '<div id="'.Smart::escape_html($div_id).'">'.$y_html_code.'</div><script type="text/javascript">SmartJS_BrowserUtils.Load_Div_Content_By_Ajax(\''.Smart::escape_js($div_id).'\', \'lib/core/img/busy_timer.gif\', \''.Smart::escape_js($y_url).'\', \''.Smart::escape_js($y_method).'\', \'html\');</script>';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: JS Redirect on Success, Button if Error
- * used just for reports (only once per page to avoid conflicts
- *
- * @access 		private
- * @internal
- *
- */
-public static function js_redirect_on_success_button_on_error($y_redirect_url, $y_error, $y_timeout='1000') {
-	//--
-	$translator_core_window = SmartTextTranslations::getTranslator('@core', 'window');
-	//--
-	if(strlen($y_error) > 0) {
-		$out = '<br><input type="button" value="'.$translator_core_window->text('action_back').'" class="bttnz" onClick="SmartJS_BrowserUtils.RedirectToURL(\''.Smart::escape_js($y_redirect_url).'\'); return false;"><br>';
-	} else {
-		$out = '<br><img src="lib/core/img/busy_circle.gif"><br>'.self::redirect_page($y_redirect_url, $y_timeout);
-	} //end if else
-	//--
-	return $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Get Browser Image
- *
- * @access 		private
- * @internal
- *
- */
-public static function get_browser_pict($y_bw) {
-	//--
-	switch(strtolower($y_bw)) {
-		case '@s#':
-			$pict = '<span title="[SmartFramework/Robot]"><img src="lib/core/img/browser/@smart-robot.png"></span>';
-			break;
-		case 'bot':
-			$pict = '<span title="Robots / Crawlers"><img src="lib/core/img/browser/bot.png"></span>';
-			break;
-		case 'lyx':
-			$pict = '<span title="Lynx Text Browser"><img src="lib/core/img/browser/lyx.png"></span>';
-			break;
-		case 'moz':
-			$pict = '<span title="Mozilla / Seamonkey"><img src="lib/core/img/browser/moz.png"></span>';
-			break;
-		case 'fox':
-			$pict = '<span title="Firefox"><img src="lib/core/img/browser/fox.png"></span>';
-			break;
-		case 'cam':
-			$pict = '<span title="Camino"><img src="lib/core/img/browser/cam.png"></span>';
-			break;
-		case 'crm':
-			$pict = '<span title="Google Chrome / Chromium"><img src="lib/core/img/browser/crm.png"></span>';
-			break;
-		case 'sfr':
-			$pict = '<span title="Apple Safari / Webkit"><img src="lib/core/img/browser/sfr.png"></span>';
-			break;
-		case 'iex':
-			$pict = '<span title="MS Internet Explorer"><img src="lib/core/img/browser/iex.png"></span>';
-			break;
-		case 'opr':
-			$pict = '<span title="Opera"><img src="lib/core/img/browser/opr.png"></span>';
-			break;
-		case 'mid':
-			$pict = '<span title="Midori / Webkit"><img src="lib/core/img/browser/mid.png"></span>';
-			break;
-		case 'knq':
-			$pict = '<span title="Konqueror"><img src="lib/core/img/browser/knq.png"></span>';
-			break;
-		case 'eph':
-			$pict = '<span title="Epiphany"><img src="lib/core/img/browser/eph.png"></span>';
-			break;
-		case 'gal':
-			$pict = '<span title="Galeon"><img src="lib/core/img/browser/gal.png"></span>';
-			break;
-		case 'omw':
-			$pict = '<span title="Omniweb Browser"><img src="lib/core/img/browser/omw.png"></span>';
-			break;
-		default:
-			$pict = '<span title="[UNKNOWN] Browser :: '.Smart::escape_html($y_bw).'"><img src="lib/core/img/sign_notice.png"></span>';
-	} //end switch
-	//--
-	return $pict;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Get Browser Image
- *
- * @access 		private
- * @internal
- *
- */
-public static function get_os_pict($y_os, $y_prefix='') {
-	//--
-	switch(strtolower($y_os)) {
-		//-
-		case 'netbsd':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'NetBSD Operating System"><img src="lib/core/img/os/bsd_netbsd.png"></span>';
-			break;
-		case 'openbsd':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'OpenBSD Operating System"><img src="lib/core/img/os/bsd_openbsd.png"></span>';
-			break;
-		case 'freebsd':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'FreeBSD Operating System"><img src="lib/core/img/os/bsd_freebsd.png"></span>';
-			break;
-		case 'dragonfly':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'DragonFlyBSD Operating System"><img src="lib/core/img/os/bsd_dragonfly.png"></span>';
-			break;
-		case 'bsd':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'* BSD Operating System"><img src="lib/core/img/os/bsd_generic.png"></span>';
-			break;
-		//-
-		case 'win':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Windows Operating System"><img src="lib/core/img/os/windows.png"></span>';
-			break;
-		case 'macos':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Apple Mac Operating System"><img src="lib/core/img/os/mac_os.png"></span>';
-			break;
-		case 'darwin':
-		case 'macosx':
-		case 'mac':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Apple MacOSX Operating System"><img src="lib/core/img/os/mac_osx.png"></span>';
-			break;
-		//-
-		case 'lnx':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'* Linux Operating System"><img src="lib/core/img/os/linux_generic.png"></span>';
-			break;
-		case 'lnx_debian':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Debian Linux Operating System"><img src="lib/core/img/os/linux_debian.png"></span>';
-			break;
-		case 'lnx_ubuntu':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Ubuntu Linux Operating System"><img src="lib/core/img/os/linux_ubuntu.png"></span>';
-			break;
-		case 'lnx_suse':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'SuSE Linux Operating System"><img src="lib/core/img/os/linux_suse.png"></span>';
-			break;
-		case 'lnx_novell':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Novell Linux Operating System"><img src="lib/core/img/os/linux_novell.png"></span>';
-			break;
-		case 'lnx_redhat':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'RedHat Linux Operating System"><img src="lib/core/img/os/linux_redhat.png"></span>';
-			break;
-		case 'lnx_fedora':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Fedora Linux Operating System"><img src="lib/core/img/os/linux_fedora.png"></span>';
-			break;
-		case 'lnx_centos':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'CentOS Linux Operating System"><img src="lib/core/img/os/linux_centos.png"></span>';
-			break;
-		case 'lnx_gentoo':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Gentoo Linux Operating System"><img src="lib/core/img/os/linux_gentoo.png"></span>';
-			break;
-		case 'lnx_mandrake':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Mandriva / Mandrake Linux Operating System"><img src="lib/core/img/os/linux_mandriva.png"></span>';
-			break;
-		case 'lnx_knoppix':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Knoppix Linux Operating System"><img src="lib/core/img/os/linux_knoppix.png"></span>';
-			break;
-		case 'lnx_arch':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Arch Linux Operating System"><img src="lib/core/img/os/linux_arch.png"></span>';
-			break;
-		//-
-		case 'aix':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'IBM/AIX Operating System"><img src="lib/core/img/os/unix_ibmaix.png"></span>';
-			break;
-		case 'hpx':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'HP-UX Operating System"><img src="lib/core/img/os/unix_hpux.png"></span>';
-			break;
-		case 'opensolaris':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Open Solaris Operating System"><img src="lib/core/img/os/unix_opensolaris.png"></span>';
-			break;
-		case 'nexenta':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Nexenta Operating System"><img src="lib/core/img/os/unix_nexentasolaris.png"></span>';
-			break;
-		case 'sun':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Sun/Solaris Operating System"><img src="lib/core/img/os/unix_solaris.png"></span>';
-			break;
-		case 'sco':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Sco/Unixware Operating System"><img src="lib/core/img/os/unix_sco.png"></span>';
-			break;
-		case 'irx':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'SGI/IRIX Operating System"><img src="lib/core/img/os/unix_sgiirix.png"></span>';
-			break;
-		//-
-		case 'ios':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Apple/iOS Mobile Operating System (iPhone)"><img src="lib/core/img/os/mobile/ios.png"></span>';
-			break;
-		case 'ipd':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Apple/iOS Mobile Operating System (iPad)"><img src="lib/core/img/os/mobile/ios_tablet.png"></span>';
-			break;
-		case 'mlx':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Linux Mobile Operating System"><img src="lib/core/img/os/mobile/linux_mobile.png"></span>';
-			break;
-		case 'and':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Google/Android Mobile Operating System"><img src="lib/core/img/os/mobile/android.png"></span>';
-			break;
-		case 'mgo':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Nokia/MeeGO Mobile Operating System"><img src="lib/core/img/os/mobile/meego.png"></span>';
-			break;
-		case 'nsy':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Nokia/Symbian Mobile Operating System"><img src="lib/core/img/os/mobile/symbian.png"></span>';
-			break;
-		case 'bby':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'BlackBerry Mobile Operating System"><img src="lib/core/img/os/mobile/blackberry.png"></span>';
-			break;
-		case 'wce':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'WindowsCE Mobile Operating System"><img src="lib/core/img/os/mobile/wince.png"></span>';
-			break;
-		case 'plm':
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'Palm Mobile Operating System"><img src="lib/core/img/os/mobile/palm.png"></span>';
-			break;
-		//-
-		case '[?]':
-		default:
-			$pict = '<span title="'.Smart::escape_html($y_prefix).'[UNKNOWN] Operating System :: '.Smart::escape_html($y_os).'"><img src="lib/core/img/sign_notice.png"></span>';
-		//-
-	} //end switch
-	//--
-	return $pict;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Display Yes=y/No=n Selector
- *
- * @access 		private
- * @internal
- *
- * @param STRING $y_var			:: HTML Var Name
- * @param STRING $y_val			:: '' | 'y' | 'n'
- * @param STRING $ytxt_yes		:: Text for 'Yes'
- * @param STRING $ytxt_no		:: Text for 'No'
- * @return STRING				:: HTML Code
- */
-public static function yes_no_selector($y_var, $y_val) {
-//--
-$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
-//--
-$txt_yes = $translator_core_messages->text('yes');
-$txt_no = $translator_core_messages->text('no');
-//--
-if((string)$y_val == 'y') {
-	$tmp_m = 'checked';
-	$tmpx_code = $txt_yes;
-} //end if
-if((string)$y_val == 'n') {
-	$tmp_f = 'checked';
-	$tmpx_code = $txt_no;
-} //end if
-//--
-$y_var = Smart::escape_html((string)$y_var);
-//--
-$code = <<<HTML_CODE
-  {$txt_yes}<input name="{$y_var}" type="radio" value="y" {$tmp_m}>
-  &nbsp; &nbsp;
-  {$txt_no}<input name="{$y_var}" type="radio" value="n" {$tmp_f}>
-HTML_CODE;
-//--
-if((string)$y_var == '') {
-	$code = (string) $tmpx_code;
-} //end if
-//--
-return (string) $code;
-//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Display True=1/False=0 Selector
- *
- * @access 		private
- * @internal
- *
- * @param STRING $y_var			:: HTML Var Name
- * @param STRING $y_val			:: '' | '0' | '1'
- * @param STRING $ytxt_true		:: Text for 'Yes' (True=1)
- * @param STRING $ytxt_false	:: Text for 'No' (False=0)
- * @return STRING				:: HTML Code
- */
-public static function true_false_selector($y_var, $y_val) {
-//--
-$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
-//--
-$txt_true = $translator_core_messages->text('yes');
-$txt_false = $translator_core_messages->text('no');
-//--
-if((string)$y_val == '1') {
-	$tmp_m = 'checked';
-	$tmpx_code = $txt_true;
-} else {
-	$tmp_f = 'checked';
-	$tmpx_code = $txt_false;
-} //end if
-//--
-$y_var = Smart::escape_html((string)$y_var);
-//--
-$code = <<<HTML_CODE
-  {$txt_true}<input name="{$y_var}" type="radio" value="1" {$tmp_m}>
-  &nbsp; &nbsp;
-  {$txt_false}<input name="{$y_var}" type="radio" value="0" {$tmp_f}>
-HTML_CODE;
-//--
-if((string)$y_var == '') {
-	$code = (string) $tmpx_code;
-} //end if
-//--
-return (string) $code;
-//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function html_form_vars($y_var, $y_html_var) {
-	//--
-	$out = '';
-	//--
-	$regex_var = '/^([_a-zA-Z0-9])+$/';
-	//--
-	if(((string)$y_html_var != '') AND (preg_match((string)$regex_var, (string)$y_html_var))) {
-		if(is_array($y_var)) { // SYNC VARS
-			foreach($y_var as $key => $val) {
-				if(((string)$key != '') AND (preg_match((string)$regex_var, (string)$key))) {
-					$out .= '<input type="hidden" name="'.Smart::escape_html((string)$y_html_var).'['.Smart::escape_html((string)$key).']" value="'.Smart::escape_html((string)$val).'">'."\n";
-				} //end if
-			} //end for
-		} elseif((string)$y_var != '') {
-			$out .= '<input type="hidden" name="'.Smart::escape_html((string)$y_html_var).'" value="'.Smart::escape_html((string)$y_var).'">'."\n";
-		} //end if else
-	} //end if
-	//--
-	return (string) $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// the allowed date formats for Javascript (just for display reasons)
-public static function get_date_format_for_js($y_format) {
-	//-- yy = year with 4 digits, mm = month 01..12, dd = day 01..31
-	$format = 'yy-mm-dd'; // the default format
-	//--
-	switch((string)$y_format) {
-		//--
-		case 'yy.mm.dd':
-		case 'yy-mm-dd':
-		case 'yy mm dd':
-		//--
-		case 'dd.mm.yy':
-		case 'dd-mm-yy':
-		case 'dd mm yy':
-		//--
-		case 'mm.dd.yy':
-		case 'mm-dd-yy':
-		case 'mm dd yy':
-		//--
-			$format = $y_format;
-			break;
-		default:
-			// nothing
-	} //end switch
-	//--
-	return (string) $format;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// the allowed date formats for PHP (just for display reasons)
-public static function get_date_format_for_php($y_format) {
-	//-- Y = year with 4 digits, m = month 01..12, d = day 01..31
-	$format = 'Y-m-d'; // the default format
-	//--
-	switch((string)$y_format) {
-		//--
-		case 'Y.m.d':
-		case 'Y-m-d':
-		case 'Y m d':
-		//--
-		case 'd.m.Y':
-		case 'd-m-Y':
-		case 'd m Y':
-		//--
-		case 'm.d.Y':
-		case 'm-d-Y':
-		case 'm d Y':
-		//--
-			$format = $y_format;
-			break;
-		default:
-			// nothing
-	} //end switch
-	//--
-	return (string) $format;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Draw Powered Info
- *
- * @access 		private
- * @internal
- *
- */
-public static function draw_powered_info($y_show_versions, $y_software_name='', $y_software_powered_logo='') {
+public static function app_powered_info($y_show_versions, $y_software_name='', $y_software_powered_logo='', $y_software_powered_url='') {
 	//--
 	global $configs;
 	//--
-	$os_pict = self::get_os_pict(SmartUtils::get_server_os(), 'Server Powered by ');
+	$arr_os = (array) self::get_imgdesc_by_os_id((string)SmartUtils::get_server_os());
+	$os_pict = (string) $arr_os['img'];
+	$os_desc = (string) $arr_os['desc'];
+	$os_desc = 'Server Powered by '.$os_desc;
 	//--
 	if(((string)$y_software_name == '') OR ((string)$y_software_powered_logo == '')) {
-		$y_software_name = 'Smart.Framework';
+		$y_software_name = 'Smart.Framework, a PHP / Javascript Web Framework';
 		$y_software_powered_logo = 'lib/framework/img/powered_by_smart_framework.png';
+		$y_software_powered_url = (string) SMART_FRAMEWORK_RELEASE_URL;
 	} //end if
 	//--
 	$tmp_arr_web_server = SmartUtils::get_webserver_version();
-	$name_webserver = Smart::escape_html($tmp_arr_web_server['name']);
+	$name_webserver = (string) $tmp_arr_web_server['name'];
 	//--
 	if((string)$y_show_versions == 'yes') { // expose versions (not recommended in web area, except for auth admins)
-		//--
 		$y_software_name .= ' :: '.SMART_SOFTWARE_APP_NAME;
-		//--
-		$version_webserver = ' :: '.Smart::escape_html($tmp_arr_web_server['version']);
-		$version_php = ' :: '.Smart::escape_html(PHP_VERSION);
-		//--
+		$version_webserver = ' :: '.$tmp_arr_web_server['version'];
+		$version_php = ' :: '.PHP_VERSION;
 	} else { // avoid expose versions
-		//--
 		$version_webserver = '';
 		$version_php = '';
-		//--
 	} //end if else
 	//--
 	if(trim(strtolower($name_webserver)) == 'apache') {
@@ -3537,11 +2494,11 @@ public static function draw_powered_info($y_show_versions, $y_software_name='', 
 	$version_dbserver = '';
 	if(is_array($configs['pgsql'])) {
 		if((defined('SMART_FRAMEWORK_DB_VERSION_PostgreSQL')) AND ((string)$y_show_versions == 'yes')) {
-			$version_dbserver = ' :: '.Smart::escape_html(SMART_FRAMEWORK_DB_VERSION_PostgreSQL);
+			$version_dbserver = ' :: '.SMART_FRAMEWORK_DB_VERSION_PostgreSQL;
 		} //end if
 		$name_dbserver = 'PostgreSQL';
-		$icon_dbserver_powered = '<img src="lib/core/img/db/powered_by_postgresql.png">';
-		$icon_dbserver_logo = '<img src="lib/core/img/db/postgresql_logo_small_trans.png">';
+		$icon_dbserver_powered = 'lib/core/img/db/powered_by_postgresql.png';
+		$icon_dbserver_logo = 'lib/core/img/db/postgresql_logo_small_trans.png';
 	} else {
 		$name_dbserver = '';
 		$icon_dbserver_powered = '';
@@ -3550,40 +2507,41 @@ public static function draw_powered_info($y_show_versions, $y_software_name='', 
 	//--
 	if(is_array($configs['redis'])) {
 		$name_cacheserver = 'Redis';
-		$icon_cacheserver_powered = '<img src="lib/core/img/db/powered_by_redis.png">';
-		$icon_cacheserver_logo = '<img src="lib/core/img/db/redis_logo_small_trans.png">';
+		$icon_cacheserver_powered = 'lib/core/img/db/powered_by_redis.png';
+		$icon_cacheserver_logo = 'lib/core/img/db/redis_logo_small_trans.png';
 	} else {
 		$name_cacheserver = '';
 		$icon_cacheserver_powered = '';
 		$icon_cacheserver_logo = '';
 	} //end if
 	//--
-	$name_dblite = 'SQLite';
-	$icon_dblite_powered = 'lib/core/img/db/powered_by_sqlite.png';
-	$icon_dblite_logo = 'lib/core/img/db/sqlite_logo_small.png';
+	$name_db_embedded = 'SQLite';
+	$icon_db_embedded_powered = 'lib/core/img/db/powered_by_sqlite.png';
+	$icon_db_embedded_logo = 'lib/core/img/db/sqlite_logo_small.png';
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/powered-info.inc.htm',
+		'lib/core/templates/app-powered-info.inc.htm',
 		[
-			'OS-LOGO' => $os_pict,
-			'WEB-SERVER-POWERED-VERSION' => $name_webserver.$version_webserver,
-			'WEB-SERVER-POWERED-ICON' => $icon_webserver_powered,
-			'WEB-SERVER-VERSION' => $name_webserver.' Web Server',
-			'WEB-SERVER-ICON' => $icon_webserver_logo,
-			'PHP-VERSION' => $version_php,
-			'DBSERVER-NAME' => $name_dbserver,
-			'DBSERVER-VERSION' => $version_dbserver,
-			'DBSERVER-POWERED-ICON' => $icon_dbserver_powered,
-			'DBSERVER-POWERED-LOGO' => $icon_dbserver_logo,
-			'CACHESERVER-NAME' => $name_cacheserver,
-			'CACHESERVER-POWERED-ICON' => $icon_cacheserver_powered,
-			'CACHESERVER-POWERED-LOGO' => $icon_cacheserver_logo,
-			'DBLITE-NAME' => $name_dblite,
-			'DBLITE-POWERED-ICON' => $icon_dblite_powered,
-			'DBLITE-POWERED-LOGO' => $icon_dblite_logo,
-
-			'SOFTWARE-NAME' => Smart::escape_html($y_software_name),
-			'SOFTWARE-POWERED-LOGO' => Smart::escape_html($y_software_powered_logo)
+			'OS-LOGO-IMG' 					=> (string) $os_pict,
+			'OS-LOGO-DESC' 					=> (string) $os_desc,
+			'WEB-SERVER-POWERED-VERSION' 	=> (string) $name_webserver.$version_webserver,
+			'WEB-SERVER-POWERED-ICON' 		=> (string) $icon_webserver_powered,
+			'WEB-SERVER-VERSION' 			=> (string) $name_webserver.' Web Server',
+			'WEB-SERVER-ICON' 				=> (string) $icon_webserver_logo,
+			'PHP-VERSION' 					=> (string) $version_php,
+			'DBSERVER-NAME' 				=> (string) $name_dbserver,
+			'DBSERVER-VERSION' 				=> (string) $version_dbserver,
+			'DBSERVER-POWERED-ICON' 		=> (string) $icon_dbserver_powered,
+			'DBSERVER-POWERED-LOGO' 		=> (string) $icon_dbserver_logo,
+			'CACHESERVER-NAME' 				=> (string) $name_cacheserver,
+			'CACHESERVER-POWERED-ICON' 		=> (string) $icon_cacheserver_powered,
+			'CACHESERVER-POWERED-LOGO' 		=> (string) $icon_cacheserver_logo,
+			'DBEMBEDDED-NAME' 				=> (string) $name_db_embedded,
+			'DBEMBEDDED-POWERED-ICON' 		=> (string) $icon_db_embedded_powered,
+			'DBEMBEDDED-POWERED-LOGO' 		=> (string) $icon_db_embedded_logo,
+			'SOFTWARE-NAME' 				=> (string) $y_software_name,
+			'SOFTWARE-POWERED-LOGO' 		=> (string) $y_software_powered_logo,
+			'SOFTWARE-POWERED-URL' 			=> (string) $y_software_powered_url
 		]
 	);
 	//--
@@ -3591,7 +2549,7 @@ public static function draw_powered_info($y_show_versions, $y_software_name='', 
 //================================================================
 
 
-//======================================================================
+//================================================================
 public static function render_app_template($template_path, $template_file, $arr_data, $use_caching='no') { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//--
@@ -3675,7 +2633,276 @@ public static function render_app_template($template_path, $template_file, $arr_
 	//--
 
 } //END FUNCTION
-//======================================================================
+//================================================================
+
+
+//================================================================
+/**
+ * Get Browser Image and Description by BW-ID
+ * This is compatible with BW-ID supplied by:
+ * 		cli: SmartUtils::get_os_browser_ip()
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function get_imgdesc_by_bw_id($y_bw) {
+	//--
+	switch(strtolower((string)$y_bw)) { // {{{SYNC-CLI-BW-ID}}}
+		case '@s#':
+			$desc = 'Smart.Framework @Robot';
+			$pict = 'browser/@smart-robot';
+			break;
+		case 'bot':
+			$desc = 'Robot / Crawler';
+			$pict = 'browser/bot';
+			break;
+		case 'lyx':
+			$desc = 'Lynx Text Browser';
+			$pict = 'browser/lyx';
+			break;
+		case 'moz':
+			$desc = 'Mozilla / Seamonkey';
+			$pict = 'browser/moz';
+			break;
+		case 'fox':
+			$desc = 'Mozilla Firefox';
+			$pict = 'browser/fox';
+			break;
+		case 'crm':
+			$desc = 'Google Chrome / Chromium';
+			$pict = 'browser/crm';
+			break;
+		case 'sfr':
+			$desc = 'Apple Safari / Webkit';
+			$pict = 'browser/sfr';
+			break;
+		case 'iee':
+			$desc = 'Microsoft Edge';
+			$pict = 'browser/iee';
+			break;
+		case 'iex':
+			$desc = 'Microsoft Internet Explorer';
+			$pict = 'browser/iex';
+			break;
+		case 'opr':
+			$desc = 'Opera';
+			$pict = 'browser/opr';
+			break;
+		case 'mid':
+			$desc = 'Midori / Webkit';
+			$pict = 'browser/mid';
+			break;
+		case 'knq':
+			$desc = 'Konqueror';
+			$pict = 'browser/knq';
+			break;
+		case 'eph':
+			$desc = 'Epiphany';
+			$pict = 'browser/eph';
+			break;
+		case 'gal':
+			$desc = 'Galeon';
+			$pict = 'browser/gal';
+			break;
+		case 'omw':
+			$desc = 'OmniWeb';
+			$pict = 'browser/omw';
+			break;
+		case 'mxt':
+			$desc = 'Maxthon';
+			$pict = 'browser/mxt';
+			break;
+		case 'nsf':
+			$desc = 'NetSurf';
+			$pict = 'browser/nsf';
+			break;
+		default:
+			$desc = '[UNKNOWN]: ('.(string)$y_bw.')';
+			$pict = 'sign_notice';
+	} //end switch
+	//--
+	return (array) [
+		'img'  => (string) 'lib/core/img/'.$pict.'.png',
+		'desc' => (string) $desc.' :: Web Browser'
+	];
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Get OS Image and Description by OS-ID
+ * This is compatible with OS-ID supplied by:
+ * 		srv: SmartUtils::get_server_os()
+ * 		cli: SmartUtils::get_os_browser_ip()
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function get_imgdesc_by_os_id($y_os_id) {
+	//--
+	switch(strtolower((string)$y_os_id)) { // {{{SYNC-SRV-OS-ID}}} ; {{{SYNC-CLI-OS-ID}}}
+		//-
+		case 'macosx':
+		case 'mac': // cli
+			$desc = 'Apple MacOSX';
+			$pict = 'os/mac_osx';
+			break;
+		//-
+		case 'winnt':
+		case 'win': // cli
+			$desc = 'Microsoft Windows';
+			$pict = 'os/windows';
+			break;
+		//-
+		case 'bsd-os':
+		case 'bsd': // cli
+			$desc = 'BSD';
+			$pict = 'os/bsd_generic';
+			break;
+		case 'netbsd':
+			$desc = 'NetBSD';
+			$pict = 'os/bsd_netbsd';
+			break;
+		case 'openbsd':
+			$desc = 'OpenBSD';
+			$pict = 'os/bsd_openbsd';
+			break;
+		case 'freebsd':
+			$desc = 'FreeBSD';
+			$pict = 'os/bsd_freebsd';
+			break;
+		case 'dragonfly':
+			$desc = 'DragonFly-BSD';
+			$pict = 'os/bsd_dragonfly';
+			break;
+		//-
+		case 'linux':
+		case 'lnx': // cli
+			$desc = 'Linux';
+			$pict = 'os/linux_generic';
+			break;
+		case 'debian':
+			$desc = 'Debian Linux';
+			$pict = 'os/linux_debian';
+			break;
+		case 'ubuntu':
+			$desc = 'Ubuntu Linux';
+			$pict = 'os/linux_ubuntu';
+			break;
+		case 'redhat':
+			$desc = 'RedHat Linux';
+			$pict = 'os/linux_redhat';
+			break;
+		case 'centos':
+			$desc = 'CentOS Linux';
+			$pict = 'os/linux_centos';
+			break;
+		case 'fedora':
+			$desc = 'Fedora Linux';
+			$pict = 'os/linux_fedora';
+			break;
+		case 'suse':
+			$desc = 'SuSE Linux';
+			$pict = 'os/linux_suse';
+			break;
+		case 'novell':
+			$desc = 'Novell Linux';
+			$pict = 'os/linux_novell';
+			break;
+		case 'slack':
+			$desc = 'Slackware Linux';
+			$pict = 'os/linux_slackware';
+			break;
+		case 'gentoo':
+			$desc = 'Gentoo Linux';
+			$pict = 'os/linux_gentoo';
+			break;
+		case 'knoppix':
+			$desc = 'Knoppix Linux';
+			$pict = 'os/linux_knoppix';
+			break;
+		case 'archlnx':
+			$desc = 'Arch Linux';
+			$pict = 'os/linux_arch';
+			break;
+		//-
+		case 'ibm-aix':
+		case 'aix': // cli
+			$desc = 'IBM / AIX';
+			$pict = 'os/unix_ibmaix';
+			break;
+		case 'hp-ux':
+		case 'hpx': // cli
+			$desc = 'HP-UX';
+			$pict = 'os/unix_hpux';
+			break;
+		case 'opensolaris':
+			$desc = 'Open Solaris';
+			$pict = 'os/unix_opensolaris';
+			break;
+		case 'nexenta':
+			$desc = 'Nexenta OS';
+			$pict = 'os/unix_nexentasolaris';
+			break;
+		case 'solaris':
+		case 'sun': // cli
+			$desc = 'Oracle (Sun) Solaris';
+			$pict = 'os/unix_solaris';
+			break;
+		case 'sgi-irix':
+		case 'irx': // cli
+			$desc = 'SGI Irix';
+			$pict = 'os/unix_sgiirix';
+			break;
+		case 'sco-uxw':
+		case 'sco': // cli
+			$desc = 'SCO Unixware';
+			$pict = 'os/unix_sco';
+			break;
+		//- cli only
+		case 'ios':
+			$desc = 'Apple iOS Mobile';
+			$pict = 'os/mobile/ios';
+			break;
+		case 'and':
+			$desc = 'Google Android Mobile';
+			$pict = 'os/mobile/android';
+			break;
+		case 'wmo':
+			$desc = 'Microsoft Windows Mobile';
+			$pict = 'os/mobile/win_mobile';
+			break;
+		case 'lxm':
+			$desc = 'Linux Mobile';
+			$pict = 'os/mobile/linux_mobile';
+			break;
+		case 'bby':
+			$desc = 'BlackBerry Mobile';
+			$pict = 'os/mobile/blackberry';
+			break;
+		case 'pwo':
+			$desc = 'Palm / WebOs Mobile';
+			$pict = 'os/mobile/palm_webos';
+			break;
+		//-
+		case '[?]':
+		default:
+			$desc = '[UNKNOWN]: ('.$y_os_id.')';
+			$pict = 'sign_notice';
+		//-
+	} //end switch
+	//--
+	return (array) [
+		'img'  => (string) 'lib/core/img/'.$pict.'.png',
+		'desc' => (string) $desc.' Operating System'
+	];
+	//--
+} //END FUNCTION
+//================================================================
 
 
 } //END CLASS

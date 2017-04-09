@@ -54,7 +54,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170405
+ * @version 	v.170408
  * @package 	Database:SQLite
  *
  */
@@ -437,7 +437,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170405
+ * @version 	v.170408
  * @package 	Database:SQLite
  *
  */
@@ -1527,7 +1527,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 	$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
 } //end if else
 //--
-$out = SmartComponents::db_error_message(
+$out = SmartComponents::app_error_message(
 	'SQLite Client',
 	'SQLite',
 	'Embedded',

@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.160215
+ * @version 	v.170408
  * @package 	Database:Redis
  *
  * @method	STRING		ping()										# Ping the Redis server ; returns: the test answer which is always PONG
@@ -637,7 +637,7 @@ if($is_fatal !== false) { // FATAL ERROR
 		$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
 	} //end if else
 	//--
-	$out = SmartComponents::db_error_message(
+	$out = SmartComponents::app_error_message(
 		'Redis Client',
 		'Redis',
 		'Caching',

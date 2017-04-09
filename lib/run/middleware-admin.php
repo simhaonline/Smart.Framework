@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.2.3.7.8');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170405
+ * @version		170407
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -121,7 +121,7 @@ public static function Run() {
 		if(SMART_SOFTWARE_DISABLE_STATUS_POWERED === true) {
 			$status_powered_info = '';
 		} else {
-			$status_powered_info = (string) SmartComponents::draw_powered_info('no');
+			$status_powered_info = (string) SmartComponents::powered-info.inc.htm('no');
 		} //end if else
 		//--
 		self::HeadersNoCache(); // headers: cache control, force no-cache

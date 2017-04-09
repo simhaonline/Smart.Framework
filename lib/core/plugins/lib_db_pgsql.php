@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170403
+ * @version 	v.170408
  * @package 	Database:PostgreSQL
  *
  */
@@ -2140,7 +2140,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 	$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
 } //end if else
 //--
-$out = SmartComponents::db_error_message(
+$out = SmartComponents::app_error_message(
 	'PgSQL Client',
 	'PostgreSQL',
 	'SQL/DB',
@@ -2231,7 +2231,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170403
+ * @version 	v.170408
  * @package 	Database:PostgreSQL
  *
  */

@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.170315
+ * @version 	v.170407
  *
  */
 final class SmartDebugProfiler {
@@ -402,7 +402,7 @@ private static function print_log_runtime() {
 	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>Client / Server :: RUNTIME Log</b></font></div>';
 	//--
 	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>App Runtime - Powered by</b></div>';
-	$log .= '<div class="smartframework_debugbar_inforow">'.SmartComponents::draw_powered_info('yes').'</div>';
+	$log .= '<div class="smartframework_debugbar_inforow">'.SmartComponents::app_powered_info('yes').'</div>';
 	//--
 	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 		$the_area = 'admin';

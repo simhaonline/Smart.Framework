@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170406
+ * @version 	v.170408
  * @package 	Base
  *
  */
@@ -769,18 +769,6 @@ public static function cleanup_numbers_from_text($ytxt) {
 
 
 //================================================================
-// prepare extensions list for display
-// from: <ext1>,<ext2>,<ext3>
-// to: ext1, ext2, ext3
-public static function format_list_extensions($ycfgext) {
-	//--
-	return '['.str_replace(array('<', '>', ' ', ','), array('', '', '', ', '), (string)$ycfgext).']';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
 // Used for log arrays
 public static function arr_log_last_entries($y_arr, $y_count) {
 	//--
@@ -901,37 +889,6 @@ public static function crypto_decrypt($y_data, $y_key='') {
 	} //end if
 	//--
 	return (string) SmartCipherCrypto::decrypt((string)$cipher, (string)$key, (string)$y_data);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function client_ident_private_key() {
-	//--
-	return (string) self::get_visitor_signature().' [#] '.SMART_SOFTWARE_NAMESPACE.'*'.SMART_FRAMEWORK_SECURITY_KEY.'.';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// generate a PRIVATE unique, very secure hash of the current user by IP and Browser Signature
-// This key should never be exposed to the public, it is used to check signed data (which may be paired with visitor unique track id)
-public static function unique_client_private_key() {
-	//--
-	return SmartHashCrypto::sha512('*'.self::client_ident_private_key());
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// generate a PRIVATE unique, very secure hash of the current user by loginID, IP and Browser Signature
-// This key should never be exposed to the public, it is used to check signed data (which may be paired with visitor unique track id)
-public static function unique_auth_client_private_key() {
-	//--
-	return SmartHashCrypto::sha512('*'.SmartAuth::get_login_id().self::client_ident_private_key());
 	//--
 } //END FUNCTION
 //================================================================
@@ -1088,20 +1045,6 @@ public static function guess_image_extension_by_url_head($y_headers) {
 	} //end if else
 	//--
 	return array('extension' => (string) $temp_image_extension, 'where-was-detected' => (string) $temp_where_was_detected);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// this provide a stable but unique, non variable signature for the self browser robot
-// this should be used just for identification purposes
-// this should be never be trusted, the signature is public
-// it must contain also the Robot keyword as it fails to identify as self-browser, at least to be identified as robot
-// this signature should be used just for the internal browsing operations
-public static function get_selfrobot_useragent_name() {
-	//--
-	return 'SmartFramework :: PHP/Robot :: SelfBrowser ('.php_uname().') @ '.SmartHashCrypto::sha1('SelfBrowser/PHP/'.php_uname().'/'.SMART_SOFTWARE_NAMESPACE.'/'.SMART_FRAMEWORK_SECURITY_KEY);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1436,9 +1379,45 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 
 
 //================================================================
-public static function get_encoding_charset() {
+public static function client_ident_private_key() {
 	//--
-	return (string) SMART_FRAMEWORK_CHARSET;
+	return (string) self::get_visitor_signature().' [#] '.SMART_SOFTWARE_NAMESPACE.'*'.SMART_FRAMEWORK_SECURITY_KEY.'.';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// generate a PRIVATE unique, very secure hash of the current user by IP and Browser Signature
+// This key should never be exposed to the public, it is used to check signed data (which may be paired with visitor unique track id)
+public static function unique_client_private_key() {
+	//--
+	return SmartHashCrypto::sha512('*'.self::client_ident_private_key());
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// generate a PRIVATE unique, very secure hash of the current user by loginID, IP and Browser Signature
+// This key should never be exposed to the public, it is used to check signed data (which may be paired with visitor unique track id)
+public static function unique_auth_client_private_key() {
+	//--
+	return SmartHashCrypto::sha512('*'.SmartAuth::get_login_id().self::client_ident_private_key());
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// this provide a stable but unique, non variable signature for the self browser robot
+// this should be used just for identification purposes
+// this should be never be trusted, the signature is public
+// it must contain also the Robot keyword as it fails to identify as self-browser, at least to be identified as robot
+// this signature should be used just for the internal browsing operations
+public static function get_selfrobot_useragent_name() {
+	//--
+	return 'SmartFramework :: PHP/Robot :: SelfBrowser ('.php_uname().') @ '.SmartHashCrypto::sha1('SelfBrowser/PHP/'.php_uname().'/'.SMART_SOFTWARE_NAMESPACE.'/'.SMART_FRAMEWORK_SECURITY_KEY);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1459,6 +1438,15 @@ public static function get_visitor_signature() {
 public static function get_visitor_tracking_uid() {
 	//--
 	return (string) SmartHashCrypto::sha1('>'.SMART_SOFTWARE_NAMESPACE.'['.SMART_FRAMEWORK_SECURITY_KEY.']'.self::client_ident_private_key().'>'.SMART_APP_VISITOR_COOKIE);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function get_encoding_charset() {
+	//--
+	return (string) SMART_FRAMEWORK_CHARSET;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1725,13 +1713,11 @@ public static function get_server_os() {
 	//--
 	if((string)$out == '') {
 		//--
-		$the_lower_os = (string) $_SERVER['SERVER_SOFTWARE'];
+		$the_lower_os = (string) strtolower((string)$_SERVER['SERVER_SOFTWARE']);
 		//--
-		switch(strtolower(PHP_OS)) {
+		switch(strtolower(PHP_OS)) { // {{{SYNC-SRV-OS-ID}}}
 			case 'mac':
 			case 'macos':
-				$out = 'macos'; // MacOS
-				break;
 			case 'darwin':
 			case 'macosx':
 				$out = 'macosx'; // MacOSX
@@ -1740,7 +1726,11 @@ public static function get_server_os() {
 			case 'winnt':
 			case 'win32':
 			case 'win64':
-				$out = 'win'; // Windows
+				$out = 'winnt'; // Windows NT
+				break;
+			case 'bsdos':
+			case 'bsd': // Generic BSD OS
+				$out = 'bsd-os';
 				break;
 			case 'netbsd': //NetBSD
 				$out = 'netbsd';
@@ -1756,44 +1746,44 @@ public static function get_server_os() {
 				$out = 'dragonfly'; // DragonFlyBSD
 				break;
 			case 'linux':
-				$out = 'lnx'; // Generic Linux
+				$out = 'linux'; // Generic Linux
 				//-
 				if(strpos($the_lower_os, '(debian') !== false) {
-					$out = 'lnx_debian';
+					$out = 'debian';
 				} elseif(strpos($the_lower_os, '(ubuntu') !== false) {
-					$out = 'lnx_ubuntu';
-				} elseif(strpos($the_lower_os, '(suse') !== false) {
-					$out = 'lnx_suse';
-				} elseif(strpos($the_lower_os, '(novell') !== false) {
-					$out = 'lnx_novell';
+					$out = 'ubuntu';
 				} elseif(strpos($the_lower_os, '(redhat') !== false) {
-					$out = 'lnx_redhat';
-				} elseif(strpos($the_lower_os, '(fedora') !== false) {
-					$out = 'lnx_fedora';
+					$out = 'redhat';
 				} elseif(strpos($the_lower_os, '(centos') !== false) {
-					$out = 'lnx_centos';
+					$out = 'centos';
+				} elseif(strpos($the_lower_os, '(fedora') !== false) {
+					$out = 'fedora';
+				} elseif(strpos($the_lower_os, '(suse') !== false) {
+					$out = 'suse';
+				} elseif(strpos($the_lower_os, '(novell') !== false) {
+					$out = 'novell';
+				} elseif(strpos($the_lower_os, '(slack') !== false) {
+					$out = 'slack';
 				} elseif(strpos($the_lower_os, '(gentoo') !== false) {
-					$out = 'lnx_gentoo';
-				} elseif((strpos($the_lower_os, '(mandrake') !== false) OR (strpos($the_lower_os, '(mandriva') !== false)) {
-					$out = 'lnx_mandrake';
+					$out = 'gentoo';
 				} elseif(strpos($the_lower_os, '(knoppix') !== false) {
-					$out = 'lnx_knoppix';
+					$out = 'knoppix';
 				} elseif(strpos($the_lower_os, '(arch') !== false) {
-					$out = 'lnx_arch';
+					$out = 'archlnx';
 				} //end if else
 				//-
 				break;
+			case 'ibmaix':
 			case 'aix':
-				$out = 'aix'; //IBM AIX
+				$out = 'ibm-aix'; //IBM AIX
 				break;
+			case 'hp-ux':
 			case 'hpux':
-				$out = 'hpx'; //HP UNIX
-				break;
-			case 'irix':
-				$out = 'irx'; //IRIX
+				$out = 'hp-ux'; //HP UNIX
 				break;
 			case 'opensolaris':
-				$out = 'opensolaris'; // OPEN SOLARIS
+			case 'openindiana':
+				$out = 'opensolaris'; // OPEN SOLARIS / OPEN INDIANA
 				break;
 			case 'nexenta':
 				$out = 'nexenta'; // NEXENTA SOLARIS
@@ -1801,17 +1791,22 @@ public static function get_server_os() {
 			case 'solaris':
 			case 'sun':
 			case 'sunos':
-				$out = 'sun'; // SUN SOLARIS
+				$out = 'solaris'; // SUN SOLARIS
 				//-
-				if(strpos($the_lower_os, '(opensolaris') !== false) {
+				if((strpos($the_lower_os, '(opensolaris') !== false) OR (strpos($the_lower_os, '(openindiana') !== false)) {
 					$out = 'opensolaris';
 				} elseif(strpos($the_lower_os, '(nexenta') !== false) {
 					$out = 'nexenta';
 				} //end if else
 				//-
 				break;
+			case 'sgi':
+			case 'irix':
+				$out = 'sgi-irix'; //IRIX
+				break;
 			case 'sco':
-				$out = 'sco'; //SCO UNIX
+			case 'unixware':
+				$out = 'sco-uxw'; //SCO UNIXWARE
 				break;
 			default:
 				// UNKNOWN
@@ -1922,21 +1917,19 @@ public static function get_os_browser_ip($y_mode='') {
 		$wp_mb = 'no'; // by default is not mobile
 		//--
 		$the_lower_signature = strtolower((string)$_SERVER['HTTP_USER_AGENT']);
+		//--
+		// {{{SYNC-CLI-BW-ID}}}
 		//-- identify browser
-		if((strpos($the_lower_signature, 'firefox') !== false) OR (strpos($the_lower_signature, 'iceweasel') !== false) OR (strpos($the_lower_signature, 'seamonkey') !== false) OR (strpos($the_lower_signature, ' fxios/') !== false)) {
+		if((strpos($the_lower_signature, 'firefox') !== false) OR (strpos($the_lower_signature, 'iceweasel') !== false) OR (strpos($the_lower_signature, ' fxios/') !== false)) {
 			$wp_browser = 'fox'; // firefox
-		} elseif((strpos($the_lower_signature, ' msie ') !== false) OR (strpos($the_lower_signature, ' trident/') !== false) OR (strpos($the_lower_signature, ' edge/') !== false)) {
-			$wp_browser = 'iex'; // internet explorer (this must be before any stealth browsers as ex.: opera)
-		} elseif((strpos($the_lower_signature, 'opera') !== false) OR (strpos($the_lower_signature, ' opr/') !== false) OR (strpos($the_lower_signature, ' opios/') !== false)) {
+		} elseif(strpos($the_lower_signature, ' edge/') !== false) {
+			$wp_browser = 'iee'; //microsoft edge
+		} elseif((strpos($the_lower_signature, ' msie ') !== false) OR (strpos($the_lower_signature, ' trident/') !== false)) {
+			$wp_browser = 'iex'; // internet explorer (must be before any stealth browsers as ex.: opera)
+		} elseif((strpos($the_lower_signature, 'opera') !== false) OR (strpos($the_lower_signature, ' opr/') !== false) OR (strpos($the_lower_signature, ' oupeng/') !== false) OR (strpos($the_lower_signature, ' opios/') !== false)) {
 			$wp_browser = 'opr'; // opera
 		} elseif((strpos($the_lower_signature, 'chrome') !== false) OR (strpos($the_lower_signature, 'chromium') !== false) OR (strpos($the_lower_signature, ' crios/') !== false)) {
-			$wp_browser = 'crm'; // Chrome
-		} elseif((strpos($the_lower_signature, 'safari') !== false) OR (strpos($the_lower_signature, 'webkit') !== false)) {
-			$wp_browser = 'sfr'; // safari / webkit
-		} elseif(strpos($the_lower_signature, 'camino') !== false) {
-			$wp_browser = 'cam'; // camino (osx)
-		} elseif(strpos($the_lower_signature, 'lynx') !== false) {
-			$wp_browser = 'lyx'; // lynx (text)
+			$wp_browser = 'crm'; // chrome
 		} elseif(strpos($the_lower_signature, 'galeon') !== false) {
 			$wp_browser = 'gal'; // galeon (gnome)
 		} elseif(strpos($the_lower_signature, 'epiphany') !== false) {
@@ -1945,10 +1938,18 @@ public static function get_os_browser_ip($y_mode='') {
 			$wp_browser = 'knq'; // konqueror (kde)
 		} elseif((strpos($the_lower_signature, 'midori') !== false) AND (strpos($the_lower_signature, 'webkit/') !== false)) {
 			$wp_browser = 'mid'; // midori over webkit
-		} elseif((strpos($the_lower_signature, 'omniweb') !== false) OR ((strpos($the_lower_signature, 'safari') !== false) AND (strpos($the_lower_signature, '(khtml, like gecko, safari/') !== false))) {
+		} elseif((strpos($the_lower_signature, 'omniweb') !== false) AND (strpos($the_lower_signature, '(khtml, like gecko') !== false)) {
 			$wp_browser = 'omw'; // omniweb
-		} elseif(strpos($the_lower_signature, 'mozilla') !== false) {
-			$wp_browser = 'moz'; // mozilla (for other mozilla derivates)
+		} elseif((strpos($the_lower_signature, 'maxthon') !== false) OR (strpos($the_lower_signature, 'mxbrowser') !== false)) {
+			$wp_browser = 'mxt'; // maxthon
+		} elseif(strpos($the_lower_signature, 'netsurf/') !== false) {
+			$wp_browser = 'nsf'; // netsurf
+		} elseif((strpos($the_lower_signature, 'safari') !== false) OR (strpos($the_lower_signature, 'webkit') !== false)) {
+			$wp_browser = 'sfr'; // safari / webkit
+		} elseif((strpos($the_lower_signature, 'mozilla') !== false) OR (strpos($the_lower_signature, 'seamonkey') !== false)) {
+			$wp_browser = 'moz'; // mozilla / seamonkey or other mozilla derivates
+		} elseif(strpos($the_lower_signature, 'lynx') !== false) {
+			$wp_browser = 'lyx'; // lynx (text)
 		} else {
 			$robots = array(
 				'robot', 'apache', 'httperf', 'benchmark', 'scanner',
@@ -1956,8 +1957,8 @@ public static function get_os_browser_ip($y_mode='') {
 				'yahoo! slurp', 'webcrawler', 'domaincrawler', 'catchbot', 'webalta crawler', 'superbot',
 				'msnbot', 'ms url control', 'winhttp', 'roku dvp', 'linkwalker', 'aihitbot', 'ia_archiver',
 				'sanszbot', 'linguee bot', 'swish-e', 'tarantula', 'fast-webcrawler', 'jeeves', 'teoma',
-				'baiduspider', 'bing bot', 'exabot', 'everyfeed spider', 'gregarius', 'facebook scraper',
-				'email wolf', 'gaisbot', 'gulperbot', 'grub-client', 'peach ',
+				'baiduspider', 'bing bot', 'yandex', 'exabot', 'everyfeed spider', 'gregarius',
+				'facebook scraper', 'email wolf', 'gaisbot', 'gulperbot', 'grub-client', 'peach ',
 				'htmlparser', 'w3c css validator', 'w3c (x)html validator', 'w3c p3p validator',
 				'download demon', 'offline explorer', 'webcopier', 'web downloader', 'webzip', 'htmldoc',
 				'wget ', 'curl ', 'php ', 'libwww-perl', 'python-urllib', 'java '
@@ -1974,6 +1975,8 @@ public static function get_os_browser_ip($y_mode='') {
 		if(trim($the_lower_signature) == strtolower(self::get_selfrobot_useragent_name())) {
 			$wp_browser = '@s#';
 		} //end if
+		//--
+		// {{{SYNC-CLI-OS-ID}}}
 		//-- identify os
 		if(strpos($the_lower_signature, 'windows') !== false) {
 			$wp_os = 'win'; // ms windows
@@ -1983,8 +1986,8 @@ public static function get_os_browser_ip($y_mode='') {
 			$wp_os = 'lnx'; // *linux
 		} elseif((strpos($the_lower_signature, 'netbsd') !== false) OR (strpos($the_lower_signature, 'openbsd') !== false) OR (strpos($the_lower_signature, 'freebsd') !== false) OR (strpos($the_lower_signature, ' bsd ') !== false)) {
 			$wp_os = 'bsd'; // *bsd
-		} elseif((strpos($the_lower_signature, 'solaris') !== false) OR (strpos($the_lower_signature, 'sunos') !== false)) {
-			$wp_os = 'sun'; // sun solaris
+		} elseif((strpos($the_lower_signature, 'solaris') !== false) OR (strpos($the_lower_signature, 'sunos') !== false) OR (strpos($the_lower_signature, 'nexenta') !== false) OR (strpos($the_lower_signature, 'openindiana') !== false)) {
+			$wp_os = 'sun'; // sun solaris incl clones
 		} elseif(strpos($the_lower_signature, 'hp/ux') !== false) {
 			$wp_os = 'hpx'; // hp/ux
 		} elseif(strpos($the_lower_signature, 'aix') !== false) {
@@ -1995,40 +1998,23 @@ public static function get_os_browser_ip($y_mode='') {
 			$wp_os = 'irx'; // silicon graphics' irix
 		} //end if
 		//-- identify mobile os
-		if(strpos($the_lower_signature, 'iphone') !== false) {
-			$wp_os = 'ios'; // apple mobile ios/iphone
+		if((strpos($the_lower_signature, 'iphone') !== false) OR (strpos($the_lower_signature, 'ipad') !== false) OR (strpos($the_lower_signature, ' opios/') !== false)) {
+			$wp_os = 'ios'; // apple mobile ios: iphone / ipad / ipod
 			$wp_mb = 'yes';
-		} elseif(strpos($the_lower_signature, 'ipad') !== false) {
-			$wp_os = 'ipd'; // apple mobile ios/ipad
-			$wp_mb = 'yes';
-		} elseif((strpos($the_lower_signature, 'windows ce') !== false) OR (strpos($the_lower_signature, 'windows phone') !== false) OR (strpos($the_lower_signature, 'windows mobile') !== false)) {
-			$wp_os = 'wce'; // ms windows mobile
-			$wp_mb = 'yes';
-		} elseif(strpos($the_lower_signature, 'android') !== false) {
+		} elseif((strpos($the_lower_signature, 'android') !== false) OR (strpos($the_lower_signature, ' opr/') !== false)) {
 			$wp_os = 'and'; // google android
 			$wp_mb = 'yes';
-		} elseif((strpos($the_lower_signature, 'linux mobile') !== false) OR (strpos($the_lower_signature, 'maemo') !== false) OR (strpos($the_lower_signature, 'openmoko') !== false) OR (strpos($the_lower_signature, 'qtopia') !== false) OR (strpos($the_lower_signature, 'opie') !== false) OR (strpos($the_lower_signature, 'zaurus') !== false) OR (strpos($the_lower_signature, 'nucleus') !== false)) {
-			$wp_os = 'mlx'; // linux mobile
+		} elseif((strpos($the_lower_signature, 'windows ce') !== false) OR (strpos($the_lower_signature, 'windows phone') !== false) OR (strpos($the_lower_signature, 'windows mobile') !== false) OR (strpos($the_lower_signature, 'windows rt') !== false)) {
+			$wp_os = 'wmo'; // ms windows mobile
 			$wp_mb = 'yes';
-		} elseif(strpos($the_lower_signature, 'meego') !== false) {
-			$wp_os = 'mgo'; // nokia meegO
-			$wp_mb = 'yes';
-		} elseif(strpos($the_lower_signature, 'symbian') !== false) {
-			$wp_os = 'nsy'; // nokia symbian
+		} elseif((strpos($the_lower_signature, 'linux mobile') !== false) OR (strpos($the_lower_signature, 'ubuntu; mobile') !== false) OR (strpos($the_lower_signature, 'tizen') !== false)) {
+			$wp_os = 'lxm'; // linux mobile
 			$wp_mb = 'yes';
 		} elseif(strpos($the_lower_signature, 'blackberry') !== false) {
 			$wp_os = 'bby'; // blackberry
 			$wp_mb = 'yes';
 		} elseif((strpos($the_lower_signature, 'webos') !== false) OR (strpos($the_lower_signature, ' palm') !== false)) {
-			$wp_os = 'plm'; // palm os
-			$wp_mb = 'yes';
-		} //end if
-		//-- fixes
-		if(strpos($the_lower_signature, ' opr/') !== false) {
-			$wp_os = 'and'; // google android
-			$wp_mb = 'yes';
-		} elseif(strpos($the_lower_signature, ' opios/') !== false) {
-			$wp_os = 'ios'; // apple mobile ios/iphone
+			$wp_os = 'pwo'; // palm / web os
 			$wp_mb = 'yes';
 		} //end if
 		//-- identify ip addr
@@ -2135,6 +2121,55 @@ private static function _iplist_get_last_address($ip) {
 	} //end if
 	//--
 	return (string) $ip;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: Lock File Name
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function single_user_mode_lockfile() {
+	//--
+	return '____SMART-FRAMEWORK_SingleUser_Mode__Enabled';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Check if Single-User Mode is Enabled
+ *
+ * @access 		private
+ * @internal
+ *
+ * @return TRUE/FALSE
+ */
+public static function single_user_mode_check() {
+	//--
+	$lock_file = (string) self::single_user_mode_lockfile();
+	//--
+	$out = false;
+	//--
+	if(SmartFileSystem::file_or_link_exists($lock_file)) {
+		//--
+		$lock_content = SmartFileSystem::read($lock_file);
+		$chk_arr = explode("\n", trim($lock_content));
+		$tmp_time = Smart::format_number_dec((($chk_arr[1] - time()) / 60), 0, '.', '');
+		//--
+		if($tmp_time <= 0) {
+			$out = true;
+		} //end if
+		//--
+	} //end if
+	//--
+	return (bool) $out;
 	//--
 } //END FUNCTION
 //================================================================

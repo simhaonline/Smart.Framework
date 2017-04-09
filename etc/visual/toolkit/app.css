@@ -23,12 +23,7 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 @import url("../../../lib/core/css/notifications.css");
 
-/* optional, required just for Components / NavPager */
 @import url("../../../lib/core/css/navpager.css");
-
-/* optional, required just for Components / ActiveTable */
-@import url("../../../lib/core/css/activetable.css");
-
 
 /* -- plugins -- */
 
@@ -38,7 +33,7 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 /* optional, required just for Media Gallery */
 @import url("../../../lib/core/plugins/css/mediagallery.css");
 
-/* optional, required just for Markdown render */
+/* optional, required just for Markdown renderer */
 @import url("../../../lib/core/plugins/css/markdown.css");
 
 /* optional, required just for ActiveCalendar */

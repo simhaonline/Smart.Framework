@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 final class SmartTestSuite {
 
 	// ::
-	// v.170403
+	// v.170407
 
 
 //==================================================================
@@ -67,7 +67,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 
 	//--
 	if(Smart::array_size($testformdata) > 0) { // because is modal we have to close it in order to refresh the parent
-		return '<table><tr><td><h1>Form Sent (Test) !</h1><hr><pre>'.Smart::escape_html(print_r($testformdata,1)).'</pre></td></tr></table><script>SmartJS_BrowserUtils.RefreshParent();</script><br><br><input id="myCloseButton" type="button" value="[Close Me]" onClick="SmartJS_BrowserUtils.CloseModalPopUp(); return false;"><br><br><b>This page will auto-close in 9 seconds [Counting: <span id="mycounter">9</span>]</b><script>jQuery("#myCloseButton").button(); SmartJS_BrowserUtils.CountDown(9, \'mycounter\', \'SmartJS_BrowserUtils.CloseDelayedModalPopUp(500);\');</script><br><br><b><i>After closing this window, parent will refresh ...</i></b>';
+		return '<table><tr><td><h1>Form Sent (Test) !</h1><hr><pre>'.Smart::escape_html(print_r($testformdata,1)).'</pre></td></tr></table><script>SmartJS_BrowserUtils.RefreshParent();</script><br><br><input class="ux-button" id="myCloseButton" type="button" value="[Close Me]" onClick="SmartJS_BrowserUtils.CloseModalPopUp(); return false;"><br><br><b>This page will auto-close in 9 seconds [Counting: <span id="mycounter">9</span>]</b><script>SmartJS_BrowserUtils.CountDown(9, \'mycounter\', \'SmartJS_BrowserUtils.CloseDelayedModalPopUp(500);\');</script><br><br><b><i>After closing this window, parent will refresh ...</i></b>';
 	} //end if
 	//--
 
@@ -75,20 +75,20 @@ public static function main_screen($tab, $frm, $testformdata) {
 	$basic_form_start = '<form id="form_for_test" action="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.main&tab=1'.'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='.SMART_FRAMEWORK_URL_VALUE_ENABLED.'" method="post" target="_blank"><input type="hidden" name="testformdata[test]" value="Testing ..."><input type="hidden" name="testformdata[another-test]" value="Testing more ...">';
 	$basic_form_end = '</form>';
 	//--
-	$basic_form_send_modal = '<input class="ux-button ux-button-primary" style="min-width:325px;" type="submit" value="Submit Form (with Confirmation / Modal)" OnClick="'.SmartComponents::js_draw_html_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [MODAL] ?</b></h3></div>', 'my_form').'">';
-	$basic_form_send_popup = '<input class="ux-button ux-button-secondary" style="min-width:325px;" type="submit" value="Submit Form (with Confirmation / PopUp)" OnClick="'.SmartComponents::js_draw_html_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [POPUP] ?</b></h3></div>', 'my_form', '780', '420', '1').'">';
+	$basic_form_send_modal = '<input class="ux-button ux-button-primary" style="min-width:325px;" type="submit" value="Submit Form (with Confirmation / Modal)" OnClick="'.SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [MODAL] ?</b></h3></div>', 'my_form').'">';
+	$basic_form_send_popup = '<input class="ux-button ux-button-secondary" style="min-width:325px;" type="submit" value="Submit Form (with Confirmation / PopUp)" OnClick="'.SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [POPUP] ?</b></h3></div>', 'my_form', '780', '420', '1').'">';
 	//--
 
 	//-- AJAX POST FORM
-	$btnop = '<button class="ux-button ux-button-large ux-button-highlight" onClick="'.SmartComponents::post_form_by_ajax('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#smart__CaptchaFrm__img\').click();').' return false;">Submit this Test Form by AJAX &nbsp; <span class="fa fa-send"></span></button>';
+	$btnop = '<button class="ux-button ux-button-large ux-button-highlight" onClick="'.SmartComponents::js_ajax_submit_html_form('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#smart__CaptchaFrm__img\').click();').' return false;">Submit this Test Form by AJAX &nbsp; <span class="fa fa-send"></span></button>';
 	//-- END
 
 	//-- lists with one element
-	$one_single_select = SmartComponents::html_single_select_list('test-unit-s-list-one', '', 'form', array('one' => 'One'), 'frm[one_single]', '150', '', 'no', 'no', '#JS-UI#'); // returns HTML Code
-	$one_single_with_blank_select = SmartComponents::html_multi_select_list('test-unit-lst-m-1', '', 'form', array('one' => 'One'), 'frm[one_multi][]', 'list', 'no', '200', '', '#JS-UI-FILTER#'); // returns HTML Code
+	$one_single_select = SmartComponents::html_select_list_single('test-unit-s-list-one', '', 'form', array('one' => 'One'), 'frm[one_single]', '150', '', 'no', 'no', '#JS-UI#'); // returns HTML Code
+	$one_single_with_blank_select = SmartComponents::html_select_list_multi('test-unit-lst-m-1', '', 'form', array('one' => 'One'), 'frm[one_multi][]', 'list', 'no', '200', '', '#JS-UI-FILTER#'); // returns HTML Code
 	//--
-	$test_normal_list_s = SmartComponents::html_single_select_list('test_normal_s', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3']);
-	$test_normal_list_m = SmartComponents::html_multi_select_list('test_normal_m', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3'], '', 'list', 'no', '200/75', '', 'height:65px;');
+	$test_normal_list_s = SmartComponents::html_select_list_single('test_normal_s', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3']);
+	$test_normal_list_m = SmartComponents::html_select_list_multi('test_normal_m', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3'], '', 'list', 'no', '200/75', '', 'height:65px;');
 	//--
 
 	//-- misc purpose data array
@@ -103,16 +103,16 @@ public static function main_screen($tab, $frm, $testformdata) {
 	} //end for
 	//-- single-select
 	$selected_value = 'id2';
-	$elem_single_select = SmartComponents::html_single_select_list('test-unit-s-list-two', $selected_value, 'form', $array_of_values, 'frm[list_single]', '150', 'onChange="alert(\''.Smart::escape_js('Getting value from the "SingleList": ').'\' + $(\'#test-unit-s-list-two\').val());"', 'no', 'yes', '#JS-UI-FILTER#'); // returns HTML Code
+	$elem_single_select = SmartComponents::html_select_list_single('test-unit-s-list-two', $selected_value, 'form', $array_of_values, 'frm[list_single]', '150', 'onChange="alert(\''.Smart::escape_js('Getting value from the "SingleList": ').'\' + $(\'#test-unit-s-list-two\').val());"', 'no', 'yes', '#JS-UI-FILTER#'); // returns HTML Code
 	//--
 	// draw a multi-select (classic)
 	$selected_values = '<id1>,<id3>';
-	$elem_multi_select = SmartComponents::html_multi_select_list('test-unit-m-list-2', $selected_values, 'form', $array_of_values, 'frm[list_multi_one][]', 'list', 'no', '250', 'onBlur="alert(\''.Smart::escape_js('Getting value from the:'."\n".' "MultiList": ').'\' + $(\'#test-unit-m-list-2\').val());"', '#JS-UI-FILTER#'); // returns HTML Code
+	$elem_multi_select = SmartComponents::html_select_list_multi('test-unit-m-list-2', $selected_values, 'form', $array_of_values, 'frm[list_multi_one][]', 'list', 'no', '250', 'onBlur="alert(\''.Smart::escape_js('Getting value from the:'."\n".' "MultiList": ').'\' + $(\'#test-unit-m-list-2\').val());"', '#JS-UI-FILTER#'); // returns HTML Code
 	//--
 	// multi-select (checkboxes)
 	$array_of_values = array('id1' => 'Label 1', 'id2' => 'Label 2', 'id3' => 'Label 3');
 	$selected_values = array('id2', 'id3');
-	$elem_multi_boxes = SmartComponents::html_multi_select_list('test-unit-m-list-3', $selected_values, 'form', $array_of_values, 'frm[list_multi_two][]', 'checkboxes'); // returns HTML Code
+	$elem_multi_boxes = SmartComponents::html_select_list_multi('test-unit-m-list-3', $selected_values, 'form', $array_of_values, 'frm[list_multi_two][]', 'checkboxes'); // returns HTML Code
 	//--
 
 	//--
@@ -131,6 +131,8 @@ public static function main_screen($tab, $frm, $testformdata) {
 	//--
 
 	//--
+	$arr_bw = (array) SmartComponents::get_imgdesc_by_bw_id(SmartUtils::get_os_browser_ip('bw'));
+	//--
 	return SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/testunit/test-unit.htm',
 		array(
@@ -143,11 +145,11 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TESTUNIT_BASE_URL' => SMART_FRAMEWORK_TESTUNIT_BASE_URL,
 			'NO-CACHE-TIME' => time(),
 			'CURRENT-DATE-TIME' => date('Y-m-d H:i:s O'),
-			'TEST-JS_SCRIPTS_Init-Tabs' => SmartComponents::js_ajx_tabs_init('tabs_draw', Smart::format_number_int($tab,'+')), // .SmartComponents::js_ajx_tabs_activate('tabs_draw', false),
+			'TEST-JS_SCRIPTS_Init-Tabs' => '<script type="text/javascript">'.SmartComponents::js_code_uitabs_init('tabs_draw', Smart::format_number_int($tab,'+')).'</script>', // '<script type="text/javascript">'.SmartComponents::js_code_uitabs_activate('tabs_draw', false).'</script>',
 			'Test-Buttons_AJAX-POST' => $btnop,
 			'TEST-VAR'  => '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: '.$info_adm.' // Test Suite</div>',
-			'TEST-ELEMENTS_DIALOG' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_draw_html_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
-			'TEST-ELEMENTS_ALERT' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_draw_html_alert('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
+			'TEST-ELEMENTS_DIALOG' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_code_ui_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
+			'TEST-ELEMENTS_ALERT' => '<a class="ux-button" style="min-width:325px;" href="#" onClick="'.SmartComponents::js_code_ui_alert_dialog('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
 			'TEST-ELEMENTS_SEND-CONFIRM-MODAL' => $basic_form_start.$basic_form_send_modal.$basic_form_end,
 			'TEST-ELEMENTS_SEND-CONFIRM-POPUP' => $basic_form_start.$basic_form_send_popup.$basic_form_end,
 			'TEST-ELEMENTS-WND-INTERRACTIONS-MODAL' => self::bttn_open_modal(true, 'test_interractions_modal_start'),
@@ -159,12 +161,12 @@ public static function main_screen($tab, $frm, $testformdata) {
 			'TEST-ELEMENTS_MULTIBOX-SELECT' => 'MultiSelect CheckBoxes:<br>'.$elem_multi_boxes,
 			'TEST-ELEMENTS_NORMAL-LIST-S' => $test_normal_list_s,
 			'TEST-ELEMENTS_NORMAL-LIST-M' => $test_normal_list_m,
-			'TEST-ELEMENTS_CALENDAR' => 'Calendar Selector: '.SmartComponents::js_draw_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
-			'TEST-ELEMENTS_TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::js_draw_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
-			'TEST-ELEMENTS_AUTOCOMPLETE-SINGLE' => 'AutoComplete: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;">'.SmartComponents::js_draw_ui_autocomplete_single('auto-complete-fld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').' &nbsp; '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;">'.SmartComponents::js_draw_ui_autocomplete_multi('auto-complete-mfld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);'),
+			'TEST-ELEMENTS_CALENDAR' => 'Calendar Selector: '.SmartComponents::html_js_date_field('frm_calendar_id', 'frm[date]', Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
+			'TEST-ELEMENTS_TIMEPICKER' => 'TimePicker Selector: '.SmartComponents::html_js_time_field('frm_timepicker_id', 'frm[time]', Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
+			'TEST-ELEMENTS_AUTOCOMPLETE-SINGLE' => 'AutoComplete: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;"><script type="text/javascript">'.SmartComponents::js_code_init_select_autocomplete_single('auto-complete-fld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script> &nbsp; '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;"><script type="text/javascript">'.SmartComponents::js_code_init_select_autocomplete_multi('auto-complete-mfld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
 			'TEST-elements_Captcha' => SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captcha_form_name()),
-			'test-elements_limited-area' => 'Limited TextArea: '.SmartComponents::js_draw_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '100px'),
-			'POWERED-INFO' => SmartComponents::draw_powered_info('no'),
+			'test-elements_limited-area' => 'Limited TextArea: '.SmartComponents::html_js_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '100px'),
+			'POWERED-INFO' => SmartComponents::app_powered_info('no').'<br><span title="'.Smart::escape_html($arr_bw['desc']).'"><img src="'.Smart::escape_html($arr_bw['img']).'"></span>',
 			'STR-NUM' => '1abc', // this will be converted to num !!
 			'NUM-NUM' => '0.123456789',
 			'MARKER' => '1234567890.abcdefghijklmniopqrstuvwxyz"',
@@ -199,7 +201,7 @@ public static function main_screen($tab, $frm, $testformdata) {
 						'c3' => 'A'
 					]
 			],
-			'MOD-JS-COMPONENTS' => $demo_mod_js_components
+			'MOD-JS-COMPONENTS' => (string) $demo_mod_js_components
 		),
 		'yes'
 	);
@@ -396,11 +398,11 @@ public static function post__answer__by__ajax($tab, $frm) {
 	//--
 
 	//--
-	$out = SmartComponents::post_answer_by_ajax($code, $title, $desc, $redir, $div_id, $div_htm, $evcode);
+	$out = SmartComponents::js_ajax_replyto_html_form($code, $title, $desc, $redir, $div_id, $div_htm, $evcode);
 	//--
 
 	//--
-	return $out;
+	return (string) $out;
 	//--
 
 } //END FUNCTION
@@ -2224,7 +2226,7 @@ public static function test_barcode1d_kix() {
 class SmartTestSQLite3Model {
 
 	// ->
-	// v.170403
+	// v.170407
 
 private $db;
 
