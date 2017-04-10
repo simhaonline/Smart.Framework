@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170408
+ * @version 	v.170410
  * @package 	Database:PostgreSQL
  *
  */
@@ -1480,7 +1480,7 @@ public static function prepare_statement($arrdata, $mode, $y_connection='DEFAULT
 		//--
 		foreach($arrdata as $key => $val) {
 			//-- check for SQL INJECTION
-			$key = trim(str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
+			$key = (string) trim(str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
 			//-- except [ in-select | 'data-array' ], do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if(((string)$mode == 'in-select') OR ((string)$mode == 'data-array')) { // in-select, data-array
 				$key = (int) $key; // force int keys
@@ -2231,7 +2231,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170408
+ * @version 	v.170410
  * @package 	Database:PostgreSQL
  *
  */

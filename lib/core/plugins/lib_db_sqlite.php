@@ -34,19 +34,25 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * <code>
  *
+ * // IMPORTANT: https://sqlite.org/lang_keywords.html
+ * // 	* SQLIte3 uses by default ' (single quotes) to quote strings and ` (backticks) or nothing to quote identifiers (table names / field names)
+ * // 	* It is recommended to quote identifiers (table names / field names) using ` (backtick) instead of not quoting at all to avoid confusion with SQL reserved syntax
+ * // 	* Using ` (backticks) is prefered as SELECT `field1` FROM `table1` is a strict syntax in SQLite3 and will throw error if either table1 or field1 do not exists
+ * // 	* Using " (double quote) for quoting identifiers may result in unexpected results as SELECT "field1" FROM "table1" will not throw exception if field1 / table1 do not exists
+ *
  * //Sample Usage
  * $db = new SmartSQliteDb('tmp/testunit.sqlite');
  * $db->open();
- * $sq_rd = (array) $db->asread("SELECT description FROM mytable WHERE (id = '".$db->escape_str($my_id)."') LIMIT 1 OFFSET 0");
+ * $sq_rd = (array) $db->asread("SELECT `description` FROM `mytable` WHERE (`id` = '".$db->escape_str($my_id)."') LIMIT 1 OFFSET 0");
  * $sq_cnt = (int) $db->count("SELECT COUNT(1) FROM mytable WHERE (score > ?)", array(100));
  * $arr_insert = array(
  * 		'id' => 100,
  * 		'active' => 1,
  * 		'name' => 'Test Record'
  * );
- * $sq_ins = (array) $db->write_data('INSERT INTO "other_table" '.$db->prepare_statement($arr_insert, 'insert'));
- * $sq_upd = (array) $db->write_data('UPDATE "other_table" SET "active" = 0 WHERE ("id" = ?)', array(100));
- * $prepared_sql = $db->prepare_param_query('SELECT * FROM "table" WHERE "id" = ?', [99]);
+ * $sq_ins = (array) $db->write_data('INSERT INTO other_table '.$db->prepare_statement($arr_insert, 'insert'));
+ * $sq_upd = (array) $db->write_data('UPDATE other_table SET active = 0 WHERE (id = ?)', array(100));
+ * $prepared_sql = $db->prepare_param_query('SELECT * FROM table WHERE id = ?', [99]);
  * $db->close(); // optional, but safe
  *
  * </code>
@@ -54,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170408
+ * @version 	v.170410
  * @package 	Database:SQLite
  *
  */
@@ -305,7 +311,7 @@ public function prepare_statement($arrdata, $mode) {
  * This can be used for a full SQL statement or just for a part.
  * The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !
  *
- * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
+ * @param STRING $query							:: SQL Statement to process like '   WHERE (id = ?)'
  * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
  * @return STRING								:: The SQL processed (partial/full) Statement
  */
@@ -437,7 +443,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170408
+ * @version 	v.170410
  * @package 	Database:SQLite
  *
  */
@@ -446,6 +452,8 @@ final class SmartSQliteUtilDb {
 	// ::
 
 	private static $slow_time = 0.0025;
+
+	private static $invalid_conn = '[?+SQLITE-FILE+?]'; // DO NOT CHANGE THIS !!!
 
 
 //======================================================
@@ -595,12 +603,12 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	} //end foreach
 	//-- create the first time table to record the sqlite version
 	if(!self::check_if_table_exists($db, '_smartframework_metadata')) {
-		self::create_table($db, '_smartframework_metadata', 'id VARCHAR(255) PRIMARY KEY UNIQUE, description TEXT');
-		self::write_data($db, 'INSERT INTO _smartframework_metadata (id, description) VALUES (\'sqlite-version\', \''.self::escape_str($db, '3').'\')');
-		self::write_data($db, 'INSERT INTO _smartframework_metadata (id, description) VALUES (\'smartframework-version\', \''.self::escape_str($db, (string)SMART_FRAMEWORK_VERSION).'\')');
-		self::write_data($db, 'INSERT INTO _smartframework_metadata (id, description) VALUES (\'creation-date-and-time\', \''.self::escape_str($db, (string)date('Y-m-d H:i:s O')).'\')');
-		self::write_data($db, 'INSERT INTO _smartframework_metadata (id, description) VALUES (\'database-name\', \''.self::escape_str($db, (string)$file_name).'\')');
-		self::write_data($db, 'INSERT INTO _smartframework_metadata (id, description) VALUES (\'domain-realm-id\', \''.self::escape_str($db, (string)SMART_SOFTWARE_NAMESPACE).'\')');
+		self::create_table($db, '_smartframework_metadata', '`id` VARCHAR(255) PRIMARY KEY UNIQUE, `description` TEXT');
+		self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'sqlite-version\', \''.self::escape_str($db, '3').'\')');
+		self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'smartframework-version\', \''.self::escape_str($db, (string)SMART_FRAMEWORK_VERSION).'\')');
+		self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'creation-date-and-time\', \''.self::escape_str($db, (string)date('Y-m-d H:i:s O')).'\')');
+		self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'database-name\', \''.self::escape_str($db, (string)$file_name).'\')');
+		self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'domain-realm-id\', \''.self::escape_str($db, (string)SMART_SOFTWARE_NAMESPACE).'\')');
 	} //end if
 	//--
 	return $db;
@@ -618,7 +626,15 @@ public static function close($db, $infofile='') {
 		//--
 		if(($db instanceof SQLite3)) {
 			//--
-			unset(SmartFrameworkRegistry::$Connections['sqlite'][(string)self::get_connection_id($db)]);
+			$conn = (string) self::get_connection_id($db);
+			if((string)$conn != (string)self::$invalid_conn) { // does not make sense to unset default INVALID connection !
+				if((string)$conn != '') {
+					//Smart::log_notice('Unsetting SQLite connection from Registry: '.$conn.' @ '.__METHOD__);
+					unset(SmartFrameworkRegistry::$Connections['sqlite'][(string)$conn]);
+				} else {
+					Smart::log_warning('Cannot Unset EMPTY SQLite connection from Registry @ '.__METHOD__);
+				} //end if else
+			} //end if
 			//--
 			@$db->close();
 			//--
@@ -631,9 +647,17 @@ public static function close($db, $infofile='') {
 				//--
 			} //end if
 			//--
+		} else {
+			//--
+			Smart::log_warning('WARNING: '.__METHOD__.' # The connection is not an instance of SQLite DB');
+			//--
 		} //end if
 		//--
-	} catch(Exception $e) {}
+	} catch(Exception $e) {
+		//--
+		Smart::log_warning('WARNING: '.__METHOD__.' # Something get wrong when trying to close an SQLite DB: '.$e->getMessage());
+		//--
+	} //end try catch
 	//--
 	return true;
 	//--
@@ -669,7 +693,7 @@ public static function check_if_table_exists($db, $table_name) {
 	//--
 	self::check_connection($db);
 	//--
-	$tquery = 'SELECT name FROM sqlite_master WHERE type=\'table\' AND name=\''.self::escape_str($db, $table_name).'\'';
+	$tquery = 'SELECT `name` FROM `sqlite_master` WHERE `type`=\'table\' AND `name`=\''.self::escape_str($db, $table_name).'\'';
 	$test = self::read_data($db, $tquery);
 	//--
 	$sqlite_error = '';
@@ -1169,7 +1193,7 @@ public static function escape_str($db, $y_string) {
 //======================================================
 public static function prepare_statement($db, $arrdata, $mode) {
 
-	// version: 170403
+	// version: 170410
 
 	//--
 	$mode = strtolower((string)$mode);
@@ -1207,7 +1231,7 @@ public static function prepare_statement($db, $arrdata, $mode) {
 		//--
 		foreach($arrdata as $key => $val) {
 			//-- check for SQL INJECTION
-			$key = trim(str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
+			$key = (string) trim(str_replace(array('`', "'", '"'), array('', '', ''), (string)$key));
 			//-- except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if((string)$mode == 'in-select') { // in-select
 				$key = (int) $key; // force int keys
@@ -1249,9 +1273,9 @@ public static function prepare_statement($db, $arrdata, $mode) {
 			if((string)$mode == 'in-select') { // in-select
 				$tmp_query_w .= $val_x.',';
 			} elseif((string)$mode == 'update') { // update
-				$tmp_query_x .= '"'.$key.'"'.'='.$val_x.',';
+				$tmp_query_x .= '`'.$key.'`'.'='.$val_x.','; // no field escaping
 			} else { // insert
-				$tmp_query_y .= '"'.$key.'"'.',';
+				$tmp_query_y .= '`'.$key.'`'.','; // no field escaping
 				$tmp_query_z .= $val_x.',';
 			} //end if else
 			//--
@@ -1300,7 +1324,7 @@ public static function prepare_statement($db, $arrdata, $mode) {
  * This can be used for a full SQL statement or just for a part.
  * The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !
  *
- * @param STRING $query							:: SQL Statement to process like '   WHERE ("id" = ?)'
+ * @param STRING $query							:: SQL Statement to process like '   WHERE (id = ?)'
  * @param ARRAY $arrdata 						:: The non-associative array as of: $arr=array('a');
  * @return STRING								:: The SQL processed (partial/full) Statement
  */
@@ -1370,10 +1394,13 @@ public static function prepare_param_query($db, $query, $replacements_arr) { // 
 //======================================================
 public static function new_safe_id($db, $y_mode, $y_id_field, $y_table_name) {
 	//--
+	$y_table_name = (string) $y_table_name;
 	if(!self::validate_table_and_fields_names($y_table_name)) {
 		self::error($db, 'NEW-SAFE-ID', 'Get New Safe ID', 'Invalid Table Name', $y_table_name);
 		return '';
 	} //end if
+	//--
+	$y_id_field = (string) $y_id_field;
 	if(!self::validate_table_and_fields_names($y_id_field)) {
 		self::error($db, 'NEW-SAFE-ID', 'Get New Safe ID', 'Invalid Field Name', $y_id_field.' / [Table='.$y_table_name.']');
 		return '';
@@ -1397,9 +1424,9 @@ public static function new_safe_id($db, $y_mode, $y_id_field, $y_table_name) {
 		//--
 		$new_id = 'NO-ID-ALGO';
 		switch((string)$y_mode) {
-//			case 'uid10seq': // sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
-//				$new_id = (string) Smart::uuid_10_seq();
-//				break;
+			case 'uid10seq': // ! sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
+				$new_id = (string) Smart::uuid_10_seq();
+				break;
 			case 'uid10num':
 				$new_id = (string) Smart::uuid_10_num();
 				break;
@@ -1410,7 +1437,7 @@ public static function new_safe_id($db, $y_mode, $y_id_field, $y_table_name) {
 		//--
 		$result_arr = array();
 		//--
-		$result_arr = self::read_data($db, "SELECT $y_id_field FROM $y_table_name WHERE ($y_id_field = '".self::escape_str($db, $new_id)."') LIMIT 1 OFFSET 0");
+		$result_arr = self::read_data($db, 'SELECT `'.$y_id_field.'` FROM `'.$y_table_name.'` WHERE (`'.$y_id_field.'` = \''.self::escape_str($db, (string)$new_id).'\') LIMIT 1 OFFSET 0');
 		//--
 		$tmp_result = (string) trim((string)$result_arr[0]);
 		$result_arr = array();
@@ -1431,6 +1458,12 @@ public static function create_table($db, $table_name, $table_schema, $table_inde
 	// $table_indexes = array('idx_uidls' => 'date_time ASC, status_delete, status_read');
 	//--
 	self::check_connection($db);
+	//-- check names
+	$table_name = (string) $table_name;
+	if(!self::validate_table_and_fields_names($table_name)) {
+		self::error($db, 'CREATE TABLE', 'Create Table: '.$table_name, 'Invalid Table Name', $table_name);
+		return '';
+	} //end if
 	//-- the create table query
 	$tbl_query = "CREATE TABLE {$table_name} ({$table_schema});";
 	//--
@@ -1439,7 +1472,11 @@ public static function create_table($db, $table_name, $table_schema, $table_inde
 	if((is_array($table_indexes)) AND (Smart::array_size($table_indexes) > 0)) {
 		//--
 		foreach($table_indexes as $key => $val) {
-			$idx_query .= ' CREATE INDEX '.$key.' ON '.$table_name.' ('.$val.');';
+			if(!self::validate_table_and_fields_names((string)$key)) {
+				self::error($db, 'CREATE TABLE', 'Create Table: '.$table_name, 'Invalid Index Name', (string)$key);
+				return '';
+			} //end if
+			$idx_query .= ' CREATE INDEX '.(string)$key.' ON '.(string)$table_name.' ('.$val.');';
 		} //end for
 		//--
 	} //end if
@@ -1474,13 +1511,24 @@ private static function validate_table_and_fields_names($y_table_or_field) {
 //======================================================
 private static function get_connection_id($db) {
 	//--
-	$out = '?SQLITE-FILE?';
+	$out = (string) self::$invalid_conn;
 	//--
 	self::check_connection($db);
 	//--
-	$arr = (array) $db->query('PRAGMA database_list')->fetchArray(SQLITE3_ASSOC);
-	if(((string)$arr['seq'] == '0') AND ((string)$arr['name'] == 'main') AND ((string)$arr['file'] != '')) {
-		$out = (string) $arr['file'];
+	try { // if DB is very busy this may fail, thus needs a try/catch
+		//--
+		$arr = (array) @$db->query('PRAGMA database_list')->fetchArray(SQLITE3_ASSOC);
+		//--
+	} catch (Exception $e) {
+		//--
+		Smart::log_warning('WARNING: '.__METHOD__.' # Failed to Get Connection ID: '.$e->getMessage());
+		//--
+	} //end try catch
+	//--
+	if(Smart::array_size($arr) > 0) {
+		if(((string)$arr['seq'] == '0') AND ((string)$arr['name'] == 'main') AND ((string)$arr['file'] != '')) {
+			$out = (string) $arr['file'];
+		} //end if
 	} //end if
 	//--
 	return (string) $out;

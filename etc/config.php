@@ -33,7 +33,6 @@ $configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugg
 // 			* SQLite
 //		Other DB Connectors are (below); they are available via Smart.Framework.Modules (copy them to modules/ folder of Smart.Framework) ; to add them to your project uncomment this line into modules/app/app-custom-bootstrap.inc.php # require_once('modules/smart-extra-libs/autoload.php'); :
 //			* MySQL 	(includded separately because MySQL (Oracle) Server License is not free if you build a commercial project with MySQL ...)
-// 			* MongoDB 	(includded separately because needs a special PHP extensions available only in PECL)
 // 			* SoLR 		(includded separately because needs a special PHP extensions available only in PECL)
 
 //--------------------------------------- Redis related configuration (used for Persistent Memory Cache but also for Redis Based Sessions)
