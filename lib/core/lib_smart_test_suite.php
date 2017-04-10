@@ -3526,19 +3526,19 @@ private function init_table_samples_countries() {
 		'iso character varying(2) PRIMARY KEY NOT NULL, name character varying(100) NOT NULL, iso3 character varying(3) NOT NULL, numcode integer NOT NULL, uuid character varying(10)',
 		[ // indexes
 		//	'iso' 		=> 'iso', // not necessary, it is the primary key
-			'name' 		=> 'name',
+			'name' 		=> 'name ASC',
 			'iso3' 		=> 'iso3',
-			'numcode' 	=> 'numcode',
+			'numcode' 	=> 'numcode DESC',
 			'uuid' 		=> 'uuid'
 		]
 	);
+	$this->db->write_data('UPDATE `sample_countries` '.$this->db->prepare_statement($rows[0], 'update').' WHERE (`iso` IS NULL)'); // test
 	foreach($rows as $key => $row) {
 		$row['uuid'] = (string) $this->db->new_safe_id('uid10seq', 'uuid', 'sample_countries');
 		$this->db->write_data(
-			'INSERT INTO sample_countries '.$this->db->prepare_statement($row, 'insert')
+			'INSERT INTO `sample_countries` '.$this->db->prepare_statement($row, 'insert')
 		);
 	} //end foreach
-	$this->db->write_data('UPDATE sample_countries '.$this->db->prepare_statement($rows[0], 'update').' WHERE (iso IS NULL)'); // test
 	$this->db->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->db->prepare_statement(array('US', 7, null), 'in-select').')');
 	$this->db->write_data('COMMIT');
 	//--
