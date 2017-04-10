@@ -258,9 +258,12 @@ License: BSD
 	font-size: 185% !important;
 }
 
+.ux-button-responsive {
+}
+
 @media all and (max-width:767px) {
 
-	.ux-button {
+	.ux-button-responsive {
 		width: 98% !important;
 		margin: 0.7em 0 0;
 	}
