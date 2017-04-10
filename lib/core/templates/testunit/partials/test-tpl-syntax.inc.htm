@@ -6,8 +6,8 @@
 					</th>
 				</tr>
 			[%%%%LOOP:LOOPTEST-VAR1%%%%]
-				[%%%%IF:IF2TEST:!=5%%%%]
-				<tr style="background:[%%%%IF:IFTEST:==1%%%%]#666699[%%%%ELSE:IFTEST%%%%]#003366[%%%%/IF:IFTEST%%%%]; color:#FFFFFF;" title="This line is displayed conditional using a templating IF syntax ; Values = [[####IFTEST|html####]] / [[####IF2TEST|html####]] ...">
+				[%%%%IF:IF2TEST:!=5;%%%%]
+				<tr style="background:[%%%%IF:IFTEST:==1;%%%%]#666699[%%%%ELSE:IFTEST%%%%]#003366[%%%%/IF:IFTEST%%%%]; color:#FFFFFF;" title="This line is displayed conditional using a templating IF syntax ; Values = [[####IFTEST|html####]] / [[####IF2TEST|html####]] ...">
 				[%%%%ELSE:IF2TEST%%%%]
 				<tr style="background:#FFCC00; color:#000000;" title="This line is displayed conditional using a templating IF syntax ; Values = [[####IFTEST|html####]] / [[####IF2TEST|html####]] ...">
 				[%%%%/IF:IF2TEST%%%%]
@@ -20,8 +20,8 @@
 			<table class="ux-table ux-table-striped" style="width:550px;">
 			[%%%%LOOP:LOOPTEST-VAR2%%%%]
 				<tr>
-					[%%%%IF:LOOPTEST-VAR2.C2:==a%%%%]
-						[%%%%IF:LOOPTEST-VAR2.C1:<1%%%%]
+					[%%%%IF:LOOPTEST-VAR2.C2:==a;%%%%]
+						[%%%%IF:LOOPTEST-VAR2.C1:<1;%%%%]
 							<td width="33%" style="color:#FF3300;">[####LOOPTEST-VAR2.C1|html####] [ &lt; 1 ; C2 = a ]</td>
 						[%%%%ELSE:LOOPTEST-VAR2.C1%%%%]
 							<td width="33%" style="color:#003399;">[####LOOPTEST-VAR2.C1|html####] [ &gt;= 1 ; C2 = a ]</td>

@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170406
+ * @version 	v.170410
  * @package 	Templating:Engines
  *
  */
@@ -833,7 +833,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 			$y_arr_context = [];
 		} //end if
 		//-- {{{SYNC-TPL-EXPR-IF}}}
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|%\!|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);?((\([0-9]*\))?%%)%%\](.*)?(\[%%%%ELSE\:\1\4%%\](.*)?)?\[%%%%\/IF\:\1\4%%\]}sU';
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|\!%|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU';
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
 		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
@@ -1013,7 +1013,7 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
-					case '%!': // not modulo (false/true)
+					case '!%': // not modulo (false/true)
 						if(!((float)$tmp_the_arr % (float)$compare_val[$i])) { // if evaluate to false keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {

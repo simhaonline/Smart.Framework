@@ -5,6 +5,7 @@
 [%%%%COMMENT%%%%]
 	!!! This is another comment, it must not be shown ... !!!
 [%%%%/COMMENT%%%%]
+<!-- Test for Markers-Templating v.170410 -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
 <!-- Test NUMERIC ([####TEST-NUM|html####]) : [####TEST-NUM|num####] -->
 <!-- Test HTML-ID ([####TEST-STR|html####]) : [####TEST-STR|htmid####] -->
@@ -26,7 +27,7 @@
 		[%%%%/IF:STATUS%%%%]
 	</div>
 	<div>
-		[%%%%IF:STATUS:@=a|b|c%%%%]
+		[%%%%IF:STATUS:@=a|b|c;%%%%]
 			<span style="color:#003399">IN [A | B | C]</span>
 		[%%%%ELSE:STATUS%%%%]
 			<span style="color:#FF3300">NOT IN [ A | B | C ]</span>
@@ -34,7 +35,7 @@
 	</div>
 	<b>Inverted Switch Eval for Status = [####STATUS####]</b>
 	<div>
-		[%%%%IF:STATUS:@!a|b|c%%%%]
+		[%%%%IF:STATUS:@!a|b|c;%%%%]
 			<span style="color:#FF3300">NOT IN [ A | B | C ]</span>
 		[%%%%ELSE:STATUS%%%%]
 			<span style="color:#003399">IN [A | B | C]</span>
@@ -42,39 +43,39 @@
 	</div>
 </div>
 <hr>
-[%%%%IF:TEST1:<=3%%%%]
+[%%%%IF:TEST1:<=3;%%%%]
 	[%%%%IF:TEST2:==3;(1)%%%%]
-		[%%%%IF:TEST3:==3%%%%]
+		[%%%%IF:TEST3:==3;%%%%]
 			This is displayed when TEST2 is = 3<br>
 		[%%%%/IF:TEST3%%%%]
 	[%%%%ELSE:TEST2(1)%%%%]
 		This is displayed when TEST2 is != 3 (ELSE)<br>
 	[%%%%/IF:TEST2(1)%%%%]
 [%%%%/IF:TEST1%%%%]
-[%%%%IF:TEST2:==3(2)%%%%]
+[%%%%IF:TEST2:==3;(2)%%%%]
 	This also appears when TEST2 is 3<br>
 [%%%%/IF:TEST2(2)%%%%]
 <hr>
-[%%%%IF:DATA:@+0(1)%%%%]
+[%%%%IF:DATA:@+0;(1)%%%%]
 <!-- Count of DATA is > 0 -->
 [%%%%ELSE:DATA(1)%%%%]
 <!-- Count of DATA is < 0 -->
 [%%%%/IF:DATA(1)%%%%]
-[%%%%IF:DATA:@-100000(2)%%%%]
+[%%%%IF:DATA:@-100000;(2)%%%%]
 <!-- Count of DATA is < 100000 -->
 [%%%%ELSE:DATA(2)%%%%]
 <!-- Count of DATA is > 100000 -->
 [%%%%/IF:DATA(2)%%%%]
 <table width="550" cellpadding="4">
 [%%%%LOOP:DATA(1)%%%%]
-[%%%%IF:TEST2:==3%%%%]
+[%%%%IF:TEST2:==3;%%%%]
 	<!-- Max Data MaxCount for Iterator: [####DATA._-MAXCOUNT-_|html####] / [####DATA._-ITERATOR-_|html####] -->
-	[%%%%IF:DATA._-ITERATOR-_:<=0(1)%%%%]
+	[%%%%IF:DATA._-ITERATOR-_:<=0;(1)%%%%]
 		<tr style="background:#003399;color:#FFFFFF;">
 			<td colspan="5"><b>[####DATA._-VAL-_|html####]</b></td>
 		</tr>
 	[%%%%ELSE:DATA._-ITERATOR-_(1)%%%%]
-		[%%%%IF:DATA._-ITERATOR-_:%2(2)%%%%]
+		[%%%%IF:DATA._-ITERATOR-_:%2;(2)%%%%]
 		<tr style="background:#ECECEC;">
 		[%%%%ELSE:DATA._-ITERATOR-_(2)%%%%]
 		<tr style="background:#FFCC00;">
@@ -82,8 +83,8 @@
 			<td>[####DATA.ID|html####]</td>
 			<td>[####DATA.SLUG|html####]</td>
 			<td>[####DATA.NAME|html####]</td>
-			[%%%%IF:DATA.IS_VOWEL:==1%%%%]
-				[%%%%IF:DATA.SLUG:==####TEST-COMPARE####%%%%]
+			[%%%%IF:DATA.IS_VOWEL:==1;%%%%]
+				[%%%%IF:DATA.SLUG:==####TEST-COMPARE####;%%%%]
 				<td>First*** Vowel: [[####DATA.IS_VOWEL|bool|html####]]</td>
 				[%%%%ELSE:DATA.SLUG%%%%]
 				<td>Vowel: [[####DATA._-VAL-_.IS_VOWEL|bool|html####]]</td>
@@ -93,12 +94,12 @@
 			[%%%%/IF:DATA.IS_VOWEL%%%%]
 			<td>[%%%%LOOP:DATA.ARR%%%%]<span>[####DATA.ARR._-VAL-_|html####]; </span>[%%%%/LOOP:DATA.ARR%%%%]</td>
 		</tr>
-		[%%%%IF:DATA.ID:%2%%%%]
-		<!-- Data ID is % 2 -->
+		[%%%%IF:DATA.ID:!%2;%%%%]
+		<!-- Data ID is !% 2 -->
 		[%%%%/IF:DATA.ID%%%%]
 	[%%%%/IF:DATA._-ITERATOR-_(1)%%%%]
 [%%%%ELSE:TEST2%%%%]
-	[%%%%IF:DATA._-ITERATOR-_:<=0(3)%%%%]
+	[%%%%IF:DATA._-ITERATOR-_:<=0;(3)%%%%]
 	<tr><td style="background:#FF3300;color:#FFFFFF;"><b>Test 2 is not 3, not showing real data ...</b></td></tr>
 	[%%%%/IF:DATA._-ITERATOR-_(3)%%%%]
 [%%%%/IF:TEST2%%%%]
@@ -111,11 +112,11 @@
 <table width="550" cellpadding="4">
 [%%%%LOOP:DAT2%%%%]
 	<!-- Max Data2 MaxCount for Iterator: [####DAT2._-MAXCOUNT-_|html####] / [####DAT2._-ITERATOR-_|html####] -->
-	[%%%%IF:DAT2._-KEY-_:!=key1%%%%]
-		[%%%%IF:DAT2._-ITERATOR-_:%2%%%%]
-		<tr style="background:#FFFFFF;">
-		[%%%%ELSE:DAT2._-ITERATOR-_%%%%]
+	[%%%%IF:DAT2._-KEY-_:!=key1;%%%%]
+		[%%%%IF:DAT2._-ITERATOR-_:!%2;%%%%]
 		<tr style="background:#DDEEFF;">
+		[%%%%ELSE:DAT2._-ITERATOR-_%%%%]
+		<tr style="background:#FFFFFF;">
 		[%%%%/IF:DAT2._-ITERATOR-_%%%%]
 		<td>[####DAT2._-KEY-_|html####]</td>
 		<td>[####DAT2._-VAL-_|html####]</td>
@@ -123,7 +124,7 @@
 	[%%%%ELSE:DAT2._-KEY-_%%%%]
 	<tr style="background:#FFFFCC;">
 		<td>[####DAT2._-KEY-_|html####]</td>
-		<td>[%%%%LOOP:DAT2.KEY1%%%%]<span style="[%%%%IF:DAT2.KEY1.ID:==val1%%%%]font-weight:bold;[%%%%ELSE:DAT2.KEY1.ID%%%%][%%%%/IF:DAT2.KEY1.ID%%%%]">[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]</td>
+		<td>[%%%%LOOP:DAT2.KEY1%%%%]<span style="[%%%%IF:DAT2.KEY1.ID:==val1;%%%%]font-weight:bold;[%%%%ELSE:DAT2.KEY1.ID%%%%][%%%%/IF:DAT2.KEY1.ID%%%%]">[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]</td>
 	</tr>
 	[%%%%/IF:DAT2._-KEY-_%%%%]
 [%%%%/LOOP:DAT2%%%%]

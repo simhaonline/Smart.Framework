@@ -17,7 +17,7 @@
 			<td align="center">
 				<div align="center">
 					<font size="5" color="#DD0000"><b>[####TITLE|html####] :: ERROR</b></font>
-					[%%%%IF:AREA:==%%%%]
+					[%%%%IF:AREA:==;%%%%]
 					<!-- empty area -->
 					[%%%%ELSE:AREA%%%%]
 					<br>
@@ -38,9 +38,9 @@
 				<font size="3" color="#DD0000"><b>[####ERR-MSG|html|nl2br####]</b></font>
 				<br>
 				<br>
-				<font size="4" color="#778899">[%%%%IF:AREA-ONE:==%%%%]Debug is OFF[%%%%ELSE:AREA-ONE%%%%]<pre>[####AREA-ONE|html####]</pre>[%%%%/IF:AREA-ONE%%%%]</font>
+				<font size="4" color="#778899">[%%%%IF:AREA-ONE:==;%%%%]Debug is OFF[%%%%ELSE:AREA-ONE%%%%]<pre>[####AREA-ONE|html####]</pre>[%%%%/IF:AREA-ONE%%%%]</font>
 				<br>
-				<font size="3" color="#333333">[%%%%IF:AREA-TWO:==%%%%]View the App ERROR Log for more details about this Error ![%%%%ELSE:AREA-TWO%%%%][####AREA-TWO|html|nl2br####]<br>[%%%%/IF:AREA-TWO%%%%]</font>
+				<font size="3" color="#333333">[%%%%IF:AREA-TWO:==;%%%%]View the App ERROR Log for more details about this Error ![%%%%ELSE:AREA-TWO%%%%][####AREA-TWO|html|nl2br####]<br>[%%%%/IF:AREA-TWO%%%%]</font>
 				<br>
 				</div>
 			</td>
