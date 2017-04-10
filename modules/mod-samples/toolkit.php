@@ -2,7 +2,7 @@
 // Controller: Samples/Toolkit
 // Route: ?/page/samples.toolkit (?page=samples.toolkit)
 // Author: unix-world.org
-// v.2.3.7.8 r.2017.03.27 / smart.framework.v.2.3
+// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application

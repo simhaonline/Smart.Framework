@@ -13,6 +13,9 @@
 	.smartGrid_Important {
 		font-weight: bold;
 	}
+	.smartGrid_HeadHighlight {
+		background-color: #DDEEFF !important;
+	}
 </style>
 <link rel="stylesheet" type="text/css" href="lib/js/jquery/pager/simplePagination.css">
 <script type="text/javascript" src="lib/js/jquery/pager/jquery.simplePagination.js"></script>
@@ -47,7 +50,7 @@ $(function() {
 
 	// Grid Data Defs
 	var columns = [
-		{id:"iso", field:"iso", name:"ID", sortable:true, width:75, cssClass:'smartGrid_Highlight', editor:TextCellSelector},
+		{id:"iso", field:"iso", name:"ID", sortable:true, width:75, cssClass:'smartGrid_Highlight', cssHeadClass:'smartGrid_HeadHighlight', editor:TextCellSelector},
 		{id:"name", field:"name", name:"Name", sortable:true, width:110, cssClass:'smartGrid_Important', editor:TextCellSelector},
 		{id:"iso3", field:"iso3", name:"ISO3 Code", sortable:true, width:70, editor:TextCellSelector},
 		{id:"numcode", field:"numcode", name:"Numeric Code", sortable:true, width:70, editor:TextCellSelector}
@@ -90,5 +93,4 @@ $(function() {
 });
 //--
 </script>
-
 <!-- #END :: Partial Template: TestUnit.SmartGrid -->

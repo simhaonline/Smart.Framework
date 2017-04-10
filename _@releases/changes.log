@@ -1,6 +1,11 @@
 
 # CHANGELOG / MIGRATION NOTES - SMART.FRAMEWORK #
 
+Apr, 10, 2017 :: Version 3.1
+	* Release / Stable
+	* refactoring for SmartComponents
+	* Marker Templating improvements
+
 Aug, 12, 2016 :: Version 2.3.5
 	* renamed SmartUnicode::utf8_fix_charset() to SmartUnicode::fix_charset()
 
