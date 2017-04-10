@@ -117,18 +117,18 @@ class SmartAppAdminController extends SmartAbstractAppController {
 			case 'testunit.html-editor':
 				//--
 				$this->PageViewSetCfg('template-file', 'template-modal.htm');
-				$main = SmartComponents::js_init_away_page();
-				$main .= SmartComponents::js_init_html_area();
-				$main .= SmartComponents::js_draw_html_area('test_html_area', 'test_html_area', '', '920px', '500px');
+				$main = '<script>'.SmartComponents::js_code_init_away_page().'</script>';
+				$main .= SmartComponents::html_jsload_htmlarea();
+				$main .= SmartComponents::html_js_htmlarea('test_html_area', 'test_html_area', '', '920px', '500px');
 				$main .= '<button class="ux-button" onClick="alert($(\'#test_html_area\').val());">Get HTML Source</button>';
 				//--
 				break;
 			case 'testunit.code-editor':
 				//--
 				$this->PageViewSetCfg('template-file', 'template-modal.htm');
-				$main = SmartComponents::js_init_away_page('The changes will be lost !');
-				$main .= SmartComponents::js_init_editarea();
-				$main .= SmartComponents::js_draw_editarea('test_code_editor', 'test_code_editor', '', 'html', true, '920px', '450px');
+				$main = '<script>'.SmartComponents::js_code_init_away_page('The changes will be lost !').'</script>';
+				$main .= SmartComponents::html_jsload_editarea();
+				$main .= SmartComponents::html_js_editarea('test_code_editor', 'test_code_editor', '', 'html', true, '920px', '450px');
 				//--
 				break;
 			case 'testunit.load-url-or-file':

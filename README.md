@@ -2,7 +2,7 @@
 (c) 2009 - 2017 unix-world.org
 License: BSD
 
-Smart.Framework - A High Performance PHP / Javascript Framework for Web Projects
+Smart.Framework - A High Performance PHP / Javascript Framework for Web Projects (websites and web applications)
 * Clean Code
 * Full Decoupled Libraries
 * Independent Packages (based on plugins and dependency-injection)
