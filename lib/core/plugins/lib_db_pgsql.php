@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / PostgreSQL Database Client]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
@@ -25,7 +25,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
 // DEPENDS-EXT: PHP PgSQL Extension
 //======================================================
 // Tested and Stable on PgSQL versions:
-// 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x
+// 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x / 9.6.x
 // Tested and Stable with PgPool-II versions:
 // 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x / 3.5.x
 // Tested and Stable with PgBouncer:
@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170410
+ * @version 	v.170411
  * @package 	Database:PostgreSQL
  *
  */
@@ -1432,7 +1432,7 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
  */
 public static function prepare_statement($arrdata, $mode, $y_connection='DEFAULT') {
 
-	// version: 170403
+	// version: 170411
 
 	//==
 	$y_connection = self::check_connection($y_connection, 'PREPARE-STATEMENT');
@@ -1484,11 +1484,9 @@ public static function prepare_statement($arrdata, $mode, $y_connection='DEFAULT
 			//-- except [ in-select | 'data-array' ], do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if(((string)$mode == 'in-select') OR ((string)$mode == 'data-array')) { // in-select, data-array
 				$key = (int) $key; // force int keys
-			} else {
-				if(!self::validate_table_and_fields_names($key)) { // no unicode modifier
-					self::error($y_connection, 'PREPARE-STATEMENT', 'Invalid KEY', '', $key);
-					return '';
-				} //end if
+			} elseif(!self::validate_table_and_fields_names($key)) { // no unicode modifier
+				self::error($y_connection, 'PREPARE-STATEMENT', 'Invalid KEY', '', $key);
+				return '';
 			} //end if
 			//--
 			$val_x = ''; // reset
@@ -2231,7 +2229,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170410
+ * @version 	v.170411
  * @package 	Database:PostgreSQL
  *
  */

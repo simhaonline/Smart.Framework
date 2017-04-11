@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / App :: r.170411 -- */
+/* -- CSS Start :: SmartFramework / App Responsive :: r.170411 -- */
 
 /* NOTICE:
 DO NOT modify the CSS original files except if located in the etc/ folder.
@@ -14,33 +14,22 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 /* -- framework -- */
 
-@import url("../../../lib/framework/css/ux-toolkit.css");
-
-@import url("../../../lib/framework/css/fonts/fontawesome.css");
+@import url("../../../lib/framework/css/ux-toolkit-responsive.css");
 
 
 /* -- core -- */
 
-@import url("../../../lib/core/css/notifications.css");
-
-@import url("../../../lib/core/css/navpager.css");
-
 /* -- plugins -- */
 
 /* optional, required just for Captcha Form */
-@import url("../../../lib/core/plugins/css/captcha.css");
 
 /* optional, required just for Media Gallery */
-@import url("../../../lib/core/plugins/css/mediagallery.css");
 
 /* optional, required just for Markdown renderer */
-@import url("../../../lib/core/plugins/css/markdown.css");
 
 /* optional, required just for ActiveCalendar */
-@import url("../../../lib/core/plugins/css/calendar.css");
 
 /* optional, required just for Email Mime Parser */
-@import url("../../../lib/core/plugins/css/email.css");
 
 /* ----------------------------- */
 

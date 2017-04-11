@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [CFG - SETTINGS]
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-//######################################### TestONLY Settings (the TestONLY Settings can be removed in real production environments)
+//######################################### Test ONLY Settings (can be removed in real production environments)
 define('SMART_FRAMEWORK_TESTUNIT_BASE_URL', '?/page/samples.testunit/op/');
 define('SMART_FRAMEWORK_TESTUNIT_CAPTCHA_MODE', 'cookie'); // cookie | session
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);
@@ -31,7 +31,7 @@ $configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugg
 //			* Redis
 // 			* PostgreSQL
 // 			* SQLite
-//		Other DB Connectors are (below); they are available via Smart.Framework.Modules (copy them to modules/ folder of Smart.Framework) ; to add them to your project uncomment this line into modules/app/app-custom-bootstrap.inc.php # require_once('modules/smart-extra-libs/autoload.php'); :
+//		Other DB Connectors are (below); they are available via Smart.Framework.Modules in modules/smart-extra-libs (copy smart-extra-libs/ to the modules/ folder of Smart.Framework) ; to add them to your project uncomment this line into modules/app/app-custom-bootstrap.inc.php # require_once('modules/smart-extra-libs/autoload.php'); :
 //			* MySQL 	(includded separately because MySQL (Oracle) Server License is not free if you build a commercial project with MySQL ...)
 // 			* SoLR 		(includded separately because needs a special PHP extensions available only in PECL)
 
@@ -61,7 +61,7 @@ $configs['pgsql']['transact']		= 'READ COMMITTED';						// Default Transaction L
 */
 //---------------------------------------
 
-//--------------------------------------- MAIL SEND
+//--------------------------------------- MAIL SEND (SMTP)
 /*
 $configs['sendmail']['server-mx-domain'] 	= 'yourdomain.tld';				// mx hello domain ; this is used for smtp send validations via HELO method, can be different from the server domain
 $configs['sendmail']['server-host'] 		= 'yourdomain.tld';				// `` | SMTP Server Host (IP or Domain)
@@ -83,7 +83,8 @@ $configs['regional']['calendar-week-start']			= '1';					// 0=start on sunday | 
 $configs['regional']['calendar-date-format-client'] = 'dd.mm.yy';			// Client Date Format - Javascript (allow only these characters: yy mm dd . - [space])
 $configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date Format - PHP (allow only these characters: Y m d . - [space])
 //---------------------------------------
-$languages = array('en' => '[EN]', 'ro' => '[RO]');							// associative array of available languages for this software (do not change without installing new languages support files)
+//$languages = array('en' => '[EN]', 'ro' => '[RO]');						// associative array of available languages for this software (do not change without installing new languages support files)
+$languages = array('en' => '[EN]');											// associative array of available languages for this software (do not change without installing new languages support files)
 //---------------------------------------
 
 //----------------------------------------

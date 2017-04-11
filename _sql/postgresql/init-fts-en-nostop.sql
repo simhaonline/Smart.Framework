@@ -1,5 +1,5 @@
 
--- FTS Init: English (EN), No-Stop-Words
+-- FTS Init: English (EN), No-Stop-Words :: r.170411
 
 CREATE TEXT SEARCH DICTIONARY public.english_stem_nostop(Template = snowball, Language = english);
 CREATE TEXT SEARCH CONFIGURATION public.english_nostop ( COPY = pg_catalog.english );

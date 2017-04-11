@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Session Management]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
@@ -62,7 +62,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.170307
+ * @version 	v.170411
  * @package 	Application
  *
  */
@@ -152,8 +152,14 @@ public static function start() {
 	//--
 	$browser_os_ip_identification = SmartUtils::get_os_browser_ip(); // get browser and os identification
 	//--
-	if(((string)$browser_os_ip_identification['bw'] == '@s#') OR ((string)$browser_os_ip_identification['bw'] == 'bot')) {
-		return; // in this case start no session for robots or the self browser (as they do not need to share info between many visits) ; if the self browser fail to identify will be at least identified as robot in the worst case
+	if((string)$browser_os_ip_identification['bw'] == '@s#') {
+		return; // this must be before identify bot ; in this case start no session for the self browser (session is blocked before a request to finalize thus it cannot be used !!!)
+	} //end if
+	//--
+	if((string)$browser_os_ip_identification['bw'] == 'bot') {
+		if(SMART_FRAMEWORK_SESSION_ROBOTS !== true) {
+			return; // in this case start no session for robots (as they do not need to share info between many visits)
+		} //end if
 	} //end if
 	//--
 	//=====
@@ -382,7 +388,7 @@ public static function start() {
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.170307
+	// v.170411
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / App Runtime]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -40,8 +40,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.1.1'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.10'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.1.2'); // this is the real release version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.11'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -155,6 +155,9 @@ if(!defined('SMART_FRAMEWORK_HTACCESS_FORBIDDEN')) {
 } //end if
 if(!defined('SMART_FRAMEWORK_HTACCESS_NOINDEXING')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_HTACCESS_NOINDEXING');
+} //end if
+if(!defined('SMART_FRAMEWORK_IDENT_ROBOTS')) {
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_IDENT_ROBOTS');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP')) {

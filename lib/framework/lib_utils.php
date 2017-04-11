@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Utils]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170408
+ * @version 	v.170411
  * @package 	Base
  *
  */
@@ -1950,29 +1950,18 @@ public static function get_os_browser_ip($y_mode='') {
 			$wp_browser = 'moz'; // mozilla / seamonkey or other mozilla derivates
 		} elseif(strpos($the_lower_signature, 'lynx') !== false) {
 			$wp_browser = 'lyx'; // lynx (text)
-		} else {
-			$robots = array(
-				'robot', 'apache', 'httperf', 'benchmark', 'scanner',
-				'googlebot', 'google adsbot', 'google toolbar', 'google web preview', 'google feed fetcher',
-				'yahoo! slurp', 'webcrawler', 'domaincrawler', 'catchbot', 'webalta crawler', 'superbot',
-				'msnbot', 'ms url control', 'winhttp', 'roku dvp', 'linkwalker', 'aihitbot', 'ia_archiver',
-				'sanszbot', 'linguee bot', 'swish-e', 'tarantula', 'fast-webcrawler', 'jeeves', 'teoma',
-				'baiduspider', 'bing bot', 'yandex', 'exabot', 'everyfeed spider', 'gregarius',
-				'facebook scraper', 'email wolf', 'gaisbot', 'gulperbot', 'grub-client', 'peach ',
-				'htmlparser', 'w3c css validator', 'w3c (x)html validator', 'w3c p3p validator',
-				'download demon', 'offline explorer', 'webcopier', 'web downloader', 'webzip', 'htmldoc',
-				'wget ', 'curl ', 'php ', 'libwww-perl', 'python-urllib', 'java '
-			);
+		} elseif(defined('SMART_FRAMEWORK_IDENT_ROBOTS')) {
+			$robots = (array) Smart::list_to_array((string)SMART_FRAMEWORK_IDENT_ROBOTS, false);
 			$imax = Smart::array_size($robots);
 			for($i=0; $i<$imax; $i++) {
-				if(strpos($the_lower_signature, $robots[$i]) !== false) {
+				if(strpos($the_lower_signature, (string)$robots[$i]) !== false) {
 					$wp_browser = 'bot'; // Robot
 					break;
 				} //end if
 			} //end for
 		} //end if else
-		//-- this is just for self-robot which name is always unique and impossible to guess
-		if(trim($the_lower_signature) == strtolower(self::get_selfrobot_useragent_name())) {
+		//-- this is just for self-robot which name is always unique and impossible to guess ; this must override the rest of detections just in the case that someone adds it to the ident robots in init ...
+		if((string)trim($the_lower_signature) == (string)strtolower(self::get_selfrobot_useragent_name())) {
 			$wp_browser = '@s#';
 		} //end if
 		//--

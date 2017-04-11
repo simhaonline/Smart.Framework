@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [SmartFramework / INIT]
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -38,6 +38,7 @@ define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', '');										// URL Rewrite 
 define('SMART_FRAMEWORK_SESSION_NAME', 		'SmartFramework__SESSION'); 					// Session Name ; *** YOU HAVE TO CHANGE IT *** this must be static and must contain only Letters and _
 define('SMART_FRAMEWORK_SESSION_LIFETIME', 	intval(60 * 60 * 24));							// Session Lifetime in seconds (24 h by default) ; set to 0 for session
 define('SMART_FRAMEWORK_SESSION_HANDLER', 	'files');										// Session Handler: 'files' (default / file storage: lightweight but in high concurencies may have locking issues) ; 'redis' (DB / in-memory, very fast)
+//define('SMART_FRAMEWORK_SESSION_ROBOTS', 	true);											// Uncomment this to enable session also for robots (robot identified user agents)
 //--------------------------------------- EXECUTION / RUNTIME LIMITS
 define('SMART_FRAMEWORK_MEMORY_LIMIT', 		'256M');										// Memory Limit Per Script (via PHP.INI) ; a good value for production is 256M or 384M ; for development, with Debugging turned ON be sure to set a big value like 512M or 1024M !!
 define('SMART_FRAMEWORK_EXECUTION_TIMEOUT', 610);											// Script Max Execution Time (Sync with the web server Timeout and PHP.INI)
@@ -98,6 +99,8 @@ define('SMART_FRAMEWORK_HTACCESS_NOINDEXING', '
 Options -Indexes
 ');
 //--
+//---------------------------------------- ROBOTS IDENTIFY :: DON'T CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING :: Sample (spaces between <> counts): '<bot signature 1>,<bot signature 2 >,< another-bot >'
+define('SMART_FRAMEWORK_IDENT_ROBOTS', '<robot>,<apache>,<httperf>,<benchmark>,<scanner>,<googlebot>,<google adsbot>,<google toolbar>,<google web preview>,<google feed fetcher>,<yahoo! slurp>,<webcrawler>,<domaincrawler>,<catchbot>,<webalta crawler>,<superbot>,<msnbot>,<ms url control>,<winhttp>,<roku dvp>,<linkwalker>,<aihitbot>,<ia_archiver>,<sanszbot>,<linguee bot>,<swish-e>,<tarantula>,<fast-webcrawler>,<jeeves>,<teoma>,<baiduspider>,<bing bot>,<yandex>,<exabot>,<everyfeed spider>,<gregarius>,<facebook scraper>,<email wolf>,<gaisbot>,<gulperbot>,<grub-client>,<peach >,<htmlparser>,<w3c css validator>,<w3c (x)html validator>,<w3c p3p validator>,<download demon>,<offline explorer>,<webcopier>,<web downloader>,<webzip>,<htmldoc>,<wget >,<curl >,<php >,<libwww-perl>,<python-urllib>,<java >'); // robots identification by user agent portions of signature
 //--------------------------------------- SPECIAL URL PARAMS
 define('SMART_FRAMEWORK_URL_VALUE_ENABLED', 		'yes');															// Enabled URL Value (for Modal/PopUp and Printable)
 define('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP', 		'winmod');														// Modal/PopUp URL Param

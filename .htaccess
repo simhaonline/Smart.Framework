@@ -2,26 +2,26 @@
 ### Smart.Framework .htaccess sample for Apache 2.2 / 2.4
 ### For the most basic version, just uncomment the 7 lines that start with the # as first character.
 
-php_value default_mimetype		text/html
-php_value variables_order		GPCS
-php_value request_order			GP
+php_value default_mimetype				text/html
+php_value variables_order				GPCS
+php_value request_order					GP
 php_flag always_populate_raw_post_data	Off
-php_value max_input_vars		1500
-php_value max_input_nesting_level	5
-php_value max_input_time		60
-php_value output_buffering		0
-#php_value output_buffering		4096
-php_value post_max_size			108M
-php_value upload_max_filesize		102M
-php_flag session.auto_start		Off
-php_value session.use_trans_sid		0
-php_flag mail.add_x_header		Off
-php_flag zend.enable_gc			On
-php_flag zend.multibyte			Off
+php_value max_input_vars				1500
+php_value max_input_nesting_level		5
+php_value max_input_time				60
+php_value output_buffering				0
+	#php_value output_buffering			4096
+php_value post_max_size					108M
+php_value upload_max_filesize			102M
+php_flag session.auto_start				Off
+php_value session.use_trans_sid			0
+php_flag mail.add_x_header				Off
+php_flag zend.enable_gc					On
+php_flag zend.multibyte					Off
 
 #<IfModule mod_rewrite.c>
 
-	#v.170109#
+	#v.170411#
 
 	###
 #	RewriteEngine 		On

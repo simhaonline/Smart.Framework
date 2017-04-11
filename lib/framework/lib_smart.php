@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Base]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170327
+ * @version     v.170411
  * @package     Base
  *
  */
@@ -1675,21 +1675,25 @@ public static function array_to_list($y_arr) {
  * Convert a List String to Array
  *
  * @param STRING 	$y_list			:: The List String to be converted: '<elem1>, <elem2>, ..., <elemN>'
+ * @param BOOLEAN 	$y_trim 		:: *Optional* default is TRUE ; If set to FALSE will not trim the values in the list
  *
  * @return ARRAY 					:: The Array: Array(elem1, elem2, ..., elemN)
  */
-public static function list_to_array($y_list) {
+public static function list_to_array($y_list, $y_trim=true) {
 	//--
 	if((string)trim((string)$y_list) == '') {
 		return array(); // empty list
 	} //end if
 	//--
-	$y_list = (string) trim((string)str_replace(array('<', '>'), array(' ', ' '), (string)$y_list));
+	$y_list = (string) trim((string)$y_list);
 	//--
 	$arr = (array) explode(',', (string)$y_list);
 	$new_arr = array();
 	for($i=0; $i<self::array_size($arr); $i++) {
-		$arr[$i] = (string) trim((string)$arr[$i]);
+		$arr[$i] = (string) str_replace(['<', '>'], ['', ''], (string)$arr[$i]);
+		if($y_trim !== false) {
+			$arr[$i] = (string) trim((string)$arr[$i]);
+		} //end if
 		if((string)$arr[$i] != '') {
 			if(!in_array((string)$arr[$i], $new_arr)) {
 				$new_arr[] = (string) $arr[$i];

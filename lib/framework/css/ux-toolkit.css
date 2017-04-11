@@ -1,4 +1,4 @@
-/***** Smart UX CSS Toolkit :: v.3.1.1 r.2017.04.10 / smart.framework.v.3.1 *****/
+/***** Smart UX CSS Toolkit :: v.3.1.2 r.2017.04.11 / smart.framework.v.3.1 *****/
 
 /*
 License: BSD
@@ -101,7 +101,9 @@ License: BSD
 	width: 8.33333333%;
 }
 
-@media all and (max-width:767px) {
+@media all and (max-width:639px) {
+
+	/* Responsive Grid */
 
 	.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
 		width: 99% !important;
@@ -261,7 +263,7 @@ License: BSD
 .ux-button-responsive {
 }
 
-@media all and (max-width:767px) {
+@media all and (max-width:639px) {
 
 	.ux-button-responsive {
 		width: 98% !important;
@@ -379,9 +381,9 @@ striping:
 	vertical-align: top;
 }
 
-/* TABLE REFLOW (by Unixman) */
+/* Fluid TABLE REFLOW (by Unixman) */
 
-@media all and (max-width:767px) {
+@media all and (max-width:639px) {
 
 	.ux-reflow-table {
 		width: 98%;
@@ -750,83 +752,6 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 .ux-form ::-moz-placeholder {
 	color: #999999;
 }
-
-/*** Forms / Responsive ***/
-
-@media all and (max-width:767px) {
-
-	.ux-form button[type="submit"] {
-		margin: 0.7em 0 0;
-	}
-
-	.ux-form input:not([type]),
-	.ux-form input[type="text"],
-	.ux-form input[type="password"],
-	.ux-form input[type="email"],
-	.ux-form input[type="url"],
-	.ux-form input[type="date"],
-	.ux-form input[type="month"],
-	.ux-form input[type="time"],
-	.ux-form input[type="datetime"],
-	.ux-form input[type="datetime-local"],
-	.ux-form input[type="week"],
-	.ux-form input[type="number"],
-	.ux-form input[type="search"],
-	.ux-form input[type="tel"],
-	.ux-form input[type="color"],
-	.ux-form label,
-	.ux-form textarea,
-	.ux-form select,
-	.ux-field {
-		margin-bottom: 0.3em;
-		display: block;
-		width: 98% !important;
-	}
-
-	.ux-group input:not([type]),
-	.ux-group input[type="text"],
-	.ux-group input[type="password"],
-	.ux-group input[type="email"],
-	.ux-group input[type="url"],
-	.ux-group input[type="date"],
-	.ux-group input[type="month"],
-	.ux-group input[type="time"],
-	.ux-group input[type="datetime"],
-	.ux-group input[type="datetime-local"],
-	.ux-group input[type="week"],
-	.ux-group input[type="number"],
-	.ux-group input[type="search"],
-	.ux-group input[type="tel"],
-	.ux-group input[type="color"],
-	.ux-form label,
-	.ux-form textarea,
-	.ux-form select,
-	.ux-field {
-		margin-bottom: 0;
-		width: 98% !important;
-	}
-
-	.ux-form-aligned .ux-control-group label {
-		margin-bottom: 0.3em;
-		text-align: left;
-		display: block;
-		width: 100%;
-	}
-
-	.ux-form-aligned .ux-controls {
-		margin: 1.5em 0 0 0;
-	}
-
-	.ux-form .ux-help-inline,
-	.ux-form-message-inline,
-	.ux-form-message {
-		display: block;
-		font-size: 0.75em;
-		padding: 0.2em 0 0.8em;
-	}
-
-}
-
 
 /*** Menus ***/
 

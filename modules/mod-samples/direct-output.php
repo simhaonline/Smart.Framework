@@ -2,7 +2,7 @@
 // Controller: Samples/DirectOutput
 // Route: ?/page/samples.direct-output (?page=direct-output)
 // Author: unix-world.org
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -18,6 +18,7 @@ define('SMART_APP_MODULE_DIRECT_OUTPUT', true);
 //		* the Middleware will end bypass the output directly to the controller
 //		* all the page settings will be ignored, no headers, no templates no other features will be available
 //		* the use for this type of controllers is when you need by example use passthru() from PHP or other functions that need gradually output !
+//		* calling InstantFlush() after each portion of output will do a gradually output (see the running example !!)
 
 /**
  * Index Controller

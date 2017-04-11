@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / SQLite 3 Database Client]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.1 r.2017.04.10 / smart.framework.v.3.1
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170410
+ * @version 	v.170411
  * @package 	Database:SQLite
  *
  */
@@ -443,7 +443,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170410
+ * @version 	v.170411
  * @package 	Database:SQLite
  *
  */
@@ -1193,7 +1193,7 @@ public static function escape_str($db, $y_string) {
 //======================================================
 public static function prepare_statement($db, $arrdata, $mode) {
 
-	// version: 170410
+	// version: 170411
 
 	//--
 	$mode = strtolower((string)$mode);
@@ -1235,11 +1235,9 @@ public static function prepare_statement($db, $arrdata, $mode) {
 			//-- except in-select, do not allow invalid keys as they represent the field names ; valid fields must contain only the following chars [A..Z][a..z][0..9][_]
 			if((string)$mode == 'in-select') { // in-select
 				$key = (int) $key; // force int keys
-			} else {
-				if(!self::validate_table_and_fields_names($key)) { // no unicode modifier
-					self::error($db, 'PREPARE-STATEMENT', 'Invalid KEY', '', $key);
-					return '';
-				} //end if
+			} elseif(!self::validate_table_and_fields_names($key)) { // no unicode modifier
+				self::error($db, 'PREPARE-STATEMENT', 'Invalid KEY', '', $key);
+				return '';
 			} //end if
 			//--
 			$val_x = ''; // reset

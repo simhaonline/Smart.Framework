@@ -1,0 +1,92 @@
+<?php
+// Controller: Samples/BenchMark
+// Route: ?/page/samples.benchmark (?page=samples.benchmark)
+// Author: unix-world.org
+// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+
+//----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
+if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+} //end if
+//-----------------------------------------------------
+
+// This sample will run a sample download.
+// It is recommended to use the framework security mechanisms to serve files for download whenever possible.
+// See the code below and enjoy ;)
+
+define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
+
+/**
+ * Index Controller
+ *
+ * @ignore
+ *
+ */
+class SmartAppIndexController extends SmartAbstractAppController {
+
+	// by default in etc/init.php the allowed download folder(s) is set in a constant: SMART_FRAMEWORK_DOWNLOAD_FOLDERS = '<wpub>'
+	// so only files under the 'wpub/' folder are allowed by default !
+	private $download_file = 'wpub/sample-download.png';
+
+	public function Run() {
+
+		if((string)$this->download_file == '') {
+			$this->PageViewSetCfg('error', 'Empty file name to download !');
+			return 500;
+		} //end if
+
+		if(!SmartFileSysUtils::check_file_or_dir_name((string)$this->download_file)) {
+			$this->PageViewSetCfg('error', 'Invalid file name to download (unsafe path) !');
+			return 403;
+		} //end if
+
+		if(!is_file((string)$this->download_file)) { // avoid re-copy each time this script runs ...
+			SmartFileSystem::copy('lib/core/img/app/session.png', (string)$this->download_file); // copy a file from lib/ to wpub/ to allow doanload it (the internal security mechanisms dissalow download files except what is defined in SMART_FRAMEWORK_DOWNLOAD_FOLDERS ...)
+		} //end if
+
+		if(!is_file((string)$this->download_file)) {
+			$this->PageViewSetCfg('error', 'Cannot find the required file for download !');
+			return 404;
+		} //end if
+
+		if(!is_readable((string)$this->download_file)) {
+			$this->PageViewSetCfg('error', 'The required file for download is not readable !');
+			return 500;
+		} //end if
+
+		$download_key 	= (string) sha1((string)time().SMART_FRAMEWORK_SECURITY_KEY); // generate a unique download key that will expire shortly
+		$download_link 	= (string) SmartUtils::create_download_link((string)$this->download_file, (string)$download_key); // generate an encrypted internal download link to serve that file once
+
+		$this->PageViewSetCfgs([
+			'download-key' 		=> (string) $download_key,
+			'download-packet' 	=> (string) $download_link
+		]);
+
+		// for the rest the framework will take care as:
+		// 		* detect the mime type and set the required headers (includding atatchment type and file name)
+		// 		* serve the file: output it using fpassthru() so the file can be up to 4GB (on some 64-bit file systems can be even larger)
+
+		// for your information, as long as you ensure a strong $download_key
+		// (a key composed from several parts: a time based one, a private key and maybe using the http user agent signature + visitor IP)
+		// so thereafter you can create secure download links that you can set in controllers but more,
+		// you can even send this encrypted (secured) download links via URL GET/POST between requests as long as the $download_key is not exposed to the visitor !!!
+
+	} //END FUNCTION
+
+} //END CLASS
+
+/**
+ * Admin Controller (optional)
+ *
+ * @ignore
+ *
+ */
+class SmartAppAdminController extends SmartAppIndexController {
+
+	// this will clone the SmartAppIndexController to run exactly the same action in admin.php
+	// or this can implement a completely different controller if it is accessed via admin.php
+
+} //END CLASS
+
+//end of php code
+?>

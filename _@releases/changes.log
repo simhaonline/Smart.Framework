@@ -1,7 +1,10 @@
 
 # CHANGELOG / MIGRATION NOTES - SMART.FRAMEWORK #
 
-Apr, 10, 2017 :: Version 3.1
+Apr, 11, 2017 :: Version 3.1.2
+	* a bug fix release
+
+Apr, 10, 2017 :: Version 3.1.1
 	* Release / Stable
 	* refactoring for SmartComponents
 	* Marker Templating improvements
