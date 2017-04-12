@@ -26,6 +26,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 	public function Run() {
 
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
+			return 500;
+		} //end if
+		//--
+
 		//-- sample page variable from Request (GET/POST)
 		$some_var_from_request = $this->RequestVarGet('extra_text', 'default', 'string');
 		//--
@@ -105,10 +112,17 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//-- building a regular URL
+		if((string)$module_area == 'admin') {
+			$sign_benchmark = '[A]';
+			$page_benchmark = 'samples.benchmark-with-session.html';
+		} else { // index (default)
+			$sign_benchmark = '[I]';
+			$page_benchmark = 'samples.benchmark.html';
+		} //end if else
 		$url_benchmark = Smart::url_add_params(
 			$this->ControllerGetParam('url-script'),
 			array(
-				'page' => 'samples.benchmark.html'
+				'page' => (string) $page_benchmark
 			)
 		);
 		$url_benchmark = Smart::url_make_semantic($url_benchmark);
@@ -133,7 +147,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewSetVar(
 			'main',
 			SmartMarkersTemplating::render_template(
-				'<h1>'.'[####TXT-HELLO-WORLD####]</h1><div align="right"><b>[####DATE-TIME|html####] [[####TXT-OK####]]'."\n".'</b></div><br><a class="ux-button ux-button-special ux-button-responsive" href="http://sourceforge.net/projects/warp-cms/files/smart-framework/" target="_blank"><i class="fa fa-cloud-download"></i> &nbsp; Download Smart.Framework (stable)</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-highlight ux-button-responsive" href="http://demo.unix-world.org/smart-framework.docs/" target="_blank"><i class="fa fa-book"></i> &nbsp; Smart.Framework Documentation</a><br>'."\n".'<br><a class="ux-button ux-button-primary ux-button-responsive" href="[####URL-TESTUNIT|html####]"><i class="fa fa-object-group"></i> &nbsp; Go to Smart.Framework Demo &amp; Tests</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-secondary ux-button-responsive" href="[####URL-BENCHMARK|html####]"><i class="fa fa-line-chart"></i> &nbsp; Benchmark URL for Smart.Framework</a><br><br>',
+				'<h1>'.'[####TXT-HELLO-WORLD####]</h1><div align="right"><b>[####DATE-TIME|html####] [[####TXT-OK####]]'."\n".'</b></div><br><a class="ux-button ux-button-special ux-button-responsive" href="http://sourceforge.net/projects/warp-cms/files/smart-framework/" target="_blank"><i class="fa fa-cloud-download"></i> &nbsp; Download Smart.Framework (stable)</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-highlight ux-button-responsive" href="http://demo.unix-world.org/smart-framework.docs/" target="_blank"><i class="fa fa-book"></i> &nbsp; Smart.Framework Documentation</a><br>'."\n".'<br><a class="ux-button ux-button-primary ux-button-responsive" href="[####URL-TESTUNIT|html####]"><i class="fa fa-object-group"></i> &nbsp; Go to Smart.Framework Demo &amp; Tests</a> &nbsp;&nbsp;&nbsp; <a class="ux-button ux-button-secondary ux-button-responsive" href="[####URL-BENCHMARK|html####]"><i class="fa fa-line-chart"></i> &nbsp; Benchmark URL for Smart.Framework '.$sign_benchmark.'</a><br><br>',
 				[
 					'DATE-TIME' 		=> date('Y-m-d H:i:s O'),
 					'TXT-OK' 			=> $translator_core->text('ok'),

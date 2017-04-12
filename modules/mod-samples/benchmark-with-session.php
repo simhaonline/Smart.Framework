@@ -24,6 +24,13 @@ class SmartAppAdminController extends SmartAbstractAppController {
 
 	public function Run() {
 
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
+			return 500;
+		} //end if
+		//--
+
 		//-- Session will be started also by set
 		$sess_key = 'Samples_Benchmark_WithSession (just-for-admin)';
 		$sess_test = (string) SmartSession::get($sess_key);

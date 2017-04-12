@@ -30,6 +30,16 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 	public function Run() {
 
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			if(!headers_sent()) {
+				http_response_code(500);
+			} //end if
+			die(SmartComponents::http_message_500_internalerror('ERROR: Test mode is disabled ...'));
+			return;
+		} //end if
+		//--
+
 		//--
 		header('Cache-Control: no-cache'); // HTTP 1.1
 		header('Pragma: no-cache'); // HTTP 1.0

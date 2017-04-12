@@ -10,6 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //######################################### Test ONLY Settings (can be removed in real production environments)
+define('SMART_FRAMEWORK_TEST_MODE', true);
 define('SMART_FRAMEWORK_TESTUNIT_BASE_URL', '?/page/samples.testunit/op/');
 define('SMART_FRAMEWORK_TESTUNIT_CAPTCHA_MODE', 'cookie'); // cookie | session
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);

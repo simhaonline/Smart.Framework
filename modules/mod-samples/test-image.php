@@ -31,6 +31,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		// this is for INDEX area ; it will use framework buffered output
 
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
+			return 500;
+		} //end if
+		//--
+
 		//--
 		$this->PageViewSetCfg('rawpage', true); // set raw page (the output must not load a template ; in this case the output will be a binary image string !!)
 		$this->PageViewSetCfg('rawmime', 'image/png'); // set mime type: Image / PNG
@@ -97,6 +104,16 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		// this is for ADMIN area ; it will use direct (unbuffered) output (aka echo)
 		// this way is much more complicated ... comparing with the above (buffered example) as we need to control every portion of output
 		// as you can see above we can control even the output of the image: if is empty (which is not possible here ...)
+
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			if(!headers_sent()) {
+				http_response_code(500);
+			} //end if
+			die(SmartComponents::http_message_500_internalerror('ERROR: Test mode is disabled ...'));
+			return;
+		} //end if
+		//--
 
 		//-- because we do here direct output we need to set all the required headers
 		header('Cache-Control: no-cache'); // HTTP 1.1

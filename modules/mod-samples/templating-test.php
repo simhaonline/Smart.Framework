@@ -22,6 +22,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 	public function Run() {
 
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
+			return 500;
+		} //end if
+		//--
+
 		//--
 		/* Uncomment this to see a Marker Template Analysis (DEBUG ONLY !!! Never use this in real production environments, it is intended for Development Only)
 		die(
@@ -85,6 +92,21 @@ class SmartAppIndexController extends SmartAbstractAppController {
 	} //END FUNCTION
 
 } //END CLASS
+
+
+/**
+ * Admin Controller (optional)
+ *
+ * @ignore
+ *
+ */
+class SmartAppAdminController extends SmartAppIndexController {
+
+	// this will clone the SmartAppIndexController to run exactly the same action in admin.php
+	// or this can implement a completely different controller if it is accessed via admin.php
+
+} //END CLASS
+
 
 //end of php code
 ?>

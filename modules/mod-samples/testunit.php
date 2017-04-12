@@ -22,6 +22,13 @@ class SmartAppAdminController extends SmartAbstractAppController {
 
 	public function Run() {
 
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
+			return 500;
+		} //end if
+		//--
+
 		//--
 		require_once('lib/core/lib_smart_test_suite.php');			// test suite
 		//--

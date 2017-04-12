@@ -30,6 +30,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 	public function Run() {
 
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
+			return 500;
+		} //end if
+		//--
+
 		if((string)$this->download_file == '') {
 			$this->PageViewSetCfg('error', 'Empty file name to download !');
 			return 500;
@@ -63,11 +70,12 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		]);
 
 		// for the rest the framework will take care as:
-		// 		* detect the mime type and set the required headers (includding atatchment type and file name)
+		// 		* detect the mime type and set the required headers (includding atatchment/inline type and file name)
 		// 		* serve the file: output it using fpassthru() so the file can be up to 4GB (on some 64-bit file systems can be even larger)
 
 		// for your information, as long as you ensure a strong $download_key
-		// (a key composed from several parts: a time based one, a private key and maybe using the http user agent signature + visitor IP)
+		// the key is automatically composed with several parts additions: the http user agent signature + visitor IP
+		// any download link will expire in several hours (1..24), as defined in SMART_FRAMEWORK_DOWNLOAD_EXPIRE
 		// so thereafter you can create secure download links that you can set in controllers but more,
 		// you can even send this encrypted (secured) download links via URL GET/POST between requests as long as the $download_key is not exposed to the visitor !!!
 

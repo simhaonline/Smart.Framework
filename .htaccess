@@ -1,7 +1,13 @@
 
-### Smart.Framework .htaccess sample for Apache 2.2 / 2.4
-### For the most basic version, just uncomment the 7 lines that start with the # as first character.
+##### Smart.Framework .htaccess sample for Apache 2.2 / 2.4 @ v.170412
 
+### Restrict by IP
+#order deny,allow
+#deny from all
+#allow from 127.0.0.1
+###
+
+### PHP recommended ini settings for Smart.Framework
 php_value default_mimetype				text/html
 php_value variables_order				GPCS
 php_value request_order					GP
@@ -18,10 +24,16 @@ php_value session.use_trans_sid			0
 php_flag mail.add_x_header				Off
 php_flag zend.enable_gc					On
 php_flag zend.multibyte					Off
+###
 
+### Cross Origin Access
+#<FilesMatch "\.(woff|ttf|svg|gif|png|jpg|jpeg)$">
+#	Header set Access-Control-Allow-Origin "*"
+#</FilesMatch>
+###
+
+### Rewrite :: For the most basic rewrite version, just uncomment the 6 lines that start with the # as first character.
 #<IfModule mod_rewrite.c>
-
-	#v.170411#
 
 	###
 #	RewriteEngine 		On
@@ -48,4 +60,10 @@ php_flag zend.multibyte					Off
 
 #</IfModule>
 
-### END
+#<IfModule !mod_rewrite.c>
+#	ErrorDocument 404 /
+#</IfModule>
+
+###
+
+##### END

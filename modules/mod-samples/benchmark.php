@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
+define('SMART_APP_MODULE_AREA', 'INDEX'); // INDEX, ADMIN, SHARED
 
 /**
  * Index Controller
@@ -21,6 +21,13 @@ define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
 class SmartAppIndexController extends SmartAbstractAppController {
 
 	public function Run() {
+
+		//-- dissalow run this sample if not test mode enabled
+		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
+			return 500;
+		} //end if
+		//--
 
 		//--
 		$this->PageViewSetCfg('template-path', '@'); // set template path to this module
@@ -50,19 +57,6 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 	} //END FUNCTION
-
-} //END CLASS
-
-/**
- * Admin Controller (optional)
- *
- * @ignore
- *
- */
-class SmartAppAdminController extends SmartAppIndexController {
-
-	// this will clone the SmartAppIndexController to run exactly the same action in admin.php
-	// or this can implement a completely different controller if it is accessed via admin.php
 
 } //END CLASS
 
