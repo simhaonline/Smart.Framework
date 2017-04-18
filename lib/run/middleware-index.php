@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.1.2');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170410
+ * @version		170415
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -530,7 +530,7 @@ public static function Run() {
 		//--
 	} //end if
 	//--
-	echo SmartComponents::render_app_template((string)$the_template_path, (string)$the_template_file, (array)$appData, 'no');
+	echo SmartComponents::render_app_template((string)$the_template_path, (string)$the_template_file, (array)$appData);
 	//-- {{{SYNC-RESOURCES}}}
 	if(function_exists('memory_get_peak_usage')) {
 		$res_memory = (int) @memory_get_peak_usage(false);

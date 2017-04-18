@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170411
+ * @version 	v.170413
  * @package 	Base
  *
  */
@@ -939,17 +939,70 @@ public static function create_download_link($y_file, $y_ctrl_key) {
 
 
 //================================================================
-public static function guess_image_extension_by_first_bytes($pict) {
+// require the all bytes (full size string) of an image to detect if GIF / PNG or JPG
+public static function guess_image_extension_by_all_bytes($pict) {
 	//--
-	$pict = (string) $pict;
+	if(!function_exists('getimagesizefromstring')) {
+		//--
+		//Smart::log_notice('Cannot use PHP function: getimagesizefromstring(), so will use a fallback: '.__CLASS__.'::'.guess_image_extension_by_first_bytes.'()');
+		return (string) self::guess_image_extension_by_first_bytes(substr((string)$pict, 0, 16));
+		//--
+	} //end if
+	//--
+	$arr_info = (array) @getimagesizefromstring((string)$pict);
+	//$width 	= (int) $arr_info[0]; // not used here
+	//$height 	= (int) $arr_info[1]; // not used here
+	$imgtyp 	= (int) $arr_info[2]; // image type constant
+	if($imgtyp <= 0) {
+		return ''; // invalid type detected
+	} //end if
+	//--
+	$ext = (string) strtolower((string)@image_type_to_extension((int)$imgtyp, true)); // return the image extension with . (dot) prepend
 	//--
 	$type = '';
-	if((bin2hex(substr($pict, 0, 1)) == '89') AND (substr($pict, 1, 3) == 'PNG')) {
+	switch((string)$ext) {
+		case '.gif':
+			$type = '.gif';
+			break;
+		case '.png':
+			$type = '.png';
+			break;
+		case '.jpg':
+		case '.jpeg':
+			$type = '.jpg';
+			break;
+		default:
+			$type = '';
+	} //end switch
+	//--
+	return (string) $type;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// require the first 16 bytes (first 16 characters - string) of an image to detect if GIF / PNG or JPG
+public static function guess_image_extension_by_first_bytes($pict) {
+	//--
+	// .jpg:  FF D8 FF
+	// .png:  89 50 4E 47 0D 0A 1A 0A
+	// .gif:  GIF89a | GIF87a
+	// .tiff: 49 49 2A 00 | 4D 4D 00 2A
+	//--
+	$pict = (string) $pict;
+	if(strlen($pict) < 16) {
+		Smart::log_warning(__METHOD__.'() expects the first 16 bytes for detection ...');
+		return '';
+	} //end if
+	//--
+	$type = '';
+	if((substr($pict, 0, 6) == 'GIF89a') OR (substr($pict, 0, 6) == 'GIF87a')) {
+		$type = '.gif';
+	} elseif((bin2hex(substr($pict, 0, 1)) == '89') AND (substr($pict, 1, 3) == 'PNG')) {
 		$type = '.png';
 	} elseif((strtolower(bin2hex(substr($pict, 0, 1))) == 'ff') AND (strtolower(bin2hex(substr($pict, 1, 1))) == 'd8')) {
 		$type = '.jpg';
-	} elseif(substr($pict, 0, 6) == 'GIF89a') {
-		$type = '.gif';
 	} //end if else
 	//--
 	return (string) $type;
@@ -959,7 +1012,7 @@ public static function guess_image_extension_by_first_bytes($pict) {
 
 
 //================================================================
-// guess extension from URL get headers v.160204
+// guess extension from URL get headers
 public static function guess_image_extension_by_url_head($y_headers) {
 	//--
 	$y_headers = (string) $y_headers;
@@ -974,8 +1027,8 @@ public static function guess_image_extension_by_url_head($y_headers) {
 			$temp_where_was_detected = '??? Try to guess by data:image/ ...';
 			//--
 			$y_headers = substr($y_headers, 11);
-			$eimg = explode(';base64,', $y_headers);
-			$eimg[0] = strtolower(trim($eimg[0]));
+			$eimg = (array) explode(';base64,', $y_headers);
+			$eimg[0] = (string) strtolower(trim((string)$eimg[0]));
 			if((string)$eimg[0] == 'jpeg') {
 				$eimg[0] = 'jpg'; // correction
 			} //end if
@@ -1096,15 +1149,15 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 		//-- try to detect if data:image/ :: {{{SYNC-DATA-IMAGE}}}
 		if((strtolower(substr($y_url_or_path, 0, 11)) == 'data:image/') AND (stripos($y_url_or_path, ';base64,') !== false)) {
 			//--
-			$eimg = explode(';base64,', $y_url_or_path);
+			$eimg = (array) explode(';base64,', $y_url_or_path);
 			//--
 			return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
 				'log' => 'OK ? Not sure, decoded from embedded b64 image: ',
 				'mode' => 'embedded',
 				'result' => '1',
 				'code' => '200', // HTTP 200 OK
-				'headers' => SmartUnicode::sub_str($y_url_or_path, 0, 50).'...', // try to get the 1st 50 chars for trying to guess the extension
-				'content' => @base64_decode(trim($eimg[1])),
+				'headers' => (string) SmartUnicode::sub_str($y_url_or_path, 0, 50).'...', // try to get the 1st 50 chars for trying to guess the extension
+				'content' => (string) @base64_decode((string)trim((string)$eimg[1])),
 				'debuglog' => ''
 			);
 			//--
@@ -1116,7 +1169,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 				'result' => '1',
 				'code' => '200', // HTTP 200 OK
 				'headers' => 'Content-Disposition: inline; filename="'.basename($y_url_or_path).'"'."\n",
-				'content' => SmartFileSystem::read($y_url_or_path),
+				'content' => (string) SmartFileSystem::read($y_url_or_path),
 				'debuglog' => ''
 			);
 			//--

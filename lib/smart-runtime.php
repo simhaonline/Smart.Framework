@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.1.2'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.12'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.15'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -209,9 +209,6 @@ $languages = array();
 
 //--------------------------------------- LOAD CONFIGS
 require('etc/config.php'); // load the main configuration, after GET/POST registration
-if((string)$configs['js']['notifications'] != 'dialog') {
-	$configs['js']['notifications'] = 'growl'; // default
-} //end if
 //---------------------------------------
 
 //--------------------------------------- LOAD SMART-FRAMEWORK

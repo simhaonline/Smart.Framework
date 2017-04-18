@@ -1,4 +1,4 @@
-<!-- r.170411 -->
+<!-- r.170415 -->
 <!-- :: TPL MISC. VARIABLES :: -->
 <!-- Template Path:   [####TEMPLATE-PATH|html####] -->
 <!-- Template File:   [####TEMPLATE-FILE|html####] -->
@@ -29,9 +29,15 @@
 <!-- Scripts -->
 [@@@@SUB-TEMPLATE:js-base.inc.htm@@@@]
 [%%%%IF:APP-REALM:==IDX;%%%%]
-[@@@@SUB-TEMPLATE:js-ui-alt.inc.htm@@@@]
+	[@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
 [%%%%ELSE:APP-REALM%%%%]
-[@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
+	[%%%%IF:SEMAPHORE:!=jqueryui;%%%%]
+		[@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
+	[%%%%ELSE:SEMAPHORE%%%%]
+		<!-- Load jQueryUI if detected: [####SEMAPHORE|html####] -->
+		[@@@@SUB-TEMPLATE:?!modules/mod-ui-jqueryui/views/js-ui.inc.htm!@@@@]
+	[%%%%/IF:SEMAPHORE%%%%]
+	<script type="text/javascript" src="lib/js/jquery/jquery.idle.js"></script>
 [%%%%/IF:APP-REALM%%%%]
 [@@@@SUB-TEMPLATE:js-settings.inc.htm@@@@]
 [####HEAD-JS####]

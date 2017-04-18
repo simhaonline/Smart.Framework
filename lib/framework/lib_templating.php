@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170410
+ * @version 	v.170415
  * @package 	Templating:Engines
  *
  */
@@ -266,16 +266,17 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
  * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
  * @param 	STRING 		$y_sub_templates_base_path 		:: The (relative) base path of sub-templates files if they are used (required to be non-empty)
  * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if markers template is empty ; 'no' will add a warning (default)
- * @param 	ENUM 		$y_use_caching 					:: 'yes' will cache the sub-templates files (if any) into memory to avoid re-read them from file system (to be used if a sub-template is used more than once per execution) ; 'no' means no caching is used (default)
  *
  * @return 	STRING										:: The parsed template
  *
  */
-public static function render_main_template($mtemplate, $y_arr_vars, $y_sub_templates_base_path, $y_ignore_if_empty='no', $y_use_caching='no') {
+public static function render_main_template($mtemplate, $y_arr_vars, $y_sub_templates_base_path, $y_ignore_if_empty='no') {
 	//--
-	// it can *optional* use caching to avoid read the sub-templates (if any) more than once per execution
-	// if using the cache the sub-templates (if any) are cached internally to avoid re-read them from filesystem
+	// main templates cannot use self-caching as they are not intended for heavy repetitive TPL loads
+	// mainly main TPLs have just few markers and sub-tpls and if a caching is required there is support for persistent cache !
 	// the replacement of sub-templates is made before injecting variables to avoid security issues
+	//--
+	$y_use_caching = 'no';
 	//--
 	$mtemplate = (string) trim((string)$mtemplate);
 	//--
@@ -445,7 +446,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	//-- sub-tpls
 	$arr_subtpls = array();
 	$matches = array();
-	preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!%]*)@@@@\]}', (string)$y_original_mtemplate, $matches); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
+	preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$y_original_mtemplate, $matches); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
 	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
 	list($orig_part, $var_part) = (array) $matches;
 	for($i=0; $i<Smart::array_size($var_part); $i++) {
@@ -1125,12 +1126,12 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) (string)$bind_var_key.'.'.'_-MAXCOUNT-_',
+							(string) $bind_var_key.'.'.'_-MAXCOUNT-_',
 							(string) $mxcnt
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) (string)$bind_var_key.'.'.'_-ITERATOR-_',
+							(string) $bind_var_key.'.'.'_-ITERATOR-_',
 							(string) $j
 						);
 						if(is_array($y_arr_vars[(string)$bind_var_key][$j]) AND (Smart::array_type_test($y_arr_vars[(string)$bind_var_key][$j]) === 2)) {
@@ -1149,7 +1150,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 						} else {
 							$mks_line = (string) self::replace_marker(
 								(string) $mks_line,
-								(string) (string)$bind_var_key.'.'.'_-VAL-_',
+								(string) $bind_var_key.'.'.'_-VAL-_',
 								(string) $y_arr_vars[(string)$bind_var_key][$j]
 							);
 						} //end if else
@@ -1207,17 +1208,17 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 						//-- process the loop replacements
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) (string)$bind_var_key.'.'.'_-MAXCOUNT-_',
+							(string) $bind_var_key.'.'.'_-MAXCOUNT-_',
 							(string) $mxcnt
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) (string)$bind_var_key.'.'.'_-ITERATOR-_',
+							(string) $bind_var_key.'.'.'_-ITERATOR-_',
 							(string) $ziterator
 						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
-							(string) (string)$bind_var_key.'.'.'_-KEY-_',
+							(string) $bind_var_key.'.'.'_-KEY-_',
 							(string) $zkey
 						);
 						if(is_array($zval) AND (Smart::array_type_test($zval) === 2)) {
@@ -1236,7 +1237,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 						} else {
 							$mks_line = (string) self::replace_marker(
 								(string) $mks_line,
-								(string) (string)$bind_var_key.'.'.'_-VAL-_',
+								(string) $bind_var_key.'.'.'_-VAL-_',
 								(string) $zval
 							);
 						} //end if else
@@ -1274,7 +1275,7 @@ private static function detect_subtemplates($mtemplate) {
 		} //end if
 		//--
 		$arr_matched_sub_templates = array();
-		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!]*)@@@@\]}', (string)$mtemplate, $arr_matched_sub_templates); // {{{SYNC-TPL-EXPR-SUBTPL}}}
+		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?]*)@@@@\]}', (string)$mtemplate, $arr_matched_sub_templates); // {{{SYNC-TPL-EXPR-SUBTPL}}} :: here the % is missing as must not be detected as it is reserved only for special purpose if SUB-TPLS are pre-defined
 		//print_r($arr_matched_sub_templates);
 		//--
 		if(Smart::array_size($arr_matched_sub_templates) > 0) {
@@ -1308,7 +1309,7 @@ private static function detect_subtemplates($mtemplate) {
 //================================================================
 // inject marker sub-templates
 // max 3 levels: template -> sub-template -> sub-sub-template
-// max 255 cycles overall: template + sub-templates + sub-sub-templates)
+// max 127 cycles overall: template + sub-templates + sub-sub-templates)
 // returns the prepared marker template contents
 private static function load_subtemplates($y_use_caching, $y_base_path, $mtemplate, $y_arr_vars_sub_templates, $cycles=0, $process_sub_sub_templates=true) {
 	//--
@@ -1334,7 +1335,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 			$key = (string) $key;
 			$val = (string) $val;
 			//--
-			if(((string)$key != '') AND (strpos($key, '..') === false) AND (strpos($val, '..') === false) AND (preg_match('/^[a-zA-Z0-9_\-\.\/\!%]+$/', $key))) {
+			if(((string)$key != '') AND (strpos($key, '..') === false) AND (strpos($val, '..') === false) AND (preg_match('/^[a-zA-Z0-9_\-\.\/\!\?%]+$/', $key))) { // {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
 				//--
 				if((string)$val == '') {
 					//--
@@ -1352,6 +1353,14 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					} //end if
 					//--
 				} else {
+					//--
+					$pfx = '';
+					$is_optional = false;
+					if(((string)$y_use_caching != 'yes') AND (substr($key, 0, 1) == '?')) {
+						$key = (string) substr($key, 1);
+						$pfx = '?'; // optional sub-templates are only allowed in non-self-caching TPLs, else the results are unpredictable ; but these are not necessary except if a module may be n/a so linking with a n/a sub-tpl will raise error ; anyway, this feature was written mainly for main TPLs !
+						$is_optional = true;
+					} //end if
 					//--
 					if((substr($key, 0, 1) == '%') AND (substr($key, -1, 1) == '%')) { // variable, only can be set programatically, full path to the template file is specified
 						if(substr($val, 0, 2) == '@/') { // use a path suffix relative path to parent template, starting with @/ ; otherwise the full relative path is expected
@@ -1375,12 +1384,19 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 						$stpl_path = (string) SmartFileSysUtils::add_dir_last_slash($val).$key;
 					} //end if else
 					//--
-					if(!is_file((string)$stpl_path)) {
-						Smart::log_warning('Invalid Markers-Sub-Template File: '.$stpl_path);
-						return 'Invalid Markers-Sub-Template File. See the ErrorLog for Details.';
-					} //end if
+					if($is_optional === true) {
+						$stemplate = '';
+						if(is_file((string)$stpl_path)) {
+							$stemplate = (string) self::read_template_or_subtemplate_file((string)$stpl_path, (string)$y_use_caching); // read
+						} //end if else
+					} else {
+						if(!is_file((string)$stpl_path)) {
+							Smart::log_warning('Invalid Markers-Sub-Template File: '.$stpl_path);
+							return 'Invalid Markers-Sub-Template File. See the ErrorLog for Details.';
+						} //end if
+						$stemplate = (string) self::read_template_or_subtemplate_file((string)$stpl_path, (string)$y_use_caching); // read
+					} //end if else
 					//--
-					$stemplate = (string) self::read_template_or_subtemplate_file((string)$stpl_path, (string)$y_use_caching); // read
 					if($process_sub_sub_templates === true) {
 						$arr_sub_sub_templates = (array) self::detect_subtemplates((string)$stemplate); // detect sub-sub templates
 						$num_sub_sub_templates = Smart::array_size($arr_sub_sub_templates);
@@ -1390,7 +1406,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 						} //end if
 					} //end if
 					$stemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
-					$mtemplate = str_replace('[@@@@SUB-TEMPLATE:'.$key.'@@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
+					$mtemplate = str_replace('[@@@@SUB-TEMPLATE:'.$pfx.$key.'@@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
 					$arr_sub_sub_templates = array();
 					$num_sub_sub_templates = 0;
 					//--
@@ -1412,8 +1428,8 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 			} //end if else
 			//--
 			$cycles++;
-			if($cycles > 255) { // protect against infinite loop, max 255 loops (incl. sub-sub templates) :: hard limit
-				Smart::log_warning('Inclusion of the Sub-Template: '.$stpl_path.' failed as it overflows the maximum hard limit: only 255 loops (sub-templates) are allowed. Current Cycle is: #'.$cycles);
+			if($cycles > 127) { // protect against infinite loop, max 127 loops (incl. sub-sub templates) :: hard limit
+				Smart::log_warning('Inclusion of the Sub-Template: '.$stpl_path.' failed as it overflows the maximum hard limit: only 127 loops (sub-templates) are allowed. Current Cycle is: #'.$cycles);
 				break;
 			} //end if
 			//--

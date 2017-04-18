@@ -50,22 +50,10 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartMailerUtils':
 			require_once('lib/core/plugins/lib_mail_utils.php');		// mail utils (send, verify, parse)
 			break;
-		//-- db drivers
-		case 'SmartRedisDb':
-			require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
-			break;
-		case 'SmartSQliteDb':
-		case 'SmartSQliteUtilDb':
-			require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
-			break;
-		case 'SmartPgsqlDb':
-		case 'SmartPgsqlExtDb':
-			require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
-			break;
-		//-- session handler
-		case 'SmartSession':
-		case 'SmartAbstractCustomSession':
-			require_once('lib/core/plugins/lib_session.php');			// session handler
+		//-- calendar
+		case 'SmartCalendarComponent':
+		case 'SmartHTMLCalendar':
+			require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
 			break;
 		//-- yaml parser and composer
 		case 'SmartYamlConverter':
@@ -80,8 +68,8 @@ function autoload__SmartFrameworkPlugins($classname) {
 			require_once('lib/core/plugins/lib_markdown.php');			// markdown to html parser
 			break;
 		//-- xml parser and composer
-		case 'SmartXmlParser':
 		case 'SmartXmlComposer':
+		case 'SmartXmlParser':
 			require_once('lib/core/plugins/lib_xml.php');				// xml parser and composer
 			break;
 		//-- lzs archiver
@@ -96,23 +84,9 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartExportToOpenOffice':
 			require_once('lib/core/plugins/lib_export_ooffice.php'); 	// ooffice export
 			break;
-		//-- calendar
-		case 'SmartCalendarComponent':
-		case 'SmartHTMLCalendar':
-			require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
-			break;
-		//-- mediagallery
-		case 'SmartMediaGalleryManager':
-		case 'SmartMediaGalleryConverter':
-		case 'SmartMediaGalleryPlayers':
-		case 'SmartGdImageProcess':
-		case 'SmartImagickImageProcess':
-			require_once('lib/core/plugins/lib_mediagallery.php'); 		// mediagallery
-			break;
-		//-- captcha
-		case 'SmartCaptchaFormCheck':
-		case 'SmartCaptchaImageDraw':
-			require_once('lib/core/plugins/lib_captcha.php'); 			// captcha image
+		//-- im (gd) process
+		case 'SmartImageGdProcess':
+			require_once('lib/core/plugins/lib_imgd.php');				// img (gd) process
 			break;
 		//-- barcodes 1D
 		case 'SmartBarcode1D':
@@ -137,6 +111,28 @@ function autoload__SmartFrameworkPlugins($classname) {
 		//-- ftp client
 		case 'SmartFtpClient':
 			require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
+			break;
+		//-- db drivers
+		case 'SmartRedisDb':
+			require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
+			break;
+		case 'SmartSQliteDb':
+		case 'SmartSQliteUtilDb':
+			require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
+			break;
+		case 'SmartPgsqlDb':
+		case 'SmartPgsqlExtDb':
+			require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
+			break;
+		//-- session handler
+		case 'SmartSession':
+		case 'SmartAbstractCustomSession':
+			require_once('lib/core/plugins/lib_session.php');			// session handler
+			break;
+		//-- captcha
+		case 'SmartCaptchaImageDraw':
+		case 'SmartCaptchaFormCheck':
+			require_once('lib/core/plugins/lib_captcha.php'); 			// captcha image
 			break;
 		//--
 		default:

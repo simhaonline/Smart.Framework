@@ -29,17 +29,17 @@ define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.3.1'); // required for fram
 // LOAD FRAMEWORK LIBS 						!!! DO NOT CHANGE THE ORDER OF THE LIBS !!!
 //#####################################################################################
 //----------------------------------------------------
-require('lib/framework/lib_unicode.php'); 		// smart unicode support
-require('lib/framework/lib_smart.php'); 		// smart (base)
+require('lib/framework/lib_unicode.php'); 		// smart unicode (support)
+require('lib/framework/lib_smart.php'); 		// smart (base) core
 require('lib/framework/lib_valid_parse.php');	// smart validators and parsers
-require('lib/framework/lib_caching.php');		// smart (non-persistent) cache
+require('lib/framework/lib_caching.php');		// smart cache (non-persistent + abstract persistent)
+require('lib/framework/lib_translate.php');		// smart (text) translate
 require('lib/framework/lib_crypto.php');		// smart crypto utils
 require('lib/framework/lib_filesys.php');		// smart file system
-require('lib/framework/lib_auth.php');			// smart authentication
 require('lib/framework/lib_http_cli.php');		// smart http client
-require('lib/framework/lib_utils.php');			// smart utils
 require('lib/framework/lib_templating.php');	// smart templating
-require('lib/framework/lib_translate.php');		// smart (text) translate
+require('lib/framework/lib_auth.php');			// smart authentication
+require('lib/framework/lib_utils.php');			// smart utils
 //----------------------------------------------------
 //#####################################################################################
 

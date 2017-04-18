@@ -1,0 +1,42 @@
+<!-- Partial Template: TestUnit.Main -->
+<script type="text/javascript">
+	var TESTUNIT_BASE_URL = '[####TESTUNIT_BASE_URL|js####]';
+</script>
+<div align="left" style="width: 100%;">
+	[####TEST-VAR####]
+	<!-- start tabs -->
+	<div id="tabs_draw">
+		<div id="tabs_nav">
+			<ul>
+				<li><a id="nolink" href="#tabs_tests_core"><i class="fa fa-home"></i> &nbsp; Core Tests</a></li>
+				<li><a id="nolink" href="#tabs_tests_interractions"><i class="fa fa-map-signs"></i> &nbsp; Interraction Tests</a></li>
+				<li><a id="nolink" href="#tabs_tests_ui"><i class="fa fa-television"></i> &nbsp; UI Tests</a></li>
+				<li><a id="nolink" href="#tabs_tests_misc"><i class="fa fa-leaf"></i> &nbsp; Misc Tests</a></li>
+				<li><a id="nolink" href="modules/mod-samples/libs/testunit/templates/smartgrid-test.partial.htm"><i class="fa fa-th-large"></i> &nbsp; Smart Grid</a></li>
+				<li><a id="nolink" href="modules/mod-samples/libs/testunit/templates/slickgrid-test.partial.htm"><i class="fa fa-th"></i> &nbsp; Big Data Grid</a></li>
+				<li><a id="nolink" href="modules/mod-samples/libs/testunit/templates/charts-test.partial.htm"><i class="fa fa-pie-chart"></i> &nbsp; Charts</a></li>
+				<li><a id="nolink" href="modules/mod-samples/libs/testunit/templates/barcodes-test.partial.htm"><i class="fa fa-qrcode"></i> &nbsp; Barcodes</a></li>
+				<li><a id="nolink" href="#tabs_tests_js_components"><i class="fa fa-plug"></i> &nbsp; JS Components</a></li>
+				<li><a id="nolink" href="broken-link.html"><i class="fa fa-chain-broken"></i> &nbsp; A Broken Link</a></li><!-- this is just for testing, does not exists -->
+			</ul>
+		</div>
+		<div id="tabs_tests_core">
+			[@@@@SUB-TEMPLATE:test-unit-tab-tests.htm@@@@]
+		</div>
+		<div id="tabs_tests_interractions">
+			[@@@@SUB-TEMPLATE:test-unit-tab-interractions.htm@@@@]
+		</div>
+		<div id="tabs_tests_ui">
+			[@@@@SUB-TEMPLATE:test-unit-tab-ui.htm@@@@]
+		</div>
+		<div id="tabs_tests_misc">
+			[@@@@SUB-TEMPLATE:%test-unit-tab-misc%@@@@]
+		</div>
+		<div id="tabs_tests_js_components">
+			[####MOD-JS-COMPONENTS####]
+		</div>
+	</div>
+	[####TEST-JS_SCRIPTS_INIT-TABS####]
+	<!-- end tabs -->
+</div>
+<!-- #END :: Partial Template: TestUnit.Main -->

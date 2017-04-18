@@ -14,6 +14,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Authentication Support
 // DEPENDS:
 //	* Smart::
+//	* SmartCipherCrypto::
 //======================================================
 
 

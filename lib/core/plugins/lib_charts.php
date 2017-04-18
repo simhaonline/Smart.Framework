@@ -295,7 +295,7 @@ public function generate($y_mode='raw') {
 		//--
 	} else { // png (default)
 		//--
-		@imagepng($this->img);
+		@imagepng($this->img); // charts are speed oriented ! default compression of zlib is 6 ; if there is a need for more optimized images as captcha have to use gif !
 		//--
 	} //end if else
 	//--
@@ -1114,7 +1114,7 @@ private function draw_chart() {
 	if((string)$this->format == 'gif') { // gif
 		@imagegif($this->img);
 	} else { // png
-		@imagepng($this->img);
+		@imagepng($this->img); // charts are speed oriented ! default compression of zlib is 6 ; if there is a need for more optimized images as captcha have to use gif !
 	} //end if else
 	//--
 	$out = ob_get_contents();

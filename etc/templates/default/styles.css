@@ -1,23 +1,28 @@
 
-/* ------------------------------------------------ CSS3, Base Styles START :: r.170411 */
+/* ------------------------------------------------ CSS3, Base Styles START :: r.170417 */
 
 * {
-	font-family: 'Open Sans',tahoma,arial,sans-serif;
+	font-family: 'Open Sans',arial,sans-serif;
 	font-smooth: always;
+	/* font-size-adjust: 0.55; */
 }
+
 html, body{
 	width: 96% auto;
 	/*height: 96% auto;*/
 	margin: 1px;
 	padding: 0px;
 }
+
 body {
 	background: #FFFFFF;
 	font-size: 13px;
 }
+
 div, p, pre, code, ul, li {
 	font-size: 13px;
 }
+
 img {
 	border: 0px;
 }
@@ -25,11 +30,13 @@ img#shaddow {
 	border: 0px;
 	box-shadow: 2px 2px 3px #BBB; /* Opera and other CSS3 supporting browsers */
 }
+
 hr {
 	border: none 0;
 	border-top: 1px solid #CCCCCC;
 	height: 1px;
 }
+
 /* ----- tables ----- */
 table {
 	font-size: 12px;
@@ -44,15 +51,17 @@ th {
 	font-size: 14px;
 	font-weight: bold;
 }
+
 /* ----- links ----- */
 a, a:link, a:visited, a:hover {
 	color: #000000;
 }
+
 /* ----- forms ----- */
 input[type="text"]:disabled {
 	background-color: #FFFFFF;
 }
-/*
+/***
 label {
 	font-size: 12px;
 	font-weight: normal;
@@ -91,20 +100,21 @@ input[type=submit], input[type=button] {
 	border-color: #333333;
 	cursor: pointer;
 }
-*/
+***/
 
-/*
+/* ----- box sizings ----- */
+/***
 * {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 *:before,
 *:after {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
-*/
+***/
 
 /* ------------------------------------------------ Base Styles END */

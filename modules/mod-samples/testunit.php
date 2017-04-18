@@ -30,7 +30,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-		require_once('lib/core/lib_smart_test_suite.php');			// test suite
+		require_once('modules/mod-samples/libs/testunit/lib_smart_test_suite.php');	// test suite
 		//--
 
 		//--
@@ -379,10 +379,11 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$this->PageViewSetVars(array(
+		$this->PageViewSetVars([
 			'title' => 'Test Suite',
-			'main' => $main
-		));
+			'main' => $main,
+			'semaphore' => ((SMART_FRAMEWORK_ADMIN_AREA === true) && (SmartAppInfo::TestIfModuleExists('mod-ui-jqueryui'))) ? 'jqueryui' : ''
+		]);
 		//--
 
 	} //END FUNCTION

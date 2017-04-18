@@ -17,7 +17,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //--
 if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_BARCODE_1D_MODE');
+	define('SMART_FRAMEWORK_BARCODE_1D_MODE', '128'); // use code 128 as default 1D barcode
 } //end if
 //--
 
@@ -56,7 +56,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.160827
+ * @version 	v.170413
  * @package 	Components:BarCodes
  *
  */
@@ -453,7 +453,7 @@ final class SmartBarcode1D {
 		} //end if else
 		//--
 		ob_start();
-		@imagepng($png);
+		@imagepng($png); // barcodes are speed oriented ! for 2 color png the zlib default compression level (6) is enough and increasing to 9 makes no diff in size ; more, if adding PNG_ALL_FILTERS will increase the size
 		$imagedata = ob_get_clean();
 		@imagedestroy($png);
 		//--

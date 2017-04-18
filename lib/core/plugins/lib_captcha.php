@@ -56,7 +56,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP XML ; classes: Smart
- * @version 	v.170316
+ * @version 	v.170417
  * @package 	Components:Captcha
  *
  */
@@ -67,7 +67,7 @@ final class SmartCaptchaFormCheck {
 
 
 //================================================================
-public static function captcha_image($y_form_name, $y_store, $y_mode='hashed', $y_pool='0123456789', $y_noise='200', $y_chars='5', $y_width='170', $y_height='50', $y_format='png', $y_font_file='lib/core/plugins/fonts/liberation-mono-italic.ttf', $y_font_size='24', $y_char_space='20', $y_char_xvary='20', $y_char_yvary='10', $y_char_colors=array(0x111111, 0x333333, 0x778899, 0x666699, 0x003366, 0x669966, 0x006600, 0xFF3300), $y_noise_colors=array(0x888888, 0x999999, 0xAAAAAA, 0xBBBBBB, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE, 0x8080C0)) {
+public static function captcha_image($y_form_name, $y_store, $y_mode='hashed', $y_pool='0123456789', $y_noise=300, $y_chars=5, $y_width=175, $y_height=50, $y_format='png', $y_font_file='lib/core/plugins/fonts/captcha/barrio.ttf', $y_font_size=24, $y_char_space=20, $y_char_xvar=15, $y_char_yvar=7, $y_char_colors=[0x111111, 0x333333, 0x778899, 0x666699, 0x003366, 0x669966, 0x006600, 0xFF3300], $y_noise_colors=[0x888888, 0x999999, 0xAAAAAA, 0xBBBBBB, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE, 0x8080C0]) {
 	//--
 	$captcha = new SmartCaptchaImageDraw();
 	//--
@@ -81,8 +81,8 @@ public static function captcha_image($y_form_name, $y_store, $y_mode='hashed', $
 	$captcha->charfont = (string) $y_font_file;
 	$captcha->charttfsize = Smart::format_number_int($y_font_size, '+');
 	$captcha->charspace = Smart::format_number_int($y_char_space,'+');
-	$captcha->charxvar = Smart::format_number_int($y_char_xvary,'+');
-	$captcha->charyvar = Smart::format_number_int($y_char_yvary,'+');
+	$captcha->charxvar = Smart::format_number_int($y_char_xvar,'+');
+	$captcha->charyvar = Smart::format_number_int($y_char_yvar,'+');
 	$captcha->noise = Smart::format_number_int($y_noise,'+');
 	if(Smart::array_size($y_char_colors) > 0) {
 		$captcha->colors_chars = (array)$y_char_colors;
@@ -331,7 +331,7 @@ public static function cookiename($y_form_name) {
 final class SmartCaptchaImageDraw {
 
 	// ->
-	// v.170316
+	// v.170417
 
 
 //================================================================
@@ -477,7 +477,7 @@ public function draw_image($y_form) {
 	switch(@strtolower($this->format)) {
 		case 'png':
 			//header: "Content-type: image/png"
-			@imagepng($captcha_image);
+			@imagepng($captcha_image); // captcha is speed oriented ! default compression of zlib is 6 ; if there is a need for more optimized images as captcha have to use gif !
 			break;
 		case 'gif':
 			//header: "Content-type: image/gif"
@@ -612,28 +612,33 @@ private function img_draw_text($im, $word) {
 		$font = 5 ; // on error
 	} //end if else
 	//--
-	$first_x = Smart::random_number(5, $this->charxvar);
+	$first_x = (int) Smart::random_number(min(10, $this->charxvar), max(10, $this->charxvar));
 	//--
 	for($i=0; $i < strlen($word); $i++) {
 		//--
 		$w = substr($word, $i, 1);
 		$c = $this->generate_color();
 		//--
-		$sign = 1;
-		if(Smart::random_number(0, 1) != 0) {
+		if(Smart::random_number(0, 1)) {
 			$sign = -1;
+		} else {
+			$sign = 1;
 		} //end if
 		//--
-		if($use_ttf_font != true) { // GDF font
-			$y = ($this->height / 2) + ($sign * Smart::random_number(0, $this->charyvar));
+		if($use_ttf_font !== true) { // GDF font
+			$y = ceil(($this->height / 2) + ($sign * Smart::random_number(0, $this->charyvar)));
 			@imagestring($im, (int)$font, (int)$first_x, (int)$y, (string)$w, $c);
 		} else { // TTF font
-			$y = ($this->height / 2) + ($this->charttfsize / 2) + ($sign * Smart::random_number(0, $this->charyvar));
-			$angle = Smart::random_number(0, 20);
+			$y = ceil(($this->height / 2) + ($this->charttfsize / 2) + ($sign * Smart::random_number(0, $this->charyvar)));
+			if(Smart::random_number(0, 1)) {
+				$angle = Smart::random_number(0, 30);
+			} else {
+				$angle = Smart::random_number(330, 360);
+			} //end if else
 			@imagettftext($im, $this->charttfsize, (int)$angle, (int)$first_x, (int)$y, $c, (string)$font, (string)$w);
 		} //end if else
 		//--
-		$first_x += (int) $this->charspace + Smart::random_number(1, 15);
+		$first_x += (int) $this->charspace + Smart::random_number(5, $this->charxvar);
 		//--
 	} //end for
 	//--

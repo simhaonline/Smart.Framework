@@ -24,7 +24,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartTextTranslations::
 // REQUIRED JS LIBS:
 //	* js-base.inc.htm
-//	* js-ui.inc.htm / js-ui-alt.inc.htm
+//	* js-ui.inc.htm [SmartJS_BrowserUIUtils] or an extension
 //	* js/jsedithtml [cleditor]
 //	* js/jseditcode [codemirror]
 // REQUIRED CSS:
@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170408
+ * @version 	v.170415
  * @package 	Components:Framework
  *
  */
@@ -1872,11 +1872,7 @@ public static function js_ajax_submit_html_form($y_form_id, $y_script_url, $y_co
 	//--
 	$y_js_evcode = (string) trim((string)$y_js_evcode);
 	//--
-	if((string)Smart::get_from_config('js.notifications') == 'growl') {
-		$tmp_use_growl = 'yes';
-	} else {
-		$tmp_use_growl = 'no';
-	} //end if else
+	$tmp_use_growl = 'auto';
 	//--
 	$js_post = 'SmartJS_BrowserUtils.Submit_Form_By_Ajax(\''.Smart::escape_js($y_form_id).'\', \''.Smart::escape_js($y_script_url).'\', \''.Smart::escape_js($tmp_use_growl).'\', \''.Smart::escape_js($y_js_evcode).'\');';
 	//--
@@ -2550,17 +2546,13 @@ public static function app_powered_info($y_show_versions, $y_software_name='', $
 
 
 //================================================================
-public static function render_app_template($template_path, $template_file, $arr_data, $use_caching='no') { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
+public static function render_app_template($template_path, $template_file, $arr_data) { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//--
 	$template_path = (string) Smart::safe_pathname((string)SmartFileSysUtils::add_dir_last_slash((string)trim((string)$template_path)));
 	$template_file = (string) Smart::safe_filename((string)trim((string)$template_file));
 	//--
 	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower (only 1st level, not nested), to comply with SmartAbstractAppController handling mode
-	//--
-	if((string)$use_caching !== 'yes') {
-		$use_caching = 'no';
-	} //end if
 	//--
 
 	//--
@@ -2576,11 +2568,15 @@ public static function render_app_template($template_path, $template_file, $arr_
 	//--
 
 	//-- external TPL vars
+	$arr_data['semaphore'] 			= (string) $arr_data['semaphore']; // a general purpose conditional var
 	$arr_data['title'] 				= (string) $arr_data['title'];
 	$arr_data['head-meta'] 			= (string) $arr_data['head-meta'];
 	$arr_data['head-css'] 			= (string) $arr_data['head-css'];
 	$arr_data['head-js'] 			= (string) $arr_data['head-js'];
+	$arr_data['header'] 			= (string) $arr_data['header'];
 	$arr_data['main'] 				= (string) $arr_data['main'];
+	$arr_data['aside'] 				= (string) $arr_data['aside'];
+	$arr_data['footer'] 			= (string) $arr_data['footer'];
 	//-- internal TPL vars
 	$arr_data['template-path'] 		= (string) $template_path; 											// current template path (ex: etc/templates/default/)
 	$arr_data['template-file'] 		= (string) $template_file; 											// current template file (ex: template.htm | template-modal.htm | ...)
@@ -2627,8 +2623,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 		(string) $tpl,				// tpl string
 		(array)  $arr_data, 		// tpl vars
 		(string) $template_path, 	// tpl base path (for sub-templates, if any)
-		'no',						// ignore if empty
-		(string) $use_caching		// use caching
+		'no'						// ignore if empty
 	);
 	//--
 

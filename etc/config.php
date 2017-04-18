@@ -9,7 +9,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-//######################################### Test ONLY Settings (can be removed in real production environments)
+//######################################### Mod.Samples (Tests ONLY Settings)
+// !!! Remove these Test ONLY Settings in real production environments !!! They are required just for Mod.Samples
 define('SMART_FRAMEWORK_TEST_MODE', true);
 define('SMART_FRAMEWORK_TESTUNIT_BASE_URL', '?/page/samples.testunit/op/');
 define('SMART_FRAMEWORK_TESTUNIT_CAPTCHA_MODE', 'cookie'); // cookie | session
@@ -84,27 +85,12 @@ $configs['regional']['calendar-week-start']			= '1';					// 0=start on sunday | 
 $configs['regional']['calendar-date-format-client'] = 'dd.mm.yy';			// Client Date Format - Javascript (allow only these characters: yy mm dd . - [space])
 $configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date Format - PHP (allow only these characters: Y m d . - [space])
 //---------------------------------------
-//$languages = array('en' => '[EN]', 'ro' => '[RO]');						// associative array of available languages for this software (do not change without installing new languages support files)
-$languages = array('en' => '[EN]');											// associative array of available languages for this software (do not change without installing new languages support files)
-//---------------------------------------
-
-//----------------------------------------
-$configs['js']['notifications']					= 'growl'; 					// 'growl' = Sticky Notifications (Jquery) ;  'dialog' = JQueryUI Dialog
-//----------------------------------------
-
-//--------------------------------------- MEDIA GALLERY
-define('SMART_FRAMEWORK_MEDIAGALLERY_IMG_CONVERTER', 	'@gd'); 				// `@gd` | path to ImagMagick Convert (change to match your system) ; can be `/usr/bin/convert` or `/usr/local/bin/convert` or `c:/open_runtime/image_magick/convert.exe`
-define('SMART_FRAMEWORK_MEDIAGALLERY_IMG_COMPOSITE', 	'@gd'); 				// `@gd` | path to ImagMagick Composite/Watermark (change to match your system) ; can be `/usr/bin/composite` or `/usr/local/bin/composite` or `c:/open_runtime/image_magick/composite.exe`
-define('SMART_FRAMEWORK_MEDIAGALLERY_MOV_THUMBNAILER', 	'/usr/bin/ffmpeg'); 	// path to FFMpeg (Video Thumbnailer to extract a preview Image from a movie) ; (change to match your system) ; can be `/usr/bin/ffmpeg` or `/usr/local/bin/ffmpeg` or `c:/open_runtime/ffmpeg/ffmpeg.exe`
-define('SMART_FRAMEWORK_MEDIAGALLERY_PDF_EXTRACTOR', 	''); 					// path to PDF Extractor (Pdf2HtmlEx)
-//--------------------------------------- BARCODE SYSTEM
-define('SMART_FRAMEWORK_BARCODE_1D_MODE', '128');								// 1D barcode system :: `128` = Code128 B (Extended) (ISO-8859-1) ; `93` = Code93 Extended+Checksum ; `39` = Code39 Extended (ISO-8859-1)
-define('SMART_FRAMEWORK_BARCODE_2D_MODE', 'qrcode');							// 2D matrix barcode system :: `qrcode` = QRCode (UTF-8) ; `semacode` = DataMatrix (UTF-8)
-define('SMART_FRAMEWORK_BARCODE_2D_OPTS', 'L');									// 2D matrix barcode options :: QRCode[L,M,Q,H] ; DataMatrix[] ; PDF417[1,2,3]
+$languages = array('en' => '[EN]');											// default associative array of available languages for this software (do not change without installing new languages support files)
+//$languages = array('en' => '[EN]', 'ro' => '[RO]');						// extended associative array of available languages for this software (do not change without installing new languages support files)
 //---------------------------------------
 
 //--------------------------------------- OTHER SPECIAL SETTINGS :: DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU ARE DOING, really ...
-//define('SMART_FRAMEWORK_CUSTOM_ERR_PAGES', 'modules/app/error-pages/');		// `` or custom path to error pages: 400.php, 401.php, 403.php, 404.php, 500.php, 503.php
+//define('SMART_FRAMEWORK_CUSTOM_ERR_PAGES', 'modules/app/error-pages/');	// `` or custom path to error pages: 400.php, 401.php, 403.php, 404.php, 500.php, 503.php
 //---------------------------------------
 
 // end of php code

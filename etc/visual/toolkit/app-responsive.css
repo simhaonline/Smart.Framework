@@ -11,25 +11,13 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 /* ----------------------------- */
 
-
 /* -- framework -- */
 
 @import url("../../../lib/framework/css/ux-toolkit-responsive.css");
 
-
 /* -- core -- */
 
 /* -- plugins -- */
-
-/* optional, required just for Captcha Form */
-
-/* optional, required just for Media Gallery */
-
-/* optional, required just for Markdown renderer */
-
-/* optional, required just for ActiveCalendar */
-
-/* optional, required just for Email Mime Parser */
 
 /* ----------------------------- */
 

@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170315
+ * @version 	v.170413
  * @package 	Mailer:Utility
  *
  */
@@ -527,7 +527,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 				$tmp_where_we_guess = (string) $guess_arr['where-was-detected'];
 				//Smart::log_notice('Guess Ext by URL Head: '.$tmp_browse_arr['headers']."\n".'### '.print_r($guess_arr,1)."\n".'#');
 				if((string)$tmp_img_ext == '') {
-					$tmp_img_ext = SmartUtils::guess_image_extension_by_first_bytes(substr($tmp_browse_arr['content'], 0, 256));
+					$tmp_img_ext = SmartUtils::guess_image_extension_by_first_bytes(substr($tmp_browse_arr['content'], 0, 16)); // needs 1st 16 bytes
 					if((string)$tmp_img_ext != '') {
 						$tmp_where_we_guess = ' First Bytes ...';
 					} //end if

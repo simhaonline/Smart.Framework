@@ -1,6 +1,10 @@
 
 # CHANGELOG / MIGRATION NOTES - SMART.FRAMEWORK #
 
+Apr 19, 2017 ::
+	* moved jQueryUI as separate module in Smart.Framework.modules
+	* moved MediaGallery in Smart.Framework.modules -> smart-extra-libs
+
 Apr, 11, 2017 :: Version 3.1.2
 	* a bug fix release
 

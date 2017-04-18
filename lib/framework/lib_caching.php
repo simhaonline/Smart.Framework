@@ -13,6 +13,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //======================================================
 // Smart-Framework - Cache Support
 // DEPENDS:
+//	* Smart::
 //	* SmartParser::
 //======================================================
 

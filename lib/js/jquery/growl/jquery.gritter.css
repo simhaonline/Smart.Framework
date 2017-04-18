@@ -1,4 +1,4 @@
-/* Gritter for jQuery Version: 1.7.4 :: with fixes by unixman */
+/* Gritter for jQuery Version: 1.7.4.2 :: with fixes by unixman r.170415 */
 
 #gritter-notice-wrapper {
 	z-index: 2147483000;
@@ -6,12 +6,22 @@
 	top: 10px;
 	right: 10px;
 	min-width: 300px !important;
-	max-width: 92% !important;
+	max-width: 450px !important;
 	opacity: 0.95;
 	max-height: 96% !important;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+
+@media all and (max-width:639px) {
+
+	#gritter-notice-wrapper {
+		min-width: 275px !important;
+		max-width: 300px !important;
+	}
+
+}
+
 #gritter-notice-wrapper.top-left {
 	left: 20px;
 	right: auto;

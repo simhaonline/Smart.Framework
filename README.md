@@ -31,7 +31,7 @@ http://sourceforge.net/projects/warp-cms/files/smart-framework/
 #### Benchmark scenario:
 Using a the same basic page for all tested frameworks, just a simple text: "Benchmark Test".
 Benchmark was running with Apache Benchmark suite with the command:
-ab -n 1500 -c 150 http://{localhost}/{framework}/{web-root}
+ab -n 2500 -c 150 http://{localhost}/{framework}/{web-root}
 Using a regular server as hardware platform (Supermicro):
 * 2 x Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz 64-bit (Total: 24 cores / 48 threads)
 * 128 GB RAM, DDR4 ECC @ 2133 MHz
