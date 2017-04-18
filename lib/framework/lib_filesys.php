@@ -223,14 +223,14 @@ private static function test_special_path($y_path) {
 // path should not contain SPACE, BACKSLASH, :, |, ...
 // the : is denied also on unix because can lead to unpredictable paths behaviours
 // the | is denied because old MacOS is not supported
-// path should not be equal with: / . .. ./ ../ ./.
+// path should not be EMPTY or equal with: / . .. ./ ../ ./.
 // path should contain just these characters _ a-z A-Z 0-9 - . @ # /
 // returns 1 if OK
 private static function test_valid_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	if((strpos($y_path, ' ') !== false) OR (strpos($y_path, '\\') !== false) OR (strpos($y_path, ':') !== false) OR (strpos($y_path, '|') !== false) OR (strpos($y_path, '...') !== false) OR ((string)trim($y_path) == '/') OR ((string)trim($y_path) == '.') OR ((string)trim($y_path) == '..') OR ((string)trim($y_path) == './') OR ((string)trim($y_path) == '../') OR ((string)trim($y_path) == './.')) {
+	if((strpos($y_path, ' ') !== false) OR (strpos($y_path, '\\') !== false) OR (strpos($y_path, ':') !== false) OR (strpos($y_path, '|') !== false) OR (strpos($y_path, '...') !== false) OR ((string)trim($y_path) == '') OR ((string)trim($y_path) == '/') OR ((string)trim($y_path) == '.') OR ((string)trim($y_path) == '..') OR ((string)trim($y_path) == './') OR ((string)trim($y_path) == '../') OR ((string)trim($y_path) == './.')) {
 		return 0;
 	} //end if else
 	//-- {{{SYNC-SAFE-PATH-CHARS}}}
