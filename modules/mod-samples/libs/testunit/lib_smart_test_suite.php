@@ -1624,6 +1624,22 @@ public static function test_fs() {
 	} //end if
 	//--
 	if((string)$err == '') {
+		$the_test = 'CHECK TEST ABSOLUTE INVALID PATHS ...';
+		$tests[] = $the_test;
+		if((SmartFileSysUtils::check_file_or_dir_name('some/path:/this/is/absolute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute:some/path', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('c:/this/is/absolute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name(':/this/is/absolute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/abso|lute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/abso lute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/abso:lute', 'no')) OR (SmartFileSysUtils::check_file_or_dir_name('#this/is/protected', 'no'))) {
+			$err = 'ERROR: CHECK TEST ABSOLUTE : INVALID / PROTECTED PATHS ... FAILED !!!';
+		} //end if
+	} //end if
+	//--
+	if((string)$err == '') {
+		$the_test = 'CHECK TEST INVALID PATHS ...';
+		$tests[] = $the_test;
+		if((SmartFileSysUtils::check_file_or_dir_name('some/path:/this/is/absolute')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute:some/path')) OR (SmartFileSysUtils::check_file_or_dir_name('c:/this/is/absolute')) OR (SmartFileSysUtils::check_file_or_dir_name(':/this/is/absolute')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/abso|lute')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/abso lute')) OR (SmartFileSysUtils::check_file_or_dir_name('/this/is/abso:lute')) OR (SmartFileSysUtils::check_file_or_dir_name('#this/is/protected'))) {
+			$err = 'ERROR: CHECK TEST INVALID / PROTECTED PATHS ... FAILED !!!';
+		} //end if
+	} //end if
+	//--
+	if((string)$err == '') {
 		$the_test = 'CHECK EXTRACT FOLDER FROM PATH ...';
 		$tests[] = $the_test;
 		if((string)$get_folder != SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($the_folder))) {

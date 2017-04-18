@@ -70,7 +70,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.170415
+ * @version 	v.170418
  * @package 	Media:ImageProcessing
  *
  */
@@ -439,8 +439,8 @@ public function resizeImage($resize_width, $resize_height, $crop=false, $mode=0,
 	} //end if
 	//--
 	$resize_height = (int) $resize_height;
-	if($resize_height < 64) {
-		$resize_height = 64;
+	if($resize_height < 16) {
+		$resize_height = 16;
 	} //end if
 	if($resize_height > 1920) {
 		$resize_height = 1920;

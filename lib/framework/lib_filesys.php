@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170403
+ * @version 	v.170418
  * @package 	Filesystem
  *
  */
@@ -99,19 +99,15 @@ public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='ye
 	} //end if
 	//-- test absolute path and protected path
 	if((string)$y_deny_absolute_path != 'no') {
-		//-- test absolute path
 		if(self::test_absolute_path($y_path) !== 1) {
 			return 0;
 		} //end if
-		//-- test protected path
-		if((string)$y_allow_protected_relative_paths != 'yes') {
-			//--
-			if(self::test_special_path($y_path) !== 1) { // check protected path only if deny absolute path access, otherwise n/a
-				return 0;
-			} //end if
-			//--
+	} //end if
+	//-- test protected path
+	if((string)$y_allow_protected_relative_paths != 'yes') {
+		if(self::test_special_path($y_path) !== 1) { // check protected path only if deny absolute path access, otherwise n/a
+			return 0;
 		} //end if
-		//--
 	} //end if
 	//-- test max path length
 	if(strlen($y_path) > 1024) {
@@ -170,7 +166,6 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 	} //end if
 	//-- test absolute path and protected path
 	if((string)$y_deny_absolute_path != 'no') {
-		//-- test absolute path
 		if(self::test_absolute_path($y_path) !== 1) {
 			//--
 			Smart::raise_error(
@@ -180,25 +175,28 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 			die(''); // just in case
 			//--
 		} //end if
-		//-- test protected path
-		if((string)$y_allow_protected_relative_paths != 'yes') {
-			if(self::test_special_path($y_path) !== 1) { // check protected path only if deny absolute path access, otherwise n/a
-				Smart::raise_error(
-					'SmartFramework // FileSystemUtils // Check Protected Path // ACCESS DENIED to invalid path: '.$y_path,
-					'FileSysUtils: PROTECTED PATH ACCESS IS DISALLOWED !' // msg to display
-				);
-				die(''); // just in case
-			} //end if
+	} //end if
+	//-- test protected path
+	if((string)$y_allow_protected_relative_paths != 'yes') {
+		if(self::test_special_path($y_path) !== 1) { // check protected path only if deny absolute path access, otherwise n/a
+			//--
+			Smart::raise_error(
+				'SmartFramework // FileSystemUtils // Check Protected Path // ACCESS DENIED to invalid path: '.$y_path,
+				'FileSysUtils: PROTECTED PATH ACCESS IS DISALLOWED !' // msg to display
+			);
+			die(''); // just in case
+			//--
 		} //end if
-		//--
 	} //end if
 	//-- test max path length
 	if(strlen($y_path) > 1024) {
+		//--
 		Smart::raise_error(
 			'SmartFramework // FileSystemUtils // Check Max Path Length (1024) // ACCESS DENIED to invalid path: '.$y_path,
 			'FileSysUtils: PATH LENGTH IS EXCEEDING THE MAX ALLOWED LENGTH !' // msg to display
 		);
 		die(''); // just in case
+		//--
 	} //end if
 	//--
 } //END FUNCTION
@@ -221,16 +219,18 @@ private static function test_special_path($y_path) {
 
 
 //================================================================ TEST IF VALID PATH
-// test if path is valid
+// test if path is valid ; on windows paths must use the / instead of backslash (and without drive letter prefix c:) to comply
+// path should not contain SPACE, BACKSLASH, :, |, ...
+// the : is denied also on unix because can lead to unpredictable paths behaviours
+// the | is denied because old MacOS is not supported
+// path should not be equal with: / . .. ./ ../ ./.
 // path should contain just these characters _ a-z A-Z 0-9 - . @ # /
-// path should not contain \ or SPACE
-// path should not be equalt with / . | ..
 // returns 1 if OK
 private static function test_valid_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	if((strpos($y_path, ' ') !== false) OR (strpos($y_path, '\\') !== false) OR ((string)trim($y_path) == '/') OR ((string)trim($y_path) == '.') OR ((string)trim($y_path) == '..')) {
+	if((strpos($y_path, ' ') !== false) OR (strpos($y_path, '\\') !== false) OR (strpos($y_path, ':') !== false) OR (strpos($y_path, '|') !== false) OR (strpos($y_path, '...') !== false) OR ((string)trim($y_path) == '/') OR ((string)trim($y_path) == '.') OR ((string)trim($y_path) == '..') OR ((string)trim($y_path) == './') OR ((string)trim($y_path) == '../') OR ((string)trim($y_path) == './.')) {
 		return 0;
 	} //end if else
 	//-- {{{SYNC-SAFE-PATH-CHARS}}}
@@ -246,6 +246,7 @@ private static function test_valid_path($y_path) {
 
 //================================================================ TEST IF BACKWARD PATH
 // test backpath or combinations against crafted paths to access backward paths on filesystem
+// will test only combinations allowed by test_valid_path()
 // returns 1 if OK
 private static function test_backward_path($y_path) {
 	//--
@@ -263,15 +264,14 @@ private static function test_backward_path($y_path) {
 
 //================================================================ TEST IF ABSOLUTE PATH
 // test against absolute path access
-// on UNIX, the first character should not be /
-// on Windows, the second character should not be : as the first is the drive letter as c: or c:/
-// on Macs & *All OSes, we do not allow | character
+// will test only combinations allowed by test_valid_path() and test_backward_path()
+// the first character should not be / ; path must not contain :, :/
 // returns 1 if OK
 private static function test_absolute_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	if((substr($y_path, 0, 1) == '/') OR (substr($y_path, 0, 1) == '\\') OR (substr($y_path, 1, 1) == ':') OR (substr($y_path, 1, 2) == ':/') OR (strpos($y_path, '|') !== false)) {
+	if(substr(trim($y_path), 0, 1) == '/') {
 		return 0;
 	} //end if
 	//--
@@ -1006,7 +1006,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170403
+ * @version 	v.170418
  * @package 	Filesystem
  *
  */
