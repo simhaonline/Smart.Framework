@@ -28,8 +28,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(SMART_FRAMEWORK_TEST_MODE !== true) {
-			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
+			return;
 		} //end if
 		//--
 
@@ -74,9 +74,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				if((is_array($test_cache['configs'])) && (is_array($test_cache['vars']))) { // if valid cache (test as we exported both arrays ... so they must be the 2 arrays again)
 					$this->PageViewSetCfgs((array)$test_cache['configs']);
 					$this->PageViewSetVars((array)$test_cache['vars']);
-					$this->PageViewAppendVar('main', "\n".'<!-- Redis Cached Content Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
+					$this->PageViewAppendVar('main', "\n".'<!-- PCached Content Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
 					if($this->IfDebug()) {
-						$this->SetDebugData('Page Cache Info', 'Serving page from Persistent Cache: Redis (override PHP Execution). Page key is: '.$the_page_cache_key);
+						$this->SetDebugData('Page Cache Info', 'Serving page from Persistent Cache (override PHP Execution). Page key is: '.$the_page_cache_key);
 					} // end if
 					return; // the page was served from Cache (stop here)
 				} //end if
@@ -161,9 +161,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewAppendVar('main', trim($fcontent));
 		//--
 
-		//== cache page (if redis - persistent cache is set in config)
+		//== cache page (if persistent cache is set in config)
 
-		//-- if Redis is active this will cache the page for 1 hour ...
+		//-- if pCache is active this will cache the page for 1 hour ...
 		if($this->PageCacheisActive()) {
 			//--
 			$this->PageSetInCache(
@@ -177,13 +177,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			);
 			//--
 			if($this->IfDebug()) {
-				$this->SetDebugData('Page Cache Info', 'Setting page in Persistent Cache: Redis (after PHP Execution). Page key is: '.$the_page_cache_key);
+				$this->SetDebugData('Page Cache Info', 'Setting page in Persistent Cache (after PHP Execution). Page key is: '.$the_page_cache_key);
 			} //end if
 			//--
 		} else {
 			//--
 			if($this->IfDebug()) {
-				$this->SetDebugData('Page Cache Info', 'Persistent Cache (Redis) is not active. Serving Page from PHP Execution.');
+				$this->SetDebugData('Page Cache Info', 'Persistent Cache is not active. Serving Page from PHP Execution.');
 			} //end if
 			//--
 		} //end if else

@@ -32,19 +32,19 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(SMART_FRAMEWORK_TEST_MODE !== true) {
-			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
+			return;
 		} //end if
 		//--
 
 		if((string)$this->download_file == '') {
-			$this->PageViewSetCfg('error', 'Empty file name to download !');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'Empty file name to download !');
+			return;
 		} //end if
 
 		if(!SmartFileSysUtils::check_file_or_dir_name((string)$this->download_file)) {
-			$this->PageViewSetCfg('error', 'Invalid file name to download (unsafe path) !');
-			return 403;
+			$this->PageViewSetErrorStatus(403, 'Invalid file name to download (unsafe path) !');
+			return;
 		} //end if
 
 		if(!is_file((string)$this->download_file)) { // avoid re-copy each time this script runs ...
@@ -52,13 +52,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		} //end if
 
 		if(!is_file((string)$this->download_file)) {
-			$this->PageViewSetCfg('error', 'Cannot find the required file for download !');
-			return 404;
+			$this->PageViewSetErrorStatus(404, 'Cannot find the required file for download !');
+			return;
 		} //end if
 
 		if(!is_readable((string)$this->download_file)) {
-			$this->PageViewSetCfg('error', 'The required file for download is not readable !');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'The required file for download is not readable !');
+			return;
 		} //end if
 
 		$download_key 	= (string) sha1((string)time().SMART_FRAMEWORK_SECURITY_KEY); // generate a unique download key that will expire shortly

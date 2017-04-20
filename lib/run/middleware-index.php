@@ -31,7 +31,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.1.2');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170415
+ * @version		170420
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -287,7 +287,7 @@ public static function Run() {
 	//--
 	$appSettings = (array) $appModule->PageViewGetCfgs();
 	if(array_key_exists('status-code', $appSettings)) {
-		$appStatusCode = (int) $appSettings['status-code'];
+		$appStatusCode = (int) $appSettings['status-code']; // this rewrites what the Run() function returns, which is very OK as this is authoritative !
 	} //end if
 	//--
 	//== CACHE CONTROL
@@ -298,7 +298,7 @@ public static function Run() {
 		self::HeadersNoCache(); // headers: cache control, force no-cache
 	} //end if else
 	//--
-	//== STATUS CODE
+	//== STATUS CODE {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 	//--
 	switch((int)$appStatusCode) {
 		//-- client errors
@@ -430,7 +430,7 @@ public static function Run() {
 	if(((string)$appSettings['download-packet'] != '') AND ((string)$appSettings['download-key'] != '')) { // expects an encrypted data packet and a key
 		$dwl_result = self::DownloadsHandler((string)$appSettings['download-packet'], (string)$appSettings['download-key']);
 		if((string)$dwl_result != '') {
-			Smart::log_info('File Download - Client: '.SmartUtils::get_visitor_signature(), (string)$dwl_result); // log result and mark it as finalized
+			Smart::log_info('File-Download: '.$dwl_result, 'Client: '.SmartUtils::get_visitor_signature()); // log result and mark it as finalized
 		} //end if
 		return; // break stop
 	} //end if

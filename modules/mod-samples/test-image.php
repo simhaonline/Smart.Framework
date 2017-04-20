@@ -15,6 +15,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // for ADMIN area it does direct output (more complicated, needs to implement all the events, status codes, output headers) ; see below sample in SmartAppAdminController
 
 define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
+
 if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 	define('SMART_APP_MODULE_DIRECT_OUTPUT', true); // for admin area do direct output
 } //end if
@@ -33,8 +34,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(SMART_FRAMEWORK_TEST_MODE !== true) {
-			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
+			return;
 		} //end if
 		//--
 
@@ -50,8 +51,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$im = imagecreate(320, 90);
 		if(!$im) {
 			Smart::log_warning('Cannot create the image in: '.__METHOD__);
-			$this->PageViewSetCfg('error', 'ERROR: Cannot create the sample image ...'); // set an error message for 500 http status
-			$this->PageViewSetCfg('status-code', 500); // this is exactly like: return 500;
+			$this->PageViewSetErrorStatus(500, 'ERROR: Cannot create the sample image ...'); // set an error message for 500 http status
 			return;
 		} //end if
 		//--
@@ -71,8 +71,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		if((string)$png == '') {
 			Smart::log_warning('Image is empty in: '.__METHOD__);
-			$this->PageViewSetCfg('error', 'ERROR: Image is Empty ...'); // set an error message for 500 http status
-			return 500; // this is exactly like: $this->PageViewSetCfg('status-code', 500);
+			$this->PageViewSetErrorStatus(500, 'ERROR: Image is Empty ...'); // set an error message for 500 http status
+			return;
 		} //end if
 		//--
 
@@ -81,10 +81,6 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			'main',
 			(string) $png
 		);
-		//--
-
-		//--
-		return 200; // HTTP 200 OK
 		//--
 
 	} //END FUNCTION

@@ -10,7 +10,21 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
+//-- this is just for test purposes ; otherwise you should prefere to autoload classes by dependency injection only whey are needed !
+require_once('lib/core/plugins/staticload.php');
+if(is_file('modules/smart-extra-libs/staticload.php')) {
+	require_once('modules/smart-extra-libs/staticload.php');
+} //end if
+//--
+
 define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
+
+define('SMART_FRAMEWORK_TESTUNIT_BASE_URL', '?/page/samples.testunit/op/');
+if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+	define('SMART_FRAMEWORK_TESTUNIT_CAPTCHA_MODE', 'session');
+} else {
+	define('SMART_FRAMEWORK_TESTUNIT_CAPTCHA_MODE', 'cookie');
+} //end if else
 
 /**
  * Index Controller
@@ -24,22 +38,20 @@ class SmartAppAdminController extends SmartAbstractAppController {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(SMART_FRAMEWORK_TEST_MODE !== true) {
-			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
+			return;
 		} //end if
 		//--
 
 		//--
-		require_once('modules/mod-samples/libs/testunit/lib_smart_test_suite.php');	// test suite
-		//--
-
-		//--
-		SmartSession::start(); // start the session
+		if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+			SmartSession::start(); // start the session
+		} //end if
 		//--
 
 		//--
 		if(SmartPersistentCache::isActive()) {
-			SmartPersistentCache::getKey('test-unit', 'version'); // just test if redis re-uses the connection ...
+			SmartPersistentCache::getKey('test-unit', 'version'); // just test if pcache re-uses the connection ...
 		} //end if
 		//--
 
@@ -47,65 +59,40 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		$op = $this->RequestVarGet('op', 'testunit.main', 'string');
 		//--
 		switch((string)$op) {
-			case 'testunit.phpinfo':
-				//--
-				$this->PageViewSetCfg('rawpage', true);
-				ob_start();
-				phpinfo();
-				$main = ob_get_contents();
-				ob_end_clean();
-				break;
-			case 'testunit.captcha':
-				//--
-				$this->PageViewSetCfg('rawpage', 'yes'); // should work both: true or 'yes'
-				$this->PageViewSetCfg('rawmime', 'image/png');
-				$this->PageViewSetCfg('rawdisp', 'inline');
-				$main = SmartTestSuite::test_captcha('png');
-				//--
-				break;
-			case 'testunit.post-form-by-ajax':
-				//--
-				sleep(1);
-				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::post__answer__by__ajax(
-					$this->RequestVarGet('tab'),
-					$this->RequestVarGet('frm')
-				);
-				//--
-				break;
+		//#####
 			case 'testunit.strings-test':
 				//--
 				sleep(1);
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_strings();
+				$main = \SmartModExtLib\Samples\TestUnitStrings::testUnicode();
 				//--
 				break;
 			case 'testunit.crypto-test':
 				//--
 				sleep(1);
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_crypto();
+				$main = \SmartModExtLib\Samples\TestUnitCrypto::testPhpAndJs();
 				//--
 				break;
 			case 'testunit.filesys-test':
 				//--
 				sleep(1);
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_fs();
+				$main = \SmartModExtLib\Samples\TestUnitFileSystem::testFs();
 				//--
 				break;
 			case 'testunit.pgsql-server-test':
 				//--
 				sleep(1);
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_pgsqlserver();
+				$main = \SmartModExtLib\Samples\TestUnitPgSQL::testPgServer();
 				//--
 				break;
-			case 'testunit.redis-server-test':
+			case 'testunit.pcache-test':
 				//--
 				sleep(1);
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_redisserver();
+				$main = \SmartModExtLib\Samples\TestUnitPCache::testPersistentCache();
 				//--
 				break;
 			case 'testunit.json-sqlite3-smartgrid':
@@ -118,7 +105,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$sorttype = $this->RequestVarGet('sorttype', 'text', 'string');
 				$src = $this->RequestVarGet('src', '', 'string'); // filter var
 				//--
-				$main = SmartTestSuite::test_sqlite3_json_smartgrid($ofs, $sortby, $sortdir, $sorttype, $src);
+				$main = \SmartModExtLib\Samples\TestUnitSQLite3::testJsonSmartgrid($ofs, $sortby, $sortdir, $sorttype, $src);
 				//--
 				break;
 			case 'testunit.html-editor':
@@ -138,55 +125,171 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main .= SmartComponents::html_js_editarea('test_code_editor', 'test_code_editor', '', 'html', true, '920px', '450px');
 				//--
 				break;
-			case 'testunit.load-url-or-file':
-				//--
-				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::load__url__or__file('http://www.unix-world.org');
-				//--
-				break;
 			case 'testunit.barcodes-qrcode':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_barcode2d_qrcode();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeQRCode();
 				//--
 				break;
 			case 'testunit.barcodes-semcode':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_barcode2d_datamatrix();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeDataMatrix();
 				//--
 				break;
 			case 'testunit.barcodes-pdf417':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_barcode2d_pdf417();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodePdf417();
 				//--
 				break;
 			case 'testunit.barcodes-code128':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_barcode1d_128B();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test1dBarcode128B();
 				//--
 				break;
 			case 'testunit.barcodes-code93':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_barcode1d_93();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test1dBarcode93();
 				//--
 				break;
 			case 'testunit.barcodes-code39':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_barcode1d_39();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test1dBarcode39();
 				//--
 				break;
 			case 'testunit.barcodes-rm4kix':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_barcode1d_kix();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test1dBarcodeKix();
 				//--
 				break;
-			case 'testunit.charts-biz':
+			case 'testunit.interractions':
+				//--
+				$this->PageViewSetCfg('template-file', 'template-modal.htm');
+				$main = \SmartModExtLib\Samples\TestUnitBrowserWinInterractions::winModalPopupContentHtml();
+				//--
+				break;
+			case 'testunit.autocomplete':
+				//--
+				$src = $this->RequestVarGet('src', '', 'string');
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitSQLite3::testJsonAutocomplete($src);
+				//--
+				break;
+			case 'testunit.captcha':
+				//--
+				$this->PageViewSetCfg('rawpage', 'yes'); // should work both: true or 'yes'
+				$this->PageViewSetCfg('rawmime', 'image/png');
+				$this->PageViewSetCfg('rawdisp', 'inline');
+				$main = \SmartModExtLib\Samples\TestUnitMain::captchaImg('png');
+				//--
+				break;
+			case 'testunit.post-form-by-ajax':
+				//--
+				sleep(1);
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitMain::formReplyJson(
+					$this->RequestVarGet('tab'),
+					$this->RequestVarGet('frm')
+				);
+				//--
+				break;
+			case 'testunit.main':
+				//--
+				$is_modal = false;
+				if($this->IfRequestModalPopup() OR $this->IfRequestPrintable()) {
+					$is_modal = true;
+					$this->PageViewSetCfg('template-file', 'template-modal.htm');
+				} //end if
+				//--
+				$main = \SmartModExtLib\Samples\TestUnitMain::mainScreen(
+					$this->RequestVarGet('tab'),
+					$this->RequestVarGet('frm'),
+					$this->RequestVarGet('testformdata')
+				);
+				//--
+				if(!$is_modal) {
+					if($this->IfDebug()) {
+						$this->SetDebugData('TestUnit.Main', 'Loading all staticload libs at once for test purposes ...');
+					} //end if
+				} //end if
+				//--
+				break;
+		//#####
+			case 'test.phpinfo':
+				//--
+				if(SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS === true) { // if trusted environment
+					$this->PageViewSetCfg('rawpage', true);
+					ob_start();
+					phpinfo();
+					$main = ob_get_contents();
+					ob_end_clean();
+				} else {
+					$main = SmartComponents::operation_notice('This test is currently DISABLED ...');
+				} //end if else
+				break;
+			case 'test.json':
+				//--
+				$mixed_data = ['Unicode Text' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド\'#@<tag>!$%^&*()-_=+'."\r\n\t".'</tag>', 'Numbers' => 1234567890.99, 'Boolean TRUE:' => true, 'Boolean FALSE:' => false];
+				//--
+				$main = '<h1> Json Test</h1>';
+				$main .= '<pre style="background:#ECECEC; border:1px solid #CCCCCC; line-height:32px; padding:8px;">';
+				$main .= '<b>Default (Unicode Unescaped) Json:</b>'."\n".Smart::json_encode($mixed_data)."\n";
+				$main .= '<hr>';
+				$main .= '<b>Default (Unicode Unescaped) Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true)."\n";
+				$main .= '<hr>';
+				$main .= '<b>Unicode Escaped Json:</b>'."\n".Smart::json_encode($mixed_data, false, false)."\n";
+				$main .= '<hr>';
+				$main .= '<b>Unicode Escaped Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true, false)."\n";
+				$main .= '</pre>';
+				//--
+				break;
+			case 'test.load-url':
+				//--
+				$browser = (array) SmartUtils::load_url_or_file('http://www.unix-world.org', 20, 'GET');
+				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
+					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
+					unset($browser);
+					return;
+				} else {
+					$main = (string) '<h1>Load URL: OK '.$browser['code'].'</h1><pre style="background:#ECECEC">'.Smart::escape_html($browser['content']).'</pre>';
+					unset($browser);
+				} //end if else
+				//--
+				break;
+			case 'test.load-secure-url':
+				//--
+				$browser = (array) SmartUtils::load_url_or_file('https://www.unix-world.org', 20, 'GET', 'tls');
+				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
+					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
+					unset($browser);
+					return;
+				} else {
+					$main = (string) '<h1>Load Secure URL: OK '.$browser['code'].'</h1><pre style="background:#ECECEC">'.Smart::escape_html($browser['content']).'</pre>';
+					unset($browser);
+				} //end if else
+				//--
+				break;
+			case 'test.ods':
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$oo = new SmartExportToOpenOffice();
+				$this->PageViewSetCfg('rawmime', $oo->ODS_Mime_Header());
+				$this->PageViewSetCfg('rawdisp', $oo->ODS_Disposition_Header('myfile.ods', 'attachment'));
+				$main = $oo->ODS_SpreadSheet(
+					'A Table',
+					array('<column 1>', 'column " 2', 'column & 3'),
+					array('data 1.1', 'data 1.2', 1.30, 'data 2.1', 'data 2.2', 2.31),
+					array('', '', 'decimal4')
+				);
+				//--
+				break;
+			case 'test.charts-biz':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
 				$this->PageViewSetCfg('expires', 120); // cache expire test
@@ -215,7 +318,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = $chart->generate();
 				//--
 				break;
-			case 'testunit.charts-gfx':
+			case 'test.charts-gfx':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
 				//--
@@ -302,78 +405,11 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = $chart->generate();
 				//--
 				break;
-			case 'testunit.ods':
-				//--
-				$this->PageViewSetCfg('rawpage', true);
-				$oo = new SmartExportToOpenOffice();
-				$this->PageViewSetCfg('rawmime', $oo->ODS_Mime_Header());
-				$this->PageViewSetCfg('rawdisp', $oo->ODS_Disposition_Header('myfile.ods', 'attachment'));
-				$main = $oo->ODS_SpreadSheet(
-					'A Table',
-					array('<column 1>', 'column " 2', 'column & 3'),
-					array('data 1.1', 'data 1.2', 1.30, 'data 2.1', 'data 2.2', 2.31),
-					array('', '', 'decimal4')
-				);
-				//--
-				break;
-			case 'testunit.json-test':
-				//--
-				$mixed_data = ['Unicode Text' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド\'#@<tag>!$%^&*()-_=+'."\r\n\t".'</tag>', 'Numbers' => 1234567890.99, 'Boolean TRUE:' => true, 'Boolean FALSE:' => false];
-				//--
-				$main = '<h1> Json Test</h1>';
-				$main .= '<pre style="background:#ECECEC; border:1px solid #CCCCCC; line-height:32px; padding:8px;">';
-				$main .= '<b>Default (Unicode Unescaped) Json:</b>'."\n".Smart::json_encode($mixed_data)."\n";
-				$main .= '<hr>';
-				$main .= '<b>Default (Unicode Unescaped) Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true)."\n";
-				$main .= '<hr>';
-				$main .= '<b>Unicode Escaped Json:</b>'."\n".Smart::json_encode($mixed_data, false, false)."\n";
-				$main .= '<hr>';
-				$main .= '<b>Unicode Escaped Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true, false)."\n";
-				$main .= '</pre>';
-				//--
-				break;
-			case 'testunit.interractions':
-				//--
-				$this->PageViewSetCfg('template-file', 'template-modal.htm');
-				$main = SmartTestSuite::test_interractions(
-					$this->RequestVarGet('mode')
-				);
-				//--
-				break;
-			case 'testunit.autocomplete':
-				//--
-				$src = $this->RequestVarGet('src', '', 'string');
-				//--
-				$this->PageViewSetCfg('rawpage', true);
-				$main = SmartTestSuite::test_sqlite3_json_autocomplete($src);
-				//--
-				break;
-			case 'testunit.main':
-				//--
-				$is_modal = false;
-				if($this->IfRequestModalPopup() OR $this->IfRequestPrintable()) {
-					$is_modal = true;
-					$this->PageViewSetCfg('template-file', 'template-modal.htm');
-				} //end if
-				//--
-				$main = SmartTestSuite::main_screen(
-					$this->RequestVarGet('tab'),
-					$this->RequestVarGet('frm'),
-					$this->RequestVarGet('testformdata')
-				);
-				//--
-				if(!$is_modal) {
-					SmartTestSuite::test_load_libs(); // just for testing all libs
-					if($this->IfDebug()) {
-						$this->SetDebugData('TestUnit.Main', 'Loading all staticload libs at once for test purposes ...');
-					} //end if
-				} //end if
-				//--
-				break;
+		//#####
 			default:
 				//--
-				$this->PageViewSetCfg('error', 'Invalid TestUnit Operation ! ...');
-				return 400;
+				$this->PageViewSetErrorStatus(400, 'Invalid TestUnit Operation ! ...');
+				return;
 				//--
 		} //end switch
 		//--

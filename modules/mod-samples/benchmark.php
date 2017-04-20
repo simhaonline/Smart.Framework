@@ -24,8 +24,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(SMART_FRAMEWORK_TEST_MODE !== true) {
-			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
+			return;
 		} //end if
 		//--
 
@@ -50,10 +50,6 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				'no' // don't use caching (use of caching make sense only if file template is used more than once per execution)
 			)
 		]);
-		//--
-
-		//--
-		return 200; // HTTP 200 OK
 		//--
 
 	} //END FUNCTION

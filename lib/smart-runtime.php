@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.1.2'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.15'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.20'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -771,18 +771,53 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		170405
+ * @version		170420
  * @package 	Application
  *
  */
 final class SmartFrameworkRuntime {
 
 	// ::
+	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 
-	private static $RequestProcessed = false; 				// after all request variables are processed this will be set to true to avoid re-process request variables which can be a huge security issue if re-process is called by mistake !
-	private static $RequiredDirsCreated = false;			// after creating required dirs this will be set to true to avoid re-run that function again
-	private static $RedirectionMonitorStarted = false; 		// after the redirection monitor have been started this will be set to true to avoid re-run it
-	private static $HighLoadMonitorStats = null; 			// register the high load monitor caches
+	private static $HttpStatusCodesOK  = [200, 202, 203, 208]; 								// list of framework available HTTP OK Status Codes (sync with middlewares)
+	private static $HttpStatusCodesERR = [400, 401, 403, 404, 429, 500, 502, 503, 504]; 	// list of framework available HTTP Error Status Codes (sync with middlewares)
+	private static $HttpStatusCodesRDR = [301, 302]; 										// list of framework available HTTP Redirect Status Codes (sync with middlewares)
+
+	private static $RequestProcessed 			= false; 	// after all request variables are processed this will be set to true to avoid re-process request variables which can be a huge security issue if re-process is called by mistake !
+	private static $RequiredDirsCreated 		= false;	// after creating required dirs this will be set to true to avoid re-run that function again
+	private static $RedirectionMonitorStarted 	= false; 	// after the redirection monitor have been started this will be set to true to avoid re-run it
+	private static $HighLoadMonitorStats 		= null; 	// register the high load monitor caches
+
+
+//======================================================================
+// the the array list with OK HTTP Status Codes (only codes that smart framework middlewares will handle)
+public static function getHttpStatusCodesOK() {
+	//--
+	return (array) self::$HttpStatusCodesOK;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// the the array list with ERROR HTTP Status Codes (only codes that smart framework middlewares will handle)
+public static function getHttpStatusCodesERR() {
+	//--
+	return (array) self::$HttpStatusCodesERR;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// the the array list with REDIRECT HTTP Status Codes (only codes that smart framework middlewares will handle)
+public static function HttpStatusCodesRDR() {
+	//--
+	return (array) self::$HttpStatusCodesRDR;
+	//--
+} //END FUNCTION
+//======================================================================
 
 
 //======================================================================

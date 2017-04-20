@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170405
+ * @version 	v.170420
  * @package 	Application
  *
  */
@@ -587,6 +587,75 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		} //end if
 		//--
 		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Set Error Status and Optional Message for a controller page
+	 * The Controller should stop the execution after calling this function using 'return;' or ending the 'Run()' main function
+	 *
+	 * @param 	ENUM 		$code			:: the HTTP Error Status Code: 400, 403, 404, 500, 503, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 500 will be used instead
+	 * @param 	STRING 		$message 		:: The detailed message that will be displayed public near the status code
+	 * @param 	BOOLEAN 	$ishtml 		:: *Optional* ; Default is FALSE ($message is not HTML thus will be HTML escaped) ; if TRUE the message is considered valid HTML so no escaping will be done
+	 *
+	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewSetErrorStatus($code, $message, $ishtml=false) {
+		//--
+		$code = (int) $code;
+		$message = (string) $message;
+		if(!$ishtml) {
+			$message = (string) Smart::escape_html($message);
+		} //end if
+		//--
+		$out = true;
+		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesERR())) { // in the case that the error status code is n/a, use 500 instead
+			$out = false;
+			$code = 500;
+			Smart::log_warning('Invalid HTTP Error Status Code ('.$code.') used in Controller: '.$this->controller);
+		} //end if
+		//--
+		$this->PageViewSetCfgs([
+			'status-code' 	=> (int) $code,
+			'error' 		=> (string) $message
+		]);
+		//--
+		return (bool) $out;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Set Redirect URL for a controller page
+	 * The Controller should stop the execution after calling this function using 'return;' or ending the 'Run()' main function
+	 *
+	 * @param 	STRING 		$url 			:: The absolute URL to redirect the page to (Ex: http://some-domain.ext/some-page.html)
+	 * @param 	ENUM 		$code			:: the HTTP Error Status Code: 301, 302, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 302 will be used instead
+	 *
+	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewSetRedirectUrl($url, $code) {
+		//--
+		$url = (string) $url;
+		if((string)$url == '') {
+			return false;
+		} //end if
+		//--
+		$code = (int) $code;
+		if(!in_array((int)$code, (array)SmartFrameworkRuntime::HttpStatusCodesRDR())) { // in the case that the redirect status code is n/a, use 302 instead
+			Smart::log_warning('Invalid HTTP Redirect Status Code ('.$code.') used in Controller: '.$this->controller);
+			$code = 302;
+		} //end if
+		//--
+		$this->PageViewSetCfgs([
+			'status-code' 	=> (int) $code,
+			'redirect-url' 	=> (string) $url
+		]);
 		//--
 	} //END FUNCTION
 	//=====

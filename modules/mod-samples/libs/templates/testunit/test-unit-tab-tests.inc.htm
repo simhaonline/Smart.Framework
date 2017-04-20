@@ -1,4 +1,5 @@
 <!-- Partial Sub-Template: TestUnit.Main.Tests -->
+			<!-- Test Escaping: [####POWERED-INFO|url|js|html####] -->
 			<span style="color: #778899; font-size: 37px; font-weight: bold;">Core Test Suite &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; コアテスト·スイート</span>
 			<br>
 			<br>
@@ -6,19 +7,18 @@
 			<button class="ux-button" id="btn_ajx_loadr_test_crypto"><i class="fa fa-key"></i> &nbsp; Test: Cryptography</button> &nbsp;
 			<button class="ux-button" id="btn_ajx_loadr_test_fs"><i class="fa fa-folder-open"></i> &nbsp; Test: FileSystem Operations</button> &nbsp;
 			<button class="ux-button" id="btn_ajx_loadr_test_pgsql"><i class="fa fa-database"></i> &nbsp; Test: PostgreSQL Server</button> &nbsp;
-			<button class="ux-button" id="btn_ajx_loadr_test_redis"><i class="fa fa-cube"></i> &nbsp; Test: Redis Server</button> &nbsp;
+			<button class="ux-button" id="btn_ajx_loadr_test_pcache"><i class="fa fa-cube"></i> &nbsp; Test: Persistent Cache</button> &nbsp;
 			<script type="text/javascript">
-			<!-- Test Escaping: [####POWERED-INFO|url|js|html####] -->
-			$(function() {
+			jQuery(function() {
 				//--
 				$('#btn_ajx_loadr_test_strings').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Unicode String Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL####]testunit.strings-test&time=[####NO-CACHE-TIME####]', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.strings-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
-				$('#btn_ajx_loadr_test_crypto').click(function() {
+				jQuery('#btn_ajx_loadr_test_crypto').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Crypto Test Suite ...</span><br><img src="lib/core/img/busy_timer.gif">');
-					SmartJS_BrowserUtils.Ajax_XHR_Request_From_URL('[####TESTUNIT_BASE_URL####]testunit.crypto-test&time=[####NO-CACHE-TIME####]', 'GET').done(function(msg) { // {{{JQUERY-AJAX}}}
+					SmartJS_BrowserUtils.Ajax_XHR_Request_From_URL('[####TESTUNIT_BASE_URL|js####]testunit.crypto-test&time=[####NO-CACHE-TIME####]', 'GET').done(function(msg) { // {{{JQUERY-AJAX}}}
 						$('#test_div_by_ajax').html(msg); // this will also evaluate the js scripts
 					}).fail(function(msg) {
 						alert('ERROR (Test-Unit): Invalid Server Response !', '' + msg.responseText);
@@ -27,17 +27,17 @@
 				//--
 				$('#btn_ajx_loadr_test_fs').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the FileSystem Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL####]testunit.filesys-test&time=[####NO-CACHE-TIME####]', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.filesys-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
-				$('#btn_ajx_loadr_test_pgsql').click(function() {
+				jQuery('#btn_ajx_loadr_test_pgsql').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the PostgreSQL Server Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL####]testunit.pgsql-server-test&time=[####NO-CACHE-TIME####]', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.pgsql-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
-				$('#btn_ajx_loadr_test_redis').click(function() {
-					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Redis Server Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL####]testunit.redis-server-test&time=[####NO-CACHE-TIME####]', 'GET', 'html');
+				$('#btn_ajx_loadr_test_pcache').click(function() {
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Persistent Cache Test Suite ...</span>');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.pcache-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
 			});

@@ -15,9 +15,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-	define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based');
-} //end if
+define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based');
 
 /**
  * Class: SmartPersistentCache (Redis based Persistent Cache adapter) - provides a persistent Cache (in-Redis-Memory), that can be shared and/or reused between multiple PHP executions.

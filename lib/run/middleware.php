@@ -33,12 +33,13 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170410
+ * @version		170420
  *
  */
 abstract class SmartAbstractAppMiddleware {
 
 	// :: ABSTRACT
+	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 
 
 //=====

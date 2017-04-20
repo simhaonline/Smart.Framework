@@ -12,11 +12,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //######################################### Mod.Samples (Tests ONLY Settings)
 // !!! Remove these Test ONLY Settings in real production environments !!! They are required just for Mod.Samples
 define('SMART_FRAMEWORK_TEST_MODE', true);
-define('SMART_FRAMEWORK_TESTUNIT_BASE_URL', '?/page/samples.testunit/op/');
-define('SMART_FRAMEWORK_TESTUNIT_CAPTCHA_MODE', 'cookie'); // cookie | session
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS', false);
-define('SMART_FRAMEWORK_TESTUNIT_ALLOW_REDIS_TESTS', false);
+define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', false);
 //######################################### END TestOnly Settings
 
 //--------------------------------------- Info URL

@@ -45,13 +45,14 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170415
+ * @version 	v.170420
  * @package 	Components:Framework
  *
  */
 final class SmartComponents {
 
 	// ::
+	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 
 //================================================================
 /**
@@ -1905,7 +1906,7 @@ public static function js_ajax_submit_html_form($y_form_id, $y_script_url, $y_co
  * @param 	$y_replace_html 	**OPTIONAL** the HTML Code to replace in DIV on Success
  * @param 	$y_js_evcode 		**OPTIONAL** the JS EvCode to be executed on either Success or Error (before redirect or Div Replace)
  *
- * @return STRING				[javascript code]
+ * @return MIXED				[JSON data]
  *
  */
 public static function js_ajax_replyto_html_form($y_status, $y_title, $y_message, $y_redirect_url='', $y_replace_div='', $y_replace_html='', $y_js_evcode='') {

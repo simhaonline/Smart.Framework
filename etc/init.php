@@ -24,7 +24,7 @@ define('SMART_ERROR_HANDLER', 				'dev'); 										// Error Handler mode: 'log'
 define('SMART_FRAMEWORK_TIMEZONE', 			'UTC'); 										// The timezone for PHP (Example: Europe/London) ; default is: UTC
 //--------------------------------------- SECURITY
 define('SMART_FRAMEWORK_SECURITY_FILTER_INPUT', '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/');			// Safe Unicode Filter Input Variables (Strings) as: remove all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
-define('SMART_FRAMEWORK_SECURITY_KEY', 		'secret-key#0987654321'); 						// Security Key ; *** YOU HAVE TO CHANGE IT *** ; will be used to generate secure hashes
+define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// Security Key ; *** YOU HAVE TO CHANGE IT *** ; will be used to generate secure hashes
 //define('SMART_FRAMEWORK_SECURITY_CRYPTO', 'mcrypt/twofish/CFB'); 							// *Optional, the crypto algo for general purpose encryption to be used ; default is hash/sha256 ; other modes: hash/sha1, hash/sha384, hash/sha512, mcrypt/{algo}/{mode} where mode can be: CBC or CFB ; algo can be: blowfish, twofish, serpent, ghost
 //--------------------------------------- COOKIES
 define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie name (if enabled)
@@ -59,7 +59,7 @@ define('SMART_FRAMEWORK_FILE_LOCKTIME', 	59);											// File wrtiting LockTim
 define('SMART_FRAMEWORK_CHMOD_DIRS', 		0770);											// Folder Permissions: 0770 | 0700
 define('SMART_FRAMEWORK_CHMOD_FILES', 		0660);											// File Permissions: 0660 | 0600
 //--------------------------------------- UPLOADS / DOWNLOADS / QUOTA
-define('SMART_FRAMEWORK_STORAGE_DISK_QUOTA',		0);										// App Disk Quota in MB (0 for unlimited) ; This is used by the uploads feature
+//define('SMART_FRAMEWORK_STORAGE_DISK_QUOTA',		0);										// App Disk Quota in MB (0 for unlimited) ; This may be used by the uploads feature but it needs extra development to calculate total sizes of all uploads and compare with this value
 define('SMART_FRAMEWORK_DOWNLOAD_FOLDERS', 			'<wpub>');								// Allow downloads ONLY from these folders: <folder1>,<folder2> (relative to the app root)
 define('SMART_FRAMEWORK_DOWNLOAD_EXPIRE',			1);										// Download expiration time in hours (between 1 and 24 hours)
 //define('SMART_FRAMEWORK_DOWNLOAD_SKIP_LOG',			true);								// If defined will disable logging for Downloads

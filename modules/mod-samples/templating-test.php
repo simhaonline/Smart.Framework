@@ -24,8 +24,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(SMART_FRAMEWORK_TEST_MODE !== true) {
-			$this->PageViewSetCfg('error', 'ERROR: Test mode is disabled ...');
-			return 500;
+			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
+			return;
 		} //end if
 		//--
 
@@ -49,6 +49,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 					$this->ControllerGetParam('module-path').'views/templating-test.htm', // the view
 					[
 						'TITLE' => $title,
+						'MARKER' => '1234567890.abcdefghijklmniopqrstuvwxyz"',
 						'TEST-COMPARE' => 'a',
 						'DATA' => [
 							// id        slug         name                is_vowel         arr of numbers

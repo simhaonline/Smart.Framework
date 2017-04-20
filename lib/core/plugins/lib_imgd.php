@@ -70,7 +70,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.170418
+ * @version 	v.170419
  * @package 	Media:ImageProcessing
  *
  */
@@ -688,6 +688,64 @@ public function applyWatermark($wtistr, $gravity, $offsx=0, $offsy=0) {
 
 //================================================================
 /**
+ * Calculate TTF text bounding box for an image
+ *
+ * @param STRING 	$text 				:: the text to be applied
+ * @param INTEGER 	$angle 				:: *Optional* TTF angle rotation (0..180) degrees ; Default is 0 | null (for built-in or GDF fonts)
+ * @param INTEGER 	$size 				:: *Optional* TTF font size ; Default is 10 | null (for built-in or GDF fonts)
+ * @param ENUM 		$font 				:: *Optional* The font to be used: character's font (1..5 for built-in gd font ; path/to/font.gdf ; path/to/font.ttf) ; Default is: lib/core/plugins/fonts/source-sans-pro-regular.ttf
+ *
+ * @hints 								:: this works just with TTF fonts
+ *
+ * @return ARRAY 						:: return an empty array on error / on success returns an array with 8 coordinates as [ 0: lower left corner, X position ; 1: lower left corner, Y position ; 2: lower right corner, X position ; 3: lower right corner, Y position ; 4: upper right corner, X position ; 5: upper right corner, Y position ; 6: upper left corner, X position ; 7: upper left corner, Y position ]
+ */
+public function calculateTextBBox($text, $angle, $size, $font) {
+
+	//--
+	$text = (string) Smart::normalize_spaces((string)$text); // only single line text is allowed
+	$text = (string) trim((string)$text);
+	//--
+	$angle = (int) $angle; // angle in degrees (apply just for ttf fonts)
+	if($angle < 0) {
+		$angle = 0;
+	} elseif($angle > 360) {
+		$angle = 360;
+	} //end if else
+	//--
+	$size = (int) $size;
+	if($size < 8) {
+		$size = 8;
+	} elseif($size > 256) {
+		$size = 256;
+	} //end if else
+	//--
+	$font = (string) $font;
+	//--
+
+	//--
+	$isttf = false;
+	if(((string)$font != '') AND (SmartFileSysUtils::check_file_or_dir_name($font)) AND (is_file($font))) {
+		if(function_exists('imagettfbbox') AND (substr($font, -4, 4) == '.ttf')) {
+			$isttf = true;
+		} //end if
+	} //end if else
+	//--
+
+	//--
+	if(!$isttf) {
+		$this->_debugMsg((string)__METHOD__.' :: '.'Invalid Font');
+		return array();
+	} else { // TTF Fonts
+		return (array) @imagettfbbox((int)$size, (int)$angle, (string)$font, (string)$text);
+	} //end if else
+	//--
+
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
  * Apply text on an image: GIF / PNG / JPG
  *
  * @param STRING 	$text 				:: the text to be applied
@@ -719,7 +777,8 @@ public function applyText($text, $offsx=0, $offsy=0, $angle=0, $size=10, $font='
 	//--
 
 	//--
-	$text = trim((string)$text);
+	$text = (string) Smart::normalize_spaces((string)$text); // only single line text is allowed
+	$text = (string) trim((string)$text);
 	if((string)$text == '') {
 		$this->_debugMsg((string)__METHOD__.' :: '.'Empty Text to Apply on Image');
 		$this->status = false;
