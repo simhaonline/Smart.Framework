@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170418
+ * @version 	v.170424
  * @package 	Filesystem
  *
  */
@@ -1006,7 +1006,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170418
+ * @version 	v.170424
  * @package 	Filesystem
  *
  */
@@ -2253,7 +2253,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 		//--
 		while(false !== ($file = readdir($handle))) {
 			//--
-			if(((string)$file != '.') AND ((string)$file != '..')) {
+			if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty
 				//--
 				$tmp_path = $dirsource.$file;
 				$tmp_dest = $dirdest.$file;
@@ -2523,7 +2523,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 				//--
 				while(false !== ($file = readdir($handle))) {
 					//--
-					if(((string)$file != '.') AND ((string)$file != '..')) {
+					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty
 						//--
 						if((is_dir($dir_name.$file)) AND (!is_link($dir_name.$file))) {
 							//--
@@ -2670,7 +2670,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160128
+ * @version 	v.170424
  * @package 	Filesystem
  *
  */
@@ -2876,7 +2876,7 @@ final class SmartGetFileSystem {
 				//---------------------------------------
 				while(false !== ($file = readdir($handle))) {
 					//--
-					if(((string)$file != '.') AND ((string)$file != '..')) {
+					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty
 						//--
 						if(($include_dot_files) OR ((!$include_dot_files) AND (substr($file, 0, 1) != '.'))) {
 							//--
