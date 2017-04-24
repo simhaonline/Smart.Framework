@@ -46,20 +46,15 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$this->PageViewSetVar(
-			'title',
-			'Benchmark with Session Test URL'
-		);
-		//--
-		$this->PageViewSetVar(
-			'main',
-			SmartMarkersTemplating::render_file_template(
-				$this->ControllerGetParam('module-path').'views/benchmark.htm',
+		$this->PageViewSetVars([
+			'title' => 'Benchmark with Session Test URL',
+			'main' => SmartMarkersTemplating::render_file_template(
+				$this->ControllerGetParam('module-path').'views/benchmark.inc.htm',
 				[
 					'BENCHMARK-TITLE' => '[ Benchmark Test URL with PHP Session ]<br>use this URL to run a benchmark of this PHP framework with the PHP Session started ...<br>(Session Value = \''.Smart::escape_html($sess_test).'\')'
 				]
 			)
-		);
+		]);
 		//--
 
 	} //END FUNCTION

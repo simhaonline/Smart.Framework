@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170415
+ * @version 	v.170420
  * @package 	Templating:Engines
  *
  */
@@ -633,6 +633,7 @@ private static function have_subtemplate($mtemplate) {
 <!-- INFO: The VALID Escaping Sequences for a Marker are all below ; If other escaping sequences are used or the escaping order is invalid, the Marker will not be detected and replaced ... -->
 [####MARKER####]
 [####MARKER|bool####]
+[####MARKER|int####]
 [####MARKER|num####]
 [####MARKER|htmid####]
 [####MARKER|jsvar####]
@@ -659,7 +660,7 @@ private static function replace_marker($mtemplate, $key, $val) {
 	//-- {{{SYNC-TPL-EXPR-MARKER}}}
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js)?(\|html)?(\|nl2br)?'.'####\]/';
+		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js)?(\|html)?(\|nl2br)?'.'####\]/';
 		//--
 		if((string)$val != '') {
 			$val = (string) str_replace(
@@ -679,7 +680,9 @@ private static function replace_marker($mtemplate, $key, $val) {
 					} else {
 						$val = 'false';
 					} //end if else
-				} elseif((string)$matches[1] == '|num') { // Number
+				} elseif((string)$matches[1] == '|int') { // Integer
+					$val = (string) (int) $val;
+				} elseif((string)$matches[1] == '|num') { // Number (Float / Decimal / Integer)
 					$val = (string) (float) $val;
 				} elseif((string)$matches[1] == '|htmid') { // HTML ID
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$val));

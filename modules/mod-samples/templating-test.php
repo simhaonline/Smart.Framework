@@ -46,7 +46,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewSetVars([
 			'title' => $title,
 			'main' => SmartMarkersTemplating::render_file_template(
-					$this->ControllerGetParam('module-path').'views/templating-test.htm', // the view
+					$this->ControllerGetParam('module-path').'views/templating-test.inc.htm', // the view
 					[
 						'TITLE' => $title,
 						'MARKER' => '1234567890.abcdefghijklmniopqrstuvwxyz"',
@@ -80,7 +80,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'TEST2' => Smart::random_number(2,3),
 						'TEST3' => 3,
 						'STATUS' => (string) $test_switch_arr[Smart::random_number(0,3)],
-						'TEST-NUM' => rand(0,2),
+						'TEST-NUM' => (float) rand(0,4)/4,
 						'TEST-STR' => 'a-\'b\'_"c" <d>',
 						'TEST-URL' => 'http://some-url/',
 						'TEST-TXT' => 'this is line one'."\n".'this is line <two>',

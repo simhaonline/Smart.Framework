@@ -108,8 +108,10 @@ final class TestUnitMain {
 		//--
 		if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 			$info_adm = '[ Admin Area ]';
+			$info_pfx = 'adm';
 		} else {
 			$info_adm = '[ Index ]';
+			$info_pfx = 'idx';
 		} //end if else
 		//--
 
@@ -133,6 +135,7 @@ final class TestUnitMain {
 					'test-unit-tab-ui.inc.htm' 				=> '@', 																// @ (self) path, assumes the same dir
 					'%test-unit-tab-misc%'					=> '@/test-unit-tab-misc.inc.htm'										// variable, with full path, using self @/sub-dir/ instead of $tpl_path/test-unit-tab-misc.htm
 				],
+				'TEST-UNIT-AREA' 							=> (string) $info_pfx,
 				'TESTUNIT-TPL-PATH' 						=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// this MUST be with trailing slash
 				'TESTUNIT_BASE_URL' 						=> (string) SMART_FRAMEWORK_TESTUNIT_BASE_URL,
 				'NO-CACHE-TIME' 							=> (string) time(),

@@ -10,10 +10,10 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //======================================================
-// App Authenticate Middleware / Admin Area (admin.php)
+// App Authenticate Middleware / Admin Area Overall Authentication (admin.php)
 // This file must NOT USE Namespaces.
 // The functionality of this Middleware is to:
-//	* ask for authentication and set if successful
+//	* ask for overall authentication for Admin Area and set if successful
 //	* if not authenticated, display the login form
 //======================================================
 // This code will be loaded into the App Boostrap automatically, to provide the Authentication for the admin.php ...
@@ -23,12 +23,12 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 //-------------------------------------------
 // This file can be customized as you need.
-//-------------------------------------------
-// NOTICE: As this is just a sample will use a fixed authentication with:
-// 		username = admin 	(ADMIN_AREA_USER 		set in config-admin.php)
-// 		password = pass 	(ADMIN_AREA_PASSWORD 	set in config-admin.php)
+// It will set an overall authentication for the Admin Area.
+// NOTICE: As this is just an example it uses a fixed authentication with:
+// 		username = admin 	(ADMIN_AREA_USER 		as set in config-admin.php)
+// 		password = pass 	(ADMIN_AREA_PASSWORD 	as set in config-admin.php)
 // This sample can be extended to read the authentication from a database or to use session in combination with SmartAuth.
-// The best way to integrate with framework's authentication is using the SmartAuth:: object.
+// The best way to integrate with framework's authentication system is to use the SmartAuth:: object.
 //-------------------------------------------
 // v.170208 / Sample Auth based on Basic HTTP Authentication (for Admin Area, overall)
 if(!defined('ADMIN_AREA_USER') OR !defined('ADMIN_AREA_PASSWORD')) {

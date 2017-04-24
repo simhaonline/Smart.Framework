@@ -10,10 +10,10 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //======================================================
-// App Authenticate Middleware / Admin Area (index.php)
+// App Authenticate Middleware / Index Area Overall Authentication (index.php)
 // This file must NOT USE Namespaces.
 // The functionality of this Middleware is to:
-//	* ask for authentication and set if successful
+//	* ask for overall authentication for Index Area and set if successful
 //	* if not authenticated, display the login form
 //======================================================
 // This code will be loaded into the App Boostrap automatically, to provide the Authentication for the index.php ...
@@ -23,8 +23,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 //-------------------------------------------
 // This file can be customized as you need.
-//-------------------------------------------
-// See an example here: modules/app/app-auth-admin.inc.php
+// Generally the Index Area is PUBLIC thus will not need an overall authentication.
+// But in the case you need it, see an example here: modules/app/app-auth-admin.inc.php
 //-------------------------------------------
 
 // end of php code

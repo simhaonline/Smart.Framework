@@ -2431,7 +2431,7 @@ public static function html_js_htmlarea_fm_callback($yurl, $is_popup=false) {
 	return (string) str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/html-editor-fm-callback.inc.htm',
 		[
-			'IS_POPUP' 	=> (int)    $is_popup,
+			'IS_POPUP' 	=> (bool)   $is_popup,
 			'URL' 		=> (string) $yurl
 		],
 		'yes' // export to cache
