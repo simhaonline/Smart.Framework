@@ -5,15 +5,15 @@
 	<meta charset="utf-8">
 	<title>SimpleTree Demo</title>
 	<style>
-.tree .button {
-	cursor: pointer;
-}
+	.tree .button {
+		cursor: pointer;
+	}
 	</style>
 </head>
 
 <body>
 	<h1>
-		<a href="https://github.com/innoq/simpletree">SimpleTree</a>
+		<a href="https://github.com/innoq/simpletree" style="color:#669999!important;">SimpleTree</a>
 		Demo
 	</h1>
 	<p>intentionally basic (e.g. no custom styling)</p>
@@ -57,8 +57,26 @@
 	</ul>
 
 	<script src="../jquery.js"></script>
+
+	<!-- these are not required but loaded just for testing ... -->
+	<script src="../jquery.simulate.js"></script>
+	<script src="../jquery.easing.js"></script>
+	<script src="../jquery.cookie.js"></script>
+	<script src="../jquery.number.js"></script>
+	<script src="../jquery.idle.js"></script>
+	<script src="../jquery.metadata.js"></script>
+	<link rel="stylesheet" href="../qunit.css" type="text/css">
+	<script src="../qunit.js"></script>
+	<link rel="stylesheet" href="../jquery.highlight.css" type="text/css">
+	<script src="../jquery.highlight.js"></script>
+	<!-- #END not required -->
+
 	<script src="simpletree.js"></script>
-	<script>jQuery("ul.hierarchy, ul.selection").simpletree();</script>
+	<script>
+		jQuery('ul.hierarchy, ul.selection').simpletree();
+		jQuery('ul').highlight('hello', 'jqtxthighlight');
+	</script>
+
 </body>
 
 </html>

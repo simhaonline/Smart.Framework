@@ -39,16 +39,19 @@
 		}
 	</style>
 
-	<script src="leaflet.js"></script>
-	<link href="leaflet.css" rel="stylesheet">
+	<script src="../leaflet.js"></script>
+	<link href="../leaflet.css" rel="stylesheet">
 
-	<link rel="stylesheet" href="mouse-position.css"  type="text/css">
-	<script type="text/javascript" src="mouse-position.js"></script>
+	<link rel="stylesheet" href="../mouse-position.css"  type="text/css">
+	<script type="text/javascript" src="../mouse-position.js"></script>
 
-	<script type="text/javascript" src="svg-icon.js"></script>
+	<link rel="stylesheet" href="../feature-select.css"  type="text/css">
+	<script type="text/javascript" src="../feature-select.js"></script>
 
-	<link rel="stylesheet" href="leaflet.draw.css">
-	<script src="leaflet.draw.js"></script>
+	<script type="text/javascript" src="../svg-icon.js"></script>
+
+	<link rel="stylesheet" href="../leaflet.draw.css">
+	<script src="../leaflet.draw.js"></script>
 
 </head>
 
@@ -114,9 +117,9 @@ var drawControl = new L.Control.Draw({
 			showLength: true,
 			shapeOptions: {
 				stroke: true,
-				color: '#FFCC00',
+				color: '#F00081',
 				weight: 4,
-				opacity: 0.75,
+				opacity: 0.7,
 				fill: false,
 				clickable: true
 			},
@@ -131,10 +134,10 @@ var drawControl = new L.Control.Draw({
 				stroke: true,
 				color: '#F00081',
 				weight: 4,
-				opacity: 0.5,
+				opacity: 0.7,
 				fill: true,
 				fillColor: '#003399',
-				fillOpacity: 0.40,
+				fillOpacity: 0.3,
 				clickable: true
 			},
 			repeatMode: false,
@@ -146,12 +149,12 @@ var drawControl = new L.Control.Draw({
 			showArea: true,
 			shapeOptions: {
 				stroke: true,
-				color: '#FFCC00',
+				color: '#F00081',
 				weight: 4,
-				opacity: 0.5,
+				opacity: 0.7,
 				fill: true,
-				fillColor: '#3388FF',
-				fillOpacity: 0.40,
+				fillColor: '#003399',
+				fillOpacity: 0.3,
 				showArea: true,
 				clickable: true
 			}
@@ -162,12 +165,12 @@ var drawControl = new L.Control.Draw({
 			showRadius: true,
 			shapeOptions: {
 				stroke: true,
-				color: '#FFCC00',
+				color: '#F00081',
 				weight: 4,
-				opacity: 0.5,
+				opacity: 0.7,
 				fill: true,
-				fillColor: '#3388FF',
-				fillOpacity: 0.4,
+				fillColor: '#003399',
+				fillOpacity: 0.3,
 				clickable: true
 			}
 		}
@@ -238,6 +241,38 @@ myMap.on('draw:edited', function(e) {
 		}
 	});
 });
+
+//--
+
+var defaultStyle = {
+	opacity: 0.7,
+	color: '#F00081'
+};
+var selectStyle = {
+	opacity: 0.9,
+	color: '#FFCC00'
+};
+
+function featureSelectSetStyle(layers, style) {
+	var i;
+	for (i=0; i<layers.length; i++) {
+		layers[i].setStyle(style);
+	}
+}
+var featureSelect = L.featureSelect({ // this currently does not work with new created features (maybe needs to be upated somehow ...)
+	featureGroup: featureGroup,
+	selectSize: [16, 16]
+});
+featureSelect.on('select', function(evt) {
+	//console.log(evt);
+	featureSelectSetStyle(evt.layers, selectStyle);
+});
+featureSelect.on('unselect', function(evt) {
+	//console.log(evt);
+	featureSelectSetStyle(evt.layers, defaultStyle);
+
+});
+featureSelect.addTo(myMap);
 
 //--
 
