@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170420
+ * @version 	v.170426
  * @package 	Components:Framework
  *
  */
@@ -2569,6 +2569,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 	//--
 
 	//-- external TPL vars
+	$arr_data['release-hash'] 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
 	$arr_data['semaphore'] 			= (string) $arr_data['semaphore']; // a general purpose conditional var
 	$arr_data['title'] 				= (string) $arr_data['title'];
 	$arr_data['head-meta'] 			= (string) $arr_data['head-meta'];

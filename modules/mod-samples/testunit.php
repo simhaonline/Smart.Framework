@@ -56,6 +56,8 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
+		$release_hash = (string) $this->ControllerGetParam('release-hash');
+		//--
 		$op = $this->RequestVarGet('op', 'testunit.main', 'string');
 		//--
 		switch((string)$op) {

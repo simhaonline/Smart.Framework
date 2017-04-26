@@ -44,6 +44,7 @@ ul.simple_tabs_head li a.simple_tabs_active {
 	color: #FFFFFF;
 	border: 1px solid #555555;
 	border-bottom: 1px solid #555555;
+	cursor: default !important;
 }
 
 ul.simple_tabs_head li a.simple_tabs_disabled {

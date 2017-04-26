@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170420
+ * @version 	v.170426
  * @package 	Application
  *
  */
@@ -238,6 +238,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	// It must NOT contain STATIC functions / Properties to avoid late state binding (self:: vs static::)
 
 	//--
+	private $releasehash;
 	private $modulearea;
 	private $modulepath;
 	private $modulename;
@@ -249,18 +250,16 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	private $urladdr;
 	private $urlpage;
 	private $urlquery;
-	//--
-	private $availsettings = [ 	// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
-		'error', 'redirect-url', 			// error message for return non 2xx codes ; redirect url for return 3xx codes
-		'expires', 'modified',				// expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now
-		'template-path', 'template-file',	// template path (@ for self module path or a relative path) ; template filename (ex: template.htm)
-		'rawpage', 'rawmime', 'rawdisp',	// raw page (yes/no) ; raw mime (any valid mime type, ex: image/png) ; raw disposition (ex: inline / attachment / attachment; filename="somefile.pdf")
-		'download-packet', 'download-key', 	// download packet ; download key
-		'status-code'						// HTTP Status Code
+	private $pagesettings; 					// will allow keys just from $availsettings
+	private $pageview; 						// will allow any key since they are markers
+	private $availsettings = [ 				// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
+		'error', 'redirect-url', 			// 		error message for return non 2xx codes ; redirect url for return 3xx codes
+		'expires', 'modified',				// 		expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now
+		'template-path', 'template-file',	// 		template path (@ for self module path or a relative path) ; template filename (ex: template.htm)
+		'rawpage', 'rawmime', 'rawdisp',	// 		raw page (yes/no) ; raw mime (any valid mime type, ex: image/png) ; raw disposition (ex: inline / attachment / attachment; filename="somefile.pdf")
+		'download-packet', 'download-key', 	// 		download packet ; download key
+		'status-code'						// 		HTTP Status Code
 	];
-	private $pagesettings; 		// will allow keys just from $availsettings
-	//--
-	private $pageview; 			// will allow any key since they are markers
 	//--
 
 
@@ -273,20 +272,21 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$ctrl_arr = (array) explode('.', (string)$y_controller);
 		//--
-		$this->modulearea 	= (string) $y_area; 							// index | admin
-		$this->modulepath 	= (string) $y_module_path; 						// modules/mod-something/
-		$this->modulename 	= (string) Smart::base_name($y_module_path); 	// mod-something
-		$this->module 		= (string) $ctrl_arr[0]; 						// something
-		$this->action 		= (string) $ctrl_arr[1]; 						// someaction
-		$this->controller 	= (string) $y_controller; 						// something.someaction
-		$this->urlscript 	= (string) $y_url_script; 						// index.php | admin.php
-		$this->urlpath 		= (string) $y_url_path; 						// /frameworks/smart-framework/
-		$this->urladdr 		= (string) $y_url_addr; 						// http(s)://127.0.0.1:8008/frameworks/smart-framework/
-		$this->urlpage 		= (string) $y_url_page; 						// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
-		$this->urlquery 	= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; // the query URL if any ...
-		//--
-		$this->pagesettings = array();
-		$this->pageview 	= array();
+		$this->releasehash 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
+		$this->modulearea 		= (string) $y_area; 							// index | admin
+		$this->modulepath 		= (string) $y_module_path; 						// modules/mod-something/
+		$this->modulename 		= (string) Smart::base_name($y_module_path); 	// mod-something
+		$this->module 			= (string) $ctrl_arr[0]; 						// something
+		$this->action 			= (string) $ctrl_arr[1]; 						// someaction
+		$this->controller 		= (string) $y_controller; 						// something.someaction
+		$this->urlscript 		= (string) $y_url_script; 						// index.php | admin.php
+		$this->urlpath 			= (string) $y_url_path; 						// /frameworks/smart-framework/
+		$this->urladdr 			= (string) $y_url_addr; 						// http(s)://127.0.0.1:8008/frameworks/smart-framework/
+		$this->urlpage 			= (string) $y_url_page; 						// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
+		$this->urlquery 		= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; // the query URL if any ...
+		$this->pagesettings 	= array();
+		$this->pageview 		= array();
+		$this->availsettings 	= (array) $this->availsettings;
 		//--
 	} //END FUNCTION
 	//=====
@@ -404,19 +404,20 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Get the value for a Controller parameter.
 	 *
-	 * @param 	ENUM 		$param 			:: The selected parameter.
+	 * @param 	ENUM 		$param 		:: The selected parameter.
 	 * The valid param values are:
-	 * 		module-area 		:: 		ex: index / admin
-	 * 		module-name 		:: 		ex: mod-samples
-	 * 		module-path 		:: 		ex: modules/mod-samples/
-	 * 		module-view-path 	:: 		ex: modules/mod-samples/views/
-	 * 		module-model-path 	:: 		ex: modules/mod-samples/models/
-	 * 		module-lib-path 	:: 		ex: modules/mod-samples/libs/
-	 * 		controller 			:: 		ex: samples.test
-	 * 		url-script 			:: 		ex: index.php / admin.php
-	 * 		url-path 			:: 		ex: /sites/smart-framework/
-	 * 		url-addr 			:: 		ex: http(s)://127.0.0.1/sites/smart-framework/
-	 * 		url-page 			:: 		ex: samples.test | test  (if samples is the default module) ; this is returning the URL page variable as is in the URL (it can be the same as 'controller' or if rewrite is used inside framework can vary
+	 * 		release-hash 				:: 		ex: 255cdb71953108baacb856591b9bf5ee9e4a39e6 (the release hash based on app framework version, framework release and modules version)
+	 * 		module-area 				:: 		ex: index / admin
+	 * 		module-name 				:: 		ex: mod-samples
+	 * 		module-path 				:: 		ex: modules/mod-samples/
+	 * 		module-view-path 			:: 		ex: modules/mod-samples/views/
+	 * 		module-model-path 			:: 		ex: modules/mod-samples/models/
+	 * 		module-lib-path 			:: 		ex: modules/mod-samples/libs/
+	 * 		controller 					:: 		ex: samples.test
+	 * 		url-script 					:: 		ex: index.php / admin.php
+	 * 		url-path 					:: 		ex: /sites/smart-framework/
+	 * 		url-addr 					:: 		ex: http(s)://127.0.0.1/sites/smart-framework/
+	 * 		url-page 					:: 		ex: samples.test | test  (if samples is the default module) ; this is returning the URL page variable as is in the URL (it can be the same as 'controller' or if rewrite is used inside framework can vary
 	 *
 	 * @return 	STRING						:: The value for the selected parameter.
 	 */
@@ -427,6 +428,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$out = '';
 		//--
 		switch((string)$param) {
+			case 'release-hash':
+				$out = $this->releasehash;
+				break;
 			case 'module-area':
 				$out = $this->modulearea;
 				break;

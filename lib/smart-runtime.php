@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.1.2'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.25'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.26'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -771,7 +771,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		170420
+ * @version		170426
  * @package 	Application
  *
  */
@@ -779,6 +779,8 @@ final class SmartFrameworkRuntime {
 
 	// ::
 	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
+
+	private static $AppReleaseHash = '';
 
 	private static $HttpStatusCodesOK  = [200, 202, 203, 208]; 								// list of framework available HTTP OK Status Codes (sync with middlewares)
 	private static $HttpStatusCodesERR = [400, 401, 403, 404, 429, 500, 502, 503, 504]; 	// list of framework available HTTP Error Status Codes (sync with middlewares)
@@ -788,6 +790,20 @@ final class SmartFrameworkRuntime {
 	private static $RequiredDirsCreated 		= false;	// after creating required dirs this will be set to true to avoid re-run that function again
 	private static $RedirectionMonitorStarted 	= false; 	// after the redirection monitor have been started this will be set to true to avoid re-run it
 	private static $HighLoadMonitorStats 		= null; 	// register the high load monitor caches
+
+
+//======================================================================
+// get the App Release Hash based on Framework Version.Release.ModulesRelease
+public static function getAppReleaseHash() {
+	//--
+	if((string)self::$AppReleaseHash == '') {
+		self::$AppReleaseHash = (string) sha1((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.SMART_FRAMEWORK_RELEASE_VERSION.SMART_APP_MODULES_RELEASE);
+	} //end if
+	//--
+	return (string) self::$AppReleaseHash;
+	//--
+} //END FUNCTION
+//======================================================================
 
 
 //======================================================================

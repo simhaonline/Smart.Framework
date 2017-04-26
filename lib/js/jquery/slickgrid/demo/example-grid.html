@@ -4,18 +4,19 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>SlickGrid Example</title>
 
-<!--	<link rel="stylesheet" type="text/css" href="../ui/themes/netvision/jquery-ui.css"> -->
-		<link rel="stylesheet" type="text/css" href="slick.grid.css">
-		<link rel="stylesheet" type="text/css" href="slick.grid-fixes.css">
+		<link rel="stylesheet" type="text/css" href="../slick.grid.css">
+		<link rel="stylesheet" type="text/css" href="../slick.grid-fixes.css">
 
-		<script type="text/javascript" src="../jquery.js"></script>
-		<script type="text/javascript" src="../jquery.smart.compat.js"></script>
-		<script type="text/javascript" src="../../framework/src/core_utils.js"></script>
+		<script type="text/javascript" src="../../jquery.js"></script>
+		<script type="text/javascript" src="../../jquery.smart.compat.js"></script>
+		<script type="text/javascript" src="../../../framework/src/core_utils.js"></script>
 
-		<script type="text/javascript" src="../jquery.event.drag.js"></script>
-		<script type="text/javascript" src="../jquery.event.drop.js"></script>
-		<script type="text/javascript" src="slick.grid.js"></script>
-		<script type="text/javascript" src="../jquery.sparkline.js"></script>
+		<script type="text/javascript" src="../../jquery.event.drag.js"></script>
+		<script type="text/javascript" src="../../jquery.event.drop.js"></script>
+		<script type="text/javascript" src="../slick.grid.js"></script>
+		<script type="text/javascript" src="../../jquery.sparkline.js"></script>
+
+		<script type="text/javascript" src="../slick.editors.js"></script>
 
 	</head>
 	<body>
@@ -63,12 +64,12 @@
 
 		var columns = [
 			{id:"id", name:"ID", field:"id", sortable:false, formatter:displayID},
-			{id:"title", name:"Title", field:"title", sortable:true},
+			{id:"title", name:"Title", field:"title", sortable:true, editor:TextCellSelector},
 			{id:"duration", name:"Duration", field:"duration", sortable:false},
-			{id:"percent", name:"% Complete", field:"percentComplete", sortable:true},
-			{id:"start", name:"Start", field:"start", sortable:true},
-			{id:"finish", name:"Finish", field:"finish", sortable:true},
-			{id:"effort-driven", name:"Effort Driven", field:"effortDriven", sortable:true},
+			{id:"percent", name:"% Complete", field:"percentComplete", sortable:true, editor:IntegerCellEditor},
+			{id:"start", name:"Start", field:"start", sortable:true, editor:LongTextCellEditor},
+			{id:"finish", name:"Finish", field:"finish", sortable:true, editor:TextCellEditor},
+			{id:"effort-driven", name:"Effort Driven", field:"effortDriven", sortable:true, editor:YesNoSelectCellEditor},
 			{id:"chart", name:"Chart", sortable:false, width:60, formatter:waitingFormatter, rerenderOnResize:true, asyncPostRenderDelay:50, asyncPostRender:renderSparkline}
 		];
 
@@ -76,7 +77,9 @@
 			enableAddRow: false,
 			enableCellNavigation: true,
 			enableColumnReorder: false,
-			enableAsyncPostRender: true // req. by spark graph
+			enableAsyncPostRender: true, // req. by spark graph
+			editable: true,
+			autoEdit: false
 		};
 
 		$(function() {
