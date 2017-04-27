@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170426
+ * @version 	v.170427
  * @package 	Components:Framework
  *
  */
@@ -1174,7 +1174,7 @@ public static function html_select_list_multi($y_id, $y_selected_value, $y_mode,
  * @return HTML Code
  *
  */
-public static function html_navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
+public static function html_navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=[]) {
 	//--
 	$styles = '';
 	//--
@@ -1210,7 +1210,7 @@ public static function html_navpager($link, $total, $limit, $current, $display_i
 
 //================================================================
 // $link = 'some-script.php?ofs={{{offset}}}';
-private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
+private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=[]) {
 	//--
 	$tpl = (string) $tpl;
 	$link = (string) $link;
@@ -1237,6 +1237,9 @@ private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $
 	} //end if
 	$opt_zerolink = '';
 	if((string)$options['zero-link'] != '') {
+		if((string)$options['zero-link'] == '@') {
+			$options['zero-link'] = (string) str_replace('{{{offset}}}', '', (string)$link);
+		} //end if
 		$opt_zerolink = (string) $options['zero-link'];
 	} //end if
 	$opt_emptydiv = '<div>&nbsp;</div>';
@@ -1419,7 +1422,7 @@ private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $
 
 //================================================================
 // $link = 'some-script.php?ofs={{{offset}}}';
-private static function html_navpager_type_numeric($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=array()) {
+private static function html_navpager_type_numeric($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=[]) {
 	//--
 	$tpl = (string) $tpl;
 	$link = (string) $link;
@@ -1442,6 +1445,9 @@ private static function html_navpager_type_numeric($tpl, $link, $total, $limit, 
 	} //end if
 	$opt_zerolink = '';
 	if((string)$options['zero-link'] != '') {
+		if((string)$options['zero-link'] == '@') {
+			$options['zero-link'] = (string) str_replace('{{{offset}}}', '', (string)$link);
+		} //end if
 		$opt_zerolink = (string) $options['zero-link'];
 	} //end if
 	$opt_emptydiv = '<div>&nbsp;</div>';
@@ -1555,6 +1561,8 @@ private static function html_navpager_type_numeric($tpl, $link, $total, $limit, 
 		if((string)$arr[(string)$max] == '') {
 			if(($max > ($adjacents + 1)) AND ((string)$arr[(string)($max-1)] == '')) {
 				$data['..'] = 'DOTS';
+			} else {
+				$showlast = true; // fix if on last pages !!
 			} //end if else
 			if((int)$max === (int)$crr) {
 				$data[(string)$max] = 'SELECTED';
