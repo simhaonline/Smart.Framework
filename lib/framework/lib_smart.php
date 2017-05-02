@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170411
+ * @version     v.170430
  * @package     Base
  *
  */
@@ -559,7 +559,7 @@ public static function escape_js($str) {
 	// WARNING: strings may contain HTML Tags ... which if apply Smart::escape_html() may break them.
 	// str_replace(array("\\", "\n", "\t", "\r", "\b", "\f", "'"), array('\\\\', '\\n', '\\t', '\\r', '', '', '\\\''), $str); // array('\\\\', '', ' ', '', '', '', '\\\'')
 	//-- encode as json
-	$encoded = (string) @json_encode((string)$str, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); // encode the string includding unicode chars, with all possible: <tag>, ' " &
+	$encoded = (string) @json_encode((string)$str, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); // encode the string includding unicode chars, with all possible: < > ' " &
 	//-- the above will provide a json encoded string as: "mystring" ; we get just what's between double quotes as: mystring
 	return (string) substr(trim((string)$encoded), 1, -1);
 	//--
@@ -571,28 +571,54 @@ public static function escape_js($str) {
 /**
  * JSON Encode PHP variables to a JSON string
  *
- * @param 	MIXED 		$data			:: The variable to be encoded (mixed): numeric, string, array
- * @param 	BOOLEAN		$prettyprint	:: If true will format the json as pretty-print (takes much more space, but sometimes make sense ...)
+ * @param 	MIXED 		$data				:: The variable to be encoded (mixed): numeric, string, array
+ * @param 	BOOLEAN 	$prettyprint		:: *Optional* Default to FALSE ; If TRUE will format the json as pretty-print (takes much more space, but sometimes make sense ...)
+ * @param 	BOOLEAN 	$unescaped_unicode 	:: *Optional* Default to TRUE ; If FALSE will escape unicode characters
+ * @param 	BOOLEAN 	$htmlsafe 			:: *Optional* Default to TRUE ; If FALSE the JSON will not be HTML-Safe as it will not escape: < > ' " &
+ * @param 	INTEGER 	$depth 				:: *Optional* Default to 512 ; The maximum recursion depth
  *
- * @return 	STRING						:: The JSON encoded string
+ * @return 	STRING							:: The JSON encoded string
  */
-public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true) {
-	// encode json v.160224 :: encode the string excludding unicode chars, with all possible: <tag>, ' " &
+public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true, $htmlsafe=true, $depth=512) {
+	// encode json v.170430
+	$options = 0;
 	if(!$unescaped_unicode) {
 		if($prettyprint) {
-			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_PRETTY_PRINT;
+			if($htmlsafe) {
+				$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_PRETTY_PRINT;
+			} else {
+				$options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
+			} //end if else
 		} else {
-			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+			if($htmlsafe) {
+				$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+			} else {
+				$options = JSON_UNESCAPED_SLASHES;
+			} //end if else
 		} //end if else
 	} else { // default
 		if($prettyprint) {
-			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+			if($htmlsafe) {
+				$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+			} else {
+				$options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+			} //end if else
 		} else {
-			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+			if($htmlsafe) {
+				$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+			} else {
+				$options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+			} //end if else
 		} //end if else
 	} //end if else
 	//--
-	return (string) @json_encode($data, $options);
+	$json = @json_encode($data, $options, $depth);
+	if((string)$json == '') { // fix if json encode returns FALSE
+		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($data,1));
+		$json = 'null';
+	} //end if
+	//--
+	return (string) $json;
 	//--
 } //END FUNCTION
 //================================================================
@@ -602,15 +628,15 @@ public static function json_encode($data, $prettyprint=false, $unescaped_unicode
 /**
  * Decode JSON strings to PHP native variable(s)
  *
- * @param 	STRING 		$y_json			:: The JSON string
- * @param 	BOOLEAN		$y_ret_array	:: When TRUE, returned objects will be converted into associative arrays (default to TRUE)
- * @param	INTEGER 	$y_depth		:: Recursion depth (default to 1024)
+ * @param 	STRING 		$json			:: The JSON string
+ * @param 	BOOLEAN		$return_array	:: *Optional* Default to FALSE ; When TRUE, returned objects will be converted into associative arrays (default to TRUE)
+ * @param	INTEGER 	$depth			:: *Optional* Default to 512 ; The maximum recursion depth
  *
  * @return 	MIXED						:: The PHP native Variable: NULL ; INT ; NUMERIC ; STRING ; ARRAY
  */
-public static function json_decode($y_json, $y_ret_array=true, $y_depth=1024) {
-	//-- decode json v.160224
-	return @json_decode((string)$y_json, $y_ret_array, $y_depth, JSON_BIGINT_AS_STRING);
+public static function json_decode($json, $return_array=true, $depth=512) {
+	//-- decode json v.170429
+	return @json_decode((string)$json, $return_array, $depth, JSON_BIGINT_AS_STRING);
 	//--
 } //END FUNCTION
 //================================================================
@@ -626,8 +652,8 @@ public static function json_decode($y_json, $y_ret_array=true, $y_depth=1024) {
  * @return 	STRING						:: The JSON encoded string
  */
 public static function seryalize($data) {
-	//-- seryalize json v.160224
-	return (string) self::json_encode($data, false, false); // is better to escape unicode when stored in Redis
+	//-- seryalize json v.170430
+	return (string) self::json_encode($data, false, false, false, 512); // no pretty print, escaped unicode is safer for Redis, no html safe, depth 512
 	//--
 } //END FUNCTION
 //================================================================
@@ -643,7 +669,7 @@ public static function seryalize($data) {
  * @return 	MIXED						:: The PHP native Variable
  */
 public static function unseryalize($y_json) {
-	//-- unseryalize json v.160224
+	//-- unseryalize json v.170430
 	return self::json_decode((string)$y_json, true, 512);
 	//--
 } //END FUNCTION

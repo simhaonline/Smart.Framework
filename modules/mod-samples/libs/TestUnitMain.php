@@ -116,9 +116,9 @@ final class TestUnitMain {
 		//--
 
 		//--
-		$demo_mod_js_components = '<h1>JS Components are not Installed ...</h1>';
+		$demo_mod_js_components = '<h1>JS Components are not Installed ...<br>However you can see some demos below:</h1><br><div style="display:inline-block; margin-right:20px; margin-bottom:20px;"><a href="lib/js/jquery/fullcalendar/demo/agenda-views.html" data-smart="open.modal" class="ux-button ux-button-regular" style="width:250px;"><i class="fa fa-calendar"></i> &nbsp; Full Calendar</a></div>';
 		if(\SmartAppInfo::TestIfModuleExists('mod-js-components')) {
-			$demo_mod_js_components = \SmartFileSystem::staticread('modules/mod-js-components/views/testunit/tab-js-components.inc.htm');
+			$demo_mod_js_components = \SmartFileSystem::staticread('modules/mod-js-components/views/templates/testunit/tab-js-components.inc.htm');
 		} //end if
 		//--
 

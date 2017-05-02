@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.1.2'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.04.27'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.05.02'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 

@@ -2,13 +2,13 @@
 (c) 2009 - 2017 unix-world.org
 License: BSD
 
-Smart.Framework - A High Performance PHP / Javascript Framework for Web Projects (websites and web applications)
+Smart.Framework - A High Performance PHP / Javascript Framework for Web Projects (websites or web based applications)
 * Clean Code
 * Full Decoupled Libraries
 * Independent Packages (based on plugins and dependency-injection)
 * Great Architecture (a hybrid between Multi-Tier and Middleware, combined with clean code separation as MVC)
 
-#### Easy coding != Performance
+#### Easy Coding != Performance
 The primary goal of Smart.Framework is to provide a very fast and responsive web framework.
 Thus, Smart.Framework provides the best balance between acceptable coding and performance.
 
@@ -22,13 +22,13 @@ When used with SQL / Non-SQL Databases and combined with In-Memory DB like Redis
 * works also with HTTPS (Varnish does not)
 * caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
 
-#### Demo:
+#### Demo URL:
 http://demo.unix-world.org/smart-framework/
 
-#### Download Stable Releases:
+#### Download Stable Releases URL:
 http://sourceforge.net/projects/warp-cms/files/smart-framework/
 
-#### Benchmark scenario:
+#### Benchmark Scenario:
 Using a the same basic page for all tested frameworks, just a simple text: "Benchmark Test".
 Benchmark was running with Apache Benchmark suite with the command:
 ab -n 2500 -c 150 http://{localhost}/{framework}/{web-root}
@@ -40,7 +40,7 @@ Software:
 * OS: Debian 8 Linux, 64-bit
 * Apps: Apache 2.4.23, PHP 5.6.29 (with Zend Opcache 7.0.6)
 
-#### Benchmark Results of PHP Frameworks (with a simple controller that Outputs: "Hello World" ; no Memcache or Redis):
+#### Benchmark Results of tested PHP Frameworks (with a simple controller that Outputs: "Hello World" ; no Memcache or Redis):
 * Smart.Framework v.3.1.2 (2017.04.11): ~ 21.5K (21503) requests / second
 * Silex 2.0.4: ~ 7.2K (7229) requests / second ( 3x slower than Smart.Framework )
 * Symfony 3.2.2: ~ 3.3K (3321) requests / second ( 6x slower than Smart.Framework )

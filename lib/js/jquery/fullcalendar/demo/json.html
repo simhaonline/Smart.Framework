@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+
+	<script type="text/javascript" src="../../jquery.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../ui-interract/jquery.ui-interract.css">
+	<script type="text/javascript" src="../../ui-interract/jquery.ui-interract.js"></script>
+	<script type="text/javascript" src="../../ui-interract/jquery.ui-touch-punch.js"></script>
+
+	<link href="../fullcalendar.css" rel="stylesheet">
+	<link href="../fullcalendar.print.css" rel="stylesheet" media="print">
+	<script src="../fullcalendar.js"></script>
+	<script>
+
+		var ICAL_SEL_DATE = new Date(2017,(3-1),1);
+
+		$(document).ready(function() {
+
+			$('#calendar').fullCalendar({
+
+				year: ICAL_SEL_DATE.getFullYear(),
+				month: ICAL_SEL_DATE.getMonth(),
+				date: ICAL_SEL_DATE.getDate(),
+
+				//editable: true,
+				editable: false,
+				firstDay: 1,
+
+				events: "json-events.json",
+
+				eventDrop: function(event, delta) {
+					alert(event.title + ' was moved ' + delta + ' days\n' +
+						'(should probably update your database)');
+				},
+
+				loading: function(bool) {
+					if (bool) $('#loading').show();
+					else $('#loading').hide();
+				}
+
+			});
+
+		});
+
+	</script>
+	<style>
+
+		body {
+			text-align: center;
+			font-size: 14px;
+			font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+			}
+
+		#loading {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			}
+
+		#calendar {
+			width: 900px;
+			margin: 0 auto;
+			}
+
+	</style>
+</head>
+<body>
+	<h1>Full Calendar :: Sample / Events loaded from external JSON</h1>
+	<div id="loading" style="display:none">loading...</div>
+	<div id="calendar"></div>
+	<p><a href="json-events.json" target="_blank">json-events.json</a> needs to be loaded from the same directory.</p>
+</body>
+</html>

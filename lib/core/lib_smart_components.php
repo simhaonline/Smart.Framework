@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170427
+ * @version 	v.170430
  * @package 	Components:Framework
  *
  */
@@ -1933,7 +1933,7 @@ public static function js_ajax_replyto_html_form($y_status, $y_title, $y_message
 		$y_redirect_url = ''; // avoid redirect if DEBUG IS ON to catch the debug messages ...
 	} //end if
 	//--
-	return Smart::json_encode([
+	return (string) Smart::json_encode([
 		'completed'			=> 'DONE',
 		'status'			=> (string) $y_status,
 		'action'			=> (string) $button_text,
@@ -2414,7 +2414,7 @@ public static function html_js_htmlarea($yid, $yvarname, $yvalue='', $ywidth='72
 			'TXT-AREA-CONTENT' 				=> (string) $yvalue,
 			'TXT-AREA-ALLOW-SCRIPTS' 		=> (bool)   $y_allow_scripts, // boolean
 			'TXT-AREA-ALLOW-SCRIPT-SRC' 	=> (bool)   $y_allow_script_src, // boolean
-			'CLEANER-REMOVE-TAGS' 			=> $y_cleaner_deftags, // mixed, will be json encoded in tpl
+			'CLEANER-REMOVE-TAGS' 			=> (string) Smart::json_encode($y_cleaner_deftags), // mixed, will be json encoded in tpl
 			'CLEANER-MODE-TAGS' 			=> (string) $y_cleaner_mode,
 			'TXT-AREA-TOOLBAR' 				=> (string) $y_toolbar_ctrls
 		],

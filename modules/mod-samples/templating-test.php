@@ -1,4 +1,5 @@
 <?php
+// [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/TemplatingTest
 // Route: ?/page/samples.templating-test (?page=samples.templating-test)
 // Author: unix-world.org
@@ -49,7 +50,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 					$this->ControllerGetParam('module-path').'views/templating-test.inc.htm', // the view
 					[
 						'TITLE' => $title,
-						'MARKER' => '1234567890.abcdefghijklmniopqrstuvwxyz"',
+						'VIEWS-PATH' => (string) $this->ControllerGetParam('module-view-path'),
+						'MARKER' => Smart::json_encode('<a>&amp;1234567890.コアテスト·スイート.abcdefghijklmniopqrstuvwxyz:'.date('Y-m-d H:i:s').':~`!@#$%^&*()_-+={}[]|,.?</a>'),
+						'MARK-AREA' => 'php',
 						'TEST-COMPARE' => 'a',
 						'DATA' => [
 							// id        slug         name                is_vowel         arr of numbers

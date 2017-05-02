@@ -2,7 +2,8 @@
 /* Slider */
 .slick-loading .slick-list
 {
-	background: #fff url('./ajax-loader.gif') center center no-repeat;
+	min-height: 36px;
+	background: #fff url('./img/ajax-loader.gif') center center no-repeat;
 }
 
 /* Icons */
@@ -11,7 +12,6 @@
 	font-family: 'slick';
 	font-weight: normal;
 	font-style: normal;
-
 	src: url('./fonts/slick.woff') format('woff');
 }
 /* Arrows */

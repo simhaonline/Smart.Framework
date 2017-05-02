@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170411
+ * @version 	v.170430
  * @package 	Database:PostgreSQL
  *
  */
@@ -490,13 +490,15 @@ private static function escape_arr_params($arr_params) {
  * This should be used with PostgreSQL json / jsonb fields.
  *
  * @param STRING $y_mixed_content				:: A mixed variable
+ * @param 	INTEGER 	$depth 					:: *Optional* Default to 512 ; The maximum recursion depth
  * @return STRING 								:: JSON string
  *
  */
-public static function json_encode($y_mixed_content) {
+public static function json_encode($y_mixed_content, $depth=512) {
 	//--
-	$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); // Fix: must return a string
+	$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE, $depth); // Fix: must return a string
 	if((string)$json == '') {
+		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($y_mixed_content,1));
 		$json = '{}'; // FIX: in PostgreSQL JSON/JSON-B fields cannot be empty !!!
 	} //end if
 	//--
@@ -2229,7 +2231,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170411
+ * @version 	v.170430
  * @package 	Database:PostgreSQL
  *
  */
@@ -2388,12 +2390,13 @@ public function escape_identifier($y_identifier) {
  * This should be used with PostgreSQL json / jsonb fields.
  *
  * @param STRING $y_mixed_content				:: A mixed variable
+ * @param INTEGER $depth 						:: *Optional* Default to 512 ; The maximum recursion depth
  * @return STRING 								:: JSON string
  *
  */
-public function json_encode($y_mixed_content) {
+public function json_encode($y_mixed_content, $depth=512) {
 	//--
-	return SmartPgsqlDb::json_encode($y_mixed_content);
+	return SmartPgsqlDb::json_encode($y_mixed_content, $depth);
 	//--
 } //END FUNCTION
 

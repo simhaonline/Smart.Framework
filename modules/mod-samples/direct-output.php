@@ -1,4 +1,5 @@
 <?php
+// [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/DirectOutput
 // Route: ?/page/samples.direct-output (?page=direct-output)
 // Author: unix-world.org

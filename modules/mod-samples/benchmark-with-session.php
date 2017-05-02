@@ -1,4 +1,5 @@
 <?php
+// [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/BenchMarkWithSession
 // Route: ?/page/samples.benchmark-with-session (?page=samples.benchmark-with-session)
 // Author: unix-world.org

@@ -1,4 +1,5 @@
 <?php
+// [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/Toolkit
 // Route: ?/page/samples.toolkit (?page=samples.toolkit)
 // Author: unix-world.org

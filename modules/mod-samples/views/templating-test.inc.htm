@@ -1,10 +1,8 @@
-[%%%%COMMENT%%%%]
-	!!! This is a comment, it must not be shown ... !!!
-[%%%%/COMMENT%%%%][%%%%COMMENT%%%%]Another Comment[%%%%/COMMENT%%%%]<!-- comments removed -->
 <h1>[####TITLE####]</h1>
+<div id="tpl-test">
 [%%%%COMMENT%%%%]
-	!!! This is another comment, it must not be shown ... !!!
-[%%%%/COMMENT%%%%]
+	File: templating-test.inc.htm
+[%%%%/COMMENT%%%%][%%%%COMMENT%%%%]Another Comment[%%%%/COMMENT%%%%]<!-- comments removed -->
 <!-- Test for Markers-Templating -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
 <!-- Test INTEGER ([####TEST-NUM|html####]) : [####TEST-NUM|int####] -->
@@ -130,35 +128,66 @@
 	[%%%%/IF:DAT2._-KEY-_%%%%]
 [%%%%/LOOP:DAT2%%%%]
 </table>
-<!-- Special Characters Syntax: SPACE \t \r\n -->
-[%%%%|SPACE%%%%][%%%%|T%%%%][%%%%|R%%%%][%%%%|N%%%%]
-<!-- #END Special Characters Syntax -->
 <hr>
 <br>
+<div style="font-weight:bold; font-size:16px; background:#ECECEC;"> PHP Test for Marker escaping :: VALID Escaping Sequences for a Marker (below):<br>[####MARKER|html####]</div>
+[@@@@SUB-TEMPLATE:templating-test-partial.inc.htm@@@@]
+<script>
+var sub_tpl_path = "[####VIEWS-PATH|js####]templating-test-partial.inc.htm";
+var the_marker = '[####MARKER|js####]';
+jQuery.ajax({
+	async: true,
+	cache: false,
+	timeout: 0,
+	type: 'GET',
+	url: sub_tpl_path,
+	//--
+	success: function(msg) {
+		//-- load tpl
+		var tpl = SmartJS_CoreUtils.render_markers_template(msg, {
+			'MARKER': the_marker,
+			'MARK-AREA': 'js'
+		});
+		//console.log('JS-TPL Renderer [' + the_marker + ']:\n' + tpl);
+		jQuery('#tpl-test').append(tpl); // apend it to body
+		//--
+		var the_tpl_php = jQuery('#test-markers-area-php').text();
+		//console.log('PHP-TPL Renderer [' + the_marker + ']:\n' + the_tpl_php);
+		var errors = 0;
+		if(the_tpl_php == '') {
+			errors++;
+			alert('WARNING: PHP-TPL: Cannot get value !');
+		} //end if
+		var the_tpl_js = jQuery('#test-markers-area-js').text();
+		if(the_tpl_js == '') {
+			errors++;
+			alert('WARNING: JS-TPL: Cannot get value !');
+		} //end if
+		if(the_tpl_php != the_tpl_js) {
+			errors++;
+			alert('WARNING: JS-TPL Renderer differs from PHP-TPL Renderer (1) !');
+		} //end if
+		if(SmartJS_CoreUtils.stringTrim(the_tpl_php) != SmartJS_CoreUtils.stringTrim(jQuery('<div/>').html(tpl).text())) {
+			errors++;
+			console.log('WARNING: HTML Normalized TPL from JS' + SmartJS_CoreUtils.stringTrim(jQuery('<div/>').html(tpl).text()));
+			alert('WARNING: JS-TPL Renderer differs from PHP-TPL Renderer (2) !');
+		} //end if
+		//--
+		if(!errors) {
+			jQuery('#tpl-test').prepend('<h2 style="color:#33CC33;">TPL JS/PHP Render comparison: OK</h2>');
+		} else {
+			jQuery('#tpl-test').prepend('<h2 style="color:#FF3300;">TPL JS/PHP Render comparison: FAILED</h2>');
+		} //end if
+		//--
+	},
+	error: function(msg) {
+		alert('ERROR: Could not load the TPL Sub-Template: ' + sub_tpl_path, '' + msg.responseText);
+	}
+});
+</script>
 <br>
-<!-- Hidden Test for Marker escaping :: {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}} :: VALID Escaping Sequences for a Marker (below):
-[####MARKER####]								MARKER
-[####MARKER|bool####]							MARKER|bool
-[####MARKER|int####]							MARKER|int
-[####MARKER|num####]							MARKER|num
-[####MARKER|htmid####]							MARKER|htmid
-[####MARKER|jsvar####]							MARKER|jsvar
-[####MARKER|json####]							MARKER|json
-[####MARKER|json|url####]						MARKER|json|url
-[####MARKER|json|js####] 						MARKER|json|js
-[####MARKER|json|html####]						MARKER|json|html
-[####MARKER|json|url|js####]					MARKER|json|url|js
-[####MARKER|json|url|html####]					MARKER|json|url|html
-[####MARKER|json|js|html####] 					MARKER|json|js|html
-[####MARKER|json|url|js|html####] 				MARKER|json|url|js|html
-[####MARKER|substr1|html####]					MARKER|substr1|html
-[####MARKER|subtxt65535|html####]				MARKER|subtxt65535|html
-[####MARKER|url####]							MARKER|url
-[####MARKER|url|js####]							MARKER|url|js
-[####MARKER|url|html####]						MARKER|url|html
-[####MARKER|url|js|html####] 					MARKER|url|js|html
-[####MARKER|js####]								MARKER|js
-[####MARKER|js|html####] 						MARKER|js|html
-[####MARKER|html####]							MARKER|html
-[####MARKER|html|nl2br####]						MARKER|html|nl2br
--->
+<div style="font-weight:bold; font-size:16px; background:#ECECEC;"> JS Test for Marker escaping :: VALID Escaping Sequences for a Marker (below):<br>[####MARKER|html####]</div>
+</div>
+<hr>
+<h1>#END Test</h1>
+<br>

@@ -1,4 +1,5 @@
 <?php
+// [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/TestUnit
 // Route: ?/page/samples.testunit (?page=samples.testunit)
 // Author: unix-world.org
@@ -237,17 +238,21 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'test.json':
 				//--
-				$mixed_data = ['Unicode Text' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド\'#@<tag>!$%^&*()-_=+'."\r\n\t".'</tag>', 'Numbers' => 1234567890.99, 'Boolean TRUE:' => true, 'Boolean FALSE:' => false];
+				$mixed_data = ['Unicode Text' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド\'#@<tag attribute="true">!$%^&*()-_=+'."\r\n\t".'</tag>', 'Numbers' => 1234567890.99, 'Boolean TRUE:' => true, 'Boolean FALSE:' => false];
 				//--
 				$main = '<h1> Json Test</h1>';
 				$main .= '<pre style="background:#ECECEC; border:1px solid #CCCCCC; line-height:32px; padding:8px;">';
-				$main .= '<b>Default (Unicode Unescaped) Json:</b>'."\n".Smart::json_encode($mixed_data)."\n";
+				$main .= '<b>(Default) Unicode Unescaped / HTML-Safe:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data))."\n";
+				$main .= '<b>Unicode Unescaped:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, false, true, false))."\n";
 				$main .= '<hr>';
-				$main .= '<b>Default (Unicode Unescaped) Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true)."\n";
+				$main .= '<b>Unicode Unescaped / HTML-Safe / Pretty Print:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, true, true, true))."\n";
+				$main .= '<b>Unicode Unescaped / Pretty Print:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, true, true, false))."\n";
 				$main .= '<hr>';
-				$main .= '<b>Unicode Escaped Json:</b>'."\n".Smart::json_encode($mixed_data, false, false)."\n";
+				$main .= '<b>Unicode Escaped / HTML-Safe:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, false, false))."\n";
+				$main .= '<b>Unicode Escaped:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, false, false, false))."\n";
 				$main .= '<hr>';
-				$main .= '<b>Unicode Escaped Json / Pretty Print:</b>'."\n".Smart::json_encode($mixed_data, true, false)."\n";
+				$main .= '<b>Unicode Escaped / HTML-Safe / Pretty Print:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, true, false))."\n";
+				$main .= '<b>Unicode Escaped / Pretty Print:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, true, false, false))."\n";
 				$main .= '</pre>';
 				//--
 				break;

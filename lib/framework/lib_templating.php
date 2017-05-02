@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170420
+ * @version 	v.170430
  * @package 	Templating:Engines
  *
  */
@@ -569,16 +569,6 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 		]);
 	} //end if
 	//--
-	/* Don't use this, it may affect <pre></pre> code ...
-	if(SmartValidator::validate_html_or_xml_code((string)$mtemplate) === true) {
-		$mtemplate = (string) preg_replace( // fix: remove multiple empty lines from HTML / XML
-			'/^\s*[\r\n]/m',
-			'',
-			(string) $mtemplate
-		);
-	} //end if
-	*/
-	//--
 	return (string) $mtemplate;
 	//--
 } //END FUNCTION
@@ -660,14 +650,26 @@ private static function replace_marker($mtemplate, $key, $val) {
 	//-- {{{SYNC-TPL-EXPR-MARKER}}}
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js)?(\|html)?(\|nl2br)?'.'####\]/';
+		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
 		//--
 		if((string)$val != '') {
+			//--
+			if(self::have_marker((string)$val)) {
+				Smart::log_warning('Undefined Markers detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+			} //end if
+			if(self::have_syntax((string)$val)) {
+				Smart::log_warning('Undefined Marker Syntax detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+			} //end if
+			if(self::have_subtemplate((string)$val)) {
+				Smart::log_warning('Undefined Marker Sub-Templates detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+			} //end if
+			//--
 			$val = (string) str_replace(
 				array('[####',   '####]', '[%%%%',   '%%%%]', '[@@@@',   '@@@@]'),
 				array('(####+', '+####)', '(%%%%+', '+%%%%)', '(@@@@+', '+@@@@)'), // the content is marked with +
 				(string) $val
 			); // protect against cascade / recursion / undefined variables - for content injections of: variables / syntax / sub-templates
+			//--
 		} //end if
 		//--
 		$mtemplate = (string) preg_replace_callback(
@@ -688,8 +690,12 @@ private static function replace_marker($mtemplate, $key, $val) {
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$val));
 				} elseif((string)$matches[1] == '|jsvar') { // JS Variable
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
-				} elseif((string)$matches[1] == '|json') { // Json Data (!!! DO NOT ENCLOSE IN ' or " as it can contain them as well as it can be [] or {} ... this is pure JSON !!!)
-					$val = (string) Smart::json_encode($val, false, false); // no pretty print, escape unicode as it is served inline !
+				} elseif((string)$matches[1] == '|json') { // Json Data ; expects pure JSON !!!
+					$val = (string) Smart::json_encode(Smart::json_decode($val, true, 512), false, true, true, 512); // it MUST be JSON with HTML-Safe Options.
+					$val = trim((string)$val);
+					if((string)$val == '') {
+						$val = 'null'; // ensure a minimal json as empty string if no expr !
+					} //end if
 				} elseif((substr((string)$matches[1], 0, 7) == '|substr') OR (substr((string)$matches[1], 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
 					$xnum = Smart::format_number_int((int)substr((string)$matches[1], 7), '+');
 					if($xnum < 1) {
@@ -720,17 +726,23 @@ private static function replace_marker($mtemplate, $key, $val) {
 				if((string)$matches[2] == '|url') {
 					$val = (string) Smart::escape_url((string)$val);
 				} //end if
-				//-- #3 Escape JS
+				//-- #3 Escape JS / HTML
 				if((string)$matches[3] == '|js') {
 					$val = (string) Smart::escape_js((string)$val);
-				} //end if
-				//-- #4 Escape HTML
-				if((string)$matches[4] == '|html') {
+				} elseif((string)$matches[3] == '|html') {
 					$val = (string) Smart::escape_html((string)$val);
 				} //end if
-				//-- #5 NL2BR
+				//-- #4 Escape HTML / JS
+				if((string)$matches[4] == '|html') {
+					$val = (string) Smart::escape_html((string)$val);
+				} elseif((string)$matches[4] == '|js') {
+					$val = (string) Smart::escape_js((string)$val);
+				} //end if
+				//-- #5 NL2BR / URL
 				if((string)$matches[5] == '|nl2br') {
 					$val = (string) Smart::nl_2_br((string)$val);
+				} elseif((string)$matches[5] == '|url') {
+					$val = (string) Smart::escape_url((string)$val);
 				} //end if
 				//--
 				return (string) $val;
