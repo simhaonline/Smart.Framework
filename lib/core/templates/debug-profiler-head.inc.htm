@@ -1,6 +1,6 @@
-<!-- #START :: SMART.FRAMEWORK / DEBUG HEAD :: v.160804 -->
-<link rel="stylesheet" type="text/css" href="lib/framework/css/fonts/octicons.css">
+<!-- #START :: SMART.FRAMEWORK / DEBUG HEAD :: v.170510 -->
 <style type="text/css">
+[@@@@SUB-TEMPLATE:!lib/core/css/tpl-highlight.css!@@@@]
 .smartframework_debugbar_bar {
 	z-index: 2147483008;
 	position: fixed;
@@ -32,6 +32,9 @@
 .smartframework_debugbar_switcher:hover {
 	color: #007784;
 }
+.smartframework_debugbar_switcher svg:hover path {
+	fill: #007784;
+}
 .smartframework_debugbar_refresher {
 	color: #D09D5D;
 	cursor: pointer;
@@ -44,6 +47,9 @@
 }
 .smartframework_debugbar_refresher:hover {
 	color: #955251;
+}
+.smartframework_debugbar_refresher svg:hover path {
+	fill: #955251;
 }
 .smartframework_debugbar_element {
 	color: #302E32;
@@ -61,6 +67,9 @@
 	color: #222222;
 	background: #A3AC99;
 }
+.smartframework_debugbar_element svg:hover path {
+	fill: #222222;
+}
 .smartframework_debugbar_panel {
 	z-index: 2147483007;
 	visibility: hidden;
@@ -69,12 +78,7 @@
 	border-top-left-radius: 7px;
 	border-top-right-radius: 7px;
 	background: #ECECEC;
-/*	width: 98%;
-	min-height: 50px;
-	max-height: 750px; */
 	position: fixed;
-/*	bottom: 38px;
-	left: 7px; */
 	left: 5px;
 	right: 5px;
 	top: 3px;
@@ -140,14 +144,18 @@
 	opacity: 0.75;
 	cursor: help;
 }
+.oct-icon {
+	width: 2em;
+	height: 2em;
+}
 </style>
 <script type="text/javascript">
 var smart_debug_bar_panel_visible = '';
-function SmartDebugProfilerRefreshPanel() {
+function SmartDebugProfilerRefreshPanel(reason) {
+	console.log('Smart.Framework.Debug :: Profiler Toolbar (Re)Load by ' + reason + ' Call ...');
 	SmartDebugAjaxLoadDivContent('SmartFramework__Debug__Profiler', '[####DEBUG-PROFILER-URL####]', 'GET', true);
 } //END FUNCTION
 function SmartDebugProfilerDisableActivePanel(el) {
-	//--
 	if(smart_debug_bar_panel_visible !== '') {
 		if(smart_debug_bar_panel_visible === el) {
 			return;
@@ -155,18 +163,15 @@ function SmartDebugProfilerDisableActivePanel(el) {
 			SmartDebugProfilerEnablePanel(smart_debug_bar_panel_visible);
 		} //end if
 	} //end if
-	//--
 } //END FUNCTION
 function SmartDebugProfilerEnablePanel(el) {
-	//--
 	try {
 		var panel = document.getElementById(el.id + '_Panel');
 		if(panel.style.visibility != 'visible') {
 			if(smart_debug_bar_panel_visible === '') {
 				smart_debug_bar_panel_visible = el;
 				panel.style.visibility = 'visible';
-				el.style.background = '#32334A';
-				el.style.color = '#FFFFFF';
+				el.style.background = '#C5CEBB';
 			} //end if
 		} else {
 			smart_debug_bar_panel_visible = '';
@@ -178,15 +183,11 @@ function SmartDebugProfilerEnablePanel(el) {
 		alert('Cannot Find the Debug Panel for this element ...');
 		return;
 	} //end if else
-	//--
 } //END FUNCTION
 function SmartDebugToggleDebugBar() {
-	//--
 	SmartDebugProfilerDisableActivePanel();
-	//--
 	var parent_div = document.getElementById('SmartFramework___Debug_InfoBar');
 	var toggle_button = document.getElementById('SmartFramework___Debug_BtnClose');
-	//--
 	if(parent_div.style.width == '45px') {
 		parent_div.style.borderBottomLeftRadius = '';
 		parent_div.style.borderTopLeftRadius = '';
@@ -198,18 +199,14 @@ function SmartDebugToggleDebugBar() {
 		parent_div.style.borderTopLeftRadius = '10px';
 		parent_div.style.borderBottomLeftRadius = '10px';
 	} //end if else
-	//--
 } //END FUNCTION
 function SmartDebugHTMLSpecialChars(str) {
-	//-- format string
-	if((typeof str == 'undefined') || (str == undefined) || (str == null)) {
+	if((typeof str == 'undefined') || (str == undefined) || (str == null)) { // format string
 		str = '';
 	} else {
 		str = '' + str; // force string
 	} //end if else
-	//--
 	return str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-	//--
 } //END FUNCTION
 function SmartDebugAjaxLoadDivContent(y_div, y_url, y_method, y_exec_jscripts) {
 	try {
@@ -227,7 +224,6 @@ function SmartDebugAjaxLoadDivContent(y_div, y_url, y_method, y_exec_jscripts) {
 				if(ajx.status == 200) {
 					if(ss !== null) { // bugfix: catch err on high refresh rates where it may return null and only the last refresh will be valid !
 						ss.innerHTML = '' + ajx.responseText;
-						console.log('Profiler Toolbar Update Ajax Calls ...');
 						if(y_exec_jscripts != false) {
 							var xscripts = ss.getElementsByTagName('script');
 							for(var i=0; i<xscripts.length; i++) {
@@ -262,8 +258,8 @@ function SmartDebugAjaxCatchCalls(open) {
 			if(this.readyState == 4) {
 				var end = new Date().getTime();
 				var time = end - start;
-				console.log('Smart.Framework.Debug :: Ajax.' + method + ' [' + time + ' ms] {' + this.status + '}' + ' :: ' + url); // this one I changed
 				if(url != '[####DEBUG-PROFILER-URL####]') {
+					console.log('Smart.Framework.Debug :: Ajax.' + method + ' [' + time + ' ms] {' + this.status + '}' + ' :: ' + url);
 					var tmp_ajax_call = {
 						'url': url,
 						'method': method,
@@ -271,7 +267,7 @@ function SmartDebugAjaxCatchCalls(open) {
 						'status': this.status
 					};
 					SmartDebugAjaxCalls.push(tmp_ajax_call);
-					SmartDebugProfilerRefreshPanel();
+					SmartDebugProfilerRefreshPanel('Ajax');
 				} //end if
 			} //end if
 		}, false);
@@ -282,7 +278,7 @@ SmartDebugAjaxCatchCalls(XMLHttpRequest.prototype.open);
 document.onreadystatechange = function() {
 	if(document.readyState === 'complete') {
 		console.log('Smart.Framework.Debug :: Document ReadyState: Completed');
-		SmartDebugProfilerRefreshPanel();
+		SmartDebugProfilerRefreshPanel('Initialize');
 	} else if(document.readyState === 'interactive') {
 		console.log('Smart.Framework.Debug :: Document ReadyState: Interactive');
 	} //end if

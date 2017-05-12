@@ -2,8 +2,8 @@
 TRANSLATIONS:
   @language: EN
   @area: mod-samples
-  @version: 2016-02-13
+  @version: 2017-05-03
   samples:
     hello-world: 'Hello World'
-    this-is-smart-framework: 'this is Smart.Framework'
+    this-is: 'this is'
 #END

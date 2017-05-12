@@ -23,6 +23,8 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 @import url("../../../lib/core/css/navpager.css");
 
+@import url("../../../lib/core/css/date-time.css");
+
 /* -- plugins -- */
 
 /* optional, required just for Captcha Form */

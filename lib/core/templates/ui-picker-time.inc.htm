@@ -1,8 +1,6 @@
 <!-- Partial Template: Core.UIPickerTime -->
-<!-- require: jquery.ui.timepicker.css jquery.ui.timepicker.js -->
 <span id="time-area-[####THE-ID|jsvar|html####]" title="[####TEXT-SELECT|html####] [HH:ii]">
-<input type="text" name="[####THE-VAR|html####]" id="[####THE-ID|jsvar|html####]" maxlength="5" size="5" value="[####THE-VALUE|html####]" readonly="readonly" ondblclick="jQuery(this).val('');" onclick="setTimeout(function(){ SmartJS_BrowserUIUtils.Time_Picker_Display('[####THE-ID|jsvar|js####]'); }, 200);" class="ux-field" style="text-align:center; display:inline;[####STYLE-SIZE|html####]">
-<img id="time-bttn-[####THE-ID|jsvar|html####]" src="lib/js/jquery/timepicker/css/images/timepicker.png" onClick="try { SmartJS_BrowserUIUtils.Time_Picker_Display('[####THE-ID|jsvar|js####]'); } catch(err){} return false;" style="vertical-align:middle; cursor:pointer;" title="">
+<input type="text" name="[####THE-VAR|html####]" id="[####THE-ID|jsvar|html####]" maxlength="5" value="[####THE-VALUE|html####]" readonly="readonly" ondblclick="jQuery(this).val('');" onclick="setTimeout(function(){ SmartJS_BrowserUIUtils.Time_Picker_Display('[####THE-ID|jsvar|js####]'); }, 200);" class="ux-field datetime_Field_TimePicker" style="[####STYLE-SIZE|html####]">
 </span>
 <script type="text/javascript">
 if(typeof SmartJS_BrowserUIUtils != 'undefined') {

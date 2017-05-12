@@ -3,7 +3,7 @@
 // Controller: Samples/TestImage
 // Route: ?/page/samples.benchmark (?page=samples.test-image)
 // Author: unix-world.org
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -49,16 +49,18 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//-- 1st level output buffering to avoid inject warnings / errors into PNG ... if any !!
 		ob_start();
 		//--
-		$im = imagecreate(320, 90);
+		$im = imagecreatetruecolor(320, 90);
 		if(!$im) {
 			Smart::log_warning('Cannot create the image in: '.__METHOD__);
 			$this->PageViewSetErrorStatus(500, 'ERROR: Cannot create the sample image ...'); // set an error message for 500 http status
 			return;
 		} //end if
 		//--
-		$background_color = imagecolorallocate($im, 0x77, 0x88, 0x99); // color for background
-		$text_color = imagecolorallocate($im, 255, 255, 255); // color for text
-		imagestring($im, 25, 25, 40, 'This is a sample PNG image ...', $text_color);
+		$bgcolor = imagecolorallocate($im, 0xEC, 0xEC, 0xEC); // color for background
+		imagefill($im, 0, 0, $bgcolor);
+		$text_color = imagecolorallocate($im, 33, 33, 33); // color for text
+		imagestring($im, 25, 25, 30, 'This is a sample PNG image ...', $text_color);
+		imagestring($im, 25, 25, 50, 'Generated from PHP GD Library', $text_color);
 		//--
 		ob_end_clean(); // #end 1st level buffering
 		//--
@@ -121,7 +123,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 
 		//--
 		ob_start(); // avoid echo warnings or errors !
-		$im = imagecreate(320, 90);
+		$im = imagecreatetruecolor(320, 90);
 		ob_end_clean();
 		if(!$im) {
 			if(!headers_sent()) {
@@ -135,16 +137,18 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		} //end if
 		//--
 		ob_start(); // avoid echo warnings or errors !
-		$background_color = imagecolorallocate($im, 0xFF, 0xFF, 0xFF); // color for background
-		$text_color = imagecolorallocate($im, 77, 88, 99); // color for text
-		imagestring($im, 25, 25, 40, 'This is a sample GIF image ...', $text_color);
+		$bgcolor = imagecolorallocate($im, 0xEC, 0xEC, 0xEC); // color for background
+		imagefill($im, 0, 0, $bgcolor);
+		$text_color = imagecolorallocate($im, 33, 33, 33); // color for text
+		imagestring($im, 25, 25, 30, 'This is a sample JPEG image ...', $text_color);
+		imagestring($im, 25, 25, 50, 'Generated from PHP GD Library', $text_color);
 		ob_end_clean();
 		//--
 
 		//--
-		header('Content-Type: image/gif');
-		header('Content-Disposition: inline; filename="sample-image-'.time().'.gif"');
-		imagegif($im); // direct echo
+		header('Content-Type: image/jpeg');
+		header('Content-Disposition: inline; filename="sample-image-'.time().'.jpg"');
+		imagejpeg($im, null, 100); // direct echo
 		//--
 		ob_start(); // avoid echo warnings or errors !
 		imagedestroy($im);

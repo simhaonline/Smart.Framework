@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: RO
   @area: core
-  @version: 2017-03-31
+  @version: 2017-05-11
   nav_texts:
     asort: 'Sortează Crescător [^]'
     dsort: 'Sortează Descrescător [v]'
@@ -11,8 +11,8 @@ TRANSLATIONS:
     res: 'Rezultate'
     empty: 'Nu există \'rezultate\''
     of: 'din'
-    start: '&laquo; Început'
-    prev: '&lsaquo; Pagina Precedentă'
-    next: 'Pagina Următoare &rsaquo;'
-    end: 'Sfârșit &raquo;'
+    start: '« Început'
+    prev: '‹ Pagina Precedentă'
+    next: 'Pagina Următoare ›'
+    end: 'Sfârșit »'
 #END

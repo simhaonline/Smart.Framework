@@ -1,0 +1,101 @@
+<!-- Partial Sub-Template: TestUnit.Main.Forms -->
+	<h3 style="display:inline;"><b><i>Play</i></b> with the <b>Form <i>controls</i></b> below (if the Limited TextArea is not empty a REDIRECTION on Success/Error is reversed !):</h3>
+	<br><br>
+	<div id="answer_ajax" style="background: #778899; z-index: 999999; border-radius:3px;"><div style="padding:2px; padding-left:5px; color: #FFFFFF;"><b>[Selecting Date is mandatory. This area will be replaced after sending the form if the below TextArea is not empty. If the below TextArea is empty, the page will refresh after post !]</b></div></div>
+	<br>
+	<form class="ux-form" id="test_form_ajax" name="test_form_ajax" method="post" action="#">
+	<input type="hidden" name="test_ajax_var" value="Testing by Ajax (hidden) ...">
+	<style type="text/css">
+	#myFormFluidTable div.ux-fluid-table {
+		width: 1024px;
+	}
+	#myFormFluidTable div.ux-fluid-table div.ux-fluid-tbl-row {
+		width: 100%;
+	}
+	#myFormFluidTable div.ux-fluid-table div.ux-fluid-tbl-row div.ux-fluid-tbl-cell {
+		width: 50%;
+		border: 0px;
+		padding: 3px;
+		padding-bottom: 5px;
+	}
+	@media all and (max-width: 1023px) {
+		#myFormFluidTable div.ux-fluid-table {
+			width: 100% !important;
+		}
+		#myFormFluidTable div.ux-fluid-table div.ux-fluid-tbl-row {
+			display: block !important;
+		}
+		#myFormFluidTable div.ux-fluid-table div.ux-fluid-tbl-row div.ux-fluid-tbl-cell {
+			display: inline-block !important;
+			width: 100% !important;
+			text-align: left !important;
+		}
+		#myFormFluidTable div.ux-fluid-table div.ux-fluid-tbl-row div.ux-fluid-tbl-cell * {
+			text-align: left !important;
+			margin-left: 0px !important;
+			margin-right: 0px !important;
+		}
+	}
+	</style>
+	<div id="myFormFluidTable">
+		<div class="ux-fluid-table">
+			<div class="ux-fluid-tbl-row">
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_CALENDAR####]
+				</div>
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_TIMEPICKER####]
+				</div>
+			</div>
+			<div class="ux-fluid-tbl-row">
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_AUTOCOMPLETE-SINGLE####]
+				</div>
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_AUTOCOMPLETE-MULTI####]
+				</div>
+			</div>
+			<div class="ux-fluid-tbl-row">
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_SINGLE-SELECT####]
+				</div>
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_SINGLE-BLANK-SELECT####]
+				</div>
+			</div>
+			<div class="ux-fluid-tbl-row">
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_SINGLE-SEARCH-SELECT####]
+				</div>
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_MULTI-SELECT####]
+				</div>
+			</div>
+			<div class="ux-fluid-tbl-row">
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_NORMAL-LIST-M####]
+				</div>
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_NORMAL-LIST-S####]
+				</div>
+			</div>
+			<div class="ux-fluid-tbl-row">
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_MULTIBOX-SELECT####]
+				</div>
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_LIMITED-AREA####]
+				</div>
+			</div>
+			<div class="ux-fluid-tbl-row" style="padding-top:10px; padding-bottom:10px;">
+				<div class="ux-fluid-tbl-cell">
+					[####TEST-ELEMENTS_CAPTCHA####]
+				</div>
+				<div class="ux-fluid-tbl-cell" style="vertical-align:bottom!important;">
+					[####TEST-BUTTONS_AJAX-POST####]
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
+<!-- #END :: Partial Sub-Template: TestUnit.Main.Forms -->

@@ -3,7 +3,7 @@
 // Controller: Samples/TestUnit
 // Route: ?/page/samples.testunit (?page=samples.testunit)
 // Author: unix-world.org
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -236,11 +236,24 @@ class SmartAppAdminController extends SmartAbstractAppController {
 					$main = SmartComponents::operation_notice('This test is currently DISABLED ...');
 				} //end if else
 				break;
+			case 'test.markdown':
+				//--
+				$main = SmartComponents::js_code_highlightsyntax('div'); // highlight pack
+				$main .= '<h1>Markdown Syntax Render Test</h1><hr>';
+				$main .= SmartMarkersTemplating::render_template(
+					(string) (new SmartMarkdownToHTML())->text((string)SmartFileSystem::staticread($this->ControllerGetParam('module-view-path').'markdown-test.md')),
+					[
+						'TITLE' => 'This is a <test> title that comes from TPL variables'
+					]
+				);
+				$main .= '<hr>';
+				//--
+				break;
 			case 'test.json':
 				//--
 				$mixed_data = ['Unicode Text' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド\'#@<tag attribute="true">!$%^&*()-_=+'."\r\n\t".'</tag>', 'Numbers' => 1234567890.99, 'Boolean TRUE:' => true, 'Boolean FALSE:' => false];
 				//--
-				$main = '<h1> Json Test</h1>';
+				$main = '<h1>Json Test</h1>';
 				$main .= '<pre style="background:#ECECEC; border:1px solid #CCCCCC; line-height:32px; padding:8px;">';
 				$main .= '<b>(Default) Unicode Unescaped / HTML-Safe:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data))."\n";
 				$main .= '<b>Unicode Unescaped:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, false, true, false))."\n";
@@ -423,7 +436,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 
 		//--
 		$this->PageViewSetVars([
-			'title' => 'Test Suite',
+			'title' => 'Smart.Framework Test and Demo Suite',
 			'main' => $main,
 			'semaphore' => ((SMART_FRAMEWORK_ADMIN_AREA === true) && (SmartAppInfo::TestIfModuleExists('mod-ui-jqueryui'))) ? 'jqueryui' : ''
 		]);

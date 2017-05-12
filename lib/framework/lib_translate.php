@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / Text Translations]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -507,7 +507,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.170307
+ * @version 	v.170511
  *
  * @access 		private
  * @internal
@@ -540,11 +540,8 @@ final class SmartTextTranslator {
 	} //END FUNCTION
 
 
-	// Texts are presumed to be HTML Safe, Already HTML Escaped ...
-	// This way texts will can contain also portions of HTML code !
-	// NOTICE: Never escape the text that come fro translations when using it
-	// NOTICE: When creating a new translation take care to save text as HTML escaped
-	public function text($y_textkey) {
+	// Texts are automatically HTML Escaped, except if the 2nd param is set to TRUE to get them as RAW ...
+	public function text($y_textkey, $y_raw=false) {
 		//--
 		if((string)$y_textkey == '') {
 			Smart::log_warning('Empty Key for Text Context Translator - Area: '.$this->area.' ; SubArea: '.$this->subarea);
@@ -553,9 +550,13 @@ final class SmartTextTranslator {
 		//--
 		$text = (string) SmartTextTranslations::getTranslationByKey($this->area, $this->subarea, $y_textkey);
 		//--
-		if((string)$text == '') {
+		if((string)trim((string)$text) == '') {
 			Smart::log_warning('Undefined Key: ['.$y_textkey.'] for Text Context Translator - Area: '.$this->area.' ; SubArea: '.$this->subarea);
-			return '{Undefined Translation Key: '.Smart::escape_html($y_textkey).'}';
+			$text = '{Undefined Translation Key: '.$y_textkey.'}';
+		} //end if
+		//--
+		if($y_raw !== true) {
+			$text = (string) Smart::escape_html((string)$text);
 		} //end if
 		//--
 		return (string) $text;

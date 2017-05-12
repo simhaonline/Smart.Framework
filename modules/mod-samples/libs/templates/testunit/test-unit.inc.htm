@@ -9,15 +9,15 @@
 	<div id="tabs_draw">
 		<div id="tabs_nav">
 			<ul>
-				<li><a href="#tabs_tests_core"><i class="fa fa-home"></i> &nbsp; Core Tests</a></li>
-				<li><a href="#tabs_tests_interractions"><i class="fa fa-map-signs"></i> &nbsp; Interraction Tests</a></li>
-				<li><a href="#tabs_tests_ui"><i class="fa fa-television"></i> &nbsp; UI Tests</a></li>
-				<li><a href="#tabs_tests_misc"><i class="fa fa-leaf"></i> &nbsp; Misc Tests</a></li>
+				<li><a href="#tabs_tests_core"><i class="fa fa-sun-o"></i> &nbsp; Core</a></li>
+				<li><a href="#tabs_tests_interractions"><i class="fa fa-arrows-alt"></i> &nbsp; Interractions</a></li>
+				<li><a href="#tabs_tests_ui"><i class="fa fa-list-alt"></i> &nbsp; Forms</a></li>
+				<li><a href="#tabs_tests_various"><i class="fa fa-anchor"></i> &nbsp; Various</a></li>
 				<li><a href="[####TESTUNIT-TPL-PATH|html####]test-unit-tabext-smartgrid-test.inc.htm"><i class="fa fa-th-large"></i> &nbsp; Smart Grid</a></li>
 				<li><a href="[####TESTUNIT-TPL-PATH|html####]test-unit-tabext-slickgrid-test.inc.htm"><i class="fa fa-th"></i> &nbsp; Big Data Grid</a></li>
 				<li><a href="[####TESTUNIT-TPL-PATH|html####]test-unit-tabext-charts-test.inc.htm"><i class="fa fa-pie-chart"></i> &nbsp; Charts</a></li>
 				<li><a href="[####TESTUNIT-TPL-PATH|html####]test-unit-tabext-barcodes-test.inc.htm"><i class="fa fa-qrcode"></i> &nbsp; Barcodes</a></li>
-				<li><a href="#tabs_tests_js_components"><i class="fa fa-plug"></i> &nbsp; JS Components</a></li>
+				<li><a href="#tabs_tests_ui_components"><i class="fa fa-desktop"></i> &nbsp; UI / Components</a></li>
 				<li><a href="broken-link.html"><i class="fa fa-chain-broken"></i> &nbsp; A Broken Link</a></li><!-- this is just for testing (broken), the URL actually does not exists -->
 			</ul>
 		</div>
@@ -28,16 +28,19 @@
 			[@@@@SUB-TEMPLATE:test-unit-tab-interractions.inc.htm@@@@]
 		</div>
 		<div id="tabs_tests_ui">
-			[@@@@SUB-TEMPLATE:test-unit-tab-ui.inc.htm@@@@]
+			[@@@@SUB-TEMPLATE:test-unit-tab-forms.inc.htm@@@@]
 		</div>
-		<div id="tabs_tests_misc">
-			[@@@@SUB-TEMPLATE:%test-unit-tab-misc%@@@@]
+		<div id="tabs_tests_various">
+			[@@@@SUB-TEMPLATE:%test-unit-tab-various%@@@@]
 		</div>
-		<div id="tabs_tests_js_components">
-			[####MOD-JS-COMPONENTS####]
+		<div id="tabs_tests_ui_components">
+			[####TEST-UI-COMPONENTS####]
 		</div>
 	</div>
 	[####TEST-JS_SCRIPTS_INIT-TABS####]
 	<!-- end tabs -->
+</div>
+<div style="text-align:right; color:#999999;">
+	Smart.Framework TestUnit: Demo and Samples, License: BSD
 </div>
 <!-- #END :: Partial Template: TestUnit.Main -->

@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / Marker Templating]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170430
+ * @version 	v.170511
  * @package 	Templating:Engines
  *
  */
@@ -166,7 +166,7 @@ public static function render_template($mtemplate, $y_arr_vars, $y_ignore_if_emp
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 			'title' => '[TPL-Render.START] :: Markers-Templating / Render ; Ignore if Empty: '.$y_ignore_if_empty,
-			'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
+			'data' => 'Content: '."\n".self::debug_tpl_length($mtemplate)
 		]);
 	} //end if
 	//-- avoid use the sub-templates array later than this point ... not needed and safer to unset
@@ -302,7 +302,7 @@ public static function render_main_template($mtemplate, $y_arr_vars, $y_sub_temp
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 			'title' => '[TPL-Render.START] :: Markers-Templating / Mixed Render ; Ignore if Empty: '.$y_ignore_if_empty.' ; Sub-Templates Load Base Path: '.$y_sub_templates_base_path,
-			'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
+			'data' => 'Content: '."\n".self::debug_tpl_length($mtemplate)
 		]);
 	} //end if
 	//-- dissalow the use of sub-templates array
@@ -396,6 +396,73 @@ public static function read_template_file($y_file_path) {
 //================================================================
 
 
+//================================================================
+/**
+ * Prepare a HTML template for display in no-conflict mode: no syntax / markers will be parsed
+ * To keep the markers and syntax as-is but avoiding conflicting with real markers / syntax it will encode as HTML Entities the following syntax patterns: [ ] # % @
+ * !!! This is intended for very special usage ... !!!
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param 	STRING 		$mtemplate 						:: The template to be prepared
+ * @param 	BOOLEAN 	$titlecomments 					:: *Optional* Default TRUE ; If FALSE will not highlight TPL markers/syntax/sub-tpl bounds and will show no hint comments over them
+ *
+ * @return 	STRING										:: The template string
+ *
+ */
+public static function prepare_nosyntax_html_template($mtemplate, $titlecomments=true) {
+	//--
+	if((self::have_marker((string)$mtemplate) === true) OR (self::have_syntax((string)$mtemplate) === true) OR (self::have_subtemplate((string)$mtemplate) === true)) {
+		//--
+		if($titlecomments === false) {
+			$arr_repls = [
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+			];
+		} else {
+			$arr_repls = [
+				' class="sf__tpl__highlight__marker" title="TPL Marker: Start"',
+				' class="sf__tpl__highlight__marker" title="TPL Marker: End"',
+				' class="sf__tpl__highlight__syntax" title="TPL Syntax: Start"',
+				' class="sf__tpl__highlight__syntax" title="TPL Syntax: End"',
+				' class="sf__tpl__highlight__subtpl" title="TPL SubTemplate: Start"',
+				' class="sf__tpl__highlight__subtpl" title="TPL SubTemplate: End"'
+			];
+		} //end if else
+		//--
+		$mtemplate = (string) str_replace(
+			[
+				'[####',
+				'####]',
+				'[%%%%',
+				'%%%%]',
+				'[@@@@',
+				'@@@@]'
+			],
+			[
+				'<span'.$arr_repls[0].'>&lbrack;&num;&num;&num;&num;</span>',
+				'<span'.$arr_repls[1].'>&num;&num;&num;&num;&rbrack;</span>',
+				'<span'.$arr_repls[2].'>&lbrack;&percnt;&percnt;&percnt;&percnt;</span>',
+				'<span'.$arr_repls[3].'>&percnt;&percnt;&percnt;&percnt;&rbrack;</span>',
+				'<span'.$arr_repls[4].'>&lbrack;&commat;&commat;&commat;&commat;</span>',
+				'<span'.$arr_repls[5].'>&commat;&commat;&commat;&commat;&rbrack;</span>'
+			],
+			(string) $mtemplate
+		);
+		//--
+	} //end if
+	//--
+	return (string) $mtemplate;
+	//--
+} //END FUNCTION
+//================================================================
+
+
 //##### PRIVATES
 
 
@@ -423,19 +490,19 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	$hash = (string) sha1($y_info.$mtemplate);
 	//-- inits
 	$html = '<!-- START: Markers Template Analyze @ '.Smart::escape_html($hash).' # -->'."\n";
-	$html .= '<div align="center">';
+	$html .= '<div align="left">';
 	$html .= '<h1>Markers Template Analyze</h1>';
 	if((string)$y_info != '') {
 		$html .= '<h2>'.Smart::escape_html($y_info).'</h2>';
 	} //end if
 	$html .= '<hr>';
 	//-- main table
-	$html .= '<table width="100%">';
+	$html .= '<table width="99%">';
 	$html .= '<tr valign="top" align="center">';
 	//-- loaded sub-tpls
 	$html .= '<td align="left" colspan="2">';
-	$html .= '<table id="'.'__marker__template__analyzer-ldsubtpls_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="950">';
-	$html .= '<tr align="center"><th>{@@@@ SUB-TEMPLATES :: LOADED @@@@}<br><small>*** All Loaded Sub-Templates are listed below ***</small></th><th>#</th></tr>';
+	$html .= '<table id="'.'__marker__template__analyzer-ldsubtpls_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="950">';
+	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:LOADED@@@@]<br><small>*** All Loaded Sub-Templates are listed below ***</small></th><th>#</th></tr>';
 	if(Smart::array_size(self::$MkTplAnalyzeLdRegDbg) > 0) {
 		foreach(self::$MkTplAnalyzeLdRegDbg as $key => $val) {
 			$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -456,8 +523,8 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 		} //end if
 	} //end for
 	$html .= '<td align="center">';
-	$html .= '<table id="'.'__marker__template__analyzer-subtpls_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="525">';
-	$html .= '<tr align="center"><th>{@@@@ SUB-TEMPLATES :: SLOTS@Level.1 @@@@}<br><small>*** Only Level-1 Sub-Templates slots are listed below ***</small></th><th>#</th></tr>';
+	$html .= '<table id="'.'__marker__template__analyzer-subtpls_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525">';
+	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:SLOTS@LEVEL-1@@@@]<br><small>*** Only Level-1 Sub-Templates slots are listed below ***</small></th><th>#</th></tr>';
 	ksort($arr_subtpls);
 	foreach($arr_subtpls as $key => $val) {
 		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -479,7 +546,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 			$arr_marks[(string)strtoupper((string)$var_part[$i])] += 1;
 		} //end if
 	} //end for
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="525"><tr align="center"><th>{#### MARKER:VARIABLES ####}</th><th>#</th></tr>';
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525"><tr align="center"><th>[####MARKER-VARIABLES####]</th><th>#</th></tr>';
 	ksort($arr_marks);
 	foreach($arr_marks as $key => $val) {
 		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -497,7 +564,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 			$arr_loops[(string)strtoupper((string)$var_part[$i])] += 1;
 		} //end if
 	} //end for
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="525"><tr align="center"><th>{%%%% LOOP:VARIABLES %%%%}</th><th>#</th></tr>';
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525"><tr align="center"><th>[%%%%LOOP:VARIABLES%%%%]<br>[%%%%/LOOP:VARIABLES%%%%]</th><th>#</th></tr>';
 	ksort($arr_loops);
 	foreach($arr_loops as $key => $val) {
 		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -515,7 +582,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 			$arr_ifs[(string)strtoupper((string)$var_part[$i])] += 1;
 		} //end if
 	} //end for
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" border="1" cellspacing="0" cellpadding="4" width="525"><tr align="center"><th>{%%%% IF:VARIABLES %%%%}</th><th>#</th></tr>';
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525"><tr align="center"><th>[%%%%IF:VARIABLES:@=;%%%%]<br>[%%%%ELSE:VARIABLES%%%%]<br>[%%%%/IF:VARIABLES%%%%]</th><th>#</th></tr>';
 	ksort($arr_ifs);
 	foreach($arr_ifs as $key => $val) {
 		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -524,9 +591,9 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	//-- end main table
 	$html .= '</tr></table><hr>';
 	//-- ending
-	$html .= '</div><h2>TPL Data - with all sub-templates [Level 1..n] loaded (if any):</h2><pre id="'.'__marker__template__analyzer-tpl_'.Smart::escape_html($hash).'"></pre><hr><script>try{document.getElementById(\''.'__marker__template__analyzer-tpl_'.Smart::escape_js($hash).'\').innerHTML = decodeURIComponent(\''.Smart::escape_js(Smart::escape_url(Smart::escape_html($mtemplate))).'\');}catch(err){ console.log(\'Errors rendering: '.'__marker__template__analyzer-tpl_'.Smart::escape_js($hash).' ...\'); }</script>'."\n".'<!-- #END: Markers Template Analyze @ '.Smart::escape_html($hash).' -->';
+	$html .= '</div><h2>TPL Source - with all sub-templates [Level 1..n] loaded (if any):</h2><div id="tpl-display-for-highlight"><pre id="'.'__marker__template__analyzer-tpl_'.Smart::escape_html($hash).'"><code class="html">'.Smart::escape_html($mtemplate).'</code></pre></div><hr>'."\n".'<!-- #END: Markers Template Analyze @ '.Smart::escape_html($hash).' -->';
 	//-- return
-	return (string) $html;
+	return (string) self::prepare_nosyntax_html_template($html);
 	//--
 } //END FUNCTION
 //================================================================
@@ -565,7 +632,7 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 		$bench = Smart::format_number_dec((float)(microtime(true) - (float)$bench), 9, '.', '');
 		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 			'title' => '[TPL-Parsing:Render.DONE] :: Markers-Templating / Processing ; Time = '.$bench.' sec.',
-			'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
+			'data' => 'Content: '."\n".self::debug_tpl_length($mtemplate)
 		]);
 	} //end if
 	//--
@@ -691,7 +758,7 @@ private static function replace_marker($mtemplate, $key, $val) {
 				} elseif((string)$matches[1] == '|jsvar') { // JS Variable
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
 				} elseif((string)$matches[1] == '|json') { // Json Data ; expects pure JSON !!!
-					$val = (string) Smart::json_encode(Smart::json_decode($val, true, 512), false, true, true, 512); // it MUST be JSON with HTML-Safe Options.
+					$val = (string) Smart::json_encode(Smart::json_decode($val, true), false, true, true); // it MUST be JSON with HTML-Safe Options.
 					$val = trim((string)$val);
 					if((string)$val == '') {
 						$val = 'null'; // ensure a minimal json as empty string if no expr !
@@ -1428,7 +1495,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 						SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 							'title' => '[TPL-Parsing:Load] :: Markers-Templating / Loading Sub-Template File: Key='.$key.' ; Path='.$stpl_path.' ; Cycle='.$cycles,
-							'data' => 'Content: '."\n".SmartParser::text_endpoints($stemplate, 255)
+							'data' => 'Content: '."\n".self::debug_tpl_length($stemplate)
 						]);
 					} //end if
 					//--
@@ -1488,7 +1555,7 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Includding a Sub-Template from VCache';
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 				'title' => '[TPL-ReadFileTemplate-From-VCache] :: Markers-Templating / File-Read ; Serving from VCache the File Template: '.$y_file_path.' ; VCacheFlag: '.$y_use_caching,
-				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
+				'data' => 'Content: '."\n".self::debug_tpl_length(self::$MkTplCache[(string)$cached_key])
 			]);
 		} //end if
 		//--
@@ -1508,7 +1575,7 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FS and REGISTER in VCache';
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 				'title' => '[TPL-ReadFileTemplate-From-FS-Register-In-VCache] :: Markers-Templating / Registering to VCache the File Template: '.$y_file_path.' ;',
-				'data' => 'Content: '."\n".SmartParser::text_endpoints(self::$MkTplCache[(string)$cached_key], 255)
+				'data' => 'Content: '."\n".self::debug_tpl_length(self::$MkTplCache[(string)$cached_key])
 			]);
 		} //end if
 		//--
@@ -1522,7 +1589,7 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FS  ; VCacheFlag: '.$y_use_caching;
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 				'title' => '[TPL-ReadFileTemplate-From-FS] :: Markers-Templating / File-Read ; Serving from FS the File Template: '.$y_file_path.' ;',
-				'data' => 'Content: '."\n".SmartParser::text_endpoints($mtemplate, 255)
+				'data' => 'Content: '."\n".self::debug_tpl_length($mtemplate)
 			]);
 		} //end if
 		//--
@@ -1548,6 +1615,25 @@ private static function log_template($mtemplate) {
 
 
 //##### DEBUG ONLY
+
+
+//================================================================
+private static function debug_tpl_length($mtemplate) {
+	//--
+	$len = 512;
+	if(defined('SMART_SOFTWARE_MKTPL_DEBUG_LEN')) {
+		if((int)SMART_SOFTWARE_MKTPL_DEBUG_LEN >= 255) {
+			if((int)SMART_SOFTWARE_MKTPL_DEBUG_LEN <= 524280) {
+				$len = (int) SMART_SOFTWARE_MKTPL_DEBUG_LEN;
+			} //end if
+		} //end if
+	} //end if
+	$len = Smart::format_number_int($len,'+');
+	//--
+	return (string) SmartParser::text_endpoints((string)$mtemplate, (int)$len);
+	//--
+} //END FUNCTION
+//================================================================
 
 
 //================================================================

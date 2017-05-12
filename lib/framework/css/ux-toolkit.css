@@ -1,4 +1,4 @@
-/***** Smart UX CSS Toolkit :: v.3.1.2 r.2017.04.11 / smart.framework.v.3.1 *****/
+/***** Smart UX CSS Toolkit :: v.3.5.1 r.2017.05.12 / smart.framework.v.3.5 *****/
 
 /*
 License: BSD
@@ -14,6 +14,29 @@ License: BSD
 	display: none !important;
 }
 
+/* Clearing */
+.ux-clear:before, .ux-clear:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+/* Align Elements */
+.ux-left {
+	text-align: left !important;
+}
+.ux-center {
+	text-align: center !important;
+}
+.ux-right {
+	text-align: right !important;
+}
+
+/* Apply Border to Elements */
+.ux-border {
+	border: 1px solid #ECECEC;
+}
+
 /* Add this class to an image to make it fit within it's fluid parent wrapper while maintaining aspect ratio. */
 .ux-img {
 	max-width: 100%;
@@ -21,39 +44,26 @@ License: BSD
 	display: block;
 }
 
-/*** Grid :: 12 columns / fluid / responsive (extra, based on Bootstrap Grid, by Unixman) ***/
+/*** Grid :: 12 columns / fluid / responsive (extra, based on W3.org Grid, adapted by Unixman) ***/
 
-.ux-g-grid {
-	padding-right: 15px;
-	padding-left: 15px;
-	margin-right: auto;
-	margin-left: auto;
+.ux-grid-row {
+	margin-right: 0px;
+	margin-left: 0px;
 	box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
 	-webkit-box-sizing: border-box !important;
 }
-.ux-g-grid-fluid {
-	padding-right: 15px;
-	padding-left: 15px;
-	margin-right: auto;
-	margin-left: auto;
-	box-sizing: border-box !important;
-	-moz-box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
+
+.ux-grid-row:before, .ux-grid-row:after {
+	content: "";
+	display: table;
+	clear: both;
 }
-.ux-g-row {
-	clear: both !important;
-	margin-right: -15px;
-	margin-left: -15px;
-	box-sizing: border-box !important;
-	-moz-box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
-}
-.ux-g-border {
-	border: 1px solid #ECECEC;
-}
-.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
-	position: relative;
+
+/* UX Grid Very Small Screen (Width < 480px) */
+.ux-grid-col {
+	float:left;
+	width:100%;
 	min-height: 1px;
 	padding-right: 15px;
 	padding-left: 15px;
@@ -61,55 +71,192 @@ License: BSD
 	-moz-box-sizing: border-box !important;
 	-webkit-box-sizing: border-box !important;
 }
-.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
-	float: left;
-}
-.ux-g-col-12 {
-	width: 100%;
-}
-.ux-g-col-11 {
-	width: 91.66666667%;
-}
-.ux-g-col-10 {
-	width: 83.33333333%;
-}
-.ux-g-col-9 {
-	width: 75%;
-}
-.ux-g-col-8 {
-	width: 66.66666667%;
-}
-.ux-g-col-7 {
-	width: 58.33333333%;
-}
-.ux-g-col-6 {
-	width: 50%;
-}
-.ux-g-col-5 {
-	width: 41.66666667%;
-}
-.ux-g-col-4 {
-	width: 33.33333333%;
-}
-.ux-g-col-3 {
-	width: 25%;
-}
-.ux-g-col-2 {
-	width: 16.66666667%;
-}
-.ux-g-col-1 {
-	width: 8.33333333%;
-}
 
-@media all and (max-width:639px) {
-
-	/* Responsive Grid */
-
-	.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
-		width: 99% !important;
-		display: block !important;
+/* UX Grid Very-Small Screen (Width <= 639px) */
+@media (max-width:639px) {
+	.ux-grid-col.v-hidden {
+		display: none;
 	}
+	.ux-grid-col.v1 {
+		width:8.33333%;
+	}
+	.ux-grid-col.v2 {
+		width:16.66666%;
+	}
+	.ux-grid-col.v3 {
+		width:24.99999%;
+	}
+	.ux-grid-col.v4 {
+		width:33.33333%;
+	}
+	.ux-grid-col.v5 {
+		width:41.66666%;
+	}
+	.ux-grid-col.v6 {
+		width:49.99999%;
+	}
+	.ux-grid-col.v7 {
+		width:58.33333%;
+	}
+	.ux-grid-col.v8 {
+		width:66.66666%;
+	}
+	.ux-grid-col.v9 {
+		width:74.99999%;
+	}
+	.ux-grid-col.v10 {
+		width:83.33333%;
+	}
+	.ux-grid-col.v11 {
+		width:91.66666%;
+	}
+	.ux-grid-col.v12 {
+		width:99.99999%;
+	}
+}
 
+/* UX Grid Small Screen (Width >= 640px) */
+@media (min-width:640px) {
+	.ux-grid-col.s-hidden {
+		display: none;
+	}
+	.ux-grid-col.s1 {
+		width:8.33333%;
+	}
+	.ux-grid-col.s2 {
+		width:16.66666%;
+	}
+	.ux-grid-col.s3 {
+		width:24.99999%;
+	}
+	.ux-grid-col.s4 {
+		width:33.33333%;
+	}
+	.ux-grid-col.s5 {
+		width:41.66666%;
+	}
+	.ux-grid-col.s6 {
+		width:49.99999%;
+	}
+	.ux-grid-col.s7 {
+		width:58.33333%;
+	}
+	.ux-grid-col.s8 {
+		width:66.66666%;
+	}
+	.ux-grid-col.s9 {
+		width:74.99999%;
+	}
+	.ux-grid-col.s10 {
+		width:83.33333%;
+	}
+	.ux-grid-col.s11 {
+		width:91.66666%;
+	}
+	.ux-grid-col.s12 {
+		width:99.99999%;
+	}
+}
+
+/* UX Grid Medium Screen (Width >= 992px) */
+@media (min-width:992px) {
+	.ux-grid-col.m-hidden {
+		display: none;
+	}
+	.ux-grid-col.m1 {
+		width:8.33333%;
+	}
+	.ux-grid-col.m2 {
+		width:16.66666%;
+	}
+	.ux-grid-col.m3 {
+		width:24.99999%;
+	}
+	.ux-grid-col.m4 {
+		width:33.33333%;
+	}
+	.ux-grid-col.m5 {
+		width:41.66666%;
+	}
+	.ux-grid-col.m6 {
+		width:49.99999%;
+	}
+	.ux-grid-col.m7 {
+		width:58.33333%;
+	}
+	.ux-grid-col.m8 {
+		width:66.66666%;
+	}
+	.ux-grid-col.m9 {
+		width:74.99999%;
+	}
+	.ux-grid-col.m10 {
+		width:83.33333%;
+	}
+	.ux-grid-col.m11 {
+		width:91.66666%;
+	}
+	.ux-grid-col.m12 {
+		width:99.99999%;
+	}
+}
+
+/* UX Grid Large Screen (Width >= 1200px) */
+@media (min-width:1200px) {
+	.ux-grid-col.l-hidden {
+		display: none;
+	}
+	.ux-grid-col.l1 {
+		width:8.33333%;
+	}
+	.ux-grid-col.l2 {
+		width:16.66666%;
+	}
+	.ux-grid-col.l3 {
+		width:24.99999%;
+	}
+	.ux-grid-col.l4 {
+		width:33.33333%;
+	}
+	.ux-grid-col.l5 {
+		width:41.66666%;
+	}
+	.ux-grid-col.l6 {
+		width:49.99999%;
+	}
+	.ux-grid-col.l7 {
+		width:58.33333%;
+	}
+	.ux-grid-col.l8 {
+		width:66.66666%;
+	}
+	.ux-grid-col.l9 {
+		width:74.99999%;
+	}
+	.ux-grid-col.l10 {
+		width:83.33333%;
+	}
+	.ux-grid-col.l11 {
+		width:91.66666%;
+	}
+	.ux-grid-col.l12 {
+		width:99.99999%;
+	}
+}
+
+/*** Links :: ***/
+
+a.ux-link, a.ux-link:link, a.ux-link:visited {
+	font-family: inherit !important;
+	font-size: 100% !important;
+	font-weight: bold !important;
+	text-decoration: underline #DDDDDD !important;
+	color: #20639E !important;
+	cursor: pointer !important;
+}
+a.ux-link:hover {
+	text-decoration: underline #295072 !important;
+	color: #10528D !important;
 }
 
 /*** Buttons :: modified ***/
@@ -127,22 +274,24 @@ License: BSD
 	font-weight: bold !important;
 	text-decoration: none !important;
 	border-radius: 3px !important;
-	border: 1px solid #EEEEEE !important;
+	border: 1px solid #DDDDDD !important;
 	background-color: #FCFCFC !important;
 	color: #317AB9 !important;
 	cursor: pointer !important;
 	user-select: none !important;
 	zoom: 1 !important;
-	margin-bottom: 1px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-bottom: 5px;
 	box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
 	-webkit-box-sizing: border-box !important;
 }
 .ux-button:hover,
 .ux-button:focus {
-	border: 1px solid #DDDDDD !important;
-	background-color: #F5F5F5 !important;
-	color: #317AB9 !important;
+	border: 1px solid #CCCCCC !important;
+	background-color: #F3F3F3 !important;
+	color: #2069A9 !important;
 }
 .ux-button:focus {
 	outline: 0 !important;
@@ -160,79 +309,73 @@ License: BSD
 }
 
 .ux-button-dark {
-	border: 1px solid #444444 !important;
+	border: 1px solid #333333 !important;
 	background-color: #555555 !important;
-	color: #FFFFFF !important;
+	color: #FEFEFE !important;
 }
 .ux-button-dark:hover,
 .ux-button-dark:focus {
 	border: 1px solid #222222 !important;
-	background-color: #333333 !important;
-	color: #EEEEEE !important;
+	background-color: #444444 !important;
+	color: #FFFFFF !important;
 }
 
 .ux-button-primary {
-	border: 1px solid #3174AF !important;
+	border: 1px solid #20639E !important;
 	background-color: #337AB7 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-primary:hover,
 .ux-button-primary:focus {
-	border: 1px solid #20639E !important;
+	border: 1px solid #10528D !important;
 	background-color: #2269A6 !important;
 	color: #FFFFFF !important;
 }
 
 .ux-button-secondary {
-	border: 1px solid #289EC1 !important;
+	border: 1px solid #178DB0 !important;
 	background-color: #31B0D5 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-secondary:hover,
 .ux-button-secondary:focus {
-	border: 1px solid #52BCDC !important;
-	background-color: #5BC0DE !important;
+	border: 1px solid #067CA0 !important;
+	background-color: #20A0C4 !important;
 	color: #FFFFFF !important;
 }
 
 .ux-button-regular {
-	/* border: 1px solid #55B455 !important;
-	background-color: #5CB85C !important;
-	color: #FFFFFF !important; */
-	border: 1px solid #608200 !important;
+	border: 1px solid #507100 !important;
 	background-color: #719300 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-regular:hover,
 .ux-button-regular:focus {
-/*	border: 1px solid #3C893C !important;
-	background-color: #449D44 !important;
-	color: #FFFFFF !important; */
-	border: 1px solid #5C7702 !important;
-	background-color: #6D8813 !important;
+	border: 1px solid #406000 !important;
+	background-color: #608200 !important;
 	color: #FFFFFF !important;
 }
 
 .ux-button-highlight {
-	border: 1px solid #EC971F !important;
+	border: 1px solid #DB860E !important;
 	background-color: #FF9900 !important;
 	color: #FFFFFF !important;
 }
 .ux-button-highlight:hover,
 .ux-button-highlight:focus {
-	border: 1px solid #D98814 !important;
-	background-color: #EC971F !important;
+	border: 1px solid #CA750D !important;
+	background-color: #EE8800 !important;
 	color: #FFFFFF !important;
 }
 
 .ux-button-special {
-	border: 1px solid #E32E2E !important;
+	border: 1px solid #D21D1D !important;
 	background-color: #F43F3F !important;
 	color: #FFFFFF !important;
 }
 .ux-button-special:hover,
 .ux-button-special:focus {
-	border: 1px solid #D21D1D !important;
+	border: 1px solid #C10C0C !important;
 	background-color: #E32E2E !important;
 	color: #FFFFFF !important;
 }
@@ -245,19 +388,19 @@ License: BSD
 
 .ux-button-xsmall {
 	padding: 3px 7px 3px 7px !important;
-	font-size: 75% !important;
+	font-size: 0.75em !important;
 }
 .ux-button-small {
 	padding: 5px 10px 5px 10px !important;
-	font-size: 85% !important;
+	font-size: 0.875em !important;
 }
 .ux-button-large {
 	padding: 9px 17px 9px 17px !important;
-	font-size: 125% !important;
+	font-size: 1.188em !important;
 }
 .ux-button-xlarge {
 	padding: 13px 23px 13px 23px !important;
-	font-size: 185% !important;
+	font-size: 1.5em !important;
 }
 
 .ux-button-responsive {
@@ -419,6 +562,14 @@ the padding. We explicitly set the box-model for select elements to border-box,
 so we can ignore the csslint warning.
 */
 
+.ux-inline {
+	display: inline;
+}
+
+.ux-inline-block {
+	display: inline-block;
+}
+
 .ux-form input[type="text"],
 .ux-form input[type="password"],
 .ux-form input[type="email"],
@@ -438,9 +589,9 @@ so we can ignore the csslint warning.
 .ux-field {
 	background-color: #FFFFFF;
 	color: #222222;
-	font-weight: normal !important;
-	font-size: 13px !important;
-	padding: 3px !important;
+	font-weight: normal;
+	font-size: 13px;
+	padding: 3px;
 /*	padding: 0.5em 0.6em; */
 	display: inline-block;
 	border: 1px solid #ccc;
@@ -448,8 +599,8 @@ so we can ignore the csslint warning.
 	border-radius: 4px;
 	vertical-align: middle;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
 .ux-form select option,
@@ -470,8 +621,8 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	box-shadow: inset 0 1px 3px #ddd;
 	border-radius: 4px;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box !important;
-	-webkit-box-sizing: border-box !important;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
 

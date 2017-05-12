@@ -13,26 +13,29 @@
 <body>
 <div style="background: #ECECEC;">
 	<div id="carousel">
-		<div style="height:300px; background: #52C0AA; color: #D9FFEF;text-align:center; font-weight:bold;">Div 1</div>
-		<div style="height:300px; background: #E79969; color: #FFE8BF;text-align:center; font-weight:bold;">Div 2</div>
-		<div style="height:300px; background: #E26E77; color: #FFE2E2;text-align:center; font-weight:bold;">Div 3</div>
-		<div style="height:300px; background: #6C7EB0; color: #DFEFF7;text-align:center; font-weight:bold;">Div 4</div>
-		<div style="height:300px; background: #4B4A86; color: #CFDFF6;text-align:center; font-weight:bold;">Div 5</div>
-		<div style="height:300px; background: #3B4250; color: #FFFFFF;text-align:center; font-weight:bold;">Div 6</div>
-		<div style="height:300px; background: #778899; color: #FFFFFF;text-align:center; font-weight:bold;">Div 7</div>
-		<div style="height:300px; background: #FC3C3C; color: #FFFFFF;text-align:center; font-weight:bold;">Div 8</div>
-		<div style="height:300px; background: #00ACED; color: #FFFFFF;text-align:center; font-weight:bold;">Div 9</div>
+		<div style="height:300px; background: #52C0AA; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 1</div>
+		<div style="height:300px; background: #E79969; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 2</div>
+		<div style="height:300px; background: #E26E77; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 3</div>
+		<div style="height:300px; background: #6C7EB0; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 4</div>
+		<div style="height:300px; background: #4B4A86; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 5</div>
+		<div style="height:300px; background: #3B4250; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 6</div>
+		<div style="height:300px; background: #778899; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 7</div>
+		<div style="height:300px; background: #E74C3C; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 8</div>
+		<div style="height:300px; background: #00ACED; color: #FFFFFF;text-align:center; font-weight:bold; padding-top:20px;">Div 9</div>
 	</div>
 </div>
 <div id="carousel-ldr" class="slick-loading"><span class="slick-list"></span></div>
 <script type="text/javascript">
 jQuery(function(){
-	jQuery('#carousel').css({ 'margin-left' : '25px', 'width': (jQuery(window).width()-55) + 'px' }).slick({
+	jQuery('#carousel').css({ 'margin-left':'auto', 'margin-right':'auto', 'width': (jQuery(window).width()-50) + 'px' }).slick({
 		dots: true,
 		arrows: true,
 		infinite: true,
 		slidesToShow: 3,
 		slidesToScroll: 3,
+		autoplay: true,
+		autoplaySpeed: 3000, // 3 seconds
+		centerMode: false,
 		responsive: [
 		{
 			breakpoint: 768,

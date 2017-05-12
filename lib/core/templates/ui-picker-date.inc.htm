@@ -1,8 +1,7 @@
 <!-- Partial Template: Core.UIPickerDate -->
 <span id="date-area-[####THE-ID|jsvar|html####]" title="[####TEXT-SELECT|html####] [[####ALT-DATE-FORMAT|html####]]">
 <input type="hidden" id="[####THE-ID|jsvar|html####]" name="[####THE-VAR|html####]" value="[####THE-VALUE|html####]">
-<input type="text" id="date-entry-[####THE-ID|jsvar|html####]" name="dtfmt__[####THE-VAR|html####]" maxlength="13" value="" readonly="readonly" ondblclick="jQuery('#[####THE-ID|jsvar|js####]').val(''); jQuery('#date-bttn-[####THE-ID|jsvar|js####]').attr('title', ''); jQuery(this).val('');" onclick="setTimeout(function(){ try { SmartJS_BrowserUIUtils.Date_Picker_Display('[####THE-ID|jsvar|js####]'); } catch(err){} }, 200);" class="ux-field" style="text-align:center; display:inline;[####STYLE-SIZE|html####]">
-<img src="lib/js/jquery/datepicker/css/images/calendar.png" onclick="try { SmartJS_BrowserUIUtils.Date_Picker_Display('[####THE-ID|jsvar|js####]'); } catch(err){} return false;" style="cursor:pointer; vertical-align:middle; margin-left:3px;" id="date-bttn-[####THE-ID|jsvar|html####]" title="">
+<input type="text" id="date-entry-[####THE-ID|jsvar|html####]" name="dtfmt__[####THE-VAR|html####]" maxlength="13" value="" readonly="readonly" ondblclick="jQuery('#[####THE-ID|jsvar|js####]').val(''); jQuery('#date-bttn-[####THE-ID|jsvar|js####]').attr('title', ''); jQuery(this).val('');" onclick="setTimeout(function(){ try { SmartJS_BrowserUIUtils.Date_Picker_Display('[####THE-ID|jsvar|js####]'); } catch(err){} }, 200);" class="ux-field datetime_Field_DatePicker" style="[####STYLE-SIZE|html####]">
 </span>
 <script type="text/javascript">
 if(typeof SmartJS_BrowserUIUtils != 'undefined') {

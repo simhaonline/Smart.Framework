@@ -8,22 +8,25 @@
 <script src="../jquery.cycle2.js"></script>
 </head>
 <body>
-
+<div align="center">
+	<h1>Photo FX Slideshow</h1>
+	<p>
+		The photo slideshow below is autorunning and will change each 1.5 seconds ...
+	</p>
+	<div id="logoslide" style="width: 600px; height: 400px; text-align:center; border:1px solid #555555;">
+		<img width="600" src="//www.w3schools.com/w3css/img_mountains.jpg"><br>
+		<img width="600" src="//www.w3schools.com/w3css/img_lights.jpg" style="display:none;"><br>
+		<img width="600" src="//www.w3schools.com/w3css/img_fjords.jpg" style="display:none;"><br>
+		<img width="600" src="//www.w3schools.com/w3css/img_forest.jpg" style="display:none;"><br>
+	</div>
+</div>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#logoslide').cycle({
 		log: false,
-		timeout: 1000
+		timeout: 1500
 	});
 });
 </script>
-<div align="center"><div id="logoslide" style="width: 600px; height: 400px; text-align:center;">
-	<img width="600" src="//www.w3schools.com/w3css/img_mountains.jpg"><br>
-	<img width="600" src="//www.w3schools.com/w3css/img_lights.jpg" style="display:none;"><br>
-	<img width="600" src="//www.w3schools.com/w3css/img_fjords.jpg" style="display:none;"><br>
-	<img width="600" src="//www.w3schools.com/w3css/img_forest.jpg" style="display:none;"><br>
-</div></div>
-
 </body>
 </html>
-

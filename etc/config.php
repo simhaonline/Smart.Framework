@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [CFG - SETTINGS]
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //######################################### Mod.Samples (Tests ONLY Settings)
-// !!! Remove these Test ONLY Settings in real production environments !!! They are required just for Mod.Samples
+// !!! Remove these Test ONLY Settings in real production environments !!! They are required just for Mod.Samples ...
 define('SMART_FRAMEWORK_TEST_MODE', true);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS', false);

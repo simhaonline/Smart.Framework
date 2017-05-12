@@ -58,6 +58,7 @@ a, a:link, a:visited, a:hover {
 }
 
 /* ----- forms ----- */
+
 input[type="text"]:disabled {
 	background-color: #FFFFFF;
 }

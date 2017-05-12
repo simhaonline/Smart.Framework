@@ -1,4 +1,4 @@
-/***** Smart UX CSS Toolkit @ Responsive :: v.3.1.2 r.2017.04.11 / smart.framework.v.3.1 *****/
+/***** Smart UX CSS Toolkit @ Responsive :: v.3.5.1 r.2017.05.12 / smart.framework.v.3.5 *****/
 
 /*
 License: BSD
@@ -8,29 +8,25 @@ License: BSD
 
 @media all and (max-width:767px) {
 
-	/* Responsive Grid */
-
-	.ux-g-col-1, .ux-g-col-2, .ux-g-col-3, .ux-g-col-4, .ux-g-col-5, .ux-g-col-6, .ux-g-col-7, .ux-g-col-8, .ux-g-col-9, .ux-g-col-10, .ux-g-col-11, .ux-g-col-12 {
-		width: 99% !important;
-		display: block !important;
-	}
-
 	/* All buttons Responsive */
 
 	.ux-button {
 		width: 98% !important;
+		min-width: 98% !important;
 		margin: 0.7em 0 0;
 	}
 
 	.ux-button-responsive {
 		width: 98% !important;
+		min-width: 98% !important;
 		margin: 0.7em 0 0;
 	}
 
 	/* Reflow Tables */
 
 	.ux-reflow-table {
-		width: 98%;
+		min-width: 98% !important;
+		width: 98% !important;
 	}
 
 	.ux-reflow-table td,
@@ -79,6 +75,7 @@ License: BSD
 		margin-bottom: 0.3em;
 		display: block;
 		width: 98% !important;
+		min-width: 98% !important;
 	}
 
 	.ux-group input:not([type]),
@@ -102,6 +99,7 @@ License: BSD
 	.ux-field {
 		margin-bottom: 0;
 		width: 98% !important;
+		min-width: 98% !important;
 	}
 
 	.ux-form-aligned .ux-control-group label {
@@ -121,6 +119,10 @@ License: BSD
 		display: block;
 		font-size: 0.75em;
 		padding: 0.2em 0 0.8em;
+	}
+
+	.ux-menu-horizontal {
+		white-space: normal !important;
 	}
 
 }

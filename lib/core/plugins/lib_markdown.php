@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / Plugins / Markdown Parser]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -27,7 +27,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.170126
+ * @version 	v.170503
  * @package 	Exporters
  *
  */
@@ -35,7 +35,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.170126@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
+	private $mkdw_version = 'v.1.5.4-r.170512@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -127,6 +127,10 @@ final class SmartMarkdownToHTML {
 
 
 	public function __construct($y_breaksEnabled=true, $y_markupEscaped=true, $y_urlsLinked=true, $y_htmlEntitiesEscaped=false) {
+		//--
+		if(!$y_markupEscaped) {
+			$y_urlsLinked = false; // fix
+		} //end if
 		//--
 		$this->breaksEnabled 		= (bool) $y_breaksEnabled;
 		$this->markupEscaped 		= (bool) $y_markupEscaped;
@@ -474,7 +478,8 @@ final class SmartMarkdownToHTML {
 			if(isset($matches[1])) { // fix from 1.5.4
 				//--
 				//$class = 'language-'.$matches[2];
-				$class = 'language-'.$matches[1]; // fix from 1.5.4
+				//$class = 'language-'.$matches[1]; // fix from 1.5.4
+				$class = (string) $matches[1]; // fix from 1.5.4 :: modified by unixman to be compliant with highlight.js
 				//--
 				$Element['attributes'] = array(
 					'class' => $class,

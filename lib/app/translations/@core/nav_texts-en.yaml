@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2017-03-31
+  @version: 2017-05-11
   nav_texts:
     asort: 'Sort Ascending [^]'
     dsort: 'Sort Descending [v]'
@@ -11,8 +11,8 @@ TRANSLATIONS:
     res: 'Results'
     empty: 'No results'
     of: 'of'
-    start: '&laquo; Start'
-    prev: '&lsaquo; Previous Page'
-    next: 'Next Page &rsaquo;'
-    end: 'End &raquo;'
+    start: '« Start'
+    prev: '‹ Previous Page'
+    next: 'Next Page ›'
+    end: 'End »'
 #END

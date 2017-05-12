@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / Captcha :: v.3.1.2 r.2017.04.11 / smart.framework.v.3.1 -- */
+/* -- CSS Start :: SmartFramework / Captcha :: v.3.5.1 r.2017.05.12 / smart.framework.v.3.5 -- */
 
 /* ----------------------------- */
 
@@ -32,6 +32,7 @@ div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Img {
 	display: inline-block;
 	vertical-align: top;
 	cursor: pointer;
+	margin-right: 10px !important;
 }
 
 div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Input {
@@ -50,6 +51,15 @@ div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Input span 
 div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Input input {
 	color: #333333 !important;
 	text-align: center;
+}
+
+@media all and (max-width:767px) {
+	div#Smart-Captcha-Area {
+		width: 98% !important;
+	}
+	div#Smart-Captcha-Area div#Smart-Captcha-Container {
+		text-align: center !important;
+	}
 }
 
 /* ----------------------------- */

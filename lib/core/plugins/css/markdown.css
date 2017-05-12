@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / Plugins / Markdown :: v.3.1.2 r.2017.04.11 / smart.framework.v.3.1 -- */
+/* -- CSS Start :: SmartFramework / Plugins / Markdown :: v.3.5.1 r.2017.05.12 / smart.framework.v.3.5 -- */
 
 /* ----------------------------- */
 
@@ -31,10 +31,12 @@
 #markdown table {
 	width: 100%;
 	margin-bottom: 20px;
-	border-spacing: 1px;
+	border-spacing: 0px;
+	border-collapse: collapse;
 	table-layout: fixed;
 	border: 0;
 }
+
 #markdown table th {
 	padding: 2px;
 	font-size: 15px;
@@ -47,6 +49,7 @@
 #markdown table th.stripped {
 	background: #F9FCF7;
 }
+
 #markdown table > tbody > tr > td {
 	padding: 1px;
 	font-size: 13px;
@@ -60,26 +63,37 @@
 #markdown table > tbody > tr:hover > td.stripped {
 	background: #F9FCF7;
 }
-/* -- */
+
+#markdown table tr.bordered, #markdown table th.bordered, #markdown table td.bordered {
+	border: 1px solid #ECECEC;
+}
+
+#markdown table tr.dbordered, #markdown table th.dbordered, #markdown table td.dbordered {
+	border: 1px dashed #ECECEC;
+}
+
+#markdown table tr.pbordered, #markdown table th.pbordered, #markdown table td.pbordered {
+	border: 1px dotted #ECECEC;
+}
 
 /* Quote, BlockQuote */
 #markdown blockquote {
-  background: #F9F9F9;
-  border-left: 10px solid #CCCCCC;
-  margin: 1.5em 10px;
-  padding: 0.5em 10px;
-  quotes: "\201C""\201D""\2018""\2019";
+	background: #F9F9F9;
+	border-left: 10px solid #CCCCCC;
+	margin: 1.5em 10px;
+	padding: 0.5em 10px;
+	quotes: "\201C""\201D""\2018""\2019";
 }
 #markdown blockquote:before {
-  color: #CCCCCC;
-  content: open-quote;
-  font-size: 4em;
-  line-height: 0.1em;
-  margin-right: 0.25em;
-  vertical-align: -0.4em;
+	color: #CCCCCC;
+	content: open-quote;
+	font-size: 4em;
+	line-height: 0.1em;
+	margin-right: 0.25em;
+	vertical-align: -0.4em;
 }
 #markdown blockquote p {
-  display: inline;
+	display: inline;
 }
 /* -- */
 

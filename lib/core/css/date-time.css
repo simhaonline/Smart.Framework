@@ -1,0 +1,27 @@
+
+/* -- CSS Start :: SmartFramework / Date-Time :: v.3.5.1 r.2017.05.12 / smart.framework.v.3.5 -- */
+
+/* ----------------------------- */
+
+
+input.datetime_Field_DatePicker {
+	text-align: left !important;
+	padding-left: 27px !important;
+	padding-right: 5px !important;
+	min-width: 105px !important;
+	background: url("../../js/jquery/datepicker/css/images/calendar.png") no-repeat 5px 50%;
+}
+
+input.datetime_Field_TimePicker {
+	text-align: left !important;
+	padding-left: 25px !important;
+	padding-right: 5px !important;
+	min-width: 70px!important;
+	background: url("../../js/jquery/timepicker/css/images/timepicker.png") no-repeat 3px 50%;
+}
+
+/* -- */
+
+/* ----------------------------- */
+
+/* -- CSS End -- */

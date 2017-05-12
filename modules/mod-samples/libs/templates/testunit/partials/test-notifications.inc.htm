@@ -1,14 +1,49 @@
-			<!-- Partial Template: TestUnit.Partials.Notifications -->
-			<table width="96%">
-				<tr>
-				<td width="33%"><div id="operation_info">This is an Info</div></td>
-				<td width="33%"><div id="operation_notice">This is a Notice</div></td>
-				<td width="33%"><div id="operation_question">This is a Question</div></td>
-				</tr>
-				<tr>
-				<td><div id="operation_warn">This is a Warning</div></td>
-				<td><div id="operation_error">This is an Error</div></td>
-				<td></td>
-				</tr>
-			</table>
-			<!-- #END# Partial Template: TestUnit.Partials.Notifications -->
+<!-- Partial Template: TestUnit.Partials.Notifications -->
+
+	<style type="text/css">
+	#notifications_FluidTable {
+		width: 100%;
+	}
+	#notifications_FluidTable div.ux-fluid-tbl-cell {
+		padding: 3px;
+	}
+	@media all and (max-width:767px) {
+		#notifications_FluidTable {
+			width: 100% !important;
+		}
+		#notifications_FluidTable div.ux-fluid-tbl-row {
+			display: block !important;
+		}
+		#notifications_FluidTable div.ux-fluid-tbl-cell {
+			display: inline-block !important;
+			width: 100% !important;
+		}
+	}
+	</style>
+	<div id="notifications_FluidTable" class="ux-fluid-table">
+		<div class="ux-fluid-tbl-row">
+			<div class="ux-fluid-tbl-cell">
+				<h2>Notifications:</h2>
+			</div>
+			<div class="ux-fluid-tbl-cell">
+				<div id="operation_info">This is an Info</div>
+			</div>
+		</div>
+		<div class="ux-fluid-tbl-row">
+			<div class="ux-fluid-tbl-cell">
+				<div id="operation_notice">This is a Notice</div>
+			</div>
+			<div class="ux-fluid-tbl-cell">
+				<div id="operation_question">This is a Question</div>
+			</div>
+		</div>
+		<div class="ux-fluid-tbl-row">
+			<div class="ux-fluid-tbl-cell">
+				<div id="operation_warn">This is a Warning</div>
+			</div>
+			<div class="ux-fluid-tbl-cell">
+				<div id="operation_error">This is an Error</div>
+			</div>
+		</div>
+	</div>
+<!-- #END# Partial Template: TestUnit.Partials.Notifications -->

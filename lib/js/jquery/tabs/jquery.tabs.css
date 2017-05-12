@@ -27,6 +27,7 @@ ul.simple_tabs_head li {
 ul.simple_tabs_head li a.simple_tabs_inactive {
 	font-weight: bold;
 	text-decoration: none !important;
+	margin-top: 5px;
 	margin-right: 2px;
 	padding: 5px 10px;
 	display: inline-block;

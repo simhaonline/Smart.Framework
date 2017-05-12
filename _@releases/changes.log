@@ -1,7 +1,8 @@
 
 # CHANGELOG / MIGRATION NOTES - SMART.FRAMEWORK #
 
-Apr 19, 2017 ::
+May 12, 2017 :: Version 3.5.1
+	* a complete new refactoring of UX Toolkit and some UI / JS Components
 	* moved jQueryUI as separate module in Smart.Framework.modules
 	* moved MediaGallery in Smart.Framework.modules -> smart-extra-libs
 

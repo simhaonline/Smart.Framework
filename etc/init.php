@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [SmartFramework / INIT]
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -112,6 +112,7 @@ define('SMART_SOFTWARE_BACKEND_ENABLED',			true);															// To Disable Ba
 //define('SMART_SOFTWARE_SQLDB_FATAL_ERR',			false);															// If defined / set to false will use exceptions that can be catched instead of fatal errors on all SQL DB servers such as PostgreSQL / SQLite ... ; disabling fatal errors on SQL servers will also disable transactions as any SQL error will just break any existing transaction and the results are unpredictable (DO NOT use this parameter unless you know what you are doing !!!)
 //define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status
 //define('SMART_SOFTWARE_MKTPL_PCACHETIME',			86400);															// If set to a positive integer (>=0) will cache the marker template files to (memory) persistent cache to avoid repetitive reads to the FileSystem (on some systems this can boost the speed ...)
+//define('SMART_SOFTWARE_MKTPL_DEBUG_LEN', 			65535);															// If set will use this TPL Debug Length (255..524280) ; If not set will use default: 512
 //---------------------------------------- CHARSET AND REGIONAL SETTINGS [ NEVER CHANGE THESE MUST BE UNICODE UTF-8 ; CHANGING IT YOU CAN BREAK THE UNICODE SUPPORT ]
 define('SMART_FRAMEWORK_CHARSET', 					'UTF-8');														// This must be `UTF-8` 	:: Default Character Set for PHP
 define('SMART_FRAMEWORK_DBSQL_CHARSET', 			'UTF8');														// This must be `UTF8` 		:: Default Character Set for DB SQL Servers

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Smart UX CSS Toolkit :: v.3.1.2 r.2017.04.11 / smart.framework.v.3.1 -->
+<!-- Smart UX CSS Toolkit :: v.3.5.1 r.2017.05.12 / smart.framework.v.3.5 -->
 <!-- extended by unixman, (c) 2015-2017 unix-world.org :: License: BSD :: based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ -->
 <html>
 <head>
@@ -27,7 +27,9 @@
 </head>
 <body>
 
-	<h1>UX Toolkit</h1>
+<div style="width:100% !important; padding-left:10px; padding-top:2px; padding-right:10px; box-sizing: border-box !important; -moz-box-sizing: border-box !important; -webkit-box-sizing: border-box !important;">
+
+	<h1>UX Toolkit - Overview</h1>
 
 	<br>
 
@@ -105,171 +107,71 @@
 
 	<h3>Form Buttons</h3>
 	<p>
-		<button class="ux-button ux-button-regular ux-button-large"><span class="fa fa-send"></span> &nbsp; Submit (Button)</button>
-		<input type="submit" class="ux-button ux-button-primary ux-button-xsmall" value="Submit (Input)">
-		<input type="button" class="ux-button ux-button-secondary ux-button-small" value="Submit Alternate (Input)">
-		<input type="reset" class="ux-button ux-button-special ux-button-xlarge" value="Reset (Input)">
+		<button class="ux-button ux-button-primary ux-button-xlarge"><span class="fa fa-send fa-lg"></span> &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-secondary ux-button-large"><span class="fa fa-send fa-lg"></span> &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-regular"><span class="fa fa-send"></span> &nbsp; Submit (Button)</button> &nbsp;
+		<button class="ux-button ux-button-highlight ux-button-small"><span class="fa fa-send fa-sm"></span> &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-special ux-button-xsmall"><span class="fa fa-send fa-sm"></span> &nbsp; Submit Button</button> &nbsp;
+		<br>
+		<input class="ux-button ux-button-special ux-button-xlarge" type="submit" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-highlight ux-button-large" type="button" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-regular" type="reset" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-highlight ux-button-small" type="button" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-special ux-button-xsmall" type="submit" value="Submit Input"> &nbsp;
+	</p>
+
+	<br>
+
+	<h3>Font Awesome Icons</h3>
+	<p>
+		<i class="fa fa-snowflake-o"></i>
+		<i class="fa fa-snowflake-o fa-sm"></i>
 	</p>
 
 	<br>
 
 <!-- Grid -->
 
-	<h2>Fluid Responsive Layout Grid, 12 columns (with / without border)</h2>
-	<div class="ux-g-grid">
-		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-12">
-				12 columns
+	<h2>Fluid Responsive Layout Grid, 12 columns, featuring screens: v=very-small ; s=small ; m=medium ; l=large</h2>
+	<div title="Responsive Fluid Grid" class="ux-border">
+		<div class="ux-grid-row">
+			<div class="ux-grid-col s1 ux-center">1</div>
+			<div class="ux-grid-col s1 ux-center" style="background:#ECECEC;">2</div>
+			<div class="ux-grid-col s1 ux-center">3</div>
+			<div class="ux-grid-col s1 ux-center" style="background:#ECECEC;">4</div>
+			<div class="ux-grid-col s1 ux-center">5</div>
+			<div class="ux-grid-col s1 ux-center" style="background:#ECECEC;">6</div>
+			<div class="ux-grid-col s1 ux-center">7</div>
+			<div class="ux-grid-col s1 ux-center" style="background:#ECECEC;">8</div>
+			<div class="ux-grid-col s1 ux-center">9</div>
+			<div class="ux-grid-col s1 ux-center" style="background:#ECECEC;">10</div>
+			<div class="ux-grid-col s1 ux-center">11</div>
+			<div class="ux-grid-col s1 ux-center" style="background:#ECECEC;">12</div>
+		</div>
+		<div class="ux-grid-row">
+			<div class="ux-grid-col s6 m4 l3" style="color:#111111; background:#DDEEFF; height:225px;">
+				<p>This part will occupy 12 columns on a very small screen, 6 on a small, 4 on a medium screen, and 3 on a large screen.</p>
+			</div>
+			<div class="ux-grid-col s6 m8 l9" style="color:#333333; background:#FFFDD0; height:225px;">
+				<p>This part will occupy 12 columns on a very small screen, 6 on a small, 8 on a medium screen, and 9 on a large screen.</p>
+				<p>This part will occupy 12 columns on a very small screen, 6 on a small, 8 on a medium screen, and 9 on a large screen.</p>
 			</div>
 		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-6">
-				6 columns
-			</div>
-			<div class="ux-g-col-6">
-				6 columns
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-5">
-				5 columns
-			</div>
-			<div class="ux-g-col-6">
-				6 columns
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-6">
-				6 columns
-			</div>
-			<div class="ux-g-col-5">
-				5 columns
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-4">
-				4 columns
-			</div>
-			<div class="ux-g-col-4">
-				4 columns
-			</div>
-			<div class="ux-g-col-4">
-				4 columns
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-3">
-				3 columns
-			</div>
-			<div class="ux-g-col-3">
-				3 columns
-			</div>
-			<div class="ux-g-col-3">
-				3 columns
-			</div>
-			<div class="ux-g-col-3">
-				3 columns
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-2">
-				2 columns
-			</div>
-			<div class="ux-g-col-2">
-				2 columns
-			</div>
-			<div class="ux-g-col-2">
-				2 columns
-			</div>
-			<div class="ux-g-col-2">
-				2 columns
-			</div>
-			<div class="ux-g-col-2">
-				2 columns
-			</div>
-			<div class="ux-g-col-2">
-				2 columns
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-3">
-				3 columns
-			</div>
-			<div class="ux-g-col-9">
-				9 columns
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-8">
-				8 columns
-			</div>
-			<div class="ux-g-col-4">
-				4 columns
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-col-11">
-				11 columns
-			</div>
-			<div class="ux-g-col-1">
-				1 column
-			</div>
-		</div>
-		<div class="ux-g-row">
-			<div class="ux-g-border ux-g-col-2">
-				2 columns
-			</div>
-			<div class="ux-g-border ux-g-col-10">
-				10 columns
-			</div>
+		<div class="ux-grid-row">
+			<div class="ux-grid-col s1 ux-center v-hidden">1</div>
+			<div class="ux-grid-col s1 ux-center v-hidden" style="background:#ECECEC;">2</div>
+			<div class="ux-grid-col s1 ux-center v-hidden">3</div>
+			<div class="ux-grid-col s1 ux-center v-hidden" style="background:#ECECEC;">4</div>
+			<div class="ux-grid-col s1 ux-center v-hidden">5</div>
+			<div class="ux-grid-col s1 ux-center v-hidden" style="background:#ECECEC;">6</div>
+			<div class="ux-grid-col s1 ux-center v-hidden">7</div>
+			<div class="ux-grid-col s1 ux-center v-hidden" style="background:#ECECEC;">8</div>
+			<div class="ux-grid-col s1 ux-center v-hidden">9</div>
+			<div class="ux-grid-col s1 ux-center v-hidden" style="background:#ECECEC;">10</div>
+			<div class="ux-grid-col s1 ux-center v-hidden">11</div>
+			<div class="ux-grid-col s1 ux-center v-hidden" style="background:#ECECEC;">12</div>
 		</div>
 	</div>
-
-	<div style="clear:both;"><br></div>
 
 <!-- Tables -->
 
@@ -280,7 +182,7 @@
 
 	<style type="text/css">
 	#myFluidTable {
-		width: 98%;
+		width: 100%;
 	}
 	#myFluidTable div.ux-fluid-tbl-cell {
 		border: 1px solid #ECECEC;
@@ -288,12 +190,14 @@
 	}
 	@media all and (max-width: 640px) {
 		#myFluidTable {
-			width: 320px;
+			width: 100% !important;
+		}
+		#myFluidTable div.ux-fluid-tbl-row {
+			display: block !important;
 		}
 		#myFluidTable div.ux-fluid-tbl-cell {
-			width: 100%;
-			display: block;
-			margin-bottom: 5px;
+			display: inline-block !important;
+			width: 100% !important;
 		}
 	}
 	</style>
@@ -313,7 +217,7 @@
 				Cell 2.1
 			</div>
 			<div class="ux-fluid-tbl-cell">
-				Cell 2.2
+				Cell 2.2 this_is_a_very_long_word_to_display_in_the_table_cell_to_test_the_overflow
 			</div>
 		</div>
 	</div>
@@ -321,7 +225,7 @@
 
 	<style type="text/css">
 	#myFluid2Table {
-		width: 75%;
+		width: 75% !important;
 	}
 	#myFluid2Table div.ux-fluid-tbl-cell {
 		border: 1px solid #CCCCCC;
@@ -329,7 +233,11 @@
 	}
 	@media all and (max-width: 480px) {
 		#myFluid2Table {
-			width: 50%;
+			width: 75% !important;
+		}
+		#myFluid2Table div.ux-fluid-tbl-row {
+			display: display: block !important;
+			width: 100% !important;
 		}
 		#myFluid2Table div.ux-fluid-tbl-cell {
 			width: 100%;
@@ -1188,6 +1096,8 @@
 
 <br>
 <br>
+
+</div>
 
 </body>
 </html>

@@ -2,8 +2,8 @@
 TRANSLATIONS:
   @language: RO
   @area: mod-samples
-  @version: 2016-02-13
+  @version: 2017-05-03
   samples:
     hello-world: 'Hello World'
-    this-is-smart-framework: 'acest framework este Smart.Framework'
+    this-is: 'acest framework este'
 #END

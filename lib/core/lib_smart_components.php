@@ -1,14 +1,14 @@
 <?php
 // [LIB - SmartFramework / Smart Components]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -30,6 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // REQUIRED CSS:
 //	* notifications.css
 //	* navpager.css
+//	* date-time.css
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -45,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170430
+ * @version 	v.170511
  * @package 	Components:Framework
  *
  */
@@ -1816,6 +1817,88 @@ public static function html_js_limited_text_area($y_field_id, $y_var_name, $y_va
 			'PLACEHOLDER-HTML' 	=> (string) $placeholder
 		],
 		'yes' // export to cache
+	);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Return the HTML / CSS / Javascript code to Load the required Javascripts for the Highlight.Js
+ * Should be called just once per page
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param STRING 	$dom_selector		The HTML-DOM Selector as container(s) for Pre>Code (see jQuery ...)
+ *
+ * @return STRING						[HTML Code]
+ */
+public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], $theme='github') {
+	//--
+	$theme = (string) strtolower((string)$theme);
+	switch((string)$theme) {
+		case 'arta':
+		case 'atom-one-light':
+		case 'codepen-embed':
+		case 'dracula':
+		case 'github-gist':
+		case 'github':
+		case 'googlecode':
+		case 'grayscale':
+		case 'mono-blue':
+		case 'monokai-sublime':
+		case 'ocean':
+		case 'rainbow':
+		case 'solarized-dark':
+		case 'sunburst':
+		case 'tomorrow-night-blue':
+		case 'tomorrow':
+		case 'xcode':
+		case 'zenburn':
+			$theme = (string) $theme;
+			break;
+		case 'default':
+		default:
+			$theme = 'default';
+	} //end switch
+	//--
+	$arr_packs = [
+		'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, xml, yaml',
+		'tpl'  => 'tex, twig',
+		'lnx'  => 'awk, bash, perl, shell',
+		'srv'  => 'accesslog, apache, dns, nginx, pf',
+		'net'  => 'csp, http, ldif, protobuf',
+		'lang' => 'basic, cmake, coffeescript, cpp, cs, delphi, erlang, fortran, fsharp, go, haskell, java, lua, makefile, objectivec, ocaml, openscad, python, r, ruby, swift, tcl, vala',
+		'ms'   => 'dos, powershell, typescript, vbnet, vbscript',
+		'hw'   => 'armasm, llvm, mipsasm, vhdl, x86asm'
+	];
+	//--
+	$arr_stx_plugs = [];
+	foreach($arr_packs as $key => $val) {
+		$key = (string) strtolower((string)trim((string)$key));
+		if(in_array((string)$key, (array)$plugins)) {
+			if((string)$key != '') {
+				$tmp_arr = (array) explode(',', (string)$val);
+				for($i=0; $i<Smart::array_size($tmp_arr); $i++) {
+					$tmp_arr[$i] = (string) trim((string)$tmp_arr[$i]);
+					if((string)$tmp_arr[$i] != '') {
+						$arr_stx_plugs[] = (string) $key.'/'.strtolower((string)$tmp_arr[$i]);
+					} //end if
+				} //end if
+				$tmp_arr = [];
+			} //end if
+		} //end if
+	} //end foreach
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/syntax-highlight.inc.htm',
+		[
+			'CSS-THEME' 		=> (string) $theme,
+			'AREAS-SELECTOR' 	=> (string) $dom_selector,
+			'SYNTAX-PLUGINS' 	=> (array)  $arr_stx_plugs
+		]
 	);
 	//--
 } //END FUNCTION

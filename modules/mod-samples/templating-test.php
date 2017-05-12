@@ -3,7 +3,7 @@
 // Controller: Samples/TemplatingTest
 // Route: ?/page/samples.templating-test (?page=samples.templating-test)
 // Author: unix-world.org
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -31,23 +31,34 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
-		/* Uncomment this to see a Marker Template Analysis (DEBUG ONLY !!! Never use this in real production environments, it is intended for Development Only)
-		die(
-		SmartMarkersTemplating::analyze_debug_file_template(
-				$this->ControllerGetParam('module-path').'views/templating-test.htm'
-			));
-		return;
-		*/
+		$op = $this->RequestVarGet('op', '', 'string');
 		//--
 
 		//--
-		$title = 'Extended Markers Template Test';
+		$tpl = (string) $this->ControllerGetParam('module-path').'views/templating-test.inc.htm';
+		//--
+
+		//-- Uncomment the following line to see a Marker Template Analysis (DEBUG ONLY !!! Never use this in real production environments, it is intended for Development Only)
+		//$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('div#tpl-display-for-highlight').SmartMarkersTemplating::analyze_debug_file_template($tpl)); return;
+		//--
+
+		//--
+		if((string)$op == 'viewsource') {
+			//--
+			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('div').'<h1>Marker Template (TPL Source)</h1><hr><pre style="background:#FAFAFA;"><code class="html">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::staticread((string)$tpl))).'</code></pre><hr><br>');
+			return;
+			//--
+		} //end if
+		//--
+
+		//--
+		$title = 'TPL Test: Markers Templating Render - Extended Syntax';
 		//--
 		$test_switch_arr = ['a', 'b', 'c', 'd'];
 		$this->PageViewSetVars([
 			'title' => $title,
 			'main' => SmartMarkersTemplating::render_file_template(
-					$this->ControllerGetParam('module-path').'views/templating-test.inc.htm', // the view
+					(string) $tpl, // the TPL view
 					[
 						'TITLE' => $title,
 						'VIEWS-PATH' => (string) $this->ControllerGetParam('module-view-path'),

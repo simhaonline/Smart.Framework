@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / Base]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170430
+ * @version     v.170530
  * @package     Base
  *
  */
@@ -575,12 +575,11 @@ public static function escape_js($str) {
  * @param 	BOOLEAN 	$prettyprint		:: *Optional* Default to FALSE ; If TRUE will format the json as pretty-print (takes much more space, but sometimes make sense ...)
  * @param 	BOOLEAN 	$unescaped_unicode 	:: *Optional* Default to TRUE ; If FALSE will escape unicode characters
  * @param 	BOOLEAN 	$htmlsafe 			:: *Optional* Default to TRUE ; If FALSE the JSON will not be HTML-Safe as it will not escape: < > ' " &
- * @param 	INTEGER 	$depth 				:: *Optional* Default to 512 ; The maximum recursion depth
  *
  * @return 	STRING							:: The JSON encoded string
  */
-public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true, $htmlsafe=true, $depth=512) {
-	// encode json v.170430
+public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true, $htmlsafe=true) {
+	// encode json v.170503
 	$options = 0;
 	if(!$unescaped_unicode) {
 		if($prettyprint) {
@@ -612,7 +611,7 @@ public static function json_encode($data, $prettyprint=false, $unescaped_unicode
 		} //end if else
 	} //end if else
 	//--
-	$json = @json_encode($data, $options, $depth);
+	$json = (string) @json_encode($data, $options); // Fix: must return a string ; mixed data ; depth was added in PHP 5.5 only !
 	if((string)$json == '') { // fix if json encode returns FALSE
 		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($data,1));
 		$json = 'null';
@@ -630,13 +629,12 @@ public static function json_encode($data, $prettyprint=false, $unescaped_unicode
  *
  * @param 	STRING 		$json			:: The JSON string
  * @param 	BOOLEAN		$return_array	:: *Optional* Default to FALSE ; When TRUE, returned objects will be converted into associative arrays (default to TRUE)
- * @param	INTEGER 	$depth			:: *Optional* Default to 512 ; The maximum recursion depth
  *
  * @return 	MIXED						:: The PHP native Variable: NULL ; INT ; NUMERIC ; STRING ; ARRAY
  */
-public static function json_decode($json, $return_array=true, $depth=512) {
-	//-- decode json v.170429
-	return @json_decode((string)$json, $return_array, $depth, JSON_BIGINT_AS_STRING);
+public static function json_decode($json, $return_array=true) {
+	//-- decode json v.170503
+	return @json_decode((string)$json, (bool)$return_array, 512, JSON_BIGINT_AS_STRING); // as json decode depth is added just in PHP 5.5 use the default depth = 512 by now ...
 	//--
 } //END FUNCTION
 //================================================================
@@ -652,8 +650,8 @@ public static function json_decode($json, $return_array=true, $depth=512) {
  * @return 	STRING						:: The JSON encoded string
  */
 public static function seryalize($data) {
-	//-- seryalize json v.170430
-	return (string) self::json_encode($data, false, false, false, 512); // no pretty print, escaped unicode is safer for Redis, no html safe, depth 512
+	//-- seryalize json v.170503
+	return (string) self::json_encode($data, false, false, false); // no pretty print, escaped unicode is safer for Redis, no html safe, depth 512
 	//--
 } //END FUNCTION
 //================================================================
@@ -669,8 +667,8 @@ public static function seryalize($data) {
  * @return 	MIXED						:: The PHP native Variable
  */
 public static function unseryalize($y_json) {
-	//-- unseryalize json v.170430
-	return self::json_decode((string)$y_json, true, 512);
+	//-- unseryalize json v.170503
+	return self::json_decode((string)$y_json, true);
 	//--
 } //END FUNCTION
 //================================================================

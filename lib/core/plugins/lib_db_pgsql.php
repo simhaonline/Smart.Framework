@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / PostgreSQL Database Client]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.1.2 r.2017.04.11 / smart.framework.v.3.1
+// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.1')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -490,13 +490,12 @@ private static function escape_arr_params($arr_params) {
  * This should be used with PostgreSQL json / jsonb fields.
  *
  * @param STRING $y_mixed_content				:: A mixed variable
- * @param 	INTEGER 	$depth 					:: *Optional* Default to 512 ; The maximum recursion depth
  * @return STRING 								:: JSON string
  *
  */
-public static function json_encode($y_mixed_content, $depth=512) {
+public static function json_encode($y_mixed_content) {
 	//--
-	$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE, $depth); // Fix: must return a string
+	$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); // Fix: must return a string ; depth was added in PHP 5.5 only !
 	if((string)$json == '') {
 		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($y_mixed_content,1));
 		$json = '{}'; // FIX: in PostgreSQL JSON/JSON-B fields cannot be empty !!!
@@ -2390,13 +2389,12 @@ public function escape_identifier($y_identifier) {
  * This should be used with PostgreSQL json / jsonb fields.
  *
  * @param STRING $y_mixed_content				:: A mixed variable
- * @param INTEGER $depth 						:: *Optional* Default to 512 ; The maximum recursion depth
  * @return STRING 								:: JSON string
  *
  */
-public function json_encode($y_mixed_content, $depth=512) {
+public function json_encode($y_mixed_content) {
 	//--
-	return SmartPgsqlDb::json_encode($y_mixed_content, $depth);
+	return SmartPgsqlDb::json_encode($y_mixed_content);
 	//--
 } //END FUNCTION
 
