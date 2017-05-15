@@ -1,16 +1,23 @@
 <!-- Partial Template: Core.UIPickerTime -->
 <span id="time-area-[####THE-ID|jsvar|html####]" title="[####TEXT-SELECT|html####] [HH:ii]">
-<input type="text" name="[####THE-VAR|html####]" id="[####THE-ID|jsvar|html####]" maxlength="5" value="[####THE-VALUE|html####]" readonly="readonly" ondblclick="jQuery(this).val('');" onclick="setTimeout(function(){ SmartJS_BrowserUIUtils.Time_Picker_Display('[####THE-ID|jsvar|js####]'); }, 200);" class="ux-field datetime_Field_TimePicker" style="[####STYLE-SIZE|html####]">
+<input type="text" name="[####THE-VAR|html####]" id="[####THE-ID|jsvar|html####]" maxlength="5" value="[####THE-VALUE|html####]" readonly="readonly" class="ux-field datetime_Field_TimePicker" style="[####STYLE-SIZE|html####]">
 </span>
 <script type="text/javascript">
 if(typeof SmartJS_BrowserUIUtils != 'undefined') {
 	(function() {
 		try {
 			SmartJS_BrowserUIUtils.Time_Picker_Init('[####THE-ID|jsvar|js####]', [####H-START|int####], [####H-END|int####], [####MIN-START|int####], [####MIN-END|int####], [####MIN-INTERVAL|int####], [####DISPLAY-ROWS|int####], '[####EVAL-JS|js####]');
+			jQuery('#[####THE-ID|jsvar|js####]').on('click', function(e){
+				setTimeout(function(){ SmartJS_BrowserUIUtils.Time_Picker_Display('[####THE-ID|jsvar|js####]'); }, 200);
+			}).on('dblclick doubletap', function(e){
+				jQuery(this).val('');
+			});
 		} catch(err) {
 			console.log('UI TimePicker ERR: ' + err);
 		}
 	})();
+} else {
+	console.log('UI:Js:TimePicker: No TimePicker widget is available ...');
 }
 </script>
 <!-- #END :: Partial Template: Core.UIPickerTime -->
