@@ -85,26 +85,26 @@ public function __construct($y_font_size='9pt') {
 			</style:style>
 			<style:style style:name="he1" style:family="table-cell" style:use-optimal-column-width="true" style:parent-style-name="Default">
 				<style:table-cell-properties fo:background-color="#AECF00"/>
-				<style:text-properties style:font-name="Tahoma" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
+				<style:text-properties style:font-name="Arial" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
 			</style:style>
 			<style:style style:name="he2" style:family="table-cell" style:use-optimal-column-width="true" style:parent-style-name="Default">
 				<style:table-cell-properties fo:background-color="#FFFFCC"/>
-				<style:text-properties style:font-name="Tahoma" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
+				<style:text-properties style:font-name="Arial" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
 			</style:style>
 			<style:style style:name="he3" style:family="table-cell" style:use-optimal-column-width="true" style:parent-style-name="Default">
 				<style:table-cell-properties fo:background-color="#FF9900"/>
-				<style:text-properties style:font-name="Tahoma" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
+				<style:text-properties style:font-name="Arial" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
 			</style:style>
 			<style:style style:name="ce1" style:family="table-cell" style:use-optimal-column-width="true" style:parent-style-name="Default">
 				<style:table-cell-properties fo:background-color="#ECEAFF"/>
-				<style:text-properties style:font-name="Tahoma" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
+				<style:text-properties style:font-name="Arial" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
 			</style:style>
 			<style:style style:name="ce2" style:family="table-cell" style:use-optimal-column-width="true" style:parent-style-name="Default">
-				<style:text-properties style:font-name="Tahoma" fo:font-size="'.$this->font_size.'" style:font-size-asian="'.$this->font_size.'" style:font-size-complex="'.$this->font_size.'"/>
+				<style:text-properties style:font-name="Arial" fo:font-size="'.$this->font_size.'" style:font-size-asian="'.$this->font_size.'" style:font-size-complex="'.$this->font_size.'"/>
 			</style:style>
 			<style:style style:name="ce3" style:family="table-cell" style:use-optimal-column-width="true" style:parent-style-name="Default">
 				<style:table-cell-properties fo:background-color="#ECECEC"/>
-				<style:text-properties style:font-name="Tahoma" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
+				<style:text-properties style:font-name="Arial" fo:font-size="'.$this->font_size.'" fo:font-weight="bold" style:font-size-asian="'.$this->font_size.'" style:font-weight-asian="bold" style:font-size-complex="'.$this->font_size.'" style:font-weight-complex="bold"/>
 			</style:style>
 		</office:automatic-styles>
 	';

@@ -136,7 +136,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 		if(!headers_sent()) {
 			@http_response_code(500); // try, if not headers send
 		} //end if
-		die('<!-- Smart Error Reporting / Smart Error Handler --><div align="center"><div style="width:548px; border: 1px solid #CCCCCC; margin-top:10px; margin-bottom:10px;"><table align="center" cellpadding="4" style="max-width:540px;"><tr valign="top"><td width="32"><img src="lib/framework/img/sign_error.png" alt="[!]" title="[!]"></td><td>&nbsp;</td><td><b>'.'Application Runtime Error @ '.SMART_ERROR_AREA.' [#'.$errno.']:<br>'.'</b><i>'.nl2br(htmlspecialchars((string)$message, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, 'ISO-8859-1'),false).'</i></td></tr></table></div><br><div style="width:550px; color:#778899; text-align:justify;"></div>'.$smart_____framework_____last__error.'</div>');
+		die('<!-- Smart Error Reporting / Smart Error Handler --><div align="center"><div style="width:548px; border: 1px solid #CCCCCC; margin-top:10px; margin-bottom:10px;"><table align="center" cellpadding="4" style="max-width:540px;"><tr valign="top"><td width="32"><img src="lib/framework/img/sign-crit-error.svg" alt="[!]" title="[!]"></td><td>&nbsp;</td><td><b>'.'Application Runtime Error @ '.SMART_ERROR_AREA.' [#'.$errno.']:<br>'.'</b><i>'.nl2br(htmlspecialchars((string)$message, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, 'ISO-8859-1'),false).'</i></td></tr></table></div><br><div style="width:550px; color:#778899; text-align:justify;"></div>'.$smart_____framework_____last__error.'</div>');
 		//--
 	} //end if else
 	//--
@@ -182,8 +182,8 @@ if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MOD
 	ini_set('log_errors_max_len', 2048); // max size of one error to log 2k (in production environments this is costly)
 } else { // dev
 	ini_set('ignore_repeated_errors', '0'); // do not ignore repeated errors
-	ini_set('error_prepend_string', '<style type="text/css">* { font-family: verdana,tahoma,arial,sans-serif; font-smooth: always; }</style> &nbsp; <font size="7" color="#4E5A92"><b>Code Execution ERROR <img src="lib/framework/img/sign_error.png"> PHP '.PHP_VERSION.'</b></font><div><hr size="1"><pre>');
-	ini_set('error_append_string', '</pre></div><br><div>'.'<small>'.date('Y-m-d H:i:s O').'</small>'.'<hr size="1"></div><span title="Powered by Smart.Framework"><img src="lib/framework/img/powered_by_smart_framework.png"></span><span title="PHP Version: '.PHP_VERSION.'"><img src="lib/framework/img/php_logo_small_trans.png" align="right"></span>');
+	ini_set('error_prepend_string', '<style type="text/css">* { font-family: arial,sans-serif; font-smooth: always; }</style> &nbsp; <font size="7" color="#4E5A92"><b>Code Execution ERROR <img src="lib/framework/img/sign-crit-error.svg"> PHP '.PHP_VERSION.' <img width="48" align="right" src="lib/framework/img/php-logo.svg"></b></font><div><hr size="1"><pre>');
+	ini_set('error_append_string', '</pre></div><br><div>'.'<small>'.date('Y-m-d H:i:s O').'</small>'.'<hr size="1"></div><span title="Powered by Smart.Framework"><img src="lib/framework/img/powered_by_smart_framework.png"></span><span title="PHP Version: '.PHP_VERSION.'"><img src="lib/framework/img/powered_by_php.png" align="right"></span>');
 	ini_set('log_errors_max_len', 16384); // max size of one error to log 16k
 } //end if else
 ini_set('html_errors', '0'); // display errors in TEXT format

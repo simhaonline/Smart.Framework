@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170511
+ * @version 	v.170513
  * @package 	Components:Framework
  *
  */
@@ -245,12 +245,13 @@ public static function app_error_message($y_title, $y_name, $y_mode, $y_type, $y
 public static function http_status_message($y_title, $y_message) {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/http-message-status.inc.htm',
+		'lib/core/templates/http-message-status.htm',
 		[
-			'CHARSET' => SmartUtils::get_encoding_charset(),
-			'TITLE' => Smart::escape_html($y_title),
-			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
-			'MESSAGE' => $y_message
+			'CHARSET' 			=> SmartUtils::get_encoding_charset(),
+			'BASE-URL' 			=> SmartUtils::get_server_current_url(),
+			'TITLE' 			=> (string) $y_title,
+			'SIGNATURE-HTML' 	=> '<b>Smart.Framework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
+			'MESSAGE-HTML' 		=> (string) $y_message
 		],
 		'no'
 	);
@@ -270,13 +271,14 @@ public static function http_status_message($y_title, $y_message) {
 public static function http_error_message($y_title, $y_message, $y_extra_message='') {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/http-message-error.inc.htm',
+		'lib/core/templates/http-message-error.htm',
 		[
-			'CHARSET' => SmartUtils::get_encoding_charset(),
-			'TITLE' => Smart::escape_html($y_title),
-			'SIGNATURE' => '<b>SmartFramework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
-			'MESSAGE' => self::operation_error($y_message, '100%'),
-			'EXTMSG' => $y_extra_message
+			'CHARSET' 			=> SmartUtils::get_encoding_charset(),
+			'BASE-URL' 			=> SmartUtils::get_server_current_url(),
+			'TITLE' 			=>(string) $y_title,
+			'SIGNATURE-HTML' 	=> '<b>Smart.Framework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
+			'MESSAGE-HTML' 		=> self::operation_error($y_message, '100%'),
+			'EXTMSG-HTML' 		=> (string) $y_extra_message
 		],
 		'no'
 	);
@@ -1866,7 +1868,7 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 	//--
 	$arr_packs = [
 		'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, xml, yaml',
-		'tpl'  => 'tex, twig',
+		'tpl'  => 'markertpl, tex, twig',
 		'lnx'  => 'awk, bash, perl, shell',
 		'srv'  => 'accesslog, apache, dns, nginx, pf',
 		'net'  => 'csp, http, ldif, protobuf',
@@ -2520,7 +2522,7 @@ public static function html_js_htmlarea($yid, $yvarname, $yvalue='', $ywidth='72
 public static function html_js_htmlarea_fm_callback($yurl, $is_popup=false) {
 	//--
 	return (string) str_replace(array("\r\n", "\r", "\n", "\t"), array(' ', ' ', ' ', ' '), (string)SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/html-editor-fm-callback.inc.htm',
+		'lib/core/templates/html-editor-fm-callback.inc.js',
 		[
 			'IS_POPUP' 	=> (bool)   $is_popup,
 			'URL' 		=> (string) $yurl
@@ -2573,10 +2575,11 @@ public static function app_powered_info($y_show_versions, $y_software_name='', $
 	if(trim(strtolower($name_webserver)) == 'apache') {
 		$name_webserver = 'Apache';
 		$icon_webserver_powered = 'lib/framework/img/powered_by_apache.png';
-		$icon_webserver_logo = 'lib/framework/img/apache_logo_small_trans.png';
+		$icon_webserver_logo = 'lib/framework/img/apache-logo.svg';
 	} else {
+		$name_webserver = 'Nginx / '.$name_webserver;
 		$icon_webserver_powered = 'lib/framework/img/powered_by_nginx.png';
-		$icon_webserver_logo = 'lib/framework/img/nginx_logo_small_trans.png';
+		$icon_webserver_logo = 'lib/framework/img/nginx-logo.svg';
 	} //end if else
 	//--
 	$version_dbserver = '';
@@ -2586,7 +2589,7 @@ public static function app_powered_info($y_show_versions, $y_software_name='', $
 		} //end if
 		$name_dbserver = 'PostgreSQL';
 		$icon_dbserver_powered = 'lib/core/img/db/powered_by_postgresql.png';
-		$icon_dbserver_logo = 'lib/core/img/db/postgresql_logo_small_trans.png';
+		$icon_dbserver_logo = 'lib/core/img/db/postgresql-logo.svg';
 	} else {
 		$name_dbserver = '';
 		$icon_dbserver_powered = '';
@@ -2596,22 +2599,31 @@ public static function app_powered_info($y_show_versions, $y_software_name='', $
 	if(is_array($configs['redis'])) {
 		$name_cacheserver = 'Redis';
 		$icon_cacheserver_powered = 'lib/core/img/db/powered_by_redis.png';
-		$icon_cacheserver_logo = 'lib/core/img/db/redis_logo_small_trans.png';
+		$icon_cacheserver_logo = 'lib/core/img/db/redis-logo.svg';
 	} else {
 		$name_cacheserver = '';
 		$icon_cacheserver_powered = '';
 		$icon_cacheserver_logo = '';
 	} //end if
 	//--
-	$name_db_embedded = 'SQLite';
-	$icon_db_embedded_powered = 'lib/core/img/db/powered_by_sqlite.png';
-	$icon_db_embedded_logo = 'lib/core/img/db/sqlite_logo_small.png';
+	if(is_array($configs['sqlite'])) {
+		$show_last_entry = 'sqlite';
+		$name_db_embedded = 'SQLite Embedded Database';
+		$icon_db_embedded_powered = 'lib/core/img/db/powered_by_sqlite.png';
+		$icon_db_embedded_logo = 'lib/core/img/db/sqlite-logo.svg';
+	} else {
+		$show_last_entry = 'firefox';
+		$name_db_embedded = 'Firefox - The Open-Source Web Browser';
+		$icon_db_embedded_powered = 'lib/framework/img/powered_optimized_firefox.png';
+		$icon_db_embedded_logo = 'lib/core/img/browser/fox.svg';
+	} //end if else
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/app-powered-info.inc.htm',
 		[
 			'OS-LOGO-IMG' 					=> (string) $os_pict,
 			'OS-LOGO-DESC' 					=> (string) $os_desc,
+			'WEB-SERVER-NAME' 				=> (string) $name_webserver,
 			'WEB-SERVER-POWERED-VERSION' 	=> (string) $name_webserver.$version_webserver,
 			'WEB-SERVER-POWERED-ICON' 		=> (string) $icon_webserver_powered,
 			'WEB-SERVER-VERSION' 			=> (string) $name_webserver.' Web Server',
@@ -2624,6 +2636,7 @@ public static function app_powered_info($y_show_versions, $y_software_name='', $
 			'CACHESERVER-NAME' 				=> (string) $name_cacheserver,
 			'CACHESERVER-POWERED-ICON' 		=> (string) $icon_cacheserver_powered,
 			'CACHESERVER-POWERED-LOGO' 		=> (string) $icon_cacheserver_logo,
+			'LAST-ENTRY-TYPE' 				=> (string) $show_last_entry,
 			'DBEMBEDDED-NAME' 				=> (string) $name_db_embedded,
 			'DBEMBEDDED-POWERED-ICON' 		=> (string) $icon_db_embedded_powered,
 			'DBEMBEDDED-POWERED-LOGO' 		=> (string) $icon_db_embedded_logo,
@@ -2712,7 +2725,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 	//--
 
 	//-- render TPL
-	return (string) SmartMarkersTemplating::render_main_template(
+	return (string) SmartMarkersTemplating::render_mixed_template(
 		(string) $tpl,				// tpl string
 		(array)  $arr_data, 		// tpl vars
 		(string) $template_path, 	// tpl base path (for sub-templates, if any)
@@ -2807,7 +2820,7 @@ public static function get_imgdesc_by_bw_id($y_bw) {
 			break;
 		default:
 			$desc = '[UNKNOWN]: ('.(string)$y_bw.')';
-			$pict = 'sign_notice';
+			$pict = 'unknown';
 	} //end switch
 	//--
 	return (array) [
@@ -2980,7 +2993,7 @@ public static function get_imgdesc_by_os_id($y_os_id) {
 		case '[?]':
 		default:
 			$desc = '[UNKNOWN]: ('.$y_os_id.')';
-			$pict = 'sign_notice';
+			$pict = 'unknown';
 		//-
 	} //end switch
 	//--

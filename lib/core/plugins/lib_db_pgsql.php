@@ -2144,7 +2144,7 @@ $out = SmartComponents::app_error_message(
 	'PostgreSQL',
 	'SQL/DB',
 	'Server',
-	'lib/core/img/db/postgresql_logo.png',
+	'lib/core/img/db/postgresql-logo.svg',
 	$width, // width
 	$the_area, // area
 	$the_error_message, // err msg

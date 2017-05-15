@@ -77,8 +77,8 @@ final class TestUnitMain {
 		$one_single_select 				= \SmartComponents::html_select_list_single('test-unit-s-list-one', '', 'form', array('one' => 'One'), 'frm[one_single]', '150', '', 'no', 'no', '#JS-UI#'); // returns HTML Code
 		$one_single_with_blank_select 	= \SmartComponents::html_select_list_multi('test-unit-lst-m-1', '', 'form', array('one' => 'One'), 'frm[one_multi][]', 'list', 'no', '200', '', '#JS-UI-FILTER#'); // returns HTML Code
 		//--
-		$test_normal_list_s 			= \SmartComponents::html_select_list_single('test_normal_s', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3']);
-		$test_normal_list_m 			= \SmartComponents::html_select_list_multi('test_normal_m', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3'], '', 'list', 'no', '200/75', '', 'height:65px;');
+		$test_normal_list_s 			= \SmartComponents::html_select_list_single('test_normal_s', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3', 4 => 'Val 4', 5 => 'Val 5']);
+		$test_normal_list_m 			= \SmartComponents::html_select_list_multi('test_normal_m', '', 'form', [1 => 'Val 1', 2 => 'Val 2', 3 => 'Val 3', 4 => 'Val 4', 5 => 'Val 5'], '', 'list', 'no', '200/75', '', 'height:65px;');
 		//--
 
 		//-- misc purpose data array
@@ -152,7 +152,7 @@ final class TestUnitMain {
 					'test-unit-tab-tests.inc.htm' 			=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// dir with trailing slash
 					'test-unit-tab-interractions.inc.htm' 	=> (string) $tpl_path, 													// dir without trailing slash
 					'test-unit-tab-forms.inc.htm' 			=> '@', 																// @ (self) path, assumes the same dir
-					'%test-unit-tab-various%'				=> '@/test-unit-tab-various.inc.htm'									// variable, with full path, using self @/sub-dir/ instead of $tpl_path/test-unit-tab-misc.htm
+					'%test-unit-tab-templating%'			=> '@/test-unit-tab-templating.inc.htm'									// variable, with full path, using self @/sub-dir/ instead of $tpl_path/test-unit-tab-misc.htm
 				],
 				'TEST-UNIT-AREA' 							=> (string) $info_pfx,
 				'TESTUNIT-TPL-PATH' 						=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// this MUST be with trailing slash
@@ -274,7 +274,7 @@ final class TestUnitMain {
 				} else {
 					$redir = '';
 					$div_id = 'answer_ajax';
-					$div_htm = '<script>jQuery("#Smart-Captcha-Img img:first").attr("src", "'.\Smart::escape_js(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha&time='.time()).'");</script><table border="0" bgcolor="#DDEEFF" width="100%"><tr><td><h1>OK, form sent on: '.date('Y-m-d H:i:s').'</h1></td></tr><tr><td><div align="left"><img src="lib/core/img/q_completed.png"></div></td></tr><tr><td><hr><b>Here is the content of the text area:</b><br><pre>'.\Smart::escape_html($frm['text_area_1']).'</pre></td></tr></table>';
+					$div_htm = '<script>jQuery("#Smart-Captcha-Img img:first").attr("src", "'.\Smart::escape_js(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha&time='.time()).'");</script><table border="0" bgcolor="#DDEEFF" width="100%"><tr><td><h1>OK, form sent on: '.date('Y-m-d H:i:s').'</h1></td></tr><tr><td><div align="left"><img width="64" src="lib/framework/img/sign-ok.svg"></div></td></tr><tr><td><hr><b>Here is the content of the text area:</b><br><pre>'.\Smart::escape_html($frm['text_area_1']).'</pre></td></tr></table>';
 				} //end if else
 				//--
 				\SmartCaptchaFormCheck::clear(self::captchaFormName(), self::captchaMode()); // everything OK, so clear captcha

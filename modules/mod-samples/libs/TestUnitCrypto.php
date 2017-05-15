@@ -128,8 +128,8 @@ final class TestUnitCrypto {
 				//--
 				'DIALOG-WIDTH' 				=> '725',
 				'DIALOG-HEIGHT' 			=> '400',
-				'IMG-SIGN' 					=> 'lib/core/img/sign_info.png',
-				'IMG-CHECK' 				=> 'lib/core/img/q_completed.png',
+				'IMG-SIGN' 					=> 'lib/framework/img/sign-info.svg',
+				'IMG-CHECK' 				=> 'modules/mod-samples/libs/templates/testunit/img/test-crypto.svg',
 				'TXT-MAIN-HTML' 			=> '<span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span>',
 				'TXT-INFO-HTML' 			=> '<h2><span style="color:#333333;"><span style="color:#83B953;">All</span> the SmartFramework Unicode <span style="color:#83B953;">Tests PASSED on both PHP&nbsp;&amp;&nbsp;Javascript</span>:</span></h2>'.'<span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html("##### Unicode CRYPTO / TESTS: ##### \n * Unicode support / UTF-8 \n * JS-Escape \n * SHA512 \n * SHA1 \n * MD5 \n * Base64: Encode / Decode \n * Bin2Hex / Hex2Bin \n * LZS-Arch: Archive / Unarchive \n * Blowfish (CBC): Encrypt / Decrypt \n * Custom: Encrypt / Decrypt (** Only for PHP) \n ##### END TESTS ... #####")).'</span>',
 				'TEST-INFO' 				=> (string) 'Crypto Test Suite for SmartFramework: PHP + Javascript'

@@ -205,16 +205,15 @@ final class TestUnitPCache {
 		//--
 		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
 		//--
+		$img_check = 'lib/core/img/db/redis-logo.svg';
 		if((string)$err == '') {
-			$img_sign = 'lib/core/img/sign_info.png';
-			$img_check = 'lib/core/img/q_completed.png';
+			$img_sign = 'lib/framework/img/sign-info.svg';
 			$text_main = '<span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span>';
 			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework Persistent Cache Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
-			$img_sign = 'lib/core/img/sign_error.png';
-			$img_check = 'lib/core/img/q_warning.png';
+			$img_sign = 'lib/framework/img/sign-error.svg';
 			$text_main = '<span style="color:#FF5500;">An ERROR occured ... &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; エラーが発生しました ...</span>';
-			$text_info = '<h2><span style="color:#FF5500;">A test FAILED</span> when testing Persistent Cache Server Operations.<span style="color:#FF5500;"><hr>FAILED Test Details</span>:</h2><br><span style="font-size:14px;"><pre>'.\Smart::escape_html($err).'</pre></span>';
+			$text_info = '<h2><span style="color:#FF5500;">A test FAILED</span> when testing Persistent Cache Server Operations.<span style="color:#FF5500;"><hr>FAILED Test Details</span>:</h2><br><h5 class="inline">'.\Smart::escape_html($tests[\Smart::array_size($tests)-1]).'</h5><br><span style="font-size:14px;"><pre>'.\Smart::escape_html($err).'</pre></span>';
 		} //end if else
 		//--
 		$test_info = 'Persistent Cache Server Test Suite for SmartFramework: PHP';

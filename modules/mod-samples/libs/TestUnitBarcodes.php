@@ -39,7 +39,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'BAR Code # 128B';
 		//--
-		return \SmartBarcode1D::getBarcode($str, '128', 'html-svg', 1, 15, '#3B5897', true, 'no');
+		return \SmartBarcode1D::getBarcode($str, '128', 'html-svg', 1, 20, '#3B5897', true, 'no');
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -50,7 +50,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'BAR Code # 93E+c';
 		//--
-		return \SmartBarcode1D::getBarcode($str, '93', 'html-png', 1, 15, '#3B5897', true, 'no');
+		return \SmartBarcode1D::getBarcode($str, '93', 'html-png', 1, 20, '#3B5897', true, 'no');
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -61,7 +61,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'BAR Code # 39E';
 		//--
-		return \SmartBarcode1D::getBarcode($str, '39', 'html-svg', 1, 15, '#3B5897', true, 'no');
+		return \SmartBarcode1D::getBarcode($str, '39', 'html-svg', 1, 20, '#3B5897', true, 'no');
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -72,7 +72,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = '1231FZ13XHS';
 		//--
-		return \SmartBarcode1D::getBarcode($str, 'KIX', 'html-png', 2, 15, '#3B5897', true, 'no');
+		return \SmartBarcode1D::getBarcode($str, 'KIX', 'html-png', 2, 20, '#3B5897', true, 'no');
 		//--
 	} //END FUNCTION
 	//============================================================

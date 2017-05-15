@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.170411
+ * @version 	v.170415
  *
  */
 final class SmartDebugProfiler {
@@ -189,6 +189,34 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 
 	//--
 	return true;
+	//--
+
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+// debug file template
+public static function print_tpl_debug($y_tpl_file, $y_arr_sub_templates=[]) {
+
+	//--
+	if((string)$y_tpl_file == '') {
+		$content = '<h1>NO Marker-TPL Template Selected for Debug ...</h1>';
+	} else {
+		$content = (string) SmartComponents::js_code_highlightsyntax('div#tpl-display-for-highlight',['web','tpl']).SmartMarkersTemplating::analyze_debug_file_template((string)$y_tpl_file, $y_arr_sub_templates);
+	} //end if else
+	//--
+
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/debug-profiler-util.htm',
+		[
+			'CHARSET' 	=> Smart::escape_html(SmartUtils::get_encoding_charset()),
+			'TITLE' 	=> Smart::escape_html('Marker-TPL Template Debug Analyze Info'),
+			'MAIN' 		=> (string) $content
+		],
+		'no'
+	);
 	//--
 
 } //END FUNCTION
@@ -359,6 +387,9 @@ public static function print_debug_info($y_area, $y_debug_token) {
 //==================================================================
 
 
+//##### PRIVATES
+
+
 //==================================================================
 private static function print_log_mail($log_mail_arr) {
 	//--
@@ -479,7 +510,7 @@ private static function print_log_configs() {
 		$log .= '<b>'.Smart::escape_html((string)$key).'</b>';
 		$log .= '</div></td><td><div class="smartframework_debugbar_inforow">';
 		if(is_array($val)) {
-			$log .= '<table width="100%" cellpadding="1" cellspacing="0" border="0">';
+			$log .= '<table width="100%" cellpadding="1" cellspacing="0" border="0" style="font-size:13px;">';
 			$j=0;
 			foreach($val as $k => $v) {
 				$j++;
@@ -905,7 +936,13 @@ private static function print_log_optimizations($title, $optimizations_log) {
 						} else {
 							$color = '#555555';
 						} //end if else
+						if((string)$tmp_item['action'] == 'debug-tpl') {
+							$log .= '<a title="Click to View Marker-TPL Debug Analyze Info" href="?smartframeworkservice=debug-tpl&tpl='.Smart::escape_url(trim((string)$tmp_item['key'])).'" target="_blank" style="text-decoration-style:dotted; text-decoration-color:'.$color.';">';
+						} //end if
 						$log .= '<span style="font-size:11px; color:'.$color.';">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_line))).'</span><br>';
+						if((string)$tmp_item['action'] == 'debug-tpl') {
+							$log .= '</a>';
+						} //end if
 					} //end if
 				} //end for
 			} else {

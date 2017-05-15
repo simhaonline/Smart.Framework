@@ -1,6 +1,13 @@
 tmp
 wpub
-modules/mod-js-components
-modules/smart-extra-libs
-modules/mod-tpl-twig
+smart-extra-libs
+mod-media-gallery
+mod-biz-components
+mod-js-components
+mod-ui-fonts
+mod-ui-jqueryui
+mod-ui-uikit
+mod-ui-bootstrap
+mod-ui-icons
+mod-tpl-twig
 !.gitignore

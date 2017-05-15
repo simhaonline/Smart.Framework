@@ -8,15 +8,15 @@ v.170424
 div.simple_tabs_container {
 	text-align: left;
 	margin-top: 1px;
-	margin-bottom: 20px;
+	margin-bottom: 5px;
 }
 
 ul.simple_tabs_head {
 	margin: 0;
 	margin-bottom: -1px;
 	padding: 0;
-	padding-top: 7px;
-	padding-left: 0px;
+	padding-top: 2px;
+	padding-left: 4px;
 }
 
 ul.simple_tabs_head li {
@@ -28,7 +28,7 @@ ul.simple_tabs_head li a.simple_tabs_inactive {
 	font-weight: bold;
 	text-decoration: none !important;
 	margin-top: 5px;
-	margin-right: 2px;
+	margin-right: 1px;
 	padding: 5px 10px;
 	display: inline-block;
 	text-decoration: none;
@@ -54,9 +54,7 @@ ul.simple_tabs_head li a.simple_tabs_disabled {
 }
 
 div.simple_tabs_content {
-
 	border: 1px solid #F2F2F2;
-
 	border-top: 1px solid #F2F2F2;
 	padding-top: 10px;
 	padding-left: 15px;

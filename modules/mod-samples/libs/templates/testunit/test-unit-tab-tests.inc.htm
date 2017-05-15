@@ -13,11 +13,11 @@
 				//--
 				$('#btn_ajx_loadr_test_strings').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Unicode String Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.strings-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spokes.svg', '[####TESTUNIT_BASE_URL|js####]testunit.strings-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
 				jQuery('#btn_ajx_loadr_test_crypto').click(function() {
-					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Crypto Test Suite ...</span><br><img src="lib/core/img/busy_timer.gif">');
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Crypto Test Suite ...</span><br><img src="lib/framework/img/loading-bars.svg">');
 					SmartJS_BrowserUtils.Ajax_XHR_Request_From_URL('[####TESTUNIT_BASE_URL|js####]testunit.crypto-test&time=[####NO-CACHE-TIME####]', 'GET').done(function(msg) { // {{{JQUERY-AJAX}}}
 						$('#test_div_by_ajax').html(msg); // this will also evaluate the js scripts
 					}).fail(function(msg) {
@@ -27,17 +27,17 @@
 				//--
 				$('#btn_ajx_loadr_test_fs').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the FileSystem Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.filesys-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-cubes.svg', '[####TESTUNIT_BASE_URL|js####]testunit.filesys-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
 				jQuery('#btn_ajx_loadr_test_pgsql').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the PostgreSQL Server Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.pgsql-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-bubbles.svg', '[####TESTUNIT_BASE_URL|js####]testunit.pgsql-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
 				$('#btn_ajx_loadr_test_pcache').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Persistent Cache Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/core/img/busy_bar.gif', '[####TESTUNIT_BASE_URL|js####]testunit.pcache-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spin.svg', '[####TESTUNIT_BASE_URL|js####]testunit.pcache-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
 			});

@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.5.1');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170420
+ * @version		170513
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -97,7 +97,12 @@ public static function Run() {
 		$smartframeworkservice = (string) strtolower((string)SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getRequestVar('smartframeworkservice')));
 		switch((string)$smartframeworkservice) {
 			case 'status':
+				break;
 			case 'debug':
+			case 'debug-tpl':
+			//	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+			//		$smartframeworkservice = '';
+			//	} //end if
 				break;
 			default: // invalid value
 				$smartframeworkservice = '';
@@ -125,11 +130,11 @@ public static function Run() {
 		if(SMART_SOFTWARE_DISABLE_STATUS_POWERED === true) {
 			$status_powered_info = '';
 		} else {
-			$status_powered_info = (string) SmartComponents::powered-info.inc.htm('no');
+			$status_powered_info = (string) SmartComponents::app_powered_info('no');
 		} //end if else
 		//--
 		self::HeadersNoCache(); // headers: cache control, force no-cache
-		echo SmartComponents::http_status_message('Smart.Framework :: Status :: [OK]', '<script type="text/javascript">setTimeout(function(){ self.location = self.location; }, 60000);</script><img src="lib/core/img/busy_bar.gif"><div><h1>'.date('Y-m-d H:i:s O').' // Service Ready :: '.$the_midmark.'</h1></div>'.$status_powered_info.'<br>');
+		echo SmartComponents::http_status_message('Smart.Framework :: Status :: [OK]', '<script type="text/javascript">setTimeout(function(){ self.location = self.location; }, 60000);</script><img height="32" src="lib/framework/img/loading-bars.svg"><div><h2 style="display:inline;">'.date('Y-m-d H:i:s O').' // Service Ready :: '.$the_midmark.'</h2></div><br>'.$status_powered_info.'<br>');
 		//--
 		return; // break stop
 		//--
@@ -149,7 +154,19 @@ public static function Run() {
 			echo SmartDebugProfiler::print_debug_info('adm', $the_debug_cookie);
 		} else {
 			http_response_code(404);
-			echo SmartComponents::http_message_404_notfound('No Debug service has been activated on this server ...');
+			echo SmartComponents::http_message_404_notfound('NO DEBUG Service has been activated on this server ...');
+		} //end if
+		//--
+		return; // break stop
+		//--
+	} elseif((string)$smartframeworkservice == 'debug-tpl') {
+		//--
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			self::HeadersNoCache(); // headers: cache control, force no-cache
+			echo SmartDebugProfiler::print_tpl_debug((string)SmartFrameworkRegistry::getRequestVar('tpl'));
+		} else {
+			http_response_code(404);
+			echo SmartComponents::http_message_404_notfound('NO TPL-DEBUG Service has been activated on this server ...');
 		} //end if
 		//--
 		return; // break stop

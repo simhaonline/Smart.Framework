@@ -39,20 +39,20 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//-- Uncomment the following line to see a Marker Template Analysis (DEBUG ONLY !!! Never use this in real production environments, it is intended for Development Only)
-		//$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('div#tpl-display-for-highlight').SmartMarkersTemplating::analyze_debug_file_template($tpl)); return;
+		//if($this->IfDebug()) { echo SmartDebugProfiler::print_tpl_debug($tpl,[]); } else { echo '<h1> Torn ON Debugging to see the Template Debug Analyze Info ...'; } die();
 		//--
 
 		//--
 		if((string)$op == 'viewsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('div').'<h1>Marker Template (TPL Source)</h1><hr><pre style="background:#FAFAFA;"><code class="html">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::staticread((string)$tpl))).'</code></pre><hr><br>');
+			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('div', ['web','tpl']).'<h1>Marker-TPL Template Source</h1><hr><pre style="background:#FAFAFA;"><code class="markertpl">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::staticread((string)$tpl)),false).'</code></pre><hr><br>');
 			return;
 			//--
 		} //end if
 		//--
 
 		//--
-		$title = 'TPL Test: Markers Templating Render - Extended Syntax';
+		$title = 'Marker-TPL Templating Render Demo - Extended Syntax';
 		//--
 		$test_switch_arr = ['a', 'b', 'c', 'd'];
 		$this->PageViewSetVars([

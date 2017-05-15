@@ -26,7 +26,7 @@ php_flag zend.enable_gc					On
 php_flag zend.multibyte					Off
 ###
 
-### Cross Origin Access
+### Cross Origin Access for some resources
 #<FilesMatch "\.(woff|ttf|svg|gif|png|jpg|jpeg)$">
 #	Header set Access-Control-Allow-Origin "*"
 #</FilesMatch>

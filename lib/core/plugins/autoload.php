@@ -59,6 +59,11 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartYamlConverter':
 			require_once('lib/core/plugins/lib_yaml.php');				// yaml converter
 			break;
+		//-- xml parser and composer
+		case 'SmartXmlComposer':
+		case 'SmartXmlParser':
+			require_once('lib/core/plugins/lib_xml.php');				// xml parser and composer
+			break;
 		//-- html parser
 		case 'SmartHtmlParser':
 			require_once('lib/core/plugins/lib_html.php');				// html parser
@@ -67,22 +72,9 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartMarkdownToHTML':
 			require_once('lib/core/plugins/lib_markdown.php');			// markdown to html parser
 			break;
-		//-- xml parser and composer
-		case 'SmartXmlComposer':
-		case 'SmartXmlParser':
-			require_once('lib/core/plugins/lib_xml.php');				// xml parser and composer
-			break;
 		//-- lzs archiver
 		case 'SmartArchiverLZS':
 			require_once('lib/core/plugins/lib_archlzs.php');			// lzs archiver
-			break;
-		//-- zip archive
-		case 'SmartZipArchive':
-			require_once('lib/core/plugins/lib_export_zip.php');		// zip archive
-			break;
-		//-- ooffice export
-		case 'SmartExportToOpenOffice':
-			require_once('lib/core/plugins/lib_export_ooffice.php'); 	// ooffice export
 			break;
 		//-- im (gd) process
 		case 'SmartImageGdProcess':
@@ -103,10 +95,10 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartBarcode2D_Pdf417':
 			require_once('lib/core/plugins/lib_barcodes_2d.php');		// barcodes 2D
 			break;
-		//-- charts
-		case 'SmartImgBizCharts':
-		case 'SmartImgGfxCharts':
-			require_once('lib/core/plugins/lib_charts.php');			// gd charts
+		//-- captcha
+		case 'SmartCaptchaImageDraw':
+		case 'SmartCaptchaFormCheck':
+			require_once('lib/core/plugins/lib_captcha.php'); 			// captcha image
 			break;
 		//-- ftp client
 		case 'SmartFtpClient':
@@ -129,10 +121,16 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartAbstractCustomSession':
 			require_once('lib/core/plugins/lib_session.php');			// session handler
 			break;
-		//-- captcha
-		case 'SmartCaptchaImageDraw':
-		case 'SmartCaptchaFormCheck':
-			require_once('lib/core/plugins/lib_captcha.php'); 			// captcha image
+		//-- zip archive
+		case 'SmartZipArchive':
+			require_once('lib/core/plugins/lib_export_zip.php');		// zip archive
+			break;
+		//-- ooffice export
+		case 'SmartExportToOpenOffice':
+			require_once('lib/core/plugins/lib_export_ooffice.php'); 	// ooffice export
+			break;
+		case 'SmartPdfExport':
+			require_once('lib/core/plugins/lib_export_pdf.php'); 		// pdf export
 			break;
 		//--
 		default:

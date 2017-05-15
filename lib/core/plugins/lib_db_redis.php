@@ -642,7 +642,7 @@ if($is_fatal !== false) { // FATAL ERROR
 		'Redis',
 		'Caching',
 		'Server',
-		'lib/core/img/db/redis_logo_trans.png',
+		'lib/core/img/db/redis-logo.svg',
 		$width, // width
 		$the_area, // area
 		$the_error_message, // err msg

@@ -1,0 +1,42 @@
+<!-- Template: Core.HTTP-MESSAGE-STATUS -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="[####CHARSET|html####]">
+	<title>[####TITLE|html####]</title>
+	[@@@@SUB-TEMPLATE:base-html-styles.inc.htm@@@@]
+	<link rel="stylesheet" type="text/css" href="[####BASE-URL|html####]lib/core/css/notifications.css">
+	<style>
+		#server-logo {
+			width: 96px;
+			height: 96px;
+			position: absolute;
+			top: 50px;
+			right: 25px;
+		}
+		#title {
+			font-size: 3em;
+			padding-right: 150px;
+		}
+	</style>
+</head>
+<body>
+	<h1 id="title">[####TITLE|html####]</h1>
+	<hr size="1">
+	<div align="left">
+		<table width="99%">
+			<tr>
+				<td>
+				[####MESSAGE-HTML####]
+				</td>
+			</tr>
+		</table>
+	</div>
+	<hr size="1">
+	<small>[####SIGNATURE-HTML####]</small>
+	<br>
+	<br>
+	<img id="server-logo" width="96" src="[####BASE-URL|html####]lib/core/img/app/server.svg">
+</body>
+</html>
+<!-- #END :: Template: Core.HTTP-MESSAGE-STATUS -->

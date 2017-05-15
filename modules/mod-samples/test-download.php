@@ -27,7 +27,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 	// by default in etc/init.php the allowed download folder(s) is set in a constant: SMART_FRAMEWORK_DOWNLOAD_FOLDERS = '<wpub>'
 	// so only files under the 'wpub/' folder are allowed by default !
-	private $download_file = 'wpub/sample-download.png';
+	private $download_file = 'wpub/sample-download.svg';
 
 	public function Run() {
 
@@ -49,7 +49,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		} //end if
 
 		if(!is_file((string)$this->download_file)) { // avoid re-copy each time this script runs ...
-			SmartFileSystem::copy('lib/core/img/app/session.png', (string)$this->download_file); // copy a file from lib/ to wpub/ to allow doanload it (the internal security mechanisms dissalow download files except what is defined in SMART_FRAMEWORK_DOWNLOAD_FOLDERS ...)
+			SmartFileSystem::copy('lib/core/img/app/session.svg', (string)$this->download_file); // copy a file from lib/ to wpub/ to allow doanload it (the internal security mechanisms dissalow download files except what is defined in SMART_FRAMEWORK_DOWNLOAD_FOLDERS ...)
 		} //end if
 
 		if(!is_file((string)$this->download_file)) {

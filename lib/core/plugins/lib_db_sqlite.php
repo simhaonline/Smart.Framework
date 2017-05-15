@@ -1578,7 +1578,7 @@ $out = SmartComponents::app_error_message(
 	'SQLite',
 	'Embedded',
 	'SQL/DB',
-	'lib/core/img/db/sqlite_logo.png',
+	'lib/core/img/db/sqlite-logo.svg',
 	$width, // width
 	$the_area, // area
 	$the_error_message, // err msg
