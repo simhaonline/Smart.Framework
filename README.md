@@ -11,7 +11,7 @@
 * Independent Packages: based on modules, plugins and 3rd party (vendor) libraries that can be integrated or developed
 * Full Decoupled Core Libraries: the framework core is using independent (decoupled) libraries (no 3rd party dependencies)
 * NameSpace Separation: for modules (Models, Views, Controllers) or Libraries
-* Based on a previous experience of more than 15 years of: developing web projects, research and experiments using web technologies
+* Based on a previous experience of more than 15 years of developing web projects, research and experiments using web technologies
 
 #### Easy Coding != Performance
 The primary goal of Smart.Framework is to provide a very fast and responsive web framework.

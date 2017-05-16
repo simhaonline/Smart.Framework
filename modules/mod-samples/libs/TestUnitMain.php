@@ -124,11 +124,11 @@ final class TestUnitMain {
 		if(\SmartAppInfo::TestIfModuleExists('mod-ui-bootstrap')) {
 			$demo_mod_ext_toolkits .= \SmartFileSystem::staticread('modules/mod-ui-bootstrap/testunit/templates/tab-ui-components.inc.htm');
 		} //end if
+		if(\SmartAppInfo::TestIfModuleExists('mod-wflow-components')) {
+			$demo_mod_ext_components .= \SmartFileSystem::staticread('modules/mod-wflow-components/testunit/templates/tab-ui-components.inc.htm');
+		} //end if
 		if(\SmartAppInfo::TestIfModuleExists('mod-js-components')) {
 			$demo_mod_ext_components .= \SmartFileSystem::staticread('modules/mod-js-components/testunit/templates/tab-ui-components.inc.htm');
-		} //end if
-		if(\SmartAppInfo::TestIfModuleExists('mod-biz-components')) {
-			$demo_mod_ext_components .= \SmartFileSystem::staticread('modules/mod-biz-components/testunit/templates/tab-ui-components.inc.htm');
 		} //end if
 		//--
 		$demo_mod_ui_components = \SmartMarkersTemplating::render_file_template(
