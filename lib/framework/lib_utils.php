@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170413
+ * @version 	v.170518
  * @package 	Base
  *
  */
@@ -390,12 +390,13 @@ public static function prepend_to_log($y_message, $y_log) {
 
 
 //================================================================
-public static function comment_php_code($y_code) {
+public static function comment_php_code($y_code, $y_repl=['tag-start' => '<!--? ', 'tag-end' => ' ?-->']) {
 	//--
 	$y_code = (string) $y_code;
+	$y_repl = (array) $y_repl;
 	//--
-	$tag_start = '<!--? ';
-	$tag_end = ' ?-->';
+	$tag_start 	= (string) $y_repl['tag-start'];
+	$tag_end 	= (string) $y_repl['tag-end'];
 	//--
 	$tmp_regex_php = array(
 		'<'.'?php',

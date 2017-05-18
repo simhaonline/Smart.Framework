@@ -1,6 +1,6 @@
 # [####TITLE|html####] (H1)
 
-&copy; &nbsp; 2015-2017 unix-world.org
+&copy;&nbsp;&nbsp;2015-2017&nbsp;unix-world.org # v.170512
 
 ## H2 (Unicode Test) ăĂîÎâÂşŞţŢ
 
@@ -12,8 +12,6 @@
 
 ###### H6
 
-v.170512
-
 Alternatively, for H1 and H2, an underline-ish style:
 
 Alt-H1
@@ -24,13 +22,30 @@ Alt-H2
 
 Line 1
 Line2
-
+```space```
 
 Emphasis, aka italics, with *asterisks* or _underscores_.
 
-<!--?
+PHP code (PHP Start-Tag and PHP End-Tag must be removed ...)
+```php
+<?php
+
+// php sample code
+function test() {
+	echo 'this is a test ...';
+}
+
 test();
- ?-->
+
+?>
+```
+
+##### Test PHP code injection:
+<?
+test();
+?>
+
+```space```
 
 Strong emphasis, aka bold, with **asterisks** or __underscores__.
 
@@ -107,13 +122,20 @@ Reference-style:
 Inline `code` has `back-ticks around` it.
 
 ```javascript
+// javascript sample code
 var s = "JavaScript syntax highlighting";
 alert(s);
 ```
 
 ```python
+# python sample code
 s = "Python syntax highlighting"
 print s
+```
+
+```html
+<!-- HTML sample code -->
+<img src="some-image.svg">
 ```
 
 ```

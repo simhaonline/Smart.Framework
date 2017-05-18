@@ -12,7 +12,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //======================================================
 // Markdown Parser - Output HTML5 Code
-// DEPENDS: SmartFramework
+// DEPENDS:
+//	* Smart::
+//	* SmartUnicode::
+//	* SmartUtils::
 // REQUIRED CSS:
 //	* markdown.css
 //======================================================
@@ -27,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.170503
+ * @version 	v.170518
  * @package 	Exporters
  *
  */
@@ -141,24 +144,28 @@ final class SmartMarkdownToHTML {
 
 
 	public function text($text) {
+		//-- Comment Out PHP tags
+		$text = (string) SmartUtils::comment_php_code((string)$text, ['tag-start' => '// -- PHP: < code ? START# --', 'tag-end' => '// -- PHP: ? code > #END --']);
 		//-- Fix broking curly quotes: ‘ = &lsquo; [0145] ; ’ = &rsquo; [0146] ; “ = &ldquo; [0147] ; ” = &rdquo; [0148]
-		$text = (string) str_replace(['‘', '’', '“', '”'], ['\'', '\'', '"', '"'], (string)$text); // bug fix (special apostrophes will break the UTF-8 markdown ... don't know why !? but need fixing ; perhaps they are interpreted different in UTF-16 context !!!)
+		$text = str_replace(['‘', '’', '“', '”'], ['\'', '\'', '"', '"'], $text); // bug fix (special apostrophes will break the UTF-8 markdown ... don't know why !? but need fixing ; perhaps they are interpreted different in UTF-16 context !!!)
 		//-- make sure no definitions are set
 		$this->DefinitionData = array();
+		//-- hack: allow space syntax (needed when a new line is required without content, to avoid use &nbsp; which is complicated ...)
+		$text = str_replace('```space```', '&nbsp;', $text);
 		//-- standardize line breaks
-		$text = str_replace(array("\r\n", "\r"), "\n", $text);
+		$text = str_replace(["\r\n", "\r"], "\n", $text);
 		//-- remove surrounding line breaks
 		$text = trim($text, "\n");
 		//-- split text into lines
-		$lines = explode("\n", $text);
+		$lines = (array) explode("\n", $text);
 		//-- iterate through lines to identify blocks
-		$markup = $this->lines($lines);
+		$markup = (string) $this->lines($lines);
 		//-- trim line breaks
 		$markup = trim($markup, "\n");
-		//--
-		$markup = $this->prepareHTML($markup);
-		//--
-		$markup = (string) SmartUnicode::fix_charset((string)$markup); // fix by unixman (in case that broken UTF-8 characters are detected just try to fix them to avoid break JSON)
+		//-- prepare the HTML
+		$markup = (string) $this->prepareHTML($markup);
+		//-- fix charset
+		$markup = (string) SmartUnicode::fix_charset($markup); // fix by unixman (in case that broken UTF-8 characters are detected just try to fix them to avoid break JSON)
 		//--
 		return (string) $markup;
 		//--
