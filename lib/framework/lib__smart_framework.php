@@ -502,6 +502,20 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
+	 * Get the Path Request Variable (PATH_INFO) in a controller
+	 *
+	 * @return 	STRING						:: The value of the PATH_INFO Request if Set or Empty String
+	 */
+	final public function RequestPathGet() {
+		//--
+		return (string) SmartFrameworkRegistry::getRequestPath(); // string
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Get a Request Variable (GET/POST) in a controller
 	 *
 	 * @param 	STRING 		$key			:: The name (key) of the GET or POST variable (if the variable is set in both GET and POST, the GPC as set in PHP.INI sequence will overwrite the GET with POST, thus the POST value will be get).

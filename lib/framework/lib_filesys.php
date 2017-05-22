@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170424
+ * @version 	v.170520
  * @package 	Filesystem
  *
  */
@@ -330,9 +330,9 @@ public static function version_remove($file) {
 	$file = (string) $file;
 	//--
 	if((strpos($file, '.@') !== false) AND (strpos($file, '@.') !== false)) {
-		$arr = explode('.@', $file);
-		$arr2 = explode('@.', $arr[1]);
-		$file = $arr[0].'.'.$arr2[1];
+		$arr = (array) explode('.@', (string)$file);
+		$arr2 = (array) explode('@.', (string)$arr[1]);
+		$file = (string) $arr[0].'.'.$arr2[1];
 	} //end if
 	//--
 	return (string) $file;
@@ -355,10 +355,36 @@ public static function version_add($file, $version) {
 	$file = (string) self::version_remove(trim((string)$file));
 	$version = (string) trim(strtolower(str_replace(array('.', '@'), array('', ''), Smart::safe_validname((string)$version))));
 	//--
-	$file_no_ext = strtolower((string)self::get_noext_file_name_from_path($file));
-	$file_ext = strtolower((string)self::get_file_extension_from_path($file));
+	$file_no_ext = (string) self::get_noext_file_name_from_path($file); // fix: removed strtolower()
+	$file_ext = (string) self::get_file_extension_from_path($file); // fix: removed strtolower()
 	//--
 	return (string) $file_no_ext.'.@'.$version.'@.'.$file_ext;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Get the version from a file name.
+ *
+ * @param 	STRING 	$file 						:: The file name to be processed
+ *
+ * @return 	STRING								:: The version from filename or ''
+ */
+public static function version_get($file) {
+	//--
+	$file = (string) $file;
+	//--
+	$version = '';
+	//--
+	if((strpos($file, '.@') !== false) AND (strpos($file, '@.') !== false)) {
+		$arr = (array) explode('.@', (string)$file);
+		$arr2 = (array) explode('@.', (string)$arr[1]);
+		$version = (string) $arr2[0];
+	} //end if
+	//--
+	return (string) $version;
 	//--
 } //END FUNCTION
 //================================================================
@@ -570,7 +596,7 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
  * Evaluate and return the File MimeType and Disposition by File Extension.
  *
  * @param STRING 		$yfile		the file name (includding file extension) ; Ex: file.ext
- * @return ARRAY 					0 => mime type ; 1 => inline/attachment; filename="file.ext"
+ * @return ARRAY 					0 => mime type ; 1 => inline/attachment; filename="file.ext" ; 2 => inline/attachment
  */
 public static function mime_eval($yfile, $ydisposition='') {
 	//--
@@ -601,6 +627,12 @@ public static function mime_eval($yfile, $ydisposition='') {
 			//---
 			break;
 		//--------------
+		case 'php':
+			$type = 'application/x-php';
+			$disp = 'attachment';
+			//---
+			break;
+		//--------------
 		case 'js':
 			$type = 'application/javascript';
 			$disp = 'inline';
@@ -620,6 +652,7 @@ public static function mime_eval($yfile, $ydisposition='') {
 			break;
 		case 'log':
 		case 'sql':
+		case 'sh':
 			$type = 'text/plain';
 			$disp = 'attachment';
 			//---
@@ -653,6 +686,11 @@ public static function mime_eval($yfile, $ydisposition='') {
 			//---
 			break;
 		//--------------
+		case 'svg':
+			$type = 'image/svg+xml';
+			$disp = 'inline';
+			//---
+			break;
 		case 'gif':
 			$type = 'image/gif';
 			$disp = 'inline';
@@ -975,7 +1013,11 @@ public static function mime_eval($yfile, $ydisposition='') {
 			// nothing
 	} //end switch
 	//--
-	return array($type, $disp.'; filename="'.Smart::safe_validname($file).'"');
+	return array(
+		(string) $type, // mime type
+		(string) $disp.'; filename="'.Smart::safe_validname($file).'"', // mime header disposition suffix
+		(string) $disp // mime disposition
+	);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1006,7 +1048,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170424
+ * @version 	v.170520
  * @package 	Filesystem
  *
  */
@@ -2670,7 +2712,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170424
+ * @version 	v.170520
  * @package 	Filesystem
  *
  */

@@ -30,10 +30,10 @@ define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// Sec
 define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie name (if enabled)
 //define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN', '');									// LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; `` or `domain.tld` for all sub-domains of domain.tld cookies ; default is `` (empty) ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies
 //--------------------------------------- URLS
-//define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 		true); 								// LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; If defined will disable the semantic URLs ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
-define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT', 'index.php');							// Semantic URL Rewriter Skip (Index) Script ; default is `index.php`
-define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE', 'samples');								// Default Module for Shortening the semantic URLs or the URL rewriter from module.controller.html to just controller.html
-define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', '');										// URL Rewrite Mode: `` | `standard` | `semantic` :: Use (Apache like) rewrite rules (must be enabled in .htaccess) and the SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT must be set to `index.php` ; semantic URLS must be not disabled
+//define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 	true); 									// If define this will DISABLE the semantic URLs for index.php and admin.php ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
+define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT', 'index.php');							// Semantic URL Rewriter Skip Script (just for index.php) ; This can be set to: `index.php` or `` empty (admin.php have no support for this)
+define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE', 'samples');								// Default Module for Shortening the semantic URLs or the URL rewriter from module.controller.html to just controller.html ; just for index.php (admin.php have no support for this)
+define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', '');										// URL Rewrite Mode: `` | `standard` | `semantic` :: Use (Apache like) rewrite rules (must be enabled in .htaccess) and the SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT must be set to `index.php` ; semantic URLS must be not disabled ; just for index.php (admin.php have no support for this)
 //--------------------------------------- SESSION
 define('SMART_FRAMEWORK_SESSION_NAME', 		'SmartFramework__SESSION'); 					// Session Name ; *** YOU HAVE TO CHANGE IT *** this must be static and must contain only Letters and _
 define('SMART_FRAMEWORK_SESSION_LIFETIME', 	intval(60 * 60 * 24));							// Session Lifetime in seconds (24 h by default) ; set to 0 for session
@@ -108,6 +108,7 @@ define('SMART_FRAMEWORK_URL_PARAM_PRINTABLE', 		'print');														// Printa
 //---------------------------------------- SPECIAL FEATURES
 define('SMART_SOFTWARE_FRONTEND_ENABLED',			true);															// To Disable Frontend (index.php) set this to false
 define('SMART_SOFTWARE_BACKEND_ENABLED',			true);															// To Disable Backend (admin.php) set this to false
+define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',			true);															// To Enable PathInfo (admin.php/path/info/) set this to true ; just for admin.php (index.php have no support for this)
 //define('SMART_SOFTWARE_MEMDB_FATAL_ERR',			true);															// If defined / set to true will not ignore (fatal / connection errors) on all memory DB servers such as Redis ; normally memchache servers can be ignored if fail and must behave like no cache
 //define('SMART_SOFTWARE_SQLDB_FATAL_ERR',			false);															// If defined / set to false will use exceptions that can be catched instead of fatal errors on all SQL DB servers such as PostgreSQL / SQLite ... ; disabling fatal errors on SQL servers will also disable transactions as any SQL error will just break any existing transaction and the results are unpredictable (DO NOT use this parameter unless you know what you are doing !!!)
 //define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status

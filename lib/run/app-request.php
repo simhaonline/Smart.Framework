@@ -26,10 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 
 //-- EXTRACT, FILTER AND REGISTER INPUT VARIABLES (GET, POST, COOKIE, SERVER)
-if(!defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE')) {
-	SmartFrameworkRuntime::Parse_Semantic_URL();
-} //end if
-//--
+SmartFrameworkRuntime::Parse_Semantic_URL();
 SmartFrameworkRuntime::Extract_Filtered_Request_Get_Post_Vars((array)$_GET, 'GET'); 	// extract and filter $_GET
 SmartFrameworkRuntime::Extract_Filtered_Request_Get_Post_Vars((array)$_POST, 'POST'); 	// extract and filter $_POST
 SmartFrameworkRuntime::Lock_Request_Processing(); 										// prevent re-processing Request variables after they were processed 1st time (this is mandatory from security point of view)

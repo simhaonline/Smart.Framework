@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170530
+ * @version     v.170519
  * @package     Base
  *
  */
@@ -226,22 +226,23 @@ public static function path_info($y_path) {
 public static function url_make_semantic($y_url) {
 	//--
 	$y_url = (string) trim((string)$y_url);
+	if((string)$y_url == '') {
+		return ''; // if URL is empty nothing to do ...
+	} //end if
 	//--
 	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE')) {
 		return (string) $y_url;
 	} //end if
 	//--
 	$ignore_script = '';
-	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT')) {
-		$ignore_script = (string) trim((string)SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT);
-	} //end if
 	$ignore_module = '';
-	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE')) {
-		$ignore_module = trim((string)SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE);
-	} //end if
-	//--
-	if((string)$y_url == '') {
-		return ''; // if URL is empty nothing to do ...
+	if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // not for admin !
+		if(defined('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT')) {
+			$ignore_script = (string) trim((string)SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT);
+		} //end if
+		if(defined('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE')) {
+			$ignore_module = (string) trim((string)SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE);
+		} //end if
 	} //end if
 	//--
 	$semantic_separator = '?/';
@@ -289,13 +290,15 @@ public static function url_make_semantic($y_url) {
 	//--
 	$use_rewrite = false;
 	$use_rfc_params = false;
-	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE')) {
-		if((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'semantic') {
-			$use_rewrite = true;
-		} elseif((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'standard') {
-			$use_rewrite = true;
-			$use_rfc_params = true;
-		} //end switch
+	if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // not for admin !
+		if(defined('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE')) {
+			if((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'semantic') {
+				$use_rewrite = true;
+			} elseif((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'standard') {
+				$use_rewrite = true;
+				$use_rfc_params = true;
+			} //end switch
+		} //end if
 	} //end if
 	//--
 	$vars = explode('&', $arr['query']);

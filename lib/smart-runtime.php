@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.1'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.05.17'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.05.22'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -482,10 +482,31 @@ final class SmartFrameworkRegistry {
 	);
 
 	private static $RequestLock = false; 	// request locking flag
+	private static $RequestPath = '';		// request path (from path-info)
 	private static $RequestVars = array(); 	// request registry
 
 
 	//##### Public Methods
+
+
+	public static function setRequestPath($value) {
+		//--
+		if(self::$RequestLock !== false) {
+			return false; // request registry is locked
+		} //end if
+		//--
+		self::$RequestPath = (string) $value;
+		//--
+		return true; // OK
+		//--
+	} //END FUNCTION
+
+
+	public static function getRequestPath() {
+		//--
+		return (string) self::$RequestPath;
+		//--
+	} //END FUNCTION
 
 
 	public static function issetRequestVar($key) {
@@ -559,7 +580,14 @@ final class SmartFrameworkRegistry {
 					$val = (string) $val;
 					break;
 				case 'boolean':
-					$val = (bool) $val;
+					$val = (string) strtolower((string)$val);
+					if(((string)$val == 'true') OR ((string)$val == 't')) {
+						$val = true;
+					} elseif(((string)$val == 'false') OR ((string)$val == 'f')) {
+						$val = false;
+					} else {
+						$val = (bool) $val;
+					} //end if else
 					break;
 				case 'integer':
 					$val = (int) $val;
@@ -853,8 +881,14 @@ public static function Lock_Request_Processing() {
 // This will run before loading the Smart.Framework and must not depend on it's classes
 public static function Parse_Semantic_URL() {
 
-	// PARSE SEMANTIC URL VIA GET v.160827
+	// PARSE SEMANTIC URL VIA GET v.170519
 	// it limits the URL to 65535 and vars to 1000
+
+	//-- check overall
+	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE')) {
+		return;
+	} //end if
+	//--
 
 	//-- check if can run
 	if(self::$RequestProcessed !== false) {
@@ -863,7 +897,21 @@ public static function Parse_Semantic_URL() {
 	//--
 
 	//--
-	$semantic_url = (string) $_SERVER['REQUEST_URI'];
+	if((SMART_SOFTWARE_URL_ALLOW_PATHINFO === true) AND (SMART_FRAMEWORK_ADMIN_AREA === true) AND (isset($_SERVER['PATH_INFO'])) AND ((string)$_SERVER['PATH_INFO'] != '')) {
+		$semantic_url = '';
+		$fix_pathinfo = (string) trim((string)$_SERVER['PATH_INFO']);
+		$sem_path_pos = strpos((string)$fix_pathinfo, '/~');
+		if($sem_path_pos !== false) {
+			$semantic_url = (string) '?'.substr((string)$fix_pathinfo, 0, $sem_path_pos);
+			$path_url = (string) substr((string)$fix_pathinfo, ($sem_path_pos + 2));
+			SmartFrameworkRegistry::setRequestPath(
+				(string) ($path_url ? $path_url : '/')
+			) OR @trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Failed to register !path-info! variable', E_USER_WARNING);
+		} //end if
+	} else {
+		$semantic_url = (string) $_SERVER['REQUEST_URI'];
+	} //end if
+	//--
 	if(strlen($semantic_url) > 65535) { // limit according with Firefox standard which is 65535 ; Apache standard is much lower as 8192
 		$semantic_url = substr($semantic_url, 0, 65535);
 	} //end if
@@ -1252,35 +1300,44 @@ public static function Redirection_Monitor() {
 	//--
 	if(((string)$url_redirect == '') AND (isset($_SERVER['PATH_INFO']))) {
 		//--
-		if(strlen($_SERVER['PATH_INFO']) > 0) {
+		if((string)$_SERVER['PATH_INFO'] != '') {
 			//--
 			if((string)$the_current_script == 'index.php') {
 				$the_current_script = '';
+			} elseif((string)$the_current_script == 'admin.php') {
+				if((SMART_SOFTWARE_URL_ALLOW_PATHINFO === true) AND (SMART_FRAMEWORK_ADMIN_AREA === true)) {
+					return;
+				} //end if
 			} //end if
-			$url_redirect = $the_current_url.$the_current_script.'?'.$_SERVER['PATH_INFO'];
+			//--
+			$url_redirect = (string) $the_current_url.$the_current_script.'?'.$_SERVER['PATH_INFO'];
 			//--
 		} //end if
 		//--
 	} //end if
 	//--
-	$gopage = '
-		<!DOCTYPE html>
+	if((string)$url_redirect != '') {
+		//--
+		$gopage = '<!DOCTYPE html>
 		<!-- template :: RUNTIME REDIRECTION / PATH SUFFIX -->
 		<html>
 			<head>
 				<meta charset="UTF-8">
 				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 				<meta http-equiv="refresh" content="3;URL='.Smart::escape_html($url_redirect).'">
+				<title>301 Moved Permanently</title>
 			</head>
 			<body>
-				<h1>Redirecting to a valid URL ... wait ...</h1><br>
+				<h1>301 Moved Permanently</h1>
+				<h2>Redirecting to a valid URL ... wait ...</h2><br>
 				<script type="text/javascript">setTimeout("self.location=\''.Smart::escape_js($url_redirect).'\'",1500);</script>
 			</body>
-		</html>
-	';
-	//--
-	if(strlen((string)$url_redirect) > 0) {
-		@header('Location: '.$url_redirect);
+		</html>';
+		//--
+		if(!headers_sent()) {
+			http_response_code(301); // permanent redirect
+			header('Location: '.$url_redirect); // force redirect
+		} //end if
 		die((string)$gopage);
 		return;
 	} //end if

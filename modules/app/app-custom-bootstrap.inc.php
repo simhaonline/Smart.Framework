@@ -30,7 +30,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //======================================================
 
 
-define('SMART_APP_MODULES_RELEASE', 'r.2017.05.17'); // this can be used for tracking changes to custom app modules
+define('SMART_APP_MODULES_RELEASE', 'r.2017.05.22'); // this can be used for tracking changes to custom app modules
 define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.5.1'); // this must be used to validate the required minimum framework version
 
 if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
