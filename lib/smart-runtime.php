@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.1'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.05.22'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.05.23'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -942,8 +942,8 @@ public static function Parse_Semantic_URL() {
 		if(is_array($location_arx)) {
 			for($i=0; $i<$cnt_arx; $i++) {
 				if((trim((string)$location_arx[$i]) != '') AND (trim((string)$location_arx[$i+1]) != '')) {
-					$location_arx[$i+1] = rawurldecode($location_arx[$i+1]); // fix
-					$location_arx[$i+1] = str_replace(rawurlencode('/'), '/', $location_arx[$i+1]);
+					$location_arx[$i+1] = (string) urldecode((string)$location_arx[$i+1]); // fix to urldecode() which decodes also + to space instead of rawurldecode()
+					$location_arx[$i+1] = (string) str_replace((string)rawurlencode('/'), '/', (string)$location_arx[$i+1]);
 					$location_arr[(string)$location_arx[$i]] = (string) $location_arx[$i+1];
 				} //end if
 				$i += 1;
@@ -1056,14 +1056,14 @@ public static function High_Load_Monitor() {
 	if($tmp_max_load > 0) { // run only if set to a value > 0
 		if(function_exists('sys_getloadavg')) {
 			$tmp_sysload_avg = (array) @sys_getloadavg();
-			$tmp_sysload_avg[0] = (int) $tmp_sysload_avg[0];
+			$tmp_sysload_avg[0] = (float) $tmp_sysload_avg[0];
 			if($tmp_sysload_avg[0] > $tmp_max_load) { // protect against system overload over max
 				if(!headers_sent()) {
 					http_response_code(503);
 				} else {
 					Smart::log_notice('#SMART-FRAMEWORK-HIGH-LOAD-PROTECT#'."\n".'SmartFramework // Web :: System Overload Protection: The System is Too Busy ... Try Again Later. The Load Averages reached the maximum allowed value by current settings ... ['.$tmp_sysload_avg[0].' of '.$tmp_max_load.']');
 				} //end if else
-				die(SmartComponents::http_message_503_serviceunavailable('<h1>503 Service Unavailable - Too busy, try again later</h1><br><b>SmartFramework // Web :: System Overload Protection</b><br>The Load Averages reached the maximum allowed value by current settings ...'));
+				die(SmartComponents::http_message_503_serviceunavailable('The Service is Too busy, try again later ...', SmartComponents::operation_warn('<b>SmartFramework // Web :: System Overload Protection</b><br>The Load Averages reached the maximum allowed value by current settings ...', '100%')));
 				return array();
 			} //end if
 		} //end if

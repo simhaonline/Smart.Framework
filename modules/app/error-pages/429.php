@@ -15,9 +15,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @internal
  *
  */
-function custom_http_message_429_toomanyrequests($y_message, $y_extra_message='') {
+function custom_http_message_429_toomanyrequests($y_message, $y_html_message='') {
 	//--
-	return SmartComponents::http_error_message('*Custom* 429 Too Many Requests', $y_message, $y_extra_message);
+	return SmartComponents::http_error_message('*Custom* 429 Too Many Requests', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 

@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170513
+ * @version 	v.170523
  * @package 	Components:Framework
  *
  */
@@ -242,7 +242,7 @@ public static function app_error_message($y_title, $y_name, $y_mode, $y_type, $y
  * @internal
  *
  */
-public static function http_status_message($y_title, $y_message) {
+public static function http_status_message($y_title, $y_html_message) {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/http-message-status.htm',
@@ -251,7 +251,7 @@ public static function http_status_message($y_title, $y_message) {
 			'BASE-URL' 			=> SmartUtils::get_server_current_url(),
 			'TITLE' 			=> (string) $y_title,
 			'SIGNATURE-HTML' 	=> '<b>Smart.Framework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
-			'MESSAGE-HTML' 		=> (string) $y_message
+			'MESSAGE-HTML' 		=> (string) $y_html_message
 		],
 		'no'
 	);
@@ -268,7 +268,7 @@ public static function http_status_message($y_title, $y_message) {
  * @internal
  *
  */
-public static function http_error_message($y_title, $y_message, $y_extra_message='') {
+public static function http_error_message($y_title, $y_message, $y_html_message='') {
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/http-message-error.htm',
@@ -277,8 +277,8 @@ public static function http_error_message($y_title, $y_message, $y_extra_message
 			'BASE-URL' 			=> SmartUtils::get_server_current_url(),
 			'TITLE' 			=>(string) $y_title,
 			'SIGNATURE-HTML' 	=> '<b>Smart.Framework // Web :: '.Smart::escape_html(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.' # '.SMART_SOFTWARE_APP_NAME.' / '.SMART_SOFTWARE_NAMESPACE).'</b>'.'<br>'.Smart::escape_html(SmartUtils::get_server_current_url().SmartUtils::get_server_current_script()),
-			'MESSAGE-HTML' 		=> self::operation_error($y_message, '100%'),
-			'EXTMSG-HTML' 		=> (string) $y_extra_message
+			'MESSAGE-HTML' 		=> self::operation_error(Smart::escape_html((string)$y_message), '100%'),
+			'EXTMSG-HTML' 		=> (string) $y_html_message
 		],
 		'no'
 	);
@@ -289,7 +289,7 @@ public static function http_error_message($y_title, $y_message, $y_extra_message
 
 //================================================================
 // 400 Bad Request :: The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
-public static function http_message_400_badrequest($y_message, $y_extra_message='') {
+public static function http_message_400_badrequest($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -298,13 +298,13 @@ public static function http_message_400_badrequest($y_message, $y_extra_message=
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'400.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'400.php');
 			if(function_exists('custom_http_message_400_badrequest')) {
-				return custom_http_message_400_badrequest($y_message, $y_extra_message);
+				return custom_http_message_400_badrequest($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('400 Bad Request', $y_message, $y_extra_message);
+	return self::http_error_message('400 Bad Request', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -312,7 +312,7 @@ public static function http_message_400_badrequest($y_message, $y_extra_message=
 
 //================================================================
 // 401 Unauthorized :: Similar to 403 Forbidden, but specifically for use when authentication is required and has failed or has not yet been provided. The response must include a WWW-Authenticate header field containing a challenge applicable to the requested resource. See Basic access authentication and Digest access authentication.
-public static function http_message_401_unauthorized($y_message, $y_extra_message='') {
+public static function http_message_401_unauthorized($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -321,13 +321,13 @@ public static function http_message_401_unauthorized($y_message, $y_extra_messag
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'401.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'401.php');
 			if(function_exists('custom_http_message_401_unauthorized')) {
-				return custom_http_message_401_unauthorized($y_message, $y_extra_message);
+				return custom_http_message_401_unauthorized($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('401 Unauthorized', $y_message, $y_extra_message);
+	return self::http_error_message('401 Unauthorized', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -335,7 +335,7 @@ public static function http_message_401_unauthorized($y_message, $y_extra_messag
 
 //================================================================
 // 403 Forbidden :: The request was a valid request, but the server is refusing to respond to it. Unlike a 401 Unauthorized response, authenticating will make no difference.
-public static function http_message_403_forbidden($y_message, $y_extra_message='') {
+public static function http_message_403_forbidden($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -344,13 +344,13 @@ public static function http_message_403_forbidden($y_message, $y_extra_message='
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'403.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'403.php');
 			if(function_exists('custom_http_message_403_forbidden')) {
-				return custom_http_message_403_forbidden($y_message, $y_extra_message);
+				return custom_http_message_403_forbidden($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('403 Forbidden', $y_message, $y_extra_message);
+	return self::http_error_message('403 Forbidden', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -358,7 +358,7 @@ public static function http_message_403_forbidden($y_message, $y_extra_message='
 
 //================================================================
 // 404 Not Found :: The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
-public static function http_message_404_notfound($y_message, $y_extra_message='') {
+public static function http_message_404_notfound($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -367,13 +367,13 @@ public static function http_message_404_notfound($y_message, $y_extra_message=''
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'404.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'404.php');
 			if(function_exists('custom_http_message_404_notfound')) {
-				return custom_http_message_404_notfound($y_message, $y_extra_message);
+				return custom_http_message_404_notfound($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('404 Not Found', $y_message, $y_extra_message);
+	return self::http_error_message('404 Not Found', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -381,7 +381,7 @@ public static function http_message_404_notfound($y_message, $y_extra_message=''
 
 //================================================================
 // 429 Too Many Requests :: The user has sent too many requests in a given amount of time. Intended for use with rate-limiting schemes.
-public static function http_message_429_toomanyrequests($y_message, $y_extra_message='') {
+public static function http_message_429_toomanyrequests($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -390,13 +390,13 @@ public static function http_message_429_toomanyrequests($y_message, $y_extra_mes
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'429.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'429.php');
 			if(function_exists('custom_http_message_429_toomanyrequests')) {
-				return custom_http_message_429_toomanyrequests($y_message, $y_extra_message);
+				return custom_http_message_429_toomanyrequests($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('429 Too Many Requests', $y_message, $y_extra_message);
+	return self::http_error_message('429 Too Many Requests', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -404,7 +404,7 @@ public static function http_message_429_toomanyrequests($y_message, $y_extra_mes
 
 //================================================================
 // 500 Internal Server Error :: A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.
-public static function http_message_500_internalerror($y_message, $y_extra_message='') {
+public static function http_message_500_internalerror($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -413,13 +413,13 @@ public static function http_message_500_internalerror($y_message, $y_extra_messa
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'500.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'500.php');
 			if(function_exists('custom_http_message_500_internalerror')) {
-				return custom_http_message_500_internalerror($y_message, $y_extra_message);
+				return custom_http_message_500_internalerror($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('500 Internal Server Error', $y_message, $y_extra_message);
+	return self::http_error_message('500 Internal Server Error', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -427,7 +427,7 @@ public static function http_message_500_internalerror($y_message, $y_extra_messa
 
 //================================================================
 // 502 Bad Gateway :: The server was acting as a gateway or proxy and received an invalid response from the upstream server.
-public static function http_message_502_badgateway($y_message, $y_extra_message='') {
+public static function http_message_502_badgateway($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -436,13 +436,13 @@ public static function http_message_502_badgateway($y_message, $y_extra_message=
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'502.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'502.php');
 			if(function_exists('custom_http_message_502_badgateway')) {
-				return custom_http_message_502_badgateway($y_message, $y_extra_message);
+				return custom_http_message_502_badgateway($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('502 Bad Gateway', $y_message, $y_extra_message);
+	return self::http_error_message('502 Bad Gateway', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -450,7 +450,7 @@ public static function http_message_502_badgateway($y_message, $y_extra_message=
 
 //================================================================
 // 503 Service Unavailable :: The server is currently unavailable (because it is overloaded or down for maintenance). Generally, this is a temporary state.
-public static function http_message_503_serviceunavailable($y_message, $y_extra_message='') {
+public static function http_message_503_serviceunavailable($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -459,13 +459,13 @@ public static function http_message_503_serviceunavailable($y_message, $y_extra_
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'503.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'503.php');
 			if(function_exists('custom_http_message_503_serviceunavailable')) {
-				return custom_http_message_503_serviceunavailable($y_message, $y_extra_message);
+				return custom_http_message_503_serviceunavailable($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('503 Service Unavailable', $y_message, $y_extra_message);
+	return self::http_error_message('503 Service Unavailable', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================
@@ -473,7 +473,7 @@ public static function http_message_503_serviceunavailable($y_message, $y_extra_
 
 //================================================================
 // 504 Gateway Timeout :: The server was acting as a gateway or proxy and did not receive a timely response from the upstream server.
-public static function http_message_504_gatewaytimeout($y_message, $y_extra_message='') {
+public static function http_message_504_gatewaytimeout($y_message, $y_html_message='') {
 	//--
 	global $configs;
 	//--
@@ -482,13 +482,13 @@ public static function http_message_504_gatewaytimeout($y_message, $y_extra_mess
 		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'504.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'504.php');
 			if(function_exists('custom_http_message_504_gatewaytimeout')) {
-				return custom_http_message_504_gatewaytimeout($y_message, $y_extra_message);
+				return custom_http_message_504_gatewaytimeout($y_message, $y_html_message);
 			} //end if
 		} //end if
 		//--
 	} //end if
 	//--
-	return self::http_error_message('504 Gateway Timeout', $y_message, $y_extra_message);
+	return self::http_error_message('504 Gateway Timeout', $y_message, $y_html_message);
 	//--
 } //END FUNCTION
 //================================================================

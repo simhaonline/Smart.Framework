@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170426
+ * @version 	v.170523
  * @package 	Application
  *
  */
@@ -617,17 +617,14 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @param 	ENUM 		$code			:: the HTTP Error Status Code: 400, 403, 404, 500, 503, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 500 will be used instead
 	 * @param 	STRING 		$message 		:: The detailed message that will be displayed public near the status code
-	 * @param 	BOOLEAN 	$ishtml 		:: *Optional* ; Default is FALSE ($message is not HTML thus will be HTML escaped) ; if TRUE the message is considered valid HTML so no escaping will be done
+	 * @param 	BOOLEAN 	$logtype 		:: *Optional* ; Default is '' ; available values: '' | 'WARN' | 'NOTICE'
 	 *
 	 * @return 	BOOL						:: TRUE if OK, FALSE if not
 	 */
-	final public function PageViewSetErrorStatus($code, $message, $ishtml=false) {
+	final public function PageViewSetErrorStatus($code, $message, $logtype='') {
 		//--
 		$code = (int) $code;
 		$message = (string) $message;
-		if(!$ishtml) {
-			$message = (string) Smart::escape_html($message);
-		} //end if
 		//--
 		$out = true;
 		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesERR())) { // in the case that the error status code is n/a, use 500 instead
@@ -640,6 +637,17 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			'status-code' 	=> (int) $code,
 			'error' 		=> (string) $message
 		]);
+		//--
+		switch((string)strtoupper((string)$logtype)) {
+			case 'NOTICE':
+				Smart::log_notice('Page Controller Log NOTICE # ('.$this->controller.'): [Status-Code:'.(int)$code.'] '.(string)$message);
+				break;
+			case 'WARN':
+				Smart::log_warning('Page Controller Log WARNING # ('.$this->controller.'): [Status-Code:'.(int)$code.'] '.(string)$message);
+				break;
+			default:
+				// no log
+		} //end switch
 		//--
 		return (bool) $out;
 		//--

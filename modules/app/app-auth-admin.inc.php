@@ -58,7 +58,7 @@ if(((string)$_SERVER['PHP_AUTH_USER'] == (string)ADMIN_AREA_USER) AND ((string)$
 	//-- NOT OK, display the Login Form and Exit
 	header('WWW-Authenticate: Basic realm="Administration Area"');
 	http_response_code(401);
-	die(SmartComponents::http_message_401_unauthorized('Authorization Required<br>Login Failed. Either you supplied the wrong credentials or your browser doesn\'t understand how to supply the credentials required.'));
+	die(SmartComponents::http_message_401_unauthorized('Authorization Required', SmartComponents::operation_notice('Login Failed. Either you supplied the wrong credentials or your browser doesn\'t understand how to supply the credentials required.', '100%')));
 	//--
 } //end if
 //-------------------------------------------
