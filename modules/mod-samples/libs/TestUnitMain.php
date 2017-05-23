@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170519
+ * @version 	v.170523
  *
  */
 final class TestUnitMain {
@@ -154,6 +154,7 @@ final class TestUnitMain {
 					'test-unit-tab-forms.inc.htm' 			=> '@', 																// @ (self) path, assumes the same dir
 					'%test-unit-tab-templating%'			=> '@/test-unit-tab-templating.inc.htm'									// variable, with full path, using self @/sub-dir/ instead of $tpl_path/test-unit-tab-misc.htm
 				],
+				'TEST-URL-UNICODE-STR' 						=> (string) \SmartModExtLib\Samples\TestUnitStrings::testStr(),
 				'TEST-UNIT-AREA' 							=> (string) $info_pfx,
 				'TESTUNIT-TPL-PATH' 						=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// this MUST be with trailing slash
 				'TESTUNIT_BASE_URL' 						=> (string) SMART_FRAMEWORK_TESTUNIT_BASE_URL,

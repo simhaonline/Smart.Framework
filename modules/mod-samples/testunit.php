@@ -66,8 +66,10 @@ class SmartAppAdminController extends SmartAbstractAppController {
 			case 'testunit.strings-test':
 				//--
 				sleep(1);
+				$str_php = $this->RequestVarGet('str_php', '', 'string');
+				$str_js = $this->RequestVarGet('str_js', '', 'string');
 				$this->PageViewSetCfg('rawpage', true);
-				$main = \SmartModExtLib\Samples\TestUnitStrings::testUnicode();
+				$main = \SmartModExtLib\Samples\TestUnitStrings::testUnicode($str_php, $str_js);
 				//--
 				break;
 			case 'testunit.crypto-test':

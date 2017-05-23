@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170520
+ * @version 	v.170523
  * @package 	Filesystem
  *
  */
@@ -332,7 +332,11 @@ public static function version_remove($file) {
 	if((strpos($file, '.@') !== false) AND (strpos($file, '@.') !== false)) {
 		$arr = (array) explode('.@', (string)$file);
 		$arr2 = (array) explode('@.', (string)$arr[1]);
-		$file = (string) $arr[0].'.'.$arr2[1];
+		if((string)$arr2[1] === '_no-ext_') { // {{{SYNC-FILE-VER-NOEXT}}}
+			$file = (string) $arr[0];
+		} else {
+			$file = (string) $arr[0].'.'.$arr2[1];
+		} //end if else
 	} //end if
 	//--
 	return (string) $file;
@@ -357,6 +361,10 @@ public static function version_add($file, $version) {
 	//--
 	$file_no_ext = (string) self::get_noext_file_name_from_path($file); // fix: removed strtolower()
 	$file_ext = (string) self::get_file_extension_from_path($file); // fix: removed strtolower()
+	//--
+	if((string)$file_ext == '') { // because file versioning expects a valid file extension, to avoid break when version remove will find no extension and would consider the version as extension, add something as extension
+		$file_ext = '_no-ext_'; // {{{SYNC-FILE-VER-NOEXT}}}
+	} //end if
 	//--
 	return (string) $file_no_ext.'.@'.$version.'@.'.$file_ext;
 	//--
@@ -1048,7 +1056,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170520
+ * @version 	v.170523
  * @package 	Filesystem
  *
  */
@@ -2712,7 +2720,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170520
+ * @version 	v.170523
  * @package 	Filesystem
  *
  */

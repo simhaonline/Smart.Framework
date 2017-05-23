@@ -9,11 +9,13 @@
 			<button class="ux-button" id="btn_ajx_loadr_test_pgsql"><i class="fa fa-database" style="color:#555555;"></i> &nbsp; Test: PostgreSQL Server</button> &nbsp;
 			<button class="ux-button" id="btn_ajx_loadr_test_pcache"><i class="fa fa-cube" style="color:#555555;"></i> &nbsp; Test: Persistent Cache</button> &nbsp;
 			<script type="text/javascript">
+			var the_url_test_unicode_str = '[####TEST-URL-UNICODE-STR|js####]';
 			jQuery(function() {
 				//--
 				$('#btn_ajx_loadr_test_strings').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Unicode String Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spokes.svg', '[####TESTUNIT_BASE_URL|js####]testunit.strings-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+					// the URL below MUST CONTAIN a combination between semantic paths and url variables to get a real testing ; from PHP to Semantic ; from JS to URL var
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spokes.svg', '[####TESTUNIT_BASE_URL|js####]testunit.strings-test/time/[####NO-CACHE-TIME|url|js####]/str_php/[####TEST-URL-UNICODE-STR|url|js####]+./' + '&str_js=' + SmartJS_CoreUtils.escape_url(the_url_test_unicode_str) + '+.', 'GET', 'html');
 				});
 				//--
 				jQuery('#btn_ajx_loadr_test_crypto').click(function() {

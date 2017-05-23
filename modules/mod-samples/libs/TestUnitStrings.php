@@ -27,15 +27,25 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170519
+ * @version 	v.170523
  *
  */
 final class TestUnitStrings {
 
 	// ::
 
+
 	//============================================================
-	public static function testUnicode() {
+	public static function testStr() {
+		//--
+		return 'Platform クラウドアプリケーションプラットフォーム \'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #\'0.51085600 1454529112#'."\r\n\t".'`~@#$%^&*()-_=+[{]}|;:"<>,.?/\\';
+		//--
+	} //END FUNCTION
+	//============================================================
+
+
+	//============================================================
+	public static function testUnicode($str_php, $str_js) {
 
 		//--
 		$time = microtime(true);
@@ -64,12 +74,28 @@ final class TestUnitStrings {
 		//--
 
 		//--
+		if((string)$err == '') {
+			$the_test = 'Unicode URL Input Test from PHP (semantic URL vars)';
+			$tests[] = $the_test;
+			if(((string)$str_php == '') OR ((string)$str_php !== (string)self::testStr().' .')) { // +. must be decoded as space. by urldecode() instead of rawurldecode()
+				$err = 'ERROR: '.$the_test.' FAILED ...';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$the_test = 'Unicode URL Input Test from Javascript (URL vars)';
+			$tests[] = $the_test;
+			if(((string)$str_js == '') OR ((string)$str_js !== (string)self::testStr().' .')) { // +. must be decoded as space. by urldecode() instead of rawurldecode()
+				$err = 'ERROR: '.$the_test.' FAILED ...';
+			} //end if
+		} //end if
+		//--
 		if(defined('SMART_FRAMEWORK_SECURITY_FILTER_INPUT')) {
 			if((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT != '') {
 				if((string)$err == '') {
 					$the_test = 'Smart.Framework Security Input Filter Regex - test over a full Unicode String';
 					$tests[] = $the_test;
-					if(preg_match((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT, 'Platform クラウドアプリケーションプラットフォーム \'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #\'0.51085600 1454529112#'."\r\n\t".'`~@#$%^&*()-_=+[{]}|;:"<>,.?/\\')) {
+					if(preg_match((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT, (string)self::testStr())) {
 						$err = 'ERROR: '.$the_test.' FAILED ...';
 					} //end if
 				} //end if
@@ -337,103 +363,102 @@ final class TestUnitStrings {
 			} //end if
 		} //end if
 		//--
-
-		//-- regex positive tests
-		$arr_regex = [
-			'number-integer' 		=> [ 0, '75', '-101' ],
-			'number-decimal' 		=> [ 0, '0.0', '0.1', '75', '75.0', '75.1', '-555', '-555.0', '-555.1' ],
-			'number-list-integer' 	=> '1;2;30',
-			'number-list-decimal' 	=> '1.0;2;30.44',
-			'url' 					=> [ 'https://192.168.1.0', 'http://localhost', 'https://www.dom.ext', 'http://dom.ext/path?a=b&c=d%20#s' ],
-			'domain' 				=> [ 'domain.com', 'sdom.domain.org' ],
-			'email' 				=> [ 'root@localhost', 'root@localhost.loc', 'sometest-name.extra@dom.ext' ],
-			'fax' 					=> [ '~+99-(0)999-123.456.78~' ],
-			'macaddr' 				=> [ '00:0A:95:9d:68:16', '00-0a-95-9D-68-16' ],
-			'ipv4' 					=> [ '192.168.0.1', '169.254.1.0', '1.0.0.1' ],
-			'ipv6' 					=> [ '::1', '0000:0000:0000:0000:0000:0000:0000:0001', '2001:0db8:0000:0000:0000:ff00:0042:8329', '2001:dB8::2:1', '2001:db8::1', '3731:54:65fe:2::a7' ]
-		];
-		//--
-		foreach((array)$arr_regex as $key => $val) {
+		if((string)$err == '') {
+			//-- regex positive tests
+			$arr_regex = [
+				'number-integer' 		=> [ 0, '75', '-101' ],
+				'number-decimal' 		=> [ 0, '0.0', '0.1', '75', '75.0', '75.1', '-555', '-555.0', '-555.1' ],
+				'number-list-integer' 	=> '1;2;30',
+				'number-list-decimal' 	=> '1.0;2;30.44',
+				'url' 					=> [ 'https://192.168.1.0', 'http://localhost', 'https://www.dom.ext', 'http://dom.ext/path?a=b&c=d%20#s' ],
+				'domain' 				=> [ 'domain.com', 'sdom.domain.org' ],
+				'email' 				=> [ 'root@localhost', 'root@localhost.loc', 'sometest-name.extra@dom.ext' ],
+				'fax' 					=> [ '~+99-(0)999-123.456.78~' ],
+				'macaddr' 				=> [ '00:0A:95:9d:68:16', '00-0a-95-9D-68-16' ],
+				'ipv4' 					=> [ '192.168.0.1', '169.254.1.0', '1.0.0.1' ],
+				'ipv6' 					=> [ '::1', '0000:0000:0000:0000:0000:0000:0000:0001', '2001:0db8:0000:0000:0000:ff00:0042:8329', '2001:dB8::2:1', '2001:db8::1', '3731:54:65fe:2::a7' ]
+			];
 			//--
-			if(is_array($val)) {
-				for($i=0; $i<\Smart::array_size($val); $i++) {
-					$the_test = 'Regex Validate Positive (#'.$i.'): '.$key.' ['.$val[$i].']';
-					$tests[] = $the_test;
-					if(\SmartValidator::validate_string($val[$i], $key) !== true) {
-						$err = 'ERROR: '.$the_test.' FAILED ...';
-						break;
-					} //end if
-					if((stripos((string)$key, 'number-') === 0) AND (stripos((string)$key, 'number-list-') === false)) {
-						$the_test = 'Regex Validate Numeric Positive (#'.$i.'): '.$key.' ['.$val[$i].']';
+			foreach((array)$arr_regex as $key => $val) {
+				//--
+				if(is_array($val)) {
+					for($i=0; $i<\Smart::array_size($val); $i++) {
+						$the_test = 'Regex Validate Positive (#'.$i.'): '.$key.' ['.$val[$i].']';
 						$tests[] = $the_test;
-						if(\SmartValidator::validate_numeric_integer_or_decimal_values($val[$i], $key) !== true) {
+						if(\SmartValidator::validate_string($val[$i], $key) !== true) {
 							$err = 'ERROR: '.$the_test.' FAILED ...';
 							break;
 						} //end if
-					} //end if
-				} //end for
-			} else {
-				$the_test = 'Regex Validate Positive: '.$key.' ['.$val.']';
-				$tests[] = $the_test;
-				if(\SmartValidator::validate_string($val, $key) !== true) {
-					$err = 'ERROR: '.$the_test.' FAILED ...';
-				} //end if
-				if((stripos((string)$key, 'number-') === 0) AND (stripos((string)$key, 'number-list-') === false)) {
-					$the_test = 'Regex Validate Numeric Positive: '.$key.' ['.$val.']';
+						if((stripos((string)$key, 'number-') === 0) AND (stripos((string)$key, 'number-list-') === false)) {
+							$the_test = 'Regex Validate Numeric Positive (#'.$i.'): '.$key.' ['.$val[$i].']';
+							$tests[] = $the_test;
+							if(\SmartValidator::validate_numeric_integer_or_decimal_values($val[$i], $key) !== true) {
+								$err = 'ERROR: '.$the_test.' FAILED ...';
+								break;
+							} //end if
+						} //end if
+					} //end for
+				} else {
+					$the_test = 'Regex Validate Positive: '.$key.' ['.$val.']';
 					$tests[] = $the_test;
-					if(\SmartValidator::validate_numeric_integer_or_decimal_values($val, $key) !== true) {
+					if(\SmartValidator::validate_string($val, $key) !== true) {
 						$err = 'ERROR: '.$the_test.' FAILED ...';
 					} //end if
-				} //end if
-			} //end if else
-			//--
-			if((string)$err != '') {
-				break;
-			} //end if
-			//--
-		} //end foreach
-		//--
-
-		//-- regex negative tests
-		$arr_regex = [
-			'number-integer' 		=> [ '', '.', 'a9', '7B', '-9 ', ' -7' ],
-			'number-decimal' 		=> [ '', '.0', '.1', '-.10', ' -7', '-9.0 ' ],
-			'number-list-integer' 	=> '1;2.3;30',
-			'number-list-decimal' 	=> '1.0;2;30.44a',
-			'url' 					=> [ 'http:://192.168.1.0', 'https://local host', 'http:/www.dom.ext', 'https:dom.ext/path?a=b&c=d%20#s' ],
-			'domain' 				=> [ 'doMain.com', 's dom.domain.org', '.dom.ext', 'dom..ext', 'localhost', 'loc', 'dom.ext.' ],
-			'email' 				=> [ 'rooT@localhost', 'root@local host.loc', 'sometest-name.extra@do_m.ext' ],
-			'fax' 					=> [ '~ +99-(0)999-123.456.78 ~' ],
-			'macaddr' 				=> [ '00:0A:95:9z:68:16', '00-0Z-95-9D-68-16' ],
-			'ipv4' 					=> [ '192.168.0.', '169..1.0', '1.0.1' ],
-			'ipv6' 					=> [ '::x', '00z0:0000:0000:0000:0000:0000:0000:0001', '2001:0dx8:0000:0000:0000:ff00:0042:8329', '2001:WB8::2:1', '2001:@db8::1', '3731:54:65Qe:2::a7' ]
-		];
-		//--
-		foreach((array)$arr_regex as $key => $val) {
-			//--
-			if(is_array($val)) {
-				for($i=0; $i<\Smart::array_size($val); $i++) {
-					$the_test = 'Regex Validate Negative (#'.$i.'): '.$key.' ['.$val[$i].']';
-					$tests[] = $the_test;
-					if(\SmartValidator::validate_string($val[$i], $key) === true) {
-						$err = 'ERROR: '.$the_test.' FAILED ...';
-						break;
+					if((stripos((string)$key, 'number-') === 0) AND (stripos((string)$key, 'number-list-') === false)) {
+						$the_test = 'Regex Validate Numeric Positive: '.$key.' ['.$val.']';
+						$tests[] = $the_test;
+						if(\SmartValidator::validate_numeric_integer_or_decimal_values($val, $key) !== true) {
+							$err = 'ERROR: '.$the_test.' FAILED ...';
+						} //end if
 					} //end if
-				} //end for
-			} else {
-				$the_test = 'Regex Validate Negative: '.$key.' ['.$val.']';
-				$tests[] = $the_test;
-				if(\SmartValidator::validate_string($val, $key) === true) {
-					$err = 'ERROR: '.$the_test.' FAILED ...';
+				} //end if else
+				//--
+				if((string)$err != '') {
+					break;
 				} //end if
-			} //end if else
+				//--
+			} //end foreach
+			//-- regex negative tests
+			$arr_regex = [
+				'number-integer' 		=> [ '', '.', 'a9', '7B', '-9 ', ' -7' ],
+				'number-decimal' 		=> [ '', '.0', '.1', '-.10', ' -7', '-9.0 ' ],
+				'number-list-integer' 	=> '1;2.3;30',
+				'number-list-decimal' 	=> '1.0;2;30.44a',
+				'url' 					=> [ 'http:://192.168.1.0', 'https://local host', 'http:/www.dom.ext', 'https:dom.ext/path?a=b&c=d%20#s' ],
+				'domain' 				=> [ 'doMain.com', 's dom.domain.org', '.dom.ext', 'dom..ext', 'localhost', 'loc', 'dom.ext.' ],
+				'email' 				=> [ 'rooT@localhost', 'root@local host.loc', 'sometest-name.extra@do_m.ext' ],
+				'fax' 					=> [ '~ +99-(0)999-123.456.78 ~' ],
+				'macaddr' 				=> [ '00:0A:95:9z:68:16', '00-0Z-95-9D-68-16' ],
+				'ipv4' 					=> [ '192.168.0.', '169..1.0', '1.0.1' ],
+				'ipv6' 					=> [ '::x', '00z0:0000:0000:0000:0000:0000:0000:0001', '2001:0dx8:0000:0000:0000:ff00:0042:8329', '2001:WB8::2:1', '2001:@db8::1', '3731:54:65Qe:2::a7' ]
+			];
 			//--
-			if((string)$err != '') {
-				break;
-			} //end if
+			foreach((array)$arr_regex as $key => $val) {
+				//--
+				if(is_array($val)) {
+					for($i=0; $i<\Smart::array_size($val); $i++) {
+						$the_test = 'Regex Validate Negative (#'.$i.'): '.$key.' ['.$val[$i].']';
+						$tests[] = $the_test;
+						if(\SmartValidator::validate_string($val[$i], $key) === true) {
+							$err = 'ERROR: '.$the_test.' FAILED ...';
+							break;
+						} //end if
+					} //end for
+				} else {
+					$the_test = 'Regex Validate Negative: '.$key.' ['.$val.']';
+					$tests[] = $the_test;
+					if(\SmartValidator::validate_string($val, $key) === true) {
+						$err = 'ERROR: '.$the_test.' FAILED ...';
+					} //end if
+				} //end if else
+				//--
+				if((string)$err != '') {
+					break;
+				} //end if
+				//--
+			} //end foreach
 			//--
-		} //end foreach
-		//--
+		} //end if
 
 		//--
 		$time = 'TOTAL TIME was: '.(microtime(true) - $time);

@@ -306,7 +306,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @access 		PUBLIC
  *
  * @depends 	-
- * @version 	v.161005
+ * @version 	v.170523
  * @package 	Application
  *
  */
@@ -314,6 +314,7 @@ final class SmartFrameworkSecurity {
 
 	// ::
 	// This class have to be able to run before loading the Smart.Framework and must not depend on it's classes.
+
 
 //======================================================================
 // Validate variable names (allow to register ONLY lowercase variables to avoid interfere with PHP reserved variables !! security fix !!)
@@ -438,6 +439,29 @@ public static function FilterGetPostCookieVars($y_var) {
 //======================================================================
 
 
+//======================================================================
+/**
+ * Return the url decoded (+/- filtered) variable from RAWURLENCODE / URLENCODE
+ * It may be used ONLY when working with RAW PATH INFO / RAW QUERY URLS !!!
+ *
+ * @param STRING 				$y_var		the input variable
+ * @param BOOLEAN 				$y_filter 	*Optional* Default to TRUE ; if FALSE will only decode but not filter variable ; DO NOT DISABLE FILTERING EXCEPT WHEN YOU CALL IT LATER EXPLICIT !!!
+ * @return STRING				[processed]
+ */
+public static function urlVarDecodeStr($y_urlencoded_str_var, $y_filter=true) {
+	//--
+	$y_urlencoded_str_var = (string) @urldecode((string)$y_urlencoded_str_var); // use urldecode() which decodes all % but also the + ; instead of rawurldecode() which does not decodes + !
+	//--
+	if($y_filter) {
+		$y_urlencoded_str_var = (string) self::FilterUnsafeString($y_urlencoded_str_var);
+	} //end if
+	//--
+	return (string) $y_urlencoded_str_var;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
 } //END CLASS
 
 //==================================================================================
@@ -461,7 +485,7 @@ public static function FilterGetPostCookieVars($y_var) {
  * @internal
  *
  * @depends 	-
- * @version 	v.161005
+ * @version 	v.170523
  * @package 	Application
  *
  */
@@ -799,7 +823,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		170426
+ * @version		170523
  * @package 	Application
  *
  */
@@ -899,13 +923,13 @@ public static function Parse_Semantic_URL() {
 	//--
 	if((SMART_SOFTWARE_URL_ALLOW_PATHINFO === true) AND (SMART_FRAMEWORK_ADMIN_AREA === true) AND (isset($_SERVER['PATH_INFO'])) AND ((string)$_SERVER['PATH_INFO'] != '')) {
 		$semantic_url = '';
-		$fix_pathinfo = (string) trim((string)$_SERVER['PATH_INFO']);
+		$fix_pathinfo = (string) SmartFrameworkSecurity::FilterUnsafeString((string)trim((string)$_SERVER['PATH_INFO'])); // variables from PathInfo are already URL Decoded, so must be ONLY Filtered !
 		$sem_path_pos = strpos((string)$fix_pathinfo, '/~');
 		if($sem_path_pos !== false) {
 			$semantic_url = (string) '?'.substr((string)$fix_pathinfo, 0, $sem_path_pos);
 			$path_url = (string) substr((string)$fix_pathinfo, ($sem_path_pos + 2));
 			SmartFrameworkRegistry::setRequestPath(
-				(string) ($path_url ? $path_url : '/')
+				(string) ($path_url ? (string)$path_url : '/')
 			) OR @trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Failed to register !path-info! variable', E_USER_WARNING);
 		} //end if
 	} else {
@@ -942,7 +966,7 @@ public static function Parse_Semantic_URL() {
 		if(is_array($location_arx)) {
 			for($i=0; $i<$cnt_arx; $i++) {
 				if((trim((string)$location_arx[$i]) != '') AND (trim((string)$location_arx[$i+1]) != '')) {
-					$location_arx[$i+1] = (string) urldecode((string)$location_arx[$i+1]); // fix to urldecode() which decodes also + to space instead of rawurldecode()
+					$location_arx[$i+1] = (string) SmartFrameworkSecurity::urlVarDecodeStr((string)$location_arx[$i+1], false); // do not filter here, will filter later when exracting to avoid double filtering !
 					$location_arx[$i+1] = (string) str_replace((string)rawurlencode('/'), '/', (string)$location_arx[$i+1]);
 					$location_arr[(string)$location_arx[$i]] = (string) $location_arx[$i+1];
 				} //end if
