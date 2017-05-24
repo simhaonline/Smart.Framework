@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170523
+ * @version 	v.170524
  * @package 	Filesystem
  *
  */
@@ -309,7 +309,7 @@ public static function add_dir_last_slash($y_path) {
 		$y_path = $y_path.'/';
 	} //end if
 	//--
-	self::raise_error_if_unsafe_path($y_path);
+	self::raise_error_if_unsafe_path($y_path, 'yes', 'yes'); // deny absolute paths ; allow #special paths
 	//--
 	return (string) $y_path;
 	//--
@@ -332,7 +332,10 @@ public static function version_remove($file) {
 	if((strpos($file, '.@') !== false) AND (strpos($file, '@.') !== false)) {
 		$arr = (array) explode('.@', (string)$file);
 		$arr2 = (array) explode('@.', (string)$arr[1]);
-		if((string)$arr2[1] === '_no-ext_') { // {{{SYNC-FILE-VER-NOEXT}}}
+		if((string)trim((string)$arr[0]) == '') {
+			$arr[0] = '_empty-filename_';
+		} //end if
+		if(((string)$arr2[1] === '_no-ext_') OR ((string)$arr2[1] === '')) { // {{{SYNC-FILE-VER-NOEXT}}}
 			$file = (string) $arr[0];
 		} else {
 			$file = (string) $arr[0].'.'.$arr2[1];
@@ -356,8 +359,12 @@ public static function version_remove($file) {
  */
 public static function version_add($file, $version) {
 	//--
-	$file = (string) self::version_remove(trim((string)$file));
 	$version = (string) trim(strtolower(str_replace(array('.', '@'), array('', ''), Smart::safe_validname((string)$version))));
+	if((string)$version == '') {
+		return (string) $file;
+	} //end if
+	//--
+	$file = (string) self::version_remove(trim((string)$file));
 	//--
 	$file_no_ext = (string) self::get_noext_file_name_from_path($file); // fix: removed strtolower()
 	$file_ext = (string) self::get_file_extension_from_path($file); // fix: removed strtolower()
@@ -1056,7 +1063,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170523
+ * @version 	v.170524
  * @package 	Filesystem
  *
  */
@@ -1070,7 +1077,7 @@ private static function lock_file_name($file_name) {
 	//--
 	$file_name = (string) $file_name;
 	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name($file_name)) {
+	if(!SmartFileSysUtils::check_file_or_dir_name($file_name, 'yes', 'yes')) { // deny absolute paths ; allow #special paths
 		//-- this is for absolute paths for example, to avoid create lock outside ...
 		if(!is_dir('tmp/locks')) {
 			self::dir_recursive_create('tmp/locks');
@@ -1099,7 +1106,7 @@ private static function lock_file_set($lock_file) {
 		return 0;
 	} //end if
 	//--
-	SmartFileSysUtils::raise_error_if_unsafe_path($lock_file);
+	SmartFileSysUtils::raise_error_if_unsafe_path($lock_file, 'yes', 'yes'); // deny absolute paths ; allow #special paths
 	//--
 	$out = 1;
 	//--
@@ -1133,7 +1140,7 @@ private static function lock_file_unset($lock_file) {
 		return 0;
 	} //end if
 	//--
-	SmartFileSysUtils::raise_error_if_unsafe_path($lock_file);
+	SmartFileSysUtils::raise_error_if_unsafe_path($lock_file, 'yes', 'yes'); // deny absolute paths ; allow #special paths
 	//--
 	$out = 0;
 	//--
@@ -1168,7 +1175,7 @@ private static function lock_file_check($lock_file, $lock_time=60) {
 		return 0; // not locked, but register the error above
 	} //end if
 	//--
-	SmartFileSysUtils::raise_error_if_unsafe_path($lock_file);
+	SmartFileSysUtils::raise_error_if_unsafe_path($lock_file, 'yes', 'yes'); // deny absolute paths ; allow #special paths
 	//--
 	if(defined('SMART_FRAMEWORK_FILE_LOCKTIME')) {
 		$lock_time = Smart::format_number_int(SMART_FRAMEWORK_FILE_LOCKTIME, '+');
@@ -2720,7 +2727,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170523
+ * @version 	v.170524
  * @package 	Filesystem
  *
  */

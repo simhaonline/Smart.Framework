@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170518
+ * @version 	v.170524
  * @package 	Base
  *
  */
@@ -1584,7 +1584,17 @@ public static function get_server_current_basedomain_name() {
 
 
 //================================================================
-// Ex: /sites/test/script.php?param= | /page.html (rewrited to some-script.php?var=val&ofs=...) ; it includes the current path
+// Ex: /sites/test/script.php/page.html|path/to/seomething-else ; the path is decoded
+public static function get_server_current_request_path() {
+	//--
+	return (string) trim((string)$_SERVER['PATH_INFO']);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// Ex: /sites/test/script.php?param= | /page.html (rewrited to some-script.php?var=val&ofs=...) ; it includes the current path. but RAW (not decoded)
 public static function get_server_current_request_uri() {
 	//--
 	return (string) trim((string)$_SERVER['REQUEST_URI']);
