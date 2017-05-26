@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170524
+ * @version 	v.170526
  * @package 	Base
  *
  */
@@ -438,7 +438,7 @@ public static function print_array_to_html($y_aray) {
 
 
 //================================================================
-public static function pretty_print_bytes($y_bytes, $y_decimals=1) {
+public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ') {
 	//--
 	$y_decimals = (int) $y_decimals;
 	if($y_decimals < 0) {
@@ -453,26 +453,26 @@ public static function pretty_print_bytes($y_bytes, $y_decimals=1) {
 	} //end if
 	//--
 	if($y_bytes < 1024) {
-		return (string) Smart::format_number_int($y_bytes).' bytes';
+		return (string) Smart::format_number_int($y_bytes).$y_separator.'bytes';
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1024;
 	if($y_bytes < 1024) {
-		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' KB';
+		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'KB';
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1024;
 	if($y_bytes < 1024) {
-		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' MB';
+		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'MB';
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1024;
 	if($y_bytes < 1024) {
-		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' GB';
+		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'GB';
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1024;
-	return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').' TB';
+	return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
 	//--
 } //END FUNCTION
 //================================================================
