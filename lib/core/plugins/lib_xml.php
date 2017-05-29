@@ -45,7 +45,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.170529
+ * @version     v.170529.r2
  * @package     DATA:XML
  *
  */
@@ -59,7 +59,6 @@ private $encoding = 'ISO-8859-1';
 
 
 //===============================
-// INIT
 public function __construct($encoding='') {
 	//--
 	if((string)$encoding == '') {
@@ -77,7 +76,6 @@ public function __construct($encoding='') {
 
 
 //===============================
-// PUBLIC
 public function transform($xml_str, $log_parse_err_warns=false) {
 	//--
 	$xml_str = (string) trim((string)$xml_str);
@@ -126,7 +124,8 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 } //END FUNCTION
 //===============================
 
-# PRIVATES
+
+##### PRIVATES
 
 
 //=============================== fix parser bugs by adding the xml markup tag and a valid xml root
@@ -155,13 +154,32 @@ private function FixXmlRoot($xml_str) {
 //===============================
 private function SimpleXML2Array($sxml) {
 	//--
-	if((!is_object($sxml)) AND (!is_array($sxml))) {
+	if(((is_object($sxml)) AND (strpos(get_class($sxml), 'SimpleXML') !== false)) OR (is_array($sxml))) {
+		//--
+		$array = (array) $sxml;
+		$sxml = array(); // free mem
+		//-- recursive Parser
+		foreach($array as $key => $value) {
+			if(((is_object($value)) AND (strpos(get_class($value), 'SimpleXML') !== false)) OR (is_array($value))) {
+				$tmp_val = (array) $this->SimpleXML2Array($value);
+				if(Smart::array_size($tmp_val) <= 0) {
+					$array[(string)$key] = ''; // FIX: avoid return empty XML key as array() from SimpleXML (empty XML key should be returned as empty string !!!)
+				} else {
+					$array[(string)$key] = (array) $tmp_val;
+				} //end if
+			} //end if
+		} //end foreach
+		//--
+		return (array) $array;
+		//--
+	} else {
+		//--
 		return array();
+		//--
 	} //end if
 	//--
-	return (array) Smart::json_decode((string)Smart::json_encode((array)$sxml, false, true, false), true); // fix: convert all SimpleXMLElement objects to arrays
-	//--
 } //END FUNCTION
+//===============================
 //===============================
 
 
@@ -205,7 +223,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.170529
+ * @version     v.170529.r2
  * @package     DATA:XML
  *
  */
@@ -243,7 +261,9 @@ public function transform($y_array) {
 } //END FUNCTION
 //===============================
 
-# PRIVATES
+
+##### PRIVATES
+
 
 //===============================
 private function create_from_array($y_array) {
