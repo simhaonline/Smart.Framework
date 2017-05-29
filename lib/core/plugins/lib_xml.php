@@ -45,7 +45,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.160902
+ * @version     v.170529
  * @package     DATA:XML
  *
  */
@@ -88,7 +88,7 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 	@libxml_use_internal_errors(true);
 	@libxml_clear_errors();
 	//--
-	$arr = $this->SimpleXML2Array(
+	$arr = (array) $this->SimpleXML2Array(
 		@simplexml_load_string(
 			$this->FixXmlRoot((string)$xml_str),
 			'SimpleXMLElement',
@@ -96,7 +96,7 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 		)
 	);
 	//-- log errors if any
-	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true)) { // log errors if set :: OR (Smart::array_size($arr) <= 0)
+	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true)) { // log errors if set
 		$errors = (array) @libxml_get_errors();
 		if(Smart::array_size($errors) > 0) {
 			$notice_log = '';
@@ -155,31 +155,11 @@ private function FixXmlRoot($xml_str) {
 //===============================
 private function SimpleXML2Array($sxml) {
 	//--
-	if(!is_object($sxml)) {
+	if((!is_object($sxml)) AND (!is_array($sxml))) {
 		return array();
 	} //end if
 	//--
-	$array = (array) $sxml;
-	$sxml = array();
-	//-- recursive Parser
-	foreach($array as $key => $value) {
-		if(is_object($value)) {
-			if(strpos(get_class($value), 'SimpleXML') !== false) {
-				$tmp_val = $this->SimpleXML2Array($value);
-				if(is_array($tmp_val)) {
-					if(Smart::array_size($tmp_val) <= 0) {
-						$array[(string)$key] = ''; // FIX: avoid return empty XML key as array() in SimpleXML (empty XML key should be returned as empty string)
-					} else {
-						$array[(string)$key] = (array) $tmp_val;
-					} //end if
-				} else {
-					$array[(string)$key] = (string) $tmp_val;
-				} //end if else
-			} //end if
-		} //end if
-	} //end foreach
-	//--
-	return (array) $array;
+	return (array) Smart::json_decode((string)Smart::json_encode((array)$sxml, false, true, false), true); // fix: convert all SimpleXMLElement objects to arrays
 	//--
 } //END FUNCTION
 //===============================
@@ -225,7 +205,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160902
+ * @version     v.170529
  * @package     DATA:XML
  *
  */
