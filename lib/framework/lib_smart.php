@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170519
+ * @version     v.170530
  * @package     Base
  *
  */
@@ -946,12 +946,15 @@ public static function array_change_key_case_recursive($y_arr, $y_mode) {
 			return (array) $y_arr;
 	} //end if
 	//--
-	return (array) array_map(function($y_arr)use($y_mode){
-		if(is_array($y_arr)) {
-			$y_arr = self::array_change_key_case_recursive($y_arr, $y_mode);
-		} //end if
-		return $y_arr;
-	}, array_change_key_case($y_arr, $case));
+	return (array) array_map(
+		function($y_newarr) use($y_mode) {
+			if(is_array($y_newarr)) {
+				$y_newarr = self::array_change_key_case_recursive($y_newarr, $y_mode);
+			} //end if
+			return $y_newarr; // mixed
+		},
+		array_change_key_case($y_arr, $case)
+	);
 	//--
 } //END FUNCTION
 //================================================================

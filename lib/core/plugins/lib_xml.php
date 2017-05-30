@@ -45,7 +45,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.170529.r2
+ * @version     v.170530
  * @package     DATA:XML
  *
  */
@@ -87,11 +87,19 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 	@libxml_clear_errors();
 	//--
 	$arr = (array) $this->SimpleXML2Array(
-		@simplexml_load_string(
-			$this->FixXmlRoot((string)$xml_str),
-			'SimpleXMLElement',
-			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
-		)
+		(array) Smart::json_decode(
+			(string)Smart::json_encode(
+				(array) @simplexml_load_string(
+					$this->FixXmlRoot((string)$xml_str),
+					'SimpleXMLElement', // this element class is referenced and check in SimpleXML2Array
+					LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
+				),
+				false, // no pretty print
+				true, // unescaped unicode
+				false // unescaped slashes
+				),
+			true // return array
+		) // FIX: json encode / decode forces to convert all simplexml objects into arrays !
 	);
 	//-- log errors if any
 	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true)) { // log errors if set
@@ -152,34 +160,27 @@ private function FixXmlRoot($xml_str) {
 
 
 //===============================
-private function SimpleXML2Array($sxml) {
+private function SimpleXML2Array($y_arr) {
 	//--
-	if(((is_object($sxml)) AND (strpos(get_class($sxml), 'SimpleXML') !== false)) OR (is_array($sxml))) {
-		//--
-		$array = (array) $sxml;
-		$sxml = array(); // free mem
-		//-- recursive Parser
-		foreach($array as $key => $value) {
-			if(((is_object($value)) AND (strpos(get_class($value), 'SimpleXML') !== false)) OR (is_array($value))) {
-				$tmp_val = (array) $this->SimpleXML2Array($value);
-				if(Smart::array_size($tmp_val) <= 0) {
-					$array[(string)$key] = ''; // FIX: avoid return empty XML key as array() from SimpleXML (empty XML key should be returned as empty string !!!)
-				} else {
-					$array[(string)$key] = (array) $tmp_val;
-				} //end if
-			} //end if
-		} //end foreach
-		//--
-		return (array) $array;
-		//--
-	} else {
-		//--
+	if(!is_array($y_arr)) { // FIX: bug if empty array / max nested level
 		return array();
-		//--
 	} //end if
 	//--
+	return (array) array_map(
+		function($y_newarr) {
+			if(is_array($y_newarr)) {
+				if(Smart::array_size($y_newarr) <= 0) {
+					$y_newarr = (string) ''; // FIX: avoid return empty XML key as array() from SimpleXML (empty XML key should be returned as empty string !!!)
+				} else {
+					$y_newarr = (array) $this->SimpleXML2Array((array)$y_newarr); // array
+				} //end if
+			} //end if
+			return $y_newarr; // mixed
+		},
+		(array) $y_arr
+	);
+	//--
 } //END FUNCTION
-//===============================
 //===============================
 
 
@@ -223,7 +224,7 @@ private function SimpleXML2Array($sxml) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.170529.r2
+ * @version     v.170530
  * @package     DATA:XML
  *
  */

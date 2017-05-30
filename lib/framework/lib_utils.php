@@ -14,6 +14,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Utils
 // DEPENDS:
 //	* Smart::
+//	* SmartUnicode::
 //	* SmartValidator::
 //	* SmartHashCrypto::
 //	* SmartAuth::
@@ -48,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170526
+ * @version 	v.170530
  * @package 	Base
  *
  */
@@ -640,11 +641,11 @@ public static function extract_title($ytxt, $y_limit=65) {
 	//--
 	$y_limit = (int) $y_limit + 1; // fix
 	//--
-	if(\SmartUnicode::str_len($ytxt) > $y_limit) {
-		$ytxt = (string) \SmartUnicode::sub_str((string)$ytxt, 0, $y_limit);
-		$space_pos = \SmartUnicode::str_rpos((string)$ytxt, ' ');
+	if(SmartUnicode::str_len($ytxt) > $y_limit) {
+		$ytxt = (string) SmartUnicode::sub_str((string)$ytxt, 0, $y_limit);
+		$space_pos = SmartUnicode::str_rpos((string)$ytxt, ' ');
 		if((int)$space_pos > (int)ceil($y_limit / 1.5)) { // if there is a space in the last 1/3 or there are spaces {{{SYNC-CUT-BACKWARD-STR-BY-SPACE}}}
-			$ytxt = (string) \SmartUnicode::sub_str((string)$ytxt, 0, (int)$space_pos); // cut backward until last space
+			$ytxt = (string) SmartUnicode::sub_str((string)$ytxt, 0, (int)$space_pos); // cut backward until last space
 		} else {
 			$ytxt .= '...';
 		} //end if
@@ -2098,6 +2099,143 @@ public static function get_os_browser_ip($y_mode='') {
 //================================================================
 
 
+//##### NON-PUBLICS
+
+
+//================================================================
+/**
+ * Function: Run Proc Cmd
+ *
+ * @access 		private
+ * @internal
+ *
+ * @return ARRAY
+ *
+ */
+public static function run_proc_cmd($cmd, $inargs=[]) {
+
+	//-- initialize
+	$descriptorspec = [
+		0 => [ 'pipe', 'r' ], // stdin
+		1 => [ 'pipe', 'w' ], // stdout
+		2 => [ 'pipe', 'w' ]  // stderr
+	];
+	//--
+	$output = array();
+	$rderr = false;
+	$pipes = array();
+	//--
+
+	//--
+	$outarr = [
+		'stdout' 	=> '',
+		'stderr' 	=> '',
+		'exitcode' 	=> null
+	];
+	//--
+
+	//-- exec
+	$resource = proc_open((string)$cmd, (array)$descriptorspec, $pipes);
+	//--
+	if(!is_resource($resource)) {
+		//--
+		$outarr['stdout'] 	= '';
+		$outarr['stderr'] 	= '';
+		$outarr['exitcode'] = false;
+		//--
+		return (array) $outarr;
+		//--
+	} //end if
+	//--
+
+	//-- write to stdin
+	if(Smart::array_size($inargs) > 0) {
+		foreach((array)$inargs as $key => $val) {
+			fwrite($pipes[0], (string)$val);
+		} //end foreach
+	} //end if
+	//--
+
+	//-- read stdout
+	$output = (string) SmartUnicode::convert_charset((string)stream_get_contents($pipes[1]));
+	//--
+
+	//-- read stderr (here may be errors or warnings)
+	$errors = (string) SmartUnicode::convert_charset((string)stream_get_contents($pipes[2]));
+	//--
+
+	//--
+	fclose($pipes[0]);
+	fclose($pipes[1]);
+	fclose($pipes[2]);
+	//--
+	$exitcode = proc_close($resource);
+	//--
+
+	//--
+	$outarr['stdout'] 	= (string) $output;
+	$outarr['stderr'] 	= (string) $errors;
+	$outarr['exitcode'] = $exitcode; // don't make it int !!!
+	//--
+	return (array) $outarr;
+	//--
+
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Function: Lock File Name
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function single_user_mode_lockfile() {
+	//--
+	return '____SMART-FRAMEWORK_SingleUser_Mode__Enabled';
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Check if Single-User Mode is Enabled
+ *
+ * @access 		private
+ * @internal
+ *
+ * @return TRUE/FALSE
+ */
+public static function single_user_mode_check() {
+	//--
+	$lock_file = (string) self::single_user_mode_lockfile();
+	//--
+	$out = false;
+	//--
+	if(SmartFileSystem::file_or_link_exists($lock_file)) {
+		//--
+		$lock_content = SmartFileSystem::read($lock_file);
+		$chk_arr = explode("\n", trim($lock_content));
+		$tmp_time = Smart::format_number_dec((($chk_arr[1] - time()) / 60), 0, '.', '');
+		//--
+		if($tmp_time <= 0) {
+			$out = true;
+		} //end if
+		//--
+	} //end if
+	//--
+	return (bool) $out;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//##### PRIVATES
+
+
 //================================================================
 // gets the IP from composed headers
 // Note on Proxy and IPs:
@@ -2174,55 +2312,6 @@ private static function _iplist_get_last_address($ip) {
 	} //end if
 	//--
 	return (string) $ip;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Lock File Name
- *
- * @access 		private
- * @internal
- *
- */
-public static function single_user_mode_lockfile() {
-	//--
-	return '____SMART-FRAMEWORK_SingleUser_Mode__Enabled';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Check if Single-User Mode is Enabled
- *
- * @access 		private
- * @internal
- *
- * @return TRUE/FALSE
- */
-public static function single_user_mode_check() {
-	//--
-	$lock_file = (string) self::single_user_mode_lockfile();
-	//--
-	$out = false;
-	//--
-	if(SmartFileSystem::file_or_link_exists($lock_file)) {
-		//--
-		$lock_content = SmartFileSystem::read($lock_file);
-		$chk_arr = explode("\n", trim($lock_content));
-		$tmp_time = Smart::format_number_dec((($chk_arr[1] - time()) / 60), 0, '.', '');
-		//--
-		if($tmp_time <= 0) {
-			$out = true;
-		} //end if
-		//--
-	} //end if
-	//--
-	return (bool) $out;
 	//--
 } //END FUNCTION
 //================================================================
