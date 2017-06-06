@@ -45,7 +45,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		if((string)$op == 'viewsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('div', ['web','tpl']).'<h1>Marker-TPL Template Source</h1><hr><pre style="background:#FAFAFA;"><code class="markertpl">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::staticread((string)$tpl)),false).'</code></pre><hr><br>');
+			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('div', ['web','tpl']).'<h1>Marker-TPL Template Source</h1><hr><pre style="background:#FAFAFA;"><code class="markertpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::staticread((string)$tpl))).'</code></pre><hr><br>');
 			return;
 			//--
 		} //end if
@@ -67,7 +67,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'TEST-COMPARE' => 'a',
 						'DATA' => [
 							// id        slug         name                is_vowel         arr of numbers
-							'This is a sample table',
+							'This is a sample table with Header + 15 Rows = 16 Rows in Total',
 							['id'=>1,  'slug'=>'a', 'name'=>'Letter A', 'is_vowel'=>true,  'arr' => [1,2,3]],
 							['id'=>2,  'slug'=>'b', 'name'=>'Letter B', 'is_vowel'=>false, 'arr' => [1,5,3]],
 							['id'=>3,  'slug'=>'c', 'name'=>'Letter C', 'is_vowel'=>false, 'arr' => [5,2,3]],

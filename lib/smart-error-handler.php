@@ -9,9 +9,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// this should be loaded from app web root only
+// # r.170603 # this should be loaded from app web root only
 
-// ===== NOTICE =====
+// ===== ATTENTION =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES
 //	* ONLY CONSTANTS CAN BE DEFINED HERE
 //	* FOR ERRORS WE TRY TO USE htmlspecialchars() with ISO-8859-1 encoding
@@ -76,6 +76,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	//-- The following error types cannot be handled with a user defined function: E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, and most of E_STRICT raised in the file where set_error_handler() is called : http://php.net/manual/en/function.set-error-handler.php
 	$app_halted = '';
 	$is_supressed = false;
+	$is_fatal = false;
 	switch($errno) { // friendly err names
 		case E_NOTICE:
 			$ferr = 'NOTICE';
@@ -85,6 +86,9 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 			break;
 		case E_USER_NOTICE:
 			$ferr = 'APP-NOTICE';
+			if((string)SMART_ERROR_HANDLER == 'log') {
+				$is_supressed = true;
+			} //end if
 			break;
 		case E_WARNING:
 			$ferr = 'WARNING';
@@ -95,11 +99,13 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 		case E_USER_WARNING:
 			$ferr = 'APP-WARNING';
 			break;
-		case E_ERROR:
+		case E_RECOVERABLE_ERROR:
+			$is_fatal = true;
 			$app_halted = ' :: Execution FAILED !';
 			$ferr = 'ERROR';
 			break;
 		case E_USER_ERROR:
+			$is_fatal = true;
 			$app_halted = ' :: Execution Halted !';
 			$ferr = 'APP-ERROR';
 			break;
@@ -110,11 +116,11 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	if(((string)SMART_ERROR_HANDLER != 'log') OR ((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes')) {
 		$is_supressed = false;
 	} //end if
-	if(!defined('SMART_ERROR_SILENCE_WARNS_NOTICE')) { // to silence warnings and notices from logs this must be set explicit in init.php as: define('SMART_ERROR_SILENCE_WARNS_NOTICE', true); // Error Handler silence warnings and notices log (available just for SMART_ERROR_HANDLER=log mode)
-		$is_supressed = false;
+	if(defined('SMART_ERROR_SILENCE_WARNS_NOTICE')) { // to silence warnings and notices from logs this must be set explicit in init.php as: define('SMART_ERROR_SILENCE_WARNS_NOTICE', true); // Error Handler silence warnings and notices log (available just for SMART_ERROR_HANDLER=log mode)
+		$is_supressed = true;
 	} //end if
 	//--
-	if($is_supressed !== true) {
+	if(($is_supressed !== true) OR ($is_fatal === true)) {
 		if((is_dir(SMART_ERROR_LOGDIR)) && (is_writable(SMART_ERROR_LOGDIR))) {
 			@file_put_contents(
 				SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE,
@@ -124,7 +130,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 		} //end if
 	} //end if
 	//--
-	if($errno === E_USER_ERROR) { // this is necessary just for E_USER_ERROR is used just for Exceptions and all other PHP errors are FATAL and will stop the execution ; For WARNING / NOTICE type errors we just want to log them, not to stop the execution !
+	if(($errno === E_RECOVERABLE_ERROR) OR ($errno === E_USER_ERROR)) { // this is necessary for: E_RECOVERABLE_ERROR and E_USER_ERROR (which is used just for Exceptions) and all other PHP errors which are FATAL and will stop the execution ; For WARNING / NOTICE type errors we just want to log them, not to stop the execution !
 		//--
 		$message = 'Server Script Execution Halted.'."\n".'See the App Error Log for details';
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
@@ -136,7 +142,6 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 		if(!headers_sent()) {
 			@http_response_code(500); // try, if not headers send
 		} //end if
-
 		die('<!-- Smart Error Reporting / Smart Error Handler --><div align="center"><div style="width:548px; border: 1px solid #CCCCCC; margin-top:10px; margin-bottom:10px;"><table align="center" cellpadding="4" style="max-width:540px;"><tr valign="top"><td width="32"><img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/sign-crit-error.svg" alt="[!]" title="[!]"></td><td>&nbsp;</td><td><b>'.'Application Runtime Error @ '.SMART_ERROR_AREA.' [#'.$errno.']:<br>'.'</b><i>'.nl2br(htmlspecialchars((string)$message, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, 'ISO-8859-1'),false).'</i></td></tr></table></div><br><div style="width:550px; color:#778899; text-align:justify;"></div>'.$smart_____framework_____last__error.'</div>');
 		//--
 	} //end if else

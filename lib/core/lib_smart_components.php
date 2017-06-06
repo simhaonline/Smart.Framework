@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170523
+ * @version 	v.170601
  * @package 	Components:Framework
  *
  */
@@ -1880,7 +1880,7 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 	$arr_stx_plugs = [];
 	foreach($arr_packs as $key => $val) {
 		$key = (string) strtolower((string)trim((string)$key));
-		if(in_array((string)$key, (array)$plugins)) {
+		if((Smart::array_size($plugins) <= 0) OR (in_array((string)$key, (array)$plugins))) {
 			if((string)$key != '') {
 				$tmp_arr = (array) explode(',', (string)$val);
 				for($i=0; $i<Smart::array_size($tmp_arr); $i++) {

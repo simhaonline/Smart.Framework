@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.170415
+ * @version 	v.170603
  *
  */
 final class SmartDebugProfiler {
@@ -407,9 +407,9 @@ private static function print_log_mail($log_mail_arr) {
 			$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Operation: <b>'.strtoupper((string)$key).'</b></div>';
 			$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:#000000;">';
 			if(is_array($val)) {
-				$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)implode("\n\n##########\n\n", $val))))).'</pre>';
+				$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)implode("\n\n##########\n\n", $val)))), true).'</pre>';
 			} else {
-				$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)self::print_value_by_type($val))))).'</pre>';
+				$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)self::print_value_by_type($val)))), true).'</pre>';
 			} //end if else
 			$log .= '</div>';
 			//--
@@ -475,11 +475,11 @@ private static function print_log_runtime() {
 		if(is_array($debug_val)) {
 			$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
 			foreach($debug_val as $key => $val) {
-				$log .= '<tr valign="top"><td width="295"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($val))).'</div></td></tr>';
+				$log .= '<tr valign="top"><td width="295"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($val)), true).'</div></td></tr>';
 			} //end foreach
 			$log .= '</table>';
 		} else {
-			$log .= '<div class="smartframework_debugbar_inforow">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)$debug_val)).'</div>';
+			$log .= '<div class="smartframework_debugbar_inforow">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)$debug_val), true).'</div>';
 		} //end if else
 	} //end while
 	//--
@@ -519,11 +519,11 @@ private static function print_log_configs() {
 				} else {
 					$color = '#FAFAFA';
 				} //end if else
-				$log .= '<tr bgcolor="'.$color.'" valign="top" title="#'.$i.'.'.$j.'"><td width="290"><b>'.Smart::escape_html((string)$k).'</b></td><td>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::nl_2_br(Smart::escape_html(self::print_value_by_type($v)))).'</td></tr>';
+				$log .= '<tr bgcolor="'.$color.'" valign="top" title="#'.$i.'.'.$j.'"><td width="290"><b>'.Smart::escape_html((string)$k).'</b></td><td>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::nl_2_br(Smart::escape_html(self::print_value_by_type($v))), true).'</td></tr>';
 			} //end foreach
 			$log .= '</table>';
 		} else {
-			$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)$val)).'</pre>';
+			$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)$val), true).'</pre>';
 		} //end if else
 		$log .= '</div></td></tr>';
 		$log .= '</table>';
@@ -549,7 +549,7 @@ private static function print_log_configs() {
 		} //end if
 		//--
 		$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
-		$log .= '<tr valign="top" title="#'.$i.'"><td width="375"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html((string)$key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::nl_2_br(Smart::escape_html(self::print_value_by_type($val)))).'</div></td></tr>';
+		$log .= '<tr valign="top" title="#'.$i.'"><td width="375"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html((string)$key).'</b></div></td><td><div class="smartframework_debugbar_inforow">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::nl_2_br(Smart::escape_html(self::print_value_by_type($val))), true).'</div></td></tr>';
 		$log .= '</table>';
 		//--
 	} //end while
@@ -591,7 +591,7 @@ private static function print_log_headers($response_code, $response_heads_arr, $
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Entries: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($response_heads_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td style="min-width: 25px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val)).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td style="min-width: 25px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -604,7 +604,7 @@ private static function print_log_headers($response_code, $response_heads_arr, $
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Entries: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($request_heads_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td style="min-width: 150px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val)).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td style="min-width: 150px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -634,7 +634,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$cnt = 0;
 		foreach($req_filtered as $debug_key => $debug_val) {
 			$cnt++;
-			$tbl .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val))).'</font></div></td></tr>';
+			$tbl .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val)), true).'</font></div></td></tr>';
 		} //end while
 		$tbl .= '</table>';
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total (Non-Empty) Variables: <b>'.Smart::escape_html($cnt).'</b></div>';
@@ -651,7 +651,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($cookies_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val)).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -664,7 +664,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($get_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val))).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val)), true).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -677,7 +677,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($post_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val))).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val)), true).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -690,7 +690,7 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($server_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td style="min-width: 200px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val)).'</font></div></td></tr>';
+			$log .= '<tr valign="top"><td style="min-width: 200px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true).'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -714,9 +714,9 @@ private static function print_log_session($session_arr) {
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		while(list($debug_key, $debug_val) = each($session_arr)) {
 			if((is_array($debug_val)) OR (is_object($debug_val))) {
-				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><font color="#333333"><b>'.Smart::escape_html($debug_key).'</b></font></div></td><td><div class="smartframework_debugbar_inforow"><pre color:#333333;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val))).'</pre></div></td></tr>';
+				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><font color="#333333"><b>'.Smart::escape_html($debug_key).'</b></font></div></td><td><div class="smartframework_debugbar_inforow"><pre color:#333333;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val)), true).'</pre></div></td></tr>';
 			} else {
-				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val)).'</font></div></td></tr>';
+				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true).'</font></div></td></tr>';
 			} //end if else
 		} //end while
 		$log .= '</table>';
@@ -747,9 +747,9 @@ private static function print_log_auth($auth_arr) {
 		foreach($login_data as $debug_key => $debug_val) {
 			$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">';
 			if(is_array($debug_val)) {
-				$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val))).'</pre>';
+				$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val)), true).'</pre>';
 			} else {
-				$log .= SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val));
+				$log .= SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true);
 			} //end if else
 			$log .= '</font></div></td></tr>';
 		} //end for
@@ -788,7 +788,7 @@ private static function print_log_database($title, $db_log) {
 					$tmp_color = '#003399';
 					//--
 					$log .= '<div class="smartframework_debugbar_inforow" style="font-size:12px; color:'.$tmp_color.';">';
-					$log .= $num.'. '.'<b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['data'])).'</b>';
+					$log .= $num.'. '.'<b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['data']), true).'</b>';
 					if((string)$tmp_arr['connection'] != '') {
 						$log .= ' @ '.Smart::escape_html($tmp_arr['connection']);
 					} //end if
@@ -796,7 +796,7 @@ private static function print_log_database($title, $db_log) {
 						$log .= '<br><span style="padding:1px;"><b>@Time: '.Smart::format_number_dec($tmp_arr['time'], 9, '.', '').' sec.</b></span>';
 					} //end if
 					if((string)$tmp_arr['query'] != '') {
-						$log .= '<br><span class="smartframework_debugbar_status_highlight" style="padding:1px;"><b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['query'])).'</b></span>';
+						$log .= '<br><span class="smartframework_debugbar_status_highlight" style="padding:1px;"><b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['query']), true).'</b></span>';
 					} //end if
 					$log .= '</div>';
 					//--
@@ -839,14 +839,14 @@ private static function print_log_database($title, $db_log) {
 						} //end if else
 					} //end if
 					if((string)$tmp_arr['query'] != '') {
-						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['query']));
+						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['query']), true);
 						if((string)$tmp_arr['type'] == 'write') {
 							$log .= '<br>'.'AFFECTED ROWS: #'.$tmp_arr['rows'];
 						} //end if
 						if(Smart::array_size($tmp_arr['params']) > 0) {
 							$tmp_params = array();
 							foreach($tmp_arr['params'] as $key => $val) {
-								$tmp_params[] = SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html('$'.($key+1).' => `'.$val.'`'));
+								$tmp_params[] = SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html('$'.($key+1).' => `'.$val.'`'), true);
 							} //end foreach
 							$log .= '<br>'.'@PARAMS:&nbsp;{ '.implode(', ', $tmp_params).' }';
 							$tmp_params = array();
@@ -855,12 +855,12 @@ private static function print_log_database($title, $db_log) {
 					if(is_array($tmp_arr['command'])) {
 						$tmp_params = array();
 						foreach($tmp_arr['command'] as $key => $val) {
-							$tmp_params[] = SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($key.' => `'.self::print_value_by_type($val).'`'));
+							$tmp_params[] = SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($key.' => `'.self::print_value_by_type($val).'`'), true);
 						} //end foreach
 						$log .= '<br>'.'@COMMAND-PARAMS:&nbsp;{ '.implode(', ', $tmp_params).' }';
 						$tmp_params = array();
 					} elseif((string)$tmp_arr['command'] != '') {
-						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::nl_2_br(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_arr['command']))));
+						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::nl_2_br(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_arr['command']))), true);
 					} //end if
 					$log .= '</div>';
 					//--
@@ -870,7 +870,7 @@ private static function print_log_database($title, $db_log) {
 					$tmp_color = '#4285F4';
 					//--
 					$log .= '<div class="smartframework_debugbar_inforow" style="font-size:12px; color:'.$tmp_color.';">';
-					$log .= '<b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['data'])).'</b>';
+					$log .= '<b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['data']), true).'</b>';
 					if((string)$tmp_arr['connection'] != '') {
 						$log .= ' @ '.Smart::escape_html($tmp_arr['connection']);
 					} //end if
@@ -883,7 +883,7 @@ private static function print_log_database($title, $db_log) {
 					$tmp_color = '#CCCCCC';
 					//--
 					$log .= '<div class="smartframework_debugbar_inforow" style="font-size:12px; color:'.$tmp_color.';">';
-					$log .= '<b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['data'])).'</b>';
+					$log .= '<b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['data']), true).'</b>';
 					if((string)$tmp_arr['connection'] != '') {
 						$log .= ' @ '.Smart::escape_html($tmp_arr['connection']);
 					} //end if
@@ -939,7 +939,7 @@ private static function print_log_optimizations($title, $optimizations_log) {
 						if((string)$tmp_item['action'] == 'debug-tpl') {
 							$log .= '<a title="Click to View Marker-TPL Debug Analyze Info" href="?smartframeworkservice=debug-tpl&tpl='.Smart::escape_url(trim((string)$tmp_item['key'])).'" target="_blank" style="text-decoration-style:dotted; text-decoration-color:'.$color.';">';
 						} //end if
-						$log .= '<span style="font-size:11px; color:'.$color.';">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_line))).'</span><br>';
+						$log .= '<span style="font-size:11px; color:'.$color.';">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_line)), true).'</span><br>';
 						if((string)$tmp_item['action'] == 'debug-tpl') {
 							$log .= '</a>';
 						} //end if
@@ -982,7 +982,7 @@ private static function print_log_extra($title, $extra_log) {
 			//--
 			$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:#000000;">';
 			$log .= '<b>'.Smart::escape_html((string)$tmp_arr['title']).'</b><br>';
-			$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)$tmp_arr['data'])))).'</pre>';
+			$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)$tmp_arr['data']))), true).'</pre>';
 			$log .= '</div>';
 			//--
 		} //end for
@@ -1017,7 +1017,7 @@ private static function print_log_modules($title, $modules_log) {
 			//--
 			$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:#000000;">';
 			$log .= '<b>'.Smart::escape_html((string)$tmp_arr['title']).'</b><br>';
-			$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)$tmp_arr['data'])))).'</pre>';
+			$log .= '<pre style="font-size:11px; color:#000000;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)$tmp_arr['data']))), true).'</pre>';
 			$log .= '</div>';
 			//--
 		} //end for

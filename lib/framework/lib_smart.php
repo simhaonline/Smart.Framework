@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170530
+ * @version     v.170604
  * @package     Base
  *
  */
@@ -1764,6 +1764,7 @@ public static function log_info($title, $message) {
  * A quick replacement for trigger_error() / E_USER_NOTICE.
  * This is intended to log APP Level Notices.
  * This will log the message as NOTICE into the App Error Log.
+ * Notices are logged ONLY if SMART_ERROR_HANDLER is set to 'dev' mode.
  *
  * @param STRING 	$message		:: The message to be triggered
  *
@@ -1805,7 +1806,7 @@ public static function log_warning($message) {
  *
  * @return -						:: This function does not return anything
  */
-public static function raise_error($message_to_log, $message_to_display='') {
+public static function raise_error($message_to_log, $message_to_display='See Error Log for More Details') {
 	//--
 	global $smart_____framework_____last__error;
 	//--

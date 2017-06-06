@@ -1,0 +1,54 @@
+
+/***** V-TimeLine CSS - Small *****/
+/* V-TimeLine
+	License: BSD
+	(c) 2015-2017 unix-world.org
+*/
+
+.vtml-timeline-icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 48px;
+	height: 48px;
+	margin-left: -7px;
+	border: 4px solid #E4E4E4;
+	border-radius: 10%;
+	cursor: default;
+}
+
+.vtml-timeline-icon div {
+	position: relative;
+	width: 24px;
+	height: 24px;
+	margin-left: 9px;
+	margin-top: 9px;
+	text-align:center;
+}
+
+.vtml-timeline-content {
+	padding: 0.75em;
+}
+
+.vtml-timeline-content p, .vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
+	font-size: 0.813em;
+	text-align: initial;
+}
+
+.vtml-timeline-content p {
+	margin: 0.25em 0;
+	line-height: 1.4;
+}
+
+.vtml-timeline-content .vtml-date {
+	padding: 0;
+	font-size: 0.938em;
+}
+
+.vtml-timeline-content h2 {
+	display: inline !important;
+	color: #222222;
+	font-size: 1.125em;
+}
+
+/* END */

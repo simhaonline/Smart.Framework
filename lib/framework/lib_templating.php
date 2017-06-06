@@ -32,11 +32,14 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Because the Marker-TPL Templating is rendering the Views by injecting plain strings and data arrays directly into these Views (no PHP code, no re-interpreted PHP code) there is NO SECURITY RISK by injecting malicious PHP code into the Views
 // It does support: MARKERS, IF/ELSE, LOOP, INCLUDE syntax.
 // Nested identic IF/ELSE or nested identic LOOP syntax must be separed with unique terminators such as: (1), (2), ...
+// For IF/ELSE syntax variable order matters for comparison if used inside LOOP ; when comparing a (special context) variable inside a LOOP with another variable (from out of this context), the LOOP context variable must be placed in the left side, otherwise the comparison will fail as the left variable may be evaluated prior the LOOP variable to be initialized ...
 // For nested LOOP it only supports max 2 levels: only 1 LOOP inside other LOOP, as combining more would be inefficient from the application performance point of view, because of the exponential structure complexity of context data, such as metadata context that must be replicated:
-// 		_-MAXCOUNT-_ 		The max iterator of array: arraysize-1
-// 		_-ITERATOR-_		The current array iterator: 0..(arraysize-1)
-// 		_-VAL-_				The current loop value
-// 		_-KEY-_				* Only for Associative Arrays * The current loop key
+// 		-_MAXSIZE_- 		The max array index = arraysize ; Available *ONLY* in LOOP
+// 		-_INDEX_- 			The current array index: 1..arraysize ; Available *ONLY* in LOOP
+// 		_-MAXCOUNT-_ 		The max iterator of array: arraysize-1 ; Available also in LOOP / IF
+// 		_-ITERATOR-_		The current array iterator: 0..(arraysize-1) ; Available also in LOOP / IF
+// 		_-VAL-_				The current loop value ; Available also in LOOP / IF
+// 		_-KEY-_				The current loop key ; Available *ONLY* for associative arrays ; Available also in LOOP / IF
 // Thus, this limitation must be compensated from the design of input variables.
 //##### TECHNICAL REFERENCE:
 // Because the recursion patterns are un-predictable, as a template can be rendered in other template in controllers or libs,
@@ -52,7 +55,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170515
+ * @version 	v.170605
  * @package 	Templating:Engines
  *
  */
@@ -377,10 +380,10 @@ public static function read_template_file($y_file_path) {
 		if(SmartPersistentCache::keyExists('smart-marker-tpl-cache', (string)$the_cache_key)) {
 			$tpl = (string) SmartPersistentCache::getKey('smart-marker-tpl-cache', (string)$the_cache_key);
 			if((string)$tpl != '') {
-				//Smart::log_notice('TPL found in cache: '.$y_file_path);
+				//Smart::log_info('TPL found in cache: '.$y_file_path);
 				$tpl = (string) SmartPersistentCache::varUncompress((string)$tpl);
 				if((string)$tpl != '') {
-					//Smart::log_notice('TPL from cache is OK: '.$y_file_path);
+					//Smart::log_info('TPL from cache is OK: '.$y_file_path);
 					return (string) $tpl; // return from persistent cache
 				} //end if
 			} //end if
@@ -390,10 +393,10 @@ public static function read_template_file($y_file_path) {
 	$tpl = (string) SmartFileSystem::staticread((string)$y_file_path);
 	if((string)$the_cache_key != '') {
 		if((string)$tpl != '') {
-			//Smart::log_notice('TPL fs-read OK: '.$y_file_path);
+			//Smart::log_info('TPL fs-read OK: '.$y_file_path);
 			$atpl = (string) SmartPersistentCache::varCompress((string)$tpl);
 			if((string)$atpl != '') {
-				//Smart::log_notice('TPL saved in cache: '.$y_file_path);
+				//Smart::log_info('TPL saved in cache: '.$y_file_path);
 				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key.'__path', (string)$y_file_path, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
 				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key, (string)$atpl, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
 			} //end if
@@ -417,12 +420,13 @@ public static function read_template_file($y_file_path) {
  * @internal
  *
  * @param 	STRING 		$mtemplate 						:: The template to be prepared
- * @param 	BOOLEAN 	$titlecomments 					:: *Optional* Default TRUE ; If FALSE will not highlight TPL markers/syntax/sub-tpl bounds and will show no hint comments over them
+ * @param 	BOOLEAN 	$titlecomments 					:: *Optional* Default FALSE ; If TRUE will highlight TPL markers/syntax/sub-tpl bounds and will show hint comments over them (use for debugging)
+ * @param 	BOOLEAN 	$analyze_dbg 					:: *Optional* Default FALSE ; If TRUE will replace also analyze hints (this should be used ONLY with TPL analyze feature ...)
  *
  * @return 	STRING										:: The template string
  *
  */
-public static function prepare_nosyntax_html_template($mtemplate, $titlecomments=true) {
+public static function prepare_nosyntax_html_template($mtemplate, $titlecomments=false, $analyze_dbg=false) {
 	//--
 	if((self::have_marker((string)$mtemplate) === true) OR (self::have_syntax((string)$mtemplate) === true) OR (self::have_subtemplate((string)$mtemplate) === true)) {
 		//--
@@ -446,27 +450,37 @@ public static function prepare_nosyntax_html_template($mtemplate, $titlecomments
 			];
 		} //end if else
 		//--
+		$arr_fix_src = [
+			'[####',
+			'####]',
+			'[%%%%',
+			'%%%%]',
+			'[@@@@',
+			'@@@@]'
+		];
+		//--
+		$arr_fix_dst = [
+			'<span'.$arr_repls[0].'>&lbrack;&num;&num;&num;&num;</span>',
+			'<span'.$arr_repls[1].'>&num;&num;&num;&num;&rbrack;</span>',
+			'<span'.$arr_repls[2].'>&lbrack;&percnt;&percnt;&percnt;&percnt;</span>',
+			'<span'.$arr_repls[3].'>&percnt;&percnt;&percnt;&percnt;&rbrack;</span>',
+			'<span'.$arr_repls[4].'>&lbrack;&commat;&commat;&commat;&commat;</span>',
+			'<span'.$arr_repls[5].'>&commat;&commat;&commat;&commat;&rbrack;</span>'
+		];
+		//--
+		if($analyze_dbg === true) {
+			//--
+			$arr_fix_src[] = '[****';
+			$arr_fix_src[] = '****]';
+			//--
+			$arr_fix_dst[] = '<span'.$arr_repls[4].'>&lbrack;&commat;&commat;&commat;&commat;</span>';
+			$arr_fix_dst[] = '<span'.$arr_repls[5].'>&commat;&commat;&commat;&commat;&rbrack;</span>';
+			//--
+		} //end if else
+		//--
 		$mtemplate = (string) str_replace(
-			[
-				'[####',
-				'####]',
-				'[%%%%',
-				'%%%%]',
-				'[@@@@',
-				'@@@@]',
-				'[****',
-				'****]'
-			],
-			[
-				'<span'.$arr_repls[0].'>&lbrack;&num;&num;&num;&num;</span>',
-				'<span'.$arr_repls[1].'>&num;&num;&num;&num;&rbrack;</span>',
-				'<span'.$arr_repls[2].'>&lbrack;&percnt;&percnt;&percnt;&percnt;</span>',
-				'<span'.$arr_repls[3].'>&percnt;&percnt;&percnt;&percnt;&rbrack;</span>',
-				'<span'.$arr_repls[4].'>&lbrack;&commat;&commat;&commat;&commat;</span>',
-				'<span'.$arr_repls[5].'>&commat;&commat;&commat;&commat;&rbrack;</span>',
-				'<span'.$arr_repls[4].'>&lbrack;&commat;&commat;&commat;&commat;</span>',
-				'<span'.$arr_repls[5].'>&commat;&commat;&commat;&commat;&rbrack;</span>'
-			],
+			(array) $arr_fix_src,
+			(array) $arr_fix_dst,
 			(string) $mtemplate
 		);
 		//--
@@ -608,7 +622,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	//-- ending
 	$html .= '</div><h2>TPL Source - with ALL:[Level 1..n] Sub-Templates Includded (if any):</h2><div id="tpl-display-for-highlight"><pre id="'.'__marker__template__analyzer-tpl_'.Smart::escape_html($hash).'"><code class="markertpl">'.Smart::escape_html($mtemplate).'</code></pre></div><hr>'."\n".'<!-- #END: Marker-TPL Analysis @ '.Smart::escape_html($hash).' -->';
 	//-- return
-	return (string) self::prepare_nosyntax_html_template($html);
+	return (string) self::prepare_nosyntax_html_template($html, true, true);
 	//--
 } //END FUNCTION
 //================================================================
@@ -639,7 +653,7 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 	} //end foreach
 	//-- if any garbage markers are still detected log warning
 	if(self::have_marker((string)$mtemplate) === true) {
-		Smart::log_warning('Undefined Markers detected in Template:'."\n".self::log_template($mtemplate));
+		Smart::log_notice('Invalid or Undefined Marker-TPL: Markers detected in Template:'."\n".self::log_template($mtemplate));
 		$mtemplate = (string) str_replace(array('[####', '####]'), array('(####-', '-####)'), (string)$mtemplate); // finally protect against undefined variables
 	} //end if
 	//-- debug end
@@ -736,21 +750,40 @@ private static function replace_marker($mtemplate, $key, $val) {
 		//--
 		if((string)$val != '') {
 			//--
+			$arr_fix_one = array();
+			$arr_fix_two = array();
+			$arr_fix_three = array();
+			//--
 			if(self::have_marker((string)$val)) {
-				Smart::log_warning('Undefined Markers detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+				$arr_fix_one[] = '[####';
+				$arr_fix_two[] = '(####+';
+				$arr_fix_one[] = '####]';
+				$arr_fix_two[] = '+####)';
+				$arr_fix_three[] = 'Markers';
 			} //end if
 			if(self::have_syntax((string)$val)) {
-				Smart::log_warning('Undefined Marker Syntax detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+				$arr_fix_one[] = '[%%%%';
+				$arr_fix_two[] = '(%%%%+';
+				$arr_fix_one[] = '%%%%]';
+				$arr_fix_two[] = '+%%%%)';
+				$arr_fix_three[] = 'Marker Syntax';
 			} //end if
 			if(self::have_subtemplate((string)$val)) {
-				Smart::log_warning('Undefined Marker Sub-Templates detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+				$arr_fix_one[] = '[@@@@';
+				$arr_fix_two[] = '(@@@@+';
+				$arr_fix_one[] = '@@@@]';
+				$arr_fix_two[] = '+@@@@)';
+				$arr_fix_three[] = 'Marker Sub-Templates';
 			} //end if
 			//--
-			$val = (string) str_replace(
-				array('[####',   '####]', '[%%%%',   '%%%%]', '[@@@@',   '@@@@]'),
-				array('(####+', '+####)', '(%%%%+', '+%%%%)', '(@@@@+', '+@@@@)'), // the content is marked with +
-				(string) $val
-			); // protect against cascade / recursion / undefined variables - for content injections of: variables / syntax / sub-templates
+			if((Smart::array_size($arr_fix_one) > 0) AND (Smart::array_size($arr_fix_two) > 0) AND (Smart::array_size($arr_fix_one) == Smart::array_size($arr_fix_two))) {
+				Smart::log_notice('Invalid or Undefined Marker-TPL: '.implode(', ', (array)$arr_fix_three).' - detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+				$val = (string) str_replace(
+					(array) $arr_fix_one, // dissalowed markers / syntax / sub-tpls
+					(array) $arr_fix_two, // fixed content, marked with +
+					(string) $val
+				); // protect against cascade / recursion / undefined variables - for content injections of: variables / syntax / sub-templates
+			} //end if
 			//--
 		} //end if
 		//--
@@ -854,7 +887,7 @@ private static function process_syntax($mtemplate, $y_arr_vars) {
 	$mtemplate = (string) self::process_rntspace_syntax($mtemplate);
 	//-- 4th, finally if any garbage syntax is detected log warning
 	if(self::have_syntax((string)$mtemplate) === true) {
-		Smart::log_warning('Undefined Marker Syntax detected in Template:'."\n".self::log_template($mtemplate));
+		Smart::log_notice('Invalid or Undefined Marker-TPL: Marker Syntax detected in Template:'."\n".self::log_template($mtemplate));
 		$mtemplate = (string) str_replace(array('[%%%%', '%%%%]'), array('(%%%%-', '-%%%%)'), (string)$mtemplate); // finally protect against invalid loops (may have not bind to an existing var or invalid syntax)
 	} //end if
 	//--
@@ -1187,9 +1220,8 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 						//-- operate on a copy of original
 						$mks_line = (string) $loop_orig;
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
-						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
-							$tmp_arr_context = [];
+							$tmp_arr_context = array(); // init
 							$tmp_arr_context[(string)$bind_var_key.'.'.'_-MAXCOUNT-_'] = (string) $mxcnt;
 							$tmp_arr_context[(string)$bind_var_key.'.'.'_-ITERATOR-_'] = (string) $j;
 							if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
@@ -1206,6 +1238,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 								(string) $bind_var_key,
 								(array)  $tmp_arr_context
 							);
+							$tmp_arr_context = array(); // reset
 						} //end if
 						//-- process 2nd Level LOOP inside LOOP for non-Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($y_arr_vars[(string)$bind_var_key][$j]))) {
@@ -1221,6 +1254,16 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 							} //end foreach
 						} //end if
 						//-- process the loop replacements
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) $bind_var_key.'.'.'-_MAXSIZE_-', // no if context
+							(string) ($mxcnt+1)
+						);
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) $bind_var_key.'.'.'-_INDEX_-', // no if context
+							(string) ($j+1)
+						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
 							(string) $bind_var_key.'.'.'_-MAXCOUNT-_',
@@ -1269,8 +1312,8 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 						$ziterator = $j;
 						$j++;
 						//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
-						$tmp_arr_context = array();
 						if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
+							$tmp_arr_context = array(); // init
 							$tmp_arr_context[(string)$bind_var_key.'.'.'_-MAXCOUNT-_'] = (string) $mxcnt;
 							$tmp_arr_context[(string)$bind_var_key.'.'.'_-ITERATOR-_'] = (string) $ziterator;
 							$tmp_arr_context[(string)$bind_var_key.'.'.'_-KEY-_'] = (string) $zkey;
@@ -1290,6 +1333,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 								(string) $bind_var_key,
 								(array)  $tmp_arr_context
 							);
+							$tmp_arr_context = array(); // reset
 						} //end if
 						//-- process 2nd Level LOOP inside LOOP for Associative Array
 						if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($zval))) {
@@ -1303,6 +1347,16 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 							} //end if
 						} //end if
 						//-- process the loop replacements
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) $bind_var_key.'.'.'-_MAXSIZE_-', // no if context
+							(string) ($mxcnt+1)
+						);
+						$mks_line = (string) self::replace_marker(
+							(string) $mks_line,
+							(string) $bind_var_key.'.'.'-_INDEX_-', // no if context
+							(string) ($ziterator+1)
+						);
 						$mks_line = (string) self::replace_marker(
 							(string) $mks_line,
 							(string) $bind_var_key.'.'.'_-MAXCOUNT-_',
@@ -1551,7 +1605,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 	} //end if
 	//--
 	if(self::have_subtemplate((string)$mtemplate) === true) {
-		Smart::log_warning('Undefined Marker-TPL Sub-Templates detected in Template:'."\n".self::log_template($mtemplate));
+		Smart::log_notice('Invalid or Undefined Marker-TPL: Marker Sub-Templates detected in Template:'."\n".self::log_template($mtemplate));
 		$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 	} //end if
 	//--

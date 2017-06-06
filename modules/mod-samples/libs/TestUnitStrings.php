@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170530
+ * @version 	v.170604
  *
  */
 final class TestUnitStrings {
@@ -293,7 +293,8 @@ final class TestUnitStrings {
 			$tests[] = $the_test;
 			$test_arr = array(
 				'TEST' => 'Testing weird key characters',
-				'line1' => 'Some ISO-8859-1 String: @ # $ % ^ & * (\') _ - + = { [ ] } ; < ,. > / ? \\ |', 'line2' => 'Unicode (long) String: '.$unicode_text.' '.\SmartUnicode::str_toupper($unicode_text).' '.$unicode_text.' '.\SmartUnicode::str_tolower($unicode_text).' '.$unicode_text.' '.\SmartUnicode::deaccent_str($unicode_text).' '.$unicode_text,
+				'line1' => 'Some ISO-8859-1 String: @ # $ % ^ & * (\') _ - + = { [ " ] } ; < ,. > / ? \\ |',
+				'line2' => '<Unicode> ("long") \'String\': '.$unicode_text.' '.\SmartUnicode::str_toupper($unicode_text).' '.$unicode_text.' '.\SmartUnicode::str_tolower($unicode_text).' '.$unicode_text.' '.\SmartUnicode::deaccent_str($unicode_text).' '.$unicode_text,
 				'line3' => ['A' => 'b', 'c' => 'D', 'e' => '', 'f' => ['g' => 'h', 'i' => '']],
 				'line4' => '',
 				'line5' => date('Y-m-d H:i:s')

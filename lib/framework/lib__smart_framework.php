@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170523
+ * @version 	v.170603
  * @package 	Application
  *
  */
@@ -341,7 +341,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	final public function SetDebugData($title, $debug_msg) {
 		//--
 		if(!$this->IfDebug()) {
-			Smart::log_notice('NOTICE: Modules/SetDebugData must be set only if Modules/IfDebug() is TRUE ... else will slow down the execution. Consider to Add SetDebugData() in a context as if($this->IfDebug()){ $this->SetDebugData(\'Debug title\', \'A debug message ...\'); } ...');
+			Smart::log_notice('Page Controller: '.$this->controller.' # NOTICE: Modules/SetDebugData must be set only if Modules/IfDebug() is TRUE ... else will slow down the execution. Consider to Add SetDebugData() in a context as if($this->IfDebug()){ $this->SetDebugData(\'Debug title\', \'A debug message ...\'); } ...');
 			return false;
 		} //end if
 		//--
@@ -474,7 +474,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 				$out = $this->urlquery;
 				break;
 			default:
-				Smart::log_warning('SmartAbstractAppController / ControllerGetParam: Invalid Parameter: '.$param);
+				Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / ControllerGetParam: Invalid Parameter: '.$param);
 		} //end switch
 		//--
 		return (string) $out;
@@ -600,7 +600,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			if(in_array((string)$param, (array)$this->availsettings)) {
 				$this->pagesettings[(string)$param] = (string)$value;
 			} else {
-				Smart::log_warning('SmartAbstractAppController / PageViewSetCfg: Invalid Parameter: '.$param);
+				Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetCfg: Invalid Parameter: '.$param);
 			} //end if else
 		} //end if
 		//--
@@ -630,7 +630,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesERR())) { // in the case that the error status code is n/a, use 500 instead
 			$out = false;
 			$code = 500;
-			Smart::log_warning('Invalid HTTP Error Status Code ('.$code.') used in Controller: '.$this->controller);
+			Smart::log_notice('Invalid HTTP Error Status Code ('.$code.') used in Controller: '.$this->controller);
 		} //end if
 		//--
 		$this->PageViewSetCfgs([
@@ -674,7 +674,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$code = (int) $code;
 		if(!in_array((int)$code, (array)SmartFrameworkRuntime::HttpStatusCodesRDR())) { // in the case that the redirect status code is n/a, use 302 instead
-			Smart::log_warning('Invalid HTTP Redirect Status Code ('.$code.') used in Controller: '.$this->controller);
+			Smart::log_notice('Invalid HTTP Redirect Status Code ('.$code.') used in Controller: '.$this->controller);
 			$code = 302;
 		} //end if
 		//--
@@ -962,7 +962,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	final public function InstantFlush() {
 		//--
 		if(SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
-			Smart::log_notice('Using the InstantFlush() in controllers that are not using direct output is not allowed as will break the middleware output chain ...');
+			Smart::log_warning('Page Controller: '.$this->controller.' # Using the InstantFlush() in controllers that are not using direct output is not allowed as will break the middleware output chain ...');
 			return;
 		} //end if
 		//--

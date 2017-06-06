@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170524
+ * @version 	v.170604
  * @package 	Filesystem
  *
  */
@@ -615,42 +615,46 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
  */
 public static function mime_eval($yfile, $ydisposition='') {
 	//--
-	$yfile = Smart::safe_pathname($yfile);
+	$yfile = (string) Smart::safe_pathname((string)$yfile);
 	//--
-	$file = strtolower(self::get_file_name_from_path($yfile)); // bug fixed: if a full path is sent, try to get just the file name to return
-	$extension = strtolower(self::get_file_extension_from_path($yfile)); // [OK]
+	$file = (string) self::get_file_name_from_path($yfile); // bug fixed: if a full path is sent, try to get just the file name to return
+	$lfile = (string) strtolower($file);
+	//--
+	if(in_array((string)$lfile, [ // all lowercase as file is already strtolower
+		'license',
+		'readme',
+		'makefile',
+		'.htaccess',
+		'.htpasswd'
+	])) {
+		$extension = (string) $lfile;
+	} else {
+		$extension = (string) strtolower((string)self::get_file_extension_from_path((string)$yfile)); // [OK]
+	} //end if else
 	//--
 	switch((string)$extension) {
-		//--------------
-		case 'txt':
+		//-------------- html / css
 		case 'htm':
 		case 'html':
 			$type = 'text/html';
-			$disp = 'inline';
-			//---
-			break;
-		//--------------
-		case 'asc':
-		case 'sig':
-			$type = 'application/pgp-signature';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'curl':
-			$type = 'application/vnd.curl';
+		case 'css':
+			$type = 'text/css';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
+		//-------------- php
 		case 'php':
 			$type = 'application/x-php';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
+		//-------------- javascript
 		case 'js':
 			$type = 'application/javascript';
-			$disp = 'inline';
+			$disp = 'attachment';
 			//---
 			break;
 		case 'json':
@@ -658,51 +662,64 @@ public static function mime_eval($yfile, $ydisposition='') {
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
+		//-------------- xml
+		case 'xhtml':
 		case 'xml':
 		case 'xsl':
+		case 'dtd':
 			$type = 'application/xml';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'log':
-		case 'sql':
-		case 'sh':
+		//-------------- plain text and development
+		case 'txt': // text
+		case 'log': // log file
+		case 'sql': // sql file
+		case 'sh': // shell script
+		case 'awk': // AWK script
+		case 'asm': // assembler
+		case 'cmd': // windows command file
+		case 'bat': // windows batch file
+		case 'jsp': // java server page
+		case 'asp': // active server page
+		case 'cs': // C#
+		case 'csh': // C-Shell script
+		case 'cpp': // C++
+		case 'cxx': // C++
+		case 'hpp': // C++ header
+		case 'hxx': // C++ header
+		case 'yxx': // Bison source code file
+		case 'y': // Yacc source code file
+		case 'c': // C
+		case 'h': // C header
+		case 'pl': // perl
+		case 'py': // python
+		case 'java': // java source code
+		case 'inc': // include file
+		case 'ins': // install config file
+		case 'inf': // info file
+		case 'ini': // ini file
+		case 'yml': // yaml file
+		case 'yaml': // yaml file
+		case 'md': // markdown
+		case 'markdown': // markdown
+		case 'license': // license
+		case 'readme': // license
+		case 'makefile': // makefile
+		case '.htaccess': // .htaccess
+		case '.htpasswd': // .htpasswd
 			$type = 'text/plain';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'csv':
-			$type = 'text/csv';
-			$disp = 'attachment';
-			//---
-			break;
-		case 'rtf':
-			$type = 'application/rtf';
-			$disp = 'attachment';
-			//---
-			break;
-		//--------------
-		case 'ai':
-		case 'eps':
-		case 'ps':
-			$type = 'application/postscript';
-			$disp = 'attachment';
-			//---
-			break;
-		case 'xfdf':
-			$type = 'application/vnd.adobe.xfdf';
-			$disp = 'attachment';
-			//---
-			break;
-		case 'pdf':
-			$type = 'application/pdf';
-			$disp = 'inline'; // 'attachment';
-			//---
-			break;
-		//--------------
+		//-------------- web images
 		case 'svg':
 			$type = 'image/svg+xml';
+			$disp = 'inline';
+			//---
+			break;
+		case 'png':
+			$type = 'image/png';
 			$disp = 'inline';
 			//---
 			break;
@@ -718,12 +735,7 @@ public static function mime_eval($yfile, $ydisposition='') {
 			$disp = 'inline';
 			//---
 			break;
-		case 'png':
-			$type = 'image/png';
-			$disp = 'inline';
-			//---
-			break;
-		//--------------
+		//-------------- other images
 		case 'tif':
 		case 'tiff':
 			$type = 'image/tiff';
@@ -740,25 +752,20 @@ public static function mime_eval($yfile, $ydisposition='') {
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'spl':
-			$type = 'application/futuresplash';
-			$disp = 'inline';
+		//-------------- portable documents
+		case 'pdf':
+			$type = 'application/pdf';
+			$disp = 'inline'; // 'attachment';
 			//---
 			break;
-		case 'swf':
-			$type = 'application/x-shockwave-flash';
-			$disp = 'inline';
-			//---
-			break;
-		//--------------
-		case 'eml':
-			$type = 'message/rfc822';
+		case 'xfdf':
+			$type = 'application/vnd.adobe.xfdf';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'vcf':
-			$type = 'text/x-vcard';
+		//-------------- email / calendar / addressbook
+		case 'eml':
+			$type = 'message/rfc822';
 			$disp = 'attachment';
 			//---
 			break;
@@ -767,100 +774,113 @@ public static function mime_eval($yfile, $ydisposition='') {
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'tar':
-			$type = 'application/x-tar';
+		case 'vcf':
+			$type = 'text/x-vcard';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'tgz':
-		case 'tbz':
-			$type = 'application/x-compressed';
+		//-------------- specials
+		case 'asc':
+		case 'sig':
+			$type = 'application/pgp-signature';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'z':
-			$type = 'application/x-compress';
+		case 'curl':
+			$type = 'application/vnd.curl';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'gz':
-			$type = 'application/x-gzip';
+		//-------------- graphics
+		case 'psd': // photoshop file
+		case 'xcf': // gimp file
+			$type = 'image/x-xcf';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'bz2':
-			$type = 'application/x-bzip2';
+		case 'ai': // illustrator file
+		case 'eps':
+		case 'ps':
+			$type = 'application/postscript';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'xz':
-			$type = 'application/x-xz';
+		//-------------- web video
+		case 'ogg': // theora audio
+		case 'oga':
+			$type = 'audio/ogg';
+			$disp = 'inline';
+			break;
+		case 'ogv': // theora video
+			$type = 'video/ogg';
+			$disp = 'inline';
+			break;
+		case 'webm': // google vp8
+			$type = 'video/webm';
+			$disp = 'inline';
+			break;
+		//-------------- other video
+		case 'mpeg':
+		case 'mpg':
+		case 'mpe':
+		case 'mpv':
+		case 'mp4':
+			$type = 'video/mpeg';
 			$disp = 'attachment';
 			//---
 			break;
-		case '7z':
-		case 'zip':
-			$type = 'application/zip';
+		case 'mpga':
+		case 'mp2':
+		case 'mp3':
+			$type = 'audio/mpeg';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'rar':
-			$type = 'application/x-rar-compressed';
+		case 'qt':
+		case 'mov':
+			$type = 'video/quicktime';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'sit':
-			$type = 'application/x-stuffit';
+		case 'rm':
+			$type = 'application/vnd.rn-realmedia';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'doc':
-		case 'dot':
-			$type = 'application/msword';
+		case 'avi':
+			$type = 'video/x-msvideo';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'xla':
-		case 'xlc':
-		case 'xlm':
-		case 'xls':
-		case 'xlt':
-		case 'xlw':
-			$type = 'application/vnd.ms-excel';
+		case 'wm':
+		case 'wmv':
+		case 'wmx':
+		case 'wvx':
+			$type = 'video/x-ms-'.$extension;
 			$disp = 'attachment';
 			//---
 			break;
-		case 'pot':
-		case 'pps':
-		case 'ppt':
-			$type = 'application/vnd.ms-powerpoint';
+		//-------------- flash
+		case 'swf':
+			$type = 'application/x-shockwave-flash';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'mdb':
-			$type = 'application/x-msaccess';
+		//-------------- data
+		case 'csv': // csv comma
+		case 'tab': // csv tab
+			$type = 'text/csv';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'mny':
-			$type = 'application/x-msmoney';
+		//-------------- rich text
+		case 'rtf':
+		case 'abw': // Abi Word
+			$type = 'application/rtf';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'wk1':
-		case 'wcm':
-		case 'wdb':
-		case 'wks':
-		case 'wps':
-			$type = 'application/vnd.ms-works';
-			$disp = 'attachment';
-			//---
-			break;
-		//--------------
+		//-------------- openoffice / libreoffice
 		case 'odc':
 			$type = 'application/vnd.oasis.opendocument.chart';
 			$disp = 'attachment';
@@ -941,76 +961,109 @@ public static function mime_eval($yfile, $ydisposition='') {
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'ogg': // theora audio
-		case 'oga':
-			$type = 'audio/ogg';
-			$disp = 'inline';
-			break;
-		case 'ogv': // theora video
-			$type = 'video/ogg';
-			$disp = 'inline';
-			break;
-		case 'webm': // google vp8
-			$type = 'video/webm';
-			$disp = 'inline';
-			break;
-		//--------------
-		case 'mpeg':
-		case 'mpg':
-		case 'mpe':
-		case 'mpv':
-		case 'mp4':
-			$type = 'video/mpeg';
+		//-------------- ms office
+		case 'doc':
+		case 'dot':
+			$type = 'application/msword';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'mpga':
-		case 'mp2':
-		case 'mp3':
-			$type = 'audio/mpeg';
+		case 'xla':
+		case 'xlc':
+		case 'xlm':
+		case 'xls':
+		case 'xlt':
+		case 'xlw':
+			$type = 'application/vnd.ms-excel';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'qt':
-		case 'mov':
-			$type = 'video/quicktime';
+		case 'pot':
+		case 'pps':
+		case 'ppt':
+			$type = 'application/vnd.ms-powerpoint';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'rm':
-			$type = 'application/vnd.rn-realmedia';
+		case 'mdb':
+			$type = 'application/x-msaccess';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
-		case 'avi':
-			$type = 'video/x-msvideo';
+		//-------------- ms monney
+		case 'mny':
+			$type = 'application/x-msmoney';
 			$disp = 'attachment';
 			//---
 			break;
-		case 'wm':
-		case 'wmv':
-		case 'wmx':
-		case 'wvx':
-			$type = 'video/x-ms-'.$extension;
+		//-------------- ms works
+		case 'wk1':
+		case 'wcm':
+		case 'wdb':
+		case 'wks':
+		case 'wps':
+			$type = 'application/vnd.ms-works';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
+		//-------------- archives
+		case '7z':
+		case 'zip':
+			$type = 'application/zip';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'xz':
+			$type = 'application/x-xz';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'tar':
+			$type = 'application/x-tar';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'tgz':
+		case 'tbz':
+			$type = 'application/x-compressed';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'gz':
+			$type = 'application/x-gzip';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'bz2':
+			$type = 'application/x-bzip2';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'z':
+			$type = 'application/x-compress';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'rar':
+			$type = 'application/x-rar-compressed';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'sit':
+			$type = 'application/x-stuffit';
+			$disp = 'attachment';
+			//---
+			break;
+		//-------------- executables
 		case 'exe':
 		case 'msi':
 		case 'dll':
 		case 'com':
-		case 'bat':
-		case 'cmd':
 			$type = 'application/x-msdownload';
 			$disp = 'attachment';
 			//---
 			break;
-		//--------------
+		//-------------- others, default
 		default:
 			$type = 'application/octet-stream';
 			$disp = 'attachment';
@@ -1019,10 +1072,10 @@ public static function mime_eval($yfile, $ydisposition='') {
 	//--
 	switch((string)$ydisposition) {
 		case 'inline':
-			$disp = 'inline'; 	// rewrite display mode
+			$disp = 'inline'; // rewrite display mode
 			break;
 		case 'attachment':
-			$disp = 'attachment'; 	// rewrite display mode
+			$disp = 'attachment'; // rewrite display mode
 			break;
 		default:
 			// nothing
@@ -1030,7 +1083,7 @@ public static function mime_eval($yfile, $ydisposition='') {
 	//--
 	return array(
 		(string) $type, // mime type
-		(string) $disp.'; filename="'.Smart::safe_validname($file).'"', // mime header disposition suffix
+		(string) $disp.'; filename="'.Smart::safe_filename($file, '-').'"', // mime header disposition suffix
 		(string) $disp // mime disposition
 	);
 	//--
@@ -1063,7 +1116,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170524
+ * @version 	v.170601
  * @package 	Filesystem
  *
  */
@@ -2727,7 +2780,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170524
+ * @version 	v.170601
  * @package 	Filesystem
  *
  */

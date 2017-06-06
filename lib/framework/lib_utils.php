@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170530
+ * @version 	v.170605
  * @package 	Base
  *
  */
@@ -453,26 +453,26 @@ public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=
 		return (string) $y_bytes;
 	} //end if
 	//--
-	if($y_bytes < 1024) {
+	if($y_bytes < 1000) {
 		return (string) Smart::format_number_int($y_bytes).$y_separator.'bytes';
 	} //end if
 	//--
-	$y_bytes = $y_bytes / 1024;
-	if($y_bytes < 1024) {
+	$y_bytes = $y_bytes / 1000;
+	if($y_bytes < 1000) {
 		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'KB';
 	} //end if
 	//--
-	$y_bytes = $y_bytes / 1024;
-	if($y_bytes < 1024) {
+	$y_bytes = $y_bytes / 1000;
+	if($y_bytes < 1000) {
 		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'MB';
 	} //end if
 	//--
-	$y_bytes = $y_bytes / 1024;
-	if($y_bytes < 1024) {
+	$y_bytes = $y_bytes / 1000;
+	if($y_bytes < 1000) {
 		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'GB';
 	} //end if
 	//--
-	$y_bytes = $y_bytes / 1024;
+	$y_bytes = $y_bytes / 1000;
 	return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
 	//--
 } //END FUNCTION
@@ -2105,14 +2105,20 @@ public static function get_os_browser_ip($y_mode='') {
 //================================================================
 /**
  * Function: Run Proc Cmd
+ * This method is using the proc_open() which provides a much greater degree of control over the program execution
  *
  * @access 		private
  * @internal
  *
- * @return ARRAY
+ * @param $cmd 		STRING 			:: the command to run ; must be escaped using escapeshellcmd() and arguments using escapeshellarg()
+ * @param $inargs 	ARRAY / NULL 	:: *Optional*, Default NULL ; the array containing the input for the STDIN
+ * @param $cwd 		STRING / NULL 	:: *Optional*, Default 'tmp/cache/run-proc-cmd' ; Use NULL to use the the working dir of the current PHP process (not recommended) ; A path for a directory to run the process in ; If not null, if path does not exists will be created
+ * @param $env 		ARRAY / NULL 	:: *Optional*, default $env ; the array with environment variables ; If NULL will use the same environment as the current PHP process
+ *
+ * @return ARRAY					:: [ stdout, stderr, exitcode ]
  *
  */
-public static function run_proc_cmd($cmd, $inargs=[]) {
+public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc-cmd', $env=null) {
 
 	//-- initialize
 	$descriptorspec = [
@@ -2130,18 +2136,36 @@ public static function run_proc_cmd($cmd, $inargs=[]) {
 	$outarr = [
 		'stdout' 	=> '',
 		'stderr' 	=> '',
-		'exitcode' 	=> null
+		'exitcode' 	=> -999
 	];
 	//--
 
 	//-- exec
-	$resource = proc_open((string)$cmd, (array)$descriptorspec, $pipes);
+	if((string)$cwd != '') {
+		if(!file_exists((string)$cwd)) {
+			SmartFileSystem::dir_recursive_create((string)$cwd);
+		} //end if
+		if(!is_dir((string)$cwd)) {
+			//--
+			Smart::raise_error(__METHOD__.'The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+			//--
+			$outarr['stdout'] 	= '';
+			$outarr['stderr'] 	= '';
+			$outarr['exitcode'] = -998;
+			//--
+			return (array) $outarr;
+			//--
+		} //end if
+	} else {
+		$cwd = null;
+	} //end if
+	$resource = proc_open((string)$cmd, (array)$descriptorspec, $pipes, $cwd, $env);
 	//--
 	if(!is_resource($resource)) {
 		//--
 		$outarr['stdout'] 	= '';
-		$outarr['stderr'] 	= '';
-		$outarr['exitcode'] = false;
+		$outarr['stderr'] 	= 'Could not open Process / Not Resource';
+		$outarr['exitcode'] = -997;
 		//--
 		return (array) $outarr;
 		//--
@@ -2149,19 +2173,21 @@ public static function run_proc_cmd($cmd, $inargs=[]) {
 	//--
 
 	//-- write to stdin
-	if(Smart::array_size($inargs) > 0) {
-		foreach((array)$inargs as $key => $val) {
-			fwrite($pipes[0], (string)$val);
-		} //end foreach
+	if(is_array($inargs)) {
+		if(count($inargs) > 0) {
+			foreach($inargs as $key => $val) {
+				fwrite($pipes[0], (string)$val);
+			} //end foreach
+		} //end if
 	} //end if
 	//--
 
 	//-- read stdout
-	$output = (string) SmartUnicode::convert_charset((string)stream_get_contents($pipes[1]));
+	$output = (string) stream_get_contents($pipes[1]); // don't convert charset as it may break binary files
 	//--
 
 	//-- read stderr (here may be errors or warnings)
-	$errors = (string) SmartUnicode::convert_charset((string)stream_get_contents($pipes[2]));
+	$errors = (string) stream_get_contents($pipes[2]); // don't convert charset as it may break binary files
 	//--
 
 	//--
@@ -2175,7 +2201,7 @@ public static function run_proc_cmd($cmd, $inargs=[]) {
 	//--
 	$outarr['stdout'] 	= (string) $output;
 	$outarr['stderr'] 	= (string) $errors;
-	$outarr['exitcode'] = $exitcode; // don't make it int !!!
+	$outarr['exitcode'] = $exitcode; // don't make it INT !!!
 	//--
 	return (array) $outarr;
 	//--

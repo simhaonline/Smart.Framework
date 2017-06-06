@@ -8,7 +8,7 @@
 [%%%%COMMENT%%%%]
 	File: templating-test.inc.htm
 [%%%%/COMMENT%%%%][%%%%COMMENT%%%%]Another Comment[%%%%/COMMENT%%%%]<!-- comments removed -->
-<!-- Test for Markers-Templating -->
+<!-- Test for Markers-Templating v.170531 -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
 <!-- Test INTEGER ([####TEST-NUM|html####]) : [####TEST-NUM|int####] -->
 <!-- Test NUMERIC ([####TEST-NUM|html####]) : [####TEST-NUM|num####] -->
@@ -74,10 +74,9 @@
 <table width="550" cellpadding="4">
 [%%%%LOOP:DATA(1)%%%%]
 [%%%%IF:TEST2:==3;%%%%]
-	<!-- Max Data MaxCount for Iterator: [####DATA._-MAXCOUNT-_|html####] / [####DATA._-ITERATOR-_|html####] -->
 	[%%%%IF:DATA._-ITERATOR-_:<=0;(1)%%%%]
 		<tr style="background:#003399;color:#FFFFFF;">
-			<td colspan="5"><b>[####DATA._-VAL-_|html####]</b></td>
+			<td colspan="5" style="cursor:help;" title="Iterator = [####DATA._-ITERATOR-_|html####] ; Index = [####DATA.-_INDEX_-|html####] ; MaxCount = [####DATA._-MAXCOUNT-_|html####] ; Total = [####DATA.-_MAXSIZE_-|html####]"><b>[####DATA._-VAL-_|html####]</b></td>
 		</tr>
 	[%%%%ELSE:DATA._-ITERATOR-_(1)%%%%]
 		[%%%%IF:DATA._-ITERATOR-_:%2;(2)%%%%]
@@ -85,7 +84,7 @@
 		[%%%%ELSE:DATA._-ITERATOR-_(2)%%%%]
 		<tr style="background:#FFCC00;">
 		[%%%%/IF:DATA._-ITERATOR-_(2)%%%%]
-			<td>[####DATA.ID|html####]</td>
+			<td style="cursor:help;" title="Iterator = [####DATA._-ITERATOR-_|html####] ; Index = [####DATA.-_INDEX_-|html####]">[####DATA.ID|html####]</td>
 			<td>[####DATA.SLUG|html####]</td>
 			<td>[####DATA.NAME|html####]</td>
 			[%%%%IF:DATA.IS_VOWEL:==1;%%%%]
@@ -97,7 +96,7 @@
 			[%%%%ELSE:DATA.IS_VOWEL%%%%]
 				<td>Consonant: [[####DATA.IS_VOWEL|bool|html####]]</td>
 			[%%%%/IF:DATA.IS_VOWEL%%%%]
-			<td>[%%%%LOOP:DATA.ARR%%%%]<span>[####DATA.ARR._-VAL-_|html####]; </span>[%%%%/LOOP:DATA.ARR%%%%]</td>
+			<td>[%%%%LOOP:DATA.ARR%%%%]<span style="cursor:help;" title="Level2-Iterator = [####DATA.ARR._-ITERATOR-_|html####] ; Level2-Index = [####DATA.ARR.-_INDEX_-|html####] ; Level2-MaxCount = [####DATA.ARR._-MAXCOUNT-_|html####] ; Level2-Total = [####DATA.ARR.-_MAXSIZE_-|html####]">[####DATA.ARR._-VAL-_|html####]; </span>[%%%%/LOOP:DATA.ARR%%%%]</td>
 		</tr>
 		[%%%%IF:DATA.ID:!%2;%%%%]
 		<!-- Data ID is !% 2 -->
@@ -116,20 +115,19 @@
 <hr>
 <table width="550" cellpadding="4">
 [%%%%LOOP:DAT2%%%%]
-	<!-- Max Data2 MaxCount for Iterator: [####DAT2._-MAXCOUNT-_|html####] / [####DAT2._-ITERATOR-_|html####] -->
 	[%%%%IF:DAT2._-KEY-_:!=key1;%%%%]
 		[%%%%IF:DAT2._-ITERATOR-_:!%2;%%%%]
 		<tr style="background:#DDEEFF;">
 		[%%%%ELSE:DAT2._-ITERATOR-_%%%%]
 		<tr style="background:#FFFFFF;">
 		[%%%%/IF:DAT2._-ITERATOR-_%%%%]
-		<td>[####DAT2._-KEY-_|html####]</td>
+		<td style="cursor:help;" title="Iterator = [####DAT2._-ITERATOR-_|html####] ; Index = [####DAT2.-_INDEX_-|html####]">[####DAT2._-KEY-_|html####]</td>
 		<td>[####DAT2._-VAL-_|html####]</td>
 	</tr>
 	[%%%%ELSE:DAT2._-KEY-_%%%%]
 	<tr style="background:#FFFFCC;">
-		<td>[####DAT2._-KEY-_|html####]</td>
-		<td>[%%%%LOOP:DAT2.KEY1%%%%]<span style="[%%%%IF:DAT2.KEY1.ID:==val1;%%%%]font-weight:bold;[%%%%ELSE:DAT2.KEY1.ID%%%%][%%%%/IF:DAT2.KEY1.ID%%%%]">[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]</td>
+		<td style="cursor:help;" title="Iterator = [####DAT2._-ITERATOR-_|html####] ; Index = [####DAT2.-_INDEX_-|html####] ; MaxCount = [####DAT2._-MAXCOUNT-_|html####] ; Total = [####DAT2.-_MAXSIZE_-|html####]">[####DAT2._-KEY-_|html####]</td>
+		<td style="cursor:help;">[%%%%LOOP:DAT2.KEY1%%%%]<span title="Level2-Iterator = [####DAT2.KEY1._-ITERATOR-_|html####] ; Level2-Index = [####DAT2.KEY1.-_INDEX_-|html####] ; Level2-MaxCount = [####DAT2.KEY1._-MAXCOUNT-_|html####] ; Level2-Total = [####DAT2.KEY1.-_MAXSIZE_-|html####]" style="[%%%%IF:DAT2.KEY1.ID:==val1;%%%%]font-weight:bold;[%%%%ELSE:DAT2.KEY1.ID%%%%][%%%%/IF:DAT2.KEY1.ID%%%%]">[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]</td>
 	</tr>
 	[%%%%/IF:DAT2._-KEY-_%%%%]
 [%%%%/LOOP:DAT2%%%%]
