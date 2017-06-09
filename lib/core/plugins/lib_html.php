@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.161128
+ * @version 	v.170609
  * @package 	DATA:HTML
  *
  */
@@ -122,7 +122,8 @@ public function get_tags($tag) {
 	$len = strlen((string)$tag) + 1; // will add ' ' or \t or or / '>' at the end for testing
 	$attrib_arr = array();
 	if(is_array($this->elements)) {
-		while(list($key, $code) = @each($this->elements)) {
+		//while(list($key, $code) = @each($this->elements)) { // Fix: this is deprecated as of PHP 7.2
+		foreach($this->elements as $key => $code) {
 			if((strpos($code, '<') !== false) OR (strpos($code, '>') !== false)) { // if valid tag
 				$code = trim(str_replace(array("\t", "\n", "\r"), array(' ', ' ', ' '), (string)$code)); // make tabs and new lines as simple space
 				$tmp_test = strtolower(substr((string)$code, 0, $len));
@@ -644,7 +645,8 @@ private function parse_elements() {
 	//--
 	$raw = (array) explode("\n", (string)$this->html);
 	//--
-	while(list($key, $line) = each($raw)) {
+	//while(list($key, $line) = @each($raw)) { // Fix: this is deprecated as of PHP 7.2
+	foreach($raw as $key => $line) {
 		//--
 		$line = trim($line);
 		if((string)$line == '') {

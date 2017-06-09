@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.170603
+ * @version 	v.170609
  *
  */
 final class SmartDebugProfiler {
@@ -712,7 +712,8 @@ private static function print_log_session($session_arr) {
 	if($max > 0) {
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
-		while(list($debug_key, $debug_val) = each($session_arr)) {
+		//while(list($debug_key, $debug_val) = @each($session_arr)) { // Fix: this is deprecated as of PHP 7.2
+		foreach($session_arr as $debug_key => $debug_val) {
 			if((is_array($debug_val)) OR (is_object($debug_val))) {
 				$log .= '<tr valign="top"><td><div class="smartframework_debugbar_inforow"><font color="#333333"><b>'.Smart::escape_html($debug_key).'</b></font></div></td><td><div class="smartframework_debugbar_inforow"><pre color:#333333;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type($debug_val)), true).'</pre></div></td></tr>';
 			} else {

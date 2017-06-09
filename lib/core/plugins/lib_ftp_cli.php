@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160205
+ * @version 	v.170609
  * @package 	Network:FTP
  *
  */
@@ -288,7 +288,8 @@ final class SmartFtpClient {
 		reset($remote_list);
 		//--
 		//while(list(,$value) = @each($remote_list)) {
-		while(list($key,$value) = @each($remote_list)) { // FIX to be compatible with the upcoming PHP 7
+		//while(list($key,$value) = @each($remote_list)) { // FIX to be compatible with the upcoming PHP 7
+		foreach($remote_list as $key => $value) { // Fix: the above is deprecated as of PHP 7.2
 			//--
 			if((string)$value == (string)$pathname) {
 				$this->error_msg = 'ERROR: Remote file exists: '.$pathname;

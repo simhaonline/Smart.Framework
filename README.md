@@ -26,6 +26,7 @@ When used with SQL / Non-SQL Databases and combined with In-Memory DB like Redis
 * delivers ~ the same speed as Varnish but allows granulary level caching policy of zones in controllers
 * works also with HTTPS (Varnish does not)
 * caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
+This framework is compatible, stable and tested with PHP 5.4 / 5.5 / 5.6 / 7.0 / 7.1 / 7.2 versions.
 
 #### Demo URL:
 <a href="http://demo.unix-world.org/smart-framework/">http://demo.unix-world.org/smart-framework/</a>

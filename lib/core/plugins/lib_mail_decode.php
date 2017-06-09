@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160915
+ * @version 	v.170609
  * @package 	Mailer:Utility
  *
  */
@@ -502,7 +502,8 @@ private function printarray($array, $part_id) {
 	//--
 
 	//--
-	while(list($key,$value) = @each($array)) {
+	//while(list($key,$value) = @each($array)) {
+	foreach($array as $key => $value) { // Fix: the above is deprecated as of PHP 7.2
 		//--
 		if(is_object($value)) {
 			//--
@@ -675,7 +676,7 @@ private function printarray($array, $part_id) {
 final class SmartMailerMimeExtract {
 
 	// ->
-	// v.160915
+	// v.170609
 
 //================================================================
 	//--
@@ -798,7 +799,8 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 	//--
 	reset($headers);
 	//--
-	while(list($key, $value) = @each($headers)) {
+	//while(list($key, $value) = @each($headers)) {
+	foreach($headers as $key => $value) { // Fix: the above is deprecated as of PHP 7.2
 		//--
 		$headers[$key]['name'] = strtolower($headers[$key]['name']);
 		//--
@@ -810,8 +812,10 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 					$return->ctype_primary   = $regs[1];
 					$return->ctype_secondary = $regs[2];
 				} //end if
-				if(isset($content_type['other'])) {
-					while(list($p_name, $p_value) = @each($content_type['other'])) {
+				//if(isset($content_type['other'])) {
+				if(is_array($content_type['other'])) {
+					//while(list($p_name, $p_value) = @each($content_type['other'])) {
+					foreach($content_type['other'] as $p_name => $p_value) { // Fix: the above is deprecated as of PHP 7.2
 						//--
 						if((string)$p_name == 'charset') {
 							$content_charset = $p_value ; // charset
@@ -825,8 +829,10 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 			case 'content-disposition';
 				$content_disposition = $this->_parseHeaderValue($headers[$key]['value']);
 				$return->disposition = $content_disposition['value'];
-				if(isset($content_disposition['other'])) {
-					while(list($p_name, $p_value) = @each($content_disposition['other'])) {
+				//if(isset($content_disposition['other'])) {
+				if(is_array($content_disposition['other'])) {
+					//while(list($p_name, $p_value) = @each($content_disposition['other'])) {
+					foreach($content_disposition['other'] as $p_name => $p_value) { // Fix: the above is deprecated as of PHP 7.2
 						$return->d_parameters[$p_name] = $p_value;
 					} //end while
 				} //end if

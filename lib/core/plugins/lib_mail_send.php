@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160915
+ * @version 	v.170609
  * @package 	Mailer:Send
  *
  */
@@ -600,7 +600,7 @@ private function build_multipart() {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160915
+ * @version 	v.170609
  * @package 	Mailer:Send
  *
  */
@@ -1305,9 +1305,11 @@ public function data_send($msg_data) {
 	$max_line_length = 800; // used below ; set here for ease in change (we use a lower value than 1000 as we use UTF-8 text)
 	//--
 	//while(list(,$line) = @each($lines)) {
-	while(list($key,$line) = @each($lines)) { // FIX to be compatible with the upcoming PHP 7
+	//while(list($key,$line) = @each($lines)) { // FIX to be compatible with the upcoming PHP 7
+	foreach($lines as $key => $line) { // Fix: the above is deprecated as of PHP 7.2
 		//--
-		$lines_out = null;
+		//$lines_out = null;
+		$lines_out = array(); // Fix !!
 		//--
 		if(((string)$line == '') AND ($in_headers)) {
 			$in_headers = false;
@@ -1328,7 +1330,8 @@ public function data_send($msg_data) {
 		$lines_out[] = $line;
 		//-- now send the lines to the server
 		//while(list(,$line_out) = @each($lines_out)) {
-		while(list($key,$line_out) = @each($lines_out)) { // FIX to be compatible with the upcoming PHP 7
+		//while(list($key,$line_out) = @each($lines_out)) { // FIX to be compatible with the upcoming PHP 7
+		foreach($lines_out as $key => $line_out) { // Fix: the above is deprecated as of PHP 7.2
 			//--
 			if(strlen($line_out) > 0) {
 				if(SmartUnicode::sub_str($line_out, 0, 1) == '.') {

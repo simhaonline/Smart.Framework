@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.160921
+ * @version 	v.170609
  * @package 	Network:HTTP
  *
  */
@@ -762,7 +762,8 @@ print_r(
 if((string)$_SERVER['REQUEST_METHOD'] === 'PUT') {
 	$putdata = file_get_contents('php://input', false , null, -1 , (int)$_SERVER['CONTENT_LENGTH']);
 	file_put_contents("test-http-stdin.txt", $putdata);
-	//$put_vars = (array) parse_str($putdata); // parse PUT data to array
+	parse_str($putdata, $put_vars); // parse PUT data to array
+	print_r($put_vars);
 } //end if
 */
 //=====================================================

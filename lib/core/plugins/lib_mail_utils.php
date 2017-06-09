@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170413
+ * @version 	v.170609
  * @package 	Mailer:Utility
  *
  */
@@ -547,13 +547,13 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 				if(strlen($tmp_fcontent) > 0) {
 					//--
 					$tmp_arr_fmime = array();
-					$tmp_arr_fmime = SmartFileSysUtils::mime_eval($tmp_eval_link);
+					$tmp_arr_fmime = (array) SmartFileSysUtils::mime_eval($tmp_eval_link);
 					//--
 					$tmp_fmime = (string) $tmp_arr_fmime[0];
 					if(((string)$tmp_fmime == '') OR ((string)$tmp_fmime == 'application/octet-stream')) {
 						$tmp_fmime = 'image'; // in the case of CIDS we already pre-validated the images
 					} //end if
-					$tmp_fname = 'cid_'.$uniq_id.'__'.$tmp_cid.$tmp_img_ext;
+					$tmp_fname = (string) 'cid_'.$uniq_id.'__'.$tmp_cid.$tmp_img_ext;
 					//--
 					$mail->add_attachment($tmp_fcontent, $tmp_fname, $tmp_fmime, 'inline', $tmp_cid.$tmp_img_ext); // attachment
 					$message = str_replace('src="'.$tmp_original_img_link.'"', 'src="cid:'.$tmp_cid.$tmp_img_ext.'"', $message);
@@ -593,10 +593,11 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 	//-- attachments
 	if(is_array($attachments)) {
 		if(Smart::array_size($attachments) > 0) {
-			while(list($key, $val) = each($attachments)) {
+			//while(list($key, $val) = @each($attachments)) { // Fix: this is deprecated as of PHP 7.2
+			foreach($attachments as $key => $val) {
 				//--
 				$tmp_arr_fmime = array();
-				$tmp_arr_fmime = SmartFileSysUtils::mime_eval($key);
+				$tmp_arr_fmime = (array) SmartFileSysUtils::mime_eval($key);
 				//--
 				$mail->add_attachment($val, $key, (string)$tmp_arr_fmime[0], 'attachment', '', 'yes'); // force as real attachments
 				//--
@@ -736,7 +737,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.160827
+ * @version 	v.170609
  * @package 	Mailer:Utility
  *
  */
