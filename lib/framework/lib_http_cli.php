@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.170609
+ * @version 	v.170613
  * @package 	Network:HTTP
  *
  */
@@ -66,6 +66,8 @@ final class SmartHttpClient {
 	private $url_parts = array();							// URL Parts
 	private $method = 'GET';								// method: GET / POST / HEAD / PUT / DELETE ...
 	private $no_content_stop_if_unauth = true;				// Return no Content (response body) if Not Auth (401)
+	//--
+	private $cafile = '';									// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
 	//--
 	//==============================================
 
@@ -109,6 +111,16 @@ final class SmartHttpClient {
 		$this->no_content_stop_if_unauth = (bool) $y_no_content_stop_if_unauth;
 		//--
 
+	} //END FUNCTION
+	//==============================================
+
+
+	//==============================================
+	// [PUBLIC] :: set the SSL/TLS Certificate Authority File
+	public function set_ssl_tls_ca_file($cafile) {
+		//--
+		$this->cafile = (string) $cafile;
+		//--
 	} //END FUNCTION
 	//==============================================
 
@@ -462,17 +474,27 @@ final class SmartHttpClient {
 		//--
 		$stream_context = @stream_context_create();
 		if((string)$browser_protocol != '') {
-			if(defined('SMART_FRAMEWORK_SSL_CA_PATH')) {
-				if((string)SMART_FRAMEWORK_SSL_CA_PATH != '') {
-					@stream_context_set_option($stream_context, 'ssl', 'capath', Smart::real_path((string)SMART_FRAMEWORK_SSL_CA_PATH));
+			//--
+			$cafile = '';
+			if((string)$this->cafile != '') {
+				$cafile = (string) $this->cafile;
+			} elseif(defined('SMART_FRAMEWORK_SSL_CA_FILE')) {
+				if((string)SMART_FRAMEWORK_SSL_CA_FILE != '') {
+					$cafile = (string) SMART_FRAMEWORK_SSL_CA_FILE;
 				} //end if
 			} //end if
+			//--
+			if((string)$cafile != '') {
+				@stream_context_set_option($stream_context, 'ssl', 'cafile', Smart::real_path((string)$cafile));
+			} //end if
+			//--
 			@stream_context_set_option($stream_context, 'ssl', 'ciphers', 				(string)SMART_FRAMEWORK_SSL_CIPHERS); // allow only high ciphers
 			@stream_context_set_option($stream_context, 'ssl', 'verify_host', 			(bool)SMART_FRAMEWORK_SSL_VFY_HOST); // allways must be set to true !
 			@stream_context_set_option($stream_context, 'ssl', 'verify_peer', 			(bool)SMART_FRAMEWORK_SSL_VFY_PEER); // this may fail with some CAs
 			@stream_context_set_option($stream_context, 'ssl', 'verify_peer_name', 		(bool)SMART_FRAMEWORK_SSL_VFY_PEER_NAME); // allow also wildcard names *
 			@stream_context_set_option($stream_context, 'ssl', 'allow_self_signed', 	(bool)SMART_FRAMEWORK_SSL_ALLOW_SELF_SIGNED); // must allow self-signed certificates but verified above
 			@stream_context_set_option($stream_context, 'ssl', 'disable_compression', 	(bool)SMART_FRAMEWORK_SSL_DISABLE_COMPRESS); // help mitigate the CRIME attack vector
+			//--
 		} //end if else
 		$this->socket = @stream_socket_client($browser_protocol.$server.':'.$port, $errno, $errstr, $this->connect_timeout, STREAM_CLIENT_CONNECT, $stream_context);
 		//--
@@ -792,7 +814,7 @@ if((string)$_SERVER['REQUEST_METHOD'] === 'PUT') {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.160921
+ * @version     v.170613
  * @package 	Network:HTTP
  *
  */

@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170609
+ * @version 	v.170613
  * @package 	Mailer:Utility
  *
  */
@@ -248,6 +248,7 @@ public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message,
 		'server_name' 		=> (string) $def_cfg_smtp['server-host'],
 		'server_port' 		=> (string) $def_cfg_smtp['server-port'],
 		'server_sslmode' 	=> (string) $def_cfg_smtp['server-ssl'],
+		'server_cafile' 	=> (string) $def_cfg_smtp['server-cafile'],
 		'server_auth_user' 	=> (string) $def_cfg_smtp['auth-user'],
 		'server_auth_pass' 	=> (string) $def_cfg_smtp['auth-password'],
 		'send_from_addr' 	=> (string) $def_cfg_smtp['from-address'],
@@ -352,16 +353,17 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 	//--
 
 	//-- SMTP Hello
-	$server_helo = trim($y_server_settings['smtp_mxdomain']);
+	$server_helo 	= (string) trim((string)$y_server_settings['smtp_mxdomain']);
 	//-- SMTP connection vars
-	$server_name = trim($y_server_settings['server_name']);
-	$server_port = trim($y_server_settings['server_port']);
-	$server_sslmode = trim($y_server_settings['server_sslmode']);
-	$server_user = trim($y_server_settings['server_auth_user']);
-	$server_pass = trim($y_server_settings['server_auth_pass']);
+	$server_name 	= (string) trim((string)$y_server_settings['server_name']);
+	$server_port 	= (string) trim((string)$y_server_settings['server_port']);
+	$server_sslmode = (string) trim((string)$y_server_settings['server_sslmode']);
+	$server_cafile 	= (string) trim((string)$y_server_settings['server_cafile']);
+	$server_user 	= (string) trim((string)$y_server_settings['server_auth_user']);
+	$server_pass 	= (string) trim((string)$y_server_settings['server_auth_pass']);
 	//-- SEND FROM
-	$send_from_addr = trim($y_server_settings['send_from_addr']);
-	$send_from_name = trim($y_server_settings['send_from_name']);
+	$send_from_addr = (string) trim((string)$y_server_settings['send_from_addr']);
+	$send_from_name = (string) trim((string)$y_server_settings['send_from_name']);
 	//--
 
 	//-- mail send class init
@@ -381,20 +383,20 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', 'Send eMail Method Selected: [SMTP]');
 		} //end if
-		//-- smtp server method
-		$mail->method = 'smtp';
-		$mail->smtp_timeout = '30';
-		//--
-		$mail->smtp_helo = $server_helo;
-		$mail->smtp_server = $server_name;
-		$mail->smtp_port = $server_port;
-		$mail->smtp_ssl = $server_sslmode;
-		//--
+		//-- debug
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			$mail->debuglevel = 1; // default is 1
 		} else {
 			$mail->debuglevel = 0; // no debug
 		} //end if else
+		//-- smtp server method
+		$mail->method = 'smtp';
+		$mail->smtp_timeout = '30';
+		$mail->smtp_helo = $server_helo;
+		$mail->smtp_server = $server_name;
+		$mail->smtp_port = $server_port;
+		$mail->smtp_ssl = $server_sslmode;
+		$mail->smtp_cafile = $server_cafile;
 		//--
 		if(((string)$server_user == '') OR ((string)$server_pass == '')) {
 			$mail->smtp_login = false;
@@ -737,7 +739,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.170609
+ * @version 	v.170613
  * @package 	Mailer:Utility
  *
  */

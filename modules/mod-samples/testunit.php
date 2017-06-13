@@ -11,7 +11,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-//-- this is just for test purposes ; otherwise you should prefere to autoload classes by dependency injection only whey are needed !
+//-- this is just for testing purposes (lint) ; otherwise you should prefere to autoload classes by dependency injection only whey are needed !
 require_once('lib/core/plugins/staticload.php');
 if(is_file('modules/smart-extra-libs/staticload.php')) {
 	require_once('modules/smart-extra-libs/staticload.php');

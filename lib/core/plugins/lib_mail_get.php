@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160205
+ * @version 	v.170613
  * @package 	Mailer:Get
  *
  */
@@ -56,6 +56,8 @@ private $inf_count = 0;		// store mailbox count
 private $inf_recent = 0;	// store mailbox recent number
 private $inf_size = 0;		// store mailbox total size
 //--
+private $cafile = '';		// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
+//--
 //=====================================================================================
 
 
@@ -80,6 +82,16 @@ public function __construct($buffer=0) { // IMAP4
 	//--
 	$this->log = '';
 	$this->error = '';
+	//--
+} //END FUNCTION
+//=====================================================================================
+
+
+//=====================================================================================
+// [PUBLIC] :: set the SSL/TLS Certificate Authority File
+public function set_ssl_tls_ca_file($cafile) {
+	//--
+	$this->cafile = (string) $cafile;
 	//--
 } //END FUNCTION
 //=====================================================================================
@@ -145,17 +157,26 @@ public function connect($server, $port=143, $sslversion='') { // IMAP4
 	//$sock = @fsockopen($protocol.$server, $port, $errno, $errstr, $this->timeout);
 	$stream_context = @stream_context_create();
 	if((string)$protocol != '') {
-		if(defined('SMART_FRAMEWORK_SSL_CA_PATH')) {
-			if((string)SMART_FRAMEWORK_SSL_CA_PATH != '') {
-				@stream_context_set_option($stream_context, 'ssl', 'capath', Smart::real_path((string)SMART_FRAMEWORK_SSL_CA_PATH));
+		//--
+		$cafile = '';
+		if((string)$this->cafile != '') {
+			$cafile = (string) $this->cafile;
+		} elseif(defined('SMART_FRAMEWORK_SSL_CA_FILE')) {
+			if((string)SMART_FRAMEWORK_SSL_CA_FILE != '') {
+				$cafile = (string) SMART_FRAMEWORK_SSL_CA_FILE;
 			} //end if
 		} //end if
+		if((string)$cafile != '') {
+			@stream_context_set_option($stream_context, 'ssl', 'cafile', Smart::real_path((string)$cafile));
+		} //end if
+		//--
 		@stream_context_set_option($stream_context, 'ssl', 'ciphers', 				(string)SMART_FRAMEWORK_SSL_CIPHERS); // allow only high ciphers
 		@stream_context_set_option($stream_context, 'ssl', 'verify_host', 			(bool)SMART_FRAMEWORK_SSL_VFY_HOST); // allways must be set to true !
 		@stream_context_set_option($stream_context, 'ssl', 'verify_peer', 			(bool)SMART_FRAMEWORK_SSL_VFY_PEER); // this may fail with some CAs
 		@stream_context_set_option($stream_context, 'ssl', 'verify_peer_name', 		(bool)SMART_FRAMEWORK_SSL_VFY_PEER_NAME); // allow also wildcard names *
 		@stream_context_set_option($stream_context, 'ssl', 'allow_self_signed', 	(bool)SMART_FRAMEWORK_SSL_ALLOW_SELF_SIGNED); // must allow self-signed certificates but verified above
 		@stream_context_set_option($stream_context, 'ssl', 'disable_compression', 	(bool)SMART_FRAMEWORK_SSL_DISABLE_COMPRESS); // help mitigate the CRIME attack vector
+		//--
 	} //end if else
 	$sock = @stream_socket_client($protocol.$server.':'.$port, $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $stream_context);
 	//--
@@ -1051,7 +1072,7 @@ private function get_answer_data() { // IMAP4
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160205
+ * @version 	v.170613
  * @package 	Mailer:Get
  *
  */
@@ -1070,6 +1091,8 @@ public $log = '';			// if debug is enabled, this is the log
 //--
 private $socket = false; 	// socket resource ID
 private $apop_banner = ''; 	// store the banner used for APOP Auth Method
+//--
+private $cafile = '';		// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
 //--
 //=====================================================================================
 
@@ -1092,6 +1115,16 @@ public function __construct($buffer=0) {
 	//--
 	$this->log = '';
 	$this->error = '';
+	//--
+} //END FUNCTION
+//=====================================================================================
+
+
+//=====================================================================================
+// [PUBLIC] :: set the SSL/TLS Certificate Authority File
+public function set_ssl_tls_ca_file($cafile) {
+	//--
+	$this->cafile = (string) $cafile;
 	//--
 } //END FUNCTION
 //=====================================================================================
@@ -1156,17 +1189,26 @@ public function connect($server, $port=110, $sslversion='') {
 	//$sock = @fsockopen($protocol.$server, $port, $errno, $errstr, $this->timeout);
 	$stream_context = @stream_context_create();
 	if((string)$protocol != '') {
-		if(defined('SMART_FRAMEWORK_SSL_CA_PATH')) {
-			if((string)SMART_FRAMEWORK_SSL_CA_PATH != '') {
-				@stream_context_set_option($stream_context, 'ssl', 'capath', Smart::real_path((string)SMART_FRAMEWORK_SSL_CA_PATH));
+		//--
+		$cafile = '';
+		if((string)$this->cafile != '') {
+			$cafile = (string) $this->cafile;
+		} elseif(defined('SMART_FRAMEWORK_SSL_CA_FILE')) {
+			if((string)SMART_FRAMEWORK_SSL_CA_FILE != '') {
+				$cafile = (string) SMART_FRAMEWORK_SSL_CA_FILE;
 			} //end if
 		} //end if
+		if((string)$cafile != '') {
+			@stream_context_set_option($stream_context, 'ssl', 'cafile', Smart::real_path((string)$cafile));
+		} //end if
+		//--
 		@stream_context_set_option($stream_context, 'ssl', 'ciphers', 				(string)SMART_FRAMEWORK_SSL_CIPHERS); // allow only high ciphers
 		@stream_context_set_option($stream_context, 'ssl', 'verify_host', 			(bool)SMART_FRAMEWORK_SSL_VFY_HOST); // allways must be set to true !
 		@stream_context_set_option($stream_context, 'ssl', 'verify_peer', 			(bool)SMART_FRAMEWORK_SSL_VFY_PEER); // this may fail with some CAs
 		@stream_context_set_option($stream_context, 'ssl', 'verify_peer_name', 		(bool)SMART_FRAMEWORK_SSL_VFY_PEER_NAME); // allow also wildcard names *
 		@stream_context_set_option($stream_context, 'ssl', 'allow_self_signed', 	(bool)SMART_FRAMEWORK_SSL_ALLOW_SELF_SIGNED); // must allow self-signed certificates but verified above
 		@stream_context_set_option($stream_context, 'ssl', 'disable_compression', 	(bool)SMART_FRAMEWORK_SSL_DISABLE_COMPRESS); // help mitigate the CRIME attack vector
+		//--
 	} //end if else
 	$sock = @stream_socket_client($protocol.$server.':'.$port, $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $stream_context);
 	//--

@@ -47,7 +47,7 @@ define('SMART_FRAMEWORK_NETSERVER_ID', 		'1'); 											// Load Balancing: Uni
 //define('SMART_FRAMEWORK_NETSERVER_MAXLOAD', 0);											// Load Balancing and DDOS Protection against High Loads :: if set to 0 will be ignored ; if set to a value > 0 if server load go over this value the server will enter in BUSY state (503 Too busy) ; by example a value of 90 means 90% load over 1 CPU core ; on multi cpus/cores value must be 90 * number of cpus/cores
 //--------------------------------------- SSL CRYPTO OVERALL TUNNINGS
 define('SMART_FRAMEWORK_SSL_MODE', 				'tls');										// SSL/TLS Mode: tls | sslv3
-define('SMART_FRAMEWORK_SSL_CA_PATH',			'');										// SSL/TLS Context CA Path: capath ; default: '' ; if non-empty, must end with trailing slash
+define('SMART_FRAMEWORK_SSL_CA_FILE',			'');										// SSL/TLS Context CA Path: cafile ; default: '' ; if non-empty, must point to something like 'etc/cacert.pem' or another path to a certification authority pem
 define('SMART_FRAMEWORK_SSL_CIPHERS',			'HIGH');									// SSL/TLS Context Ciphers: ciphers ; default: 'HIGH' ; generally allow only high ciphers
 define('SMART_FRAMEWORK_SSL_VFY_HOST',			true);										// SSL/TLS Context Verify Host: verify_host ; default: true
 define('SMART_FRAMEWORK_SSL_VFY_PEER',			false);										// SSL/TLS Context Verify Peer: verify_peer ; default: false ; this fails with some CAs
