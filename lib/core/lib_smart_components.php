@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170601
+ * @version 	v.170614
  * @package 	Components:Framework
  *
  */
@@ -2820,11 +2820,11 @@ public static function get_imgdesc_by_bw_id($y_bw) {
 			break;
 		default:
 			$desc = '[UNKNOWN]: ('.(string)$y_bw.')';
-			$pict = 'unknown';
+			$pict = 'browser/wkt';
 	} //end switch
 	//--
 	return (array) [
-		'img'  => (string) 'lib/core/img/'.$pict.'.png',
+		'img'  => (string) 'lib/core/img/'.$pict.'.svg',
 		'desc' => (string) $desc.' :: Web Browser'
 	];
 	//--
@@ -2993,7 +2993,7 @@ public static function get_imgdesc_by_os_id($y_os_id) {
 		case '[?]':
 		default:
 			$desc = '[UNKNOWN]: ('.$y_os_id.')';
-			$pict = 'unknown';
+			$pict = 'os/linux_other';
 		//-
 	} //end switch
 	//--

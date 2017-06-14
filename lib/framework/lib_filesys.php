@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170604
+ * @version 	v.170614
  * @package 	Filesystem
  *
  */
@@ -641,6 +641,9 @@ public static function mime_eval($yfile, $ydisposition='') {
 			//---
 			break;
 		case 'css':
+		case 'less':
+		case 'scss':
+		case 'sass':
 			$type = 'text/css';
 			$disp = 'attachment';
 			//---
@@ -683,15 +686,16 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'jsp': // java server page
 		case 'asp': // active server page
 		case 'cs': // C#
-		case 'csh': // C-Shell script
-		case 'cpp': // C++
-		case 'cxx': // C++
-		case 'hpp': // C++ header
-		case 'hxx': // C++ header
-		case 'yxx': // Bison source code file
-		case 'y': // Yacc source code file
 		case 'c': // C
 		case 'h': // C header
+		case 'y': // Yacc source code file
+		case 'cpp': // C++
+		case 'hpp': // C++ header
+		case 'ypp': // Bison source code file
+		case 'cxx': // C++
+		case 'hxx': // C++ header
+		case 'yxx': // Bison source code file
+		case 'csh': // C-Shell script
 		case 'pl': // perl
 		case 'py': // python
 		case 'java': // java source code
