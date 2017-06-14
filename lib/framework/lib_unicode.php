@@ -150,7 +150,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.160926
+ * @version     v.170914
  * @package     Base
  *
  */
@@ -545,10 +545,11 @@ public static function utf8_to_iso($str, $normalize=true) {
  * De-Accent a latin-based Unicode string 	:: will convert all accented characters in UTF-8 / ISO-8859-* with their unnaccented versions into ISO-8859-1
  *
  * @param STRING 	$str					:: The string
+ * @param BOOLEAN	$normalize				:: Normalize (Default is TRUE) - will normalize the string by forcing the ISO-8859-1 character set
  *
  * @return STRING							:: The processed string
  */
-public static function deaccent_str($str) {
+public static function deaccent_str($str, $normalize=true) {
 	//--
 	if((string)$str == '') {
 		return '';
@@ -556,7 +557,12 @@ public static function deaccent_str($str) {
 	//--
 	$accents = (array) self::accented_chars();
 	//--
-	return (string) self::utf8_to_iso((string)str_replace(array_keys($accents), array_values($accents), (string)$str));
+	$str = (string) str_replace(array_keys($accents), array_values($accents), (string)$str);
+	if($normalize) {
+		$str = (string) self::utf8_to_iso((string)$str);
+	} //end if
+	//--
+	return (string) $str;
 	//--
 } //END FUNCTION
 //================================================================
