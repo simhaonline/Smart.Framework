@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170614
+ * @version 	v.170615
  * @package 	Filesystem
  *
  */
@@ -686,6 +686,7 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'jsp': // java server page
 		case 'asp': // active server page
 		case 'cs': // C#
+		case 'm': // Objective C Method
 		case 'c': // C
 		case 'h': // C header
 		case 'y': // Yacc source code file
