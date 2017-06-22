@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170604
+ * @version     v.170622
  * @package     Base
  *
  */
@@ -1161,6 +1161,8 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 	//-- restore html unicode entities
 	$html_accents = (array) SmartUnicode::accented_html_entities();
 	$yhtmlcode = (string) str_replace((array)array_values($html_accents), (array)array_keys($html_accents), (string)$yhtmlcode);
+	//-- try to convert other remaining html entities
+	$yhtmlcode = (string) html_entity_decode((string)$yhtmlcode, ENT_HTML5, SMART_FRAMEWORK_CHARSET);
 	//-- clean any other remaining html entities
 	$yhtmlcode = (string) preg_replace('/&\#?([0-9a-z]+);/i', ' ', (string)$yhtmlcode);
 	//-- cleanup multiple spaces with just one space

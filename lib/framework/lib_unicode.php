@@ -150,7 +150,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.170914
+ * @version     v.170622
  * @package     Base
  *
  */
@@ -583,8 +583,11 @@ public static function html_entities($str) {
 	} //end if
 	//--
 	$html_accents = (array) self::accented_html_entities();
+	$str = (string) str_replace(array_keys($html_accents), array_values($html_accents), (string)$str); // use utf8 to iso for safety
 	//--
-	return (string) self::utf8_to_iso((string)str_replace(array_keys($html_accents), array_values($html_accents), (string)$str)); // use utf8 to iso for safety
+	$str = (string) self::convert_charset($str, '', 'HTML-ENTITIES', true);
+	//--
+	return (string) self::utf8_to_iso((string)$str);
 	//--
 } //END FUNCTION
 //================================================================
