@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170614
+ * @version 	v.170620
  * @package 	Components:Framework
  *
  */
@@ -1828,12 +1828,14 @@ public static function html_js_limited_text_area($y_field_id, $y_var_name, $y_va
 //================================================================
 /**
  * Return the HTML / CSS / Javascript code to Load the required Javascripts for the Highlight.Js
- * Should be called just once per page
+ * Should be called just once per a HTML page
  *
  * @access 		private
  * @internal
  *
  * @param STRING 	$dom_selector		The HTML-DOM Selector as container(s) for Pre>Code (see jQuery ...)
+ * @param ARRAY 	$plugins 			The Array with enum of packages to load
+ * @param ENUM 		$theme 				The Visual CSS Theme to Load
  *
  * @return STRING						[HTML Code]
  */
@@ -1872,7 +1874,7 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 		'lnx'  => 'awk, bash, perl, shell',
 		'srv'  => 'accesslog, apache, dns, nginx, pf',
 		'net'  => 'csp, http, ldif, protobuf',
-		'lang' => 'basic, cmake, coffeescript, cpp, cs, delphi, erlang, fortran, fsharp, go, haskell, java, lua, makefile, objectivec, ocaml, openscad, python, r, ruby, swift, tcl, vala',
+		'lang' => 'basic, cmake, coffeescript, cpp, cs, delphi, erlang, fortran, fsharp, go, haskell, java, lua, makefile, objectivec, ocaml, openscad, python, r, ruby, scala, swift, tcl, vala',
 		'ms'   => 'dos, powershell, typescript, vbnet, vbscript',
 		'hw'   => 'armasm, llvm, mipsasm, vhdl, x86asm'
 	];
@@ -2390,7 +2392,7 @@ public static function html_js_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 			$the_mode = 'text/x-yaml';
 			break;
 		case 'php':
-			$the_mode = 'application/x-httpd-php';
+			$the_mode = 'application/x-php';
 			break;
 		case 'sql':
 			$the_mode = 'text/x-sql';

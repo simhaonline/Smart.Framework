@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170615
+ * @version 	v.170620
  * @package 	Filesystem
  *
  */
@@ -624,6 +624,7 @@ public static function mime_eval($yfile, $ydisposition='') {
 		'license',
 		'readme',
 		'makefile',
+		'cmake',
 		'.htaccess',
 		'.htpasswd'
 	])) {
@@ -675,21 +676,29 @@ public static function mime_eval($yfile, $ydisposition='') {
 			//---
 			break;
 		//-------------- plain text and development
+		case 'tex': // TeX
 		case 'txt': // text
 		case 'log': // log file
 		case 'sql': // sql file
+		case 'cfg': // config file
+		case 'conf': // config file
+		case 'config': // config file
 		case 'sh': // shell script
 		case 'awk': // AWK script
 		case 'asm': // assembler
 		case 'cmd': // windows command file
 		case 'bat': // windows batch file
-		case 'jsp': // java server page
 		case 'asp': // active server page
 		case 'cs': // C#
 		case 'm': // Objective C Method
 		case 'c': // C
 		case 'h': // C header
 		case 'y': // Yacc source code file
+		case 'f': // Fortran
+		case 'fs': // Fortran Sharp
+		case 'r': // R language
+		case 'diff': // Diff File
+		case 'patch': // Diff Patch
 		case 'cpp': // C++
 		case 'hpp': // C++ header
 		case 'ypp': // Bison source code file
@@ -697,9 +706,23 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'hxx': // C++ header
 		case 'yxx': // Bison source code file
 		case 'csh': // C-Shell script
+		case 'tcl': // TCL
+		case 'tk': // Tk
+		case 'lua': // Lua
+		case 'go': // Go Lang
+		case 'coffee': // Coffee Script
+		case 'cson': // Coffee Script
+		case 'ocaml': // Ocaml
+		case 'ml': // Ocaml ML
+		case 'erl': // Erlang
 		case 'pl': // perl
 		case 'py': // python
+		case 'scala': // Scala
 		case 'java': // java source code
+		case 'jsp': // java server page
+		case 'pas': // Delphi / Pascal
+		case 'as': // action script
+		case 'basic': // Basic
 		case 'inc': // include file
 		case 'ins': // install config file
 		case 'inf': // info file
@@ -713,6 +736,7 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'makefile': // makefile
 		case '.htaccess': // .htaccess
 		case '.htpasswd': // .htpasswd
+		case 'pem': // PEM Certificate File
 			$type = 'text/plain';
 			$disp = 'attachment';
 			//---
@@ -781,6 +805,11 @@ public static function mime_eval($yfile, $ydisposition='') {
 			break;
 		case 'vcf':
 			$type = 'text/x-vcard';
+			$disp = 'attachment';
+			//---
+			break;
+		case 'ldif':
+			$type = 'text/ldif';
 			$disp = 'attachment';
 			//---
 			break;

@@ -28,6 +28,7 @@
   <script type="text/javascript" src="../syntax/lang/delphi.js"></script>
   <script type="text/javascript" src="../syntax/lang/basic.js"></script>
   <script type="text/javascript" src="../syntax/lang/r.js"></script>
+  <script type="text/javascript" src="../syntax/lang/scala.js"></script>
   <script type="text/javascript" src="../syntax/lang/openscad.js"></script>
 
   <script type="text/javascript" src="../../jquery/jquery.js"></script>
@@ -794,6 +795,71 @@ translate([0,0,2])dodecahedron(1);
 dodecahedron(2);
 //call the module with a height of 4 and move down 4
 translate([0,0,-4])dodecahedron(4);
+</code></pre>
+</div>
+
+<!-- Scala -->
+
+<div>
+<h2>Scala</h2>
+<pre><code class="scala">/**
+ * A person has a name and an age.
+ */
+case class Person(name: String, age: Int)
+
+abstract class Vertical extends CaseJeu
+case class Haut(a: Int) extends Vertical
+case class Bas(name: String, b: Double) extends Vertical
+
+sealed trait Ior[+A, +B]
+case class Left[A](a: A) extends Ior[A, Nothing]
+case class Right[B](b: B) extends Ior[Nothing, B]
+case class Both[A, B](a: A, b: B) extends Ior[A, B]
+
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A], f: A =&gt; B): F[B]
+}
+
+// beware Int.MinValue
+def absoluteValue(n: Int): Int =
+  if (n &lt; 0) -n else n
+
+def interp(n: Int): String =
+  s&quot;there are $n ${color} balloons.\n&quot;
+
+type ξ[A] = (A, A)
+
+trait Hist { lhs =&gt;
+  def ⊕(rhs: Hist): Hist
+}
+
+def gsum[A: Ring](as: Seq[A]): A =
+  as.foldLeft(Ring[A].zero)(_ + _)
+
+val actions: List[Symbol] =
+  &#39;init :: &#39;read :: &#39;write :: &#39;close :: Nil
+
+trait Cake {
+  type T;
+  type Q
+  val things: Seq[T]
+
+  abstract class Spindler
+
+  def spindle(s: Spindler, ts: Seq[T], reversed: Boolean = false): Seq[Q]
+}
+
+val colors = Map(
+  &quot;red&quot;       -&gt; 0xFF0000,
+  &quot;turquoise&quot; -&gt; 0x00FFFF,
+  &quot;black&quot;     -&gt; 0x000000,
+  &quot;orange&quot;    -&gt; 0xFF8040,
+  &quot;brown&quot;     -&gt; 0x804000)
+
+lazy val ns = for {
+  x &lt;- 0 until 100
+  y &lt;- 0 until 100
+} yield (x + y) * 33.33
 </code></pre>
 </div>
 
