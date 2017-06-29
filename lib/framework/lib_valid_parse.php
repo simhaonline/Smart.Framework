@@ -317,7 +317,7 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160921
+ * @version     v.170629
  * @package     Base
  *
  */
@@ -506,6 +506,7 @@ public static function validate_string($y_string, $y_mode) {
 //================================================================
 /**
  * Validate if a string or number is Integer or Decimal (positive / negative)
+ * This will not check if the number is finite or overflowing !!
  *
  * @param 	STRING		$val				:: The string or number to be validated
  * @return 	BOOL							:: TRUE if Integer or Decimal (positive / negative) ; FALSE if not
@@ -521,6 +522,44 @@ public static function validate_numeric_integer_or_decimal_values($val) { // {{{
 	} else {
 		return false; // NOT VALID
 	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Validate if a string or number is VALID numeric (finite, not overflowing, match precision, not Expressions like 1.3e3 ; may contain only -0123456789.)
+ *
+ * @param 	STRING		$val				:: The string or number to be validated
+ * @return 	BOOL							:: TRUE if match condition ; FALSE if not
+ */
+public static function validate_numeric_pure_valid_values($val) {
+	//--
+	if((self::validate_numeric_integer_or_decimal_values($val)) AND (!is_nan($val)) AND (!is_infinite($val)) AND ((string)$val == (string)(float)$val)) {
+		return true;
+	} else {
+		return false;
+	} //end if
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Validate if a string or number is VALID integer (finite, not overflowing, match precision and max/min integer, not Expressions like 1.3e3 ; may contain only -0123456789)
+ *
+ * @param 	STRING		$val				:: The string or number to be validated
+ * @return 	BOOL							:: TRUE if match condition ; FALSE if not
+ */
+public static function validate_integer_pure_valid_values($val) {
+	//--
+	if((self::validate_numeric_pure_valid_values($val)) AND ($val >= PHP_INT_MIN) AND ($val <= PHP_INT_MAX)) {
+		return true;
+	} else {
+		return false;
+	} //end if
 	//--
 } //END FUNCTION
 //================================================================
