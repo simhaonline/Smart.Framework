@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170622
+ * @version     v.170703
  * @package     Base
  *
  */
@@ -1157,7 +1157,8 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 		'.'
 	);
 	$yhtmlcode = (string) str_ireplace((array)$regex_h, (array)$regex_r, (string)$yhtmlcode);
-	$yhtmlcode = (string) strip_tags((string)$yhtmlcode); // fix: after all fixes when reversing entities, new tags can appear that were encoded, so needs run again for safety ...
+	//-- if new tags may appear after strip tags that is natural as they were encoded already with entities ... ; Anyway, the following can't be used as IT BREAKS TEXT THAT COMES AFTER < which was previous encoded as &lt; !!!
+	//$yhtmlcode = (string) strip_tags((string)$yhtmlcode); // fix: after all fixes when reversing entities, new tags can appear that were encoded, so needs run again for safety ...
 	//-- restore html unicode entities
 	$html_accents = (array) SmartUnicode::accented_html_entities();
 	$yhtmlcode = (string) str_replace((array)array_values($html_accents), (array)array_keys($html_accents), (string)$yhtmlcode);
