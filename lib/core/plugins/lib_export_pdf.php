@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.160204
+ * @version 	v.170703
  * @package 	Exporters
  *
  */
@@ -301,7 +301,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 				$tmp_where_we_guess = (string) $guess_arr['where-was-detected'];
 				$guess_arr = array();
 				if((string)$tmp_img_ext == '') {
-					$tmp_img_ext = SmartUtils::guess_image_extension_by_first_bytes(substr($tmp_arr['content'], 0, 256));
+					$tmp_img_ext = SmartUtils::guess_image_extension_by_first_bytes(substr($tmp_arr['content'], 0, 16));
 					if((string)$tmp_img_ext != '') {
 						$tmp_where_we_guess = ' First Bytes ...';
 					} //end if
