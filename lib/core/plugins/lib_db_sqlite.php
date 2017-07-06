@@ -43,8 +43,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * //Sample Usage
  * $db = new SmartSQliteDb('tmp/testunit.sqlite');
  * $db->open();
- * $sq_rd = (array) $db->asread("SELECT `description` FROM `mytable` WHERE (`id` = '".$db->escape_str($my_id)."') LIMIT 1 OFFSET 0");
- * $sq_cnt = (int) $db->count("SELECT COUNT(1) FROM mytable WHERE (score > ?)", array(100));
+ * $sq_rd = (array) $db->read_asdata("SELECT `description` FROM `mytable` WHERE (`id` = '".$db->escape_str($my_id)."') LIMIT 1 OFFSET 0");
+ * $sq_cnt = (int) $db->count_data("SELECT COUNT(1) FROM mytable WHERE (score > ?)", array(100));
  * $arr_insert = array(
  * 		'id' => 100,
  * 		'active' => 1,
