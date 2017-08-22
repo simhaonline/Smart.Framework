@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //######################################### Mod.Samples (Tests ONLY Settings)
-// !!! Remove these Test ONLY Settings in real production environments !!! They are required just for Mod.Samples ...
+// !!! Remove these Test ONLY Settings when using in real production environments !!! They are required just for Mod.Samples ...
 define('SMART_FRAMEWORK_TEST_MODE', true);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS', false);
@@ -28,7 +28,7 @@ $configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugg
 
 // NOTICE on DB Connectors:
 //		The standard DB connectors includded in Smart.Framework are below:
-//			* Redis
+//			* Redis (persistent caching)
 // 			* PostgreSQL
 // 			* SQLite
 //		Other DB Connectors are (below); they are available via Smart.Framework.Modules in modules/smart-extra-libs (copy smart-extra-libs/ to the modules/ folder of Smart.Framework) ; to add them to your project uncomment this line into modules/app/app-custom-bootstrap.inc.php # require_once('modules/smart-extra-libs/autoload.php'); :
@@ -79,12 +79,12 @@ $configs['sendmail']['log-messages']		= 'no';							// `no` | `yes` :: // Log Se
 $configs['regional']['language-id']					= 'en';					// Language `en` | `ro` (must exists as defined)
 $configs['regional']['decimal-separator']			= '.';					// decimal separator `.` | `,`
 $configs['regional']['thousands-separator']			= ',';					// thousand separator `,` | `.` | ` `
-$configs['regional']['calendar-week-start']			= '1';					// 0=start on sunday | 1=start on Monday ; used for both PHP and Javascript
+$configs['regional']['calendar-week-start']			= '0';					// 0=start on sunday | 1=start on Monday ; used for both PHP and Javascript
 $configs['regional']['calendar-date-format-client'] = 'dd.mm.yy';			// Client Date Format - Javascript (allow only these characters: yy mm dd . - [space])
 $configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date Format - PHP (allow only these characters: Y m d . - [space])
 //---------------------------------------
 $languages = array('en' => '[EN]');											// default associative array of available languages for this software (do not change without installing new languages support files)
-//$languages = array('en' => '[EN]', 'ro' => '[RO]');						// extended associative array of available languages for this software (do not change without installing new languages support files)
+//$languages = array('en' => '[EN]', 'ro' => [ 'name'=>'[RO]', 'decimal-separator'=>',', 'thousands-separator'=>'.', 'calendar-week-start'=>'1' ]);						// extended associative array of available languages for this software (do not change without installing new languages support files)
 //---------------------------------------
 
 //--------------------------------------- OTHER SPECIAL SETTINGS :: DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU ARE DOING, really ...

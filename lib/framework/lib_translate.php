@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.170307
+ * @version 	v.170811
  * @package 	Application
  *
  */
@@ -52,6 +52,22 @@ final class SmartTextTranslations {
 
 	//=====
 	/**
+	 * Regional Text :: Get Available Languages
+	 *
+	 * @return 	ARRAY						:: The array with available language IDs ; sample: ['en', 'ro']
+	 */
+	public static function getAvailableLanguages() {
+		//--
+		$all_languages = (array) self::getSafeLanguagesArr();
+		//--
+		return (array) array_keys((array)$all_languages);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Regional Text :: Get Language
 	 *
 	 * @return 	STRING						:: The language ID ; sample (for English) will return: 'en'
@@ -59,7 +75,6 @@ final class SmartTextTranslations {
 	public static function getLanguage() {
 		//--
 		global $configs;
-		global $languages;
 		//--
 		if(strlen((string)self::$cache['#LANGUAGE#']) == 2) {
 			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
@@ -73,19 +88,17 @@ final class SmartTextTranslations {
 			return (string) self::$cache['#LANGUAGE#'];
 		} //end if
 		//--
-		if(!is_array($languages)) {
-			$languages = array('en' => '[EN]');
-		} //end if
+		$all_languages = (array) self::getSafeLanguagesArr();
 		//--
 		$the_lang = 'en'; // default
 		//--
 		if(is_array($configs)) {
 			if(is_array($configs['regional'])) {
-				$tmp_lang = (string) $configs['regional']['language-id'];
+				$tmp_lang = (string) strtolower((string)$configs['regional']['language-id']);
 				if(strlen((string)$tmp_lang) == 2) { // if language id have only 2 characters
 					if(preg_match('/^[a-z]+$/', (string)$tmp_lang)) { // language id must contain only a..z characters (iso-8859-1)
-						if(is_array($languages)) {
-							if((string)$languages[(string)$tmp_lang] != '') { // if that lang is set in languages array
+						if(is_array($all_languages)) {
+							if($all_languages[(string)$tmp_lang]) { // if that lang is set in languages array
 								$the_lang = (string) $tmp_lang;
 								if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
 									if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
@@ -102,10 +115,9 @@ final class SmartTextTranslations {
 			} //end if
 		} //end if
 		//--
-		$the_lang = (string) strtolower((string)$the_lang);
-		self::$cache['#LANGUAGE#'] = (string) $the_lang;
+		self::$cache['#LANGUAGE#'] = (string) strtolower((string)$the_lang);
 		//--
-		return (string) $the_lang;
+		return (string) self::$cache['#LANGUAGE#'];
 		//--
 	} //END FUNCTION
 	//=====
@@ -122,19 +134,29 @@ final class SmartTextTranslations {
 	public static function setLanguage($y_language) {
 		//--
 		global $configs;
-		global $languages;
 		//--
 		$result = false;
+		//--
+		$all_languages = (array) self::getSafeLanguagesArr();
 		//--
 		$tmp_lang = (string) strtolower((string)SmartUnicode::utf8_to_iso((string)$y_language));
 		//--
 		if(is_array($configs)) {
 			if(strlen((string)$tmp_lang) == 2) { // if language id have only 2 characters
 				if(preg_match('/^[a-z]+$/', (string)$tmp_lang)) { // language id must contain only a..z characters (iso-8859-1)
-					if(is_array($languages)) {
-						if((string)$languages[(string)$tmp_lang] != '') { // if that lang is set in languages array
+					if(is_array($all_languages)) {
+						if($all_languages[(string)$tmp_lang]) { // if that lang is set in languages array
 							if((string)$tmp_lang != (string)$configs['regional']['language-id']) { // if it is the same, don't make sense to set it again !
 								$configs['regional']['language-id'] = (string) $tmp_lang;
+								if(Smart::array_size($all_languages[(string)$tmp_lang]) > 0) {
+									// set also the rest of regional params if available and set custom for that language ...
+									foreach($all_languages[(string)$tmp_lang] as $k => $v) {
+										if(array_key_exists((string)$k, (array)$configs['regional'])) {
+											//Smart::log_notice('Setting Regional Key for Language: '.$tmp_lang.' as @ '.$k.'='.$v);
+											$configs['regional'][(string)$k] = (string) $v;
+										} //end if
+									} //end foreach
+								} //end if
 								self::$cache['#LANGUAGE#'] = (string) $tmp_lang;
 								$result = true;
 								if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
@@ -263,6 +285,24 @@ final class SmartTextTranslations {
 
 
 	//#####
+
+
+	//=====
+	// get safe fixed languages arr
+	private static function getSafeLanguagesArr() {
+		//--
+		global $languages;
+		//--
+		if(!is_array($languages)) {
+			$languages = array('en' => '[EN]');
+		} else {
+			$languages = (array) array_change_key_case((array)$languages, CASE_LOWER); // make all keys lower
+		} //end if
+		//--
+		return (array) $languages;
+		//--
+	} //END FUNCTION
+	//=====
 
 
 	//=====

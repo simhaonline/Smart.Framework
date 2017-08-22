@@ -154,7 +154,7 @@ define('SMART_SOFTWARE_APP_NAME', 'smart.framework.app'); // software version fo
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version 	v.170405
+ * @version 	v.170811
  *
  */
 final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
@@ -170,7 +170,6 @@ final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
 	public static function Run() {
 		//--
 		global $configs;
-		global $languages;
 		//--
 		if(self::$isRunning !== false) {
 			http_response_code(500);

@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170603
+ * @version 	v.170821
  * @package 	Application
  *
  */
@@ -423,7 +423,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function ControllerGetParam($param) {
 		//--
-		$param = strtolower((string)$param);
+		$param = (string) strtolower((string)$param);
 		//--
 		$out = '';
 		//--
@@ -587,7 +587,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return false;
 		} //end if
 		//--
-		$param = strtolower((string)$param);
+		$param = (string) strtolower((string)$param);
 		//--
 		if((string)$param != '') {
 			if(is_bool($value)) { // fix for bool
@@ -742,7 +742,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return false;
 		} //end if
 		//--
-		$param = strtolower((string)$param);
+		$param = (string) strtolower((string)$param);
 		//--
 		if((string)$param != '') {
 			$this->pageview[(string)$param] = (string)$value; // set
@@ -769,7 +769,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return false;
 		} //end if
 		//--
-		$param = strtolower((string)$param);
+		$param = (string) strtolower((string)$param);
 		//--
 		if((string)$param != '') {
 			if(!array_key_exists((string)$param, $this->pageview)) {
@@ -814,7 +814,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return false;
 		} //end if
 		//--
-		$param = strtolower((string)$param);
+		$param = (string) strtolower((string)$param);
 		//--
 		if((string)$param != '') {
 			$this->pageview[(string)$param] = '';
@@ -877,8 +877,8 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		} //end if
 		//--
 		$cache = SmartPersistentCache::getKey(
-			(string)$storage_namespace,
-			(string)$unique_key
+			(string) $storage_namespace,
+			(string) $unique_key
 		);
 		//--
 		if(($cache === null) OR ((string)$cache == '')) {
@@ -918,10 +918,10 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		} //end if
 		//--
 		return SmartPersistentCache::setKey(
-			(string)$storage_namespace,
-			(string)$unique_key,
-			(string)$cache,
-			(int)$expiration // expiration time in seconds
+			(string) $storage_namespace,
+			(string) $unique_key,
+			(string) $cache,
+			(int)    $expiration // expiration time in seconds
 		);
 		//--
 	} //END FUNCTION
@@ -940,8 +940,8 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	final public function PageUnsetFromCache($storage_namespace, $unique_key) {
 		//--
 		return SmartPersistentCache::unsetKey(
-			(string)$storage_namespace,
-			(string)$unique_key
+			(string) $storage_namespace,
+			(string) $unique_key
 		);
 		//--
 	} //END FUNCTION

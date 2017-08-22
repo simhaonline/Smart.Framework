@@ -2126,7 +2126,7 @@ public static function js_code_notification_remove($y_id='') {
  * @internal
  *
  */
-public static function js_code_ui_confirm_dialog($y_question_html, $y_ok_jscript_function='', $y_width='550', $y_height='225', $y_title='?') {
+public static function js_code_ui_confirm_dialog($y_question_html, $y_ok_jscript_function='', $y_width='550', $y_height='250', $y_title='?') {
 	//--
 	return 'SmartJS_BrowserUtils.confirm_Dialog(\''.Smart::escape_js($y_question_html).'\', \''.Smart::escape_js($y_ok_jscript_function).'\', \''.Smart::escape_js($y_title).'\', '.(int)$y_width.', '.(int)$y_height.');';
 	//--
