@@ -14,4 +14,6 @@ mod-tpl-twig
 mod-sm-facebook
 mod-sm-twitter
 mod-vanilla
+mod-agile
+mod-svn
 !.gitignore
