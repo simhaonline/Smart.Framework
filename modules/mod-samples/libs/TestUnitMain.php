@@ -5,7 +5,7 @@
 
 // Class: \SmartModExtLib\Samples\TestUnitMain
 // Type: Module Library
-// Info: this class integrates with the default Smart.Framework modules autoloader so does not need anything else to be setup
+// Info: this class integrates with the default Smart.Framework modules autoloader so it does not need anything else to be setup
 
 namespace SmartModExtLib\Samples;
 
@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170603
+ * @version 	v.170830
  *
  */
 final class TestUnitMain {
@@ -61,7 +61,7 @@ final class TestUnitMain {
 		} //end if
 		//--
 
-		//-- normal form with modal/popup
+		//-- normal form with modal / popup
 		$basic_form_start 	= '<form class="ux-form ux-inline-block" id="form_for_test" action="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.main&tab=1'.'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='.SMART_FRAMEWORK_URL_VALUE_ENABLED.'" method="post" target="_blank"><input type="hidden" name="testformdata[test]" value="Testing ..."><input type="hidden" name="testformdata[another-test]" value="Testing more ...">';
 		$basic_form_end 	= '</form>';
 		//--
@@ -69,9 +69,9 @@ final class TestUnitMain {
 		$basic_form_send_popup = '<input class="ux-button ux-button-secondary" style="min-width:320px;" type="submit" value="Submit Form (with Confirmation / PopUp)" OnClick="'.\SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [POPUP] ?</b></h3></div>', 'my_form', '780', '420', '1').'">';
 		//--
 
-		//-- AJAX POST FORM
+		//-- ajax post form
 		$btnop = '<button title="Submit this Test Form by AJAX (with Confirmation)" class="ux-button ux-button-large ux-button-special" onClick="'.\SmartComponents::js_ajax_submit_html_form('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#smart__CaptchaFrm__img\').click();').' return false;">Submit this Test Form by AJAX &nbsp; <span class="fa fa-send"></span></button>';
-		//-- END
+		//-- end
 
 		//-- lists with one element
 		$one_single_select 				= \SmartComponents::html_select_list_single('test-unit-s-list-one', '', 'form', array('one' => 'One'), 'frm[one_single]', '150', '', 'no', 'no', '#JS-UI#'); // returns HTML Code
@@ -91,15 +91,19 @@ final class TestUnitMain {
 			$array_of_values[] = 'id'.$i;
 			$array_of_values[] = 'Label '.$i;
 		} //end for
+		//--
+
 		//-- single-select
 		$selected_value 	= 'id2';
 		$elem_single_select = \SmartComponents::html_select_list_single('test-unit-s-list-two', $selected_value, 'form', $array_of_values, 'frm[list_single]', '150', 'onChange="alert(\''.\Smart::escape_js('Getting value from the "SingleList": ').'\' + $(\'#test-unit-s-list-two\').val());"', 'no', 'yes', '#JS-UI-FILTER#'); // returns HTML Code
 		//--
-		// draw a multi-select (classic)
+
+		//-- draw a multi-select (classic)
 		$selected_values 	= '<id1>,<id3>';
 		$elem_multi_select 	= \SmartComponents::html_select_list_multi('test-unit-m-list-2', $selected_values, 'form', $array_of_values, 'frm[list_multi_one][]', 'list', 'no', '250', 'onBlur="alert(\''.\Smart::escape_js('Getting value from the:'."\n".' "MultiList": ').'\' + $(\'#test-unit-m-list-2\').val());"', '#JS-UI-FILTER#'); // returns HTML Code
 		//--
-		// multi-select (checkboxes)
+
+		//-- multi-select (checkboxes)
 		$array_of_values 	= array('id1' => 'Label 1', 'id2' => 'Label 2', 'id3' => 'Label 3');
 		$selected_values 	= array('id2', 'id3');
 		$elem_multi_boxes 	= \SmartComponents::html_select_list_multi('test-unit-m-list-3', $selected_values, 'form', $array_of_values, 'frm[list_multi_two][]', 'checkboxes'); // returns HTML Code
@@ -145,7 +149,7 @@ final class TestUnitMain {
 		$arr_bw = (array) \SmartComponents::get_imgdesc_by_bw_id(\SmartUtils::get_os_browser_ip('bw'));
 		$tpl_path = 'modules/mod-samples/libs/templates/testunit';
 		//--
-		return \SmartMarkersTemplating::render_file_template(
+		return \SmartMarkersTemplating::render_file_template( // rendering a complex template with hardcoded sub templates
 			'modules/mod-samples/libs/templates/testunit/test-unit.inc.htm',
 			[
 				'@SUB-TEMPLATES@' => [
@@ -163,8 +167,8 @@ final class TestUnitMain {
 				'TEST-JS_SCRIPTS_Init-Tabs' 				=> '<script type="text/javascript">'.\SmartComponents::js_code_uitabs_init('tabs_draw', \Smart::format_number_int($tab,'+')).'</script>', // '<script type="text/javascript">'.\SmartComponents::js_code_uitabs_activate('tabs_draw', false).'</script>',
 				'Test-Buttons_AJAX-POST' 					=> (string) $btnop,
 				'TEST-VAR'  								=> '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: Test and Demo Suite @ '.$info_adm.'</div>',
-				'TEST-ELEMENTS_DIALOG' 						=> '<a class="ux-button ux-button-dark" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_confirm_dialog('<h1>Do you like this framework ?</h1>', 'alert(\'Well ... then \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
-				'TEST-ELEMENTS_ALERT' 						=> '<a class="ux-button" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_alert_dialog('<h2>You can press now OK !</h2>', 'alert(\'Good ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
+				'TEST-ELEMENTS_DIALOG' 						=> '<a class="ux-button ux-button-dark" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_confirm_dialog('<h1>Do you like this framework ?</h1><br>Option: <select id="test-dlg-select-el-sf"><option value="Yes">Yes</option><option value="No">No</option></select>', 'alert(\'Well ... then you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
+				'TEST-ELEMENTS_ALERT' 						=> '<a class="ux-button" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_alert_dialog('<h2>You can press now OK !</h2><br>Option: <select id="test-dlg-select-el-sf"><option value="One">One</option><option value="Two">Two</option></select>', 'alert(\'Good ... you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
 				'TEST-ELEMENTS_SEND-CONFIRM-MODAL' 			=> (string) $basic_form_start.$basic_form_send_modal.$basic_form_end,
 				'TEST-ELEMENTS_SEND-CONFIRM-POPUP' 			=> (string) $basic_form_start.$basic_form_send_popup.$basic_form_end,
 				'TEST-ELEMENTS-WND-INTERRACTIONS-MODAL' 	=> (string) \SmartModExtLib\Samples\TestUnitBrowserWinInterractions::bttnModalTestInit(),
@@ -216,7 +220,7 @@ final class TestUnitMain {
 							'c3' => 'A'
 						]
 				],
-				'TPL-SYNTAX-DESCR' 							=> (string) \SmartMarkersTemplating::prepare_nosyntax_html_template(\SmartFileSystem::staticread('modules/mod-samples/libs/templates/testunit/partials/test-tpl-syntax-desc.nosyntax.inc.htm')),
+				'TPL-SYNTAX-DESCR' 							=> (string) \SmartMarkersTemplating::prepare_nosyntax_html_template(\SmartFileSystem::staticread('modules/mod-samples/libs/templates/testunit/partials/test-tpl-syntax-desc.nosyntax.inc.htm'), true),
 				'TEST-UI-COMPONENTS' 						=> (string) $demo_mod_ui_components,
 				'TWIG-AVAILABLE' 							=> (string) (\SmartAppInfo::TestIfModuleExists('mod-tpl-twig') ? 'yes' : 'no')
 			]
@@ -346,7 +350,7 @@ final class TestUnitMain {
 	//============================================================
 	private static function captchaFormName() {
 		//--
-		return ' Test_Unit-Ajax-Form-forCaptcha_'.date('Y').' '; // test value with all allowed characters and spaces to be trimmed
+		return ' Test_Unit-Ajax-Form-forCaptcha_'.date('Y').' '; // test value with all allowed characters and some spaces (that spaces are presumed to be trimmed ...)
 		//--
 	} //END FUNCTION
 	//============================================================

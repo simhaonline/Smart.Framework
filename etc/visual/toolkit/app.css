@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / App :: r.170426 -- */
+/* -- CSS Start :: SmartFramework / App :: r.170830 -- */
 
 /* NOTICE:
 DO NOT modify the CSS original files except if located in the etc/ folder.
@@ -24,6 +24,9 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 @import url("../../../lib/core/css/navpager.css");
 
 @import url("../../../lib/core/css/date-time.css");
+
+/* optional, required just for TPL Debug */
+@import url("../../../lib/core/css/tpl-highlight.css");
 
 /* -- plugins -- */
 
