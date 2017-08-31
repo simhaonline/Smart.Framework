@@ -1,3 +1,4 @@
+#db
 tmp
 wpub
 smart-extra-libs
@@ -16,4 +17,6 @@ mod-sm-twitter
 mod-vanilla
 mod-agile
 mod-svn
+mod-kml
+mod-maps-cache
 !.gitignore
