@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.5.1');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170811
+ * @version		170831
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -314,6 +314,8 @@ public static function Run() {
 		return; // break stop after the controller has terminated the direct output
 	} //end if else
 	//--
+	$appRawHeads = (array) $appModule->PageViewGetRawHeaders();
+	//--
 	$appSettings = (array) $appModule->PageViewGetCfgs();
 	if(array_key_exists('status-code', $appSettings)) {
 		$appStatusCode = (int) $appSettings['status-code']; // this rewrites what the Run() function returns, which is very OK as this is authoritative !
@@ -453,6 +455,10 @@ public static function Run() {
 		echo '<h1>'.Smart::escape_html($the_redirect_text).'</h1>'.'<br>'.'If the page redirection fails, click on the below link:'.'<br>'.$the_redirect_link;
 		return; // break stop
 	} //end if
+	//--
+	//== RAW HEADERS
+	//--
+	self::SetRawHeaders($appRawHeads);
 	//--
 	//== DOWNLOADS HANDLER (downloads can be set only explicit from Controllers)
 	//--

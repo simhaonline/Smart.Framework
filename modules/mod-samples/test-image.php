@@ -42,6 +42,15 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//--
 		$this->PageViewSetCfg('rawpage', true); // set raw page (the output must not load a template ; in this case the output will be a binary image string !!)
+		//--
+
+		//--
+		$this->PageViewSetRawHeader(
+			'Z-Test-Image', 'This is an image' // just a sample dummy header entry
+		);
+		//--
+
+		//--
 		$this->PageViewSetCfg('rawmime', 'image/png'); // set mime type: Image / PNG
 		$this->PageViewSetCfg('rawdisp', 'inline; filename="sample-image-'.time().'.png"'); // display inline and set the file name for the image
 		//--
@@ -119,6 +128,10 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		header('Pragma: no-cache'); // HTTP 1.0
 		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 year')).' 09:05:00 GMT'); // HTTP 1.0
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+		//--
+
+		//--
+		header('Z-Test-Image: This is an image'); // just a sample dummy header entry
 		//--
 
 		//--

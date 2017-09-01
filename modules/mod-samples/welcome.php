@@ -56,6 +56,17 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
+		$this->PageViewResetRawHeaders();
+		$this->PageViewSetRawHeaders([
+			'Z-Test-Header-1:' 	=> 'This is a test (1)',
+			'Z-Test-Header-2' 	=> 'This is a test (2)'
+		]);
+		$this->PageViewSetRawHeader(
+			'Z-Test-Header-3', 'This is a test (3)'
+		);
+		//--
+
+		//--
 		if($this->PageCacheisActive()) {
 			//-- because the Request can modify the content, also the unique key must take in account variables that will vary the page config or page content vars
 			$the_page_cache_key = (string) $this->PageCacheSafeKey('samples-welcome-'.$module_area.'__'.SmartHashCrypto::sha384((string)$some_var_from_request));
@@ -72,7 +83,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			);
 			//--
 			if(Smart::array_size($test_cache) > 0) {
-				if((is_array($test_cache['configs'])) && (is_array($test_cache['vars']))) { // if valid cache (test as we exported both arrays ... so they must be the 2 arrays again)
+				if((is_array($test_cache['headers'])) && (is_array($test_cache['configs'])) && (is_array($test_cache['vars']))) { // if valid cache (test as we exported all arrays ... so they must be the 3 arrays again)
+					$this->PageViewResetRawHeaders();
+					$this->PageViewSetRawHeaders((array)$test_cache['headers']);
 					$this->PageViewSetCfgs((array)$test_cache['configs']);
 					$this->PageViewSetVars((array)$test_cache['vars']);
 					$this->PageViewAppendVar('main', "\n".'<!-- PCached Content Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
@@ -169,8 +182,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				'cached-samples', // the cache sample namespace
 				$the_page_cache_key, // the unique key (if there are GET/POST variables that will change the content
 				array(
-					'configs' => $this->PageViewGetCfgs(),
-					'vars' => $this->PageViewGetVars()
+					'headers' 	=> $this->PageViewGetRawHeaders(),
+					'configs' 	=> $this->PageViewGetCfgs(),
+					'vars' 		=> $this->PageViewGetVars()
 				), // this will het the full array with all page vars and configs
 				3600 // 60 mins
 			);

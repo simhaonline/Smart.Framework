@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170513
+ * @version		170831
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -62,7 +62,7 @@ final public static function HeadersNoCache() {
 		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 year')).' 09:05:00 GMT'); // HTTP 1.0
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 	} else {
-		Smart::log_warning('WARNING: Smart App Runtime :: Could not set No-Cache Headers, Headers Already Sent ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Could not set No-Cache Headers, Headers Already Sent ...');
 	} //end if else
 	//--
 } //END FUNCTION
@@ -92,7 +92,37 @@ final public static function HeadersCacheExpire($expiration, $modified=0) {
 		//--
 	} else {
 		//--
-		Smart::log_warning('WARNING: Smart App Runtime :: Could not set Expire Cache Headers, Headers Already Sent ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Could not set Expire Cache Headers, Headers Already Sent ...');
+		//--
+	} //end if else
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+final public static function SetRawHeaders($headers) {
+	//--
+	if(!is_array($headers)) {
+		$headers = array();
+	} //end if
+	//--
+	$headers['X-Powered-By'] = 'PHP Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION;
+	//--
+	if(!headers_sent()) {
+		//--
+		foreach($headers as $key => $val) {
+			//--
+			if(((string)$key != '') AND ((string)$val != '')) {
+				$hdr = (string) trim((string)$key.': '.(string)$val);
+				header((string)$hdr); // set raw header key => value
+			} //end if
+			//--
+		} //end foreach
+		//--
+	} else {
+		//--
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before RawHeaders');
 		//--
 	} //end if else
 	//--
@@ -106,7 +136,7 @@ final public static function Raise400Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(400);
 	} else {
-		Smart::log_warning('Headers Already Sent before 400 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 400 ...');
 	} //end if else
 	die(SmartComponents::http_message_400_badrequest((string)$y_msg));
 	//--
@@ -120,7 +150,7 @@ final public static function Raise401Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(401);
 	} else {
-		Smart::log_warning('Headers Already Sent before 401 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 401 ...');
 	} //end if else
 	die(SmartComponents::http_message_401_unauthorized((string)$y_msg));
 	//--
@@ -134,7 +164,7 @@ final public static function Raise403Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(403);
 	} else {
-		Smart::log_warning('Headers Already Sent before 403 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 403 ...');
 	} //end if else
 	die(SmartComponents::http_message_403_forbidden((string)$y_msg));
 	//--
@@ -148,7 +178,7 @@ final public static function Raise404Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(404);
 	} else {
-		Smart::log_warning('Headers Already Sent before 404 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 404 ...');
 	} //end if else
 	die(SmartComponents::http_message_404_notfound((string)$y_msg));
 	//--
@@ -162,7 +192,7 @@ final public static function Raise429Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(429);
 	} else {
-		Smart::log_warning('Headers Already Sent before 429 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 429 ...');
 	} //end if else
 	die(SmartComponents::http_message_429_toomanyrequests((string)$y_msg));
 	//--
@@ -176,7 +206,7 @@ final public static function Raise500Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(500);
 	} else {
-		Smart::log_warning('Headers Already Sent before 500 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 500 ...');
 	} //end if else
 	die(SmartComponents::http_message_500_internalerror((string)$y_msg));
 	//--
@@ -190,7 +220,7 @@ final public static function Raise502Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(502);
 	} else {
-		Smart::log_warning('Headers Already Sent before 502 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 502 ...');
 	} //end if else
 	die(SmartComponents::http_message_502_badgateway((string)$y_msg));
 	//--
@@ -204,7 +234,7 @@ final public static function Raise503Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(503);
 	} else {
-		Smart::log_warning('Headers Already Sent before 503 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 503 ...');
 	} //end if else
 	die(SmartComponents::http_message_503_serviceunavailable((string)$y_msg));
 	//--
@@ -218,7 +248,7 @@ final public static function Raise504Error($y_msg) {
 	if(!headers_sent()) {
 		http_response_code(504);
 	} else {
-		Smart::log_warning('Headers Already Sent before 504 ...');
+		Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 504 ...');
 	} //end if else
 	die(SmartComponents::http_message_504_gatewaytimeout((string)$y_msg));
 	//--

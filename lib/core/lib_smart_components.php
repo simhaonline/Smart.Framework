@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170620
+ * @version 	v.170901
  * @package 	Components:Framework
  *
  */
@@ -2675,34 +2675,35 @@ public static function render_app_template($template_path, $template_file, $arr_
 	//--
 
 	//-- external TPL vars
-	$arr_data['release-hash'] 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
-	$arr_data['semaphore'] 			= (string) $arr_data['semaphore']; // a general purpose conditional var
-	$arr_data['title'] 				= (string) $arr_data['title'];
-	$arr_data['head-meta'] 			= (string) $arr_data['head-meta'];
-	$arr_data['head-css'] 			= (string) $arr_data['head-css'];
-	$arr_data['head-js'] 			= (string) $arr_data['head-js'];
-	$arr_data['header'] 			= (string) $arr_data['header'];
-	$arr_data['main'] 				= (string) $arr_data['main'];
-	$arr_data['aside'] 				= (string) $arr_data['aside'];
-	$arr_data['footer'] 			= (string) $arr_data['footer'];
+	$arr_data['release-hash'] 			= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
+	$arr_data['semaphore'] 				= (string) $arr_data['semaphore']; // a general purpose conditional var
+	$arr_data['title'] 					= (string) $arr_data['title'];
+	$arr_data['head-meta'] 				= (string) $arr_data['head-meta'];
+	$arr_data['head-css'] 				= (string) $arr_data['head-css'];
+	$arr_data['head-js'] 				= (string) $arr_data['head-js'];
+	$arr_data['header'] 				= (string) $arr_data['header'];
+	$arr_data['main'] 					= (string) $arr_data['main'];
+	$arr_data['aside'] 					= (string) $arr_data['aside'];
+	$arr_data['footer'] 				= (string) $arr_data['footer'];
 	//-- internal TPL vars
-	$arr_data['template-path'] 		= (string) $template_path; 											// current template path (ex: etc/templates/default/)
-	$arr_data['template-file'] 		= (string) $template_file; 											// current template file (ex: template.htm | template-modal.htm | ...)
-	$arr_data['lang'] 				= (string) SmartTextTranslations::getLanguage(); 					// current set language (ex: en)
-	$arr_data['client-browser'] 	= (string) $os_bw['bw']; 											// client browser OS (ex: bsd)
-	$arr_data['client-os'] 			= (string) $os_bw['os']; 											// client browser ID (ex: fox)
-	$arr_data['app-realm'] 			= (string) $the_realm; 												// IDX (for index.php area) ; ADM (for admin.php area)
-	$arr_data['app-domain'] 		= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by realm: $configs['app']['index-domain'] | $configs['app']['admin-domain']
-	$arr_data['base-url'] 			= (string) SmartUtils::get_server_current_url(); 					// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
-	$arr_data['base-path'] 			= (string) SmartUtils::get_server_current_path(); 					// / | /sites/frameworks/smart-framework/
-	$arr_data['base-domain'] 		= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP
-	$arr_data['srv-domain'] 		= (string) SmartUtils::get_server_current_domain_name(); 			// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
-	$arr_data['srv-proto'] 			= (string) SmartUtils::get_server_current_protocol(); 				// http:// | https://
-	$arr_data['srv-port'] 			= (string) SmartUtils::get_server_current_port(); 					// 80 | 443 | ...
-	$arr_data['srv-script'] 		= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
-	$arr_data['srv-urlquery'] 		= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
-	$arr_data['srv-requri'] 		= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
-	$arr_data['debug-mode'] 		= (string) SMART_FRAMEWORK_DEBUG_MODE; 								// yes | no
+	$arr_data['template-path'] 			= (string) $template_path; 											// current template path (ex: etc/templates/default/)
+	$arr_data['template-file'] 			= (string) $template_file; 											// current template file (ex: template.htm | template-modal.htm | ...)
+	$arr_data['lang'] 					= (string) SmartTextTranslations::getLanguage(); 					// current set language (ex: en)
+	$arr_data['client-browser'] 		= (string) $os_bw['bw']; 											// client browser OS (ex: bsd)
+	$arr_data['client-os'] 				= (string) $os_bw['os']; 											// client browser ID (ex: fox)
+	$arr_data['client-uid-cookie-name'] = (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME;					// client browser UID Cookie Name (as defined in init.php) ; it may be required to pass this cookie name to the Javascript ...)
+	$arr_data['app-realm'] 				= (string) $the_realm; 												// IDX (for index.php area) ; ADM (for admin.php area)
+	$arr_data['app-domain'] 			= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by realm: $configs['app']['index-domain'] | $configs['app']['admin-domain']
+	$arr_data['base-url'] 				= (string) SmartUtils::get_server_current_url(); 					// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
+	$arr_data['base-path'] 				= (string) SmartUtils::get_server_current_path(); 					// / | /sites/frameworks/smart-framework/
+	$arr_data['base-domain'] 			= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP
+	$arr_data['srv-domain'] 			= (string) SmartUtils::get_server_current_domain_name(); 			// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
+	$arr_data['srv-proto'] 				= (string) SmartUtils::get_server_current_protocol(); 				// http:// | https://
+	$arr_data['srv-port'] 				= (string) SmartUtils::get_server_current_port(); 					// 80 | 443 | ...
+	$arr_data['srv-script'] 			= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
+	$arr_data['srv-urlquery'] 			= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
+	$arr_data['srv-requri'] 			= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
+	$arr_data['debug-mode'] 			= (string) SMART_FRAMEWORK_DEBUG_MODE; 								// yes | no
 	//--
 
 	//-- read TPL

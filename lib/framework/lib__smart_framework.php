@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170821
+ * @version 	v.170831
  * @package 	Application
  *
  */
@@ -250,6 +250,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	private $urladdr;
 	private $urlpage;
 	private $urlquery;
+	private $pageheaders;
 	private $pagesettings; 					// will allow keys just from $availsettings
 	private $pageview; 						// will allow any key since they are markers
 	private $availsettings = [ 				// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
@@ -284,6 +285,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$this->urladdr 			= (string) $y_url_addr; 						// http(s)://127.0.0.1:8008/frameworks/smart-framework/
 		$this->urlpage 			= (string) $y_url_page; 						// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
 		$this->urlquery 		= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; // the query URL if any ...
+		$this->pageheaders 		= array();
 		$this->pagesettings 	= array();
 		$this->pageview 		= array();
 		$this->availsettings 	= (array) $this->availsettings;
@@ -309,11 +311,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Test if Debug is On.
+	 * Test if Debug is On
 	 *
-	 * If Debug is turned on, this area of Debug messages will be displayed in Modules section.
+	 * If Debug is turned on, this area of Debug messages will be displayed in Modules section
 	 *
-	 * @return 	BOOLEAN						:: TRUE if Debug is ON, FALSE if not
+	 * @return 	BOOLEAN					:: TRUE if Debug is ON, FALSE if not
 	 */
 	final public function IfDebug() {
 		//--
@@ -329,14 +331,14 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Set Custom Debug Data.
+	 * Set Custom Debug Data
 	 *
-	 * If Debug is turned on, this area of Debug messages will be displayed in Modules section.
+	 * If Debug is turned on, this area of Debug messages will be displayed in Modules section
 	 *
-	 * @param 	STRING 	$title 				:: A title for the debug message.
-	 * @param 	MIXED 	$debug_msg 			:: The data for the debug message. Ex: STRING / ARRAY
+	 * @param 	STRING 	$title 			:: A title for the debug message.
+	 * @param 	MIXED 	$debug_msg 		:: The data for the debug message. Ex: STRING / ARRAY
 	 *
-	 * @return 	BOOLEAN						:: TRUE if successful, FALSE if not
+	 * @return 	BOOLEAN					:: TRUE if successful, FALSE if not
 	 */
 	final public function SetDebugData($title, $debug_msg) {
 		//--
@@ -362,11 +364,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Test if Modal/PopUp is set via (URL) Request.
+	 * Test if Modal/PopUp is set via (URL) Request
 	 *
 	 * If is set, will return TRUE, else will return FALSE
 	 *
-	 * @return 	BOOLEAN						:: TRUE / FALSE
+	 * @return 	BOOLEAN					:: TRUE / FALSE
 	 */
 	final public function IfRequestModalPopup() {
 		//--
@@ -382,11 +384,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Test if Printable is set via (URL) Request.
+	 * Test if Printable is set via (URL) Request
 	 *
 	 * If is set, will return TRUE, else will return FALSE
 	 *
-	 * @return 	BOOLEAN						:: TRUE / FALSE
+	 * @return 	BOOLEAN					:: TRUE / FALSE
 	 */
 	final public function IfRequestPrintable() {
 		//--
@@ -402,9 +404,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Get the value for a Controller parameter.
+	 * Get the value for a Controller parameter
 	 *
-	 * @param 	ENUM 		$param 		:: The selected parameter.
+	 * @param 	ENUM 		$param 		:: The selected parameter
 	 * The valid param values are:
 	 * 		release-hash 				:: 		ex: 255cdb71953108baacb856591b9bf5ee9e4a39e6 (the release hash based on app framework version, framework release and modules version)
 	 * 		module-area 				:: 		ex: index / admin
@@ -419,7 +421,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * 		url-addr 					:: 		ex: http(s)://127.0.0.1/sites/smart-framework/
 	 * 		url-page 					:: 		ex: samples.test | test  (if samples is the default module) ; this is returning the URL page variable as is in the URL (it can be the same as 'controller' or if rewrite is used inside framework can vary
 	 *
-	 * @return 	STRING						:: The value for the selected parameter.
+	 * @return 	STRING					:: The value for the selected parameter
 	 */
 	final public function ControllerGetParam($param) {
 		//--
@@ -485,12 +487,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Get the value for a Config parameter from the app $configs array.
+	 * Get the value for a Config parameter from the app $configs array
 	 *
-	 * @param 	ENUM 		$param 			:: The selected configuration parameter.
-	 * Examples: 'app.info-url' will get value from $configs['app']['info-url'] ; 'regional.decimal-separator' will get the value (string) from $configs['regional']['decimal-separator'] ; 'regional' will get the value (array) from $configs['regional']
+	 * @param 	ENUM 		$param 		:: The selected configuration parameter ; Examples: 'app.info-url' will get value from $configs['app']['info-url'] ; 'regional.decimal-separator' will get the value (string) from $configs['regional']['decimal-separator'] ; 'regional' will get the value (array) from $configs['regional']
 	 *
-	 * @return 	MIXED						:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string.
+	 * @return 	MIXED					:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string
 	 */
 	final public function ConfigParamGet($param) {
 		//--
@@ -504,7 +505,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Get the Path Request Variable (PATH_INFO) in a controller
 	 *
-	 * @return 	STRING						:: The value of the PATH_INFO Request if Set or Empty String
+	 * @return 	STRING					:: The value of the PATH_INFO Request if Set or Empty String
 	 */
 	final public function RequestPathGet() {
 		//--
@@ -518,11 +519,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Get a Request Variable (GET/POST) in a controller
 	 *
-	 * @param 	STRING 		$key			:: The name (key) of the GET or POST variable (if the variable is set in both GET and POST, the GPC as set in PHP.INI sequence will overwrite the GET with POST, thus the POST value will be get).
-	 * @param	MIXED		$defval			:: The default value (if a type is set must be the same type) of that variable in the case was not set in the Request (GET/POST). By default it is set to null.
-	 * @param	ENUM		$type			:: The type of the variable ; Default is '' (no enforcing). This can be used to enforce a type for the variable as: ['enum', 'list', 'of', 'allowed', 'values'], 'array', 'string', 'boolean', 'integer', 'integer+', 'integer-', 'decimal1', 'decimal2', 'decimal3', 'decimal4', 'numeric'.
+	 * @param 	STRING 		$key		:: The name (key) of the GET or POST variable (if the variable is set in both GET and POST, the GPC as set in PHP.INI sequence will overwrite the GET with POST, thus the POST value will be get).
+	 * @param	MIXED		$defval		:: The default value (if a type is set must be the same type) of that variable in the case was not set in the Request (GET/POST). By default it is set to null.
+	 * @param	ENUM		$type		:: The type of the variable ; Default is '' (no enforcing). This can be used to enforce a type for the variable as: ['enum', 'list', 'of', 'allowed', 'values'], 'array', 'string', 'boolean', 'integer', 'integer+', 'integer-', 'decimal1', 'decimal2', 'decimal3', 'decimal4', 'numeric'.
 	 *
-	 * @return 	MIXED						:: The value of the choosen Request (GET/POST) variable
+	 * @return 	MIXED					:: The value of the choosen Request (GET/POST) variable
 	 */
 	final public function RequestVarGet($key, $defval=null, $type='') { // {{{SYNC-REQUEST-DEF-PARAMS}}}
 		//--
@@ -534,9 +535,107 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
+	 * Get all the current controller PageView Headers (Raw) that will be mapped to Raw HTTP Header(s)
+	 *
+	 * @return 	ARRAY					:: an associative array with all controller Page View (Raw) Headers currently set
+	 */
+	final public function PageViewGetRawHeaders() {
+		//--
+		return (array) $this->pageheaders;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Set a list with multiple values for RawHeaders into the current controller as PageView Headers (Raw) that will be mapped to Raw HTTP Header(s)
+	 *
+	 * @param 	ARRAY 		$entries	:: an associative array to be set with elements for each raw header entry [ 'Header Key 1' => 'Header Entry One', 'Header Key 2' => 'Header Entry Two', ..., 'Header Key n' => 'Header Entry N' ]
+	 *
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewSetRawHeaders($entries) {
+		//--
+		if(!is_array($entries)) {
+			return false; // $entries must be array
+		} //end if
+		//--
+		$ok = true;
+		//--
+		foreach($entries as $key => $val) {
+			$test = $this->PageViewSetRawHeader($key, $val);
+			if($test !== true) {
+				$ok = false;
+			} //end if
+		} //end foreach
+		//--
+		return (bool) $ok;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Set a single value for settings into the current controller as PageView Headers (Raw) that will be mapped to Raw HTTP Header(s)
+	 *
+	 * @param 	STRING 		$param		:: the header key 		(Ex: 'X-XSS-Protection')
+	 * @param 	STRING 		$value		:: the header value 	(Ex: '1; mode=block')
+	 *
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewSetRawHeader($param, $value) {
+		//--
+		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
+			return false;
+		} //end if
+		//--
+		$param = (string) Smart::normalize_spaces((string)$param); // safety
+		$param = (string) preg_replace('/[^0-9a-zA-Z\-]/', '', (string)$param); // allow just A-Z a-z 0-9 -
+		$param = (string) str_replace(' ', '', (string)$param); // remove any remaining spaces ... (to be sure)
+		$param = (string) trim((string)$param); // trim
+		if((string)$param == '') {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetRawHeader: Invalid Parameter: '.$param);
+		} //end if
+		//--
+		$value = (string) Smart::normalize_spaces((string)$value); // safety
+		$value = (string) trim((string)$value); // trim
+		//--
+		if((string)$param == '') {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetRawHeader: Empty Key / Parameter');
+			return false;
+		} //end if
+		//--
+		$this->pageheaders[(string)$param] = (string) $value; // IMPORTANT: Value can be empty (Ex: 'Expect:')
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Reset all variables for the current controller into PageView Headers (Raw) that will be mapped to Raw HTTP Header(s)
+	 *
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewResetRawHeaders() {
+		//--
+		$this->pageheaders = array();
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Get all the current controller PageView Settings (Cfgs)
 	 *
-	 * @return 	ARRAY						:: an array with all controller Page View Cfgs. (Settings) currently set
+	 * @return 	ARRAY					:: an associative array with all controller Page View Cfgs. (Settings) currently set
 	 */
 	final public function PageViewGetCfgs() {
 		//--
@@ -550,9 +649,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Set a list with multiple values for settings into the current controller as PageView Settings (Cfgs)
 	 *
-	 * @param 	ARRAY 		$params			:: an associative array to be set as [ 'param1' => 'value1', ..., 'param-n' => 'val-n']
+	 * @param 	ARRAY 		$params		:: an associative array to be set as [ 'param1' => 'value1', ..., 'param-n' => 'val-n' ]
 	 *
-	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetCfgs($params) {
 		//--
@@ -562,11 +661,16 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$params = (array) array_change_key_case((array)$params, CASE_LOWER); // make all keys lower
 		//--
+		$ok = true;
+		//--
 		foreach($params as $key => $val) {
-			$this->PageViewSetCfg($key, $val);
+			$test = $this->PageViewSetCfg($key, $val);
+			if($test !== true) {
+				$ok = false;
+			} //end if
 		} //end foreach
 		//--
-		return true;
+		return (bool) $ok;
 		//--
 	} //END FUNCTION
 	//=====
@@ -576,33 +680,48 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Set a single value for settings into the current controller as PageView Settings (Cfgs)
 	 *
-	 * @param 	STRING 		$param			:: the parameter to be set
-	 * @param 	STRING 		$value			:: the value
+	 * @param 	STRING 		$param		:: the parameter to be set
+	 * @param 	STRING 		$value		:: the value
 	 *
-	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetCfg($param, $value) {
 		//--
-		if((is_array($param)) OR (is_object($param)) OR (is_array($value)) OR (is_object($value))) {
+		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
 			return false;
 		} //end if
 		//--
 		$param = (string) strtolower((string)$param);
 		//--
-		if((string)$param != '') {
-			if(is_bool($value)) { // fix for bool
-				if($value === true) {
-					$value = 'yes'; // true
-				} elseif($value === false) {
-					$value = ''; // false
-				} //end if else
-			} //end if
-			if(in_array((string)$param, (array)$this->availsettings)) {
-				$this->pagesettings[(string)$param] = (string)$value;
-			} else {
-				Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetCfg: Invalid Parameter: '.$param);
+		if(is_bool($value)) { // fix for bool
+			if($value === true) {
+				$value = 'yes'; // true
+			} elseif($value === false) {
+				$value = ''; // false
 			} //end if else
 		} //end if
+		if(in_array((string)$param, (array)$this->availsettings)) {
+			$this->pagesettings[(string)$param] = (string)$value;
+		} else {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetCfg: Invalid Parameter: '.$param);
+			return false;
+		} //end if else
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Reset all variables for the current controller into PageView Settings (Cfgs)
+	 *
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewResetCfgs() {
+		//--
+		$this->pagesettings = array();
 		//--
 		return true;
 		//--
@@ -615,11 +734,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * Set Error Status and Optional Message for a controller page
 	 * The Controller should stop the execution after calling this function using 'return;' or ending the 'Run()' main function
 	 *
-	 * @param 	ENUM 		$code			:: the HTTP Error Status Code: 400, 403, 404, 500, 503, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 500 will be used instead
-	 * @param 	STRING 		$message 		:: The detailed message that will be displayed public near the status code
-	 * @param 	BOOLEAN 	$logtype 		:: *Optional* ; Default is '' ; available values: '' | 'WARN' | 'NOTICE'
+	 * @param 	ENUM 		$code		:: the HTTP Error Status Code: 400, 403, 404, 500, 503, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 500 will be used instead
+	 * @param 	STRING 		$message 	:: The detailed message that will be displayed public near the status code
+	 * @param 	BOOLEAN 	$logtype 	:: *Optional* ; Default is '' ; available values: '' | 'WARN' | 'NOTICE'
 	 *
-	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetErrorStatus($code, $message, $logtype='') {
 		//--
@@ -660,10 +779,10 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * Set Redirect URL for a controller page
 	 * The Controller should stop the execution after calling this function using 'return;' or ending the 'Run()' main function
 	 *
-	 * @param 	STRING 		$url 			:: The absolute URL to redirect the page to (Ex: http://some-domain.ext/some-page.html)
-	 * @param 	ENUM 		$code			:: the HTTP Error Status Code: 301, 302, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 302 will be used instead
+	 * @param 	STRING 		$url 		:: The absolute URL to redirect the page to (Ex: http://some-domain.ext/some-page.html)
+	 * @param 	ENUM 		$code		:: the HTTP Error Status Code: 301, 302, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 302 will be used instead
 	 *
-	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetRedirectUrl($url, $code) {
 		//--
@@ -689,9 +808,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Get all the current controller PageView Vars.
+	 * Get all the current controller PageView Vars
 	 *
-	 * @return 	ARRAY						:: an array with all the controller Page View variables currently set.
+	 * @return 	ARRAY					:: an associative array with all the controller Page View variables currently set
 	 */
 	final public function PageViewGetVars() {
 		//--
@@ -703,11 +822,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Set a list with multiple values for variables into the current controller into PageView Vars.
+	 * Set a list with multiple values for variables into the current controller into PageView Vars
 	 *
-	 * @param 	ARRAY 		$params			:: an associative array to be set as [ 'variable1' => 'value1', ..., 'variable-n' => 'val-n']
+	 * @param 	ARRAY 		$params		:: an associative array to be set as [ 'variable1' => 'value1', ..., 'variable-n' => 'val-n' ]
 	 *
-	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetVars($params) {
 		//--
@@ -717,11 +836,16 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$params = (array) array_change_key_case((array)$params, CASE_LOWER); // make all keys lower
 		//--
+		$ok = true;
+		//--
 		foreach($params as $key => $val) {
-			$this->PageViewSetVar($key, $val);
+			$test = $this->PageViewSetVar($key, $val);
+			if($test !== true) {
+				$ok = false;
+			} //end if
 		} //end foreach
 		//--
-		return true;
+		return (bool) $ok;
 		//--
 	} //END FUNCTION
 	//=====
@@ -729,24 +853,22 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Set a single value for the current controller into PageView Vars.
+	 * Set a single value for the current controller into PageView Vars
 	 *
-	 * @param 	STRING 		$param			:: the variable to be set
-	 * @param 	STRING 		$value			:: the value
+	 * @param 	STRING 		$param		:: the variable to be set
+	 * @param 	STRING 		$value		:: the value
 	 *
-	 * @return 	BOOL						:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetVar($param, $value) {
 		//--
-		if((is_array($param)) OR (is_object($param)) OR (is_array($value)) OR (is_object($value))) {
+		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
 			return false;
 		} //end if
 		//--
 		$param = (string) strtolower((string)$param);
 		//--
-		if((string)$param != '') {
-			$this->pageview[(string)$param] = (string)$value; // set
-		} //end if
+		$this->pageview[(string)$param] = (string)$value; // set
 		//--
 		return true;
 		//--
@@ -756,27 +878,25 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Append a single value to a variable for the current controller into PageView Vars.
+	 * Append a single value to a variable for the current controller into PageView Vars
 	 *
-	 * @param 	STRING 		$param				:: the variable to append value to
-	 * @param 	STRING 		$value				:: the value
+	 * @param 	STRING 		$param		:: the variable to append value to
+	 * @param 	STRING 		$value		:: the value
 	 *
-	 * @return 	BOOL							:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewAppendVar($param, $value) {
 		//--
-		if((is_array($param)) OR (is_object($param)) OR (is_array($value)) OR (is_object($value))) {
+		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
 			return false;
 		} //end if
 		//--
 		$param = (string) strtolower((string)$param);
 		//--
-		if((string)$param != '') {
-			if(!array_key_exists((string)$param, $this->pageview)) {
-				$this->pageview[(string)$param] = ''; // init
-			} //end if
-			$this->pageview[(string)$param] .= (string)$value; // append
+		if(!array_key_exists((string)$param, $this->pageview)) {
+			$this->pageview[(string)$param] = ''; // init
 		} //end if
+		$this->pageview[(string)$param] .= (string) $value; // append
 		//--
 		return true;
 		//--
@@ -786,9 +906,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Reset all variables for the current controller into PageView Vars.
+	 * Reset all variables for the current controller into PageView Vars
 	 *
-	 * @return 	BOOL							:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewResetVars() {
 		//--
@@ -802,11 +922,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Reset a single variable value for the current controller into PageView Vars.
+	 * Reset a single variable value for the current controller into PageView Vars
 	 *
-	 * @param 	STRING 		$param				:: the variable to be reset (unset)
+	 * @param 	STRING 		$param		:: the variable to be reset (unset)
 	 *
-	 * @return 	BOOL							:: TRUE if OK, FALSE if not
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewResetVar($param) {
 		//--
@@ -829,10 +949,10 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Test if the Page Cache (system) is active or not.
-	 * This is based on PersistentCache.
+	 * Test if the Page Cache (system) is active or not
+	 * This is based on PersistentCache
 	 *
-	 * @return 	BOOL								:: TRUE if Active, FALSE if not
+	 * @return 	BOOL					:: TRUE if Active, FALSE if not
 	 */
 	final public function PageCacheisActive() {
 		//--
@@ -844,10 +964,10 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Prepare a Page Cache SAFE Key or Realm.
-	 * This is based on PersistentCache.
+	 * Prepare a Page Cache SAFE Key or Realm
+	 * This is based on PersistentCache
 	 *
-	 * @return 	STRING								:: The safe prepared Key or Realm
+	 * @return 	STRING					:: The safe prepared Key or Realm
 	 */
 	final public function PageCacheSafeKey($y_key_or_realm) {
 		//--
@@ -859,7 +979,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Get a Page from the (Persistent) Cache.
+	 * Get a Page from the (Persistent) Cache
 	 *
 	 * @param 	STRING 		$storage_namespace		:: the cache storage namespace, used to group keys
 	 * @param 	STRING 		$unique_key				:: the unique cache key
@@ -893,7 +1013,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Set a Page into the (Persistent) Cache.
+	 * Set a Page into the (Persistent) Cache
 	 *
 	 * @param 	STRING 		$storage_namespace		:: the cache storage namespace, used to group keys
 	 * @param 	STRING 		$unique_key				:: the unique cache key
@@ -930,7 +1050,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Unset a Page from the (Persistent) Cache.
+	 * Unset a Page from the (Persistent) Cache
 	 *
 	 * @param 	STRING 		$storage_namespace		:: the cache storage namespace, used to group keys
 	 * @param 	STRING 		$unique_key				:: the unique cache key
@@ -980,9 +1100,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * The Controller Runtime - This function is required to be re-defined in all controllers.
+	 * The Controller Runtime - This function is required to be re-defined in all controllers
 	 *
-	 * @return 	INTEGER									:: *OPTIONAL* The HTTP Status Code: by default it does not return or it must returns 200 which is optional ; other supported HTTP Status Codes are: 202/203/208 (OK with notice/warning/error messages - used only for REST/APIs), 500 (Internal Error), 404 (Not Found), 403 (Forbidden), 401 (Authentication Required), 400 (Error) ; if the HTTP status code is not 200, an extra notification message can be set as: ##EXAMPLE: $this->PageViewSetCfg('error', 'Access to this page is restricted'); return 403; ## - to have also a detailed error message to be shown near the HTTP status code)
+	 * @return 	INTEGER					:: *OPTIONAL* The HTTP Status Code: by default it does not return or it must returns 200 which is optional ; other supported HTTP Status Codes are: 202/203/208 (OK with notice/warning/error messages - used only for REST/APIs), 500 (Internal Error), 404 (Not Found), 403 (Forbidden), 401 (Authentication Required), 400 (Error) ; if the HTTP status code is not 200, an extra notification message can be set as: ##EXAMPLE: $this->PageViewSetCfg('error', 'Access to this page is restricted'); return 403; ## - to have also a detailed error message to be shown near the HTTP status code)
 	 */
 	abstract public function Run(); //END FUNCTION
 	//=====
@@ -1007,7 +1127,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 */
 	public function ShutDown() {
-		// *** optional*** can be redefined in a controller
+		// *** optional*** can be redefined in a controller (as a safe destructor if required) but is not mandatory ...
 	} //END FUNCTION
 	//=====
 
