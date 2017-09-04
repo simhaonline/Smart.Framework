@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.5.1');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170831
+ * @version		170904
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -402,7 +402,7 @@ public static function Run() {
 	//--
 	$rawpage = '';
 	if(isset($appSettings['rawpage'])) {
-		$rawpage = strtolower((string)$appSettings['rawpage']);
+		$rawpage = (string) strtolower((string)$appSettings['rawpage']);
 		if((string)$rawpage == 'yes') {
 			$rawpage = 'yes'; // standardize the value
 		} //end if
@@ -412,20 +412,24 @@ public static function Run() {
 	} //end if
 	//--
 	$rawmime = '';
-	if(isset($appSettings['rawmime'])) {
-		$rawmime = (string) $appSettings['rawmime'];
-		if((string)$rawmime != '') {
-			$rawmime = SmartValidator::validate_mime_type($rawmime);
-		} //end if
-	} //end if else
+	if((string)$rawpage == 'yes') {
+		if(isset($appSettings['rawmime'])) {
+			$rawmime = (string) $appSettings['rawmime'];
+			if((string)$rawmime != '') {
+				$rawmime = (string) SmartValidator::validate_mime_type($rawmime);
+			} //end if
+		} //end if else
+	} //end if
 	//--
 	$rawdisp = '';
-	if(isset($appSettings['rawdisp'])) {
-		$rawdisp = (string) $appSettings['rawdisp'];
-		if((string)$rawdisp != '') {
-			$rawdisp = SmartValidator::validate_mime_disposition($rawdisp);
-		} //end if
-	} //end if else
+	if((string)$rawpage == 'yes') {
+		if(isset($appSettings['rawdisp'])) {
+			$rawdisp = (string) $appSettings['rawdisp'];
+			if((string)$rawdisp != '') {
+				$rawdisp = (string) SmartValidator::validate_mime_disposition($rawdisp);
+			} //end if
+		} //end if else
+	} //end if
 	//--
 	$appData = (array) $appModule->PageViewGetVars();
 	//--
