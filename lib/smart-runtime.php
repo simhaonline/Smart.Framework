@@ -44,6 +44,10 @@ define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // this is the real rel
 define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.05'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
+if(!headers_sent()) {
+	header('X-Powered-By: '.'PHP Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION);
+} //end if
+//--
 
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {

@@ -109,8 +109,6 @@ final public static function SetRawHeaders($headers) {
 	//--
 	if(!headers_sent()) {
 		//--
-		$headers['X-Powered-By'] = 'PHP Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION;
-		//--
 		foreach($headers as $key => $val) {
 			//--
 			if(((string)$key != '') AND ((string)$val != '')) {
