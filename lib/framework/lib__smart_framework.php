@@ -1,7 +1,7 @@
 <?php
 // [Smart-Framework]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170831
+ * @version 	v.170905
  * @package 	Application
  *
  */
@@ -731,6 +731,30 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
+	 * Set OK (2xx) STATUS Code for a controller page
+	 *
+	 * @param 	ENUM 		$code		:: the HTTP Error Status Code: 301, 302, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 200 will be used instead
+	 *
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewSetOkStatus($code) {
+		//--
+		$code = (int) $code;
+		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesOK())) { // in the case that the http status code is n/a, use 200 instead
+			Smart::log_notice('Invalid OK Status Code ('.$code.') used in Controller: '.$this->controller);
+			$code = 200;
+		} //end if
+		//--
+		$this->PageViewSetCfg(
+			'status-code', (int)$code
+		);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Set Error Status and Optional Message for a controller page
 	 * The Controller should stop the execution after calling this function using 'return;' or ending the 'Run()' main function
 	 *
@@ -740,7 +764,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
-	final public function PageViewSetErrorStatus($code, $message, $logtype='') {
+	final public function PageViewSetErrorStatus($code, $message='', $logtype='') {
 		//--
 		$code = (int) $code;
 		$message = (string) $message;
@@ -792,7 +816,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		} //end if
 		//--
 		$code = (int) $code;
-		if(!in_array((int)$code, (array)SmartFrameworkRuntime::HttpStatusCodesRDR())) { // in the case that the redirect status code is n/a, use 302 instead
+		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesRDR())) { // in the case that the redirect status code is n/a, use 302 instead
 			Smart::log_notice('Invalid HTTP Redirect Status Code ('.$code.') used in Controller: '.$this->controller);
 			$code = 302;
 		} //end if

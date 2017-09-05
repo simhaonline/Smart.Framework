@@ -24,7 +24,7 @@ The original software architecture of this web framework allows it to deliver a 
 Thus this is a web framework that can really serve many million users per day with a single server !
 When used with SQL / Non-SQL Databases and combined with In-Memory DB like Redis or Memcache it beats Varnish in many aspects:
 * delivers ~ the same speed as Varnish but allows granulary level caching policy of zones in controllers
-* works also with HTTPS (Varnish does not)
+* works also with HTTPS (by example, Varnish does not)
 * caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
 This framework is compatible, stable and tested with PHP 5.4 / 5.5 / 5.6 / 7.0 / 7.1 / 7.2 versions.
 
@@ -45,12 +45,12 @@ Using a regular server as hardware platform (Supermicro):
 * 128 GB RAM, DDR4 ECC @ 2133 MHz
 * HDD 2 x 1TB SSD
 Software:
-* OS: Debian 8 Linux, 64-bit
+* OS: Debian 8 Linux, 64-bit, up-to-date 2017-09-05
 * Apps: Apache 2.4.23, PHP 5.6.30 (with Zend Opcache 7.0.6)
 
 #### Benchmark Results of tested PHP Frameworks (with a simple controller that Outputs: 'Hello World' ; no Memcache or Redis):
-* Smart.Framework v.3.5.1 (2017.05.12): ~ 21.5K (21507) requests / second
+* Smart.Framework v.3.5.7 (2017.09.05): ~ 21.7K (21721) requests / second
 * Silex 2.0.4: ~ 7.2K (7229) requests / second ( 3x slower than Smart.Framework )
-* Symfony 3.2.2: ~ 3.3K (3321) requests / second ( 6x slower than Smart.Framework )
+* Symfony 3.3.8: ~ 3.3K (3374) requests / second ( 6x slower than Smart.Framework )
 * Laravel 5.4.3 ~ 3.0K (3015) requests / second ( 7x slower than Smart.Framework )
 * Zend Framework 2.4.11: ~ 2.5K (2568) requests / second ( 9x slower than Smart.Framework )

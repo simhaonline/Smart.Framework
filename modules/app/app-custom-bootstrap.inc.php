@@ -1,7 +1,7 @@
 <?php
 // [APP - Custom Bootstrap]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -30,8 +30,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //======================================================
 
 
-define('SMART_APP_MODULES_RELEASE', 'r.2017.09.04'); // this can be used for tracking changes to custom app modules
-define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.5.1'); // this must be used to validate the required minimum framework version
+define('SMART_APP_MODULES_RELEASE', 'r.2017.09.05'); // this can be used for tracking changes to custom app modules
+define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.5.7'); // this must be used to validate the required minimum framework version
 
 if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
 	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_MIN_FRAMEWORK_VER.' or later !');

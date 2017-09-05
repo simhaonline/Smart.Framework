@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / ERRORS MANAGEMENT]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -196,6 +196,11 @@ ini_set('html_errors', '0'); // display errors in TEXT format
 ini_set('log_errors', '1'); // log always the errors
 ini_set('error_log', (string)SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE); // error log file
 //==
+/**
+ * Function Error Handler Get BasePath
+ * @access 		private
+ * @internal
+ */
 function smart__framework__err__handler__get__basepath() {
 	$imgprefix = (string) dirname((string)$_SERVER['SCRIPT_NAME']);
 	if(((string)$imgprefix == '') || ((string)$imgprefix == '/') || ((string)$imgprefix == '\\') || ((string)$imgprefix == '.')) {

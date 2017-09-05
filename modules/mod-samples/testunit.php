@@ -3,7 +3,7 @@
 // Controller: Samples/TestUnit
 // Route: ?/page/samples.testunit (?page=samples.testunit)
 // Author: unix-world.org
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -27,6 +27,7 @@ if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 	define('SMART_FRAMEWORK_TESTUNIT_CAPTCHA_MODE', 'cookie');
 } //end if else
 
+
 /**
  * Index Controller
  *
@@ -34,6 +35,7 @@ if(SMART_FRAMEWORK_ADMIN_AREA === true) {
  *
  */
 class SmartAppAdminController extends SmartAbstractAppController {
+
 
 	public function Run() {
 
@@ -86,18 +88,18 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = \SmartModExtLib\Samples\TestUnitFileSystem::testFs();
 				//--
 				break;
-			case 'testunit.pgsql-server-test':
-				//--
-				sleep(1);
-				$this->PageViewSetCfg('rawpage', true);
-				$main = \SmartModExtLib\Samples\TestUnitPgSQL::testPgServer();
-				//--
-				break;
 			case 'testunit.pcache-test':
 				//--
 				sleep(1);
 				$this->PageViewSetCfg('rawpage', true);
 				$main = \SmartModExtLib\Samples\TestUnitPCache::testPersistentCache();
+				//--
+				break;
+			case 'testunit.pgsql-server-test':
+				//--
+				sleep(1);
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitPgSQL::testPgServer();
 				//--
 				break;
 			case 'testunit.json-sqlite3-smartgrid':
@@ -312,6 +314,12 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				//--
 				break;
 		//#####
+			case 'testunit.redirect':
+				//--
+				$this->PageViewSetRedirectUrl('https://www.unix-world.org', 302);
+				//--
+				break;
+		//#####
 			default:
 				//--
 				$this->PageViewSetErrorStatus(400, 'Invalid TestUnit Operation ! ...');
@@ -332,6 +340,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 
 } //END CLASS
 
+
 /**
  * Admin Controller (optional)
  *
@@ -344,6 +353,7 @@ class SmartAppIndexController extends SmartAppAdminController {
 	// or this can implement a completely different controller if it is accessed via admin.php
 
 } //END CLASS
+
 
 //end of php code
 ?>

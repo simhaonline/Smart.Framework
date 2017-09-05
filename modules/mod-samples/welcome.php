@@ -3,7 +3,7 @@
 // Controller: Samples/Welcome
 // Route: ?/page/samples.welcome (?page=samples.welcome)
 // Author: unix-world.org
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -171,6 +171,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewAppendVar('main', '<div style="text-align:right; color:#CCCCCC;">['.Smart::escape_html($some_var_from_request).']</div>'.'<hr>'.'<div style="color:#DDDDDD">Smart.Framework have Full Unicode (UTF-8) Support: '.Smart::escape_html('Unicode@String :: Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム :: áâãäåāăąÁÂÃÄÅĀĂĄ ćĉčçĆĈČÇ ďĎ èéêëēĕėěęÈÉÊËĒĔĖĚĘ ĝģĜĢ ĥħĤĦ ìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮ ĳĵĲĴ ķĶ ĺļľłĹĻĽŁ ñńņňÑŃŅŇ óôõöōŏőøœÒÓÔÕÖŌŎŐØŒ ŕŗřŔŖŘ șşšśŝßȘŞŠŚŜ țţťȚŢŤ ùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲ ŵŴ ẏỳŷÿýẎỲŶŸÝ źżžŹŻŽ').'</div><hr><br>');
 		$this->PageViewAppendVar('main', (string) (new SmartMarkdownToHTML(true, false))->text((string)SmartFileSystem::staticread('README.md')));
 		$this->PageViewAppendVar('main', '<br><hr><br><br>');
+		//--
+		$this->PageViewSetOkStatus(200); // this is optional ; if code is different than 200 it matters to be re-exported in pcache, as it using controller return 2xx is later and can't be re-exported
 		//--
 
 		//== cache page (if persistent cache is set in config)

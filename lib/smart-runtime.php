@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / App Runtime]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -40,8 +40,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.1'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.04'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // this is the real release version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.05'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -823,7 +823,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		170523
+ * @version		170904
  * @package 	Application
  *
  */
@@ -835,8 +835,8 @@ final class SmartFrameworkRuntime {
 	private static $AppReleaseHash = '';
 
 	private static $HttpStatusCodesOK  = [200, 202, 203, 208]; 								// list of framework available HTTP OK Status Codes (sync with middlewares)
-	private static $HttpStatusCodesERR = [400, 401, 403, 404, 429, 500, 502, 503, 504]; 	// list of framework available HTTP Error Status Codes (sync with middlewares)
 	private static $HttpStatusCodesRDR = [301, 302]; 										// list of framework available HTTP Redirect Status Codes (sync with middlewares)
+	private static $HttpStatusCodesERR = [400, 401, 403, 404, 429, 500, 502, 503, 504]; 	// list of framework available HTTP Error Status Codes (sync with middlewares)
 
 	private static $RequestProcessed 			= false; 	// after all request variables are processed this will be set to true to avoid re-process request variables which can be a huge security issue if re-process is called by mistake !
 	private static $RequiredDirsCreated 		= false;	// after creating required dirs this will be set to true to avoid re-run that function again
@@ -869,6 +869,16 @@ public static function getHttpStatusCodesOK() {
 
 
 //======================================================================
+// the the array list with REDIRECT HTTP Status Codes (only codes that smart framework middlewares will handle)
+public static function getHttpStatusCodesRDR() {
+	//--
+	return (array) self::$HttpStatusCodesRDR;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
 // the the array list with ERROR HTTP Status Codes (only codes that smart framework middlewares will handle)
 public static function getHttpStatusCodesERR() {
 	//--
@@ -879,10 +889,10 @@ public static function getHttpStatusCodesERR() {
 
 
 //======================================================================
-// the the array list with REDIRECT HTTP Status Codes (only codes that smart framework middlewares will handle)
-public static function HttpStatusCodesRDR() {
+// the the array list with ALL(OK,REDIRECT,ERROR) HTTP Status Codes (only codes that smart framework middlewares will handle)
+public static function getHttpStatusCodesALL() {
 	//--
-	return (array) self::$HttpStatusCodesRDR;
+	return (array) array_merge(self::getHttpStatusCodesOK(), self::getHttpStatusCodesRDR(), self::getHttpStatusCodesERR());
 	//--
 } //END FUNCTION
 //======================================================================

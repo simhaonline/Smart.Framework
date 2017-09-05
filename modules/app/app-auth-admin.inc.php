@@ -1,7 +1,7 @@
 <?php
 // [APP - Authenticate / Admin]
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -25,33 +25,44 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // This file can be customized as you need.
 // It will set an overall authentication for the Admin Area.
 // NOTICE: As this is just an example it uses a fixed authentication with:
-// 		username = admin 	(ADMIN_AREA_USER 		as set in config-admin.php)
-// 		password = pass 	(ADMIN_AREA_PASSWORD 	as set in config-admin.php)
-// This sample can be extended to read the authentication from a database or to use session in combination with SmartAuth.
-// The best way to integrate with framework's authentication system is to use the SmartAuth:: object.
+// 		username = admin 	(ADMIN_AREA_USER 		as constant, set in config-admin.php)
+// 		password = pass 	(ADMIN_AREA_PASSWORD 	as constant, set in config-admin.php)
+// This sample can be extended to read the authentication from a database or to use session in combination with SmartAuth:: object.
+// This is the best way to integrate with framework's authentication system by using SmartAuth:: object.
 //-------------------------------------------
-// v.170208 / Sample Auth based on Basic HTTP Authentication (for Admin Area, overall)
+// v.170905 / Sample Auth based on Basic HTTP Authentication (for Admin Area, overall)
+//-------------------------------------------
+if(headers_sent()) {
+	//--
+	http_response_code(500);
+	die(SmartComponents::http_message_403_forbidden('Authentication Failed, Headers Already Sent ...'));
+	//--
+} //end if
+//-------------------------------------------
 if(!defined('ADMIN_AREA_USER') OR !defined('ADMIN_AREA_PASSWORD')) {
+	//--
 	http_response_code(403);
 	die(SmartComponents::http_message_403_forbidden('Authentication ADMIN_AREA_USER / ADMIN_AREA_PASSWORD not set in config-admin.php ...'));
+	//--
 } //end if
+//-------------------------------------------
 if(((string)$_SERVER['PHP_AUTH_USER'] == (string)ADMIN_AREA_USER) AND ((string)$_SERVER['PHP_AUTH_PW'] == (string)ADMIN_AREA_PASSWORD)) {
 	//-- OK, loggen in
 	SmartAuth::set_login_data(
-		(string)$_SERVER['PHP_AUTH_USER'], 		// this should be always the user login ID (login user name)
-		(string)$_SERVER['PHP_AUTH_USER'], 		// username alias to display (in this case is the same as the login ID, but may be different)
+		(string) $_SERVER['PHP_AUTH_USER'], 	// this should be always the user login ID (login user name)
+		(string) $_SERVER['PHP_AUTH_USER'], 	// username alias (in this case is the same as the login ID, but may be different)
 		'admin@smart-framework.test', 			// user email * Optional * (this may be also redundant if the login ID is actually the user email)
 		'Test Admin', 							// user full name (Title + ' ' + First Name + ' ' + Last name) * Optional *
-		array('admin','superadmin'), 			// login privileges * Optional *
+		['admin', 'superadmin'], 				// login privileges * Optional *
 		0, 										// quota * Optional *
-		array( // metadata
+		[ // metadata
 			'title' => 'Mr.',
 			'name_f' => 'Test',
 			'name_l' => 'Admin'
-		),
+		],
 		'SMART-FRAMEWORK.TEST', // realm
 		'HTTP-BASIC',
-		(string)$_SERVER['PHP_AUTH_PW']
+		(string) $_SERVER['PHP_AUTH_PW']
 	);
 	//--
 } else {

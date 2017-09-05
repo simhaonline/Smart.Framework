@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Middleware / Index
 // (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -19,7 +19,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.5.1');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.5.7');
 
 
 //==================================================================================
@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.5.1');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170904
+ * @version		170905
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -303,6 +303,12 @@ public static function Run() {
 	} //end if
 	$appStatusCode = (int) $appModule->Run();
 	$appModule->ShutDown();
+	$appSettings = (array) $appModule->PageViewGetCfgs();
+	if(array_key_exists('status-code', $appSettings)) {
+		$appStatusCode = (int) $appSettings['status-code']; // this rewrites what the Run() function returns, which is very OK as this is authoritative !
+	} //end if
+	$appRawHeads = (array) $appModule->PageViewGetRawHeaders();
+	$appData = (array) $appModule->PageViewGetVars();
 	if(SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
 		$ctrl_output = ob_get_contents();
 		ob_end_clean();
@@ -314,12 +320,7 @@ public static function Run() {
 		return; // break stop after the controller has terminated the direct output
 	} //end if else
 	//--
-	$appRawHeads = (array) $appModule->PageViewGetRawHeaders();
-	//--
-	$appSettings = (array) $appModule->PageViewGetCfgs();
-	if(array_key_exists('status-code', $appSettings)) {
-		$appStatusCode = (int) $appSettings['status-code']; // this rewrites what the Run() function returns, which is very OK as this is authoritative !
-	} //end if
+	$appModule = null; // free mem
 	//--
 	//== CACHE CONTROL
 	//--
@@ -332,50 +333,74 @@ public static function Run() {
 	//== STATUS CODE {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 	//--
 	switch((int)$appStatusCode) {
-		//-- client errors
-		case 400:
-			self::Raise400Error((string)$appSettings['error']);
-			return;
-			break;
-		case 401:
-			self::Raise401Error((string)$appSettings['error']);
-			return;
-			break;
-		case 403:
-			self::Raise403Error((string)$appSettings['error']);
-			return;
-			break;
-		case 404:
-			self::Raise404Error((string)$appSettings['error']);
-			return;
-			break;
-		case 429:
-			self::Raise429Error((string)$appSettings['error']);
-			return;
-			break;
 		//-- server errors
-		case 500:
-			self::Raise500Error((string)$appSettings['error']);
-			return;
-			break;
-		case 502:
-			self::Raise502Error((string)$appSettings['error']);
+		case 504:
+			self::Raise504Error((string)$appSettings['error']);
 			return;
 			break;
 		case 503:
 			self::Raise503Error((string)$appSettings['error']);
 			return;
 			break;
-		case 504:
-			self::Raise504Error((string)$appSettings['error']);
+		case 502:
+			self::Raise502Error((string)$appSettings['error']);
 			return;
 			break;
-		//-- extended 2xx statuses: NOTICE / WARNING / ERROR that can be used for REST / API
-		case 202: // NOTICE
-			if(!headers_sent()) {
-				http_response_code(202); // Accepted (this should be used only as an alternate SUCCESS code instead of 200 for NOTICES)
+		case 500:
+			self::Raise500Error((string)$appSettings['error']);
+			return;
+			break;
+		//-- client errors
+		case 429:
+			self::Raise429Error((string)$appSettings['error']);
+			return;
+			break;
+		case 404:
+			self::Raise404Error((string)$appSettings['error']);
+			return;
+			break;
+		case 403:
+			self::Raise403Error((string)$appSettings['error']);
+			return;
+			break;
+		case 401:
+			self::Raise401Error((string)$appSettings['error']);
+			return;
+			break;
+		case 400:
+			self::Raise400Error((string)$appSettings['error']);
+			return;
+			break;
+		//-- redirect 3xx statuses
+		case 301:
+		case 302:
+			if((string)$appSettings['redirect-url'] != '') { // expects a valid URL
+				$the_redirect_link = '<a href="'.Smart::escape_html((string)$appSettings['redirect-url']).'">'.Smart::escape_html((string)$appSettings['redirect-url']).'</a>';
+				if(headers_sent()) {
+					Smart::log_warning('Headers Already Sent before Redirection: ['.$appStatusCode.'] ; URL: '.$appSettings['redirect-url']);
+					self::Raise500Error('The app failed to Redirect to: '.$the_redirect_link);
+					return;
+				} //end if
+				if((int)$appStatusCode == 301) {
+					$the_redirect_text = 'Moved Permanently'; // permanent redirect for HTTP 1.0 / HTTP 1.1
+					http_response_code(301);
+				} else { // any other code will be interpreted as 302 (the default redirection in PHP)
+					$the_redirect_text = 'Found'; // temporary redirect for HTTP 1.0 / HTTP 1.1
+					http_response_code(302);
+				} //end if else
+				header('Location: '.SmartFrameworkSecurity::FilterUnsafeString((string)$appSettings['redirect-url']));
+				echo '<h1>'.Smart::escape_html($the_redirect_text).'</h1>'.'<br>'.'If the page redirection fails, click on the below link:'.'<br>'.$the_redirect_link;
+				return; // break stop
 			} else {
-				Smart::log_warning('Headers Already Sent before 202 ...');
+				Smart::log_warning('Redirection HTTP Status ['.(int)$appStatusCode.'] was used in a page controller without a redirection URL ...');
+			} //end if
+			break;
+		//-- extended 2xx statuses: NOTICE / WARNING / ERROR that can be used for REST / API
+		case 208: // ERROR
+			if(!headers_sent()) {
+				http_response_code(208); // Already Reported (this should be used only as an alternate SUCCESS code instead of 200 for ERRORS)
+			} else {
+				Smart::log_warning('Headers Already Sent before 208 ...');
 			} //end if else
 			break;
 		case 203: // WARNING
@@ -385,11 +410,11 @@ public static function Run() {
 				Smart::log_warning('Headers Already Sent before 203 ...');
 			} //end if else
 			break;
-		case 208: // ERROR
+		case 202: // NOTICE
 			if(!headers_sent()) {
-				http_response_code(208); // Already Reported (this should be used only as an alternate SUCCESS code instead of 200 for ERRORS)
+				http_response_code(202); // Accepted (this should be used only as an alternate SUCCESS code instead of 200 for NOTICES)
 			} else {
-				Smart::log_warning('Headers Already Sent before 208 ...');
+				Smart::log_warning('Headers Already Sent before 202 ...');
 			} //end if else
 			break;
 		//-- DEFAULT: OK
@@ -431,38 +456,9 @@ public static function Run() {
 		} //end if else
 	} //end if
 	//--
-	$appData = (array) $appModule->PageViewGetVars();
-	//--
-	//== REDIRECTION HANDLER (this can be set only explicit from Controllers)
-	//--
-	if((string)$appSettings['redirect-url'] != '') { // expects a valid URL
-		//--
-		$the_redirect_link = '<a href="'.Smart::escape_html((string)$appSettings['redirect-url']).'">'.Smart::escape_html((string)$appSettings['redirect-url']).'</a>';
-		//--
-		if(headers_sent()) {
-			Smart::log_warning('Headers Already Sent before Redirection: ['.$appStatusCode.'] ; URL: '.$appSettings['redirect-url']);
-			self::Raise500Error('The app failed to Redirect to: '.$the_redirect_link);
-			return;
-		} //end if
-		switch((int)$appStatusCode) {
-			case 301:
-				http_response_code(301);
-				$the_redirect_text = 'Moved Permanently'; // permanent redirect for HTTP 1.0 / HTTP 1.1
-				break;
-			case 302:
-			default: // any other code will be interpreted as 302 (the default redirection in PHP)
-				http_response_code(302);
-				$the_redirect_text = 'Found'; // temporary redirect for HTTP 1.0 / HTTP 1.1
-				break;
-		} //end switch
-		header('Location: '.SmartFrameworkSecurity::FilterUnsafeString((string)$appSettings['redirect-url']));
-		echo '<h1>'.Smart::escape_html($the_redirect_text).'</h1>'.'<br>'.'If the page redirection fails, click on the below link:'.'<br>'.$the_redirect_link;
-		return; // break stop
-	} //end if
-	//--
 	//== RAW HEADERS
 	//--
-	self::SetRawHeaders($appRawHeads);
+	self::SetRawHeaders($appRawHeads); // headers must be set before downloads and after STD.HTTP STATUS CODES
 	//--
 	//== DOWNLOADS HANDLER (downloads can be set only explicit from Controllers)
 	//--

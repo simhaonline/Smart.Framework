@@ -1,5 +1,5 @@
 
-##### Smart.Framework .htaccess sample for Apache 2.2 / 2.4 :: v.3.5.1 r.2017.05.12 / smart.framework.v.3.5
+##### Smart.Framework .htaccess sample for Apache 2.2 / 2.4 :: v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
 
 ### Restrict by IP
 #order deny,allow
@@ -32,7 +32,7 @@ php_flag zend.multibyte					Off
 #</FilesMatch>
 ###
 
-### Rewrite :: For the most basic rewrite version, just uncomment the 6 lines that start with the # as first character.
+### Rewrite :: For the most basic rewrite version, just uncomment the 4 lines that start with the # as first character.
 #<IfModule mod_rewrite.c>
 
 	###
@@ -46,7 +46,7 @@ php_flag zend.multibyte					Off
 #	RewriteRule 		^(.*)\.(html|stml|json)$ 		index.php?page=$1 [QSA,L]
 	###
 
-	### sample: alternate URLs to use in combination with sub-domains (This is only for very very advanced use ... !!!)
+	### sample: alternate URLs to use in combination with sub-domains (This is only for very very advanced use of URL Rewrites ... !!!)
 	##RewriteCond 		%{HTTP_HOST} ^([0-9a-z\-]*)\.
 	##### module.smart-framework/controller
 	##RewriteRule 		^(.*)?/?$ 						index.php?page=$1.%1 [QSA,L]
