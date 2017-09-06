@@ -584,7 +584,7 @@ public static function Run() {
 	} //end if else
 	//--
 	if(SMART_SOFTWARE_DISABLE_STATUS_POWERED !== true) {
-		echo "\n".'<!-- Smart.Framework スマート.フレームワーク :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' / '.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.$the_midmark.' :: '.SMART_FRAMEWORK_RELEASE_URL.' -->';
+		echo "\n".'<!-- Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.$the_midmark.' :: '.SMART_FRAMEWORK_RELEASE_URL.' -->';
 	} //end if
 	echo "\n".'<!-- Resources: ['.Smart::format_number_dec($res_time, 13, '.', '').' sec.] / ['.Smart::format_number_dec($res_memory, 0, '.', ' ').' by.]'.' -->'."\n";
 	//--
