@@ -32,7 +32,7 @@ if(!function_exists('mb_convert_encoding')) {
 //=====================================================================================
 
 // fixes by unixman (see below)
-// based on LZString v . 1 . 3 . 6 (a free LZ based compression algorithm)
+// based on LZString v.1.3.6 (a free LZ based compression algorithm)
 // this is intended for on-the-fly archive/unarchive not for storing (where ZLib is a better option)
 // it compatible with SmartFramework/JS/SmartJS_Archiver_LZS
 // License: BSD
@@ -55,7 +55,7 @@ if(!function_exists('mb_convert_encoding')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.160827
+ * @version 	v.170908
  * @package 	Archivers
  *
  */
@@ -81,6 +81,10 @@ private static $keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
 public static function compressToBase64($input) {
 	//--
 	$input = (string) $input;
+	//--
+	if((string)trim((string)$input) == '') {
+		return '';
+	} //end if
 	//--
 	$input = self::compressRawLZS($input);
 	//--
@@ -172,6 +176,10 @@ public static function decompressFromBase64($input) {
 	//--
 	$input = (string) $input;
 	//--
+	if((string)trim((string)$input) == '') {
+		return '';
+	} //end if
+	//--
 	$output = '';
 	//--
 	$ol = 0;
@@ -251,6 +259,10 @@ public static function decompressFromBase64($input) {
  */
 public static function compressRawLZS($uncompressed) {
 	//--
+	if((string)trim((string)$uncompressed) == '') {
+		return '';
+	} //end if
+	//--
 	$arch = strtoupper(bin2hex((string)$uncompressed));
 	//--
 	return self::RawDeflate($arch.'#CHECKSUM-SHA1#'.SmartHashCrypto::sha1($arch)); // add sha1 checksum
@@ -268,6 +280,10 @@ public static function compressRawLZS($uncompressed) {
  *
  */
 public static function decompressRawLZS($compressed) {
+	//--
+	if((string)trim((string)$compressed) == '') {
+		return '';
+	} //end if
 	//--
 	$unarch = trim(self::RawInflate((string)$compressed));
 	//-- checksum verification
@@ -698,7 +714,7 @@ private static function RawInflate($compressed) {
 final class SmartArchiverObjContextLZS {
 	//--
 	// ->
-	// v.160827
+	// v.170908
 	//--
 	public $c = '';
 	public $w = '';
@@ -739,7 +755,7 @@ final class SmartArchiverObjContextLZS {
 final class SmartArchiverObjDataLZS {
 	//--
 	// ->
-	// v.160827
+	// v.170908
 	//--
 	public $str;
 	public $val;

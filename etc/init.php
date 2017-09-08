@@ -108,7 +108,7 @@ define('SMART_FRAMEWORK_URL_PARAM_PRINTABLE', 		'print');														// Printa
 //---------------------------------------- SPECIAL FEATURES
 define('SMART_SOFTWARE_FRONTEND_ENABLED',			true);															// To Disable Frontend (index.php) set this to false
 define('SMART_SOFTWARE_BACKEND_ENABLED',			true);															// To Disable Backend (admin.php) set this to false
-define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',			true);															// To Enable PathInfo (admin.php/path/info/) set this to true ; just for admin.php (index.php have no support for this)
+define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',			2);																// Set to: 0 = none ; 1 = only admin ; 2 = both index & admin ; 3 = only index :: To Disable/Enable PathInfo (index|admin.php/path/info/)
 //define('SMART_SOFTWARE_MEMDB_FATAL_ERR',			true);															// If defined / set to true will not ignore (fatal / connection errors) on all memory DB servers such as Redis ; normally memchache servers can be ignored if fail and must behave like no cache
 //define('SMART_SOFTWARE_SQLDB_FATAL_ERR',			false);															// If defined / set to false will use exceptions that can be catched instead of fatal errors on all SQL DB servers such as PostgreSQL / SQLite ... ; disabling fatal errors on SQL servers will also disable transactions as any SQL error will just break any existing transaction and the results are unpredictable (DO NOT use this parameter unless you know what you are doing !!!)
 //define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status

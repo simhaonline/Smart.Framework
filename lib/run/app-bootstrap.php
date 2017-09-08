@@ -91,7 +91,7 @@ function autoload__SmartFrameworkModClasses($classname) {
 	//--
 	if((string)$parts[1] != '') {
 		//--
-		$dir .= strtolower(implode('-', preg_split('/(?=[A-Z])/', (string)$parts[1])));
+		$dir .= (string) strtolower((string)implode('-', preg_split('/(?=[A-Z])/', (string)$parts[1])));
 		//--
 		if((string)$parts[0] == 'SmartModExtLib') {
 			//--
@@ -109,7 +109,7 @@ function autoload__SmartFrameworkModClasses($classname) {
 		//--
 		if((string)$parts[2] != '') {
 			for($i=2; $i<$max; $i++) {
-				$dir .= $parts[$i].'/';
+				$dir .= (string) $parts[$i].'/';
 			} //end for
 		} //end if
 		//--
@@ -122,9 +122,9 @@ function autoload__SmartFrameworkModClasses($classname) {
 	$dir = (string) $dir;
 	$file = (string) $parts[(int)$max];
 	$path = (string) $dir.$file;
-	$path = (string) str_replace(array('\\', "\0"), array('', ''), $path); // filter out null byte and backslash
+	$path = (string) trim(str_replace(array('\\', "\0"), array('', ''), $path)); // filter out null byte and backslash
 	//--
-	if(!preg_match('/^[_a-zA-Z0-9\-\/]+$/', $path)) {
+	if(((string)$path == '') OR ((string)$path == '/') OR (!preg_match('/^[_a-zA-Z0-9\-\/]+$/', $path))) {
 		return; // invalid path characters in file
 	} //end if
 	//--

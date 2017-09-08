@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.05'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.08'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -64,7 +64,7 @@ if(!headers_sent()) {
 
 //--
 if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
-	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, do it here to avoid later modifications
+	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, set it here to avoid later modifications
 } //end if
 //--
 if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) {
@@ -168,14 +168,24 @@ if(!defined('SMART_FRAMEWORK_IDENT_ROBOTS')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_IDENT_ROBOTS');
 } //end if
 //--
+if(!defined('SMART_FRAMEWORK_URL_VALUE_ENABLED')) {
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_VALUE_ENABLED');
+} //end if
 if(!defined('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_MODALPOPUP');
 } //end if
 if(!defined('SMART_FRAMEWORK_URL_PARAM_PRINTABLE')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_PRINTABLE');
 } //end if
-if(!defined('SMART_FRAMEWORK_URL_VALUE_ENABLED')) {
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_VALUE_ENABLED');
+//--
+if(!defined('SMART_SOFTWARE_FRONTEND_ENABLED')) {
+	define('SMART_SOFTWARE_FRONTEND_ENABLED', true); // if not explicit defined, set it here to avoid later modifications
+} //end if
+if(!defined('SMART_SOFTWARE_BACKEND_ENABLED')) {
+	define('SMART_SOFTWARE_BACKEND_ENABLED', true); // if not explicit defined, set it here to avoid later modifications
+} //end if
+if(!defined('SMART_SOFTWARE_URL_ALLOW_PATHINFO')) {
+	define('SMART_SOFTWARE_URL_ALLOW_PATHINFO', 0); // if not explicit defined, set it here to avoid later modifications
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_CHARSET')) {
@@ -920,6 +930,41 @@ public static function Lock_Request_Processing() {
 
 
 //======================================================================
+// check if pathInfo is enabled (allowed)
+public static function PathInfo_Enabled() {
+	//--
+	$status = false;
+	//--
+	if(defined('SMART_SOFTWARE_URL_ALLOW_PATHINFO')) {
+		//--
+		switch((int)SMART_SOFTWARE_URL_ALLOW_PATHINFO) {
+			case 3: // only index enabled
+				if(SMART_FRAMEWORK_ADMIN_AREA !== true) {
+					$status = true;
+				} //end if
+				break;
+			case 2: // both enabled: index & admin
+				$status = true;
+				break;
+			case 1: // only admin enabled
+				if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+					$status = true;
+				} //end if
+				break;
+			case 0: // none enabled
+			default:
+				// not enabled
+		} //end switch
+		//--
+	} //end if
+	//--
+	return (bool) $status;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
 // This will run before loading the Smart.Framework and must not depend on it's classes
 public static function Parse_Semantic_URL() {
 
@@ -939,7 +984,7 @@ public static function Parse_Semantic_URL() {
 	//--
 
 	//--
-	if((SMART_SOFTWARE_URL_ALLOW_PATHINFO === true) AND (SMART_FRAMEWORK_ADMIN_AREA === true) AND (isset($_SERVER['PATH_INFO'])) AND ((string)$_SERVER['PATH_INFO'] != '')) {
+	if((self::PathInfo_Enabled() === true) AND (isset($_SERVER['PATH_INFO'])) AND ((string)$_SERVER['PATH_INFO'] != '')) {
 		$semantic_url = '';
 		$fix_pathinfo = (string) SmartFrameworkSecurity::FilterUnsafeString((string)trim((string)$_SERVER['PATH_INFO'])); // variables from PathInfo are already URL Decoded, so must be ONLY Filtered !
 		$sem_path_pos = strpos((string)$fix_pathinfo, '/~');
@@ -1345,9 +1390,12 @@ public static function Redirection_Monitor() {
 		if((string)$_SERVER['PATH_INFO'] != '') {
 			//--
 			if((string)$the_current_script == 'index.php') {
+				if(self::PathInfo_Enabled() === true) {
+					return;
+				} //end if
 				$the_current_script = '';
 			} elseif((string)$the_current_script == 'admin.php') {
-				if((SMART_SOFTWARE_URL_ALLOW_PATHINFO === true) AND (SMART_FRAMEWORK_ADMIN_AREA === true)) {
+				if(self::PathInfo_Enabled() === true) {
 					return;
 				} //end if
 			} //end if
