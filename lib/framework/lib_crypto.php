@@ -264,7 +264,7 @@ final class SmartHashCrypto {
  * @hints       Blowfish is a 64-bit (8 bytes) block cipher. Max Key is up to 56 chars length (56 bytes = 448 bits). The CBC mode requires a initialization vector (iv).
  *
  * @depends     classes: Smart
- * @version     v.160827
+ * @version     v.170908
  * @package     Crypto
  *
  */
@@ -283,6 +283,10 @@ final class SmartCipherCrypto {
 	 * @return STRING 			The encrypted data
 	 */
 	public static function encrypt($cipher, $key, $data) {
+		//--
+		if((string)trim((string)$data) == '') {
+			return '';
+		} //end if
 		//--
 		if(((string)$cipher == 'blowfish') OR ((string)$cipher == 'blowfish.cbc')) {
 			if((string)self::crypto_options('blowfish') == 'blowfish.cbc.mcrypt') { // use the mcrypt blowfish CBC
@@ -312,6 +316,10 @@ final class SmartCipherCrypto {
 	 * @return STRING 			The plain / decrypted data
 	 */
 	public static function decrypt($cipher, $key, $data) {
+		//--
+		if((string)trim((string)$data) == '') {
+			return '';
+		} //end if
 		//--
 		if(((string)$cipher == 'blowfish') OR ((string)$cipher == 'blowfish.cbc')) {
 			if((string)self::crypto_options('blowfish') == 'blowfish.cbc.mcrypt') { // use the mcrypt blowfish CBC

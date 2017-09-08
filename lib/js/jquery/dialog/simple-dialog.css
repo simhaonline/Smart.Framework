@@ -2,7 +2,7 @@
  * jQuery Simple Dialog (SmartLightUI)
  * (c) 2015-2017 unix-world.org
  * License: BSD
- * v.170406
+ * v.170908
  */
 
 /* Overlay */
@@ -90,7 +90,7 @@
 	cursor: pointer;
 	padding-left: 10px;
 	padding-right: 10px;
-	padding-top: 1px;
+	padding-top: 5px;
 	padding-bottom: 1px;
 	border-radius: 3px;
 }

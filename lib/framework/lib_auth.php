@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160221
+ * @version 	v.170908
  * @package 	Application
  *
  */
@@ -71,7 +71,7 @@ final class SmartAuth {
  * and the data cannot be changed after a successful or failed authentication has set.
  *
  * @param 	STRING 	$y_user_id 				:: The user (login) ID used to authenticate the user ; Mandatory ; it can be the UserID from DB or if not using a DB must supply a unique ID to identify the user like username
- * @param 	STRING 	$y_user_alias			:: The user (login) Alias, used to display the logged in user ; Mandatory ; can be the same as the login ID or different (Ex: login ID can be 'myUserName' and this 'myUserName' ; or: login ID can be 5017 and this 'myUserName')
+ * @param 	STRING 	$y_user_alias			:: The user (login) Alias (aka Username), used to display the logged in user ; Mandatory ; can be the same as the login ID or different (Ex: login ID can be 'myUserName' and this 'myUserName' ; or: login ID can be 5017 and this 'myUserName')
  * @param 	STRING 	$y_user_email 			:: *OPTIONAL* The user Email ; if email is used as login ID this may be redundant !
  * @param 	STRING 	$y_user_fullname 		:: *OPTIONAL* The user Full Name (First Name + Last Name)
  * @param 	ARRAY 	$y_user_privileges_list :: *OPTIONAL* The user Privileges List as array that list all the current user privileges
