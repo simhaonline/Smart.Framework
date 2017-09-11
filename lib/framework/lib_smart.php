@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170703
+ * @version     v.170908
  * @package     Base
  *
  */
@@ -122,7 +122,7 @@ public static function get_from_config($param) {
 public static function fix_path_separator($y_path) {
 	//--
 	if((string)DIRECTORY_SEPARATOR == '\\') { // if on Windows, Fix Path Separator !!!
-		if(strpos($y_path, '\\') !== false) {
+		if(strpos((string)$y_path, '\\') !== false) {
 			$y_path = str_replace((string)DIRECTORY_SEPARATOR, '/', (string)$y_path); // convert \ to / on paths
 		} //end if
 	} //end if

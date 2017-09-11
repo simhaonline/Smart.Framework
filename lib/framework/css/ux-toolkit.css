@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (c) 2015-2017 unix-world.org
+	extended by unixman, (stable.170909), (c) 2015-2017 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -604,7 +604,7 @@ so we can ignore the csslint warning.
 }
 
 .ux-form select option,
-.ux-select option, {
+.ux-select option {
 	font-weight: normal !important;
 	font-size: 13px !important;
 	padding: 1px !important;
@@ -668,7 +668,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 .ux-form input[type="radio"]:focus,
 .ux-form input[type="checkbox"]:focus {
 	outline: thin solid #129FEA;
-	outline: 1px auto #129FEA;
+	/* @alternate */ outline: 1px auto #129FEA; /* mark as alternate for google closures stylesheet */
 }
 .ux-form .ux-checkbox,
 .ux-form .ux-radio {

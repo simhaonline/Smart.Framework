@@ -1,6 +1,10 @@
+/*
+ [@[#[!NO-STRIP!]#]@]
+ this fails to compile with google closure stylesheets (unrecognized: @-moz ...)
+*/
 /* CLEditor / SmartComponents v.2016.02.18 */
 * {
-	font-family: tahoma,arial,sans-serif;
+	font-family: arial,sans-serif;
 }
 table {
 	margin-top: 2px;

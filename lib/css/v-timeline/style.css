@@ -121,7 +121,7 @@
 }
 .vtml-timeline-content p, .vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
 	font-size: 14px;
-	font-size: 0.875em;
+	/* @alternate */ font-size: 0.875em;
 	text-align: justify;
 }
 .vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
@@ -149,7 +149,7 @@
 	float: left;
 	padding: 0.8em 0;
 	font-size: 16px;
-	font-size: 1em;
+	/* @alternate */ font-size: 1em;
 }
 .vtml-timeline-content::before {
 	content: '';

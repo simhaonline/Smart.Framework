@@ -54,7 +54,7 @@
 		left: 122%;
 		color: #444444;
 		font-size: 20px;
-		font-size: 1.25em;
+		/* @alternate */ font-size: 1.25em;
 	}
 	.vtml-timeline-block:nth-child(even) .vtml-timeline-content {
 		float: right;

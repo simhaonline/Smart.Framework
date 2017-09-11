@@ -110,7 +110,7 @@
 	position: relative;
 	z-index: 800;
 	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
-	pointer-events: auto;
+	/* @alternate */ pointer-events: auto;
 }
 .leaflet-top,
 .leaflet-bottom {
@@ -231,7 +231,7 @@
 .leaflet-image-layer.leaflet-interactive,
 .leaflet-pane > svg path.leaflet-interactive {
 	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
-	pointer-events: auto;
+	/* @alternate */ pointer-events: auto;
 }
 
 /* visual tweaks */
@@ -386,7 +386,7 @@
 /* attribution and scale controls */
 
 .leaflet-container .leaflet-control-attribution {
-	background: #fff;
+	/* @alternate */ background: #fff;
 	background: rgba(255, 255, 255, 0.7);
 	margin: 0;
 }
@@ -420,10 +420,9 @@
 	white-space: nowrap;
 	overflow: hidden;
 	-moz-box-sizing: border-box;
-	     box-sizing: border-box;
-
+	box-sizing: border-box;
 	background: #fff;
-	background: rgba(255, 255, 255, 0.5);
+	/* @alternate */ background: rgba(255, 255, 255, 0.5);
 }
 .leaflet-control-scale-line:not(:first-child) {
 	border-top: 2px solid #777;
@@ -525,7 +524,7 @@
 	margin: 0 auto;
 
 	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
-	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	/*	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678); */
 }
 .leaflet-oldie .leaflet-popup-tip-container {
 	margin-top: -1px;

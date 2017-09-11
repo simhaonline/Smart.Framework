@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170620
+ * @version 	v.170908
  * @package 	Filesystem
  *
  */
@@ -189,7 +189,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 		} //end if
 	} //end if
 	//-- test max path length
-	if(strlen($y_path) > 1024) {
+	if(strlen((string)$y_path) > 1024) {
 		//--
 		Smart::raise_error(
 			'SmartFramework // FileSystemUtils // Check Max Path Length (1024) // ACCESS DENIED to invalid path: '.$y_path,
@@ -1150,7 +1150,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170601
+ * @version 	v.170910
  * @package 	Filesystem
  *
  */
@@ -2620,14 +2620,22 @@ public static function dir_rename($dir_name, $new_dir_name) {
 // returns: 1 for success and 0 for error/fail
 public static function dir_delete($dir_name, $recursive=true) {
 	//--
+	$dir_name = (string) $dir_name;
+	//--
 	if((string)$dir_name == '') {
 		Smart::log_warning('LibFileSys // DeleteDir // Dir Name is Empty !');
 		return 0;
 	} //end if
 	//-- THIS MUST BE DONE BEFORE ADDING THE TRAILING SLASH
-	if(is_link($dir_name)) {
+	if(is_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
 		//--
-		return self::delete($dir_name); // avoid deleting content from a linked dir, just remove the link
+		$f_cx = @unlink($dir_name); // avoid deleting content from a linked dir, just remove the link
+		//--
+		if(($f_cx) AND (!is_link($dir_name))) {
+			return 1;
+		} else {
+			return 0;
+		} //end if else
 		//--
 	} //end if
 	//--
@@ -2643,6 +2651,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 		//--
 	} //end if
 	//--
+	// avoid deleting content from a linked dir, just remove the link (2nd check, after adding the trailing slash)
 	if(is_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
 		//--
 		$f_cx = @unlink($dir_name);

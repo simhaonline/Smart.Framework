@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170605
+ * @version 	v.170910
  * @package 	Base
  *
  */
@@ -994,7 +994,7 @@ public static function guess_image_extension_by_first_bytes($pict) {
 	//--
 	$pict = (string) $pict;
 	if(strlen($pict) < 16) {
-		Smart::log_warning(__METHOD__.'() expects the first 16 bytes for detection ...');
+		Smart::log_warning(__METHOD__.'(): expects the first 16 bytes for detection ...');
 		return '';
 	} //end if
 	//--
@@ -2147,7 +2147,7 @@ public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc
 		} //end if
 		if(!is_dir((string)$cwd)) {
 			//--
-			Smart::raise_error(__METHOD__.'The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+			Smart::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
 			//--
 			$outarr['stdout'] 	= '';
 			$outarr['stderr'] 	= '';
