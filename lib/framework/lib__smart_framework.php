@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170909
+ * @version 	v.170911
  * @package 	Application
  *
  */
@@ -245,11 +245,17 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	private $module;
 	private $action;
 	private $controller;
+	private $urlproto;
+	private $urldomain;
+	private $urlport;
 	private $urlscript;
 	private $urlpath;
 	private $urladdr;
 	private $urlpage;
 	private $urlquery;
+	private $urluri;
+	private $uripath;
+	//--
 	private $pageheaders;
 	private $pagesettings; 					// will allow keys just from $availsettings
 	private $pageview; 						// will allow any key since they are markers
@@ -273,18 +279,24 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$ctrl_arr = (array) explode('.', (string)$y_controller);
 		//--
-		$this->releasehash 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
-		$this->modulearea 		= (string) $y_area; 							// index | admin
-		$this->modulepath 		= (string) $y_module_path; 						// modules/mod-something/
-		$this->modulename 		= (string) Smart::base_name($y_module_path); 	// mod-something
-		$this->module 			= (string) $ctrl_arr[0]; 						// something
-		$this->action 			= (string) $ctrl_arr[1]; 						// someaction
-		$this->controller 		= (string) $y_controller; 						// something.someaction
-		$this->urlscript 		= (string) $y_url_script; 						// index.php | admin.php
-		$this->urlpath 			= (string) $y_url_path; 						// /frameworks/smart-framework/
-		$this->urladdr 			= (string) $y_url_addr; 						// http(s)://127.0.0.1:8008/frameworks/smart-framework/
-		$this->urlpage 			= (string) $y_url_page; 						// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
-		$this->urlquery 		= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; // the query URL if any ...
+		$this->releasehash 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); 						// the release hash based on app framework version, framework release and modules version
+		$this->modulearea 		= (string) $y_area; 														// index | admin
+		$this->modulepath 		= (string) $y_module_path; 													// modules/mod-something/
+		$this->modulename 		= (string) Smart::base_name($y_module_path); 								// mod-something
+		$this->module 			= (string) $ctrl_arr[0]; 													// something
+		$this->action 			= (string) $ctrl_arr[1]; 													// someaction
+		$this->controller 		= (string) $y_controller; 													// something.someaction
+		$this->urlproto 		= (string) SmartUtils::get_server_current_protocol(); 						// http:// | https://
+		$this->urldomain 		= (string) SmartUtils::get_server_current_domain_name(); 					// 127.0.0.1|localhost
+		$this->urlport 			= (string) SmartUtils::get_server_current_port(); 							// 80 | 443 | ...
+		$this->urlscript 		= (string) $y_url_script; 													// index.php | admin.php
+		$this->urlpath 			= (string) $y_url_path; 													// /frameworks/smart-framework/
+		$this->urladdr 			= (string) $y_url_addr; 													// http(s)://127.0.0.1|localhost:8008/frameworks/smart-framework/
+		$this->urlpage 			= (string) $y_url_page; 													// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
+		$this->urlquery 		= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; 	// the query URL if any ...
+		$this->urluri 			= (string) SmartUtils::get_server_current_request_uri(); 					// the REQUEST_URI
+		$this->uripath 			= (string) SmartUtils::get_server_current_request_path(); 					// the PATH_INFO
+		//--
 		$this->pageheaders 		= array();
 		$this->pagesettings 	= array();
 		$this->pageview 		= array();
@@ -415,11 +427,21 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * 		module-view-path 			:: 		ex: modules/mod-samples/views/
 	 * 		module-model-path 			:: 		ex: modules/mod-samples/models/
 	 * 		module-lib-path 			:: 		ex: modules/mod-samples/libs/
+	 * 		module 						:: 		ex: samples (1st part from controller, before .)
+	 * 		action 						:: 		ex: test (2nd part from controller, after .)
 	 * 		controller 					:: 		ex: samples.test
+	 * 		url-proto 					:: 		ex: http | https (the current server protocol)
+	 * 		url-proto-addr 				:: 		ex: http:// | https:// (the current server protocol address)
+	 * 		url-domain 					:: 		ex: 127.0.0.1|localhost (the curent server domain, or IP)
+	 * 		url-port 					:: 		ex: 80 | 443 | 8080 ... (the current server port)
+	 * 		url-port-addr 				:: 		ex: '' | ''  | ':8080' ... (the current server port address ; empty for port 80 and 443 ; for the rest of ports will be :portnumber)
 	 * 		url-script 					:: 		ex: index.php / admin.php
 	 * 		url-path 					:: 		ex: /sites/smart-framework/
-	 * 		url-addr 					:: 		ex: http(s)://127.0.0.1/sites/smart-framework/
+	 * 		url-addr 					:: 		ex: http(s)://127.0.0.1|localhost/sites/smart-framework/
 	 * 		url-page 					:: 		ex: samples.test | test  (if samples is the default module) ; this is returning the URL page variable as is in the URL (it can be the same as 'controller' or if rewrite is used inside framework can vary
+	 * 		url-query 					:: 		ex: ?page=test&ofs=10
+	 * 		url-uri 					:: 		ex: /sites/smart-framework/index|admin.php{/some/path/}?page=test&ofs=10
+	 * 		uri-path 					:: 		ex: {/some/path/}
 	 *
 	 * @return 	STRING					:: The value for the selected parameter
 	 */
@@ -460,6 +482,21 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			case 'controller':
 				$out = $this->controller;
 				break;
+			case 'url-proto':
+				$out = ((string)$this->urlproto == 'https://') ? 'https' : 'http';
+				break;
+			case 'url-proto-addr':
+				$out = $this->urlproto;
+				break;
+			case 'url-domain':
+				$out = $this->urldomain;
+				break;
+			case 'url-port':
+				$out = $this->urlport;
+				break;
+			case 'url-port-addr':
+				$out = ((($this->urlport == 80) || ($this->urlport == 443)) ? '' : ':'.$this->urlport);
+				break;
 			case 'url-script':
 				$out = $this->urlscript;
 				break;
@@ -474,6 +511,12 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 				break;
 			case 'url-query':
 				$out = $this->urlquery;
+				break;
+			case 'url-uri':
+				$out = $this->urluri;
+				break;
+			case 'uri-path':
+				$out = $this->uripath;
 				break;
 			default:
 				Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / ControllerGetParam: Invalid Parameter: '.$param);
