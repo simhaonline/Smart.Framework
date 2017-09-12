@@ -34,7 +34,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  * @access 		private
  * @internal
  *
- * @version		160215
+ * @version		170913
  *
  */
 final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTranslations {
@@ -79,7 +79,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 			//--
 		} //end if
 		//--
-		$fcontent = SmartFileSystem::staticread($fdb_file);
+		$fcontent = SmartFileSystem::read($fdb_file);
 		$arr = (new SmartYamlConverter())->parse((string)$fcontent);
 		//--
 		if(!is_array($arr)) {

@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170911
+ * @version 	v.170913
  *
  */
 final class TestUnitFileSystem {
@@ -156,7 +156,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK PATH NAME DIR: check_file_or_dir_name() : '.$the_folder;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSysUtils::check_file_or_dir_name($the_folder);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -166,7 +165,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK PATH NAME FILE: check_file_or_dir_name() : '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSysUtils::check_file_or_dir_name($the_file);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -214,7 +212,6 @@ final class TestUnitFileSystem {
 			if(is_dir($get_folder)) {
 				$the_test = 'DIR DELETE - INIT CLEANUP: dir_delete() + recursive: '.$get_folder;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::dir_delete($the_base_folder, true);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -227,7 +224,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'DIR CREATE RECURSIVE: dir_create() : '.$the_folder.$long_prefixed.$short_prefixed;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::dir_create($the_folder.$long_prefixed.$short_prefixed, true); // recursive
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -236,7 +232,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'DIR CREATE NON-RECURSIVE: dir_create() : extra/ in : '.\Smart::dir_name($the_extra_folder);
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::dir_create($the_extra_folder);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -247,7 +242,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'CREATE BROKEN FILE LINK FOR DELETION (1): link_create() : as : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create('tmp/cache', $the_broken_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -256,7 +250,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'DELETE BROKEN FILE LINK (1): delete() : as : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::delete($the_broken_link);
 				if(($result !== 1) || is_link($the_broken_link)) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -265,7 +258,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'CREATE BROKEN FILE LINK FOR DELETION (2): link_create() : as : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create('tmp/index.html', $the_broken_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -274,7 +266,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'DELETE BROKEN FILE LINK (2): dir_delete() : as : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::dir_delete($the_broken_link);
 				if(($result !== 1) || is_link($the_broken_link)) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -283,7 +274,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'CREATE BROKEN FILE LINK: link_create() : as : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create('tmp/index.html', $the_broken_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -292,7 +282,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'CREATE BROKEN DIR LINK: link_create() : as : '.$the_broken_dir_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create('tmp/', $the_broken_dir_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -301,7 +290,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'CREATE A FILE LINK: link_create() : as : '.$the_good_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create(\Smart::real_path('tmp/index.html'), $the_good_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -310,7 +298,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'CREATE A DIR LINK: link_create() : as : '.$the_good_dir_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create(\Smart::real_path('tmp/'), $the_good_dir_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -321,7 +308,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE WRITE with empty content: write() : '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::write($the_file, '');
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -330,7 +316,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE WRITE: write() / before append : '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::write($the_file, $test_string);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -339,7 +324,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE WRITE: write() +append : '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::write($the_file, $test_string, 'a');
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -348,7 +332,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE READ / Append: read() Full Size: '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::read($the_file);
 			if((string)\SmartHashCrypto::sha512($result) != (string)\SmartHashCrypto::sha512($test_string.$test_string)) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -357,7 +340,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE WRITE: re-write() : '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::write($the_file, $test_string);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -368,7 +350,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'FILE WRITE TO A BROKEN LINK: write() : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::write($the_broken_link, $test_string);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -377,7 +358,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'DELETE THE BROKEN LINK AFTER write() and RE-CREATE IT : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::delete($the_broken_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -386,7 +366,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'RE-CREATE BROKEN FILE LINK [AFTER WRITE]: link_create() : as : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create('tmp/index.html', $the_broken_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -395,7 +374,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'FILE WRITE: write_if_not_exists() with Content Compare to a broken link : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::write_if_not_exists($the_broken_link, $test_string, 'yes');
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -404,7 +382,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'DELETE THE BROKEN LINK AFTER write_if_not_exists() and RE-CREATE IT : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::delete($the_broken_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -413,7 +390,6 @@ final class TestUnitFileSystem {
 			if((string)$err == '') {
 				$the_test = 'RE-CREATE BROKEN FILE LINK [AFTER WRITE-IF-NOT-EXISTS]: link_create() : as : '.$the_broken_link;
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::link_create('tmp/index.html', $the_broken_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -424,7 +400,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE WRITE: write_if_not_exists() without Content Compare : '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::write_if_not_exists($the_file, $test_string, 'no');
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -434,37 +409,16 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE READ: read() Full Size: '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
-			$result = \SmartFileSystem::read($the_file);
+			$result = (string) \SmartFileSystem::read($the_file);
 			if((string)\SmartHashCrypto::sha512($result) != (string)$test_str_cksum) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
 		} //end if
 		if((string)$err == '') {
-			$the_test = 'FILE READ: read() Partial Size, First 10 bytes: '.$the_file;
+			$the_test = 'FILE READ: read() Partial Size, First 11 bytes: '.$the_file;
 			$tests[] = $the_test;
-			$result = 0;
-			$result = \SmartFileSystem::read($the_file, 10);
-			if((string)sha1($result) != (string)\SmartHashCrypto::sha1(substr($test_string, 0, 10))) { // here we read bytes so substr() not \SmartUnicode::sub_str() should be used
-				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
-			} //end if
-		} //end if
-		//--
-		if((string)$err == '') {
-			$the_test = 'FILE STATIC-READ: staticread() Full Size: '.$the_file;
-			$tests[] = $the_test;
-			$result = 0;
-			$result = \SmartFileSystem::staticread($the_file);
-			if((string)\SmartHashCrypto::sha512($result) != (string)$test_str_cksum) {
-				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
-			} //end if
-		} //end if
-		if((string)$err == '') {
-			$the_test = 'FILE STATIC-READ: staticread() Partial Size, First 10 bytes: '.$the_file;
-			$tests[] = $the_test;
-			$result = 0;
-			$result = \SmartFileSystem::staticread($the_file, 10);
-			if((string)\SmartHashCrypto::sha1($result) != (string)sha1(substr($test_string, 0, 10))) { // here we read bytes so substr() not \SmartUnicode::sub_str() should be used
+			$result = (string) \SmartFileSystem::read($the_file, 11);
+			if((strlen($result) !== 11) OR ((string)sha1($result) != (string)\SmartHashCrypto::sha1(substr($test_string, 0, 11)))) { // here we read bytes so substr() not \SmartUnicode::sub_str() should be used
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
 		} //end if
@@ -472,7 +426,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE COPY: copy() : '.$the_file.' to: '.$the_copy_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::copy($the_file, $the_copy_file);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -481,7 +434,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE COPY with OVERWRITE: copy() : '.$the_file.' to: '.$the_copy_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::copy($the_file, $the_copy_file, true); // overwrite destination file(s)
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -490,7 +442,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE RE-COPY (test should re-write the destination): copy() : '.$the_file.' to: '.$the_move_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::copy($the_file, $the_move_file);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -507,7 +458,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'FILE RENAME/MOVE: rename() : '.$the_copy_file.' to: '.$the_move_file;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::rename($the_copy_file, $the_move_file);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -519,7 +469,6 @@ final class TestUnitFileSystem {
 				//--
 				$the_test = 'RECURSIVE COPY (CLONE) DIR [DEVELOPMENT]: dir_copy() : '.'_scripts/'.' to: '.$the_folder.'_scripts';
 				$tests[] = $the_test;
-				$result = 0;
 				$result = \SmartFileSystem::dir_copy('_scripts/', $the_folder.'_scripts');
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -543,7 +492,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'RECURSIVE COPY (CLONE) DIR: dir_copy() : '.$the_folder.' to: '.$the_copy_folder;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::dir_copy($the_folder, $the_copy_folder);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -553,7 +501,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'MOVE/RENAME DIR: dir_rename() : '.$the_copy_folder.' to: '.$the_move_folder;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::dir_rename($the_copy_folder, $the_move_folder);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -573,7 +520,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'DIR DELETE - SIMPLE: dir_delete() non-recursive: '.$the_extra_folder;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::dir_delete($the_extra_folder, false);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
@@ -582,7 +528,6 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'DIR DELETE - LAST CLEANUP: dir_delete() + recursive: '.$get_folder;
 			$tests[] = $the_test;
-			$result = 0;
 			$result = \SmartFileSystem::dir_delete($the_base_folder, true);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;

@@ -245,7 +245,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = SmartComponents::js_code_highlightsyntax('div'); // highlight pack
 				$main .= '<h1>Markdown Syntax Render Test</h1><hr>';
 				$main .= SmartMarkersTemplating::render_template(
-					(string) (new SmartMarkdownToHTML())->text((string)SmartFileSystem::staticread($this->ControllerGetParam('module-view-path').'markdown-test.md')),
+					(string) (new SmartMarkdownToHTML())->text((string)SmartFileSystem::read($this->ControllerGetParam('module-view-path').'markdown-test.md')),
 					[
 						'TITLE' => 'This is a <test> title that comes from TPL variables'
 					]

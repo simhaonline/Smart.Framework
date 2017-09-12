@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170830
+ * @version 	v.170913
  *
  */
 final class TestUnitMain {
@@ -123,16 +123,16 @@ final class TestUnitMain {
 		$demo_mod_ext_toolkits = '';
 		$demo_mod_ext_components = '';
 		if(\SmartAppInfo::TestIfModuleExists('mod-ui-uikit')) {
-			$demo_mod_ext_toolkits .= \SmartFileSystem::staticread('modules/mod-ui-uikit/testunit/templates/tab-ui-components.inc.htm');
+			$demo_mod_ext_toolkits .= \SmartFileSystem::read('modules/mod-ui-uikit/testunit/templates/tab-ui-components.inc.htm');
 		} //end if
 		if(\SmartAppInfo::TestIfModuleExists('mod-ui-bootstrap')) {
-			$demo_mod_ext_toolkits .= \SmartFileSystem::staticread('modules/mod-ui-bootstrap/testunit/templates/tab-ui-components.inc.htm');
+			$demo_mod_ext_toolkits .= \SmartFileSystem::read('modules/mod-ui-bootstrap/testunit/templates/tab-ui-components.inc.htm');
 		} //end if
 		if(\SmartAppInfo::TestIfModuleExists('mod-wflow-components')) {
-			$demo_mod_ext_components .= \SmartFileSystem::staticread('modules/mod-wflow-components/testunit/templates/tab-ui-components.inc.htm');
+			$demo_mod_ext_components .= \SmartFileSystem::read('modules/mod-wflow-components/testunit/templates/tab-ui-components.inc.htm');
 		} //end if
 		if(\SmartAppInfo::TestIfModuleExists('mod-js-components')) {
-			$demo_mod_ext_components .= \SmartFileSystem::staticread('modules/mod-js-components/testunit/templates/tab-ui-components.inc.htm');
+			$demo_mod_ext_components .= \SmartFileSystem::read('modules/mod-js-components/testunit/templates/tab-ui-components.inc.htm');
 		} //end if
 		//--
 		$demo_mod_ui_components = \SmartMarkersTemplating::render_file_template(
@@ -220,7 +220,7 @@ final class TestUnitMain {
 							'c3' => 'A'
 						]
 				],
-				'TPL-SYNTAX-DESCR' 							=> (string) \SmartMarkersTemplating::prepare_nosyntax_html_template(\SmartFileSystem::staticread('modules/mod-samples/libs/templates/testunit/partials/test-tpl-syntax-desc.nosyntax.inc.htm'), true),
+				'TPL-SYNTAX-DESCR' 							=> (string) \SmartMarkersTemplating::prepare_nosyntax_html_template(\SmartFileSystem::read('modules/mod-samples/libs/templates/testunit/partials/test-tpl-syntax-desc.nosyntax.inc.htm'), true),
 				'TEST-UI-COMPONENTS' 						=> (string) $demo_mod_ui_components,
 				'TWIG-AVAILABLE' 							=> (string) (\SmartAppInfo::TestIfModuleExists('mod-tpl-twig') ? 'yes' : 'no')
 			]

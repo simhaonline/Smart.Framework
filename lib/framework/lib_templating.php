@@ -55,7 +55,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170905
+ * @version 	v.170913
  * @package 	Templating:Engines
  *
  */
@@ -112,7 +112,7 @@ public static function analyze_debug_file_template($y_file_path, $y_arr_sub_temp
 	//--
 	$y_arr_sub_templates = (array) $y_arr_sub_templates;
 	//--
-	$mtemplate = (string) SmartFileSystem::staticread((string)$y_file_path);
+	$mtemplate = (string) SmartFileSystem::read((string)$y_file_path);
 	$original_mtemplate = (string) $mtemplate;
 	//-- add TPL START/END to see where it starts load
 	preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$mtemplate, $matches); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
@@ -390,7 +390,7 @@ public static function read_template_file($y_file_path) {
 		} //end if
 	} //end if
 	//--
-	$tpl = (string) SmartFileSystem::staticread((string)$y_file_path);
+	$tpl = (string) SmartFileSystem::read((string)$y_file_path);
 	if((string)$the_cache_key != '') {
 		if((string)$tpl != '') {
 			//Smart::log_info('TPL fs-read OK: '.$y_file_path);

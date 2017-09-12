@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.12'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.13'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -1211,20 +1211,6 @@ public static function Create_Required_Dirs() {
 	if(!is_file($dir.'.htaccess')) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #TMP: '.$dir.'.htaccess',
-			'App Init ERROR :: (See Error Log for More Details)'
-		);
-		die();
-		return;
-	} //end if
-	//-- tmp locks dir
-	$dir = 'tmp/locks/';
-	if(!is_dir($dir)) {
-		SmartFileSystem::dir_create($dir);
-		SmartFileSystem::write($dir.'index.html', '');
-	} // end if
-	if(!is_writable($dir)) {
-		Smart::raise_error(
-			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
 		die();
