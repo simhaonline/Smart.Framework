@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170613
+ * @version 	v.170911
  * @package 	Mailer:Utility
  *
  */
@@ -275,7 +275,7 @@ public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message,
 		$logsend_dir .= $stmp_y.'/'.$stmp_y.'-'.$stmp_m.'/'.$stmp_y.'-'.$stmp_m.'-'.$stmp_d; // add the time stamps
 		$logsend_dir = SmartFileSysUtils::add_dir_last_slash($logsend_dir); // add the last slash finally
 		//--
-		SmartFileSystem::dir_recursive_create($logsend_dir);
+		SmartFileSystem::dir_create($logsend_dir, true); // recursive
 		//--
 		$tmp_send_mode = 'send-return';
 		//--

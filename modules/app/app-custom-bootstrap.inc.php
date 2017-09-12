@@ -29,13 +29,17 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // 		- ... other purposes ...
 //======================================================
 
-
-define('SMART_APP_MODULES_RELEASE', 'r.2017.09.11'); // this can be used for tracking changes to custom app modules
+//-- defines the minimum version of the Smart.Framework to run on
+define('SMART_APP_MODULES_RELEASE', 'r.2017.09.12'); // this can be used for tracking changes to custom app modules
 define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.5.7'); // this must be used to validate the required minimum framework version
-
+//-- checks the minimum version of the Smart.Framework to run on
+if(version_compare((string)SMART_FRAMEWORK_RELEASE_VERSION, (string)SMART_APP_MODULES_RELEASE) < 0) {
+	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_RELEASE.' or later !');
+} //end if
 if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
 	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_MIN_FRAMEWORK_VER.' or later !');
 } //end if
+//--
 
 // # Here can be loaded the Smart.Framework extra libs package from: https://github.com/unix-world/Smart.Framework.Modules
 //require_once('modules/smart-extra-libs/autoload.php'); // autoload for Smart.Framework.Modules / (Smart) Extra Libs

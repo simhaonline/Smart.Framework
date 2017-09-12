@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.170703
+ * @version 	v.170911
  * @package 	Exporters
  *
  */
@@ -240,7 +240,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 		} //end if
 		//--
 		if(!is_dir($the_dir)) {
-			SmartFileSystem::dir_recursive_create($the_dir);
+			SmartFileSystem::dir_create($the_dir, true); // recursive
 		} // end if
 		//--
 		SmartFileSystem::write_if_not_exists($protect_file, trim(SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n", 'yes');

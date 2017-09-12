@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170519
+ * @version 	v.170911
  *
  */
 final class TestUnitFileSystem {
@@ -225,19 +225,19 @@ final class TestUnitFileSystem {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$the_test = 'DIR CREATE RECURSIVE: dir_recursive_create() : '.$the_folder.$long_prefixed.$short_prefixed;
+			$the_test = 'DIR CREATE RECURSIVE: dir_create() : '.$the_folder.$long_prefixed.$short_prefixed;
 			$tests[] = $the_test;
 			$result = 0;
-			$result = \SmartFileSystem::dir_recursive_create($the_folder.$long_prefixed.$short_prefixed);
+			$result = \SmartFileSystem::dir_create($the_folder.$long_prefixed.$short_prefixed, true); // recursive
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
 		} //end if
 		if((string)$err == '') {
-			$the_test = 'DIR CREATE NON-RECURSIVE: dir_create() : extra/ in : '.$the_extra_folder;
+			$the_test = 'DIR CREATE NON-RECURSIVE: dir_create() : extra/ in : '.\Smart::dir_name($the_extra_folder);
 			$tests[] = $the_test;
 			$result = 0;
-			$result = \SmartFileSystem::dir_recursive_create($the_extra_folder);
+			$result = \SmartFileSystem::dir_create($the_extra_folder);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if

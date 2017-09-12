@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		To use paths in a safe manner, never add manually a / at the end of a path variable, because if it is empty will result in accessing the root of the file system (/). To handle this in an easy and safe manner, use the function SmartFileSysUtils::add_dir_last_slash($my_dir) so it will add the trailing slash ONLY if misses but NOT if the $my_dir is empty to avoid root access !
  *
  * @depends 	classes: Smart
- * @version 	v.170908
+ * @version 	v.170912
  * @package 	Filesystem
  *
  */
@@ -1150,7 +1150,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170910
+ * @version 	v.170912
  * @package 	Filesystem
  *
  */
@@ -1167,7 +1167,7 @@ private static function lock_file_name($file_name) {
 	if(!SmartFileSysUtils::check_file_or_dir_name($file_name, 'yes', 'yes')) { // deny absolute paths ; allow #special paths
 		//-- this is for absolute paths for example, to avoid create lock outside ...
 		if(!is_dir('tmp/locks')) {
-			self::dir_recursive_create('tmp/locks');
+			self::dir_create('tmp/locks', true); // recursive
 		} //end if
 		$lock_file = 'tmp/locks/'.SmartHashCrypto::sha256(SMART_FRAMEWORK_SECURITY_KEY.'!'.$file_name).'__'.substr(Smart::safe_filename($file_name, '-'), 0, 99).'.__LOCK__'; // this is a max of 165 chars (file name is no more than 255 bytes on many systems)
 		//--
@@ -1189,7 +1189,7 @@ private static function lock_file_set($lock_file) {
 	$lock_file = (string) $lock_file;
 	//--
 	if((string)$lock_file == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Lock File Set: Empty File Name');
+		Smart::log_warning('SmartFramework // FileSystem // Lock File Set: Empty File Name');
 		return 0;
 	} //end if
 	//--
@@ -1203,12 +1203,12 @@ private static function lock_file_set($lock_file) {
 		@chmod($lock_file, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 	} else {
 		$out = 0;
-		Smart::log_warning('LibFileSys // LockFileSet // FAILED to set lockfile: '.$lock_file);
+		Smart::log_warning('SmartFramework // FileSystem // LockFileSet // FAILED to set lockfile: '.$lock_file);
 	} //end if
 	//--
 	if(!is_readable($lock_file)) {
 		$out = 0;
-		Smart::log_warning('LibFileSys // LockFileSet // The lockfile is not readable: '.$lock_file);
+		Smart::log_warning('SmartFramework // FileSystem // LockFileSet // The lockfile is not readable: '.$lock_file);
 	} //end if
 	//--
 	return $out;
@@ -1223,7 +1223,7 @@ private static function lock_file_unset($lock_file) {
 	$lock_file = (string) $lock_file;
 	//--
 	if((string)$lock_file == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Lock File Unset: Empty File Name');
+		Smart::log_warning('SmartFramework // FileSystem // Lock File Unset: Empty File Name');
 		return 0;
 	} //end if
 	//--
@@ -1237,7 +1237,7 @@ private static function lock_file_unset($lock_file) {
 	} //end if
 	//--
 	if(is_file($lock_file)) {
-		Smart::log_warning('LibFileSys // LockFileSet // FAILED to set lockfile: '.$lock_file);
+		Smart::log_warning('SmartFramework // FileSystem // LockFileSet // FAILED to set lockfile: '.$lock_file);
 	} //end if
 	//--
 	if($result) {
@@ -1258,7 +1258,7 @@ private static function lock_file_check($lock_file, $lock_time=60) {
 	$lock_time = (int) (0 + $lock_time);
 	//--
 	if((string)$lock_file == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Lock File Check: Empty File Name');
+		Smart::log_warning('SmartFramework // FileSystem // Lock File Check: Empty File Name');
 		return 0; // not locked, but register the error above
 	} //end if
 	//--
@@ -1390,7 +1390,7 @@ public static function staticread($file_name, $file_len=0, $markchmod='no') {
 				if(!is_readable($file_name)) {
 					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //try to make it readable by applying chmod
 					if(!is_readable($file_name)) {
-						Smart::log_warning('LibFileSys // StaticReadFile // A file is not readable: '.$file_name);
+						Smart::log_warning('SmartFramework // FileSystem // StaticReadFile // A file is not readable: '.$file_name);
 						return '';
 					} //end if
 				} //end if
@@ -1440,7 +1440,7 @@ public static function read($file_name, $file_len=0, $markchmod='no') {
 	//--
 	if((string)self::lock_file_check(self::lock_file_name($file_name)) == '1') {
 		Smart::raise_error(
-			'LibFileSys // ReadFile // A file is still locked: '.$file_name,
+			'SmartFramework // FileSystem // ReadFile // A file is still locked: '.$file_name,
 			'ERROR: FS :: A File is still LOCKED while trying to Open it for READING ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -1461,7 +1461,7 @@ public static function read($file_name, $file_len=0, $markchmod='no') {
 				if(!is_readable($file_name)) {
 					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //try to make ir readable by applying chmod
 					if(!is_readable($file_name)) {
-						Smart::log_warning('LibFileSys // ReadFile // A file is not readable: '.$file_name);
+						Smart::log_warning('SmartFramework // FileSystem // ReadFile // A file is not readable: '.$file_name);
 						return '';
 					} //end if
 				} //end if
@@ -1527,7 +1527,7 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 	//--
 	if((string)self::lock_file_check($lock_file) == '1') {
 		Smart::raise_error(
-			'LibFileSys // WriteFile // A file is still locked: '.$file_name,
+			'SmartFramework // FileSystem // WriteFile // A file is still locked: '.$file_name,
 			'ERROR: FS :: A File is still LOCKED while trying to Open it for WRITING ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -1570,23 +1570,23 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 					//--
 					if(!is_writable($file_name)) {
-						Smart::log_warning('LibFileSys // WriteFile // A file is not writable: '.$file_name);
+						Smart::log_warning('SmartFramework // FileSystem // WriteFile // A file is not writable: '.$file_name);
 					} //end if
 					//--
 				} //end if
 				//-- check the write result (number of bytes written)
 				if($result === false) {
-					Smart::log_warning('LibFileSys // WriteFile // Failed to write a file: '.$file_name);
+					Smart::log_warning('SmartFramework // FileSystem // WriteFile // Failed to write a file: '.$file_name);
 				} else {
 					if($result !== @strlen((string)$file_content)) {
-						Smart::log_warning('LibFileSys // WriteFile // A file was not completely written (removing it ...): '.$file_name);
+						Smart::log_warning('SmartFramework // FileSystem // WriteFile // A file was not completely written (removing it ...): '.$file_name);
 						@unlink($file_name); // delete the file, was not completely written (do not use self::delete here, the file is still locked !)
 					} //end if
 				} //end if
 				//--
 			} else {
 				//--
-				Smart::log_warning('LibFileSys // WriteFile // Failed to set the lock file. File was not written: '.$file_name);
+				Smart::log_warning('SmartFramework // FileSystem // WriteFile // Failed to set the lock file. File was not written: '.$file_name);
 				//--
 			} //end if
 			//-- remove the lock file
@@ -1674,12 +1674,12 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 	} //end if
 	//--
 	if((!is_file($file_name)) OR ((is_link($file_name)) AND (!is_file(self::link_get_origin($file_name))))) {
-		Smart::log_warning('LibFileSys // Copy // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
+		Smart::log_warning('SmartFramework // FileSystem // Copy // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
 	if($overwrite_destination !== true) {
 		if(self::file_or_link_exists($newlocation)) {
-			Smart::log_warning('LibFileSys // Copy // The destination file exists (1): S='.$file_name.' ; D='.$newlocation);
+			Smart::log_warning('SmartFramework // FileSystem // Copy // The destination file exists (1): S='.$file_name.' ; D='.$newlocation);
 			return 0;
 		} //end if
 	} //end if
@@ -1691,7 +1691,7 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 	//--
 	if((string)self::lock_file_check(self::lock_file_name($file_name)) == '1') {
 		Smart::raise_error(
-			'LibFileSys // FileCopy // Source file is still locked: '.$file_name,
+			'SmartFramework // FileSystem // FileCopy // Source file is still locked: '.$file_name,
 			'ERROR: FS :: A File is still LOCKED while trying to COPY [SOURCE] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -1700,7 +1700,7 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 	//--
 	if((string)self::lock_file_check(self::lock_file_name($newlocation)) == '1') {
 		Smart::raise_error(
-			'LibFileSys // FileCopy // Destination file is still locked: '.$newlocation,
+			'SmartFramework // FileSystem // FileCopy // Destination file is still locked: '.$newlocation,
 			'ERROR: FS :: A File is still LOCKED while trying to COPY [DESTINATION] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -1715,13 +1715,13 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 			if(is_file($newlocation)) {
 				@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 			} else {
-				Smart::log_warning('LibFileSys // CopyFile // Failed to copy a file: '.$file_name.' // to destination: '.$newlocation);
+				Smart::log_warning('SmartFramework // FileSystem // CopyFile // Failed to copy a file: '.$file_name.' // to destination: '.$newlocation);
 			} //end if
 			if(!is_readable($newlocation)) {
-				Smart::log_warning('LibFileSys // CopyFile // Destination file is not readable: '.$newlocation);
+				Smart::log_warning('SmartFramework // FileSystem // CopyFile // Destination file is not readable: '.$newlocation);
 			} //end if
 		} else {
-			Smart::log_warning('LibFileSys // CopyFile // Destination file exists (2): '.$newlocation);
+			Smart::log_warning('SmartFramework // FileSystem // CopyFile // Destination file exists (2): '.$newlocation);
 		} //end if
 	} //end if
 	//--
@@ -1759,11 +1759,11 @@ public static function rename($file_name, $newlocation) {
 	} //end if
 	//--
 	if((!is_file($file_name)) OR ((is_link($file_name)) AND (!is_file(self::link_get_origin($file_name))))) {
-		Smart::log_warning('LibFileSys // Rename/Move // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
+		Smart::log_warning('SmartFramework // FileSystem // Rename/Move // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
 	if(self::file_or_link_exists($newlocation)) {
-		Smart::log_warning('LibFileSys // Rename/Move // The destination already exists: S='.$file_name.' ; D='.$newlocation);
+		Smart::log_warning('SmartFramework // FileSystem // Rename/Move // The destination already exists: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
 	//--
@@ -1774,7 +1774,7 @@ public static function rename($file_name, $newlocation) {
 	//--
 	if((string)self::lock_file_check(self::lock_file_name($file_name)) == '1') {
 		Smart::raise_error(
-			'LibFileSys // FileRename // Source file is still locked: '.$file_name,
+			'SmartFramework // FileSystem // FileRename // Source file is still locked: '.$file_name,
 			'ERROR: FS :: A File is still LOCKED while trying to MOVE [SOURCE] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -1783,7 +1783,7 @@ public static function rename($file_name, $newlocation) {
 	//--
 	if((string)self::lock_file_check(self::lock_file_name($newlocation)) == '1') {
 		Smart::raise_error(
-			'LibFileSys // FileRename // Destination file is still locked: '.$newlocation,
+			'SmartFramework // FileSystem // FileRename // Destination file is still locked: '.$newlocation,
 			'ERROR: FS :: A File is still LOCKED while trying to MOVE [DESTINATION] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -1805,11 +1805,11 @@ public static function rename($file_name, $newlocation) {
 				if(is_file($newlocation)) {
 					@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 				} else {
-					Smart::log_warning('LibFileSys // RenameFile // Failed to rename a file: '.$file_name.' // to destination: '.$newlocation);
+					Smart::log_warning('SmartFramework // FileSystem // RenameFile // Failed to rename a file: '.$file_name.' // to destination: '.$newlocation);
 				} //end if
 				//--
 				if(!is_readable($newlocation)) {
-					Smart::log_warning('LibFileSys // RenameFile // Destination file is not readable: '.$newlocation);
+					Smart::log_warning('SmartFramework // FileSystem // RenameFile // Destination file is not readable: '.$newlocation);
 				} //end if
 				//--
 			} //end if else
@@ -1839,13 +1839,13 @@ public static function read_uploaded($file_name) {
 	$file_name = (string) $file_name;
 	//--
 	if((string)$file_name == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Read-Uploaded: Empty Uploaded File Name');
+		Smart::log_warning('SmartFramework // FileSystem // Read-Uploaded: Empty Uploaded File Name');
 		return '';
 	} //end if
 	//-- {{{SYNC-FILESYS-UPLD-FILE-CHECKS}}}
 	if((string)DIRECTORY_SEPARATOR != '\\') { // if not on Windows (this test will FAIL on Windows ...)
 		if(!SmartFileSysUtils::check_file_or_dir_name($file_name, 'no')) { // here we do not test against absolute path access because uploaded files always return the absolute path
-			Smart::log_warning('SmartFramework // FileSystem / Read-Uploaded: The Uploaded File Path is Not Safe: '.$file_name);
+			Smart::log_warning('SmartFramework // FileSystem // Read-Uploaded: The Uploaded File Path is Not Safe: '.$file_name);
 			return '';
 		} //end if
 		SmartFileSysUtils::raise_error_if_unsafe_path($file_name, 'no'); // here we do not test against absolute path access because uploaded files always return the absolute path
@@ -1878,7 +1878,7 @@ public static function read_uploaded($file_name) {
 				//--
 			} else {
 				//--
-				Smart::log_warning('LibFileSys // ReadUploadedFile // The file is not readable: '.$file_name);
+				Smart::log_warning('SmartFramework // FileSystem // ReadUploadedFile // The file is not readable: '.$file_name);
 				//--
 			} //end if
 			//--
@@ -1886,7 +1886,7 @@ public static function read_uploaded($file_name) {
 		//--
 	} else {
 		//--
-		Smart::log_warning('LibFileSys // ReadUploadedFile // Cannot Find the Uploaded File or it is NOT an Uploaded File: '.$file_name);
+		Smart::log_warning('SmartFramework // FileSystem // ReadUploadedFile // Cannot Find the Uploaded File or it is NOT an Uploaded File: '.$file_name);
 		//--
 	} //end if
 	//--
@@ -1925,14 +1925,14 @@ public static function move_uploaded($file_name, $newlocation) {
 	//-- {{{SYNC-FILESYS-UPLD-FILE-CHECKS}}}
 	if((string)DIRECTORY_SEPARATOR != '\\') { // if not on Windows (this test will FAIL on Windows ...)
 		if(!SmartFileSysUtils::check_file_or_dir_name($file_name, 'no')) { // here we do not test against absolute path access because uploaded files always return the absolute path
-			Smart::log_warning('SmartFramework // FileSystem / MoveUploadedFile: The Uploaded File Path is Not Safe: '.$file_name);
+			Smart::log_warning('SmartFramework // FileSystem // MoveUploadedFile: The Uploaded File Path is Not Safe: '.$file_name);
 			return 0;
 		} //end if
 		SmartFileSysUtils::raise_error_if_unsafe_path($file_name, 'no'); // here we do not test against absolute path access because uploaded files always return the absolute path
 	} //end if
 	//--
 	if(!SmartFileSysUtils::check_file_or_dir_name($newlocation)) {
-		Smart::log_warning('SmartFramework // FileSystem / MoveUploadedFile: The Destination File Path is Not Safe: '.$file_name);
+		Smart::log_warning('SmartFramework // FileSystem // MoveUploadedFile: The Destination File Path is Not Safe: '.$file_name);
 		return 0;
 	} //end if
 	SmartFileSysUtils::raise_error_if_unsafe_path($newlocation);
@@ -1941,7 +1941,7 @@ public static function move_uploaded($file_name, $newlocation) {
 	//--
 	if((string)self::lock_file_check(self::lock_file_name($newlocation)) == '1') {
 		Smart::raise_error(
-			'LibFileSys // MoveUploadedFile // Destination file is still locked: '.$newlocation,
+			'SmartFramework // FileSystem // MoveUploadedFile // Destination file is still locked: '.$newlocation,
 			'ERROR: FS :: A File is still LOCKED while trying to MOVE-UPLOADED [DESTINATION] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -1964,11 +1964,11 @@ public static function move_uploaded($file_name, $newlocation) {
 					@touch($newlocation, time()); // touch modified time to avoid upload differences in time
 					@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 				} else {
-					Smart::log_warning('LibFileSys // MoveUploadedFile // Failed to move uploaded file: '.$file_name.' // to destination: '.$newlocation);
+					Smart::log_warning('SmartFramework // FileSystem // MoveUploadedFile // Failed to move uploaded file: '.$file_name.' // to destination: '.$newlocation);
 				} //end if
 				//--
 				if(!is_readable($newlocation)) {
-					Smart::log_warning('LibFileSys // MoveUploadedFile // Destination file is not readable: '.$newlocation);
+					Smart::log_warning('SmartFramework // FileSystem // MoveUploadedFile // Destination file is not readable: '.$newlocation);
 				} //end if
 				//--
 				sleep(1); // stay one second to release a second difference between uploaded files
@@ -1999,7 +1999,7 @@ public static function delete($file_name) {
 	$file_name = (string) $file_name;
 	//--
 	if((string)$file_name == '') {
-		Smart::log_warning('SmartFramework // FileSystem / File Delete: The File Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // FileDelete // The File Name is Empty !');
 		return 0; // empty file name
 	} //end if
 	//--
@@ -2027,7 +2027,7 @@ public static function delete($file_name) {
 	//--
 	if((string)self::lock_file_check(self::lock_file_name($file_name)) == '1') {
 		Smart::raise_error(
-			'LibFileSys // FileDelete // A file is still locked: '.$file_name,
+			'SmartFramework // FileSystem // FileDelete // A file is still locked: '.$file_name,
 			'ERROR: FS :: A File is still LOCKED while trying to DELETE ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 		);
 		die(''); // just in case
@@ -2047,14 +2047,14 @@ public static function delete($file_name) {
 				$f_cx = @unlink($file_name);
 				//--
 				if(self::file_or_link_exists($file_name)) {
-					Smart::log_warning('LibFileSys // DeleteFile // FAILED to delete this file: '.$file_name);
+					Smart::log_warning('SmartFramework // FileSystem // DeleteFile // FAILED to delete this file: '.$file_name);
 				} //end if
 				//--
 			} //end if
 			//--
 		} elseif(is_dir($file_name)) {
 			//--
-			Smart::log_warning('LibFileSys // DeleteFile // A file was marked for deletion but that is a directory: '.$file_name);
+			Smart::log_warning('SmartFramework // FileSystem // DeleteFile // A file was marked for deletion but that is a directory: '.$file_name);
 			//--
 		} //end if
 		//--
@@ -2078,29 +2078,29 @@ public static function link_get_origin($y_link) {
 	$y_link = (string) $y_link;
 	//--
 	if((string)$y_link == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Get Link: The Link Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Get Link: The Link Name is Empty !');
 		return 0;
 	} //end if
 	//--
 	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) {
-		Smart::log_warning('SmartFramework // FileSystem / Get Link: Invalid Path Link : '.$y_link);
+		Smart::log_warning('SmartFramework // FileSystem // Get Link: Invalid Path Link : '.$y_link);
 		return 0;
 	} //end if
 	//--
 	if(substr($y_link, -1, 1) == '/') { // add trailing slash
-		Smart::log_warning('SmartFramework // FileSystem / Get Link: Link Have a trailing Slash / : '.$y_link);
+		Smart::log_warning('SmartFramework // FileSystem // Get Link: Link Have a trailing Slash / : '.$y_link);
 		$y_link = substr($y_link, 0, (strlen($y_link)-1));
 	} //end if
 	//--
 	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) {
-		Smart::log_warning('SmartFramework // FileSystem / Get Link: Invalid Link Path : '.$y_link);
+		Smart::log_warning('SmartFramework // FileSystem // Get Link: Invalid Link Path : '.$y_link);
 		return 0;
 	} //end if
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($y_link);
 	//--
 	if(!is_link($y_link)) {
-		Smart::log_warning('SmartFramework // FileSystem / Get Link: Link does not exists : '.$y_link);
+		Smart::log_warning('SmartFramework // FileSystem // Get Link: Link does not exists : '.$y_link);
 		return 0;
 	} //end if
 	//--
@@ -2117,29 +2117,29 @@ public static function link_create($origin, $destination) {
 	$destination = (string) $destination;
 	//--
 	if((string)$origin == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Create Link: The Origin Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Create Link: The Origin Name is Empty !');
 		return 0;
 	} //end if
 	if((string)$destination == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Create Link: The Destination Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Create Link: The Destination Name is Empty !');
 		return 0;
 	} //end if
 	//--
 	if(!SmartFileSysUtils::check_file_or_dir_name($origin, 'no')) { // here we do not test against absolute path access because readlink may return an absolute path
-		Smart::log_warning('SmartFramework // FileSystem / Create Link: Invalid Path for Origin : '.$origin);
+		Smart::log_warning('SmartFramework // FileSystem // Create Link: Invalid Path for Origin : '.$origin);
 		return 0;
 	} //end if
 	if(!SmartFileSysUtils::check_file_or_dir_name($destination)) {
-		Smart::log_warning('SmartFramework // FileSystem / Create Link: Invalid Path for Destination : '.$destination);
+		Smart::log_warning('SmartFramework // FileSystem // Create Link: Invalid Path for Destination : '.$destination);
 		return 0;
 	} //end if
 	//--
 	if(!self::file_or_link_exists($origin)) {
-		Smart::log_warning('SmartFramework // FileSystem / Create Link: Origin does not exists : '.$origin);
+		Smart::log_warning('SmartFramework // FileSystem // Create Link: Origin does not exists : '.$origin);
 		return 0;
 	} //end if
 	if(self::file_or_link_exists($destination)) {
-		Smart::log_warning('SmartFramework // FileSystem / Create Link: Destination exists : '.$destination);
+		Smart::log_warning('SmartFramework // FileSystem // Create Link: Destination exists : '.$destination);
 		return 0;
 	} //end if
 	//--
@@ -2161,14 +2161,14 @@ public static function link_create($origin, $destination) {
 
 
 //================================================================ CREATE DIRS
-// create a dir
+// create a dir (non-recursive or recursive)
 // returns: 1 for success and 0 for error/fail
-public static function dir_create($dir_name) {
+public static function dir_create($dir_name, $recursive=false) {
 	//--
 	$dir_name = (string) $dir_name;
 	//--
 	if((string)$dir_name == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Create Dir: The Dir Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Create Dir [R='.(int)$recursive.'] // The Dir Name is Empty !');
 		return 0;
 	} //end if
 	//--
@@ -2182,11 +2182,27 @@ public static function dir_create($dir_name) {
 		//--
 		if(!self::file_or_link_exists($dir_name)) {
 			//--
-			$result = @mkdir($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
-			//--
-			if(is_dir($dir_name)) {
-				@chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
-			} //end if
+			if($recursive === true) {
+				$result = @mkdir($dir_name, SMART_FRAMEWORK_CHMOD_DIRS, true);
+				$dir_elements = (array) explode('/', $dir_name);
+				$tmp_crr_dir = '';
+				for($i=0; $i<count($dir_elements); $i++) { // fix: to chown all dir parts (in PHP the mkdir chown is applied only to the last part if recursive ...)
+					$dir_elements[$i] = (string) trim((string)$dir_elements[$i]);
+					if((string)$dir_elements[$i] != '') {
+						$tmp_crr_dir .= (string) SmartFileSysUtils::add_dir_last_slash((string)$dir_elements[$i]);
+						if((string)$tmp_crr_dir != '') {
+							if(is_dir((string)$tmp_crr_dir)) {
+								@chmod((string)$tmp_crr_dir, SMART_FRAMEWORK_CHMOD_DIRS); //apply separate chmod to each segment
+							} //end if
+						} //end if
+					} //end if
+				} //end for
+			} else {
+				$result = @mkdir($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
+				if(is_dir($dir_name)) {
+					@chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
+				} //end if
+			} //end if else
 			//--
 		} elseif(is_dir($dir_name)) {
 			//--
@@ -2195,12 +2211,12 @@ public static function dir_create($dir_name) {
 		} //end if else
 		//--
 		if(!is_dir($dir_name)) {
-			Smart::log_warning('LibFileSys // CreateDir // FAILED to create a directory: '.$dir_name);
+			Smart::log_warning('SmartFramework // FileSystem // CreateDir [R='.(int)$recursive.'] // FAILED to create a directory: '.$dir_name);
 			$out = 0;
 		} //end if
 		//--
 		if(!is_writable($dir_name)) {
-			Smart::log_warning('LibFileSys // CreateDir // The directory is not writable: '.$dir_name);
+			Smart::log_warning('SmartFramework // FileSystem // CreateDir [R='.(int)$recursive.'] // The directory is not writable: '.$dir_name);
 			$out = 0;
 		} //end if
 		//--
@@ -2213,76 +2229,6 @@ public static function dir_create($dir_name) {
 	} //end if
 	//--
 	return $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================ CREATE RECURSIVE DIRS
-// recursive create dir
-// returns: 1 for success and 0 for error/fail
-public static function dir_recursive_create($dir_name) {
-	//--
-	$dir_name = (string) $dir_name;
-	//--
-	if((string)$dir_name == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Create Dir Recursive: The Dir Name is Empty !');
-		return 0;
-	} //end if
-	//--
-	$dir_name = SmartFileSysUtils::add_dir_last_slash($dir_name); // fix invalid path (must end with /)
-	//--
-	SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
-	//--
-	if(is_dir($dir_name)) {
-		return 1; // stop if dir exists
-	} //end if
-	//--
-	$dir_elements = explode('/', $dir_name);
-	//--
-	if(Smart::array_size($dir_elements) <= 1) { // will have 'dir/'
-		return 0;
-	} //end if
-	//--
-	@clearstatcache();
-	//--
-	for($i=0; $i<count($dir_elements); $i++) {
-		//--
-		$tmp_element = $dir_elements[$i];
-		//--
-		if(strlen($tmp_element) <= 0) {
-			continue; // loop jump
-		} //end if
-		//--
-		$tmp_crr_dir .= $tmp_element.'/';
-		//--
-		$result = 0;
-		//--
-		if(is_file($tmp_crr_dir)) {
-			$result = 0; // will not rewrite a file with a dir !
-		} elseif(is_dir($tmp_crr_dir)) {
-			$result = 1; // dir already exists
-		} else {
-			$result = self::dir_create($tmp_crr_dir);
-		} //end if else
-		//--
-		if(!$result) {
-			return 0;
-		} //end if
-		//--
-	} //end for
-	//--
-	if(!is_dir($dir_name)) {
-		Smart::log_warning('LibFileSys // CreateDir Recursive // The directory does not exists: '.$dir_name);
-		return 0;
-	} //end if
-	//--
-	if(!is_writable($dir_name)) {
-		Smart::log_warning('LibFileSys // CreateDir Recursive // The directory is not writable: '.$dir_name);
-		return 0;
-	} //end if
-	//--
-	return 1;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2314,11 +2260,11 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 	$protected_dirdest = (string) $protected_dirdest;
 	//--
 	if(strlen($dirsource) <= 0) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Source Dir Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Source Dir Name is Empty !');
 		return 0; // empty source dir
 	} //end if
 	if(strlen($dirdest) <= 0) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Destination Dir Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Destination Dir Name is Empty !');
 		return 0; // empty destination dir
 	} //end if
 	//--
@@ -2329,7 +2275,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 	} //end if
 	if(strlen($protected_dirdest) <= 0) {
 		if(self::file_or_link_exists($dirdest)) {
-			Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Destination Dir exists: S='.$destination);
+			Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Destination Dir exists: S='.$destination);
 			return 0;
 		} //end if else
 		$protected_dirdest = (string) $dirdest; // 1st time
@@ -2344,49 +2290,49 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 	SmartFileSysUtils::raise_error_if_unsafe_path($protected_dirdest);
 	//-- protect against infinite loop if the source and destination are the same or destination contained in source
 	if((string)$dirdest == (string)$dirsource) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Source Dir is the same as Destination Dir: S&D='.$dirdest);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Source Dir is the same as Destination Dir: S&D='.$dirdest);
 		return 0;
 	} //end if
 	if((string)$dirdest == (string)SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($dirsource))) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Destination Dir is the same as Source Parent Dir: S='.$dirsource.' ; D='.$dirdest);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Destination Dir is the same as Source Parent Dir: S='.$dirsource.' ; D='.$dirdest);
 		return 0;
 	} //end if
 	if((string)substr($dirdest, 0, strlen($dirsource)) == (string)$dirsource) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Destination Dir is inside the Source Dir: S='.$dirsource.' ; D='.$dirdest);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Destination Dir is inside the Source Dir: S='.$dirsource.' ; D='.$dirdest);
 		return 0;
 	} //end if
 	if((string)substr($protected_dirdest, 0, strlen($protected_dirsource)) == (string)$protected_dirsource) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Original Destination Dir is inside the Original Source Dir: S*='.$protected_dirsource.' ; D*='.$protected_dirdest);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Original Destination Dir is inside the Original Source Dir: S*='.$protected_dirsource.' ; D*='.$protected_dirdest);
 		return 0;
 	} //end if
 	//-- protect against infinite loop (this can happen with loop sym-links)
 	if((string)$dirsource == (string)$protected_dirdest) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Source Dir is the same as Previous Step Source Dir (Loop Detected): S='.$dirsource.' ; S*='.$protected_dirdest);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Source Dir is the same as Previous Step Source Dir (Loop Detected): S='.$dirsource.' ; S*='.$protected_dirdest);
 		return 0;
 	} //end if
 	//--
 	if(!SmartFileSysUtils::check_file_or_dir_name($dirsource)) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Source Dir Name is Invalid: S='.$dirsource);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Source Dir Name is Invalid: S='.$dirsource);
 		return 0;
 	} //end if
 	if(!SmartFileSysUtils::check_file_or_dir_name($dirdest)) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Destination Dir Name is Invalid: D='.$dirdest);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Destination Dir Name is Invalid: D='.$dirdest);
 		return 0;
 	} //end if
 	//--
 	if(!is_dir($dirsource)) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Source Dir Name is not a Directory or does not exists: S='.$dirsource);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Source Dir Name is not a Directory or does not exists: S='.$dirsource);
 		return 0;
 	} //end if else
 	//--
 	if(self::file_or_link_exists($dirdest)) {
 		if(!is_dir($dirdest)) {
-			Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Destination Dir appear to be a file: D='.$dirdest);
+			Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Destination Dir appear to be a file: D='.$dirdest);
 			return 0;
 		} //end if
 	} else {
-		if(self::dir_recursive_create($dirdest) !== 1) {
-			Smart::log_warning('SmartFramework // FileSystem / Copy Dir: Could Not Recursively Create the Destination: D='.$dirdest);
+		if(self::dir_create($dirdest, true) !== 1) { // recursive
+			Smart::log_warning('SmartFramework // FileSystem // Copy Dir: Could Not Recursively Create the Destination: D='.$dirdest);
 			return 0;
 		} //end if
 	} //end if else
@@ -2413,7 +2359,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 						if(!is_dir($tmp_readlink)) {
 							if((string)self::lock_file_check(self::lock_file_name($tmp_readlink)) == '1') {
 								Smart::raise_error(
-									'SmartFramework // FileSystem / Copy Dir: Link is Locked (Read-Link Source): '.$tmp_readlink,
+									'SmartFramework // FileSystem // Copy Dir: Link is Locked (Read-Link Source): '.$tmp_readlink,
 									'ERROR: FS :: A Link is still LOCKED while trying to COPY [READLINK-SOURCE] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 								);
 								die(''); // just in case
@@ -2421,7 +2367,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 							} //end if
 							if((string)self::lock_file_check(self::lock_file_name($tmp_path)) == '1') {
 								Smart::raise_error(
-									'SmartFramework // FileSystem / Copy Dir: Link is Locked (Source): '.$tmp_path,
+									'SmartFramework // FileSystem // Copy Dir: Link is Locked (Source): '.$tmp_path,
 									'ERROR: FS :: A Link is still LOCKED while trying to COPY [SOURCE] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 								);
 								die(''); // just in case
@@ -2431,7 +2377,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 						//--
 						if((string)self::lock_file_check(self::lock_file_name($tmp_dest)) == '1') {
 							Smart::raise_error(
-								'SmartFramework // FileSystem / Copy Dir: Link is Locked (Destination): '.$tmp_dest,
+								'SmartFramework // FileSystem // Copy Dir: Link is Locked (Destination): '.$tmp_dest,
 								'ERROR: FS :: A Link is still LOCKED while trying to COPY [DESTINATION] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 							);
 							die(''); // just in case
@@ -2440,11 +2386,11 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 						//--
 						self::delete($tmp_dest);
 						if(self::file_or_link_exists($tmp_dest)) {
-							Smart::log_warning('LibFileSys // RecursiveDirCopy // Destination link still exists: '.$tmp_dest);
+							Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Destination link still exists: '.$tmp_dest);
 						} //end if
 						//--
 						if(self::link_create($tmp_readlink, $tmp_dest) !== 1) {
-							Smart::log_warning('LibFileSys // RecursiveDirCopy // Failed to copy a Link: '.$tmp_path);
+							Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Failed to copy a Link: '.$tmp_path);
 							return 0;
 						} //end if else
 						//--
@@ -2452,7 +2398,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 						//--
 						if((string)self::lock_file_check(self::lock_file_name($tmp_path)) == '1') {
 							Smart::raise_error(
-								'SmartFramework // FileSystem / Copy Dir: File is Locked (Source): '.$tmp_path,
+								'SmartFramework // FileSystem // Copy Dir: File is Locked (Source): '.$tmp_path,
 								'ERROR: FS :: A File is still LOCKED while trying to COPY [SOURCE] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 							);
 							die(''); // just in case
@@ -2461,7 +2407,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 						//--
 						if((string)self::lock_file_check(self::lock_file_name($tmp_dest)) == '1') {
 							Smart::raise_error(
-								'SmartFramework // FileSystem / Copy Dir: File is Locked (Destination): '.$tmp_dest,
+								'SmartFramework // FileSystem // Copy Dir: File is Locked (Destination): '.$tmp_dest,
 								'ERROR: FS :: A File is still LOCKED while trying to COPY [DESTINATION] ... Please Try Again in few seconds as the Server is too Busy ...!' // msg to display
 							);
 							die(''); // just in case
@@ -2470,24 +2416,24 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 						//--
 						self::delete($tmp_dest);
 						if(self::file_or_link_exists($tmp_dest)) {
-							Smart::log_warning('LibFileSys // RecursiveDirCopy // Destination file still exists: '.$tmp_dest);
+							Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Destination file still exists: '.$tmp_dest);
 						} //end if
 						//--
 						if(self::copy($tmp_path, $tmp_dest) !== 1) {
-							Smart::log_warning('LibFileSys // RecursiveDirCopy // Failed to copy a File: '.$tmp_path);
+							Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Failed to copy a File: '.$tmp_path);
 							return 0;
 						} //end if else
 						//--
 					} elseif(is_dir($tmp_path)) { // dir
 						//--
 						if(self::dir_recursive_private_copy($tmp_path, $tmp_dest, $protected_dirsource, $protected_dirdest) !== 1) {
-							Smart::log_warning('LibFileSys // RecursiveDirCopy // Failed on Dir: '.$tmp_path);
+							Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Failed on Dir: '.$tmp_path);
 							return 0;
 						} //end if
 						//--
 					} else {
 						//--
-						Smart::log_warning('LibFileSys // RecursiveDirCopy // Invalid Type: '.$tmp_path);
+						Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Invalid Type: '.$tmp_path);
 						return 0;
 						//--
 					} //end if else
@@ -2496,17 +2442,17 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $protec
 					//--
 					self::delete($tmp_dest);
 					if(self::file_or_link_exists($tmp_dest)) {
-						Smart::log_warning('LibFileSys // RecursiveDirCopy // Destination Link still exists: '.$tmp_dest);
+						Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Destination Link still exists: '.$tmp_dest);
 					} //end if
 					//--
 					if(self::link_create(self::link_get_origin($tmp_path), $tmp_dest) !== 1) {
-						Smart::log_warning('LibFileSys // RecursiveDirCopy // Failed to copy a Link: '.$tmp_path);
+						Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // Failed to copy a Link: '.$tmp_path);
 						return 0;
 					} //end if else
 					//--
 				} else {
 					//--
-					Smart::log_warning('LibFileSys // RecursiveDirCopy // File does not exists or is not accessible: '.$tmp_path);
+					Smart::log_warning('SmartFramework // FileSystem // RecursiveDirCopy // File does not exists or is not accessible: '.$tmp_path);
 					return 0;
 					//--
 				} //end if
@@ -2538,11 +2484,11 @@ public static function dir_rename($dir_name, $new_dir_name) {
 	$new_dir_name = (string) $new_dir_name;
 	//--
 	if((string)$dir_name == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Rename/Move Dir: Source Dir Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Rename/Move Dir: Source Dir Name is Empty !');
 		return 0;
 	} //end if
 	if((string)$new_dir_name == '') {
-		Smart::log_warning('SmartFramework // FileSystem / Rename/Move Dir: Destination Dir Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // Rename/Move Dir: Destination Dir Name is Empty !');
 		return 0;
 	} //end if
 	if((string)$dir_name == (string)$new_dir_name) {
@@ -2551,11 +2497,11 @@ public static function dir_rename($dir_name, $new_dir_name) {
 	} //end if
 	//--
 	if((!is_dir($dir_name)) OR ((is_link($dir_name)) AND (!is_dir(self::link_get_origin($dir_name))))) {
-		Smart::log_warning('LibFileSys // RenameDir // Source is not a DIR: S='.$dir_name.' ; D='.$new_dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // RenameDir // Source is not a DIR: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
 	if(self::file_or_link_exists($new_dir_name)) {
-		Smart::log_warning('LibFileSys // RenameDir // The destination already exists: S='.$dir_name.' ; D='.$new_dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // RenameDir // The destination already exists: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
 	//--
@@ -2566,19 +2512,19 @@ public static function dir_rename($dir_name, $new_dir_name) {
 	SmartFileSysUtils::raise_error_if_unsafe_path($new_dir_name);
 	//--
 	if((string)$dir_name == (string)$new_dir_name) {
-		Smart::log_warning('SmartFramework // FileSystem / Rename/Move Dir: Source and Destination are the same: S&D='.$dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // Rename/Move Dir: Source and Destination are the same: S&D='.$dir_name);
 		return 0;
 	} //end if
 	if((string)$new_dir_name == (string)SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($dir_name))) {
-		Smart::log_warning('SmartFramework // FileSystem / Copy Dir: The Destination Dir is the same as Source Parent Dir: S='.$dir_name.' ; D='.$new_dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // Copy Dir: The Destination Dir is the same as Source Parent Dir: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
 	if((string)substr($new_dir_name, 0, strlen($dir_name)) == (string)$dir_name) {
-		Smart::log_warning('SmartFramework // FileSystem / Rename/Move Dir: The Destination Dir is inside the Source Dir: S='.$dir_name.' ; D='.$new_dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // Rename/Move Dir: The Destination Dir is inside the Source Dir: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
 	if(!is_dir(SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($new_dir_name)))) {
-		Smart::log_warning('SmartFramework // FileSystem / Rename/Move Dir: The Destination Parent Dir is missing: P='.SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($new_dir_name)).' of D='.$new_dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // Rename/Move Dir: The Destination Parent Dir is missing: P='.SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($new_dir_name)).' of D='.$new_dir_name);
 		return 0;
 	} //end if
 	//--
@@ -2595,11 +2541,11 @@ public static function dir_rename($dir_name, $new_dir_name) {
 	} //end if else
 	//--
 	if((!is_dir($new_dir_name)) OR ((is_link($new_dir_name)) AND (!is_dir(self::link_get_origin($new_dir_name))))) {
-		Smart::log_warning('LibFileSys // RenameDir // FAILED to rename a directory: S='.$dir_name.' ; D='.$new_dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // RenameDir // FAILED to rename a directory: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
 	if(self::file_or_link_exists($dir_name)) {
-		Smart::log_warning('LibFileSys // RenameDir // Source DIR still exists: S='.$dir_name.' ; D='.$new_dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // RenameDir // Source DIR still exists: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
 	//--
@@ -2623,7 +2569,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 	$dir_name = (string) $dir_name;
 	//--
 	if((string)$dir_name == '') {
-		Smart::log_warning('LibFileSys // DeleteDir // Dir Name is Empty !');
+		Smart::log_warning('SmartFramework // FileSystem // DeleteDir [R='.(int)$recursive.'] // Dir Name is Empty !');
 		return 0;
 	} //end if
 	//-- THIS MUST BE DONE BEFORE ADDING THE TRAILING SLASH
@@ -2705,7 +2651,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 			} else {
 				//--
 				$result = false;
-				Smart::log_warning('LibFileSys // DeleteDir // FAILED to open the directory: '.$dir_name);
+				Smart::log_warning('SmartFramework // FileSystem // DeleteDir [R='.(int)$recursive.'] // FAILED to open the directory: '.$dir_name);
 				//--
 			} //end if
 			//-- finally, remove itself
@@ -2714,7 +2660,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 		} else { // the rest of cases: is a file or a link
 			//--
 			$result = false;
-			Smart::log_warning('LibFileSys // DeleteDir // This is not a directory: '.$dir_name);
+			Smart::log_warning('SmartFramework // FileSystem // DeleteDir [R='.(int)$recursive.'] // This is not a directory: '.$dir_name);
 			//--
 		} //end if
 		//--
@@ -2722,7 +2668,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 	//--
 	if(self::file_or_link_exists($dir_name)) { // last final check
 		$result = false;
-		Smart::log_warning('LibFileSys // DeleteDir // FAILED to delete a directory: '.$dir_name);
+		Smart::log_warning('SmartFramework // FileSystem // DeleteDir [R='.(int)$recursive.'] // FAILED to delete a directory: '.$dir_name);
 	} //end if
 	//--
 	if($result == true) {
@@ -2890,7 +2836,7 @@ final class SmartGetFileSystem {
 		$dir_name = (string) $dir_name;
 		//--
 		if((string)$dir_name == '') {
-			Smart::log_warning('LibFileSys // GetStorage // Dir Name is Empty !');
+			Smart::log_warning('SmartFramework // FileSystem // GetStorage // Dir Name is Empty !');
 			return array();
 		} //end if
 		//-- fix invalid path (must end with /)
@@ -2947,7 +2893,7 @@ final class SmartGetFileSystem {
 		$dir_name = (string) $dir_name;
 		//--
 		if((string)$dir_name == '') {
-			Smart::log_warning('LibFileSys // SearchFiles // Dir Name is Empty !');
+			Smart::log_warning('SmartFramework // FileSystem // SearchFiles // Dir Name is Empty !');
 			return array();
 		} //end if
 		//-- fix invalid path (must end with /)
@@ -3008,7 +2954,7 @@ final class SmartGetFileSystem {
 		$search_prevent_override = (string) $search_prevent_override;
 		//--
 		if((string)$dir_name == '') {
-			Smart::log_warning('LibFileSys // ReadsFolderRecurring // Dir Name is Empty !');
+			Smart::log_warning('SmartFramework // FileSystem // ReadsFolderRecurring // Dir Name is Empty !');
 			return; // this function does not return anything, but just stop here in this case
 		} //end if
 		//-- fix invalid path (must end with /)

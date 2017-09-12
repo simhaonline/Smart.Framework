@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170910
+ * @version 	v.170911
  * @package 	Base
  *
  */
@@ -1372,7 +1372,7 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 
 	//--
 	if(!is_dir($dir)) {
-		SmartFileSystem::dir_recursive_create($dir);
+		SmartFileSystem::dir_create($dir, true); // recursive
 	} // end if
 	//--
 	$protect_file = $dir.'index.html';
@@ -2143,7 +2143,7 @@ public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc
 	//-- exec
 	if((string)$cwd != '') {
 		if(!file_exists((string)$cwd)) {
-			SmartFileSystem::dir_recursive_create((string)$cwd);
+			SmartFileSystem::dir_create((string)$cwd, true); // recursive
 		} //end if
 		if(!is_dir((string)$cwd)) {
 			//--

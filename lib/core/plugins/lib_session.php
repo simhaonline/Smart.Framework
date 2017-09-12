@@ -62,7 +62,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.170411
+ * @version 	v.170911
  * @package 	Application
  *
  */
@@ -281,7 +281,7 @@ public static function start() {
 	$sf_sess_dir = Smart::safe_pathname($sf_sess_dir);
 	//--
 	if(!is_dir($sf_sess_dir)) {
-		SmartFileSystem::dir_recursive_create($sf_sess_dir);
+		SmartFileSystem::dir_create($sf_sess_dir, true); // recursive
 	} //end if
 	SmartFileSystem::write_if_not_exists('tmp/sessions/'.$sf_sess_area.'/'.'index.html', '');
 	//=====
