@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170613
+ * @version 	v.170913
  * @package 	Mailer:Send
  *
  */
@@ -560,7 +560,7 @@ private function build_multipart() {
 //$mail->subject = "Testing...";
 //$mail->is_html = false; // false | true
 //$mail->body = "This is just a test.";
-//$attachment = fread(fopen("test.jpg", "rb"), filesize("test.jpg"));
+//$attachment = file_get_contents(test.jpg);
 //$mail->add_attachment("$attachment", "test.jpg", "image/jpeg");
 //$mail->send();
 //=====================================================
@@ -605,7 +605,7 @@ private function build_multipart() {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170613
+ * @version 	v.170913
  * @package 	Mailer:Send
  *
  */

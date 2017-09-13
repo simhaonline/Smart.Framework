@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170609
+ * @version 	v.170913
  * @package 	Network:FTP
  *
  */
@@ -433,7 +433,7 @@ final class SmartFtpClient {
 		//--
 		umask($this->umask);
 		//--
-		if(SmartFileSystem::file_or_link_exists($localfile)) {
+		if(SmartFileSystem::path_exists($localfile)) {
 			SmartFileSystem::delete($localfile);
 			if((string)$this->debug_level == 'full') {
 				$this->_debug_print('WARNING: local file will be overwritten'."\n");
@@ -501,7 +501,7 @@ final class SmartFtpClient {
 	//===================================
 	public function ftp_put($remotefile, $localfile, $mode=1) {
 		//--
-		if(!SmartFileSystem::file_or_link_exists($localfile)) {
+		if(!SmartFileSystem::path_real_exists($localfile)) {
 			$this->error_msg = 'ERROR: PUT command failed // No such file or directory (or broken link): '.$localfile;
 			return false;
 		} //end if

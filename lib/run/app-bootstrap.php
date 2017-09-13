@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //####################
 
 //== Persistent-Cache Adapter
-if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM) >= 5) AND (is_file((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM))) {
+if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM) >= 5) AND (SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM))) {
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM);
 	require((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM); // custom persistent cache
 } elseif(is_array($configs['redis'])) {
@@ -38,7 +38,7 @@ if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_
 	require('lib/app/persistent-cache-x-blackhole.php'); // load the blackhole (x-none) persistent cache which will implement nothing but definitions and is required for compatibility
 } //end if else
 //== Text Translations Adapter (depends on Persistent-Cache)
-if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND (substr((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM) >= 5) AND (is_file((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM))) {
+if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND (substr((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM) >= 5) AND (SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM))) {
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
 	require((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
 } else {
@@ -55,7 +55,7 @@ if((string)SMART_FRAMEWORK_SESSION_HANDLER === 'redis') {
 		);
 		die('');
 	} //end if else
-} elseif(((string)SMART_FRAMEWORK_SESSION_HANDLER === 'custom') AND (defined('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER') AND (substr((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER) >= 5) AND (is_file((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER)))) {
+} elseif(((string)SMART_FRAMEWORK_SESSION_HANDLER === 'custom') AND (defined('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER') AND (substr((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER) >= 5) AND (SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER)))) {
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
 	require((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
 } else { // files
@@ -128,7 +128,7 @@ function autoload__SmartFrameworkModClasses($classname) {
 		return; // invalid path characters in file
 	} //end if
 	//--
-	if(!is_file($path.'.php')) {
+	if(!is_file($path.'.php')) { // here must be used is_file() because is autoloader ...
 		return; // file does not exists
 	} //end if
 	//--
@@ -242,7 +242,7 @@ final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170405
+ * @version 	v.170913
  * @package 	Application
  *
  */
@@ -277,7 +277,7 @@ final class SmartAppInfo implements SmartInterfaceAppInfo {
 			//--
 		} else { // real test
 			//--
-			if(is_dir('etc/templates/'.$y_template_name.'/')) {
+			if(SmartFileSystem::is_type_dir('etc/templates/'.$y_template_name.'/')) {
 				$exists = true;
 				self::$cache['TestIfTemplateExists:'.$y_template_name] = 'YES';
 			} else {
@@ -317,7 +317,7 @@ final class SmartAppInfo implements SmartInterfaceAppInfo {
 			//--
 		} else { // real test
 			//--
-			if(is_dir('modules/'.$y_module_name.'/')) {
+			if(SmartFileSystem::is_type_dir('modules/'.$y_module_name.'/')) {
 				$exists = true;
 				self::$cache['TestIfModuleExists:'.$y_module_name] = 'YES';
 			} else {

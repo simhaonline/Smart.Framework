@@ -67,7 +67,7 @@ if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
 	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, set it here to avoid later modifications
 } //end if
 //--
-if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) {
+if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) { // here must be file_exists() and is_link() as the file sys lib is not yet initialized ... {{{SYNC-SF-PATH-EXISTS}}}
 	define('SMART_FRAMEWORK_INSTALL_MODE', 'yes');
 } else {
 	define('SMART_FRAMEWORK_INSTALL_MODE', 'no');
@@ -841,7 +841,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		170904
+ * @version		170913
  * @package 	Application
  *
  */
@@ -1181,17 +1181,17 @@ public static function Create_Required_Dirs() {
 	@clearstatcache();
 	//-- tmp dir
 	$dir = 'tmp/';
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 		SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n");
 	} else { // manage debug cleanup
 		if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
-			if(is_file('tmp/SMART-FRAMEWORK__DEBUG-ON')) {
-				if(is_dir('tmp/logs/idx/')) {
+			if(SmartFileSystem::is_type_file('tmp/SMART-FRAMEWORK__DEBUG-ON')) {
+				if(SmartFileSystem::is_type_dir('tmp/logs/idx/')) {
 					SmartFileSystem::dir_delete('tmp/logs/idx/', true);
 				} //end if
-				if(is_dir('tmp/logs/adm/')) {
+				if(SmartFileSystem::is_type_dir('tmp/logs/adm/')) {
 					SmartFileSystem::dir_delete('tmp/logs/adm/', true);
 				} //end if
 				SmartFileSystem::delete('tmp/SMART-FRAMEWORK__DEBUG-ON');
@@ -1200,7 +1200,7 @@ public static function Create_Required_Dirs() {
 			SmartFileSystem::write_if_not_exists('tmp/SMART-FRAMEWORK__DEBUG-ON', 'DEBUG:ON');
 		} //end if else
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (Temporary Folder is Not Writable)' // this must be also as message !!!
@@ -1208,7 +1208,7 @@ public static function Create_Required_Dirs() {
 		die();
 		return;
 	} //end if
-	if(!is_file($dir.'.htaccess')) {
+	if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #TMP: '.$dir.'.htaccess',
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1218,11 +1218,11 @@ public static function Create_Required_Dirs() {
 	} //end if
 	//-- tmp cache dir
 	$dir = 'tmp/cache/';
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1232,11 +1232,11 @@ public static function Create_Required_Dirs() {
 	} //end if
 	//-- tmp logs dir
 	$dir = 'tmp/logs/';
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (Error Log Folder is Not Writable)' // this must be also as message !!!
@@ -1246,11 +1246,11 @@ public static function Create_Required_Dirs() {
 	} //end if
 	//-- tmp logs/admin dir
 	$dir = 'tmp/logs/adm/';
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1260,11 +1260,11 @@ public static function Create_Required_Dirs() {
 	} //end if
 	//-- tmp logs/idx dir
 	$dir = 'tmp/logs/idx/';
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1274,11 +1274,11 @@ public static function Create_Required_Dirs() {
 	} //end if
 	//-- tmp sessions dir
 	$dir = 'tmp/sessions/';
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1291,14 +1291,14 @@ public static function Create_Required_Dirs() {
 	$ctrlfile = $dir.'#wpub';
 	$htfile = $dir.'.htaccess';
 	$robotsfile = $dir.'robots.txt';
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 		SmartFileSystem::write($robotsfile, 'User-agent: *'."\n".'Disallow: *'); // avoid robots to index it
 		SmartFileSystem::write($ctrlfile, 'FileName: #wpub (#WEB-PUBLIC)'."\n".'Created by: App-Runtime'."\n".date('Y-m-d H:i:s O'));
 		SmartFileSystem::write($htfile, trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n"); // trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: #WEB-PUBLIC Folder: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1306,7 +1306,7 @@ public static function Create_Required_Dirs() {
 		die();
 		return;
 	} //end if
-	if(!is_file($ctrlfile)) {
+	if(!SmartFileSystem::is_type_file($ctrlfile)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'Cannot Connect to FileSystem #WEB-PUBLIC: '.$ctrlfile,
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1314,7 +1314,7 @@ public static function Create_Required_Dirs() {
 		die();
 		return;
 	} //end if
-	if(!is_file($htfile)) {
+	if(!SmartFileSystem::is_type_file($htfile)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #WEB-PUBLIC: '.$htfile,
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1324,11 +1324,11 @@ public static function Create_Required_Dirs() {
 	} //end if
 	//-- wpub/webapps-content
 	$dir = 'wpub/webapps-content/'; // {{{SYNC-WEBAPPS-DIR}}}
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
 		SmartFileSystem::write($dir.'index.html', '');
 	} // end if
-	if(!is_writable($dir)) {
+	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
@@ -1481,7 +1481,7 @@ public static function DebugRequestLog($y_message) {
 		$the_log = $the_dir.date('Y-m-d@H').'-debug-requests.log';
 	} //end if else
 	//--
-	if(is_dir((string)$the_dir)) {
+	if(is_dir((string)$the_dir)) { // here must be is_dir() and file_put_contents() as the smart framework libs are not yet initialized in this phase ...
 		@file_put_contents((string)$the_log, $y_message."\n", FILE_APPEND | LOCK_EX); // init
 	} //end if
 	//--

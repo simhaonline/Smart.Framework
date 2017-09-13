@@ -85,7 +85,7 @@ public static function max_upload_size() {
 
 //================================================================
 /**
- * Check a Filename or a Dirname if contain valid characters (to avoid security injections)
+ * Check a File Name or a Directory Name if contain valid characters (to avoid security injections)
  *
  * @param 	STRING 	$y_path 								:: The path (dir or file) to validate
  * @param 	YES/NO 	$y_deny_absolute_path 					:: *Optional* If YES will dissalow absolute paths
@@ -328,9 +328,10 @@ public static function add_dir_last_slash($y_path) {
 
 //================================================================
 /**
- * Remove the version from a file name.
+ * Remove the version from a file name
+ * Ex: myfile.@1505240360@.ext will become: myfile.ext
  *
- * @param 	STRING 	$file 						:: The file name to be processed
+ * @param 	STRING 	$file 						:: The file name (with version or not) to be processed
  *
  * @return 	STRING								:: The fixed file name without the version
  */
@@ -360,8 +361,9 @@ public static function version_remove($file) {
 //================================================================
 /**
  * Add the version to a file name.
+ * Ex: myfile.ext will become: myfile.@1505240360@.ext
  *
- * @param 	STRING 	$file 						:: The file name to be processed
+ * @param 	STRING 	$file 						:: The file name (with version or not) to be processed ; if version detected will be preserved
  * @param 	STRING 	$version 					:: The version to be added
  *
  * @return 	STRING								:: The fixed file name with a version
@@ -545,8 +547,8 @@ public static function get_file_extension_from_path($y_path) {
 
 //================================================================
 /**
- * Generate a prefixed dir from a base36 ID: [0-9A-Z] length: 10 chars.
- * It does include also the ID as final folder.
+ * Generate a prefixed dir from a base36 UUID, 10 chars length : [0-9A-Z].
+ * It does include also the UUID as final folder segment.
  * Example: for ID ABCDEFGHIJ09 will return: 9T/5B/0B/9M/9T5B0B9M8M/ as the generated prefixed path.
  * This have to be used for large folder storage structure to avoid limitations on some filesystems (ext3 / ntfs) where max sub-dirs per dir is 32k.
  *
@@ -554,7 +556,7 @@ public static function get_file_extension_from_path($y_path) {
  * If a lower length than 10 chars is provided will pad with 0 on the left.
  * If a higher length or an invalid ID is provided will reset the ID to 000000..00 (10 chars) for the given length, but also drop a warning.
  *
- * @param STRING 		$y_id		10 chars id
+ * @param STRING 		$y_id		10 chars id (uuid10)
  * @return STRING 					Prefixed Path
  */
 public static function prefixed_uuid10_dir($y_id) { // check len is default 10 as set in lib core uuid 10s
@@ -562,14 +564,14 @@ public static function prefixed_uuid10_dir($y_id) { // check len is default 10 a
 	$y_id = (string) strtoupper(trim((string)$y_id));
 	//--
 	if((strlen($y_id) != 10) OR (!preg_match('/^[A-Z0-9]+$/', (string)$y_id))) {
-		Smart::log_warning(__METHOD__.'() // Prefixed Dir B36-UID // Invalid ID ['.$y_id.']');
-		$y_id = '0000000000'; // the all zero
+		Smart::log_warning(__METHOD__.'() // Prefixed Path UID10(B36) // Invalid ID ['.$y_id.']');
+		$y_id = '0000000000'; // str-10.B36 (uuid10)
 	} //end if
 	//--
 	$dir = self::add_dir_last_slash(self::add_dir_last_slash((string)implode('/', (array)str_split((string)substr((string)$y_id, 0, 8), 2))).$y_id); // split by 2 grouping except last 2 chars
 	//--
 	if(!self::check_file_or_dir_name($dir)) {
-		Smart::log_warning(__METHOD__.'() // Prefixed Dir B36-UID // Invalid Path: ['.$dir.'] :: From ID: ['.$y_id.']');
+		Smart::log_warning(__METHOD__.'() // Prefixed Path UID10(B36) // Invalid Dir Path: ['.$dir.'] :: From ID: ['.$y_id.']');
 		return 'tmp/invalid/pfx-b36uid-path/'; // this error should not happen ...
 	} //end if
 	//--
@@ -581,7 +583,7 @@ public static function prefixed_uuid10_dir($y_id) { // check len is default 10 a
 
 //================================================================
 /**
- * Generate a prefixed parent dir from a base16 sha1: [0-9a-f] length: 40 chars.
+ * Generate a prefixed dir from a base16 UUID (sha1), 40 chars length : [0-9a-f].
  * It does NOT include the ID final folder.
  * Example: for ID df3a808b2bf20aaab4419c43d9f3a6143bd6b4bb will return: d/f3a/808/b2b/f20/aaa/b44/19c/43d/9f3/a61/43b/d6b/ as the generated prefixed path.
  * This have to be used for large folder storage structure to avoid limitations on some filesystems (ext3 / ntfs) where max sub-dirs per dir is 32k.
@@ -590,7 +592,7 @@ public static function prefixed_uuid10_dir($y_id) { // check len is default 10 a
  * If a lower length than 40 chars is provided will pad with 0 on the left.
  * If a higher length than 40 chars or an invalid ID is provided will reset the ID to 000000..00 (40 chars) for the given length, but also drop a warning.
  *
- * @param STRING 		$y_id		10 chars id
+ * @param STRING 		$y_id		40 chars id (sha1)
  * @return STRING 					Prefixed Path
  */
 public static function prefixed_sha1_path($y_id) { // here the number of levels does not matter too much as at the end will be a cache file
@@ -598,14 +600,14 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
 	$y_id = (string) strtolower(trim((string)$y_id));
 	//--
 	if((strlen($y_id) != 40) OR (!preg_match('/^[a-f0-9]+$/', (string)$y_id))) {
-		Smart::log_warning(__METHOD__.'() // Prefixed pDir B16SHA // Invalid ID ['.$y_id.']');
-		$y_id = '0000000000000000000000000000000000000000'; // 40 hex like sha1
+		Smart::log_warning(__METHOD__.'() // Prefixed Path SHA1-40(B16) // Invalid ID ['.$y_id.']');
+		$y_id = '0000000000000000000000000000000000000000'; // str-40.hex (sha1)
 	} //end if
 	//--
 	$dir = self::add_dir_last_slash((string)substr((string)$y_id, 0, 1).'/'.implode('/', (array)str_split((string)substr((string)$y_id, 1, 36), 3))); // split by 3 grouping
 	//--
 	if(!self::check_file_or_dir_name($dir)) {
-		Smart::log_warning(__METHOD__.'() // Prefixed pDir B16SHA // Invalid Path: ['.$dir.'] :: From ID: ['.$y_id.']');
+		Smart::log_warning(__METHOD__.'() // Prefixed Path SHA1-40(B16) // Invalid Dir Path: ['.$dir.'] :: From ID: ['.$y_id.']');
 		return 'tmp/invalid/pfx-b16sha-path/'; // this error should not happen ...
 	} //end if
 	//--
@@ -1176,12 +1178,202 @@ final class SmartFileSystem {
 
 
 //================================================================
-// BUG FIX: PHP file_exists() will return false if the file is a broken link ...
-public static function file_or_link_exists($y_file_or_link) {
+/**
+ * GET the File Size in Bytes. If invalid file or not file or broken link will return 0 (zero).
+ * This provides a safe way to get the file size (works also with symlinks) ...
+ *
+ * @param 	STRING 	$file_name 					:: The relative path to the file name to get the size for (file or symlink)
+ *
+ * @return 	INTEGER								:: 0 (zero) if file does not exists or invalid file type ; the file size in bytes for the rest of cases
+ */
+public static function get_file_size($file_name) {
+	//--
+	$file_name = (string) $file_name;
+	//--
+	if((string)trim((string)$file_name) == '') {
+		return 0;
+	} //end if
+	if(!self::path_real_exists($file_name)) {
+		return 0;
+	} //end if
+	//--
+	return (int) @filesize((string)$file_name); // should return INTEGER as some comparisons may fail if casted type
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * GET the File Modification Timestamp. If invalid file or not file or broken link will return 0 (zero).
+ * This provides a safe way to get the file modification timestamp (works also with symlinks) ...
+ *
+ * @param 	STRING 	$file_name 					:: The relative path to the file name to get the last modification timestamp for (file or symlink)
+ *
+ * @return 	INTEGER								:: 0 (zero) if file does not exists or invalid file type ; the file modification timestamp for the rest of cases
+ */
+public static function get_file_mtime($file_name) {
+	//--
+	$file_name = (string) $file_name;
+	//--
+	if((string)trim((string)$file_name) == '') {
+		return 0;
+	} //end if
+	if(!self::path_real_exists($file_name)) {
+		return 0;
+	} //end if
+	//--
+	return (int) @filemtime((string)$file_name); // should return INTEGER as some comparisons may fail if casted type
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * CHECK if a path is a directory (folder) type and exists.
+ * This provides a safe way to check if a path is directory (folder) (works also with symlinks) ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or dir or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if directory (folder), FALSE if not
+ */
+public static function is_type_dir($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		return false;
+	} //end if
 	//--
 	@clearstatcache();
 	//--
-	if((file_exists($y_file_or_link)) OR (is_link($y_file_or_link))) {
+	return (bool) is_dir($path);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * CHECK if a path is a file type and exists.
+ * This provides a safe way to check if a path is file (works also with symlinks) ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or dir or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if file, FALSE if not
+ */
+public static function is_type_file($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		return false;
+	} //end if
+	//--
+	@clearstatcache();
+	//--
+	return (bool) is_file($path);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * CHECK if a path directory or file is a symlink and exists. Will not check if symlink is broken (not check if symlink origin exists)
+ * This provides a safe way to check if a path is symlink (may be broken or not) ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or dir or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if symlink, FALSE if not
+ */
+public static function is_type_link($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		return false;
+	} //end if
+	//--
+	@clearstatcache();
+	//--
+	return (bool) is_link($path);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * CHECK if a path directory or file exists and is readable (includding if a symlink).
+ * This provides a safe way to check if a path is readable ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or dir or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if readable, FALSE if not
+ */
+public static function have_access_read($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		return false;
+	} //end if
+	//--
+	@clearstatcache();
+	//--
+	return (bool) is_readable($path);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * CHECK if a path directory or file exists and is writable (includding if a symlink).
+ * This provides a safe way to check if a path is writable ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or dir or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if writable, FALSE if not
+ */
+public static function have_access_write($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		return false;
+	} //end if
+	//--
+	@clearstatcache();
+	//--
+	return (bool) is_writable($path);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * CHECK if a path exists (includding if a symlink or a broken symlink).
+ * This provides a safe way to check if a path exists because using only PHP file_exists() will return false if the path is a broken symlink ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or dir or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if exists, FALSE if not
+ */
+public static function path_exists($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		return false;
+	} //end if
+	//--
+	@clearstatcache();
+	//--
+	if((file_exists($path)) OR (is_link($path))) { // {{{SYNC-SF-PATH-EXISTS}}}
 		return true;
 	} else {
 		return false;
@@ -1191,11 +1383,46 @@ public static function file_or_link_exists($y_file_or_link) {
 //================================================================
 
 
+//================================================================
+/**
+ * CHECK if a path real exists (excluding if a symlink or a broken symlink).
+ * This provides a way to check if a path exists but only if take in consideration that the path may be a broken symlink that will return false if checked
+ * For normal checking if a path exists use SmartFileSystem::path_exists().
+ * Use this in special cases where you need to check if a path that may be a broken link ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or dir or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if exists, FALSE if not
+ */
+// will return TRUE if file or dir exists ; if a symlink will return TRUE just if the symlink is not broken (it's target exists)
+public static function path_real_exists($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		return false;
+	} //end if
+	//--
+	@clearstatcache();
+	//--
+	return (bool) file_exists($path); // checks if a file or directory exists (but this is not safe with symlinks as if a symlink is broken will return false ...)
+	//--
+} //END FUNCTION
+//================================================================
+
+
 //================================================================ READ FILES
-// read a file with checks until the defined length (if defined length is zero, read the entire file)
-// return the file content as string
-// CANNOT USED TO ACCESS TEMPORARY UPLOAD FILES WHICH ARE ALWAYS ABSOLUTE PATH
-// NOTE: To access uploaded files use ::read_uploaded()
+/**
+ * Safe READ A FILE contents. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/file.ext).
+ * It can read the full file content or just a part, starting from the zero offset (ex: first 100 bytes only)
+ * IT CANNOT BE USED TO ACCESS TEMPORARY UPLOAD FILES WHICH ARE ALWAYS ABSOLUTE PATHS. To access uploaded files use the method SmartFileSystem::read_uploaded()
+ *
+ * @param 	STRING 		$file_name 				:: The relative path of file to be read (can be a symlink to a file)
+ * @param 	INTEGER+ 	$file_len 				:: DEFAULT is 0 (zero) ; If zero will read the entire file ; If > 0 (ex: 100) will read only the first 100 bytes fro the file or less if the file size is under 100 bytes
+ * @param 	YES/NO 		$markchmod 				:: DEFAULT is 'no' ; If 'yes' will force a chmod (as defined in SMART_FRAMEWORK_CHMOD_FILES) on the file before trying to read to ensure consistent chmod on all accesible files.
+ *
+ * @return 	STRING								:: The file contents (or a part of file contents if $file_len parameter is used) ; if the file does not exists will return an empty string
+ */
 public static function read($file_name, $file_len=0, $markchmod='no') {
 	//--
 	$file_name = (string) $file_name;
@@ -1215,23 +1442,23 @@ public static function read($file_name, $file_len=0, $markchmod='no') {
 	//--
 	if(SmartFileSysUtils::check_file_or_dir_name($file_name)) {
 		//--
-		if(!is_dir($file_name)) {
+		if(!self::is_type_dir($file_name)) {
 			//--
-			if(is_file($file_name)) {
+			if(self::is_type_file($file_name)) {
 				//--
 				if((string)$markchmod == 'yes') {
 					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); // force chmod
 				} //end if
-				if(!is_readable($file_name)) {
+				if(!self::have_access_read($file_name)) {
 					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //try to make ir readable by applying chmod
-					if(!is_readable($file_name)) {
+					if(!self::have_access_read($file_name)) {
 						Smart::log_warning(__METHOD__.'() // ReadFile // A file is not readable: '.$file_name);
 						return '';
 					} //end if
 				} //end if
 				//--
 				if($file_len > 0) {
-					$tmp_file_len = Smart::format_number_int(@filesize((string)$file_name), '+');
+					$tmp_file_len = Smart::format_number_int(self::get_file_size((string)$file_name), '+');
 					if((int)$file_len > (int)$tmp_file_len) {
 						$file_len = (int) $tmp_file_len; // cannot be more than file length
 					} //end if
@@ -1275,10 +1502,18 @@ public static function read($file_name, $file_len=0, $markchmod='no') {
 
 
 //================================================================ CREATE AND WRITE FILES
-// create or write a file
-// return true or false
-// $write_mode is: 'w' = write / 'a' = append
-// returns: 1 for success and 0 for error/fail
+/**
+ * Safe CREATE AND/OR WRITE/APPEND CONTENTS TO A FILE. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/file.ext).
+ * It can create a new file or overwrite an existing file.
+ * It also can to write append to a file.
+ * The file will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_FILES.
+ *
+ * @param 	STRING 		$file_name 				:: The relative path of file to be written (can be an existing symlink to a file)
+ * @param 	STRING 		$file_content 			:: DEFAULT is '' ; The content string to be written to the file (binary safe)
+ * @param 	ENUM 		$write_mode 			:: DEFAULT is 'w' Write (If file exists then overwrite. If the file does not exist create it) ; If 'a' will use Write-Append by appending the content to a file which can exists or not.
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function write($file_name, $file_content='', $write_mode='w') {
 	//--
 	$file_name = (string) $file_name;
@@ -1296,13 +1531,13 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 	//--
 	if(SmartFileSysUtils::check_file_or_dir_name($file_name)) {
 		//--
-		if(!is_dir($file_name)) {
+		if(!self::is_type_dir($file_name)) {
 			//-- remove it if is a link
-			if(is_link($file_name)) {
+			if(self::is_type_link($file_name)) {
 				self::delete($file_name); // delete the link if is a link (before setting the lock file !)
 			} //end if
 			//--
-			if(is_file($file_name)) {
+			if(self::is_type_file($file_name)) {
 				@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod first to be sure file is writable
 			} //end if
 			//-- fopen/fwrite method lacks the real locking which can be achieved just with flock which is not as safe as doing at once with: file_put_contents
@@ -1312,11 +1547,11 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 				$result = @file_put_contents($file_name, (string)$file_content, FILE_APPEND | LOCK_EX);
 			} //end if else
 			//--
-			if(is_file($file_name)) {
+			if(self::is_type_file($file_name)) {
 				//--
 				@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 				//--
-				if(!is_writable($file_name)) {
+				if(!self::have_access_write($file_name)) {
 					Smart::log_warning(__METHOD__.'() // WriteFile // A file is not writable: '.$file_name);
 				} //end if
 				//--
@@ -1347,11 +1582,18 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 //================================================================
 
 
-//================================================================ WRITE IF NOT EXISTS
-// write a file just if not exists
-// lock check is managed via ::write
-// stat cache is cleared via :: write
-// returns: 1 for success and 0 for error/fail
+//================================================================ WRITE IF NOT EXISTS OR CONTENT DIFFERS
+/**
+ * Safe CREATE OR WRITE TO A FILE IF NOT EXISTS OR CONTENT DIFFERS. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/file.ext).
+ * It can only create a new file or overwrite an existing file if the content does not match.
+ * The file will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_FILES.
+ *
+ * @param 	STRING 		$file_name 				:: The relative path of file to be written (can be an existing symlink to a file)
+ * @param 	STRING 		$file_content 			:: DEFAULT is '' ; The content string to be written to the file (binary safe)
+ * @param 	YES/NO 		$y_chkcompare 			:: DEFAULT is 'no' ; If 'yes' will check the existing fiile contents and will overwrite if different than the passed contents in $file_content
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function write_if_not_exists($file_name, $file_content, $y_chkcompare='no') {
 	//--
 	$file_name = (string) $file_name;
@@ -1375,7 +1617,7 @@ public static function write_if_not_exists($file_name, $file_content, $y_chkcomp
 		//--
 	} else {
 		//--
-		if(!is_file($file_name)) {
+		if(!self::is_type_file($file_name)) {
 			$x_ok = self::write($file_name, (string)$file_content);
 		} else {
 			$x_ok = 1;
@@ -1389,10 +1631,19 @@ public static function write_if_not_exists($file_name, $file_content, $y_chkcomp
 //================================================================
 
 
-//================================================================ COPY FILE
-// copy a file to a new location
-// return true or false
-// returns: 1 for success and 0 for error/fail
+//================================================================ COPY A FILE TO A DESTINATION
+/**
+ * Safe COPY A FILE TO A DIFFERENT LOCATION. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/file.ext).
+ * It will copy the file from source location to a destination location (includding across partitions).
+ * The destination file will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_FILES.
+ *
+ * @param 	STRING 		$file_name 				:: The relative path of file to be copied (can be a symlink to a file)
+ * @param 	STRING 		$newlocation 			:: The relative path of the destination file (where to copy)
+ * @param 	BOOLEAN 	$overwrite_destination 	:: DEFAULT is FALSE ; If set to FALSE will FAIL if destination file exists ; If set to TRUE will overwrite the file destination if exists
+ * @param 	BOOLEAN 	$check_copy_contents 	:: DEFAULT is TRUE ; If set to TRUE (safe mode) will compare the copied content from the destination file with the original file content using sha1-file checksums ; If set to FALSE (non-safe mode) will not do this comparison check (but may save a big amount of time when working with very large files)
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function copy($file_name, $newlocation, $overwrite_destination=false, $check_copy_contents=true) {
 	//--
 	$file_name = (string) $file_name;
@@ -1411,12 +1662,12 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 		return 0;
 	} //end if
 	//--
-	if((!is_file($file_name)) OR ((is_link($file_name)) AND (!is_file(self::link_get_origin($file_name))))) {
+	if((!self::is_type_file($file_name)) OR ((self::is_type_link($file_name)) AND (!self::is_type_file(self::link_get_origin($file_name))))) {
 		Smart::log_warning(__METHOD__.'() // Copy // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
 	if($overwrite_destination !== true) {
-		if(self::file_or_link_exists($newlocation)) {
+		if(self::path_exists($newlocation)) {
 			Smart::log_warning(__METHOD__.'() // Copy // The destination file exists (1): S='.$file_name.' ; D='.$newlocation);
 			return 0;
 		} //end if
@@ -1429,21 +1680,21 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 	//--
 	$result = false;
 	//--
-	if(is_file($file_name)) {
+	if(self::is_type_file($file_name)) {
 		//--
-		if(($overwrite_destination === true) OR (!self::file_or_link_exists($newlocation))) {
+		if(($overwrite_destination === true) OR (!self::path_exists($newlocation))) {
 			//--
 			$result = @copy($file_name, $newlocation); // if destination exists will overwrite it
 			//--
-			if(is_file($newlocation)) {
+			if(self::is_type_file($newlocation)) {
 				//--
 				@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 				//--
-				if(!is_readable($newlocation)) {
+				if(!self::have_access_read($newlocation)) {
 					Smart::log_warning(__METHOD__.'() // CopyFile // Destination file is not readable: '.$newlocation);
 				} //end if
 				//--
-				if(filesize($file_name) !== filesize($newlocation)) {
+				if((int)self::get_file_size($file_name) !== (int)self::get_file_size($newlocation)) {
 					$result = false; // clear
 					self::delete($newlocation); // remove incomplete copied file
 					Smart::log_warning(__METHOD__.'() // CopyFile // Destination file is not same size as original: '.$newlocation);
@@ -1482,8 +1733,17 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 
 
 //================================================================ RENAME / MOVE FILES
-// move a file to a new location
-// returns: 1 for success and 0 for error/fail
+/**
+ * Safe RENAME OR MOVE A FILE TO A DIFFERENT LOCATION. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/file.ext).
+ * It will rename or move the file from source location to a destination location (includding across partitions).
+ * The destination file will NOT be rewritten if exists, so be sure to check and remove the destination if you intend to overwrite it.
+ * After rename or move the destination will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_FILES.
+ *
+ * @param 	STRING 		$file_name 				:: The relative path of file to be renamed or moved (can be a symlink to a file)
+ * @param 	STRING 		$newlocation 			:: The relative path of the destination file (new file name to rename or a new path where to move)
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function rename($file_name, $newlocation) {
 	//--
 	$file_name = (string) $file_name;
@@ -1502,11 +1762,11 @@ public static function rename($file_name, $newlocation) {
 		return 0;
 	} //end if
 	//--
-	if((!is_file($file_name)) OR ((is_link($file_name)) AND (!is_file(self::link_get_origin($file_name))))) {
+	if((!self::is_type_file($file_name)) OR ((self::is_type_link($file_name)) AND (!self::is_type_file(self::link_get_origin($file_name))))) {
 		Smart::log_warning(__METHOD__.'() // Rename/Move // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
-	if(self::file_or_link_exists($newlocation)) {
+	if(self::path_exists($newlocation)) {
 		Smart::log_warning(__METHOD__.'() // Rename/Move // The destination already exists: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
@@ -1520,22 +1780,22 @@ public static function rename($file_name, $newlocation) {
 	//--
 	if(((string)$file_name != (string)$newlocation) AND (SmartFileSysUtils::check_file_or_dir_name($file_name)) AND (SmartFileSysUtils::check_file_or_dir_name($newlocation))) {
 		//--
-		if((is_file($file_name)) OR ((is_link($file_name)) AND (is_file(self::link_get_origin($file_name))))) { // don't move broken links
+		if((self::is_type_file($file_name)) OR ((self::is_type_link($file_name)) AND (self::is_type_file(self::link_get_origin($file_name))))) { // don't move broken links
 			//--
-			if(!is_dir($newlocation)) {
+			if(!self::is_type_dir($newlocation)) {
 				//--
 				self::delete($newlocation);
 				//--
-				if(file_exists($newlocation)) {
+				if(self::path_exists($newlocation)) {
 					//--
-					Smart::log_warning(__METHOD__.'() // RenameFile // Destination file could not be cleared: '.$newlocation);
+					Smart::log_warning(__METHOD__.'() // RenameFile // Destination file points to an existing file or link: '.$newlocation);
 					//--
 				} else {
 					//--
 					$f_cx = @rename($file_name, $newlocation);
 					//--
-					if((is_file($newlocation)) OR ((is_link($newlocation)) AND (is_file(self::link_get_origin($newlocation))))) {
-						if(is_file($newlocation)) {
+					if((self::is_type_file($newlocation)) OR ((self::is_type_link($newlocation)) AND (self::is_type_file(self::link_get_origin($newlocation))))) {
+						if(self::is_type_file($newlocation)) {
 							@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); // apply chmod just if file
 						} //end if
 					} else {
@@ -1543,7 +1803,7 @@ public static function rename($file_name, $newlocation) {
 						Smart::log_warning(__METHOD__.'() // RenameFile // Failed to rename a file: '.$file_name.' // to destination: '.$newlocation);
 					} //end if
 					//--
-					if(!is_readable($newlocation)) {
+					if(!self::have_access_read($newlocation)) {
 						Smart::log_warning(__METHOD__.'() // RenameFile // Destination file is not readable: '.$newlocation);
 					} //end if
 				} //end if
@@ -1567,9 +1827,17 @@ public static function rename($file_name, $newlocation) {
 
 
 //================================================================ READ UPLOADED FILES
-// read an uploaded file
-// return the file contents as string
-// v.160215 with fix for Windows absolute paths
+/**
+ * Safe READ AN UPLOADED FILE contents. WORKS WITH ABSOLUTE PATHS (Ex: /tmp/path/to/uploaded-file.ext).
+ * INFO: This function is 100% SAFE ON LINUX and UNIX file systems.
+ * WARNING: This function is NOT VERY SAFE TO USE ON WINDOWS file systems (use it on your own risk) because extra checks over the absolute path are not available on windows paths, thus in theory it may lead to insecure path access if crafted paths may result ...
+ * It will read the full file content of the uploaded file.
+ * IT SHOULD BE USED TO ACCESS ONLY TEMPORARY UPLOAD FILES. To read other files use the method SmartFileSystem::read()
+ *
+ * @param 	STRING 		$file_name 				:: The absolute path of the uploaded file to be read
+ *
+ * @return 	STRING								:: The file contents ; if the file does not exists or it is not an uploaded file will return an empty string
+ */
 public static function read_uploaded($file_name) {
 	//--
 	$file_name = (string) $file_name;
@@ -1593,24 +1861,11 @@ public static function read_uploaded($file_name) {
 	//--
 	if(is_uploaded_file($file_name)) {
 		//--
-		if(!is_dir($file_name)) {
+		if(!self::is_type_dir($file_name)) {
 			//--
-			if((is_file($file_name)) AND (is_readable($file_name))) {
+			if((self::is_type_file($file_name)) AND (self::have_access_read($file_name))) {
 				//--
-				$f_id = @fopen($file_name, 'rb');
-				//--
-				$tmp_file_len = @filesize($file_name);
-				//--
-				if($tmp_file_len > 0) {
-					$f_cx = @fread($f_id, $tmp_file_len);
-					if($f_cx === false) {
-						$f_cx = '';
-					} //end if
-				} else {
-					$f_cx = '';
-				} //end if else
-				//--
-				@fclose($f_id);
+				$f_cx = (string) @file_get_contents($file_name);
 				//--
 			} else {
 				//--
@@ -1633,9 +1888,19 @@ public static function read_uploaded($file_name) {
 
 
 //================================================================ MOVE UPLOADED FILE
-// move a UPLOADED file to a new location
-// returns: 1 for success and 0 for error/fail
-// v.160215 with fix for Windows absolute paths
+/**
+ * Safe MOVE AN UPLOADED FILE to a new RELATIVE location. WORKS WITH ABSOLUTE PATH FOR UPLOADED FILE (Ex: /tmp/path/to/uploaded-file.ext) and a RELATIVE PATH FOR THE DESTINATION FILE (Ex: path/to/a/file.ext).
+ * INFO: This function is 100% SAFE ON LINUX and UNIX file systems.
+ * WARNING: This function is NOT VERY SAFE TO USE ON WINDOWS file systems (use it on your own risk) because extra checks over the absolute path are not available on windows paths, thus in theory it may lead to insecure path access if crafted paths may result ...
+ * It will move an uploaded file to a new destination.
+ * The destination file will be rewritten if exists.
+ * IT SHOULD BE USED TO MOVE ONLY TEMPORARY UPLOAD FILES. To move/rename other files use the method SmartFileSystem::rename()
+ *
+ * @param 	STRING 		$file_name 				:: The absolute path of the uploaded file to be moved
+ * @param 	STRING 		$newlocation 			:: The relative path of the destination file (the path where to move)
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function move_uploaded($file_name, $newlocation) {
 	//--
 	$file_name = (string) $file_name;
@@ -1679,22 +1944,22 @@ public static function move_uploaded($file_name, $newlocation) {
 	//--
 	if(SmartFileSysUtils::check_file_or_dir_name($newlocation)) {
 		//--
-		if(!is_dir($file_name)) {
+		if(!self::is_type_dir($file_name)) {
 			//--
-			if(!is_dir($newlocation)) {
+			if(!self::is_type_dir($newlocation)) {
 				//--
 				self::delete($newlocation);
 				//--
 				$f_cx = @move_uploaded_file($file_name, $newlocation);
 				//--
-				if(is_file($newlocation)) {
+				if(self::is_type_file($newlocation)) {
 					@touch($newlocation, time()); // touch modified time to avoid upload differences in time
 					@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 				} else {
 					Smart::log_warning(__METHOD__.'() // MoveUploadedFile // Failed to move uploaded file: '.$file_name.' // to destination: '.$newlocation);
 				} //end if
 				//--
-				if(!is_readable($newlocation)) {
+				if(!self::have_access_read($newlocation)) {
 					Smart::log_warning(__METHOD__.'() // MoveUploadedFile // Destination file is not readable: '.$newlocation);
 				} //end if
 				//--
@@ -1719,8 +1984,14 @@ public static function move_uploaded($file_name, $newlocation) {
 
 
 //================================================================ DELETE FILES
-// delete a file
-// returns: 1 for success and 0 for error/fail
+/**
+ * Safe DELETE A FILE. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/file.ext).
+ * It will delete a file (or a symlink) if exists
+ *
+ * @param 	STRING 		$file_name 				:: The relative path of file to be deleted (can be a symlink to a file)
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function delete($file_name) {
 	//--
 	$file_name = (string) $file_name;
@@ -1734,17 +2005,17 @@ public static function delete($file_name) {
 	//--
 	@clearstatcache();
 	//--
-	if(!self::file_or_link_exists($file_name)) {
+	if(!self::path_exists($file_name)) {
 		//--
 		return 1;
 		//--
 	} //end if
 	//--
-	if(is_link($file_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
+	if(self::is_type_link($file_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
 		//--
 		$f_cx = @unlink($file_name);
 		//--
-		if(($f_cx) AND (!is_link($file_name))) {
+		if(($f_cx) AND (!self::is_type_link($file_name))) {
 			return 1;
 		} else {
 			return 0;
@@ -1756,21 +2027,21 @@ public static function delete($file_name) {
 	//--
 	if(SmartFileSysUtils::check_file_or_dir_name($file_name)) {
 		//--
-		if((is_file($file_name)) OR (is_link($file_name))) {
+		if((self::is_type_file($file_name)) OR (self::is_type_link($file_name))) {
 			//--
-			if(is_file($file_name)) {
+			if(self::is_type_file($file_name)) {
 				//--
 				@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
 				//--
 				$f_cx = @unlink($file_name);
 				//--
-				if(self::file_or_link_exists($file_name)) {
+				if(self::path_exists($file_name)) {
 					Smart::log_warning(__METHOD__.'() // DeleteFile // FAILED to delete this file: '.$file_name);
 				} //end if
 				//--
 			} //end if
 			//--
-		} elseif(is_dir($file_name)) {
+		} elseif(self::is_type_dir($file_name)) {
 			//--
 			Smart::log_warning(__METHOD__.'() // DeleteFile // A file was marked for deletion but that is a directory: '.$file_name);
 			//--
@@ -1791,35 +2062,45 @@ public static function delete($file_name) {
 
 
 //================================================================
+/**
+ * Safe GET THE ORIGIN OF A SYMLINK. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/symlink).
+ * It will get the origin path of a symlink if exists (not broken).
+ * WARNING: Use this function carefuly as it may return an absolute path or a non-safe path of the link origin which may result in unpredictable security issues ...
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param 	STRING 		$y_link 				:: The relative path of symlink to be analyzed
+ *
+ * @return 	STRING								:: The relative or absolute (or non-safe) path to the symlink origin or empty string if broken link (no path safety checks are implemented over)
+ */
 public static function link_get_origin($y_link) {
 	//--
 	$y_link = (string) $y_link;
 	//--
 	if((string)$y_link == '') {
 		Smart::log_warning(__METHOD__.'() // Get Link: The Link Name is Empty !');
-		return 0;
+		return '';
 	} //end if
 	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) {
+	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) { // pre-check
 		Smart::log_warning(__METHOD__.'() // Get Link: Invalid Path Link : '.$y_link);
-		return 0;
+		return '';
 	} //end if
-	//--
-	if(substr($y_link, -1, 1) == '/') { // add trailing slash
-		Smart::log_warning(__METHOD__.'() // Get Link: Link Have a trailing Slash / : '.$y_link);
-		$y_link = substr($y_link, 0, (strlen($y_link)-1));
+	if(substr($y_link, -1, 1) == '/') { // test if end with one or more trailing slash(es) and rtrim
+		Smart::log_warning(__METHOD__.'() // Get Link: Link ends with one or many trailing slash(es) / : '.$y_link);
+		$y_link = (string) rtrim($y_link, '/');
 	} //end if
-	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) {
+	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) { // post-check
 		Smart::log_warning(__METHOD__.'() // Get Link: Invalid Link Path : '.$y_link);
-		return 0;
+		return '';
 	} //end if
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($y_link);
 	//--
-	if(!is_link($y_link)) {
+	if(!self::is_type_link($y_link)) {
 		Smart::log_warning(__METHOD__.'() // Get Link: Link does not exists : '.$y_link);
-		return 0;
+		return '';
 	} //end if
 	//--
 	return (string) @readlink($y_link);
@@ -1829,6 +2110,19 @@ public static function link_get_origin($y_link) {
 
 
 //================================================================
+/**
+ * Safe CREATE A SYMLINK. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/something).
+ * It will create a symlink of the origin into destination.
+ * WARNING: Use this function carefuly as the origin path may be an absolute path or a non-safe path of the link origin which may result in unpredictable security issues ...
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param 	STRING 		$origin 				:: The origin of the symlink, relative or absolute path or even may be a non-safe path (no path safety checks are implemented over)
+ * @param 	STRING 		$destination 			:: The destination of the symlink, relative path
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function link_create($origin, $destination) {
 	//--
 	$origin = (string) $origin;
@@ -1843,20 +2137,22 @@ public static function link_create($origin, $destination) {
 		return 0;
 	} //end if
 	//--
+	/* DO NOT CHECK, IT MAY BE AN ABSOLUTE + NON-SAFE PATH RETURNED BY SmartFileSystem::link_get_origin() ...
 	if(!SmartFileSysUtils::check_file_or_dir_name($origin, 'no')) { // here we do not test against absolute path access because readlink may return an absolute path
 		Smart::log_warning(__METHOD__.'() // Create Link: Invalid Path for Origin : '.$origin);
 		return 0;
 	} //end if
+	*/
 	if(!SmartFileSysUtils::check_file_or_dir_name($destination)) {
 		Smart::log_warning(__METHOD__.'() // Create Link: Invalid Path for Destination : '.$destination);
 		return 0;
 	} //end if
 	//--
-	if(!self::file_or_link_exists($origin)) {
+	if(!self::path_exists($origin)) {
 		Smart::log_warning(__METHOD__.'() // Create Link: Origin does not exists : '.$origin);
 		return 0;
 	} //end if
-	if(self::file_or_link_exists($destination)) {
+	if(self::path_exists($destination)) {
 		Smart::log_warning(__METHOD__.'() // Create Link: Destination exists : '.$destination);
 		return 0;
 	} //end if
@@ -1879,8 +2175,16 @@ public static function link_create($origin, $destination) {
 
 
 //================================================================ CREATE DIRS
-// create a dir (non-recursive or recursive)
-// returns: 1 for success and 0 for error/fail
+/**
+ * Safe CREATE A DIRECTORY (FOLDER) RECURSIVE OR NON-RECURSIVE. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/new-dir).
+ * It will create a new directory (folder) if not exists. If non-recursive will try to create just the last directory (folder) segment.
+ * The directory (folder) will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_DIRS.
+ *
+ * @param 	STRING 		$dir_name 				:: The relative path of directory to be created (can be an existing symlink to a directory)
+ * @param 	BOOLEAN 		$recursive 				:: DEFAULT is FALSE ; If TRUE will attempt to create the full directory (folder) structure if not exists and apply over each segment the standardized chmod, as set in SMART_FRAMEWORK_CHMOD_DIRS
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function dir_create($dir_name, $recursive=false) {
 	//--
 	$dir_name = (string) $dir_name;
@@ -1898,18 +2202,18 @@ public static function dir_create($dir_name, $recursive=false) {
 	//--
 	if(SmartFileSysUtils::check_file_or_dir_name($dir_name)) {
 		//--
-		if(!self::file_or_link_exists($dir_name)) {
+		if(!self::path_exists($dir_name)) {
 			//--
 			if($recursive === true) {
 				$result = @mkdir($dir_name, SMART_FRAMEWORK_CHMOD_DIRS, true);
 				$dir_elements = (array) explode('/', $dir_name);
 				$tmp_crr_dir = '';
-				for($i=0; $i<count($dir_elements); $i++) { // fix: to chown all dir parts (in PHP the mkdir chown is applied only to the last part if recursive ...)
+				for($i=0; $i<count($dir_elements); $i++) { // fix: to chmod all dir segments (in PHP the mkdir chmod is applied only to the last dir segment if recursive mkdir ...)
 					$dir_elements[$i] = (string) trim((string)$dir_elements[$i]);
 					if((string)$dir_elements[$i] != '') {
 						$tmp_crr_dir .= (string) SmartFileSysUtils::add_dir_last_slash((string)$dir_elements[$i]);
 						if((string)$tmp_crr_dir != '') {
-							if(is_dir((string)$tmp_crr_dir)) {
+							if(self::is_type_dir((string)$tmp_crr_dir)) {
 								@chmod((string)$tmp_crr_dir, SMART_FRAMEWORK_CHMOD_DIRS); //apply separate chmod to each segment
 							} //end if
 						} //end if
@@ -1917,23 +2221,23 @@ public static function dir_create($dir_name, $recursive=false) {
 				} //end for
 			} else {
 				$result = @mkdir($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
-				if(is_dir($dir_name)) {
+				if(self::is_type_dir($dir_name)) {
 					@chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
 				} //end if
 			} //end if else
 			//--
-		} elseif(is_dir($dir_name)) {
+		} elseif(self::is_type_dir($dir_name)) {
 			//--
 			$result = true; // dir exists
 			//--
 		} //end if else
 		//--
-		if(!is_dir($dir_name)) {
+		if(!self::is_type_dir($dir_name)) {
 			Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'] // FAILED to create a directory: '.$dir_name);
 			$out = 0;
 		} //end if
 		//--
-		if(!is_writable($dir_name)) {
+		if(!self::have_access_write($dir_name)) {
 			Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'] // The directory is not writable: '.$dir_name);
 			$out = 0;
 		} //end if
@@ -1953,23 +2257,33 @@ public static function dir_create($dir_name, $recursive=false) {
 
 
 //================================================================ RECURSIVE COPY A DIRECTORY (FULL CLONE)
-//#####
-// !!! IMPORTANT !!!
-// Always use this with single-user mode enabled
-// AFTER COPY A DIR USE compare_folders() to check (not use here because is recursive and would take too much ...)
-//#####
-// recursive function to copy a folder with all sub folders and files
-// returns: 1 for success and 0, -1, -2, -3, -4, -5 for error/fail
-// WARNING: Should Not Copy Destination inside Source to avoid Infinite Loop (anyway there is a loop protection but it is not safe as we don't know if all files were copied) !!!
-// WARNING: Last two params SHOULD NOT be used (they are private to remember the initial dirs...)
-// NOTICE: $dirsource = 'some/folder/one'; // Must not end with Slash !!!
-// NOTICE: $dirdest = 'some/folder/two'; // Must not end with Slash !!!
+/**
+ * Safe COPY (CLONE) A DIRECTORY (FOLDER) RECURSIVE WITH ALL FILES AND SUB-DIRS, USING FILE COPY COMPARISON OR NOT. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/some-dir).
+ * It will clone an existing directory (folder) into a new directory (destination) by copying all the sub-directories, files and symlinks (includding broken symlinks on Linux/Unix ; except broken symlinks on Windows)
+ * The entire copied (cloned) dir structure (files, folders) will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_DIRS (for dirs) / SMART_FRAMEWORK_CHMOD_FILES (for files).
+ * WARNING: DO NOT Copy Destination inside Source to avoid Infinite Loops (anyway there is a loop protection but it is not safe as we don't know if all files were copied ...) !!!
+ * NOTICE: use this with single-user mode enabled as using it into multi-concurency environents if the source directory structure / files are altered meanwhile it may result in unpredictable errors ...
+ * IMPORTANT: after cloning a directory with this function it is recommended to do a check using use SmartFileSystem::compare_folders() to check if ALL the files and sub-dirs where copied as if other processes may write inside the source directory meanwhile not all content may be copied ...
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param 	STRING 		$dirsource 				:: The relative path of the source directory to be cloned (can be an existing symlink to a directory)
+ * @param 	STRING 		$dirdest 				:: The relative path of the destination directory - where the files and sub-folders will be copied (can be an existing symlink to a directory)
+ * @param 	BOOLEAN 	$check_copy_contents 	:: DEFAULT is TRUE ; If set to TRUE will compare the copied content from the destination files with the original reference files content using sha1-file checksums ; If set to FALSE will not do this comparison check (which may take a big amount of time on very large files)
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0, -1, -2, -3, -4, -5 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function dir_copy($dirsource, $dirdest, $check_copy_contents=true) {
 	//--
 	return self::dir_recursive_private_copy($dirsource, $dirdest, $check_copy_contents);
 	//--
 } //END FUNCTION
 //================================================================
+
+
+//================================================================ PRIVATE RECURSIVE COPY A DIRECTORY (FULL CLONE)
+// NOTICE: This function is PRIVATE because the last two params are private, they SHOULD NOT be used unauthorized (they are used only internal to remember the initial dirs ...)
 private static function dir_recursive_private_copy($dirsource, $dirdest, $check_copy_contents, $protected_dirsource='', $protected_dirdest='') {
 	//--
 	$dirsource = (string) $dirsource;
@@ -1993,7 +2307,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 		$protected_dirsource = (string) $dirsource; // 1st time
 	} //end if
 	if(strlen($protected_dirdest) <= 0) {
-		if(self::file_or_link_exists($dirdest)) {
+		if(self::path_exists($dirdest)) {
 			Smart::log_warning(__METHOD__.'() // Copy Dir: The Destination Dir exists: S='.$destination);
 			return 0;
 		} //end if else
@@ -2039,13 +2353,13 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 		return 0;
 	} //end if
 	//--
-	if(!is_dir($dirsource)) {
+	if(!self::is_type_dir($dirsource)) {
 		Smart::log_warning(__METHOD__.'() // Copy Dir: The Source Dir Name is not a Directory or does not exists: S='.$dirsource);
 		return 0;
 	} //end if else
 	//--
-	if(self::file_or_link_exists($dirdest)) {
-		if(!is_dir($dirdest)) {
+	if(self::path_exists($dirdest)) {
+		if(!self::is_type_dir($dirdest)) {
 			Smart::log_warning(__METHOD__.'() // Copy Dir: The Destination Dir appear to be a file: D='.$dirdest);
 			return 0;
 		} //end if
@@ -2070,26 +2384,24 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 				SmartFileSysUtils::raise_error_if_unsafe_path($tmp_path);
 				SmartFileSysUtils::raise_error_if_unsafe_path($tmp_dest);
 				//--
-				if(self::file_or_link_exists($tmp_path)) {
+				if(self::path_exists($tmp_path)) {
 					//--
-					if(is_link($tmp_path)) { // link
-						//--
-						$tmp_readlink = self::link_get_origin($tmp_path);
+					if(self::is_type_link($tmp_path)) { // link
 						//--
 						self::delete($tmp_dest);
-						if(self::file_or_link_exists($tmp_dest)) {
+						if(self::path_exists($tmp_dest)) {
 							Smart::log_warning(__METHOD__.'() // RecursiveDirCopy // Destination link still exists: '.$tmp_dest);
 						} //end if
 						//--
-						if(self::link_create($tmp_readlink, $tmp_dest) !== 1) {
+						if(self::link_create(self::link_get_origin($tmp_path), $tmp_dest) !== 1) {
 							Smart::log_warning(__METHOD__.'() // RecursiveDirCopy // Failed to copy a Link: '.$tmp_path);
 							return 0;
 						} //end if else
 						//--
-					} elseif(is_file($tmp_path)) { // file
+					} elseif(self::is_type_file($tmp_path)) { // file
 						//--
 						self::delete($tmp_dest);
-						if(self::file_or_link_exists($tmp_dest)) {
+						if(self::path_exists($tmp_dest)) {
 							Smart::log_warning(__METHOD__.'() // RecursiveDirCopy // Destination file still exists: '.$tmp_dest);
 						} //end if
 						//--
@@ -2098,7 +2410,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 							return 0;
 						} //end if else
 						//--
-					} elseif(is_dir($tmp_path)) { // dir
+					} elseif(self::is_type_dir($tmp_path)) { // dir
 						//--
 						if(self::dir_recursive_private_copy($tmp_path, $tmp_dest, $check_copy_contents, $protected_dirsource, $protected_dirdest) !== 1) {
 							Smart::log_warning(__METHOD__.'() // RecursiveDirCopy // Failed on Dir: '.$tmp_path);
@@ -2112,10 +2424,10 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 						//--
 					} //end if else
 					//--
-				} elseif(is_link($tmp_path)) { // broken link (we still copy it)
+				} elseif(self::is_type_link($tmp_path)) { // broken link (we still copy it)
 					//--
 					self::delete($tmp_dest);
-					if(self::file_or_link_exists($tmp_dest)) {
+					if(self::path_exists($tmp_dest)) {
 						Smart::log_warning(__METHOD__.'() // RecursiveDirCopy // Destination Link still exists: '.$tmp_dest);
 					} //end if
 					//--
@@ -2150,8 +2462,17 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 
 
 //================================================================ RENAME DIR / MOVE DIR
-// rename or move a dir
-// returns: 1 for success and 0 for error/fail
+/**
+ * Safe RENAME OR MOVE A DIRECTORY (FOLDER) TO A DIFFERENT LOCATION. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/some-dir).
+ * It will rename or move the source directory (folder) to a new location (destination), includding across partitions.
+ * It will FAIL if the destination directory exists, so be sure to check and remove the destination if you intend to overwrite it.
+ * After rename or move the destination will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_DIRS.
+ *
+ * @param 	STRING 		$dir_name 				:: The relative path of directory (folder) to be renamed or moved (can be a symlink to a directory)
+ * @param 	STRING 		$new_dir_name 			:: The relative path of the destination directory (folder) or a new directory (folder) name to rename or a new path where to move
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function dir_rename($dir_name, $new_dir_name) {
 	//--
 	$dir_name = (string) $dir_name;
@@ -2170,11 +2491,11 @@ public static function dir_rename($dir_name, $new_dir_name) {
 		return 0;
 	} //end if
 	//--
-	if((!is_dir($dir_name)) OR ((is_link($dir_name)) AND (!is_dir(self::link_get_origin($dir_name))))) {
+	if((!self::is_type_dir($dir_name)) OR ((self::is_type_link($dir_name)) AND (!self::is_type_dir(self::link_get_origin($dir_name))))) {
 		Smart::log_warning(__METHOD__.'() // RenameDir // Source is not a DIR: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
-	if(self::file_or_link_exists($new_dir_name)) {
+	if(self::path_exists($new_dir_name)) {
 		Smart::log_warning(__METHOD__.'() // RenameDir // The destination already exists: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
@@ -2197,7 +2518,7 @@ public static function dir_rename($dir_name, $new_dir_name) {
 		Smart::log_warning(__METHOD__.'() // Rename/Move Dir: The Destination Dir is inside the Source Dir: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
-	if(!is_dir(SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($new_dir_name)))) {
+	if(!self::is_type_dir(SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($new_dir_name)))) {
 		Smart::log_warning(__METHOD__.'() // Rename/Move Dir: The Destination Parent Dir is missing: P='.SmartFileSysUtils::add_dir_last_slash(Smart::dir_name($new_dir_name)).' of D='.$new_dir_name);
 		return 0;
 	} //end if
@@ -2207,18 +2528,18 @@ public static function dir_rename($dir_name, $new_dir_name) {
 	$result = false;
 	//--
 	if(((string)$dir_name != (string)$new_dir_name) AND (SmartFileSysUtils::check_file_or_dir_name($dir_name)) AND (SmartFileSysUtils::check_file_or_dir_name($new_dir_name))) {
-		if((is_dir($dir_name)) OR ((is_link($dir_name)) AND (is_dir(self::link_get_origin($dir_name))))) {
-			if(!self::file_or_link_exists($new_dir_name)) {
+		if((self::is_type_dir($dir_name)) OR ((self::is_type_link($dir_name)) AND (self::is_type_dir(self::link_get_origin($dir_name))))) {
+			if(!self::path_exists($new_dir_name)) {
 				$result = @rename($dir_name, $new_dir_name);
 			} //end if
 		} //end if
 	} //end if else
 	//--
-	if((!is_dir($new_dir_name)) OR ((is_link($new_dir_name)) AND (!is_dir(self::link_get_origin($new_dir_name))))) {
+	if((!self::is_type_dir($new_dir_name)) OR ((self::is_type_link($new_dir_name)) AND (!self::is_type_dir(self::link_get_origin($new_dir_name))))) {
 		Smart::log_warning(__METHOD__.'() // RenameDir // FAILED to rename a directory: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
-	if(self::file_or_link_exists($dir_name)) {
+	if(self::path_exists($dir_name)) {
 		Smart::log_warning(__METHOD__.'() // RenameDir // Source DIR still exists: S='.$dir_name.' ; D='.$new_dir_name);
 		return 0;
 	} //end if
@@ -2236,8 +2557,16 @@ public static function dir_rename($dir_name, $new_dir_name) {
 
 
 //================================================================ DELETE DIRS
-// delete a dir (simple or recursive)
-// returns: 1 for success and 0 for error/fail
+/**
+ * Safe DELETE (REMOVE) A DIRECTORY (FOLDER). IF RECURSIVE WILL REMOVE ALL THE SUB-DIR CONTENTS (FILES AND SUB-DIRS). WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/some-dir).
+ * It will try to remove the directory (folder) if empty in non-recursive mode or will try to delete all directory content (files and sub-folders), if recursive mode enabled.
+ * It will FAIL in non-recursive mode if the directory (folder) is not empty.
+ *
+ * @param 	STRING 		$dir_name 				:: The relative path of directory (folder) to be deleted (removed) ; it can be a symlink to another directory
+ * @param 	BOOLEAN 	$recursive 				:: DEFAULT is TRUE ; If set to TRUE will remove directory and all it's content ; If FALSE will try just to remove the directory if empty, otherwise will FAIL
+ *
+ * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
+ */
 public static function dir_delete($dir_name, $recursive=true) {
 	//--
 	$dir_name = (string) $dir_name;
@@ -2247,11 +2576,11 @@ public static function dir_delete($dir_name, $recursive=true) {
 		return 0;
 	} //end if
 	//-- THIS MUST BE DONE BEFORE ADDING THE TRAILING SLASH
-	if(is_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
+	if(self::is_type_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
 		//--
 		$f_cx = @unlink($dir_name); // avoid deleting content from a linked dir, just remove the link
 		//--
-		if(($f_cx) AND (!is_link($dir_name))) {
+		if(($f_cx) AND (!self::is_type_link($dir_name))) {
 			return 1;
 		} else {
 			return 0;
@@ -2265,18 +2594,18 @@ public static function dir_delete($dir_name, $recursive=true) {
 	//--
 	@clearstatcache();
 	//--
-	if(!self::file_or_link_exists($dir_name)) {
+	if(!self::path_exists($dir_name)) {
 		//--
 		return 1;
 		//--
 	} //end if
 	//--
 	// avoid deleting content from a linked dir, just remove the link (2nd check, after adding the trailing slash)
-	if(is_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
+	if(self::is_type_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
 		//--
 		$f_cx = @unlink($dir_name);
 		//--
-		if(($f_cx) AND (!is_link($dir_name))) {
+		if(($f_cx) AND (!self::is_type_link($dir_name))) {
 			return 1;
 		} else {
 			return 0;
@@ -2288,7 +2617,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 	//-- remove all subdirs and files within
 	if(SmartFileSysUtils::check_file_or_dir_name($dir_name)) {
 		//--
-		if((is_dir($dir_name)) AND (!is_link($dir_name))) {
+		if((self::is_type_dir($dir_name)) AND (!self::is_type_link($dir_name))) {
 			//--
 			@chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
 			//--
@@ -2298,7 +2627,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 					//--
 					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty
 						//--
-						if((is_dir($dir_name.$file)) AND (!is_link($dir_name.$file))) {
+						if((self::is_type_dir($dir_name.$file)) AND (!self::is_type_link($dir_name.$file))) {
 							//--
 							if($recursive == true) {
 								//--
@@ -2340,7 +2669,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 		//--
 	} //end if
 	//--
-	if(self::file_or_link_exists($dir_name)) { // last final check
+	if(self::path_exists($dir_name)) { // last final check
 		$result = false;
 		Smart::log_warning(__METHOD__.'() // DeleteDir [R='.(int)$recursive.'] // FAILED to delete a directory: '.$dir_name);
 	} //end if
@@ -2358,10 +2687,17 @@ public static function dir_delete($dir_name, $recursive=true) {
 
 
 //================================================================
-// compare two folders by number of dirs, files, links and the total size
-// if second param is YES, will take in comparation also the .dot files
-// if 3rd parameter is empty, will not compare folders or file names ; but if equal with * will also populate the pattern matches array with the file and folder names to compare
-public static function compare_folders($dir1, $dir2, $include_dot_files=true, $recurring=true) {
+/**
+ * Safe COMPARE TWO DIRECTORIES (FOLDERS) FROM LEFT TO RIGHT. RECURSIVE OR NOT. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/some-dir).
+ *
+ * @param 	STRING 		$dir1 					:: The relative path of the LEFT directory (folder) to compare ; it can be a symlink to another directory
+ * @param 	STRING 		$dir2 					:: The relative path of the RIGHT directory (folder) to compare ; it can be a symlink to another directory
+ * @param 	BOOLEAN 	$include_dot_files 		:: DEFAULT is TRUE ; If set to TRUE will compare also dot files (ex: .gitignore) ; If FALSE will skip comparing dot files
+ * @param 	BOOLEAN 	$recurring 				:: DEFAULT is TRUE ; If set to TRUE will do a full comparison (recuring) ; If set to FALSE will compare just the first level of each directory and will not recurse and compare into sub-directories
+ *
+ * @return 	ARRAY								:: Array of Differences ; If Empty Array, there are no diferences ; If array size > 0, will contain the differences between the compared directories (folders)
+ */
+public static function compare_folders($dir1, $dir2, $include_dot_files=true, $recurring=true) { // TODO: add a 4th parameter as search pattern to compare
 	//-- get storage data for each folder
 	$arr_dir1 = (array) (new SmartGetFileSystem(true))->get_storage($dir1, $recurring, $include_dot_files);
 	$arr_dir2 = (array) (new SmartGetFileSystem(true))->get_storage($dir2, $recurring, $include_dot_files);
@@ -2388,6 +2724,7 @@ public static function compare_folders($dir1, $dir2, $include_dot_files=true, $r
 //================================================================
 
 
+/*** TO BE DONE IN THE FUTURE TO EXTEND THE SEARCH PATTER FILTERING CAPABILITIES ON GET STORAGE
 //================================================================
 // check a file by given filter
 // returns 1/0 if valid or not ...
@@ -2415,6 +2752,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
 	//--
 } //END FUNCTION
 //================================================================
+***/
 
 
 } //END CLASS
@@ -2450,7 +2788,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @hints 		This class can handle thread concurency to the filesystem by using the LOCK_EX (lock exclusive) on each file written / appended
  *
  * @depends 	classes: Smart
- * @version 	v.170601
+ * @version 	v.170913
  * @package 	Filesystem
  *
  */
@@ -2649,7 +2987,7 @@ final class SmartGetFileSystem {
 		$this->search_prevent_file = $search_prevent_file;
 		$this->search_prevent_override = $search_prevent_override;
 		//--
-		if((SmartFileSystem::file_or_link_exists($dir_name)) AND (!is_file($dir_name))) { // can be dir or link
+		if((SmartFileSystem::path_exists($dir_name)) AND (!SmartFileSystem::is_type_file($dir_name))) { // can be dir or link
 			//list
 			//--
 			if($handle = opendir($dir_name)) {
@@ -2665,13 +3003,13 @@ final class SmartGetFileSystem {
 							$tmp_allow_addition = 1;
 							$tmp_add_pattern = 0;
 							//-- this is for #private folders, will prevent searching in folders containing for example this file: .private-folder but can be overriden by the $search_prevent_override option exluding a particular path like folder/private/user1
-							if((strlen($search_prevent_file) > 0) AND (is_file($dir_name.$search_prevent_file))) {
-								if((strlen($search_prevent_override) <= 0) OR ((strlen($search_prevent_override) > 0) AND (!is_file($dir_name.$search_prevent_override)))) {
+							if((strlen($search_prevent_file) > 0) AND (SmartFileSystem::is_type_file($dir_name.$search_prevent_file))) {
+								if((strlen($search_prevent_override) <= 0) OR ((strlen($search_prevent_override) > 0) AND (!SmartFileSystem::is_type_file($dir_name.$search_prevent_override)))) {
 									$tmp_allow_addition = 0;
 								} //end if
 							} //end if
 							//-- this is a search pattern (search pattern does not apply to folders !!) ; if no empty will populate the pattern matches array with all files and folders matching ; to include all, use * or a particular search for the rest like myfile1
-							if(((string)$search_pattern == '') OR (is_dir($dir_name.$file))) {
+							if(((string)$search_pattern == '') OR (SmartFileSystem::is_type_dir($dir_name.$file))) {
 								if($tmp_allow_addition) {
 									if($this->list_files_and_dirs) {
 										$tmp_add_pattern = 1;
@@ -2697,13 +3035,13 @@ final class SmartGetFileSystem {
 								} //end if
 							} //end if
 							//--
-							if(!is_link($dir_name.$file)) {
+							if(!SmartFileSystem::is_type_link($dir_name.$file)) {
 								//--
-								if(is_dir($dir_name.$file)) {
+								if(SmartFileSystem::is_type_dir($dir_name.$file)) {
 									//-- dir
 									if($tmp_allow_addition) {
 										//--
-										$tmp_fsize = Smart::format_number_int(@filesize($dir_name.$file),'+');
+										$tmp_fsize = Smart::format_number_int(SmartFileSystem::get_file_size($dir_name.$file),'+');
 										//--
 										$this->num_dirs++;
 										$this->num_size += $tmp_fsize;
@@ -2713,9 +3051,9 @@ final class SmartGetFileSystem {
 										//--
 										if($tmp_add_pattern) {
 											if($recurring) { // if recurring, add the full path
-												$this->pattern_dir_matches[$dir_name.$file] = @filemtime($dir_name.$file);
-											} else { // if not recurring, add just base path, without dirname prefix
-												$this->pattern_dir_matches[$file] = @filemtime($dir_name.$file);
+												$this->pattern_dir_matches[$dir_name.$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
+											} else { // if not recurring, add just base path, without dir name prefix
+												$this->pattern_dir_matches[$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
 											} //end if else
 										} //end if
 										//--
@@ -2731,7 +3069,7 @@ final class SmartGetFileSystem {
 									//-- file
 									if($tmp_allow_addition) {
 										//--
-										$tmp_fsize = Smart::format_number_int(@filesize($dir_name.$file),'+');
+										$tmp_fsize = Smart::format_number_int(SmartFileSystem::get_file_size($dir_name.$file),'+');
 										//--
 										$this->num_files++;
 										$this->num_size += $tmp_fsize;
@@ -2741,9 +3079,9 @@ final class SmartGetFileSystem {
 										//--
 										if($tmp_add_pattern) {
 											if($recurring) { // if recurring, add the full path
-												$this->pattern_file_matches[$dir_name.$file] = @filemtime($dir_name.$file);
-											} else { // if not recurring, add just base path, without dirname prefix
-												$this->pattern_file_matches[$file] = @filemtime($dir_name.$file);
+												$this->pattern_file_matches[$dir_name.$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
+											} else { // if not recurring, add just base path, without dir name prefix
+												$this->pattern_file_matches[$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
 											} //end if else
 										} //end if
 										//--
@@ -2755,11 +3093,11 @@ final class SmartGetFileSystem {
 								//-- link
 								if($tmp_allow_addition) {
 									//--
-									$link_result = SmartFileSystem::link_get_origin($dir_name.$file);
+									$link_origin = (string) SmartFileSystem::link_get_origin($dir_name.$file);
 									//--
-									if(empty($link_result) OR ((string)$link_result == '') OR (!SmartFileSystem::file_or_link_exists($link_result))) {
+									if(((string)$link_origin == '') OR (!SmartFileSystem::path_exists($link_origin))) {
 										//--
-										// case of readlink error ..., not includding broken links, they are useless
+										// case of broken link ..., not includding broken links, they are useless
 										//--
 									} else {
 										//--
@@ -2770,25 +3108,25 @@ final class SmartGetFileSystem {
 										//--
 										$this->num_links++;
 										//--
-										if(file_exists($dir_name.$file)) { // here file_exists must be tested because if broken link not stat on it (filemtime) to avoid log un-necessary errors
+										if(SmartFileSystem::path_real_exists($dir_name.$file)) { // here the real path must exists to be tested because if broken link and stat on it (file modif time) will log un-necessary errors ...
 											//-- bugfix: not if broken link
 											$this->num_size += $tmp_fsize;
 											if($tmp_add_pattern) {
-												if(is_dir($dir_name.$file)) {
+												if(SmartFileSystem::is_type_dir($dir_name.$file)) {
 													$this->num_dirs++;
 													$this->num_dirs_size += $tmp_fsize;
 													if($recurring) { // if recurring, add the full path
-														$this->pattern_dir_matches[$dir_name.$file] = @filemtime($dir_name.$file);
-													} else { // if not recurring, add just base path, without dirname prefix
-														$this->pattern_dir_matches[$file] = @filemtime($dir_name.$file);
+														$this->pattern_dir_matches[$dir_name.$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
+													} else { // if not recurring, add just base path, without dir name prefix
+														$this->pattern_dir_matches[$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
 													} //end if else
 												} else {
 													$this->num_files++;
 													$this->num_files_size += $tmp_fsize;
 													if($recurring) { // if recurring, add the full path
-														$this->pattern_file_matches[$dir_name.$file] = @filemtime($dir_name.$file);
-													} else { // if not recurring, add just base path, without dirname prefix
-														$this->pattern_file_matches[$file] = @filemtime($dir_name.$file);
+														$this->pattern_file_matches[$dir_name.$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
+													} else { // if not recurring, add just base path, without dir name prefix
+														$this->pattern_file_matches[$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
 													} //end if else
 												} //end if else
 											} //end if
@@ -2806,7 +3144,7 @@ final class SmartGetFileSystem {
 							//--
 						} //end if
 						//--
-					} //end if(. ..)
+					} //end if (. ..)
 					//--
 				} //end while
 				//---------------------------------------

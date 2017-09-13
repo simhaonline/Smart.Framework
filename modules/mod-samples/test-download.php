@@ -48,16 +48,16 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			return;
 		} //end if
 
-		if(!is_file((string)$this->download_file)) { // avoid re-copy each time this script runs ...
+		if(!SmartFileSystem::is_type_file((string)$this->download_file)) { // avoid re-copy each time this script runs ...
 			SmartFileSystem::copy('lib/core/img/app/session.svg', (string)$this->download_file); // copy a file from lib/ to wpub/ to allow doanload it (the internal security mechanisms dissalow download files except what is defined in SMART_FRAMEWORK_DOWNLOAD_FOLDERS ...)
 		} //end if
 
-		if(!is_file((string)$this->download_file)) {
+		if(!SmartFileSystem::is_type_file((string)$this->download_file)) {
 			$this->PageViewSetErrorStatus(404, 'Cannot find the required file for download !');
 			return;
 		} //end if
 
-		if(!is_readable((string)$this->download_file)) {
+		if(!SmartFileSystem::have_access_read((string)$this->download_file)) {
 			$this->PageViewSetErrorStatus(500, 'The required file for download is not readable !');
 			return;
 		} //end if

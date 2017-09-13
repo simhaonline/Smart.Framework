@@ -56,7 +56,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP XML ; classes: Smart
- * @version 	v.170417
+ * @version 	v.170913
  * @package 	Components:Captcha
  *
  */
@@ -331,7 +331,7 @@ public static function cookiename($y_form_name) {
 final class SmartCaptchaImageDraw {
 
 	// ->
-	// v.170417
+	// v.170913
 
 
 //================================================================
@@ -598,7 +598,7 @@ private function img_draw_text($im, $word) {
 	$use_ttf_font = false;
 	if(is_int($this->charfont) AND ($this->charfont > 0)) {
 		$font = (int) $this->charfont;
-	} elseif(((string)$this->charfont != '') AND (SmartFileSysUtils::check_file_or_dir_name($this->charfont)) AND (is_file($this->charfont))) {
+	} elseif(((string)$this->charfont != '') AND (SmartFileSysUtils::check_file_or_dir_name($this->charfont)) AND (SmartFileSystem::is_type_file($this->charfont))) {
 		if(function_exists('imagettftext') AND (substr($this->charfont, -4, 4) == '.ttf')) {
 			$font = (string) $this->charfont;
 			$use_ttf_font = true;

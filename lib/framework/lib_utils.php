@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170911
+ * @version 	v.170913
  * @package 	Base
  *
  */
@@ -1140,12 +1140,12 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 	} //end if
 	//-- detect if file or url
 	if((substr($y_url_or_path, 0, 7) == 'http://') OR (substr($y_url_or_path, 0, 8) == 'https://')) {
-		$is_file = 0; // it is a url
+		$test_file = 0; // it is a url
 	} else {
-		$is_file = 1; // it is a file
+		$test_file = 1; // it is a file
 	} //end if
 	//--
-	if($is_file == 1) {
+	if($test_file == 1) {
 		//--
 		$y_url_or_path = trim($y_url_or_path);
 		//-- try to detect if data:image/ :: {{{SYNC-DATA-IMAGE}}}
@@ -1163,7 +1163,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 				'debuglog' => ''
 			);
 			//--
-		} elseif(is_file($y_url_or_path)) {
+		} elseif(SmartFileSystem::is_type_file($y_url_or_path)) {
 			//--
 			return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
 				'log' => 'OK: FILE Exists',
@@ -1331,8 +1331,6 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
  */
 public static function load_cached_content($y_cache_file_extension, $y_cache_prefix, $y_load_url, $y_content='', $y_cache_expire=0, $y_encrypted='no') {
 
-	// v.150209
-
 	//--
 	$y_load_url = (string) $y_load_url;
 	//--
@@ -1371,18 +1369,18 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 	//--
 
 	//--
-	if(!is_dir($dir)) {
+	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir, true); // recursive
 	} // end if
 	//--
 	$protect_file = $dir.'index.html';
-	if(!is_file($protect_file)) {
+	if(!SmartFileSystem::is_type_file($protect_file)) {
 		SmartFileSystem::write($protect_file, '');
 	} //end if
 	//--
 
 	//-- will go through this only if cache expired or no cache
-	if((!is_file($file)) OR ((is_file($file)) AND ($y_cache_expire > 0) AND ((@filemtime($file) + $y_cache_expire) < time()))) {
+	if((!SmartFileSystem::is_type_file($file)) OR ((SmartFileSystem::is_type_file($file)) AND ($y_cache_expire > 0) AND ((SmartFileSystem::get_file_mtime($file) + $y_cache_expire) < time()))) {
 		//-- read
 		if((substr($y_load_url, 0, 9) == 'memory://') AND ((string)$y_content != '')) {
 			//-- set the content from memory
@@ -2142,10 +2140,10 @@ public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc
 
 	//-- exec
 	if((string)$cwd != '') {
-		if(!file_exists((string)$cwd)) {
+		if(!SmartFileSystem::path_exists((string)$cwd)) {
 			SmartFileSystem::dir_create((string)$cwd, true); // recursive
 		} //end if
-		if(!is_dir((string)$cwd)) {
+		if(!SmartFileSystem::is_type_dir((string)$cwd)) {
 			//--
 			Smart::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
 			//--
@@ -2241,7 +2239,7 @@ public static function single_user_mode_check() {
 	//--
 	$out = false;
 	//--
-	if(SmartFileSystem::file_or_link_exists($lock_file)) {
+	if(SmartFileSystem::path_exists($lock_file)) {
 		//--
 		$lock_content = SmartFileSystem::read($lock_file);
 		$chk_arr = explode("\n", trim($lock_content));

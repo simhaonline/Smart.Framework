@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170908
+ * @version     v.170913
  * @package     Base
  *
  */
@@ -1752,7 +1752,7 @@ public static function list_to_array($y_list, $y_trim=true) {
  */
 public static function log_info($title, $message) {
 	//--
-	if((defined('SMART_FRAMEWORK_INFO_LOG')) AND (is_dir(dirname((string)SMART_FRAMEWORK_INFO_LOG)))) {
+	if((defined('SMART_FRAMEWORK_INFO_LOG')) AND (is_dir(self::dir_name((string)SMART_FRAMEWORK_INFO_LOG)))) { // must use is_dir here to avoid dependency with smart file system lib
 		@file_put_contents((string)SMART_FRAMEWORK_INFO_LOG, '[INF]'."\t".date('Y-m-d H:i:s O')."\t".self::normalize_spaces($title)."\t".self::normalize_spaces($message)."\n", FILE_APPEND | LOCK_EX);
 	} else {
 		self::log_notice('INFO-LOG NOT SET :: Logging to Notices ... # Message: '.$title."\n".$message);

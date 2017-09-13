@@ -106,7 +106,7 @@ public static function analyze_debug_template($mtemplate) {
 public static function analyze_debug_file_template($y_file_path, $y_arr_sub_templates=[]) {
 	//--
 	$y_file_path = (string) $y_file_path;
-	if(!is_file($y_file_path)) {
+	if(!SmartFileSystem::is_type_file($y_file_path)) {
 		return '<h1>{#### ERROR: Invalid Marker-TPL File ['.Smart::escape_html($y_file_path).'] ####}</h1>';
 	} //end if
 	//--
@@ -212,7 +212,7 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 	// the replacement of sub-templates is made before injecting variables to avoid security issues
 	//--
 	$y_file_path = (string) $y_file_path;
-	if(!is_file($y_file_path)) {
+	if(!SmartFileSystem::is_type_file($y_file_path)) {
 		Smart::log_warning('Invalid Marker-TPL File: '.$y_file_path);
 		return '{#### Invalid Marker-TPL File. See the ErrorLog for Details. ####}';
 	} //end if
@@ -1537,7 +1537,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					//--
 					if(($is_optional === true) OR (self::$MkTplAnalyzeLdDbg === true)) { // for Analyze Make just TRY TO Load Sub-TPLs to avoid load errors if the paths are defined in the TPL-Load Array not in the TPL
 						$stemplate = '';
-						if(is_file((string)$stpl_path)) {
+						if(SmartFileSystem::is_type_file((string)$stpl_path)) {
 							$stemplate = (string) self::read_template_or_subtemplate_file((string)$stpl_path, (string)$y_use_caching); // read
 						} elseif(self::$MkTplAnalyzeLdDbg === true) {
 							$dbgnfo = 'To check if this is an ERROR OR NOT try to debug this Marker-Template directly from the real usage context by using the master template (of which base path may be different) or by passing also the @SUB-TEMPLATES@ custom definition if used.';
@@ -1549,7 +1549,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 							$dbgnfo = '';
 						} //end if else
 					} else {
-						if(!is_file((string)$stpl_path)) {
+						if(!SmartFileSystem::is_type_file((string)$stpl_path)) {
 							Smart::log_warning('Invalid Marker-TPL Sub-Template File: '.$stpl_path);
 							return 'Invalid Marker-TPL Sub-Template File. See the ErrorLog for Details.';
 						} //end if

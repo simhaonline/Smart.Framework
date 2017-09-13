@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170911
+ * @version 	v.170913
  * @package 	Mailer:Utility
  *
  */
@@ -303,7 +303,7 @@ public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message,
 	//--
 	if((string)$logsend_dir != '') {
 		//--
-		if(is_dir($logsend_dir)) {
+		if(SmartFileSystem::is_type_dir($logsend_dir)) {
 			//--
 			if(is_array($to)) {
 				$mark_to = '@multi@';
@@ -739,7 +739,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.170613
+ * @version 	v.170913
  * @package 	Mailer:Utility
  *
  */
@@ -965,7 +965,7 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 	//--
 
 	//--
-	if(((string)$the_message_eml == '') OR (!is_file((string)$the_message_eml))) {
+	if(((string)$the_message_eml == '') OR (!SmartFileSystem::is_type_file((string)$the_message_eml))) {
 		Smart::raise_error(
 			'ERROR: MIME Parser // Message File EMPTY or NOT FOUND !: '.$the_message_eml,
 			'ERROR: MIME Parser // Mesage File Decode // See error log for details ...'

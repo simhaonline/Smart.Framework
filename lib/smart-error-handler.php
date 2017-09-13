@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// # r.170603 # this should be loaded from app web root only
+// # r.170913 # this should be loaded from app web root only
 
 // ===== ATTENTION =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES
@@ -121,7 +121,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	} //end if
 	//--
 	if(($is_supressed !== true) OR ($is_fatal === true)) {
-		if((is_dir(SMART_ERROR_LOGDIR)) && (is_writable(SMART_ERROR_LOGDIR))) {
+		if((is_dir(SMART_ERROR_LOGDIR)) && (is_writable(SMART_ERROR_LOGDIR))) { // here must be is_dir(), is_writable() and file_put_contents() as the smart framework libs are not yet initialized in this phase ...
 			@file_put_contents(
 				SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE,
 				"\n".'===== '.date('Y-m-d H:i:s O')."\n".'PHP '.PHP_VERSION.' [SMART-ERR-HANDLER] #'.$errno.' ['.$ferr.']'.$app_halted."\n".'URI: ['.SMART_ERROR_AREA.'] @ '.$_SERVER['REQUEST_URI']."\n".'Script: '.$errfile."\n".'Line number: '.$errline."\n".$errstr."\n".'==================================='."\n\n",

@@ -70,7 +70,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.170419
+ * @version 	v.170913
  * @package 	Media:ImageProcessing
  *
  */
@@ -724,7 +724,7 @@ public function calculateTextBBox($text, $angle, $size, $font) {
 
 	//--
 	$isttf = false;
-	if(((string)$font != '') AND (SmartFileSysUtils::check_file_or_dir_name($font)) AND (is_file($font))) {
+	if(((string)$font != '') AND (SmartFileSysUtils::check_file_or_dir_name($font)) AND (SmartFileSystem::is_type_file($font))) {
 		if(function_exists('imagettfbbox') AND (substr($font, -4, 4) == '.ttf')) {
 			$isttf = true;
 		} //end if
@@ -822,7 +822,7 @@ public function applyText($text, $offsx=0, $offsy=0, $angle=0, $size=10, $font='
 	$isttf = false;
 	if(is_int($font) AND ($font > 0)) {
 		$font = (int) $font;
-	} elseif(((string)$font != '') AND (SmartFileSysUtils::check_file_or_dir_name($font)) AND (is_file($font))) {
+	} elseif(((string)$font != '') AND (SmartFileSysUtils::check_file_or_dir_name($font)) AND (SmartFileSystem::is_type_file($font))) {
 		if(function_exists('imagettftext') AND (substr($font, -4, 4) == '.ttf')) {
 			$font = (string) $font;
 			$isttf = true;

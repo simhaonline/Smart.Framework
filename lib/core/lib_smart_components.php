@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170901
+ * @version 	v.170913
  * @package 	Components:Core
  *
  */
@@ -295,7 +295,7 @@ public static function http_message_400_badrequest($y_message, $y_html_message='
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'400.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'400.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'400.php');
 			if(function_exists('custom_http_message_400_badrequest')) {
 				return custom_http_message_400_badrequest($y_message, $y_html_message);
@@ -318,7 +318,7 @@ public static function http_message_401_unauthorized($y_message, $y_html_message
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'401.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'401.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'401.php');
 			if(function_exists('custom_http_message_401_unauthorized')) {
 				return custom_http_message_401_unauthorized($y_message, $y_html_message);
@@ -341,7 +341,7 @@ public static function http_message_403_forbidden($y_message, $y_html_message=''
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'403.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'403.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'403.php');
 			if(function_exists('custom_http_message_403_forbidden')) {
 				return custom_http_message_403_forbidden($y_message, $y_html_message);
@@ -364,7 +364,7 @@ public static function http_message_404_notfound($y_message, $y_html_message='')
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'404.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'404.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'404.php');
 			if(function_exists('custom_http_message_404_notfound')) {
 				return custom_http_message_404_notfound($y_message, $y_html_message);
@@ -387,7 +387,7 @@ public static function http_message_429_toomanyrequests($y_message, $y_html_mess
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'429.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'429.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'429.php');
 			if(function_exists('custom_http_message_429_toomanyrequests')) {
 				return custom_http_message_429_toomanyrequests($y_message, $y_html_message);
@@ -410,7 +410,7 @@ public static function http_message_500_internalerror($y_message, $y_html_messag
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'500.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'500.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'500.php');
 			if(function_exists('custom_http_message_500_internalerror')) {
 				return custom_http_message_500_internalerror($y_message, $y_html_message);
@@ -433,7 +433,7 @@ public static function http_message_502_badgateway($y_message, $y_html_message='
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'502.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'502.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'502.php');
 			if(function_exists('custom_http_message_502_badgateway')) {
 				return custom_http_message_502_badgateway($y_message, $y_html_message);
@@ -456,7 +456,7 @@ public static function http_message_503_serviceunavailable($y_message, $y_html_m
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'503.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'503.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'503.php');
 			if(function_exists('custom_http_message_503_serviceunavailable')) {
 				return custom_http_message_503_serviceunavailable($y_message, $y_html_message);
@@ -479,7 +479,7 @@ public static function http_message_504_gatewaytimeout($y_message, $y_html_messa
 	//--
 	if(defined('SMART_FRAMEWORK_CUSTOM_ERR_PAGES')) {
 		//--
-		if(is_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'504.php')) {
+		if(SmartFileSystem::is_type_file(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'504.php')) {
 			require_once(SMART_FRAMEWORK_CUSTOM_ERR_PAGES.'504.php');
 			if(function_exists('custom_http_message_504_gatewaytimeout')) {
 				return custom_http_message_504_gatewaytimeout($y_message, $y_html_message);

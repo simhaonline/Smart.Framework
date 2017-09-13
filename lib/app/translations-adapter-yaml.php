@@ -61,7 +61,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 		$fdb_file = (string) $fdb_dir.$fdb_template.'.yaml';
 		SmartFileSysUtils::raise_error_if_unsafe_path($fdb_file);
 		//--
-		if(!is_dir($fdb_dir)) {
+		if(!SmartFileSystem::is_type_dir($fdb_dir)) {
 			Smart::raise_error(
 				'Invalid Language Dir: '.$fdb_dir.' :: for: '.$y_area.'@'.$y_subarea,
 				'Invalid Language Dir for: '.$y_area.'@'.$y_subarea // msg to display
@@ -69,7 +69,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 			return array();
 		} //end if
 		//--
-		if(!is_file($fdb_file)) {
+		if(!SmartFileSystem::is_type_file($fdb_file)) {
 			//--
 			Smart::raise_error(
 				'Invalid Language File: '.$fdb_file,

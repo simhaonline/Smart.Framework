@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170905
+ * @version		170913
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -359,7 +359,7 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 				//--
 				@clearstatcache();
 				//--
-				if(is_file($filepath)) {
+				if(SmartFileSystem::is_type_file($filepath) AND SmartFileSystem::have_access_read($filepath)) {
 					//--
 					if(!headers_sent()) {
 						//--
@@ -402,8 +402,8 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 					//--
 				} else {
 					//--
-					Smart::log_info('File Download', 'Failed: 404 / The requested File does not Exists: '.$filepath.' on Client: '.$client_signature);
-					self::Raise404Error('WARNING: The requested File for Download does not Exists !');
+					Smart::log_info('File Download', 'Failed: 404 / The requested File does not Exists or is Not Accessible: '.$filepath.' on Client: '.$client_signature);
+					self::Raise404Error('WARNING: The requested File for Download does not Exists or is Not Accessible !');
 					return '';
 					//--
 				} //end if else

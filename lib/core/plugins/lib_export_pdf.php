@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.170911
+ * @version 	v.170913
  * @package 	Exporters
  *
  */
@@ -235,11 +235,11 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 		$file = $the_dir.'__document_'.SmartHashCrypto::sha256('@@PDF#File::Cache@@'.$tmp_uuid).'.html' ;
 		$logfile = $the_dir.'__headers_'.SmartHashCrypto::sha256('@@PDF#File::Cache@@'.$tmp_uuid).'.log';
 		//--
-		if(is_dir($the_dir)) {
+		if(SmartFileSystem::is_type_dir($the_dir)) {
 			SmartFileSystem::dir_delete($the_dir);
 		} //end if
 		//--
-		if(!is_dir($the_dir)) {
+		if(!SmartFileSystem::is_type_dir($the_dir)) {
 			SmartFileSystem::dir_create($the_dir, true); // recursive
 		} // end if
 		//--
@@ -340,7 +340,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 		//--
 		SmartFileSystem::write($file, $orientation."\n".$y_html_content);
 		//--
-		if(is_file($file)) {
+		if(SmartFileSystem::is_type_file($file)) {
 			//--
 			ob_start();
 			//--
@@ -355,7 +355,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 		} //end if else
 		//-- cleanup
 		if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') { // if not debug, cleanup the dir
-			if(is_dir($the_dir)) {
+			if(SmartFileSystem::is_type_dir($the_dir)) {
 				SmartFileSystem::dir_delete($the_dir);
 			} //end if
 		} //end if

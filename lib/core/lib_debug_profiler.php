@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.170911
+ * @version 	v.170913
  *
  */
 final class SmartDebugProfiler {
@@ -112,12 +112,12 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 	//--
 
 	//--
-	if(!is_dir($the_dir)) {
+	if(!SmartFileSystem::is_type_dir($the_dir)) {
 		SmartFileSystem::dir_create($the_dir, true); // recursive
 	} //end if
 	//--
-	if(is_dir($the_dir)) {
-		if(is_writable($the_dir)) {
+	if(SmartFileSystem::is_type_dir($the_dir)) {
+		if(SmartFileSystem::have_access_write($the_dir)) {
 			//--
 			$arr = array();
 			//-- generate debug info if set to show optimizations

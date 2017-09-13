@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.5.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170905
+ * @version		170913
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -239,7 +239,7 @@ public static function Run() {
 	$the_controller_name = (string) $arr[0].'.'.$arr[1];
 	$the_path_to_module = Smart::safe_pathname(SmartFileSysUtils::add_dir_last_slash('modules/mod-'.Smart::safe_filename($arr[0])));
 	$the_module = Smart::safe_pathname($the_path_to_module.Smart::safe_filename($arr[1]).'.php');
-	if(!is_file($the_module)) {
+	if(!SmartFileSystem::is_type_file($the_module)) {
 		if((string)$err404 == '') {
 			$err404 = 'Page does not exist: '.$page;
 		} //end if
@@ -542,7 +542,7 @@ public static function Run() {
 		self::Raise500Error('Invalid Page Template Path. See the error log !');
 		return;
 	} //end if
-	if(!is_dir($the_template_path)) {
+	if(!SmartFileSystem::is_type_dir($the_template_path)) {
 		Smart::log_warning('Page Template Path does not Exists: '.$the_template_path);
 		self::Raise500Error('Page Template Path does not Exists. See the error log !');
 		return;
@@ -552,7 +552,7 @@ public static function Run() {
 		self::Raise500Error('Invalid Page Template File. See the error log !');
 		return;
 	} //end if
-	if(!is_file($the_template_path.$the_template_file)) {
+	if(!SmartFileSystem::is_type_file($the_template_path.$the_template_file)) {
 		Smart::log_warning('Page Template File does not Exists: '.$the_template_path.$the_template_file);
 		self::Raise500Error('Page Template File does not Exists. See the error log !');
 		return;

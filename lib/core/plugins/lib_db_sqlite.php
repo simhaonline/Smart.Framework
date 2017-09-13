@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170411
+ * @version 	v.170913
  * @package 	Database:SQLite
  *
  */
@@ -396,7 +396,7 @@ public function check_newinstance() {
  */
 private function check_exists() {
 	$exists = false;
-	if(((string)$this->get_filename() != '') AND (is_file($this->get_filename()))) {
+	if(((string)$this->get_filename() != '') AND (SmartFileSystem::is_type_file($this->get_filename()))) {
 		$exists = true;
 	} //end if
 	return $exists;
@@ -443,7 +443,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170411
+ * @version 	v.170913
  * @package 	Database:SQLite
  *
  */
@@ -496,35 +496,35 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	} //end if
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db, 'yes', 'yes'); 					// deny absolute path access ; allow protected path access (starting with #)
 	//--
-	if(!is_dir($dir_of_db)) {
+	if(!SmartFileSystem::is_type_dir($dir_of_db)) {
 		@mkdir($dir_of_db, SMART_FRAMEWORK_CHMOD_DIRS, true);
 	} //end if
-	if(is_dir($dir_of_db)) {
+	if(SmartFileSystem::is_type_dir($dir_of_db)) {
 		@chmod($dir_of_db, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
 	} else {
 		self::error((string)$file_name, 'OPEN', 'ERROR: DB folder does not exists !', '', '');
 		return;
 	} //end if
-	if(!is_writable($dir_of_db)) {
+	if(!SmartFileSystem::have_access_write($dir_of_db)) {
 		self::error((string)$file_name, 'OPEN', 'ERROR: DB folder is not writable !', '', '');
 		return;
 	} //end if
-	if(!is_file((string)$dir_of_db.'.htaccess')) {
+	if(!SmartFileSystem::is_type_file((string)$dir_of_db.'.htaccess')) {
 		SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'.htaccess', 'yes', 'yes'); 	// deny absolute path access ; allow protected path access (starting with #)
 		if(!@file_put_contents((string)$dir_of_db.'.htaccess', (string)'### Smart.Framework // '.__METHOD__.' @ HtAccess Data Protection ###'."\n".SMART_FRAMEWORK_HTACCESS_NOINDEXING.SMART_FRAMEWORK_HTACCESS_FORBIDDEN."\n".'### END ###', LOCK_EX)) {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder access-protection not initialized !', '', '');
 			return;
 		} //end if
 		@chmod((string)$dir_of_db.'.htaccess', SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
-		if(!is_file((string)$dir_of_db.'.htaccess')) {
+		if(!SmartFileSystem::is_type_file((string)$dir_of_db.'.htaccess')) {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder access-protection not found !', '', '');
 			return;
 		} //end if
 	} //end if
-	if(!is_file((string)$dir_of_db.'index.html')) {
+	if(!SmartFileSystem::is_type_file((string)$dir_of_db.'index.html')) {
 		SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'index.html', 'yes', 'yes'); 	// deny absolute path access ; allow protected path access (starting with #)
 		@file_put_contents((string)$dir_of_db.'index.html', '', LOCK_EX);
-		if(!is_file((string)$dir_of_db.'index.html')) {
+		if(!SmartFileSystem::is_type_file((string)$dir_of_db.'index.html')) {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder index-protection not found !', '', '');
 			return;
 		} //end if
@@ -573,7 +573,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		//--
 	} //end try catch
 	//--
-	if(is_file($file_name)) {
+	if(SmartFileSystem::is_type_file($file_name)) {
 		@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES);
 	} //end if
 	//--
