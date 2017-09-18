@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170917
+ * @version 	v.170918
  * @package 	Filesystem
  *
  */
@@ -1199,7 +1199,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170917
+ * @version 	v.170918
  * @package 	Filesystem
  *
  */
@@ -1231,7 +1231,7 @@ public static function fix_dir_chmod($dir_name) {
 		return false;
 	} //end if
 	if(!self::is_type_dir($dir_name)) { // not a dir
-		Smart::log_warning(__METHOD__.'() // Skip: Not a Directory Type');
+		Smart::log_warning(__METHOD__.'() // Skip: Not a Directory Type: '.$dir_name);
 		return false;
 	} //end if
 	if(self::is_type_link($dir_name)) { // skip links !!
@@ -1267,7 +1267,7 @@ public static function fix_file_chmod($file_name) {
 		return false;
 	} //end if
 	if(!self::is_type_file($file_name)) { // not a file
-		Smart::log_warning(__METHOD__.'() // Skip: Not a File Type');
+		Smart::log_warning(__METHOD__.'() // Skip: Not a File Type: '.$file_name);
 		return false;
 	} //end if
 	if(self::is_type_link($file_name)) { // skip links !!
@@ -2704,6 +2704,9 @@ public static function dir_rename($dir_name, $new_dir_name) {
 	//--
 	$result = false;
 	//--
+	$dir_name = (string) rtrim((string)$dir_name, '/'); // FIX: remove trailing slash, it may be a link
+	$new_dir_name = (string) rtrim((string)$new_dir_name, '/'); // FIX: remove trailing slash, it may be a link
+	//--
 	if(((string)$dir_name != (string)$new_dir_name) AND (SmartFileSysUtils::check_if_safe_path($dir_name)) AND (SmartFileSysUtils::check_if_safe_path($new_dir_name))) {
 		if((self::is_type_dir($dir_name)) OR ((self::is_type_link($dir_name)) AND (self::is_type_dir(self::link_get_origin($dir_name))))) {
 			if(!self::path_exists($new_dir_name)) {
@@ -2973,7 +2976,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170917
+ * @version 	v.170918
  * @package 	Filesystem
  *
  */

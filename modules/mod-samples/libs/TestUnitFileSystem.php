@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170917
+ * @version 	v.170918
  *
  */
 final class TestUnitFileSystem {
@@ -147,7 +147,7 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK EXTRACT FILE AND EXTENSION FROM PATH (2) ...';
 			$tests[] = $the_test;
-			if((string)$get_file != $get_xfile.'.'.$get_ext) {
+			if((string)$get_file != (string)$get_xfile.'.'.$get_ext) {
 				$err = 'ERROR :: Path Extraction FAILED: File='.$get_file.' ; XFile='.$get_xfile.' ; Ext='.$get_ext;
 			} //end if
 		} //end if
@@ -288,7 +288,7 @@ final class TestUnitFileSystem {
 				} //end if
 			} //end if
 			if((string)$err == '') {
-				$the_test = 'CREATE A FILE LINK: link_create() : as : '.$the_good_link;
+				$the_test = 'CREATE A FILE LINK: link_create() tmp/index.html : as : '.$the_good_link;
 				$tests[] = $the_test;
 				$result = \SmartFileSystem::link_create(\Smart::real_path('tmp/index.html'), $the_good_link);
 				if($result !== 1) {
@@ -296,14 +296,72 @@ final class TestUnitFileSystem {
 				} //end if
 			} //end if
 			if((string)$err == '') {
-				$the_test = 'CREATE A DIR LINK: link_create() : as : '.$the_good_dir_link;
+				$the_test = 'COPY A FILE LINK: copy() '.$the_good_link.' : as : '.$the_good_link.'.copied';
+				$tests[] = $the_test;
+				$result = \SmartFileSystem::copy($the_good_link, $the_good_link.'.copied');
+				if($result !== 1) {
+					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				$the_test = 'COPY A FILE LINK (2): copy() '.$the_good_link.' : as : '.$the_good_link.'.copied2';
+				$tests[] = $the_test;
+				$result = \SmartFileSystem::copy($the_good_link, $the_good_link.'.copied2');
+				if($result !== 1) {
+					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				$the_test = 'DELETE A FILE LINK: delete() : '.$the_good_link.'.copied2';
+				$tests[] = $the_test;
+				$result = \SmartFileSystem::delete($the_good_link.'.copied2');
+				if(($result !== 1) OR (\SmartFileSystem::path_exists($the_good_link.'.copied2'))) {
+					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				$the_test = 'CREATE A DIR LINK: link_create() '.$the_good_dir_link.' : as : '.$the_good_dir_link;
 				$tests[] = $the_test;
 				$result = \SmartFileSystem::link_create(\Smart::real_path('tmp/'), $the_good_dir_link);
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 				} //end if
 			} //end if
+			if((string)$err == '') {
+				$the_test = 'RENAME A DIR LINK: dir_rename() '.$the_good_dir_link.' : as : '.$the_good_dir_link.'.renamed';
+				$tests[] = $the_test;
+				$result = \SmartFileSystem::dir_rename($the_good_dir_link, $the_good_dir_link.'.renamed');
+				if($result !== 1) {
+					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				$the_test = 'CREATE A DIR LINK (2): link_create() tmp/ : as : '.$the_good_dir_link;
+				$tests[] = $the_test;
+				$result = \SmartFileSystem::link_create(\Smart::real_path('tmp/'), $the_good_dir_link);
+				if($result !== 1) {
+					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				$the_test = 'RENAME A DIR LINK (2): dir_rename() '.$the_good_dir_link.' : as : '.$the_good_dir_link.'.renamed2';
+				$tests[] = $the_test;
+				$result = \SmartFileSystem::dir_rename($the_good_dir_link, $the_good_dir_link.'.renamed2');
+				if($result !== 1) {
+					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				$the_test = 'DELETE A DIR LINK: dir_delete() : '.$the_good_dir_link.'.renamed2';
+				$tests[] = $the_test;
+				$result = \SmartFileSystem::dir_delete($the_good_dir_link.'.renamed2');
+				if(($result !== 1) OR (\SmartFileSystem::path_exists($the_good_dir_link.'.renamed2'))) {
+					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+				} //end if
+			} //end if
 		} //end if
+		//--
+
 		//--
 		if((string)$err == '') {
 			$the_test = 'FILE WRITE with empty content: write() : '.$the_file;
@@ -362,6 +420,8 @@ final class TestUnitFileSystem {
 			} //end if
 		} //end if
 		//--
+
+		//--
 		if((string)DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
 			if((string)$err == '') {
 				$the_test = 'FILE WRITE TO A BROKEN LINK: write() : '.$the_broken_link;
@@ -412,6 +472,8 @@ final class TestUnitFileSystem {
 				} //end if
 			} //end if
 		} //end if
+		//--
+
 		//--
 		if((string)$err == '') {
 			$the_test = 'FILE WRITE: write_if_not_exists() without Content Compare : '.$the_file;
@@ -480,6 +542,8 @@ final class TestUnitFileSystem {
 			} //end if
 		} //end if
 		//--
+
+		//--
 		if(\SmartFileSystem::is_type_dir('_scripts/')) {
 			//--
 			if((string)$err == '') {
@@ -526,6 +590,7 @@ final class TestUnitFileSystem {
 		} else {
 			$tests[] = 'GET STORAGE / RECURSIVE COPY / DIR COMPARE :: DIR [DEVELOPMENT]: Tests Not Run (Development environment not detected) ...';
 		} //end if else
+		//--
 
 		//--
 		if((string)$err == '') {
@@ -555,6 +620,8 @@ final class TestUnitFileSystem {
 				$err = 'ERROR :: '.$the_test.' #DIFFERENCES='.print_r($arr_diff,1);
 			} //end if
 		} //end if
+		//--
+
 		//--
 		if((string)$err == '') {
 			$the_test = 'DIR DELETE - SIMPLE: dir_delete() non-recursive: '.$the_extra_folder;
