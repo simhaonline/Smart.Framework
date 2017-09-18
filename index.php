@@ -12,6 +12,14 @@
 ini_set('display_errors', '1'); 											// temporary enable this to display bootstrap errors if any ; will be managed later by Smart Error Handler
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED); 			// on bootstrap show real-time errors (sync with Smart Error Handler)
 //--
+if(is_file('maintenance.html')) {
+	@http_response_code(503); // 503 maintenance mode
+	if(!@readfile('maintenance.html', false)) {
+		echo('<h1>503 Service under Maintenance ...</h1>');
+	} //end if
+	die('<!-- Smart.Framework [I] 503 Maintenance -->');
+} //end if
+//--
 define('SMART_FRAMEWORK_SESSION_PREFIX', 	'idx-sess'); 					// session prefix
 define('SMART_FRAMEWORK_ADMIN_AREA', 		false); 						// run app in public/index mode
 define('SMART_FRAMEWORK_RUNTIME_READY', 	microtime(true)); 				// semaphore, runtime can execute scripts

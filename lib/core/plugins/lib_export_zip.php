@@ -18,8 +18,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //--
-if(!function_exists('gzcompress')) {
-	die('ERROR: The PHP ZLIB Extension / GzCompress is Required for the SmartFramework / Zip Archive');
+// gzcompress / gzuncompress (rfc1950) which uses ADLER32 minimal checksums
+//--
+if((!function_exists('gzcompress')) OR (!function_exists('gzuncompress'))) {
+	die('ERROR: The PHP ZLIB Extension (gzcompress/gzuncompress) is required for SmartFramework / Lib ZipArchive');
 } //end if
 //--
 
@@ -74,7 +76,11 @@ public function __construct() {
  *
  * @access public
  */
-public function add_file($name, $data, $time = 0) {
+public function add_file($name, $data, $time=0) {
+
+	//--
+	$data = (string) $data;
+	//--
 
 	//--
 	$name = str_replace('\\', '/', $name);
@@ -83,26 +89,53 @@ public function add_file($name, $data, $time = 0) {
 	//--
 
 	//--
-	$hexdtime = '\x'.$dtime[6].$dtime[7].
-				'\x'.$dtime[4].$dtime[5].
-				'\x'.$dtime[2].$dtime[3].
-				'\x'.$dtime[0].$dtime[1];
+	$hexdtime = (string) '\x'.$dtime[6].$dtime[7].'\x'.$dtime[4].$dtime[5].'\x'.$dtime[2].$dtime[3].'\x'.$dtime[0].$dtime[1];
 	//--
-	eval('$hexdtime = "'.$hexdtime.'";');
+	//eval('$hexdtime = "'.str_replace('"', '', (string)$hexdtime).'";');
+	$hexdtime = (string) @hex2bin(str_replace('\x', '', $hexdtime)); // fix by unixman: modern PHP can do this which is safer and faster
 	//--
 
 	//--
 	$fr  = "\x50\x4b\x03\x04";
-	$fr .= "\x14\x00";            // ver needed to extract
-	$fr .= "\x00\x00";            // gen purpose bit flag
-	$fr .= "\x08\x00";            // compression method
-	$fr .= $hexdtime;             // last mod time and date
+	$fr .= "\x14\x00"; // ver needed to extract
+	$fr .= "\x00\x00"; // gen purpose bit flag
+	$fr .= "\x08\x00"; // compression method
+	$fr .= $hexdtime;  // last mod time and date
 	//--
 
-	//-- "local file header" segment
-	$unc_len = strlen($data);
-	$crc     = crc32($data);
-	$zdata   = gzcompress($data);
+	//-- local file header segment
+	$unc_len 	= strlen($data);
+	$crc 		= crc32($data);
+	//--
+	$len_data 	= strlen($data);
+	$zdata 		= gzcompress($data);
+	$data 		= ''; // free mem
+	//--
+
+	//-- check for possible zlib-pack errors
+	if(($zdata === false) OR ((string)$zdata == '')) {
+		Smart::log_warning(__METHOD__.'() / FileName: ['.$name.'] / Zlib GZ-Encode ERROR ! ...');
+		return;
+	} //end if
+	$len_arch = strlen((string)$zdata);
+	if(($len_data > 0) AND ($len_arch > 0)) {
+		$ratio = $len_data / $len_arch;
+	} else {
+		$ratio = 0;
+	} //end if
+	/* not applied, can be a file with an empty content
+	if($ratio <= 0) { // check for empty input / output !
+		Smart::log_warning(__METHOD__.'() / FileName: ['.$name.'] / ZLib Data Ratio is zero ! ...');
+		return;
+	} //end if
+	*/
+	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZ-ARCHIVE-ERR-CHECK}}}
+		Smart::log_warning(__METHOD__.'() / FileName: ['.$name.'] / ZLib Data Ratio is higher than 32768 ! ...');
+		return;
+	} //end if
+	//--
+
+	//--
 	$zdata   = substr(substr($zdata, 0, strlen($zdata) - 4), 2); // fix crc bug
 	$c_len   = strlen($zdata);
 	//--
@@ -163,12 +196,12 @@ public function add_file($name, $data, $time = 0) {
 public function output() {
 
 	//--
-	$data    = implode('', $this->datasec);
-	$ctrldir = implode('', $this->ctrl_dir);
+	$data    = (string) implode('', (array)$this->datasec);
+	$ctrldir = (string) implode('', (array)$this->ctrl_dir);
 	//--
 
 	//--
-	return $data.$ctrldir.$this->eof_ctrl_dir.
+	return (string) $data.$ctrldir.$this->eof_ctrl_dir.
 		pack('v', sizeof($this->ctrl_dir)).  // total # of entries "on this disk"
 		pack('v', sizeof($this->ctrl_dir)).  // total # of entries overall
 		pack('V', strlen($ctrldir)).         // size of central dir
@@ -191,7 +224,7 @@ public function output() {
  *
  * @access private
  */
-private function unix_2_dos_time($unixtime = 0) {
+private function unix_2_dos_time($unixtime=0) {
 
 	//--
 	$timearray = ($unixtime == 0) ? getdate() : getdate($unixtime);

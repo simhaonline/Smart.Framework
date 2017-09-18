@@ -18,6 +18,15 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //======================================================
 
 
+//--
+// gzencode / gzdecode (rfc1952) is the gzip compatible algorithm which uses CRC32 minimal checksums (a bit safer and faster than ADLER32)
+//--
+if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
+	die('ERROR: The PHP ZLIB Extension (gzencode/gzdecode) is required for SmartFramework / Lib Utils');
+} //end if
+//--
+
+
 //=====================================================================================
 //===================================================================================== CLASS START
 //=====================================================================================
@@ -36,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160117
+ * @version 	v.170914
  * @package 	Caching
  *
  */
@@ -181,7 +190,7 @@ final class SmartCache {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170223
+ * @version 	v.170914
  * @package 	Caching
  *
  */
@@ -372,7 +381,7 @@ abstract class SmartAbstractPersistentCache {
 	 * To reverse the compressing + encoding use varUncompress()
 	 *
 	 * Use this function to store any type of variables: numbers, strings or arrays in a safe encoded + compressed format.
-	 * By default the variable will be: encoded (serialized as Json), compressed (gzcompress/6/deflate) and finally B64-Encoded.
+	 * By default the variable will be: encoded (serialized as Json), compressed (gzencode/6/gzip) and finally B64-Encoded.
 	 *
 	 * @param MIXED 	$y_var			The Variable to be encoded + compressed
 	 *
@@ -387,11 +396,11 @@ abstract class SmartAbstractPersistentCache {
 		} //end if
 		//-- compress
 		$len_data = strlen((string)$raw_data);
-		$arch_data = @gzcompress((string)$raw_data, 6, ZLIB_ENCODING_DEFLATE); // zlib compress (default compression of zlib is 6)
+		$arch_data = @gzencode((string)$raw_data, -1, FORCE_GZIP); // don't make it string, may return false ; -1 = default compression of the zlib library is used which is 6
 		$raw_data = ''; // free mem
-		//-- check for possible compress errors
+		//-- check for possible zlib-pack errors
 		if(($arch_data === false) OR ((string)$arch_data == '')) {
-			Smart::log_warning('SmartPersistentCache / Cache Variable Compress :: ZLib Compress ERROR ! ...');
+			Smart::log_warning('SmartPersistentCache / Cache Variable Compress :: Zlib GZ-Encode ERROR ! ...');
 			return '';
 		} //end if
 		$len_arch = strlen((string)$arch_data);
@@ -404,7 +413,7 @@ abstract class SmartAbstractPersistentCache {
 			Smart::log_warning('SmartPersistentCache / Cache Variable Compress :: ZLib Data Ratio is zero ! ...');
 			return '';
 		} //end if
-		if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZDEFLATE-ERR-CHECK}}}
+		if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZ-ARCHIVE-ERR-CHECK}}}
 			Smart::log_warning('SmartPersistentCache / Cache Variable Compress :: ZLib Data Ratio is higher than 32768 ! ...');
 			return '';
 		} //end if
@@ -418,7 +427,7 @@ abstract class SmartAbstractPersistentCache {
 	 * Uncompress + Decode a MIXED variable (array / string / number) to be stored in Persistent Cache
 	 *
 	 * Use this function to retrieve any type of variables: numbers, strings or arrays that were previous safe encoded + compressed.
-	 * By default the variable will be: B64-Decoded, uncompressed (gzcompress/inflate) and finally decoded (unserialized from Json).
+	 * By default the variable will be: B64-Decoded, uncompressed (gzdecode) and finally decoded (unserialized from Json).
 	 *
 	 * @param STRING 	$y_cache_arch_var		The compressed + encoded variable
 	 *
@@ -432,13 +441,15 @@ abstract class SmartAbstractPersistentCache {
 			return null; // no data to unarchive, return empty string
 		} //end if
 		//--
-		$y_cache_arch_var = @base64_decode((string)$y_cache_arch_var);
-		if(($y_cache_arch_var === false) OR (trim((string)$y_cache_arch_var) == '')) { // use trim, the deflated string can't contain only spaces
+		$y_cache_arch_var = @base64_decode((string)$y_cache_arch_var, true); // STRICT ! don't make it string, may return false
+		if(($y_cache_arch_var === false) OR ((string)trim((string)$y_cache_arch_var) == '')) { // use trim, the deflated string can't contain only spaces
+			Smart::log_warning('SmartPersistentCache / Cache Variable Decompress :: Empty Data after B64-Decode ! ...');
 			return null; // something went wrong after b64 decoding ...
 		} //end if
 		//--
-		$y_cache_arch_var = @gzuncompress((string)$y_cache_arch_var);
-		if(($y_cache_arch_var === false) OR (trim((string)$y_cache_arch_var) == '')) { // use trim, the string before unseryalize can't contain only spaces
+		$y_cache_arch_var = @gzdecode((string)$y_cache_arch_var); // don't make it string, may return false
+		if(($y_cache_arch_var === false) OR ((string)trim((string)$y_cache_arch_var) == '')) { // use trim, the string before unseryalize can't contain only spaces
+			Smart::log_warning('SmartPersistentCache / Cache Variable Decompress :: Empty Data after Zlib GZ-Decode ! ...');
 			return null;
 		} //end if
 		//--

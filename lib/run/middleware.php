@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170913
+ * @version		170917
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -337,7 +337,7 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 			return '';
 		} //end if
 		//--
-		if(SmartFileSysUtils::check_file_or_dir_name($filepath)) {
+		if(SmartFileSysUtils::check_if_safe_path($filepath)) {
 			//--
 			$skip_log = 'no'; // default log
 			if(defined('SMART_FRAMEWORK_DOWNLOAD_SKIP_LOG')) {

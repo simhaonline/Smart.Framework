@@ -57,10 +57,9 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * </code>
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
- * @hints 		This class can handle thread concurency to the filesystem by using the LOCK_EX (lock exclusive) on each file written / appended
  *
  * @depends 	classes: Smart
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Filesystem
  *
  */
@@ -77,7 +76,7 @@ final class SmartFileSysUtils {
  */
 public static function max_upload_size() {
 	//--
-	return Smart::format_number_int(((int)ini_get('upload_max_filesize') * 1000 * 1000), '+');
+	return (int) Smart::format_number_int(((int)ini_get('upload_max_filesize') * 1000 * 1000), '+');
 	//--
 } //END FUNCTION
 //================================================================
@@ -85,7 +84,39 @@ public static function max_upload_size() {
 
 //================================================================
 /**
- * Check a File Name or a Directory Name if contain valid characters (to avoid security injections)
+ * Check a Name of a File or Directory (not a path containing /) if contain valid characters (to avoid filesystem path security injections)
+ * Security: provides check if unsafe filenames or dirnames are accessed.
+ *
+ * @param 	STRING 	$y_fname 								:: The dirname or filename, (not path containing /) to validate
+ *
+ * @return 	0/1												:: returns 1 if VALID ; 0 if INVALID
+ */
+public static function check_if_safe_file_or_dir_name($y_fname) {
+	//-- test empty filename
+	if((string)trim((string)$y_fname) == '') {
+		return 0;
+	} //end if else
+	//-- test valid characters in filename or dirname (must not contain /, it is not a path)
+	if(!preg_match('/^[_a-zA-Z0-9\-\.@#]+$/', (string)$y_fname)) { // {{{SYNC-CHK-SAFE-FILENAME}}}
+		return 0;
+	} //end if
+	//-- test valid path (should pass all tests from valid, especially: must not be equal with . or .. (and they are includded in valid path)
+	if(self::test_valid_path($y_fname) !== 1) {
+		return 0;
+	} //end if
+	//--
+	// IMPORTANT: it should not test if filenames or dirnames start with a # (protected) as they are not paths !!!
+	//--
+	return 1;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Check a Path (to a Directory or to a File) if contain valid characters (to avoid filesystem path security injections)
+ * Security: provides check if unsafe paths are accessed.
  *
  * @param 	STRING 	$y_path 								:: The path (dir or file) to validate
  * @param 	YES/NO 	$y_deny_absolute_path 					:: *Optional* If YES will dissalow absolute paths
@@ -93,7 +124,7 @@ public static function max_upload_size() {
  *
  * @return 	0/1												:: returns 1 if VALID ; 0 if INVALID
  */
-public static function check_file_or_dir_name($y_path, $y_deny_absolute_path='yes', $y_allow_protected_relative_paths='no') { // {{{SYNC-FS-PATHS-CHECK}}}
+public static function check_if_safe_path($y_path, $y_deny_absolute_path='yes', $y_allow_protected_relative_paths='no') { // {{{SYNC-FS-PATHS-CHECK}}}
 	//-- dissalow empty paths
 	if((string)trim((string)$y_path) == '') {
 		return 0;
@@ -243,7 +274,7 @@ private static function test_valid_path($y_path) {
 		return 0;
 	} //end if else
 	//-- {{{SYNC-SAFE-PATH-CHARS}}}
-	if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) { // only ISO-8859-1 characters are allowed in paths (unicode paths are unsafe for the network environments !!!)
+	if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) { // {{{SYNC-CHK-SAFE-PATH}}} only ISO-8859-1 characters are allowed in paths (unicode paths are unsafe for the network environments !!!)
 		return 0;
 	} //end if
 	//--
@@ -570,7 +601,7 @@ public static function prefixed_uuid10_dir($y_id) { // check len is default 10 a
 	//--
 	$dir = self::add_dir_last_slash(self::add_dir_last_slash((string)implode('/', (array)str_split((string)substr((string)$y_id, 0, 8), 2))).$y_id); // split by 2 grouping except last 2 chars
 	//--
-	if(!self::check_file_or_dir_name($dir)) {
+	if(!self::check_if_safe_path($dir)) {
 		Smart::log_warning(__METHOD__.'() // Prefixed Path UID10(B36) // Invalid Dir Path: ['.$dir.'] :: From ID: ['.$y_id.']');
 		return 'tmp/invalid/pfx-b36uid-path/'; // this error should not happen ...
 	} //end if
@@ -606,7 +637,7 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
 	//--
 	$dir = self::add_dir_last_slash((string)substr((string)$y_id, 0, 1).'/'.implode('/', (array)str_split((string)substr((string)$y_id, 1, 36), 3))); // split by 3 grouping
 	//--
-	if(!self::check_file_or_dir_name($dir)) {
+	if(!self::check_if_safe_path($dir)) {
 		Smart::log_warning(__METHOD__.'() // Prefixed Path SHA1-40(B16) // Invalid Dir Path: ['.$dir.'] :: From ID: ['.$y_id.']');
 		return 'tmp/invalid/pfx-b16sha-path/'; // this error should not happen ...
 	} //end if
@@ -1165,16 +1196,88 @@ public static function mime_eval($yfile, $ydisposition='') {
  * </code>
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
- * @hints 		This class can handle thread concurency to the filesystem by using the LOCK_EX (lock exclusive) on each file written / appended
+ * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Filesystem
  *
  */
 final class SmartFileSystem {
 
 	// ::
+
+
+//================================================================
+/**
+ * Fix the Directory CHMOD as defined in SMART_FRAMEWORK_CHMOD_DIRS.
+ * This provides a safe way to fix chmod on directories (symlinks or files will be skipped) ...
+ *
+ * @param 	STRING 	$dir_name 					:: The relative path to the directory name to fix chmod for (folder)
+ *
+ * @return 	BOOLEAN								:: TRUE if success, FALSE if not
+ */
+public static function fix_dir_chmod($dir_name) {
+	//--
+	if(!defined('SMART_FRAMEWORK_CHMOD_DIRS')) {
+		Smart::log_warning(__METHOD__.'() // Skip: A required constant (SMART_FRAMEWORK_CHMOD_DIRS) has not been defined ...');
+		return false;
+	} //end if
+	//--
+	$dir_name = (string) $dir_name;
+	//--
+	if((string)trim((string)$dir_name) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty DirName');
+		return false;
+	} //end if
+	if(!self::is_type_dir($dir_name)) { // not a dir
+		Smart::log_warning(__METHOD__.'() // Skip: Not a Directory Type');
+		return false;
+	} //end if
+	if(self::is_type_link($dir_name)) { // skip links !!
+		return true;
+	} //end if
+	//--
+	return (bool) @chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Fix the File CHMOD as defined in SMART_FRAMEWORK_CHMOD_FILES.
+ * This provides a safe way to fix chmod on files (symlinks or dirs will be skipped) ...
+ *
+ * @param 	STRING 	$file_name 					:: The relative path to the file name to fix chmod for (file)
+ *
+ * @return 	BOOLEAN								:: TRUE if success, FALSE if not
+ */
+public static function fix_file_chmod($file_name) {
+	//--
+	if(!defined('SMART_FRAMEWORK_CHMOD_FILES')) {
+		Smart::log_warning(__METHOD__.'() // Skip: A required constant (SMART_FRAMEWORK_CHMOD_FILES) has not been defined ...');
+		return false;
+	} //end if
+	//--
+	$file_name = (string) $file_name;
+	//--
+	if((string)trim((string)$file_name) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty FileName');
+		return false;
+	} //end if
+	if(!self::is_type_file($file_name)) { // not a file
+		Smart::log_warning(__METHOD__.'() // Skip: Not a File Type');
+		return false;
+	} //end if
+	if(self::is_type_link($file_name)) { // skip links !!
+		return true;
+	} //end if
+	//--
+	return (bool) @chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES);
+	//--
+} //END FUNCTION
+//================================================================
 
 
 //================================================================
@@ -1191,6 +1294,7 @@ public static function get_file_size($file_name) {
 	$file_name = (string) $file_name;
 	//--
 	if((string)trim((string)$file_name) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty FileName');
 		return 0;
 	} //end if
 	if(!self::path_real_exists($file_name)) {
@@ -1217,6 +1321,7 @@ public static function get_file_mtime($file_name) {
 	$file_name = (string) $file_name;
 	//--
 	if((string)trim((string)$file_name) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty FileName');
 		return 0;
 	} //end if
 	if(!self::path_real_exists($file_name)) {
@@ -1243,6 +1348,7 @@ public static function is_type_dir($path) {
 	$path = (string) $path;
 	//--
 	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
 		return false;
 	} //end if
 	//--
@@ -1268,6 +1374,7 @@ public static function is_type_file($path) {
 	$path = (string) $path;
 	//--
 	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
 		return false;
 	} //end if
 	//--
@@ -1293,6 +1400,7 @@ public static function is_type_link($path) {
 	$path = (string) $path;
 	//--
 	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
 		return false;
 	} //end if
 	//--
@@ -1318,6 +1426,7 @@ public static function have_access_read($path) {
 	$path = (string) $path;
 	//--
 	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
 		return false;
 	} //end if
 	//--
@@ -1343,12 +1452,39 @@ public static function have_access_write($path) {
 	$path = (string) $path;
 	//--
 	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
 		return false;
 	} //end if
 	//--
 	@clearstatcache();
 	//--
 	return (bool) is_writable($path);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * CHECK if a path is an executable file.
+ * This provides a safe way to check if a file path is executable (works also with symlinks) ...
+ *
+ * @param 	STRING 	$path 						:: The relative path name to be checked (file or symlink)
+ *
+ * @return 	BOOLEAN								:: TRUE if file, FALSE if not
+ */
+public static function have_access_executable($path) {
+	//--
+	$path = (string) $path;
+	//--
+	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
+		return false;
+	} //end if
+	//--
+	@clearstatcache();
+	//--
+	return (bool) is_executable($path);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1368,6 +1504,7 @@ public static function path_exists($path) {
 	$path = (string) $path;
 	//--
 	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
 		return false;
 	} //end if
 	//--
@@ -1400,6 +1537,7 @@ public static function path_real_exists($path) {
 	$path = (string) $path;
 	//--
 	if((string)trim((string)$path) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty Path');
 		return false;
 	} //end if
 	//--
@@ -1440,17 +1578,17 @@ public static function read($file_name, $file_len=0, $markchmod='no') {
 	//--
 	$fcontent = '';
 	//--
-	if(SmartFileSysUtils::check_file_or_dir_name($file_name)) {
+	if(SmartFileSysUtils::check_if_safe_path($file_name)) {
 		//--
 		if(!self::is_type_dir($file_name)) {
 			//--
 			if(self::is_type_file($file_name)) {
 				//--
 				if((string)$markchmod == 'yes') {
-					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); // force chmod
+					self::fix_file_chmod($file_name); // force chmod
 				} //end if
 				if(!self::have_access_read($file_name)) {
-					@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //try to make ir readable by applying chmod
+					self::fix_file_chmod($file_name); // try to make ir readable by applying chmod
 					if(!self::have_access_read($file_name)) {
 						Smart::log_warning(__METHOD__.'() // ReadFile // A file is not readable: '.$file_name);
 						return '';
@@ -1529,16 +1667,18 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 	//--
 	$result = false;
 	//--
-	if(SmartFileSysUtils::check_file_or_dir_name($file_name)) {
+	if(SmartFileSysUtils::check_if_safe_path($file_name)) {
 		//--
 		if(!self::is_type_dir($file_name)) {
-			//-- remove it if is a link
+			//--
 			if(self::is_type_link($file_name)) {
-				self::delete($file_name); // delete the link if is a link (before setting the lock file !)
+				if(!self::path_real_exists($file_name)) {
+					self::delete($file_name); // delete the link if broken
+				} //end if
 			} //end if
 			//--
 			if(self::is_type_file($file_name)) {
-				@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod first to be sure file is writable
+				self::fix_file_chmod($file_name); // apply chmod first to be sure file is writable
 			} //end if
 			//-- fopen/fwrite method lacks the real locking which can be achieved just with flock which is not as safe as doing at once with: file_put_contents
 			if((string)$write_mode == 'w') { // wb (write, binary safe)
@@ -1549,7 +1689,7 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 			//--
 			if(self::is_type_file($file_name)) {
 				//--
-				@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
+				self::fix_file_chmod($file_name); // apply chmod
 				//--
 				if(!self::have_access_write($file_name)) {
 					Smart::log_warning(__METHOD__.'() // WriteFile // A file is not writable: '.$file_name);
@@ -1566,6 +1706,10 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 				} //end if
 			} //end if
 			//--
+		} else {
+			//--
+			Smart::log_warning(__METHOD__.'() // WriteFile // Failing to write file as this is a type Directory: '.$file_name);
+			//--
 		} //end if else
 		//--
 	} //end if else
@@ -1576,7 +1720,7 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 		$out = 1;
 	} //end if
 	//--
-	return $out;
+	return (int) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1625,7 +1769,7 @@ public static function write_if_not_exists($file_name, $file_content, $y_chkcomp
 		//--
 	} //end if
 	//--
-	return $x_ok;
+	return (int) $x_ok;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1688,7 +1832,7 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 			//--
 			if(self::is_type_file($newlocation)) {
 				//--
-				@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
+				self::fix_file_chmod($newlocation); // apply chmod
 				//--
 				if(!self::have_access_read($newlocation)) {
 					Smart::log_warning(__METHOD__.'() // CopyFile // Destination file is not readable: '.$newlocation);
@@ -1726,7 +1870,7 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 		$out = 0;
 	} //end if else
 	//--
-	return $out;
+	return (int) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1778,7 +1922,7 @@ public static function rename($file_name, $newlocation) {
 	//--
 	$f_cx = false;
 	//--
-	if(((string)$file_name != (string)$newlocation) AND (SmartFileSysUtils::check_file_or_dir_name($file_name)) AND (SmartFileSysUtils::check_file_or_dir_name($newlocation))) {
+	if(((string)$file_name != (string)$newlocation) AND (SmartFileSysUtils::check_if_safe_path($file_name)) AND (SmartFileSysUtils::check_if_safe_path($newlocation))) {
 		//--
 		if((self::is_type_file($file_name)) OR ((self::is_type_link($file_name)) AND (self::is_type_file(self::link_get_origin($file_name))))) { // don't move broken links
 			//--
@@ -1796,7 +1940,7 @@ public static function rename($file_name, $newlocation) {
 					//--
 					if((self::is_type_file($newlocation)) OR ((self::is_type_link($newlocation)) AND (self::is_type_file(self::link_get_origin($newlocation))))) {
 						if(self::is_type_file($newlocation)) {
-							@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); // apply chmod just if file
+							self::fix_file_chmod($newlocation); // apply chmod just if file and not a linked dir
 						} //end if
 					} else {
 						$f_cx = false; // clear
@@ -1820,7 +1964,7 @@ public static function rename($file_name, $newlocation) {
 		$x_ok = 0;
 	} //end if
 	//--
-	return $x_ok;
+	return (int) $x_ok;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1848,7 +1992,7 @@ public static function read_uploaded($file_name) {
 	} //end if
 	//-- {{{SYNC-FILESYS-UPLD-FILE-CHECKS}}}
 	if((string)DIRECTORY_SEPARATOR != '\\') { // if not on Windows (this test will FAIL on Windows ...)
-		if(!SmartFileSysUtils::check_file_or_dir_name($file_name, 'no')) { // here we do not test against absolute path access because uploaded files always return the absolute path
+		if(!SmartFileSysUtils::check_if_safe_path($file_name, 'no')) { // here we do not test against absolute path access because uploaded files always return the absolute path
 			Smart::log_warning(__METHOD__.'() // Read-Uploaded: The Uploaded File Path is Not Safe: '.$file_name);
 			return '';
 		} //end if
@@ -1925,14 +2069,14 @@ public static function move_uploaded($file_name, $newlocation) {
 	} //end if
 	//-- {{{SYNC-FILESYS-UPLD-FILE-CHECKS}}}
 	if((string)DIRECTORY_SEPARATOR != '\\') { // if not on Windows (this test will FAIL on Windows ...)
-		if(!SmartFileSysUtils::check_file_or_dir_name($file_name, 'no')) { // here we do not test against absolute path access because uploaded files always return the absolute path
+		if(!SmartFileSysUtils::check_if_safe_path($file_name, 'no')) { // here we do not test against absolute path access because uploaded files always return the absolute path
 			Smart::log_warning(__METHOD__.'() // MoveUploadedFile: The Uploaded File Path is Not Safe: '.$file_name);
 			return 0;
 		} //end if
 		SmartFileSysUtils::raise_error_if_unsafe_path($file_name, 'no'); // here we do not test against absolute path access because uploaded files always return the absolute path
 	} //end if
 	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name($newlocation)) {
+	if(!SmartFileSysUtils::check_if_safe_path($newlocation)) {
 		Smart::log_warning(__METHOD__.'() // MoveUploadedFile: The Destination File Path is Not Safe: '.$file_name);
 		return 0;
 	} //end if
@@ -1942,7 +2086,7 @@ public static function move_uploaded($file_name, $newlocation) {
 	//--
 	$f_cx = false;
 	//--
-	if(SmartFileSysUtils::check_file_or_dir_name($newlocation)) {
+	if(SmartFileSysUtils::check_if_safe_path($newlocation)) {
 		//--
 		if(!self::is_type_dir($file_name)) {
 			//--
@@ -1954,7 +2098,7 @@ public static function move_uploaded($file_name, $newlocation) {
 				//--
 				if(self::is_type_file($newlocation)) {
 					@touch($newlocation, time()); // touch modified time to avoid upload differences in time
-					@chmod($newlocation, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
+					self::fix_file_chmod($newlocation); // apply chmod
 				} else {
 					Smart::log_warning(__METHOD__.'() // MoveUploadedFile // Failed to move uploaded file: '.$file_name.' // to destination: '.$newlocation);
 				} //end if
@@ -1977,7 +2121,7 @@ public static function move_uploaded($file_name, $newlocation) {
 		$x_ok = 0;
 	} //end if
 	//--
-	return $x_ok;
+	return (int) $x_ok;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2025,13 +2169,13 @@ public static function delete($file_name) {
 	//--
 	$f_cx = false;
 	//--
-	if(SmartFileSysUtils::check_file_or_dir_name($file_name)) {
+	if(SmartFileSysUtils::check_if_safe_path($file_name)) {
 		//--
 		if((self::is_type_file($file_name)) OR (self::is_type_link($file_name))) {
 			//--
 			if(self::is_type_file($file_name)) {
 				//--
-				@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
+				self::fix_file_chmod($file_name); // apply chmod
 				//--
 				$f_cx = @unlink($file_name);
 				//--
@@ -2055,7 +2199,7 @@ public static function delete($file_name) {
 		$x_ok = 0;
 	} //end if
 	//--
-	return $x_ok;
+	return (int) $x_ok;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2083,7 +2227,7 @@ public static function link_get_origin($y_link) {
 		return '';
 	} //end if
 	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) { // pre-check
+	if(!SmartFileSysUtils::check_if_safe_path($y_link)) { // pre-check
 		Smart::log_warning(__METHOD__.'() // Get Link: Invalid Path Link : '.$y_link);
 		return '';
 	} //end if
@@ -2091,7 +2235,7 @@ public static function link_get_origin($y_link) {
 		Smart::log_warning(__METHOD__.'() // Get Link: Link ends with one or many trailing slash(es) / : '.$y_link);
 		$y_link = (string) rtrim($y_link, '/');
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name($y_link)) { // post-check
+	if(!SmartFileSysUtils::check_if_safe_path($y_link)) { // post-check
 		Smart::log_warning(__METHOD__.'() // Get Link: Invalid Link Path : '.$y_link);
 		return '';
 	} //end if
@@ -2138,12 +2282,12 @@ public static function link_create($origin, $destination) {
 	} //end if
 	//--
 	/* DO NOT CHECK, IT MAY BE AN ABSOLUTE + NON-SAFE PATH RETURNED BY SmartFileSystem::link_get_origin() ...
-	if(!SmartFileSysUtils::check_file_or_dir_name($origin, 'no')) { // here we do not test against absolute path access because readlink may return an absolute path
+	if(!SmartFileSysUtils::check_if_safe_path($origin, 'no')) { // here we do not test against absolute path access because readlink may return an absolute path
 		Smart::log_warning(__METHOD__.'() // Create Link: Invalid Path for Origin : '.$origin);
 		return 0;
 	} //end if
 	*/
-	if(!SmartFileSysUtils::check_file_or_dir_name($destination)) {
+	if(!SmartFileSysUtils::check_if_safe_path($destination)) {
 		Smart::log_warning(__METHOD__.'() // Create Link: Invalid Path for Destination : '.$destination);
 		return 0;
 	} //end if
@@ -2157,7 +2301,9 @@ public static function link_create($origin, $destination) {
 		return 0;
 	} //end if
 	//--
-	SmartFileSysUtils::raise_error_if_unsafe_path($origin, 'no'); // here we do not test against absolute path access because readlink may return an absolute path
+	// DO NOT CHECK, IT MAY BE AN ABSOLUTE + NON-SAFE PATH RETURNED BY SmartFileSystem::link_get_origin() ...
+	//SmartFileSysUtils::raise_error_if_unsafe_path($origin, 'no'); // here we do not test against absolute path access because readlink may return an absolute path
+	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($destination);
 	//--
 	$result = @symlink($origin, $destination);
@@ -2168,7 +2314,7 @@ public static function link_create($origin, $destination) {
 		$out = 0;
 	} //end if else
 	//--
-	return $out;
+	return (int) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2180,27 +2326,45 @@ public static function link_create($origin, $destination) {
  * It will create a new directory (folder) if not exists. If non-recursive will try to create just the last directory (folder) segment.
  * The directory (folder) will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_DIRS.
  *
+ * WARNING: The $allow_protected_paths parameter MUST BE SET TO TRUE ONLY FOR VERY SPECIAL USAGE ONLY, TO ALLOW relative paths like : #path/to/a/new-dir that may not be used with standard SmartFileSystem functions as they should be PROTECTED.
+ * Protected Paths (Directories / Folders) are intended for separing the accesible part of filesystem (for regular operations provided via this class) by the protected part of filesystem that can be by example accessed only from special designed libraries.
+ * Example: create a folder #db/sqlite/ and it's content (files, sub-dirs) will not be accessed by this class but only from outside libraries like SQLite).
+ * This feature implements a separation between regular file system folders that this class can access and other application level protected folders in order to avoid filesystem direct access to the protected folders.
+ * As long as all file system operations will be provided only by this class and not using the PHP internal file system functions this separation is safe and secure.
+ *
  * @param 	STRING 		$dir_name 				:: The relative path of directory to be created (can be an existing symlink to a directory)
- * @param 	BOOLEAN 		$recursive 				:: DEFAULT is FALSE ; If TRUE will attempt to create the full directory (folder) structure if not exists and apply over each segment the standardized chmod, as set in SMART_FRAMEWORK_CHMOD_DIRS
+ * @param 	BOOLEAN 	$recursive 				:: DEFAULT is FALSE ; If TRUE will attempt to create the full directory (folder) structure if not exists and apply over each segment the standardized chmod, as set in SMART_FRAMEWORK_CHMOD_DIRS
+ * @param 	BOOLEAN 	$allow_protected_paths 	:: DEFAULT is FALSE ; If TRUE it may be used to create special protected folders (set to TRUE only if you know what you are really doing and you need to create a folder starting with a `#`, otherwise may lead to security issues ...)
  *
  * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
  */
-public static function dir_create($dir_name, $recursive=false) {
+public static function dir_create($dir_name, $recursive=false, $allow_protected_paths=false) {
 	//--
 	$dir_name = (string) $dir_name;
 	//--
-	if((string)$dir_name == '') {
-		Smart::log_warning(__METHOD__.'() // Create Dir [R='.(int)$recursive.'] // The Dir Name is Empty !');
+	if(!defined('SMART_FRAMEWORK_CHMOD_DIRS')) {
+		Smart::log_warning(__METHOD__.'() // Skip: A required constant (SMART_FRAMEWORK_CHMOD_DIRS) has not been defined ...');
 		return 0;
 	} //end if
 	//--
-	SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
+	if((string)$dir_name == '') {
+		Smart::log_warning(__METHOD__.'() // Create Dir [R='.(int)$recursive.'/S='.(int)$allow_protected_paths.'] // The Dir Name is Empty !');
+		return 0;
+	} //end if
+	//--
+	if($allow_protected_paths === true) {
+		SmartFileSysUtils::raise_error_if_unsafe_path($dir_name, 'yes', 'yes'); // deny absolute paths ; allow protected paths (starting with a `#`)
+		$is_path_chk_safe = SmartFileSysUtils::check_if_safe_path($dir_name, 'yes', 'yes'); // deny absolute paths ; allow protected paths (starting with a `#`)
+	} else {
+		SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
+		$is_path_chk_safe = SmartFileSysUtils::check_if_safe_path($dir_name);
+	} //end if else
 	//--
 	@clearstatcache();
 	//--
 	$result = false;
 	//--
-	if(SmartFileSysUtils::check_file_or_dir_name($dir_name)) {
+	if($is_path_chk_safe) {
 		//--
 		if(!self::path_exists($dir_name)) {
 			//--
@@ -2214,7 +2378,7 @@ public static function dir_create($dir_name, $recursive=false) {
 						$tmp_crr_dir .= (string) SmartFileSysUtils::add_dir_last_slash((string)$dir_elements[$i]);
 						if((string)$tmp_crr_dir != '') {
 							if(self::is_type_dir((string)$tmp_crr_dir)) {
-								@chmod((string)$tmp_crr_dir, SMART_FRAMEWORK_CHMOD_DIRS); //apply separate chmod to each segment
+								self::fix_dir_chmod((string)$tmp_crr_dir); // apply separate chmod to each segment
 							} //end if
 						} //end if
 					} //end if
@@ -2222,7 +2386,7 @@ public static function dir_create($dir_name, $recursive=false) {
 			} else {
 				$result = @mkdir($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
 				if(self::is_type_dir($dir_name)) {
-					@chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
+					self::fix_dir_chmod($dir_name); // apply chmod
 				} //end if
 			} //end if else
 			//--
@@ -2230,17 +2394,25 @@ public static function dir_create($dir_name, $recursive=false) {
 			//--
 			$result = true; // dir exists
 			//--
+		} else {
+			//--
+			Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'/S='.(int)$allow_protected_paths.'] // FAILED to create a directory because it appear to be a File: '.$dir_name);
+			//--
 		} //end if else
 		//--
 		if(!self::is_type_dir($dir_name)) {
-			Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'] // FAILED to create a directory: '.$dir_name);
+			Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'/S='.(int)$allow_protected_paths.'] // FAILED to create a directory: '.$dir_name);
 			$out = 0;
 		} //end if
 		//--
 		if(!self::have_access_write($dir_name)) {
-			Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'] // The directory is not writable: '.$dir_name);
+			Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'/S='.(int)$allow_protected_paths.'] // The directory is not writable: '.$dir_name);
 			$out = 0;
 		} //end if
+		//--
+	} else {
+		//--
+		Smart::log_warning(__METHOD__.'() // CreateDir [R='.(int)$recursive.'/S='.(int)$allow_protected_paths.'] // The directory path is not Safe: '.$dir_name);
 		//--
 	} //end if
 	//--
@@ -2250,7 +2422,7 @@ public static function dir_create($dir_name, $recursive=false) {
 		$out = 0;
 	} //end if
 	//--
-	return $out;
+	return (int) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2276,7 +2448,7 @@ public static function dir_create($dir_name, $recursive=false) {
  */
 public static function dir_copy($dirsource, $dirdest, $check_copy_contents=true) {
 	//--
-	return self::dir_recursive_private_copy($dirsource, $dirdest, $check_copy_contents);
+	return (int) self::dir_recursive_private_copy($dirsource, $dirdest, $check_copy_contents);
 	//--
 } //END FUNCTION
 //================================================================
@@ -2344,11 +2516,11 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 		return 0;
 	} //end if
 	//--
-	if(!SmartFileSysUtils::check_file_or_dir_name($dirsource)) {
+	if(!SmartFileSysUtils::check_if_safe_path($dirsource)) {
 		Smart::log_warning(__METHOD__.'() // Copy Dir: The Source Dir Name is Invalid: S='.$dirsource);
 		return 0;
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name($dirdest)) {
+	if(!SmartFileSysUtils::check_if_safe_path($dirdest)) {
 		Smart::log_warning(__METHOD__.'() // Copy Dir: The Destination Dir Name is Invalid: D='.$dirdest);
 		return 0;
 	} //end if
@@ -2378,8 +2550,13 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 			//--
 			if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty
 				//--
-				$tmp_path = $dirsource.$file;
-				$tmp_dest = $dirdest.$file;
+				if(SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$file) != 1) {
+					Smart::log_warning(__METHOD__.'() // Copy Dir: Skip Unsafe FileName or DirName `'.$file.'` detected in path: '.$dirsource);
+					continue; // skip
+				} //end if
+				//--
+				$tmp_path = (string) $dirsource.$file;
+				$tmp_dest = (string) $dirdest.$file;
 				//--
 				SmartFileSysUtils::raise_error_if_unsafe_path($tmp_path);
 				SmartFileSysUtils::raise_error_if_unsafe_path($tmp_dest);
@@ -2455,7 +2632,7 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 		//--
 	} //end if else
 	//--
-	return $out;
+	return (int) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2527,7 +2704,7 @@ public static function dir_rename($dir_name, $new_dir_name) {
 	//--
 	$result = false;
 	//--
-	if(((string)$dir_name != (string)$new_dir_name) AND (SmartFileSysUtils::check_file_or_dir_name($dir_name)) AND (SmartFileSysUtils::check_file_or_dir_name($new_dir_name))) {
+	if(((string)$dir_name != (string)$new_dir_name) AND (SmartFileSysUtils::check_if_safe_path($dir_name)) AND (SmartFileSysUtils::check_if_safe_path($new_dir_name))) {
 		if((self::is_type_dir($dir_name)) OR ((self::is_type_link($dir_name)) AND (self::is_type_dir(self::link_get_origin($dir_name))))) {
 			if(!self::path_exists($new_dir_name)) {
 				$result = @rename($dir_name, $new_dir_name);
@@ -2550,7 +2727,7 @@ public static function dir_rename($dir_name, $new_dir_name) {
 		$out = 0;
 	} //end if
 	//--
-	return $out;
+	return (int) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2615,11 +2792,11 @@ public static function dir_delete($dir_name, $recursive=true) {
 	//--
 	$result = false;
 	//-- remove all subdirs and files within
-	if(SmartFileSysUtils::check_file_or_dir_name($dir_name)) {
+	if(SmartFileSysUtils::check_if_safe_path($dir_name)) {
 		//--
-		if((self::is_type_dir($dir_name)) AND (!self::is_type_link($dir_name))) {
+		if((self::is_type_dir($dir_name)) AND (!self::is_type_link($dir_name))) { // double check if type link
 			//--
-			@chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
+			self::fix_dir_chmod($dir_name); // apply chmod
 			//--
 			if($handle = opendir($dir_name)) {
 				//--
@@ -2627,21 +2804,29 @@ public static function dir_delete($dir_name, $recursive=true) {
 					//--
 					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty
 						//--
-						if((self::is_type_dir($dir_name.$file)) AND (!self::is_type_link($dir_name.$file))) {
+						if(SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$file) != 1) { // skip non-safe filenames to avoid raise error if a directory contains accidentally a nn-safe filename or dirname (at least delete as much as can) ...
 							//--
-							if($recursive == true) {
+							Smart::log_warning(__METHOD__.'() // DeleteDir [R='.(int)$recursive.'] // SKIP Unsafe FileName or DirName `'.$file.'` detected in path: '.$dir_name);
+							//--
+						} else {
+							//--
+							if((self::is_type_dir($dir_name.$file)) AND (!self::is_type_link($dir_name.$file))) {
 								//--
-								self::dir_delete($dir_name.$file, $recursive);
+								if($recursive == true) {
+									//--
+									self::dir_delete($dir_name.$file, $recursive);
+									//--
+								} else {
+									//--
+									return 0; // not recursive and in this case sub-folders are not deleted
+									//--
+								} //end if else
 								//--
-							} else {
+							} else { // file or link
 								//--
-								return 0; // not recursive and in this case sub-folders are not deleted
+								self::delete($dir_name.$file);
 								//--
 							} //end if else
-							//--
-						} else { // file or link
-							//--
-							self::delete($dir_name.$file);
 							//--
 						} //end if else
 						//--
@@ -2680,7 +2865,7 @@ public static function dir_delete($dir_name, $recursive=true) {
 		$out = 0;
 	} //end if
 	//--
-	return $out;
+	return (int) $out;
 	//--
 } //END FUNCTION
 //================================================================
@@ -2785,10 +2970,10 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * </code>
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
- * @hints 		This class can handle thread concurency to the filesystem by using the LOCK_EX (lock exclusive) on each file written / appended
+ * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Filesystem
  *
  */
@@ -2990,11 +3175,22 @@ final class SmartGetFileSystem {
 		if((SmartFileSystem::path_exists($dir_name)) AND (!SmartFileSystem::is_type_file($dir_name))) { // can be dir or link
 			//list
 			//--
-			if($handle = opendir($dir_name)) {
+			$arr_dir_files = scandir((string)$dir_name); // don't make it array, can be false
+			//--
+			//if($handle = opendir($dir_name)) {
+			if(($arr_dir_files !== false) AND (Smart::array_size($arr_dir_files) > 0)) {
 				//---------------------------------------
-				while(false !== ($file = readdir($handle))) {
+				//while(false !== ($file = readdir($handle))) {
+				for($i=0; $i<Smart::array_size($arr_dir_files); $i++) {
 					//--
-					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty
+					$file = (string) $arr_dir_files[$i]; // used by for loop
+					//--
+					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix empty, skip get the unsafe file names to avoid errors
+						//--
+						if(SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$file) != 1) {
+							Smart::log_warning(__METHOD__.'() // Skip Unsafe FileName or DirName `'.$file.'` detected in path: '.$dir_name);
+							continue; // skip
+						} //end if
 						//--
 						if(($include_dot_files) OR ((!$include_dot_files) AND (substr($file, 0, 1) != '.'))) {
 							//--
@@ -3146,9 +3342,9 @@ final class SmartGetFileSystem {
 						//--
 					} //end if (. ..)
 					//--
-				} //end while
+				} //end for
 				//---------------------------------------
-				@closedir($handle);
+				//@closedir($handle);
 				//---------------------------------------
 			} else {
 				//---------------------------------------

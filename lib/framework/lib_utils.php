@@ -27,12 +27,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //--
-// gzdeflate / gzinflate (rfc1951) have no checksum for data integrity by default ; if checksums are integrated separately, it can be better than other zlib algorithms
-// gzcompress / gzuncompress (rfc1950) which uses ADLER32 minimal checksums
-// gzencode / gzdecode (rfc1952) is the gzip compatible algorithm but it includes large info headers and is a bit slower
+// gzdeflate / gzinflate (rfc1951) have no checksum for data integrity by default ; if sha1 checksums are integrated separately, it can be better than other zlib algorithms
 //--
-if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!function_exists('gzuncompress')) OR (!function_exists('gzcompress'))) {
-	die('ERROR: The PHP ZLIB Extension is required for SmartFramework / Lib Utils');
+if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
+	die('ERROR: The PHP ZLIB Extension (gzdeflate/gzinflate) is required for SmartFramework / Lib Utils');
 } //end if
 //--
 
@@ -49,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate')) OR (!funct
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Base
  *
  */
@@ -228,14 +226,6 @@ public static function datetime_fixed_offset($y_timezone_offset, $ydate) {
 
 
 //================================================================
-// to avoid memory overheads, this is the max optimised text field size for Databases, limited to 64 MB)
-public static function data_max_size() {
-	return 67108864; // [DO NOT CHANGE THIS VALUE !!!]
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
 // Archive data (string) to B64/Zlib-Raw/Hex
 public static function data_archive($y_str) {
 	//-- if empty data, return empty string
@@ -246,7 +236,7 @@ public static function data_archive($y_str) {
 	$chksum = SmartHashCrypto::sha1((string)$y_str);
 	//-- prepare data and add checksum
 	$y_str = trim(strtoupper(bin2hex((string)$y_str))).'#CHECKSUM-SHA1#'.$chksum;
-	$out = @gzdeflate($y_str, 6, ZLIB_ENCODING_RAW); // deflate (default compression of zlib is 6)
+	$out = @gzdeflate($y_str, -1, ZLIB_ENCODING_RAW); // don't make it string, may return false ; -1 = default compression of the zlib library is used which is 6
 	//-- check for possible deflate errors
 	if(($out === false) OR ((string)$out == '')) {
 		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
@@ -263,17 +253,17 @@ public static function data_archive($y_str) {
 		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is zero ! ...');
 		return '';
 	} //end if
-	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZDEFLATE-ERR-CHECK}}}
+	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZ-ARCHIVE-ERR-CHECK}}}
 		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is higher than 32768 ! ...');
 		return '';
 	} //end if
 	//--
 	$y_str = ''; // free mem
 	//-- add signature
-	$out = trim(base64_encode((string)$out))."\n".'PHP.SF.151129/B64.ZLibRaw.HEX';
+	$out = (string) trim((string)base64_encode((string)$out))."\n".'PHP.SF.151129/B64.ZLibRaw.HEX';
 	//-- test unarchive
 	$unarch_checksum = SmartHashCrypto::sha1(self::data_unarchive($out));
-	if((string)$chksum != (string)$unarch_checksum) { // check: if this is a very serious bug with ZLib or PHP so we can't tolerate
+	if((string)$chksum != (string)$unarch_checksum) { // check: if there is a serious bug with ZLib or PHP we can't tolerate, so test decompress here !!
 		Smart::log_warning('SmartFramework Utils / Data Archive :: Data Encode Check Failed ! ...');
 		return '';
 	} //end if
@@ -306,28 +296,28 @@ public static function data_unarchive($y_enc_data) {
 		Smart::log_notice('SmartFramework // Data Unarchive // Invalid Package Signature: '.$arr[1]);
 	} //end if
 	//-- decode it (at least try)
-	$out = @base64_decode((string)$arr[0]);
-	if(($out === false) OR (trim((string)$out) == '')) { // use trim, the deflated string can't contain only spaces
+	$out = @base64_decode((string)$arr[0]); // NON-STRICT ! don't make it string, may return false
+	if(($out === false) OR ((string)trim((string)$out) == '')) { // use trim, the deflated string can't contain only spaces
 		Smart::log_warning('SmartFramework // Data Unarchive // Invalid B64 Data for packet with signature: '.$arr[1]);
 		return '';
 	} //end if
 	$out = @gzinflate($out);
-	if(($out === false) OR (trim((string)$out) == '')) {
-		Smart::log_warning('SmartFramework // Data Unarchive // Invalid Inflate of Data for packet with signature: '.$arr[1]);
+	if(($out === false) OR ((string)trim((string)$out) == '')) {
+		Smart::log_warning('SmartFramework // Data Unarchive // Invalid Zlib GzInflate Data for packet with signature: '.$arr[1]);
 		return '';
 	} //end if
 	//-- post-process
 	if(strpos((string)$out, '#CHECKSUM-SHA1#') !== false) {
 		//--
 		$arr = array();
-		$arr = explode('#CHECKSUM-SHA1#', (string)$out);
+		$arr = (array) explode('#CHECKSUM-SHA1#', (string)$out);
 		$out = '';
-		$arr[0] = @hex2bin(strtolower(trim((string)$arr[0]))); // is the data packet
+		$arr[0] = @hex2bin(strtolower(trim((string)$arr[0]))); // don't make it string, may return false ; it is the data packet
 		if(($arr[0] === false) OR ((string)$arr[0] == '')) { // no trim here ... (the real string may contain only some spaces)
 			Smart::log_warning('SmartFramework // Data Unarchive // Invalid HEX Data for packet with signature: '.$arr[1]);
 			return '';
 		} //end if
-		$arr[1] = trim((string)$arr[1]); // the checksum
+		$arr[1] = (string) trim((string)$arr[1]); // the checksum
 		if(SmartHashCrypto::sha1($arr[0]) != (string)$arr[1]) {
 			Smart::log_warning('SmartFramework // Data Unarchive // Invalid Packet, Checksum FAILED :: A checksum was found but is invalid: '.$arr[1]);
 			return '';
@@ -905,7 +895,7 @@ public static function create_download_link($y_file, $y_ctrl_key) {
 		Smart::log_warning('Utils / Create Download Link: Empty File Path has been provided. This means the download link will be unavaliable (empty) to assure security protection.');
 		return '';
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name($y_file)) {
+	if(!SmartFileSysUtils::check_if_safe_path($y_file)) {
 		Smart::log_warning('Utils / Create Download Link: Invalid File Path has been provided. This means the download link will be unavaliable (empty) to assure security protection. File: '.$y_file);
 		return '';
 	} //end if
@@ -2204,55 +2194,6 @@ public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc
 	return (array) $outarr;
 	//--
 
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Function: Lock File Name
- *
- * @access 		private
- * @internal
- *
- */
-public static function single_user_mode_lockfile() {
-	//--
-	return '____SMART-FRAMEWORK_SingleUser_Mode__Enabled';
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Check if Single-User Mode is Enabled
- *
- * @access 		private
- * @internal
- *
- * @return TRUE/FALSE
- */
-public static function single_user_mode_check() {
-	//--
-	$lock_file = (string) self::single_user_mode_lockfile();
-	//--
-	$out = false;
-	//--
-	if(SmartFileSystem::path_exists($lock_file)) {
-		//--
-		$lock_content = SmartFileSystem::read($lock_file);
-		$chk_arr = explode("\n", trim($lock_content));
-		$tmp_time = Smart::format_number_dec((($chk_arr[1] - time()) / 60), 0, '.', '');
-		//--
-		if($tmp_time <= 0) {
-			$out = true;
-		} //end if
-		//--
-	} //end if
-	//--
-	return (bool) $out;
-	//--
 } //END FUNCTION
 //================================================================
 

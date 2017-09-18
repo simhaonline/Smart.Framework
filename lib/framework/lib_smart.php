@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170913
+ * @version     v.170917
  * @package     Base
  *
  */
@@ -1190,7 +1190,7 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
  */
 public static function safe_pathname($y_path, $ysupresschar='') {
 	//-- v.160221
-	if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) {
+	if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) { // {{{SYNC-CHK-SAFE-PATH}}}
 		return (string) $y_path;
 	} //end if
 	//--
@@ -1234,7 +1234,7 @@ public static function safe_pathname($y_path, $ysupresschar='') {
  */
 public static function safe_filename($y_fname, $ysupresschar='') {
 	//-- v.160221
-	if(preg_match('/^[_a-zA-Z0-9\-\.@#]+$/', (string)$y_fname)) {
+	if(preg_match('/^[_a-zA-Z0-9\-\.@#]+$/', (string)$y_fname)) { // {{{SYNC-CHK-SAFE-FILENAME}}}
 		return (string) $y_fname;
 	} //end if
 	//--

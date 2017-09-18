@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Database:SQLite
  *
  */
@@ -443,7 +443,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Database:SQLite
  *
  */
@@ -481,7 +481,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		return;
 	} //end if
 	//--
-	if(SmartFileSysUtils::check_file_or_dir_name((string)$file_name, 'yes', 'yes') != 1) { 				// deny absolute path access ; allow protected path access (starting with #)
+	if(SmartFileSysUtils::check_if_safe_path((string)$file_name, 'yes', 'yes') != 1) { 				// deny absolute path access ; allow protected path access (starting with #)
 		self::error((string)$file_name, 'OPEN', 'ERROR: DB path is invalid !', '', '');
 		return;
 	} //end if
@@ -497,11 +497,9 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db, 'yes', 'yes'); 					// deny absolute path access ; allow protected path access (starting with #)
 	//--
 	if(!SmartFileSystem::is_type_dir($dir_of_db)) {
-		@mkdir($dir_of_db, SMART_FRAMEWORK_CHMOD_DIRS, true);
+		SmartFileSystem::dir_create($dir_of_db, true, true); // allow protected paths
 	} //end if
-	if(SmartFileSystem::is_type_dir($dir_of_db)) {
-		@chmod($dir_of_db, SMART_FRAMEWORK_CHMOD_DIRS); //apply chmod
-	} else {
+	if(!SmartFileSystem::is_type_dir($dir_of_db)) {
 		self::error((string)$file_name, 'OPEN', 'ERROR: DB folder does not exists !', '', '');
 		return;
 	} //end if
@@ -515,7 +513,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder access-protection not initialized !', '', '');
 			return;
 		} //end if
-		@chmod((string)$dir_of_db.'.htaccess', SMART_FRAMEWORK_CHMOD_FILES); //apply chmod
+		SmartFileSystem::fix_file_chmod((string)$dir_of_db.'.htaccess'); // apply file chmod
 		if(!SmartFileSystem::is_type_file((string)$dir_of_db.'.htaccess')) {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder access-protection not found !', '', '');
 			return;
@@ -574,7 +572,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	} //end try catch
 	//--
 	if(SmartFileSystem::is_type_file($file_name)) {
-		@chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES);
+		SmartFileSystem::fix_file_chmod($file_name); // apply file chmod
 	} //end if
 	//--
 	self::check_connection($db);

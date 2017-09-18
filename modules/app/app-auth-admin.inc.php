@@ -42,7 +42,17 @@ if(headers_sent()) {
 if(!defined('ADMIN_AREA_USER') OR !defined('ADMIN_AREA_PASSWORD')) {
 	//--
 	http_response_code(403);
-	die(SmartComponents::http_message_403_forbidden('Authentication ADMIN_AREA_USER / ADMIN_AREA_PASSWORD not set in config-admin.php ...'));
+	die(SmartComponents::http_message_403_forbidden('Authentication ADMIN_AREA_USER / ADMIN_AREA_PASSWORD not set ...')); // must be set in config-admin.php
+	//--
+} elseif((string)trim((string)ADMIN_AREA_USER) == '') {
+	//--
+	http_response_code(500);
+	die(SmartComponents::http_message_500_internalerror('Authentication ADMIN_AREA_USER was set but is Empty ...'));
+	//--
+} elseif((string)trim((string)ADMIN_AREA_PASSWORD) == '') {
+	//--
+	http_response_code(500);
+	die(SmartComponents::http_message_500_internalerror('Authentication ADMIN_AREA_PASSWORD was set but is Empty ...'));
 	//--
 } //end if
 //-------------------------------------------

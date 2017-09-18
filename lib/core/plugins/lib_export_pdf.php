@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.170913
+ * @version 	v.170914
  * @package 	Exporters
  *
  */
@@ -59,7 +59,7 @@ public static function is_active() {
 	$out = '';
 	//--
 	if((defined('SMART_FRAMEWORK_PDF_GENERATOR_APP')) AND ((string)SMART_FRAMEWORK_PDF_GENERATOR_APP != '')) {
-		if(is_executable(SMART_FRAMEWORK_PDF_GENERATOR_APP)) {
+		if(SmartFileSystem::have_access_executable(SMART_FRAMEWORK_PDF_GENERATOR_APP)) {
 			$out = SMART_FRAMEWORK_PDF_GENERATOR_APP;
 		} //end if
 	} //end if

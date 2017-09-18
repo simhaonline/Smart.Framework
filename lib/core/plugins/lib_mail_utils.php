@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Mailer:Utility
  *
  */
@@ -739,7 +739,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.170913
+ * @version 	v.170917
  * @package 	Mailer:Utility
  *
  */
@@ -756,7 +756,7 @@ public static function encode_mime_fileurl($y_msg_file, $y_ctrl_key) {
 		Smart::log_warning('Mail-Utils / Encode Mime File URL: Empty Message File Path has been provided. This means the URL link will be unavaliable (empty) to assure security protection.');
 		return '';
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name($y_msg_file)) {
+	if(!SmartFileSysUtils::check_if_safe_path($y_msg_file)) {
 		Smart::log_warning('Mail-Utils / Encode Mime File URL: Invalid Message File Path has been provided. This means the URL link will be unavaliable (empty) to assure security protection. Message File: '.$y_msg_file);
 		return '';
 	} //end if
@@ -801,7 +801,7 @@ public static function decode_mime_fileurl($y_enc_msg_file, $y_ctrl_key) {
 		Smart::log_warning('Mail-Utils / Decode Mime File URL: Empty Message File Path has been provided. This means the URL link will be unavaliable (empty) to assure security protection.');
 		return '';
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name($y_enc_msg_file)) {
+	if(!SmartFileSysUtils::check_if_safe_path($y_enc_msg_file)) {
 		Smart::log_warning('Mail-Utils / Decode Mime File URL: Invalid Message File Path has been provided. This means the URL link will be unavaliable (empty) to assure security protection. Message File: '.$y_enc_msg_file);
 		return '';
 	} //end if
@@ -853,7 +853,7 @@ public static function decode_mime_fileurl($y_enc_msg_file, $y_ctrl_key) {
 		$arr['error'] = 'ERROR: Empty Message Path ...';
 		return (array) $arr;
 	} //end if
-	if(!SmartFileSysUtils::check_file_or_dir_name($arr['message-file'])) {
+	if(!SmartFileSysUtils::check_if_safe_path($arr['message-file'])) {
 		$arr = array();
 		$arr['error'] = 'ERROR: Unsafe Message Path Access ...';
 		return (array) $arr;

@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170913
+ * @version 	v.170917
  *
  */
 final class TestUnitFileSystem {
@@ -109,7 +109,7 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK TEST ABSOLUTE / BACKWARD PATHS ...';
 			$tests[] = $the_test;
-			if((!\SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/../backward/path')) OR (\SmartFileSysUtils::check_file_or_dir_name('../backward/path')) OR (\SmartFileSysUtils::check_file_or_dir_name('#this/is/protected', 'yes', 'no')) OR (!\SmartFileSysUtils::check_file_or_dir_name('#this/is/protected', 'yes', 'yes'))) {
+			if((!\SmartFileSysUtils::check_if_safe_path('/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/../backward/path')) OR (\SmartFileSysUtils::check_if_safe_path('../backward/path')) OR (\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'yes', 'no')) OR (!\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'yes', 'yes'))) {
 				$err = 'ERROR: CHECK TEST ABSOLUTE / BACKWARD / PROTECTED PATHS ... FAILED !!!';
 			} //end if
 		} //end if
@@ -117,7 +117,7 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK TEST ABSOLUTE INVALID PATHS ...';
 			$tests[] = $the_test;
-			if((\SmartFileSysUtils::check_file_or_dir_name('some/path:/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute:some/path', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name('c:/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name(':/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/abso|lute', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/abso lute', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/abso:lute', 'no')) OR (\SmartFileSysUtils::check_file_or_dir_name('#this/is/protected', 'no'))) {
+			if((\SmartFileSysUtils::check_if_safe_path('some/path:/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/absolute:some/path', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('c:/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path(':/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso|lute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso lute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso:lute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'no'))) {
 				$err = 'ERROR: CHECK TEST ABSOLUTE : INVALID / PROTECTED PATHS ... FAILED !!!';
 			} //end if
 		} //end if
@@ -125,7 +125,7 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK TEST INVALID PATHS ...';
 			$tests[] = $the_test;
-			if((\SmartFileSysUtils::check_file_or_dir_name('some/path:/this/is/absolute')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/absolute:some/path')) OR (\SmartFileSysUtils::check_file_or_dir_name('c:/this/is/absolute')) OR (\SmartFileSysUtils::check_file_or_dir_name(':/this/is/absolute')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/abso|lute')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/abso lute')) OR (\SmartFileSysUtils::check_file_or_dir_name('/this/is/abso:lute')) OR (\SmartFileSysUtils::check_file_or_dir_name('#this/is/protected'))) {
+			if((\SmartFileSysUtils::check_if_safe_path('some/path:/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/absolute:some/path')) OR (\SmartFileSysUtils::check_if_safe_path('c:/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path(':/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso|lute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso lute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso:lute')) OR (\SmartFileSysUtils::check_if_safe_path('#this/is/protected'))) {
 				$err = 'ERROR: CHECK TEST INVALID / PROTECTED PATHS ... FAILED !!!';
 			} //end if
 		} //end if
@@ -154,18 +154,18 @@ final class TestUnitFileSystem {
 		//--
 		\SmartFileSysUtils::raise_error_if_unsafe_path($the_folder);
 		if((string)$err == '') {
-			$the_test = 'CHECK PATH NAME DIR: check_file_or_dir_name() : '.$the_folder;
+			$the_test = 'CHECK PATH NAME DIR: check_if_safe_path() : '.$the_folder;
 			$tests[] = $the_test;
-			$result = \SmartFileSysUtils::check_file_or_dir_name($the_folder);
+			$result = \SmartFileSysUtils::check_if_safe_path($the_folder);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
 		} //end if
 		\SmartFileSysUtils::raise_error_if_unsafe_path($the_file);
 		if((string)$err == '') {
-			$the_test = 'CHECK PATH NAME FILE: check_file_or_dir_name() : '.$the_file;
+			$the_test = 'CHECK PATH NAME FILE: check_if_safe_path() : '.$the_file;
 			$tests[] = $the_test;
-			$result = \SmartFileSysUtils::check_file_or_dir_name($the_file);
+			$result = \SmartFileSysUtils::check_if_safe_path($the_file);
 			if($result !== 1) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
@@ -480,30 +480,53 @@ final class TestUnitFileSystem {
 			} //end if
 		} //end if
 		//--
-		if((string)$err == '') {
-			if(\SmartFileSystem::is_type_dir('_scripts/')) {
-				//--
+		if(\SmartFileSystem::is_type_dir('_scripts/')) {
+			//--
+			if((string)$err == '') {
+				$the_test = 'GET STORAGE DIR [DEVELOPMENT]: get_storage() : '.'_scripts/';
+				$tests[] = $the_test;
+				$result = (new \SmartGetFileSystem(true))->get_storage('_scripts/', true, true);
+				if(\Smart::array_size($result) <= 0) {
+					$err = 'ERROR :: '.$the_test.' #RESULT=NOT-ARRAY';
+				} else {
+					if(\Smart::array_size($result['list-dirs']) <= 0) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-dirs]=NOT-ARRAY';
+					} //end if
+					if(\Smart::array_size($result['list-dirs']) != (int)$result['dirs']) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-dirs]!=RESULT[dirs]';
+					} //end if
+					if(\Smart::array_size($result['list-files']) <= 0) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-files]=NOT-ARRAY';
+					} //end if
+					if(\Smart::array_size($result['list-files']) != (int)$result['files']) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-files]!=RESULT[files]';
+					} //end if
+				} //end if
+			} //end if
+			//--
+			if((string)$err == '') {
 				$the_test = 'RECURSIVE COPY (CLONE) DIR [DEVELOPMENT]: dir_copy() : '.'_scripts/'.' to: '.$the_folder.'_scripts';
 				$tests[] = $the_test;
 				$result = \SmartFileSystem::dir_copy('_scripts/', $the_folder.'_scripts');
 				if($result !== 1) {
 					$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 				} //end if
-				//--
-				if((string)$err == '') {
-					$the_test = 'DIR COMPARE THE [DEVELOPMENT] SOURCE WITH [DEVELOPMENT] DESTINATION AFTER DIR COPY AND DIR MOVE:'.' '.'compare_folders() : '.'_scripts/'.' with: '.$the_folder.'_scripts/';
-					$tests[] = $the_test;
-					$arr_diff = array();
-					$arr_diff = \SmartFileSystem::compare_folders('_scripts', $the_folder.'_scripts', true, true);
-					if(\Smart::array_size($arr_diff) > 0) {
-						$err = 'ERROR :: '.$the_test.' #DIFFERENCES='.print_r($arr_diff,1);
-					} //end if
+			} //end if
+			//--
+			if((string)$err == '') {
+				$the_test = 'DIR COMPARE THE [DEVELOPMENT] SOURCE WITH [DEVELOPMENT] DESTINATION AFTER DIR COPY AND DIR MOVE:'.' '.'compare_folders() : '.'_scripts/'.' with: '.$the_folder.'_scripts/';
+				$tests[] = $the_test;
+				$arr_diff = array();
+				$arr_diff = \SmartFileSystem::compare_folders('_scripts', $the_folder.'_scripts', true, true);
+				if(\Smart::array_size($arr_diff) > 0) {
+					$err = 'ERROR :: '.$the_test.' #DIFFERENCES='.print_r($arr_diff,1);
 				} //end if
-				//--
-			} else {
-				$tests[] = 'RECURSIVE COPY (CLONE) DIR [DEVELOPMENT]: Test Not Run (Development environment not detected) ...';
-			} //end if else
-		} //end if
+			} //end if
+			//--
+		} else {
+			$tests[] = 'GET STORAGE / RECURSIVE COPY / DIR COMPARE :: DIR [DEVELOPMENT]: Tests Not Run (Development environment not detected) ...';
+		} //end if else
+
 		//--
 		if((string)$err == '') {
 			$the_test = 'RECURSIVE COPY (CLONE) DIR: dir_copy() : '.$the_folder.' to: '.$the_copy_folder;
