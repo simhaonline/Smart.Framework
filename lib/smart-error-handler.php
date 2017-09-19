@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// # r.170913 # this should be loaded from app web root only
+// # r.170919 # this should be loaded from app web root only
 
 // ===== ATTENTION =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES
@@ -70,7 +70,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	//--
 	global $smart_____framework_____last__error;
 	//--
-	if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) {
+	if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) { // log :: hide errors and just log them
 		$smart_____framework_____last__error = ''; // hide errors if explicit set so (make sense in production environments)
 	} //end if
 	//-- The following error types cannot be handled with a user defined function: E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, and most of E_STRICT raised in the file where set_error_handler() is called : http://php.net/manual/en/function.set-error-handler.php
@@ -183,9 +183,10 @@ set_exception_handler(function($exception) { // no type for EXCEPTION to be PHP 
 });
 //==
 ini_set('ignore_repeated_source', '0'); // do not ignore repeated errors if in different files
-if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) {
+if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) { // log :: hide errors and just log them
 	ini_set('ignore_repeated_errors', '1'); // ignore repeated errors in the same file on the same line
 	ini_set('log_errors_max_len', 2048); // max size of one error to log 2k (in production environments this is costly)
+	register_shutdown_function('smart__framework__err__handler__catch_fatal_errs');
 } else { // dev
 	ini_set('ignore_repeated_errors', '0'); // do not ignore repeated errors
 	ini_set('error_prepend_string', '<style type="text/css">* { font-family: arial,sans-serif; font-smooth: always; }</style> &nbsp; <font size="7" color="#4E5A92"><b>Code Execution ERROR <img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/sign-crit-error.svg"> PHP '.PHP_VERSION.' <img width="48" align="right" src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/php-logo.svg"></b></font><div><hr size="1"><pre>');
@@ -197,6 +198,29 @@ ini_set('log_errors', '1'); // log always the errors
 ini_set('error_log', (string)SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE); // error log file
 //==
 /**
+ * Function Error Handler Catch Fatal Errors
+ * Info: when display_errors is set to false, will display a blank page
+ * This is a fix for that situation ...
+ * @access 		private
+ * @internal
+ */
+function smart__framework__err__handler__catch_fatal_errs() {
+	$error = error_get_last();
+	if(is_array($error)) {
+		switch($error['type']) {
+			case E_ERROR:
+			case E_PARSE:
+			case E_CORE_ERROR:
+			case E_COMPILE_ERROR:
+				@trigger_error('FATAL ERROR: '.(string)print_r($error,1), E_USER_ERROR);
+				break;
+			default:
+				// don't handle
+		} //end switch
+	} //end if
+} //END FUNCTION
+//==
+/**
  * Function Error Handler Get BasePath
  * @access 		private
  * @internal
@@ -204,9 +228,9 @@ ini_set('error_log', (string)SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE); // error l
 function smart__framework__err__handler__get__basepath() {
 	$imgprefix = (string) dirname((string)$_SERVER['SCRIPT_NAME']);
 	if(((string)$imgprefix == '') || ((string)$imgprefix == '/') || ((string)$imgprefix == '\\') || ((string)$imgprefix == '.')) {
-		$imgprefix = '';
+		$imgprefix = ''; // no prefix
 	} else {
-		$imgprefix .= '/';
+		$imgprefix .= '/'; // fix: add a trailing slash
 	} //end if
 	return (string) $imgprefix;
 } //END FUNCTION
