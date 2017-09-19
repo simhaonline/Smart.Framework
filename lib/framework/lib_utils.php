@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170917
+ * @version 	v.170919
  * @package 	Base
  *
  */
@@ -1969,7 +1969,7 @@ public static function get_os_browser_ip($y_mode='') {
 		$wp_px = '[?]';
 		$wp_mb = 'no'; // by default is not mobile
 		//--
-		$the_lower_signature = strtolower((string)$_SERVER['HTTP_USER_AGENT']);
+		$the_lower_signature = (string) strtolower((string)$_SERVER['HTTP_USER_AGENT']);
 		//--
 		// {{{SYNC-CLI-BW-ID}}}
 		//-- identify browser

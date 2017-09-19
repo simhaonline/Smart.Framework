@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170918
+ * @version 	v.170919
  * @package 	Filesystem
  *
  */
@@ -1199,7 +1199,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170918
+ * @version 	v.170919
  * @package 	Filesystem
  *
  */
@@ -2976,7 +2976,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170918
+ * @version 	v.170919
  * @package 	Filesystem
  *
  */
