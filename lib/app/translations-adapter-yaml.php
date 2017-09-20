@@ -34,7 +34,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  * @access 		private
  * @internal
  *
- * @version		170913
+ * @version		170920
  *
  */
 final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTranslations {
@@ -113,12 +113,6 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 	public static function getTranslationsVersion() {
 		//--
 		$version = 'Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_VERSION.' '.SMART_FRAMEWORK_RELEASE_TAGVERSION;
-		//--
-		//if(defined('SMART_FRAMEWORK_MODULES_VERSION')) {
-		//	if(defined('SMART_FRAMEWORK_MODULES_HEAD_VERSION')) {
-		//		$version .= "\n".'Smart.Framework.Modules :: '.SMART_FRAMEWORK_MODULES_VERSION.' '.SMART_FRAMEWORK_MODULES_HEAD_VERSION;
-		//	} //end if
-		//} //end if
 		//--
 		if(defined('SMART_APP_MODULES_RELEASE')) {
 			$version .= "\n".'App.Modules :: '.SMART_APP_MODULES_RELEASE;

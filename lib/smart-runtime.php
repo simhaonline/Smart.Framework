@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.19'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.09.20'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -867,7 +867,11 @@ final class SmartFrameworkRuntime {
 public static function getAppReleaseHash() {
 	//--
 	if((string)self::$AppReleaseHash == '') {
-		self::$AppReleaseHash = (string) sha1((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.SMART_FRAMEWORK_RELEASE_VERSION.SMART_APP_MODULES_RELEASE);
+		$crc32 = (int) crc32((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION.(string)SMART_APP_MODULES_RELEASE);
+		if($crc32 < 0) {
+			$crc32 = (int) (-1 * $crc32); // fix for 32bit platforms
+		} //end if
+		self::$AppReleaseHash = (string) strtolower((string)base_convert((int)$crc32, 10, 36));
 	} //end if
 	//--
 	return (string) self::$AppReleaseHash;

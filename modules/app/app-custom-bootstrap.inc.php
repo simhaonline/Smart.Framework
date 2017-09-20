@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //======================================================
-// This file can be customized as you need.
+// NOTICE: This file can be customized as you need.
 //======================================================
 // App Custom Bootstrap Middleware / Shared (for both: index.php / admin.php)
 // This code will be loaded into the App Boostrap automatically.
@@ -29,14 +29,13 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // 		- ... other purposes ...
 //======================================================
 
-//-- defines the minimum version of the Smart.Framework to run on
-define('SMART_APP_MODULES_RELEASE', 'r.2017.09.19'); // this can be used for tracking changes to custom app modules
-define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.5.7'); // this must be used to validate the required minimum framework version
+//-- defines the modules version (required for AppReleaseHash)
+define('SMART_APP_MODULES_RELEASE', 'm.170920'); // this can be used for tracking changes to custom app modules
+//--
+
 //-- checks the minimum version of the Smart.Framework to run on
-if(version_compare((string)SMART_FRAMEWORK_RELEASE_VERSION, (string)SMART_APP_MODULES_RELEASE) < 0) {
-	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_RELEASE.' or later !');
-} //end if
-if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
+define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.5.7.r.2017.09.20'); // this must be used to validate the required minimum framework version
+if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
 	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_MIN_FRAMEWORK_VER.' or later !');
 } //end if
 //--
