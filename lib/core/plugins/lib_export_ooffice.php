@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart, SmartZipArchive
- * @version 	v.160107
+ * @version 	v.170920
  * @package 	Exporters
  *
  */
@@ -149,7 +149,7 @@ public function ODS_Disposition_Header($y_filename='file.ods', $y_disp='attachme
 			$y_disp = 'attachment';
 	} //end switch
 	//--
-	return (string) $y_disp.'; filename="'.Smart::safe_validname($y_filename).'"';
+	return (string) $y_disp.'; filename="'.Smart::safe_filename($y_filename).'"';
 	//--
 } //END FUNCTION
 //=====================================================================

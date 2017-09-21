@@ -69,8 +69,8 @@ if((string)$var == 'some-string') {
  * @hints       It is recommended to use the methods in this class instead of PHP native methods whenever is possible because this class will offer Long Term Support and the methods will be supported even if the behind PHP methods can change over time, so the code would be easier to maintain.
  *
  * @access      PUBLIC
- * @depends     extensions: PHP XML, PHP JSON ; classes: SmartUnicode
- * @version     v.170917
+ * @depends     extensions: PHP JSON ; classes: SmartUnicode
+ * @version     v.170921
  * @package     Base
  *
  */
@@ -1179,19 +1179,61 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 
 //================================================================
 /**
- * Safe Path Name to be used to process dynamic build paths to avoid weird path character injections
- * To be used for full path to files or full path to dirs or just dir names
+ * Test and Fix if unsafe detected for: safe path / safe filename / safe valid name / safe username / safe varname
+ * This is intended to be used against the result of above functions to avoid generate an unsafe file system path (ex: . or .. or / or /. or /..)
+ * Because all the above functions may return an empty (string) result, if unsafe sequences are detected will just fix it by clear the result (enforce empty string is better than unsafe)
+ * It should allow also both: absolute and relative paths, thus if absolute path should be tested later
+ *
+ * @access 		private
+ * @internal
+ *
+ * @return STRING 						:: The fixed (filesys) safe string
+ *
+ */
+public static function safe_fix_invalid_filesys_names($y_fsname) {
+	//-- v.170920
+	$y_fsname = (string) trim((string)$y_fsname);
+	//-- {{{SYNC-SAFE-PATH-CHARS}}} {{{SYNC-CHK-SAFE-PATH}}}
+	if(
+		((string)$y_fsname == '.') OR
+		((string)$y_fsname == '..') OR
+		((string)$y_fsname == '/') OR
+		((string)$y_fsname == '/.') OR
+		((string)$y_fsname == '/..') OR
+		(substr($y_fsname, -2, 2) == '/.') OR
+		(substr($y_fsname, -3, 3) == '/..')
+	) {
+		$y_fsname = '';
+	} //end if
+	//--
+	return (string) $y_fsname; // returns trimmed value or empty if non-safe
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Create a Safe Path Name to be used to process dynamic build paths to avoid weird path character injections
+ * This should be used for relative or absolute path to files or dirs
+ * It should allow also both: absolute and relative paths, thus if absolute path should be tested later
+ * NOTICE: It may return an empty string if all characters in the path are invalid or invalid path sequences detected, so if empty path name must be tested later
  * ALLOWED CHARS: [a-zA-Z0-9] _ - . @ # /
  *
  * @param STRING 		$y_path			:: Path to be processed
  * @param STRING 		$ysupresschar	:: The suppression character to replace weird characters ; optional ; default is ''
  *
- * @return STRING 						:: The safe path
+ * @return STRING 						:: The safe path ; if invalid will return empty value
  */
 public static function safe_pathname($y_path, $ysupresschar='') {
-	//-- v.160221
+	//-- v.170920
+	$y_path = (string) trim((string)$y_path); // force string and trim
+	if((string)$y_path == '') {
+		return '';
+	} //end if
+	//--
 	if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) { // {{{SYNC-CHK-SAFE-PATH}}}
-		return (string) $y_path;
+		return (string) self::safe_fix_invalid_filesys_names($y_path);
 	} //end if
 	//--
 	$ysupresschar = (string) $ysupresschar; // force string and be sure is lower
@@ -1203,18 +1245,18 @@ public static function safe_pathname($y_path, $ysupresschar='') {
 			$ysupresschar = '';
 	} //end if
 	//--
-	$y_path = (string) $y_path; // force string
 	$y_path = (string) preg_replace((string)self::lower_unsafe_characters(), '', (string)$y_path); // remove dangerous characters
 	$y_path = (string) SmartUnicode::utf8_to_iso($y_path); // bring STRING to ISO-8859-1
 	$y_path = (string) stripslashes($y_path); // remove any possible back-slashes
-	$y_path = (string) str_replace('?', $ysupresschar, $y_path); // replace questionmark (that may come from utf8 decode)
+	$y_path = (string) self::normalize_spaces($y_path); // normalize spaces to catch null seq.
+	//$y_path = (string) str_replace('?', $ysupresschar, $y_path); // replace questionmark (that may come from utf8 decode) ; this is already done below
 	$y_path = (string) preg_replace('/[^_a-zA-Z0-9\-\.@#\/]/', $ysupresschar, $y_path); // {{{SYNC-SAFE-PATH-CHARS}}} suppress any other characters than these, no unicode modifier
 	$y_path = (string) preg_replace("/(\.)\\1+/", '.', $y_path); // suppress multiple . dots and replace with single dot
 	$y_path = (string) preg_replace("/(\/)\\1+/", '/', $y_path); // suppress multiple // slashes and replace with single slash
 	$y_path = (string) str_replace(array('../', './'), array('-', '-'), $y_path); // replace any unsafe path combinations (do not suppress but replace with a fixed character to avoid create security breaches)
 	$y_path = (string) trim($y_path); // finally trim it
 	//--
-	return (string) $y_path;
+	return (string) self::safe_fix_invalid_filesys_names($y_path);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1222,20 +1264,26 @@ public static function safe_pathname($y_path, $ysupresschar='') {
 
 //================================================================
 /**
- * Safe File Name to be used to process dynamic build file names or single dir names to avoid weird path character injections
- * To be used for file or single dir names
- * DO NOT USE for full paths or full dir paths because will break them, as the / character is supressed
+ * Create a Safe File Name to be used to process dynamic build file names or dir names to avoid weird path character injections
+ * To should be used only for file or dir names (not paths)
+ * NOTICE: DO NOT USE for full paths or full dir paths because will break them, as the / character is supressed
+ * NOTICE: It may return an empty string if all characters in the file/dir name are invalid or invalid path sequences detected, so if empty file/dir name must be tested later
  * ALLOWED CHARS: [a-zA-Z0-9] _ - . @ #
  *
- * @param STRING 		$y_fname		:: File Name or Single Dir Name to be processed
+ * @param STRING 		$y_fname		:: File Name or Dir Name to be processed
  * @param STRING 		$ysupresschar	:: The suppression character to replace weird characters ; optional ; default is ''
  *
- * @return STRING 						:: The safe file or single-dir name
+ * @return STRING 						:: The safe file or dir name ; if invalid will return empty value
  */
 public static function safe_filename($y_fname, $ysupresschar='') {
-	//-- v.160221
+	//-- v.170920
+	$y_fname = (string) trim((string)$y_fname); // force string and trim
+	if((string)$y_fname == '') {
+		return '';
+	} //end if
+	//--
 	if(preg_match('/^[_a-zA-Z0-9\-\.@#]+$/', (string)$y_fname)) { // {{{SYNC-CHK-SAFE-FILENAME}}}
-		return (string) $y_fname;
+		return (string) self::safe_fix_invalid_filesys_names($y_fname);
 	} //end if
 	//--
 	$ysupresschar = (string) $ysupresschar; // force string and be sure is lower
@@ -1247,12 +1295,11 @@ public static function safe_filename($y_fname, $ysupresschar='') {
 			$ysupresschar = '';
 	} //end if
 	//--
-	$y_fname = (string) $y_fname; // force string
 	$y_fname = (string) self::safe_pathname($y_fname, $ysupresschar);
 	$y_fname = (string) str_replace('/', '-', $y_fname); // replace the path character with a fixed character (do not suppress to avoid create security breaches)
 	$y_fname = (string) trim($y_fname); // finally trim it
 	//--
-	return (string) $y_fname;
+	return (string) self::safe_fix_invalid_filesys_names($y_fname);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1260,18 +1307,24 @@ public static function safe_filename($y_fname, $ysupresschar='') {
 
 //================================================================
 /**
- * RFC Safe compliant User Names ; Can be used also for email addresses
+ * Create a (RFC, ISO) Safe compliant User Name, Domain Name or Email Address
+ * NOTICE: It may return an empty string if all characters in the given name are invalid or invalid path sequences detected, so if empty name must be tested later
  * ALLOWED CHARS: [a-z0-9] _ - . @
  *
- * @param STRING 		$y_name			:: Variable to validate
+ * @param STRING 		$y_name			:: Name to be processed
  * @param STRING 		$ysupresschar	:: The suppression character to replace weird characters ; optional ; default is ''
  *
- * @return STRING 						:: The safe validated variable
+ * @return STRING 						:: The safe name ; if invalid should return empty value
  */
 public static function safe_validname($y_name, $ysupresschar='') {
-	//-- v.160221
+	//-- v.170920
+	$y_name = (string) trim((string)$y_name); // force string and trim
+	if((string)$y_name == '') {
+		return '';
+	} //end if
+	//--
 	if(preg_match('/^[_a-z0-9\-\.@]+$/', (string)$y_name)) {
-		return (string) $y_name;
+		return (string) self::safe_fix_invalid_filesys_names($y_name);
 	} //end if
 	//--
 	$ysupresschar = (string) $ysupresschar; // force string and be sure is lower
@@ -1283,13 +1336,12 @@ public static function safe_validname($y_name, $ysupresschar='') {
 			$ysupresschar = '';
 	} //end if
 	//--
-	$y_name = (string) $y_name; // force string
 	$y_name = (string) self::safe_filename($y_name, $ysupresschar);
 	$y_name = (string) strtolower($y_name); // make all lower chars
 	$y_name = (string) str_replace('#', '', $y_name); // replace also diez
 	$y_name = (string) trim($y_name);
 	//--
-	return (string) $y_name;
+	return (string) self::safe_fix_invalid_filesys_names($y_name);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1297,25 +1349,30 @@ public static function safe_validname($y_name, $ysupresschar='') {
 
 //================================================================
 /**
- * Safe Valid User Names
+ * Create a Safe Valid Strict User Name
+ * NOTICE: It may return an empty string if all characters in the given name are invalid or invalid path sequences detected, so if empty name must be tested later
  * ALLOWED CHARS: [a-z0-9] .
  *
- * @param STRING 		$y_name			:: Variable to validate
+ * @param STRING 		$y_name			:: Name to be processed
  *
- * @return STRING 						:: The safe validated variable
+ * @return STRING 						:: The safe name ; if invalid should return empty value
  */
 public static function safe_username($y_name) {
-	//-- v.160221
-	if(preg_match('/^[a-z0-9\.]+$/', (string)$y_name)) {
-		return (string) $y_name;
+	//-- v.170920
+	$y_name = (string) trim((string)$y_name); // force string and trim
+	if((string)$y_name == '') {
+		return '';
 	} //end if
 	//--
-	$y_name = (string) $y_name; // force string
+	if(preg_match('/^[a-z0-9\.]+$/', (string)$y_name)) {
+		return (string) self::safe_fix_invalid_filesys_names($y_name);
+	} //end if
+	//--
 	$y_name = (string) self::safe_validname($y_name, '.');
 	$y_name = (string) str_replace(array('@', '-', '_'), array('', '', ''), $y_name); // replace also @ - _
 	$y_name = (string) trim($y_name);
 	//--
-	return (string) $y_name;
+	return (string) self::safe_fix_invalid_filesys_names($y_name);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1323,26 +1380,31 @@ public static function safe_username($y_name) {
 
 //================================================================
 /**
- * Safe Valid Variable Like Names
- * NOTICE: this have a special usage and must allow also 0..9 as prefix because is used for many purposes not just for real variables ...
+ * Creates a Safe Valid Variable Name
+ * NOTICE: this have a special usage and must allow also 0..9 as prefix because is can be used for other purposes not just for real safe variable names, thus if real safe valid variable name must be tested later (real safe variable names cannot start with numbers ...)
+ * NOTICE: It may return an empty string if all characters in the given variable name are invalid or invalid path sequences detected, so if empty variable name must be tested later
  * ALLOWED CHARS: [a-z0-9] _
  *
- * @param STRING 		$y_name			:: Variable to validate
+ * @param STRING 		$y_name			:: Variable Name to be processed
  *
- * @return STRING 						:: The safe validated variable
+ * @return STRING 						:: The safe variable name ; if invalid should return empty value
  */
 public static function safe_varname($y_name) {
-	//-- v.160221
-	if(preg_match('/^[_a-z0-9]+$/', (string)$y_name)) {
-		return (string) $y_name;
+	//-- v.170920
+	$y_name = (string) trim((string)$y_name); // force string and trim
+	if((string)$y_name == '') {
+		return '';
 	} //end if
 	//--
-	$y_name = (string) $y_name; // force string
+	if(preg_match('/^[_a-z0-9]+$/', (string)$y_name)) {
+		return (string) self::safe_fix_invalid_filesys_names($y_name);
+	} //end if
+	//--
 	$y_name = (string) self::safe_validname($y_name, '-');
 	$y_name = (string) str_replace(array('.', '@', '-'), array('', '', ''), $y_name); // replace also . @ -
 	$y_name = (string) trim($y_name);
 	//--
-	return (string) $y_name;
+	return (string) self::safe_fix_invalid_filesys_names($y_name);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1823,9 +1885,12 @@ public static function raise_error($message_to_log, $message_to_display='See Err
 
 //================================================================
 /**
+ * Returns the Regex Expr. with the lower unsafe characters
  *
  * @access 		private
  * @internal
+ *
+ * @return STRING 						:: A regex expression
  *
  */
 public static function lower_unsafe_characters() {

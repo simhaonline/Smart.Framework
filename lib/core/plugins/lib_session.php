@@ -62,7 +62,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.170913
+ * @version 	v.170920
  * @package 	Application
  *
  */
@@ -251,6 +251,13 @@ public static function start() {
 	$the_sess_id = $the_sess_client_entropy.'-'.$the_sess_client_lock; // session ID combines the secret client key based on it's IP / Browser and the Client Entropy Cookie
 	//--
 	$sf_sess_area = Smart::safe_filename((string)SMART_FRAMEWORK_SESSION_PREFIX);
+	if(((string)$sf_sess_area == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$sf_sess_area))) {
+		Smart::raise_error(
+			'SESSION // FATAL ERROR: Invalid/Empty Session Area: '.$sf_sess_area
+		);
+		die('');
+		return;
+	} //end if
 	$sf_sess_dpfx = substr($the_sess_client_entropy, 0, 1).'-'.substr($the_sess_client_lock, 0, 1); // this come from hexa so 3 chars are 16x16x16=4096 dirs
 	//--
 	if((string)$browser_os_ip_identification['bw'] == '@s#') {
@@ -261,6 +268,13 @@ public static function start() {
 		$sf_sess_ns = 'c-'.substr($browser_os_ip_identification['bw'],0,3).'-'.$sf_sess_dpfx; // we just need a short prefix for clients (on disk is costly for GC to keep separate folders, but of course, not so safe)
 	} //end if else
 	$sf_sess_ns = Smart::safe_filename($sf_sess_ns);
+	if(((string)$sf_sess_ns == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$sf_sess_ns))) {
+		Smart::raise_error(
+			'SESSION // FATAL ERROR: Invalid/Empty Session NameSpace: '.$sf_sess_ns
+		);
+		die('');
+		return;
+	} //end if
 	//-- by default set for files
 	$sf_sess_mode = 'files';
 	$sf_sess_dir = 'tmp/sessions/'.$sf_sess_area.'/'.$sf_sess_ns.'/';
@@ -279,6 +293,7 @@ public static function start() {
 		} //end if
 	} //end if
 	$sf_sess_dir = Smart::safe_pathname($sf_sess_dir);
+	SmartFileSysUtils::raise_error_if_unsafe_path($sf_sess_dir);
 	//--
 	if(!SmartFileSystem::is_type_dir($sf_sess_dir)) {
 		SmartFileSystem::dir_create($sf_sess_dir, true); // recursive
@@ -388,7 +403,7 @@ public static function start() {
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.170913
+	// v.170920
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

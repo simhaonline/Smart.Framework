@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170919
+ * @version 	v.170921
  * @package 	Filesystem
  *
  */
@@ -96,11 +96,11 @@ public static function check_if_safe_file_or_dir_name($y_fname) {
 	if((string)trim((string)$y_fname) == '') {
 		return 0;
 	} //end if else
-	//-- test valid characters in filename or dirname (must not contain /, it is not a path)
+	//-- test valid characters in filename or dirname (must not contain / (slash), it is not a path)
 	if(!preg_match('/^[_a-zA-Z0-9\-\.@#]+$/', (string)$y_fname)) { // {{{SYNC-CHK-SAFE-FILENAME}}}
 		return 0;
 	} //end if
-	//-- test valid path (should pass all tests from valid, especially: must not be equal with . or .. (and they are includded in valid path)
+	//-- test valid path (should pass all tests from valid, especially: must not be equal with: / or . or .. (and they are includded in valid path)
 	if(self::test_valid_path($y_fname) !== 1) {
 		return 0;
 	} //end if
@@ -248,7 +248,9 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 // returns 1 if OK
 private static function test_special_path($y_path) {
 	//--
-	if((string)substr((string)$y_path, 0, 1) == '#') {
+	$y_path = (string) $y_path;
+	//--
+	if((string)substr((string)trim($y_path), 0, 1) == '#') {
 		return 0;
 	} //end if
 	//--
@@ -270,13 +272,28 @@ private static function test_valid_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	if((strpos($y_path, ' ') !== false) OR (strpos($y_path, '\\') !== false) OR (strpos($y_path, ':') !== false) OR (strpos($y_path, '|') !== false) OR (strpos($y_path, '...') !== false) OR ((string)trim($y_path) == '') OR ((string)trim($y_path) == '/') OR ((string)trim($y_path) == '.') OR ((string)trim($y_path) == '..') OR ((string)trim($y_path) == './') OR ((string)trim($y_path) == '../') OR ((string)trim($y_path) == './.')) {
-		return 0;
-	} //end if else
-	//-- {{{SYNC-SAFE-PATH-CHARS}}}
-	if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) { // {{{SYNC-CHK-SAFE-PATH}}} only ISO-8859-1 characters are allowed in paths (unicode paths are unsafe for the network environments !!!)
+	if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_path)) { // {{{SYNC-SAFE-PATH-CHARS}}} {{{SYNC-CHK-SAFE-PATH}}} only ISO-8859-1 characters are allowed in paths (unicode paths are unsafe for the network environments !!!)
 		return 0;
 	} //end if
+	//--
+	if(
+		((string)trim($y_path) == '') OR 			// empty path: error
+		((string)trim($y_path) == '.') OR 			// special: protected
+		((string)trim($y_path) == '..') OR 			// special: protected
+		((string)trim($y_path) == '/') OR 			// root dir: security
+		(strpos($y_path, ' ') !== false) OR 		// no space allowed
+		(strpos($y_path, '\\') !== false) OR 		// no backslash allowed
+		(strpos($y_path, ':') !== false) OR 		// no dos/win disk access allowed
+		(strpos($y_path, '|') !== false) OR 		// no macos disk access allowed
+		((string)trim($y_path) == './') OR 			// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something
+		((string)trim($y_path) == '../') OR 		// backward path access denied: security
+		((string)trim($y_path) == './.') OR 		// this is a risk that can lead to unpredictable results
+		(strpos($y_path, '...') !== false) OR 		// this is a risk that can lead to unpredictable results
+		(substr(trim($y_path), -2, 2) == '/.') OR 	// special: protected ; this may lead to rewrite/delete the special protected . in a directory if refered as a filename or dirname that may break the filesystem
+		(substr(trim($y_path), -3, 3) == '/..')  	// special: protected ; this may lead to rewrite/delete the special protected .. in a directory if refered as a filename or dirname that may break the filesystem
+	) {
+		return 0;
+	} //end if else
 	//--
 	return 1; // valid
 	//--
@@ -292,7 +309,12 @@ private static function test_backward_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	if((strpos($y_path, '/../') !== false) OR (strpos($y_path, '/./') !== false) OR (strpos($y_path, '/..') !== false) OR (strpos($y_path, '../') !== false)) {
+	if(
+		(strpos($y_path, '/../') !== false) OR
+		(strpos($y_path, '/./') !== false) OR
+		(strpos($y_path, '/..') !== false) OR
+		(strpos($y_path, '../') !== false)
+	) {
 		return 0;
 	} //end if else
 	//--
@@ -1199,7 +1221,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170919
+ * @version 	v.170921
  * @package 	Filesystem
  *
  */
@@ -2976,7 +2998,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170919
+ * @version 	v.170921
  * @package 	Filesystem
  *
  */

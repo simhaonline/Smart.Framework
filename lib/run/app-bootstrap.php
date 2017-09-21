@@ -242,7 +242,7 @@ final class SmartAppBootstrap implements SmartInterfaceAppBootstrap {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170913
+ * @version 	v.170920
  * @package 	Application
  *
  */
@@ -264,6 +264,9 @@ final class SmartAppInfo implements SmartInterfaceAppInfo {
 	public static function TestIfTemplateExists($y_template_name) {
 		//--
 		$y_template_name = Smart::safe_filename((string)$y_template_name);
+		if((string)$y_template_name == '') {
+			return false;
+		} //end if
 		//--
 		$test_cache = (string) self::$cache['TestIfTemplateExists:'.$y_template_name];
 		//--
@@ -304,6 +307,9 @@ final class SmartAppInfo implements SmartInterfaceAppInfo {
 	public static function TestIfModuleExists($y_module_name) {
 		//--
 		$y_module_name = Smart::safe_filename((string)$y_module_name);
+		if((string)$y_module_name == '') {
+			return false;
+		} //end if
 		//--
 		$test_cache = (string) self::$cache['TestIfModuleExists:'.$y_module_name];
 		//--

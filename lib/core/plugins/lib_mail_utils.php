@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170917
+ * @version 	v.170920
  * @package 	Mailer:Utility
  *
  */
@@ -145,21 +145,26 @@ public static function validate_mx_email_address($helo, $email, $y_smtp_port) {
 	$tmp_arr = array();
 	$tmp_arr = (array) explode('@', (string)$email);
 	$domain = (string) trim((string)$tmp_arr[1]);
+	$safedom = (string) Smart::safe_validname($domain);
 	$tmp_arr = array();
 	//------------
 	if(function_exists('getmxrr')) {
-		@getmxrr(Smart::safe_validname($domain), $tmp_arr); // getmxrr is available also on Windows platforms since PHP 5.3
+		if((string)$safedom != '') {
+			@getmxrr($safedom, $tmp_arr); // getmxrr is available also on Windows platforms since PHP 5.3
+		} else {
+			$msg .= 'WARNING: Empty Safe Domain Name (after-conversion) for: '.$domain;
+		} //end if
 	} else {
 		$msg .= 'WARNING: PHP getmxrr is not implemented on this platform ...';
 	} //end if
 	//------------
 	if(Smart::array_size($tmp_arr) <= 0) {
 		//-- ERR
-		$msg .= 'WARNING: Invalid MX Records for Domain \''.Smart::safe_validname($domain).'\''."\n";
+		$msg .= 'WARNING: Invalid MX Records for Domain \''.$safedom.'\''."\n";
 		//--
 	} else {
 		//--
-		$msg .= 'List of available MX Servers for Domain \''.Smart::safe_validname($domain).'\':'."\n";
+		$msg .= 'List of available MX Servers for Domain \''.$safedom.'\':'."\n";
 		//--
 		for($m=0; $m<Smart::array_size($tmp_arr); $m++) {
 			//--
@@ -739,7 +744,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.170917
+ * @version 	v.170920
  * @package 	Mailer:Utility
  *
  */

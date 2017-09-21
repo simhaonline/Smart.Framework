@@ -34,7 +34,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  * @access 		private
  * @internal
  *
- * @version		170920
+ * @version		170921
  *
  */
 final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTranslations {
@@ -45,6 +45,24 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 	//==================================================================
 	// This reads and parse from YAML sources
 	public static function getTranslationsFromSource($the_lang, $y_area, $y_subarea) {
+		//--
+		$the_lang = (string) Smart::safe_varname((string)$the_lang);
+		if(((string)$the_lang == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_lang))) {
+			Smart::log_warning(__METHOD__.'() :: Invalid/Empty parameter for Translation Language: '.$the_lang);
+			return array();
+		} //end if
+		//--
+		$y_area = (string) Smart::safe_filename((string)$y_area);
+		if(((string)$y_area == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$y_area))) {
+			Smart::log_warning(__METHOD__.'() :: Invalid/Empty parameter for Translation Area: '.$y_area);
+			return array();
+		} //end if
+		//--
+		$y_subarea = (string) Smart::safe_filename((string)$y_subarea);
+		if(((string)$y_subarea == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$y_subarea))) {
+			Smart::log_warning(__METHOD__.'() :: Invalid/Empty parameter for Translation SubArea: '.$y_subarea);
+			return array();
+		} //end if
 		//--
 		if(substr((string)$y_area, 0, 1) == '@') {
 			if((string)$the_lang == 'en') {
@@ -66,6 +84,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 				'Invalid Language Dir: '.$fdb_dir.' :: for: '.$y_area.'@'.$y_subarea,
 				'Invalid Language Dir for: '.$y_area.'@'.$y_subarea // msg to display
 			);
+			die();
 			return array();
 		} //end if
 		//--

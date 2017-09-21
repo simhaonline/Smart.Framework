@@ -45,7 +45,7 @@ if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170914
+ * @version 	v.170921
  * @package 	Caching
  *
  */
@@ -190,7 +190,7 @@ final class SmartCache {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170914
+ * @version 	v.170921
  * @package 	Caching
  *
  */
@@ -335,7 +335,13 @@ abstract class SmartAbstractPersistentCache {
 	 */
 	public static function safeKey($y_key_or_realm) {
 		//--
-		return (string) Smart::safe_pathname((string)$y_key_or_realm);
+		$key_or_realm = Smart::safe_pathname((string)$y_key_or_realm);
+		if((string)$key_or_realm == '') {
+			$key_or_realm = 'InvalidName__Cache__Key/Realm__';
+			Smart::log_warning(__METHOD__.'() :: Invalid/Empty parameter KeyOrRealm: '.$y_key_or_realm);
+		} //end if
+		//--
+		return (string) $key_or_realm;
 		//--
 	} //END FUNCTION
 

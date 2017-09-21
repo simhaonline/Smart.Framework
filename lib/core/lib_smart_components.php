@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170913
+ * @version 	v.170920
  * @package 	Components:Core
  *
  */
@@ -2657,7 +2657,33 @@ public static function render_app_template($template_path, $template_file, $arr_
 
 	//--
 	$template_path = (string) Smart::safe_pathname((string)SmartFileSysUtils::add_dir_last_slash((string)trim((string)$template_path)));
+	if(!SmartFileSysUtils::check_if_safe_path($template_path)) {
+		Smart::raise_error(
+			'#SMART-FRAMEWORK-RENDER-APP-TEMPLATE#'."\n".'The Template Dir Path is Invalid: '.$template_path,
+			'App Template Render ERROR :: (See Error Log for More Details)'
+		);
+		die();
+		return;
+	} //end if
+	//--
 	$template_file = (string) Smart::safe_filename((string)trim((string)$template_file));
+	if(!SmartFileSysUtils::check_if_safe_file_or_dir_name($template_file)) {
+		Smart::raise_error(
+			'#SMART-FRAMEWORK-RENDER-APP-TEMPLATE#'."\n".'The Template File Name is Invalid: '.$template_file,
+			'App Template Render ERROR :: (See Error Log for More Details)'
+		);
+		die();
+		return;
+	} //end if
+	//--
+	if(!SmartFileSysUtils::check_if_safe_path($template_path.$template_file)) {
+		Smart::raise_error(
+			'#SMART-FRAMEWORK-RENDER-APP-TEMPLATE#'."\n".'The Template File Path is Invalid: '.$template_path.$template_file,
+			'App Template Render ERROR :: (See Error Log for More Details)'
+		);
+		die();
+		return;
+	} //end if
 	//--
 	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower (only 1st level, not nested), to comply with SmartAbstractAppController handling mode
 	//--
@@ -2710,8 +2736,8 @@ public static function render_app_template($template_path, $template_file, $arr_
 	$tpl = (string) trim((string)SmartMarkersTemplating::read_template_file((string)$template_path.$template_file));
 	if((string)$tpl == '') {
 		Smart::raise_error(
-			'#SMART-FRAMEWORK-RENDER-MAIN-TEMPLATE#'."\n".'The Template File is either: Empty / Does not Exists / Cannot be Read: '.$template_path.$template_file,
-			'Main Template Render ERROR :: (See Error Log for More Details)'
+			'#SMART-FRAMEWORK-RENDER-APP-TEMPLATE#'."\n".'The Template File is either: Empty / Does not Exists / Cannot be Read: '.$template_path.$template_file,
+			'App Template Render ERROR :: (See Error Log for More Details)'
 		);
 		die();
 		return;

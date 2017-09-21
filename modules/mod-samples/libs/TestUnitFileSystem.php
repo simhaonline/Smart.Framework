@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170918
+ * @version 	v.170920
  *
  */
 final class TestUnitFileSystem {
@@ -83,7 +83,8 @@ final class TestUnitFileSystem {
 		$get_xfile = \SmartFileSysUtils::get_noext_file_name_from_path($the_file);
 		$get_ext = \SmartFileSysUtils::get_file_extension_from_path($the_file);
 		//--
-		$the_copy_file = $the_file.'.copy.txt';
+		$the_sufx_copy = '.copy.txt';
+		$the_copy_file = $the_file.$the_sufx_copy;
 		$the_move_file = $the_extra_folder.$the_base_file.'.copy.moved.txt';
 		$the_broken_link = $the_extra_folder.'a-broken-link';
 		$the_broken_dir_link = $the_extra_folder.'a-broken-dir-link';
@@ -101,15 +102,57 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK TEST SAFE PATH NAME: DIR / FILE ...';
 			$tests[] = $the_test;
-			if(((string)\Smart::safe_pathname((string)$get_folder) !== (string)$get_folder) OR ((string)\Smart::safe_pathname((string)$the_copy_file) !== (string)$the_copy_file)) {
+			if(
+				((string)\Smart::safe_pathname((string)$get_folder) !== (string)$get_folder) OR
+				((string)\Smart::safe_pathname((string)$the_copy_file) !== (string)$the_copy_file) OR
+				((string)\Smart::safe_pathname((string)\SmartFileSysUtils::get_dir_from_path($the_copy_file)) !== (string)rtrim($the_folder,'/')) OR
+				((string)\Smart::safe_filename((string)\SmartFileSysUtils::get_file_name_from_path($the_copy_file)) !== (string)$the_base_file.$the_sufx_copy) OR
+				((string)\Smart::safe_pathname('.') !== '') OR
+				((string)\Smart::safe_filename('.') !== '') OR
+				((string)\Smart::safe_validname('.') !== '') OR
+				((string)\Smart::safe_username('.') !== '') OR
+				((string)\Smart::safe_varname('.') !== '') OR
+				((string)\Smart::safe_pathname('..') !== '') OR
+				((string)\Smart::safe_filename('..') !== '') OR
+				((string)\Smart::safe_validname('..') !== '') OR
+				((string)\Smart::safe_username('..') !== '') OR
+				((string)\Smart::safe_varname('..') !== '') OR
+				((string)\Smart::safe_pathname('/') !== '') OR
+				((string)\Smart::safe_filename('/') !== '') OR
+				((string)\Smart::safe_validname('/') !== '') OR
+				((string)\Smart::safe_username('/') !== '') OR
+				((string)\Smart::safe_varname('/') !== '') OR
+				((string)\Smart::safe_pathname('/.') !== '') OR
+				((string)\Smart::safe_filename('/.') !== '') OR
+				((string)\Smart::safe_validname('/.') !== '') OR
+				((string)\Smart::safe_username('/.') !== '') OR
+				((string)\Smart::safe_varname('/.') !== '') OR
+				((string)\Smart::safe_pathname('/..') !== '') OR
+				((string)\Smart::safe_filename('/..') !== '') OR
+				((string)\Smart::safe_validname('/..') !== '') OR
+				((string)\Smart::safe_username('/..') !== '') OR
+				((string)\Smart::safe_varname('/..') !== '') OR
+				((string)\Smart::safe_pathname('_a-zA-Z0-9-.@#/') !== '_a-zA-Z0-9-.@#/') OR
+				((string)\Smart::safe_filename('_a-zA-Z0-9-.@#/') !== '_a-zA-Z0-9-.@#-') OR // slash is replaced by -
+				((string)\Smart::safe_validname('_a-zA-Z0-9-.@#/') !== '_a-za-z0-9-.@-') OR // slash is replaced by - (from above)
+				((string)\Smart::safe_username('_a-zA-Z0-9-.@#/') !== 'azaz09.') OR
+				((string)\Smart::safe_varname('_a-zA-Z0-9-.@#/') !== '_azaz09')
+			) {
 				$err = 'ERROR: SAFE PATH NAME TEST ... FAILED !!!';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$the_test = 'CHECK TEST ABSOLUTE / BACKWARD PATHS ...';
+			$the_test = 'CHECK TEST VARIOUS ABSOLUTE AND BACKWARD PATHS ...';
 			$tests[] = $the_test;
-			if((!\SmartFileSysUtils::check_if_safe_path('/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/../backward/path')) OR (\SmartFileSysUtils::check_if_safe_path('../backward/path')) OR (\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'yes', 'no')) OR (!\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'yes', 'yes'))) {
+			if(
+				(!\SmartFileSysUtils::check_if_safe_path('/this/is/absolute', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/absolute')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/../backward/path')) OR
+				(\SmartFileSysUtils::check_if_safe_path('../backward/path')) OR
+				(\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'yes', 'no')) OR
+				(!\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'yes', 'yes'))
+			) {
 				$err = 'ERROR: CHECK TEST ABSOLUTE / BACKWARD / PROTECTED PATHS ... FAILED !!!';
 			} //end if
 		} //end if
@@ -117,15 +160,55 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$the_test = 'CHECK TEST ABSOLUTE INVALID PATHS ...';
 			$tests[] = $the_test;
-			if((\SmartFileSysUtils::check_if_safe_path('some/path:/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/absolute:some/path', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('c:/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path(':/this/is/absolute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso|lute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso lute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso:lute', 'no')) OR (\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'no'))) {
+			if(
+				(\SmartFileSysUtils::check_if_safe_path('some/path:/this/is/absolute', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/absolute:some/path', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path('c:/this/is/absolute', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path(':/this/is/absolute', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/abso|lute', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/abso lute', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/abso:lute', 'no')) OR
+				(\SmartFileSysUtils::check_if_safe_path('#this/is/protected', 'no'))
+			) {
 				$err = 'ERROR: CHECK TEST ABSOLUTE : INVALID / PROTECTED PATHS ... FAILED !!!';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$the_test = 'CHECK TEST INVALID PATHS ...';
+			$the_test = 'CHECK TEST INVALID / DANGEROUS PATHS ...';
 			$tests[] = $the_test;
-			if((\SmartFileSysUtils::check_if_safe_path('some/path:/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/absolute:some/path')) OR (\SmartFileSysUtils::check_if_safe_path('c:/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path(':/this/is/absolute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso|lute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso lute')) OR (\SmartFileSysUtils::check_if_safe_path('/this/is/abso:lute')) OR (\SmartFileSysUtils::check_if_safe_path('#this/is/protected'))) {
+			if(
+				(\SmartFileSysUtils::check_if_safe_path('some/path:/this/is/absolute')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/absolute:some/path')) OR
+				(\SmartFileSysUtils::check_if_safe_path('c:/this/is/absolute')) OR
+				(\SmartFileSysUtils::check_if_safe_path(':/this/is/absolute')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/abso|lute')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/abso lute')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/this/is/abso:lute')) OR
+				(\SmartFileSysUtils::check_if_safe_path('#this/is/protected')) OR
+				(\SmartFileSysUtils::check_if_safe_file_or_dir_name('')) OR
+				(\SmartFileSysUtils::check_if_safe_path('')) OR
+				(\SmartFileSysUtils::check_if_safe_file_or_dir_name(' ')) OR
+				(\SmartFileSysUtils::check_if_safe_path(' ')) OR
+				(\SmartFileSysUtils::check_if_safe_file_or_dir_name('some fname with spaces')) OR
+				(\SmartFileSysUtils::check_if_safe_path('some/path with spaces')) OR
+				(\SmartFileSysUtils::check_if_safe_file_or_dir_name('.')) OR
+				(\SmartFileSysUtils::check_if_safe_path('.')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/.')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/. ')) OR
+				(\SmartFileSysUtils::check_if_safe_path(' /.')) OR
+				(\SmartFileSysUtils::check_if_safe_path('relative/.')) OR
+				(\SmartFileSysUtils::check_if_safe_path('relative/. ')) OR
+				(\SmartFileSysUtils::check_if_safe_file_or_dir_name('..')) OR
+				(\SmartFileSysUtils::check_if_safe_path('..')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/..')) OR
+				(\SmartFileSysUtils::check_if_safe_path('/.. ')) OR
+				(\SmartFileSysUtils::check_if_safe_path(' /..')) OR
+				(\SmartFileSysUtils::check_if_safe_path('relative/..')) OR
+				(\SmartFileSysUtils::check_if_safe_path('relative/.. ')) OR
+				(\SmartFileSysUtils::check_if_safe_path('.../test')) OR
+				(\SmartFileSysUtils::check_if_safe_path('a\\path\\with\\backslashes'))
+			) {
 				$err = 'ERROR: CHECK TEST INVALID / PROTECTED PATHS ... FAILED !!!';
 			} //end if
 		} //end if

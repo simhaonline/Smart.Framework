@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170919
+ * @version 	v.170921
  * @package 	Base
  *
  */
@@ -1049,7 +1049,10 @@ public static function guess_image_extension_by_url_head($y_headers) {
 			if(((string)$temp_guess_extension == 'png') OR ((string)$temp_guess_extension == 'gif') OR ((string)$temp_guess_extension == 'jpg')) {
 				// OK, we guess it
 				$temp_where_was_detected = '[content-disposition]: \''.$temp_guess_extension.'\'';
-				$temp_image_extension = '.'.strtolower(Smart::safe_validname($temp_guess_extension)); // add the point
+				$temp_image_extension = Smart::safe_validname($temp_guess_extension); // make it safe
+				if((string)$temp_image_extension != '') {
+					$temp_image_extension = '.'.strtolower($temp_image_extension); // add the point only if non-empty to avoid issues
+				} //end if
 			} else {
 				//-- try to guess by the content type (strategy 2)
 				$temp_guess_ext_tmp = array();

@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.170913
+ * @version 	v.170920
  *
  */
 final class SmartDebugProfiler {
@@ -99,7 +99,7 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 	if((string)$y_debug_token == '') {
 		return false;
 	} //end if
-	//--
+	//-- the use of safe_filename() here is safe because the params are validated above
 	$the_dir = 'tmp/logs/'.Smart::safe_filename($y_area).'/'.date('Y-m-d@H').'-debug-data/'.Smart::safe_filename($y_debug_token).'/';
 	//-- #END# SYNC
 

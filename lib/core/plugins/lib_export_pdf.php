@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.170914
+ * @version 	v.170920
  * @package 	Exporters
  *
  */
@@ -189,7 +189,7 @@ public static function pdf_disposition_header($y_filename='file.pdf', $y_disp='i
 			$y_disp = 'inline';
 	} //end switch
 	//--
-	return (string) $y_disp.'; filename="'.Smart::safe_validname($y_filename).'"';
+	return (string) $y_disp.'; filename="'.Smart::safe_filename($y_filename).'"';
 	//--
 } //END FUNCTION
 //=====================================================================
