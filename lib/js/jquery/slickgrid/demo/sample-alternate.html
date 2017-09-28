@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>SlickGrid example 8: Alternative display</title>
+		<title>SlickGrid Example: Alternative display</title>
 
 		<style>
 		.slick-cell {
@@ -159,20 +159,16 @@
 			return compiled_template(dataContext);
 		}
 
-		$(function()
-		{
+		$(function() {
 			for (var i=0; i<100; i++) {
 				var d = (data[i] = {});
-
 				d["name"] = "User " + i;
 				d["email"] = "test.user@nospam.org";
 				d["title"] = "Regional sales manager";
 				d["phone"] = "206-000-0000";
 			}
-
-
 			grid = new Slick.Grid($("#myGrid"), data, columns, options);
-		})
+		});
 
 		</script>
 	</body>

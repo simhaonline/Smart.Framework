@@ -49,7 +49,7 @@ Software:
 * Apps: Apache 2.4.23, PHP 5.6.30 (with Zend Opcache 7.0.6)
 
 #### Benchmark Results of tested PHP Frameworks (with a simple controller that Outputs: 'Hello World' ; no Memcache or Redis):
-* Smart.Framework v.3.5.7 (2017.09.05): ~ 21.7K (21721) requests / second
+* Smart.Framework v.3.5.7 (2017.09.27): ~ 21.7K (21721) requests / second
 * Silex 2.0.4: ~ 7.2K (7229) requests / second ( 3x slower than Smart.Framework )
 * Symfony 3.3.8: ~ 3.3K (3374) requests / second ( 6x slower than Smart.Framework )
 * Laravel 5.4.3 ~ 3.0K (3015) requests / second ( 7x slower than Smart.Framework )

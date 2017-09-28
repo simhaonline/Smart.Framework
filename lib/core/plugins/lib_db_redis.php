@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.170411
+ * @version 	v.170927
  * @package 	Database:Redis
  *
  * @method	STRING		ping()										# Ping the Redis server ; returns: the test answer which is always PONG
@@ -387,7 +387,7 @@ private function run_command($method, array $args) {
 		SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 			'type' => 'nosql',
 			'data' => strtoupper($method).' :: '.$this->description,
-			'command' => SmartParser::text_endpoints((string)$cmd, 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]'),
+			'command' => Smart::text_cut_by_limit((string)$cmd, 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]'),
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) $this->socket
 		]);

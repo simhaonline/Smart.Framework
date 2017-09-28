@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170921
+ * @version 	v.170928
  * @package 	Base
  *
  */
@@ -612,7 +612,11 @@ public static function calc_percent($number, $maxnumber) {
 
 //================================================================
 // extract HTML title (must not exceed 128 characters ; recommended is max 65) ; no changes
-public static function extract_title($ytxt, $y_limit=65) {
+public static function extract_title($ytxt, $y_limit=65, $clear_numbers=false) {
+	//--
+	if($clear_numbers === true) {
+		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt);
+	} //end if
 	//--
 	$ytxt = (string) Smart::striptags((string)$ytxt, 'no'); // will do strip tags
 	$ytxt = (string) Smart::normalize_spaces((string)$ytxt); // will do normalize spaces
@@ -629,19 +633,7 @@ public static function extract_title($ytxt, $y_limit=65) {
 		$y_limit = 128;
 	} //end if
 	//--
-	$y_limit = (int) $y_limit + 1; // fix
-	//--
-	if(SmartUnicode::str_len($ytxt) > $y_limit) {
-		$ytxt = (string) SmartUnicode::sub_str((string)$ytxt, 0, $y_limit);
-		$space_pos = SmartUnicode::str_rpos((string)$ytxt, ' ');
-		if((int)$space_pos > (int)ceil($y_limit / 1.5)) { // if there is a space in the last 1/3 or there are spaces {{{SYNC-CUT-BACKWARD-STR-BY-SPACE}}}
-			$ytxt = (string) SmartUnicode::sub_str((string)$ytxt, 0, (int)$space_pos); // cut backward until last space
-		} else {
-			$ytxt .= '...';
-		} //end if
-	} //end if
-	//--
-	return (string) $ytxt;
+	return (string) trim((string)Smart::text_cut_by_limit((string)$ytxt, (int)$y_limit, false, ''));
 	//--
 } //END FUNCTION
 //================================================================
@@ -649,7 +641,11 @@ public static function extract_title($ytxt, $y_limit=65) {
 
 //================================================================
 // extract HTML meta description (must not exceed 256 characters ; recommended is max 155 characters)
-public static function extract_description($ytxt, $y_limit=155) {
+public static function extract_description($ytxt, $y_limit=155, $clear_numbers=false) {
+	//--
+	if($clear_numbers === true) {
+		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt);
+	} //end if
 	//--
 	$ytxt = (string) trim((string)$ytxt);
 	if((string)$ytxt == '') {
@@ -664,28 +660,11 @@ public static function extract_description($ytxt, $y_limit=155) {
 		$y_limit = 256;
 	} //end if
 	//--
-	$arr = self::extract_words_from_text_html($ytxt); // will do strip tags + normalize spaces
+	$arr = (array) self::extract_words_from_text_html($ytxt); // will do strip tags + normalize spaces
+	$ytxt = (string) implode(' ', (array)$arr);
+	$arr = null; // free mem
 	//--
-	$out = '';
-	$max = Smart::array_size($arr);
-	for($i=0; $i<$max; $i++) {
-		$tmp_word = trim($arr[$i]);
-		if((string)$tmp_word != '') {
-			$out .= $tmp_word.' ';
-		} //end if
-		if(SmartUnicode::str_len($out) >= $y_limit) {
-			break;
-		} //end if
-	} //end for
-	//--
-	$out = (string) trim((string)$out);
-	if((string)$out != '') {
-		if($i < ($max-1)) {
-			$out .= ' ...';
-		} //end if
-	} //end if
-	//--
-	return (string) $out;
+	return (string) trim((string)Smart::text_cut_by_limit((string)$ytxt, (int)$y_limit, false, ''));
 	//--
 } //END FUNCTION
 //================================================================
@@ -697,7 +676,11 @@ public static function extract_description($ytxt, $y_limit=155) {
 // will find the keywords listed descending by the occurence number
 // keywords with higher frequency will be listed first
 // We add Strategy: Max 2% up to 7% of keywords from existing text (SEO req.)
-public static function extract_keywords($ytxt, $y_count=97) {
+public static function extract_keywords($ytxt, $y_count=97, $clear_numbers=true) {
+	//--
+	if($clear_numbers === true) {
+		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt);
+	} //end if
 	//--
 	$ytxt = (string) trim((string)$ytxt);
 	if((string)$ytxt == '') {
@@ -713,16 +696,17 @@ public static function extract_keywords($ytxt, $y_count=97) {
 	} //end if
 	//--
 	$ytxt = str_replace(',', ' ', SmartUnicode::str_tolower($ytxt));
-	$ytxt = self::cleanup_numbers_from_text($ytxt);
 	$arr = self::extract_words_from_text_html($ytxt); // will do strip tags + normalize spaces
 	if(is_array($arr)) {
-		$arr = array_unique($arr);
+		$arr = (array) array_unique($arr);
 	} //end if
 	//--
 	$cnt = 0;
 	$out = '';
-	for($i=0; $i<Smart::array_size($arr); $i++) {
-		$tmp_word = (string) trim(str_replace(['.', '_', ';', '"', '<', '>', '[', ']', '{', '}', '!', '?', '^', '|', '/', '\\'], ' ', (string)$arr[$i]));
+	for($i=0; $i<Smart::array_size($arr); $i++) { // allow: '&', '-', '.'
+		$tmp_word = (string) trim((string)str_replace(['`', '~', '!', '@', '#', '$', '%', '^', '*', '(', ')', '_', '+', '=', '[', ']', '{', '}', '|', '\\', '/', '?', '<', '>', ',', ':', ';', '"', "'"], ' ', (string)$arr[$i]));
+		$tmp_word = (string) preg_replace("/(\.)\\1+/", '.', $tmp_word); // suppress multiple . dots and replace with single dot
+		$tmp_word = (string) preg_replace("/(\-)\\1+/", '-', $tmp_word); // suppress multiple - minus signs and replace with single minus sign
 		if((string)$tmp_word != '') {
 			$out .= $tmp_word.', ';
 			$cnt++;
@@ -732,7 +716,7 @@ public static function extract_keywords($ytxt, $y_count=97) {
 		} //end if
 	} //end for
 	//--
-	return trim($out, ' ,');
+	return (string) trim((string)$out, ' ,');
 	//--
 } //END FUNCTION
 //================================================================
@@ -754,7 +738,8 @@ public static function extract_words_from_text_html($ytxt) {
 //================================================================
 public static function cleanup_numbers_from_text($ytxt) {
 	//--
-	return preg_replace('~([0-9-:]+)~i', ' ', (string)$ytxt); // remove numbers from a text
+	$num_prefix_sufix = '(\(?\)?\-?\:?\+?#?.?)';
+	return (string) preg_replace('~'.$num_prefix_sufix.'([0-9]+)'.$num_prefix_sufix.'~i', ' ', (string)$ytxt); // remove numbers from a text
 	//--
 } //END FUNCTION
 //================================================================

@@ -55,7 +55,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.170913
+ * @version 	v.170927
  * @package 	Templating:Engines
  *
  */
@@ -818,23 +818,14 @@ private static function replace_marker($mtemplate, $key, $val) {
 					} elseif($xnum > 65535) {
 						$xnum = 65535;
 					} //end if
-					$xlen = SmartUnicode::str_len((string)$val);
-					if($xlen > $xnum) {
-						$val = (string) SmartUnicode::sub_str((string)$val, 0, (int)$xnum);
-					} else {
-						$val = (string) $val;
-					} //end if
 					if(substr((string)$matches[1], 0, 7) == '|subtxt') {
-						if($xlen > $xnum) {
-							$xpos = SmartUnicode::str_rpos((string)$val, ' ');
-							if((int)$xpos > (int)ceil($xnum / 1.5)) { // if there is a space in the last 1/3 or there are spaces {{{SYNC-CUT-BACKWARD-STR-BY-SPACE}}}
-								$val = (string) SmartUnicode::sub_str((string)$val, 0, (int)$xpos); // cut backward until last space
-							} //end if
-							$val .= '...'; // if text is longer for subtxt add ...
-							unset($xpos);
+						if($xnum < 5) {
+							$xnum = 5;
 						} //end if
-					} //end if
-					unset($xlen);
+						$val= (string) Smart::text_cut_by_limit((string)$val, (int)$xnum, false, '...');
+					} else { // '|substr'
+						$val= (string) Smart::text_cut_by_limit((string)$val, (int)$xnum, true, '');
+					} //end if else
 					unset($xnum);
 				} //end if
 				//-- #2 Escape URL
@@ -1707,7 +1698,7 @@ private static function debug_tpl_length($mtemplate) {
 	} //end if
 	$len = Smart::format_number_int($len,'+');
 	//--
-	return (string) SmartParser::text_endpoints((string)$mtemplate, (int)$len);
+	return (string) Smart::text_cut_by_limit((string)$mtemplate, (int)$len, true, '[...]');
 	//--
 } //END FUNCTION
 //================================================================

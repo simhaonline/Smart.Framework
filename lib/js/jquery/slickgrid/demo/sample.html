@@ -37,11 +37,11 @@
 		<script>
 
 		//-- ID
-		function displayID(value) {
+		function displayID(row, cell, value, columnDef, dataContext) {
 			return '<a href="#">' + value + '</a>';
 		} //END FUNCTION
 		//-- Spark Graph
-		function waitingFormatter(value) {
+		function waitingFormatter(row, cell, value, columnDef, dataContext) {
 			return "wait...";
 		} //END FUNCTION
 		function renderSparkline(cellNode, row, dataContext, colDef) {

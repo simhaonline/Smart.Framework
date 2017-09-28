@@ -68,7 +68,7 @@ ini_set('track_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED); // error reporting for display only
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	//--
-	global $smart_____framework_____last__error;
+	global $smart_____framework_____last__error; // presume it is already html special chars safe
 	//--
 	if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) { // log :: hide errors and just log them
 		$smart_____framework_____last__error = ''; // hide errors if explicit set so (make sense in production environments)

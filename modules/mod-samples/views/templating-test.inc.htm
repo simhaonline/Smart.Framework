@@ -8,7 +8,7 @@
 [%%%%COMMENT%%%%]
 	File: templating-test.inc.htm
 [%%%%/COMMENT%%%%][%%%%COMMENT%%%%]Another Comment[%%%%/COMMENT%%%%]<!-- comments removed -->
-<!-- Test for Markers-Templating v.170531 -->
+<!-- Test for Markers-Templating v.170927 -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
 <!-- Test INTEGER ([####TEST-NUM|html####]) : [####TEST-NUM|int####] -->
 <!-- Test NUMERIC ([####TEST-NUM|html####]) : [####TEST-NUM|num####] -->
@@ -139,6 +139,7 @@
 <script>
 var sub_tpl_path = "[####VIEWS-PATH|js####]templating-test-partial.inc.htm";
 var the_marker = '[####MARKER|js####]';
+var the_textstr = '[####TEXTSTR|js####]';
 jQuery.ajax({
 	async: true,
 	cache: false,
@@ -150,6 +151,7 @@ jQuery.ajax({
 		//-- load tpl
 		var tpl = SmartJS_CoreUtils.render_markers_template(msg, {
 			'MARKER': the_marker,
+			'TEXTSTR' : the_textstr,
 			'MARK-AREA': 'js'
 		});
 		//console.log('JS-TPL Renderer [' + the_marker + ']:\n' + tpl);

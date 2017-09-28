@@ -146,7 +146,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//--
 		$this->PageViewSetVars([
-			'title' => 'Smart Framework - A PHP / Javascript Framework for Web',
+			'title' => SmartUtils::extract_title('Smart Framework - A   PHP / Javascript Framework for 123 Web !!!!!', 57, true),
 			'main'	=> '<h1>This text should not be displayed, it was RESET !!!</h1>'
 		]);
 		$this->PageViewResetVar('main'); // test reset
@@ -171,6 +171,10 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewAppendVar('main', '<div style="text-align:right; color:#CCCCCC;">['.Smart::escape_html($some_var_from_request).']</div>'.'<hr>'.'<div style="color:#DDDDDD">Smart.Framework have Full Unicode (UTF-8) Support: '.Smart::escape_html('Unicode@String :: Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム :: áâãäåāăąÁÂÃÄÅĀĂĄ ćĉčçĆĈČÇ ďĎ èéêëēĕėěęÈÉÊËĒĔĖĚĘ ĝģĜĢ ĥħĤĦ ìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮ ĳĵĲĴ ķĶ ĺļľłĹĻĽŁ ñńņňÑŃŅŇ óôõöōŏőøœÒÓÔÕÖŌŎŐØŒ ŕŗřŔŖŘ șşšśŝßȘŞŠŚŜ țţťȚŢŤ ùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲ ŵŴ ẏỳŷÿýẎỲŶŸÝ źżžŹŻŽ').'</div><hr><br>');
 		$this->PageViewAppendVar('main', (string) (new SmartMarkdownToHTML(true, false))->text((string)SmartFileSystem::read('README.md')));
 		$this->PageViewAppendVar('main', '<br><hr><br><br>');
+		$txt_meta = 'Smart.Framework, a modern, high-performance   PHP / Javascript Framework (for Web) featuring MVC + Middlewares #123-456:789+10 11.12';
+		$this->PageViewSetVars([
+			'head-meta' => '<meta name="description" content="'.Smart::escape_html(SmartUtils::extract_description($txt_meta, 150, true)).'">'."\n".'<meta name="keywords" content="'.Smart::escape_html(SmartUtils::extract_keywords($txt_meta, 90, true)).'">'."\n"
+		]);
 		//--
 		$this->PageViewSetOkStatus(200); // this is optional ; if code is different than 200 it matters to be re-exported in pcache, as it using controller return 2xx is later and can't be re-exported
 		//--

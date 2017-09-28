@@ -35,42 +35,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.160921
+ * @version     v.170927
  * @package     Base
  *
  */
 final class SmartParser {
 
 	// ::
-
-
-//================================================================
-/**
- * Provides a fixed length string text ; if longer than allowed length will add trailing dots (...)
- *
- * @param 	STRING 	$ystr 				:: The text string to be processed
- * @param 	STRING 	$ylen 				:: The fixed length of the string
- * @param 	BOOLEAN	$y_cut_words		:: if TRUE, will CUT last word to provide a fixed length ; if FALSE will eliminate unterminate last word ; default is TRUE
- *
- * @return 	STRING						:: The processed string (text)
- */
-public static function text_endpoints($ystr, $ylen, $y_cut_words=true, $y_dots='...') {
-	//--
-	$ystr = (string) trim((string)$ystr);
-	$ylen = Smart::format_number_int($ylen, '+');
-	//--
-	if(($ylen > 0) AND (SmartUnicode::str_len($ystr) > $ylen)) {
-		$ystr = (string) SmartUnicode::sub_str($ystr, 0, ($ylen-3));
-		if(!$y_cut_words) {
-			$ystr = (string) preg_replace('/\s+?(\S+)?$/', '', (string)$ystr);
-		} //end if
-		$ystr .= (string) $y_dots;
-	} //end if
-	//--
-	return (string) $ystr;
-	//--
-} //END FUNCTION
-//================================================================
 
 
 //================================================================
@@ -108,9 +79,9 @@ public static function text_urls($string, $ytarget='_blank', $ypict='', $y_lentr
 	$expr = SmartValidator::regex_stringvalidation_expression('url', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
 	if((string)$ypict == '') {
-		$string = preg_replace_callback($regex, function($matches) use ($ytarget, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'</a>'; }, $string);
+		$string = preg_replace_callback($regex, function($matches) use ($ytarget, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'">'.Smart::escape_html(Smart::text_cut_by_limit($matches[0], $y_lentrim)).'</a>'; }, $string);
 	} else {
-		$string = preg_replace_callback($regex, function($matches) use ($ytarget, $ypict, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'"><img border="0" src="'.$ypict.'" width="32" height="32" align="absmiddle" alt="'.Smart::escape_html($matches[0]).'" title="'.Smart::escape_html($matches[0]).'"></a>&nbsp;'.Smart::escape_html(SmartParser::text_endpoints($matches[0], $y_lentrim)).'<br>'; }, $string);
+		$string = preg_replace_callback($regex, function($matches) use ($ytarget, $ypict, $y_lentrim) { return '<a title="@URL@" id="url_recognition" href="'.Smart::escape_html($matches[0]).'" target="'.$ytarget.'"><img border="0" src="'.$ypict.'" width="32" height="32" align="absmiddle" alt="'.Smart::escape_html($matches[0]).'" title="'.Smart::escape_html($matches[0]).'"></a>&nbsp;'.Smart::escape_html(Smart::text_cut_by_limit($matches[0], $y_lentrim)).'<br>'; }, $string);
 	} //end if else
 	return (string) $string;
 } //END FUNCTION
@@ -150,7 +121,7 @@ public static function text_emails($string, $yaction='mailto:', $ytarget='') {
 	$string = (string) $string;
 	$expr = SmartValidator::regex_stringvalidation_expression('email', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
-	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eMail@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[0]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[0], 100)).'</a>'; }, $string);
+	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eMail@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[0]))).'" target="'.$ytarget.'">'.Smart::escape_html(Smart::text_cut_by_limit($matches[0], 100)).'</a>'; }, $string);
 	return (string) $string;
 } //END FUNCTION
 //================================================================
@@ -189,7 +160,7 @@ public static function text_faxnums($string, $yaction='efax:', $ytarget='_blank'
 	$string = (string) $string;
 	$expr = SmartValidator::regex_stringvalidation_expression('fax', 'partial');
 	$regex = $expr.'iu'; //insensitive, with /u modifier for unicode strings
-	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eFax@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[2]))).'" target="'.$ytarget.'">'.Smart::escape_html(SmartParser::text_endpoints($matches[2], 75)).'</a>'; }, $string);
+	$string = preg_replace_callback($regex, function($matches) use ($yaction, $ytarget) { return '<a title="@eFax@" id="url_recognition" href="'.Smart::escape_html($yaction.rawurlencode(trim($matches[2]))).'" target="'.$ytarget.'">'.Smart::escape_html(Smart::text_cut_by_limit($matches[2], 75)).'</a>'; }, $string);
 	return (string) $string;
 } //END FUNCTION
 //================================================================
@@ -317,7 +288,7 @@ public static function simple_notes($ynotes, $y_hide_times, $y_tblsize='100%', $
  *
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
- * @version     v.170629
+ * @version     v.170927
  * @package     Base
  *
  */

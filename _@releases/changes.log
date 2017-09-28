@@ -1,11 +1,12 @@
 
 # CHANGELOG / MIGRATION NOTES - SMART.FRAMEWORK #
 
-Sep 05, 2017 :: Version 3.5.7
+Sep 27, 2017 :: Version 3.5.7
 	* middleware optimizations
 	* feature: controller raw headers
 	* many fixes in the Javascript code (ex: String() instead of .toString())
 	* many fixes in the PHP code
+	* rework and rename of some functions (see documentation)
 
 May 12, 2017 :: Version 3.5.1
 	* a complete new refactoring of UX Toolkit and some UI / JS Components

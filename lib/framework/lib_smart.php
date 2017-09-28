@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.170921
+ * @version     v.170928
  * @package     Base
  *
  */
@@ -1059,6 +1059,53 @@ public static function array_diff_assoc_oneway_recursive($array1, $array2) {
 
 //================================================================
 /**
+ * Cut a text by a fixed length, if longer than allowed length.
+ * If cut words option is FALSE it may make the string shorted by rolling back until the last space and cutting off the last partial word.
+ * The default cut suffix is (...) but can be disabled using the last parameter.
+ *
+ * @param 	STRING 	$ytxt 				:: The text string to be processed
+ * @param 	STRING 	$ylen 				:: The fixed length of the string
+ * @param 	BOOLEAN	$y_cut_words		:: *Optional* Default TRUE ; if TRUE, will CUT last word to provide a fixed length ; if FALSE will eliminate unterminate last word ; default is TRUE
+ * @param 	ENUM 	$y_suffix 			:: *Optional* Default '...' ; Can be '' or '[...a cutoff-message...]'
+ *
+ * @return 	STRING						:: The processed string (text)
+ */
+public static function text_cut_by_limit($ytxt, $ylen, $y_cut_words=true, $y_suffix='...') {
+	//--
+	$ytxt = (string) trim((string)$ytxt);
+	$ylen = Smart::format_number_int($ylen, '+');
+	//--
+	if((string)$y_suffix == '') {
+		$cutoff = (int) $ylen;
+	} else {
+		$cutoff = (int) Smart::format_number_int(($ylen - SmartUnicode::str_len($y_suffix)), '+');
+	} //end if else
+	if($cutoff <= 0) {
+		$cutoff = 1;
+	} //end if
+	//--
+	if(SmartUnicode::str_len($ytxt) > $cutoff) {
+		//--
+		$ytxt = (string) SmartUnicode::sub_str($ytxt, 0, $cutoff);
+		//--
+		if($y_cut_words === false) {
+			//-- {{{SYNC-REGEX-TEXT-CUTOFF}}}
+			$ytxt = (string) preg_replace('/\s+?(\S+)?$/', '', (string)$ytxt); // cut off last word until first space (if no space, no cut)
+			//--
+		} //end if
+		//--
+		$ytxt .= (string) $y_suffix;
+		//--
+	} //end if
+	//--
+	return (string) $ytxt;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
  * Easy HTML5 compliant nl2br() ; Will replace new lines (\n) with HTML5 <br> instead of XHTML <br />
  *
  * @param STRING 		$y_code			:: The string to apply nl2br()
@@ -1867,17 +1914,22 @@ public static function log_warning($message) {
  * This is intended to log APP Level Errors.
  * This will log the message as ERROR into the App Error Log and stop the execution (also in the Smart Error Handler will raise a HTTP 500 Code).
  *
- * @param STRING 	$message		:: The message to be triggered
+ * @param STRING 	$message_to_log			:: The message to be triggered
+ * @param STRING 	$message_to_display 	:: *Optional* the message to be displayed
  *
- * @return -						:: This function does not return anything
+ * @return -								:: This function does not return anything
  */
-public static function raise_error($message_to_log, $message_to_display='See Error Log for More Details') {
+public static function raise_error($message_to_log, $message_to_display='') {
 	//--
-	global $smart_____framework_____last__error;
+	global $smart_____framework_____last__error; // presume it is already html special chars safe
 	//--
+	$message_to_display = (string) self::escape_html($message_to_display); // make it html special chars safe
+	if((string)trim((string)$message_to_display) == '') {
+		$message_to_display = 'See Error Log for More Details'; // avoid empty message to display
+	} //end if
 	$smart_____framework_____last__error = (string) $message_to_display;
 	@trigger_error('#SMART-FRAMEWORK.ERROR# '.$message_to_log, E_USER_ERROR);
-	die('App Level Raise ERROR. Execution Halted. See the App Error log for more details.'); // normally this line will never be executed because the E_USER_ERROR via Smart Error Handler will die() before ... but this is just in case, as this is a fatal error and the execution should be halted here !
+	die('App Level Raise ERROR. Execution Halted. '.$message_to_display); // normally this line will never be executed because the E_USER_ERROR via Smart Error Handler will die() before ... but this is just in case, as this is a fatal error and the execution should be halted here !
 	//--
 } //END FUNCTION
 //================================================================

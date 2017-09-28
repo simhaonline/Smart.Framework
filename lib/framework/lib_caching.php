@@ -45,7 +45,7 @@ if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170921
+ * @version 	v.170927
  * @package 	Caching
  *
  */
@@ -119,7 +119,7 @@ final class SmartCache {
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-CACHE', [
 				'title' => '[SetKey]: '.$y_realm.' / '.$y_key,
-				'data' => SmartParser::text_endpoints((string)print_r($y_value,1), 1024)
+				'data' => Smart::text_cut_by_limit((string)print_r($y_value,1), 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]')
 			]);
 		} //end if
 		//--
@@ -190,7 +190,7 @@ final class SmartCache {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170921
+ * @version 	v.170927
  * @package 	Caching
  *
  */
