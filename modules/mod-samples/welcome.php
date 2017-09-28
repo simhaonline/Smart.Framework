@@ -56,17 +56,6 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$this->PageViewResetRawHeaders();
-		$this->PageViewSetRawHeaders([
-			'Z-Test-Header-1:' 	=> 'This is a test (1)',
-			'Z-Test-Header-2' 	=> 'This is a test (2)'
-		]);
-		$this->PageViewSetRawHeader(
-			'Z-Test-Header-3', 'This is a test (3)'
-		);
-		//--
-
-		//--
 		if($this->PageCacheisActive()) {
 			//-- because the Request can modify the content, also the unique key must take in account variables that will vary the page config or page content vars
 			$the_page_cache_key = (string) $this->PageCacheSafeKey('samples-welcome-'.$module_area.'__'.SmartHashCrypto::sha384((string)$some_var_from_request));
@@ -77,29 +66,39 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		if($this->PageCacheisActive()) {
 			//--
-			$test_cache = $this->PageGetFromCache(
+			$test_pcache_data_arr = $this->PageGetFromCache(
 				'cached-samples', // the cache sample namespace
 				$the_page_cache_key  // the unique key (if there are GET/POST variables that will change the content
 			);
 			//--
-			if(Smart::array_size($test_cache) > 0) {
-				if((is_array($test_cache['headers'])) && (is_array($test_cache['configs'])) && (is_array($test_cache['vars']))) { // if valid cache (test as we exported all arrays ... so they must be the 3 arrays again)
-					$this->PageViewResetRawHeaders();
-					$this->PageViewSetRawHeaders((array)$test_cache['headers']);
-					$this->PageViewSetCfgs((array)$test_cache['configs']);
-					$this->PageViewSetVars((array)$test_cache['vars']);
-					$this->PageViewAppendVar('main', "\n".'<!-- PCached Content Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
+			if(Smart::array_size($test_pcache_data_arr) > 0) {
+				if($this->PageViewSetData($test_pcache_data_arr) === true) {
+					//-- *optional* code
 					if($this->IfDebug()) {
-						$this->SetDebugData('Page Cache Info', 'Serving page from Persistent Cache (override PHP Execution). Page key is: '.$the_page_cache_key);
+						$this->SetDebugData('Page Cache Info', 'Serving page from Persistent Cache (override PHP full code Execution). Page namespace/key is: cached-samples / '.$the_page_cache_key);
 					} // end if
-					return; // the page was served from Cache (stop here)
+					$this->PageViewPrependVar('main', "\n".'<!-- [R]: Cached Content ; Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
+					$this->PageViewAppendVar('main',  "\n".'<!-- [R]: Cached Content ; Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
+					//-- #end: *optional code
+					return; // this is mandatory, the page was served from Cache (stop here ...)
 				} //end if
 			} //end if
 			//--
 		} //end if
 		//--
 
-		//=== if no cached, execute the code below ...
+		//=== if not cached, execute the code below ...
+
+		//--
+		$this->PageViewResetRawHeaders();
+		$this->PageViewSetRawHeaders([
+			'Z-Test-Header-1:' 	=> 'This is a test (1)',
+			'Z-Test-Header-2' 	=> 'This is a test (2)'
+		]);
+		$this->PageViewSetRawHeader(
+			'Z-Test-Header-3', 'This is a test (3)'
+		);
+		//--
 
 		//--
 		$this->PageViewSetCfg('template-path', 'default'); 		// set the template path (must be inside etc/templates/)
@@ -176,7 +175,11 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			'head-meta' => '<meta name="description" content="'.Smart::escape_html(SmartUtils::extract_description($txt_meta, 150, true)).'">'."\n".'<meta name="keywords" content="'.Smart::escape_html(SmartUtils::extract_keywords($txt_meta, 90, true)).'">'."\n"
 		]);
 		//--
-		$this->PageViewSetOkStatus(200); // this is optional ; if code is different than 200 it matters to be re-exported in pcache, as it using controller return 2xx is later and can't be re-exported
+
+		//-- the purpose of setting here 202 instead of 200 is just for testing the export of cfgs ...
+		$this->PageViewSetOkStatus(202); // HTTP OK Status Code ; this is optional ; by default if no status code is set the 200 status code is served
+		//$this->PageViewSetErrorStatus(500, 'Testing 500 Status Code ...'); // HTTP ERROR Status Code + Message ; this should be used for: 400, 403, 404, 500, 503
+		//$this->PageViewSetRedirectUrl('https://demo.unix-world.org/smart-framework/', 302); // sample redirection with 302 (temporary) or can be 301 (permanent)
 		//--
 
 		//== cache page (if persistent cache is set in config)
@@ -185,14 +188,10 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		if($this->PageCacheisActive()) {
 			//--
 			$this->PageSetInCache(
-				'cached-samples', // the cache sample namespace
-				$the_page_cache_key, // the unique key (if there are GET/POST variables that will change the content
-				array(
-					'headers' 	=> $this->PageViewGetRawHeaders(),
-					'configs' 	=> $this->PageViewGetCfgs(),
-					'vars' 		=> $this->PageViewGetVars()
-				), // this will het the full array with all page vars and configs
-				3600 // 60 mins
+				'cached-samples', 					// the cache sample namespace
+				(string) $the_page_cache_key, 		// the cache unique key (if there are GET/POST variables that will change the content
+				(array)  $this->PageViewGetData(), 	// this will get the full array with all page vars, configs and heads
+				(int)    3600 						// cache time: 60 mins
 			);
 			//--
 			if($this->IfDebug()) {
@@ -206,6 +205,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			} //end if
 			//--
 		} //end if else
+		//--
+
+		//==
+
+		//-- after cache content, to avoid save it into cache
+		$this->PageViewPrependVar('main', "\n".'<!-- [L]: Live Content -->'."\n"); // add a markup to the HTML to know was served live (not cached) ...
+		$this->PageViewAppendVar('main',  "\n".'<!-- [L]: Live Content -->'."\n"); // add a markup to the HTML to know was served live (not cached) ...
 		//--
 
 	} //END FUNCTION

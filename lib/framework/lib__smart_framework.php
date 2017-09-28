@@ -56,7 +56,7 @@ require('lib/framework/lib_utils.php');			// smart utils
  * @access 		private
  * @internal
  *
- * @version 	v.170405
+ * @version 	v.170928
  *
  */
 interface SmartInterfaceAppBootstrap {
@@ -105,7 +105,7 @@ interface SmartInterfaceAppBootstrap {
  * @access 		private
  * @internal
  *
- * @version 	v.170405
+ * @version 	v.170928
  *
  */
 interface SmartInterfaceAppInfo {
@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170911
+ * @version 	v.170928
  * @package 	Application
  *
  */
@@ -578,6 +578,74 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
+	 * Get all the current controller PageView Data: (Raw) Headers, Cfgs and Vars
+	 * The general purpose of this function is to get all Page Data at once to export into persistent cache.
+	 *
+	 * @return 	ARRAY					:: an associative array as: [ heads => PageViewGetRawHeaders() ; cfgs => PageViewGetCfgs() ; vars => PageViewGetVars() ]
+	 */
+	final public function PageViewGetData() {
+		//--
+		return (array) [
+			'heads' 	=> (array) $this->PageViewGetRawHeaders(),
+			'cfgs' 		=> (array) $this->PageViewGetCfgs(),
+			'vars' 		=> (array) $this->PageViewGetVars()
+		];
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Set all the current controller PageView Data: (Raw) Headers, Cfgs and Vars
+	 * The general purpose of this function is to set all Page Data at once when imported from persistent cache.
+	 *
+	 * @param 	ARRAY 		$data		:: an associative array as: [ heads => PageViewGetRawHeaders() ; cfgs => PageViewGetCfgs() ; vars => PageViewGetVars() ]
+	 *
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewSetData($data) {
+		//--
+		if(!is_array($data)) {
+			return false; // $data must be array
+		} //end if
+		//--
+		$data = (array) array_change_key_case((array)$data, CASE_LOWER); // make all keys lower
+		//--
+		if(!is_array($data['heads'])) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetData: Invalid Heads');
+			return false;
+		} //end if
+		if(!is_array($data['cfgs'])) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetData: Invalid Cfgs');
+			return false;
+		} //end if
+		if(!is_array($data['vars'])) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetData: Invalid Vars');
+			return false;
+		} //end if
+		//--
+		if($this->PageViewSetRawHeaders($data['heads']) !== true) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetData: Failed to Set Heads');
+			return false;
+		} //end if
+		if($this->PageViewSetCfgs($data['cfgs']) !== true) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetData: Failed to Set Cfgs');
+			return false;
+		} //end if
+		if($this->PageViewSetVars($data['vars']) !== true) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetData: Failed to Set Vars');
+			return false;
+		} //end if
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Get all the current controller PageView Headers (Raw) that will be mapped to Raw HTTP Header(s)
 	 *
 	 * @return 	ARRAY					:: an associative array with all controller Page View (Raw) Headers currently set
@@ -776,7 +844,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Set OK (2xx) STATUS Code for a controller page
 	 *
-	 * @param 	ENUM 		$code		:: the HTTP Error Status Code: 301, 302, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 200 will be used instead
+	 * @param 	ENUM 		$code		:: the HTTP OK Status Code: 200, 202, 203, 208, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 200 will be used instead
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
@@ -936,6 +1004,35 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$param = (string) strtolower((string)$param);
 		//--
 		$this->pageview[(string)$param] = (string)$value; // set
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Prepend a single value to a variable for the current controller into PageView Vars
+	 *
+	 * @param 	STRING 		$param		:: the variable to prepend value to
+	 * @param 	STRING 		$value		:: the value
+	 *
+	 * @return 	BOOL					:: TRUE if OK, FALSE if not
+	 */
+	final public function PageViewPrependVar($param, $value) {
+		//--
+		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
+			return false;
+		} //end if
+		//--
+		$param = (string) strtolower((string)$param);
+		$value = (string) $value;
+		//--
+		if(!array_key_exists((string)$param, $this->pageview)) {
+			$this->pageview[(string)$param] = ''; // init
+		} //end if
+		$this->pageview[(string)$param] = (string) $value.$this->pageview[(string)$param]; // prepend
 		//--
 		return true;
 		//--
