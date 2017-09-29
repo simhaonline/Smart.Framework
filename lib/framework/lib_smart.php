@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.170928
+ * @version     v.170929
  * @package     Base
  *
  */
@@ -1915,7 +1915,7 @@ public static function log_warning($message) {
  * This will log the message as ERROR into the App Error Log and stop the execution (also in the Smart Error Handler will raise a HTTP 500 Code).
  *
  * @param STRING 	$message_to_log			:: The message to be triggered
- * @param STRING 	$message_to_display 	:: *Optional* the message to be displayed
+ * @param STRING 	$message_to_display 	:: *Optional* the message to be displayed (must be html special chars safe)
  *
  * @return -								:: This function does not return anything
  */
@@ -1923,7 +1923,6 @@ public static function raise_error($message_to_log, $message_to_display='') {
 	//--
 	global $smart_____framework_____last__error; // presume it is already html special chars safe
 	//--
-	$message_to_display = (string) self::escape_html($message_to_display); // make it html special chars safe
 	if((string)trim((string)$message_to_display) == '') {
 		$message_to_display = 'See Error Log for More Details'; // avoid empty message to display
 	} //end if
