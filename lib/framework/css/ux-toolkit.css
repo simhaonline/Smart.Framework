@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.170909), (c) 2015-2017 unix-world.org
+	extended by unixman, (stable.171003), (c) 2015-2017 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -904,6 +904,219 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	color: #999999;
 }
 
+/*** Menu Bars ***/
+
+
+.ux-menubar-button {
+	border: none;
+	display: inline-block;
+	outline: 0;
+	padding: 8px 16px;
+	vertical-align: middle;
+	overflow: hidden;
+	text-decoration: none;
+	color: inherit;
+	background-color: inherit;
+	text-align: center;
+	cursor: pointer;
+	white-space: nowrap;
+	font: inherit;
+	text-transform: none;
+	margin: 0;
+	border-style: none;
+}
+.ux-menubar-button {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.ux-menubar-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.3;
+}
+.ux-menubar-button:hover, .ux-menubar-button:hover * {
+	color: #000000 !important;
+	background-color: #ffffff! important;
+}
+
+.ux-menubar-dropdown-click, .ux-menubar-dropdown-hover {
+	position:relative;
+	display:inline-block;
+	cursor:pointer;
+}
+.ux-menubar-dropdown-hover:hover .ux-menubar-dropdown-content {
+	display:block;
+	z-index:90001;
+}
+.ux-menubar-dropdown-hover:first-child, .ux-menubar-dropdown-click:hover, .ux-menubar-dropdown-click:hover * {
+	background-color:#ffffff;
+	color:#000000;
+}
+.ux-menubar-dropdown-hover:hover > .ux-menubar-button:first-child, .ux-menubar-dropdown-click:hover > .ux-menubar-button:first-child {
+	background-color:#ffffff;
+	color:#000000;
+}
+.ux-menubar-dropdown-content {
+	cursor:auto;
+	display:none;
+	position:absolute;
+/*	min-width:250px; */
+	margin:0;
+	padding:0;
+	border: 0;
+	overflow: hidden;
+}
+
+.ux-menubar-bar-block .ux-menubar-dropdown-hover, .ux-menubar-bar-block .ux-menubar-dropdown-click {
+	width:100%;
+}
+.ux-menubar-bar-block .ux-menubar-dropdown-hover .ux-menubar-dropdown-content, .ux-menubar-bar-block .ux-menubar-dropdown-click .ux-menubar-dropdown-content {
+	min-width:100%;
+}
+.ux-menubar-bar-block .ux-menubar-dropdown-hover .ux-menubar-button, .ux-menubar-bar-block .ux-menubar-dropdown-click .ux-menubar-button {
+	width:100%;
+	text-align:left;
+	padding:9px 16px;
+}
+
+.ux-menubar-bar {
+	width:100%;
+	overflow:hidden;
+}
+
+.ux-menubar-bar * {
+	font-size:15px !important;
+}
+
+.ux-menubar-center .ux-menubar-bar {
+	display:inline-block;
+	width:auto;
+}
+.ux-menubar-bar .ux-menubar-bar-item {
+	padding:9px 16px;
+	float:left;
+	width:auto;
+	border:none;
+	outline:none;
+	display:block;
+}
+.ux-menubar-bar .ux-menubar-dropdown-hover, .ux-menubar-bar .ux-menubar-dropdown-click {
+	position:static;
+	float:left;
+}
+.ux-menubar-bar .ux-menubar-button {
+	white-space:normal;
+}
+.ux-menubar-bar-block .ux-menubar-bar-item {
+	width:100%;
+	display:block;
+	padding:9px 16px;
+	text-align:left;
+	border:none;
+	outline:none;
+	white-space:normal;
+	float:none;
+}
+.ux-menubar-bar-block .ux-menubar-center .ux-menubar-bar-item {
+	text-align:center;
+}
+.ux-menubar-block {
+	display:block;
+	width:100%;
+}
+
+.ux-menubar-color-blue, .ux-menubar-color-blue *, ux-menubar-color-hover-blue:hover, ux-menubar-color-hover-blue:hover * {
+	color: #FFFFFF !important;
+	background-color: #3F51B5 !important;
+}
+.ux-menubar-color-darkblue, .ux-menubar-color-darkblue *, ux-menubar-color-hover-darkblue:hover, ux-menubar-color-hover-darkblue:hover * {
+	color: #FFFFFF !important;
+	background-color: #3B5998 !important;
+}
+.ux-menubar-color-lightblue, .ux-menubar-color-lightblue *, ux-menubar-color-hover-lightblue:hover, ux-menubar-color-hover-lightblue:hover * {
+	color: #FFFFFF !important;
+	background-color: #1DA1F2 !important;
+}
+.ux-menubar-color-yellow, .ux-menubar-color-yellow *, .ux-menubar-color-hover-yellow:hover, .ux-menubar-color-hover-yellow:hover * {
+	color: #000000 !important;
+	background-color: #FFEB3B!important;
+}
+.ux-menubar-color-amber, .ux-menubar-color-amber *, .ux-menubar-color-hover-amber:hover, .ux-menubar-color-hover-amber:hover * {
+	color: #000000 !important;
+	background-color: #FFC107!important;
+}
+.ux-menubar-color-khaki, .ux-menubar-color-khaki *, .ux-menubar-color-hover-khaki:hover, .ux-menubar-color-hover-khaki:hover * {
+	color: #000000 !important;
+	background-color: #f0e68c!important;
+}
+.ux-menubar-color-green, .ux-menubar-color-green *, .ux-menubar-color-hover-green:hover, .ux-menubar-color-hover-green:hover * {
+	color: #FFFFFF !important;
+	background-color: #4CAF50!important;
+}
+.ux-menubar-color-darkgreen, .ux-menubar-color-darkgreen *, .ux-menubar-color-hover-darkgreen:hover, .ux-menubar-color-hover-darkgreen:hover * {
+	color: #FFFFFF !important;
+	background-color: #009688!important;
+}
+.ux-menubar-color-lightgreen, .ux-menubar-color-lightgreen *, .ux-menubar-color-hover-lightgreen:hover, .ux-menubar-color-hover-lightgreen:hover * {
+	color: #FFFFFF !important;
+	background-color: #719300!important;
+}
+.ux-menubar-color-lime, .ux-menubar-color-lime *, .ux-menubar-color-hover-lime:hover, .ux-menubar-color-hover-lime:hover * {
+	color: #000000 !important;
+	background-color: #cddc39!important;
+}
+.ux-menubar-color-orange, .ux-menubar-color-orange *, .ux-menubar-color-hover-orange:hover, .ux-menubar-color-hover-orange:hover * {
+	color: #FFFFFF !important;
+	background-color: #FF8800!important;
+}
+.ux-menubar-color-pink, .ux-menubar-color-pink *, .ux-menubar-color-hover-pink:hover, .ux-menubar-color-hover-pink:hover * {
+	color: #FFFFFF !important;
+	background-color: #E91E63!important;
+}
+.ux-menubar-color-red, .ux-menubar-color-red *, .ux-menubar-color-hover-red:hover, .ux-menubar-color-hover-red:hover * {
+	color: #FFFFFF !important;
+	background-color: #f44336!important;
+}
+.ux-menubar-color-violet, .ux-menubar-color-violet *, .ux-menubar-color-hover-violet:hover, .ux-menubar-color-hover-violet:hover * {
+	color: #FFFFFF !important;
+	background-color: #673ab7!important;
+}
+.ux-menubar-color-brown, .ux-menubar-color-brown *, .ux-menubar-color-hover-brown:hover, .ux-menubar-color-hover-brown:hover * {
+	color: #FFFFFF !important;
+	background-color: #795548!important;
+}
+.ux-menubar-color-grey, .ux-menubar-color-grey *, .ux-menubar-color-hover-grey:hover, .ux-menubar-color-hover-grey:hover * {
+	color: #000000 !important;
+	background-color: #BBBBBB!important;
+}
+.ux-menubar-color-darkgrey, .ux-menubar-color-darkgrey *, .ux-menubar-color-hover-darkgrey:hover, .ux-menubar-color-hover-darkgrey:hover * {
+	color: #FFFFFF !important;
+	background-color: #777777!important;
+}
+.ux-menubar-color-lightgrey, .ux-menubar-color-lightgrey *, .ux-menubar-color-hover-lightgrey:hover, .ux-menubar-color-hover-lightgrey:hover * {
+	color: #000000 !important;
+	background-color: #DCDCDC!important;
+}
+.ux-menubar-color-bluegrey, .ux-menubar-color-bluegrey *, .ux-menubar-color-hover-bluegrey:hover, .ux-menubar-color-hover-bluegrey:hover * {
+	color: #FFFFFF !important;
+	background-color: #778899!important;
+}
+.ux-menubar-color-purplegrey, .ux-menubar-color-purplegrey *, .ux-menubar-color-hover-purplegrey:hover, .ux-menubar-color-hover-purplegrey:hover * {
+	color: #FFFFFF !important;
+	background-color: #666699!important;
+}
+.ux-menubar-color-black, .ux-menubar-color-black *, .ux-menubar-color-hover-black:hover, .ux-menubar-color-hover-black:hover * {
+	color: #FFFFFF !important;
+	background-color: #333333!important;
+}
+.ux-menubar-color-white, .ux-menubar-color-white *, .ux-menubar-color-hover-white:hover, .ux-menubar-color-hover-white:hover * {
+	color: #111111 !important;
+	background-color: #FAFAFA!important;
+}
+
 /*** Menus ***/
 
 /** Menus, Core **/
@@ -943,6 +1156,11 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	display: block;
 	text-decoration: none;
 	white-space: nowrap;
+}
+
+.ux-menu-link:hover {
+	color: #000000 !important;
+	background-color: #FFFFFF!important;
 }
 
 /** Menus, Horizontal **/

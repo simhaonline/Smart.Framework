@@ -62,7 +62,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.170920
+ * @version 	v.171002
  * @package 	Application
  *
  */
@@ -98,16 +98,20 @@ public static function active() {
  *
  * @param STRING $yvariable 		variable name
  *
- * returns MIXED $_SESSION or $_SESSION[$yvariable]
+ * @return MIXED $_SESSION or $_SESSION[$yvariable]
  */
 public static function get($yvariable=null) {
 	//--
 	self::start(); // start session if not already started
 	//--
-	if($yvariable === null) {
-		return (array) $_SESSION;
+	if(!is_array($_SESSION)) { // fix for php 7.2+
+		return null;
+	} //end if
+	//--
+	if(($yvariable === null) OR ((string)trim((string)$yvariable) == '')) {
+		return (array) $_SESSION; // array, all the session variables at once
 	} else {
-		return $_SESSION[(string)$yvariable];
+		return $_SESSION[(string)$yvariable]; // mixed
 	} //end if else
 	//--
 } //END FUNCTION
@@ -120,16 +124,24 @@ public static function get($yvariable=null) {
  *
  * @param STRING $yvariable 		variable name
  * @param ANY VARIABLE $yvalue 		variable value
+ *
+ * @return BOOLEAN 					TRUE if successful, FALSE if not
  */
 public static function set($yvariable, $yvalue) {
 	//--
 	self::start(); // start session if not already started
+	//--
+	if(!is_array($_SESSION)) { // fix for php 7.2+
+		return false;
+	} //end if
 	//--
 	if($yvalue === null) {
 		unset($_SESSION[(string)$yvariable]);
 	} else {
 		$_SESSION[(string)$yvariable] = $yvalue;
 	} //end if else
+	//--
+	return true;
 	//--
 } //END FUNCTION
 //==================================================
