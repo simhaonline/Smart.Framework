@@ -19,4 +19,5 @@ mod-agile
 mod-svn
 mod-kml
 mod-maps-cache
+mod-ui-w3
 !.gitignore
