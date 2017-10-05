@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170917
+ * @version		171004
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -356,9 +356,7 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 			if((substr((string)$filepath, 0, 1) != '/') AND (strpos((string)SMART_FRAMEWORK_DOWNLOAD_FOLDERS, '<'.trim((string)$tmp_arr_paths[0]).'>') !== false) AND (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_file_ext.'>') === false)) {
 				//--
 				SmartFileSysUtils::raise_error_if_unsafe_path($filepath); // re-test finally
-				//--
-				@clearstatcache();
-				//--
+				//-- no need to clear the stat cache as the following checks will do it
 				if(SmartFileSystem::is_type_file($filepath) AND SmartFileSystem::have_access_read($filepath)) {
 					//--
 					if(!headers_sent()) {

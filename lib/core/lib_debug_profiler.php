@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.170920
+ * @version 	v.171005
  *
  */
 final class SmartDebugProfiler {
@@ -48,7 +48,7 @@ public static function js_headers_debug($y_profiler_url) {
 
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
-		return false;
+		return '';
 	} //end if
 	//--
 
@@ -71,7 +71,7 @@ public static function div_main_debug() {
 
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
-		return false;
+		return '';
 	} //end if
 	//--
 
@@ -196,14 +196,112 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 
 
 //==================================================================
-// debug file template
-public static function print_tpl_debug($y_tpl_file, $y_arr_sub_templates=[]) {
+public static function test_tpl_file_for_debug($y_tpl_file) {
 
 	//--
-	if((string)$y_tpl_file == '') {
-		$content = '<h1>NO Marker-TPL Template Selected for Debug ...</h1>';
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		return false;
+	} //end if
+	//--
+
+	//--
+	if((string)trim((string)$y_tpl_file) == '') { // no file
+		return false;
+	} //end if
+	//--
+	if(
+		((string)substr((string)$y_tpl_file, -9, 9) == '.htaccess') OR
+		((string)substr((string)$y_tpl_file, -9, 9) == '.htpasswd') OR
+		((string)substr((string)$y_tpl_file, -3, 3) == '.sh') OR
+		((string)substr((string)$y_tpl_file, -3, 3) == '.py') OR
+		((string)substr((string)$y_tpl_file, -3, 3) == '.pl') OR
+		((string)substr((string)$y_tpl_file, -4, 4) == '.log') OR
+		((string)substr((string)$y_tpl_file, -4, 4) == '.pem') OR
+		((string)substr((string)$y_tpl_file, -4, 4) == '.yml') OR
+		((string)substr((string)$y_tpl_file, -5, 5) == '.yaml') OR
+		((string)substr((string)$y_tpl_file, -4, 4) == '.sql') OR
+		((string)substr((string)$y_tpl_file, -4, 4) == '.ini') OR
+		((string)substr((string)$y_tpl_file, -4, 4) == '.php')
+
+	) { // deny for the above files, they must be protected
+		return false;
+	} //end if
+	//--
+	if((strpos((string)$y_tpl_file, 'etc/') === 0) OR (strpos((string)$y_tpl_file, 'lib/') === 0) OR (strpos((string)$y_tpl_file, 'modules/') === 0)) {
+		if(SmartFileSysUtils::check_if_safe_path((string)$y_tpl_file)) {
+			if(SmartFileSystem::is_type_file((string)$y_tpl_file)) {
+				return true;
+			} //end if
+		} //end if
+	} //end if
+	//--
+	return false;
+	//--
+
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+// reads and returns the content of a generic TPL file template for debug (can be used to extend debuging over other TPL files other than Marker-TPL) {{{SYNC-DEBUG-TPL-FILES}}}
+public static function read_tpl_file_for_debug($y_tpl_file) {
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		return array();
+	} //end if
+	//--
+
+	//--
+	$y_tpl_file = (string) $y_tpl_file;
+	//--
+	$y_tpl_file = (string) self::url_tpl_decrypt((string)$y_tpl_file);
+	//--
+
+	//--
+	if(self::test_tpl_file_for_debug($y_tpl_file) === true) {
+		$fcontent = (string) SmartFileSystem::read($y_tpl_file);
 	} else {
+		$fcontent = '';
+	} //end if else
+	//--
+
+	//--
+	return (array) [
+		'dbg-file-name' 	=> (string) $y_tpl_file,
+		'dbg-file-contents' => (string) $fcontent
+	];
+	//--
+
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+// reads and display a Marker-TPL file template for debug {{{SYNC-DEBUG-TPL-FILES}}}
+public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_templates=[], $y_use_decrypt=true) {
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		return '';
+	} //end if
+	//--
+
+	//--
+	$y_tpl_file = (string) $y_tpl_file;
+	//--
+	if($y_use_decrypt !== false) {
+		$y_tpl_file = (string) self::url_tpl_decrypt((string)$y_tpl_file);
+	} //end if
+	//--
+
+	//--
+	if(self::test_tpl_file_for_debug($y_tpl_file) === true) {
 		$content = (string) SmartComponents::js_code_highlightsyntax('div#tpl-display-for-highlight',['web','tpl']).SmartMarkersTemplating::analyze_debug_file_template((string)$y_tpl_file, $y_arr_sub_templates);
+	} elseif((string)trim((string)$y_tpl_file) == '') {
+		$content = '<h1>WARNING: Empty Marker-TPL Template to Debug</h1>';
+	} else {
+		$content = '<h1>WARNING: Invalid Marker-TPL Template to Debug: '.Smart::escape_html($y_tpl_file).'</h1>';
 	} //end if else
 	//--
 
@@ -212,7 +310,7 @@ public static function print_tpl_debug($y_tpl_file, $y_arr_sub_templates=[]) {
 		'lib/core/templates/debug-profiler-util.htm',
 		[
 			'CHARSET' 	=> Smart::escape_html(SmartUtils::get_encoding_charset()),
-			'TITLE' 	=> Smart::escape_html('Marker-TPL Template Debug Analyze Info'),
+			'TITLE' 	=> '#### Marker-TPL #### Template Debug Profiling',
 			'MAIN' 		=> (string) $content
 		],
 		'no'
@@ -388,6 +486,41 @@ public static function print_debug_info($y_area, $y_debug_token) {
 
 
 //##### PRIVATES
+
+
+//==================================================================
+private static function url_tpl_decrypt($y_tpl_file) {
+	//--
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		$the_area = 'admin';
+	} else {
+		$the_area = 'index';
+	} //end if else
+	//--
+	$y_tpl_file = (string) SmartCipherCrypto::decrypt('hash/sha256', (string)$the_area.' '.SMART_FRAMEWORK_SECURITY_KEY.' '.SMART_SOFTWARE_NAMESPACE, (string)$y_tpl_file);
+	if(!SmartFileSysUtils::check_if_safe_path((string)$y_tpl_file)) {
+		$y_tpl_file = '';
+	} //end if
+	//--
+	return (string) $y_tpl_file;
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+private static function url_tpl_encrypt($y_tpl_file) {
+	//--
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		$the_area = 'admin';
+	} else {
+		$the_area = 'index';
+	} //end if else
+	//--
+	return (string) SmartCipherCrypto::encrypt('hash/sha256', (string)$the_area.' '.SMART_FRAMEWORK_SECURITY_KEY.' '.SMART_SOFTWARE_NAMESPACE, (string)$y_tpl_file);
+	//--
+} //END FUNCTION
+//==================================================================
 
 
 //==================================================================
@@ -932,11 +1065,16 @@ private static function print_log_optimizations($title, $optimizations_log) {
 						} else {
 							$color = '#555555';
 						} //end if else
+						$have_link = false;
 						if((string)$tmp_item['action'] == 'debug-tpl') {
-							$log .= '<a title="Click to View Marker-TPL Debug Analyze Info" href="?smartframeworkservice=debug-tpl&tpl='.Smart::escape_url(trim((string)$tmp_item['key'])).'" target="_blank" style="text-decoration-style:dotted; text-decoration-color:'.$color.';">';
+							$have_link = true;
+							$log .= '<a title="Click to View the Marker-TPL Template Debug Profiling" href="'.Smart::escape_html(SmartUtils::get_server_current_script()).'?smartframeworkservice=debug-tpl&tpl='.Smart::escape_url(self::url_tpl_encrypt(trim((string)$tmp_item['key']))).'" target="_blank" style="text-decoration-style:dotted; text-decoration-color:'.$color.';">';
+						} elseif((string)trim((string)$tmp_item['action']) != '') {
+							$have_link = true;
+							$log .= '<a title="Click to View the Extended Debug Profiling" href="'.Smart::escape_html((string)trim((string)$tmp_item['action']).Smart::escape_url(self::url_tpl_encrypt(trim((string)$tmp_item['key'])))).'" target="_blank" style="text-decoration-style:dashed; text-decoration-color:'.$color.';">';
 						} //end if
 						$log .= '<span style="font-size:11px; color:'.$color.';">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), $tmp_line)), true).'</span><br>';
-						if((string)$tmp_item['action'] == 'debug-tpl') {
+						if($have_link) {
 							$log .= '</a>';
 						} //end if
 					} //end if

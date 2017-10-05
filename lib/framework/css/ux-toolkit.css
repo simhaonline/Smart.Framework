@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.171003), (c) 2015-2017 unix-world.org
+	extended by unixman, (stable.171005), (c) 2015-2017 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -469,13 +469,13 @@ striping:
 	background-color: #FFFFFF;
 }
 .ux-table .ux-tr-even:hover {
-	background-color: #DDEEFF;
+	background-color: #FFFDD0;
 }
 .ux-table .ux-tr-odd {
 	background-color: #F2F2F2;
 }
 .ux-table .ux-tr-odd:hover {
-	background-color: #DDEEFF;
+	background-color: #FFFDD0;
 }
 
 /* nth-child selector for modern browsers */
@@ -486,7 +486,7 @@ striping:
 	background-color: #F2F2F2;
 }
 .ux-table-striped tbody tr:hover {
-	background-color: #DDEEFF;
+	background-color: #FFFDD0;
 }
 
 /* BORDERED TABLES */

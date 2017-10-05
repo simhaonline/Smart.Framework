@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.10.03'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.10.05'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -1182,7 +1182,7 @@ public static function Create_Required_Dirs() {
 	} //end if
 	self::$RequiredDirsCreated = true;
 	//--
-	@clearstatcache();
+	clearstatcache(true); // do a full clear stat cache at the begining
 	//-- tmp dir
 	$dir = 'tmp/';
 	if(!SmartFileSystem::is_type_dir($dir)) {

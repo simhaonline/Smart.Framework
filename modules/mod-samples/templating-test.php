@@ -39,7 +39,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//-- Uncomment the following line to see a Marker Template Analysis (DEBUG ONLY !!! Never use this in real production environments, it is intended for Development Only)
-		//if($this->IfDebug()) { echo SmartDebugProfiler::print_tpl_debug($tpl,[]); } else { echo '<h1> Torn ON Debugging to see the Template Debug Analyze Info ...'; } die();
+		//if($this->IfDebug()) { echo SmartDebugProfiler::display_marker_tpl_debug($tpl,[],false); } else { echo '<h1> Turn ON Debugging to see the Template Debug Analyze Info ...'; } die();
 		//--
 
 		//--

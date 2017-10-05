@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.5.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		170917
+ * @version		171005
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -171,7 +171,7 @@ public static function Run() {
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			self::HeadersNoCache(); // headers: cache control, force no-cache
-			echo SmartDebugProfiler::print_tpl_debug((string)SmartFrameworkRegistry::getRequestVar('tpl'));
+			echo SmartDebugProfiler::display_marker_tpl_debug((string)SmartFrameworkRegistry::getRequestVar('tpl'));
 		} else {
 			http_response_code(404);
 			echo SmartComponents::http_message_404_notfound('NO TPL-DEBUG Service has been activated on this server ...');

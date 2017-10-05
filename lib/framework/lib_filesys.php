@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170921
+ * @version 	v.171004
  * @package 	Filesystem
  *
  */
@@ -1221,7 +1221,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170921
+ * @version 	v.171004
  * @package 	Filesystem
  *
  */
@@ -1374,7 +1374,7 @@ public static function is_type_dir($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	return (bool) is_dir($path);
 	//--
@@ -1400,7 +1400,7 @@ public static function is_type_file($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	return (bool) is_file($path);
 	//--
@@ -1426,7 +1426,7 @@ public static function is_type_link($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	return (bool) is_link($path);
 	//--
@@ -1452,7 +1452,7 @@ public static function have_access_read($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	return (bool) is_readable($path);
 	//--
@@ -1478,7 +1478,7 @@ public static function have_access_write($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	return (bool) is_writable($path);
 	//--
@@ -1504,7 +1504,7 @@ public static function have_access_executable($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	return (bool) is_executable($path);
 	//--
@@ -1530,7 +1530,7 @@ public static function path_exists($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	if((file_exists($path)) OR (is_link($path))) { // {{{SYNC-SF-PATH-EXISTS}}}
 		return true;
@@ -1563,7 +1563,7 @@ public static function path_real_exists($path) {
 		return false;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $path);
 	//--
 	return (bool) file_exists($path); // checks if a file or directory exists (but this is not safe with symlinks as if a symlink is broken will return false ...)
 	//--
@@ -1596,7 +1596,7 @@ public static function read($file_name, $file_len=0, $markchmod='no') {
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
 	//--
-	@clearstatcache();
+	clearstatcache(true, $file_name);
 	//--
 	$fcontent = '';
 	//--
@@ -1685,7 +1685,7 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
 	//--
-	@clearstatcache();
+	clearstatcache(true, $file_name);
 	//--
 	$result = false;
 	//--
@@ -1842,7 +1842,8 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
 	SmartFileSysUtils::raise_error_if_unsafe_path($newlocation);
 	//--
-	@clearstatcache();
+	clearstatcache(true, $file_name);
+	clearstatcache(true, $newlocation);
 	//--
 	$result = false;
 	//--
@@ -1940,7 +1941,8 @@ public static function rename($file_name, $newlocation) {
 	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
 	SmartFileSysUtils::raise_error_if_unsafe_path($newlocation);
 	//--
-	@clearstatcache();
+	clearstatcache(true, $file_name);
+	clearstatcache(true, $newlocation);
 	//--
 	$f_cx = false;
 	//--
@@ -2021,7 +2023,7 @@ public static function read_uploaded($file_name) {
 		SmartFileSysUtils::raise_error_if_unsafe_path($file_name, 'no'); // here we do not test against absolute path access because uploaded files always return the absolute path
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $file_name);
 	//--
 	$f_cx = '';
 	//--
@@ -2104,7 +2106,8 @@ public static function move_uploaded($file_name, $newlocation) {
 	} //end if
 	SmartFileSysUtils::raise_error_if_unsafe_path($newlocation);
 	//--
-	@clearstatcache();
+	clearstatcache(true, $file_name);
+	clearstatcache(true, $newlocation);
 	//--
 	$f_cx = false;
 	//--
@@ -2169,7 +2172,7 @@ public static function delete($file_name) {
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
 	//--
-	@clearstatcache();
+	clearstatcache(true, $file_name);
 	//--
 	if(!self::path_exists($file_name)) {
 		//--
@@ -2382,7 +2385,7 @@ public static function dir_create($dir_name, $recursive=false, $allow_protected_
 		$is_path_chk_safe = SmartFileSysUtils::check_if_safe_path($dir_name);
 	} //end if else
 	//--
-	@clearstatcache();
+	clearstatcache(true, $dir_name);
 	//--
 	$result = false;
 	//--
@@ -2495,7 +2498,8 @@ private static function dir_recursive_private_copy($dirsource, $dirdest, $check_
 		return 0; // empty destination dir
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $dirsource);
+	clearstatcache(true, $dirdest);
 	//--
 	if(strlen($protected_dirsource) <= 0) {
 		$protected_dirsource = (string) $dirsource; // 1st time
@@ -2722,7 +2726,8 @@ public static function dir_rename($dir_name, $new_dir_name) {
 		return 0;
 	} //end if
 	//--
-	@clearstatcache();
+	clearstatcache(true, $dir_name);
+	clearstatcache(true, $new_dir_name);
 	//--
 	$result = false;
 	//--
@@ -2777,10 +2782,12 @@ public static function dir_delete($dir_name, $recursive=true) {
 		Smart::log_warning(__METHOD__.'() // DeleteDir [R='.(int)$recursive.'] // Dir Name is Empty !');
 		return 0;
 	} //end if
-	//-- THIS MUST BE DONE BEFORE ADDING THE TRAILING SLASH
+	//--
+	clearstatcache(true, $dir_name);
+	//--
 	if(self::is_type_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
 		//--
-		$f_cx = @unlink($dir_name); // avoid deleting content from a linked dir, just remove the link
+		$f_cx = @unlink($dir_name); // avoid deleting content from a linked dir, just remove the link :: THIS MUST BE DONE BEFORE ADDING THE TRAILING SLASH
 		//--
 		if(($f_cx) AND (!self::is_type_link($dir_name))) {
 			return 1;
@@ -2794,15 +2801,12 @@ public static function dir_delete($dir_name, $recursive=true) {
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
 	//--
-	@clearstatcache();
-	//--
 	if(!self::path_exists($dir_name)) {
 		//--
 		return 1;
 		//--
 	} //end if
-	//--
-	// avoid deleting content from a linked dir, just remove the link (2nd check, after adding the trailing slash)
+	//-- avoid deleting content from a linked dir, just remove the link (2nd check, after adding the trailing slash)
 	if(self::is_type_link($dir_name)) { // {{{SYNC-BROKEN-LINK-DELETE}}}
 		//--
 		$f_cx = @unlink($dir_name);
@@ -3191,7 +3195,7 @@ final class SmartGetFileSystem {
 		//-- protection
 		SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
 		//--
-		@clearstatcache();
+		clearstatcache(true, $dir_name);
 		//--
 		$this->pattern_search_str = $search_pattern;
 		$this->search_prevent_file = $search_prevent_file;
