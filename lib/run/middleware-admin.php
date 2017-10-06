@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.5.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		171005
+ * @version		171006
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -584,9 +584,9 @@ public static function Run() {
 	} //end if else
 	//--
 	if(SMART_SOFTWARE_DISABLE_STATUS_POWERED !== true) {
-		echo "\n".'<!-- Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.$the_midmark.' :: '.SMART_FRAMEWORK_RELEASE_URL.' -->';
+		echo "\n".'<!-- Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.SMART_FRAMEWORK_RELEASE_URL.' -->';
+		echo "\n".'<!-- WebPage Server-Side Metrics '.$the_midmark.': '.str_pad('Total Execution Time = '.Smart::format_number_dec($res_time, 13, '.', '').' seconds', 55, ' ', STR_PAD_BOTH).' | '.str_pad('Memory Peak Usage = '.SmartUtils::pretty_print_bytes($res_memory, 2), 37, ' ', STR_PAD_BOTH).' -->'."\n";
 	} //end if
-	echo "\n".'<!-- Resources: ['.Smart::format_number_dec($res_time, 13, '.', '').' sec.] / ['.Smart::format_number_dec($res_memory, 0, '.', ' ').' by.]'.' -->'."\n";
 	//--
 } //END FUNCTION
 //====================================================================

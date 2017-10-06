@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.170929
+ * @version     v.171006
  * @package     Base
  *
  */
@@ -254,11 +254,11 @@ public static function url_make_semantic($y_url) {
 	$arr = parse_url((string)$y_url);
 	//print_r($arr);
 	//--
-	$arr['scheme'] = trim((string)$arr['scheme']); 	// http
-	$arr['host'] = trim((string)$arr['host']); 		// 127.0.0.1
-	$arr['port'] = trim((string)$arr['port']); 		// 80 / 443 / 8088 ...
-	$arr['path'] = trim((string)$arr['path']); 		// /some/path
-	$arr['query'] = trim((string)$arr['query']);	// page=some&op=other
+	$arr['scheme'] 	= (string) trim((string)$arr['scheme']); 	// http / https
+	$arr['host'] 	= (string) trim((string)$arr['host']); 		// 127.0.0.1
+	$arr['port'] 	= (string) trim((string)$arr['port']); 		// 80 / 443 / 8088 ...
+	$arr['path'] 	= (string) trim((string)$arr['path']); 		// /some/path
+	$arr['query'] 	= (string) trim((string)$arr['query']);		// page=some&op=other
 	//--
 	if((string)$arr['query'] == '') {
 		return (string) $y_url; // there is no query string to format as semantic
@@ -267,7 +267,10 @@ public static function url_make_semantic($y_url) {
 	$semantic_url = '';
 	//--
 	if((string)$arr['host'] != '') {
-		$semantic_url .= $arr['scheme'].'://'.$arr['host'];
+		if((string)$arr['scheme'] != '') {
+			$semantic_url .= $arr['scheme'].':';
+		} //end if
+		$semantic_url .= '//'.$arr['host'];
 		if(((string)$arr['port'] != '') AND ((string)$arr['port'] != '80') AND ((string)$arr['port'] != '443')) {
 			$semantic_url .= ':'.$arr['port'];
 		} //end if
