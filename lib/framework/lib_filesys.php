@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.171004
+ * @version 	v.171008
  * @package 	Filesystem
  *
  */
@@ -672,10 +672,11 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
 
 //================================================================
 /**
- * Evaluate and return the File MimeType and Disposition by File Extension.
+ * Evaluate and return the File MimeType (and *Optional* the Disposition by File Extension).
  *
- * @param STRING 		$yfile		the file name (includding file extension) ; Ex: file.ext
- * @return ARRAY 					0 => mime type ; 1 => inline/attachment; filename="file.ext" ; 2 => inline/attachment
+ * @param STRING 		$yfile			the file name (includding file extension) ; Ex: file.ext
+ * @param ENUM 			$ydisposition 	STRING: '' to leave as is ; attachment | inline to force a type ; BOOLEAN: FALSE to get just Mime Type
+ * @return MIXED 						ARRAY [ 0 => mime type ; 1 => inline/attachment; filename="file.ext" ; 2 => inline/attachment ] ; IF $ydisposition == FALSE will return STRING: mime type
  */
 public static function mime_eval($yfile, $ydisposition='') {
 	//--
@@ -1168,22 +1169,30 @@ public static function mime_eval($yfile, $ydisposition='') {
 		//--------------
 	} //end switch
 	//--
-	switch((string)$ydisposition) {
-		case 'inline':
-			$disp = 'inline'; // rewrite display mode
-			break;
-		case 'attachment':
-			$disp = 'attachment'; // rewrite display mode
-			break;
-		default:
-			// nothing
-	} //end switch
-	//--
-	return array(
-		(string) $type, // mime type
-		(string) $disp.'; filename="'.Smart::safe_filename($file, '-').'"', // mime header disposition suffix
-		(string) $disp // mime disposition
-	);
+	if($ydisposition === false) {
+		//--
+		return (string) $type; // mime type
+		//--
+	} else {
+		//--
+		switch((string)$ydisposition) {
+			case 'inline':
+				$disp = 'inline'; // rewrite display mode
+				break;
+			case 'attachment':
+				$disp = 'attachment'; // rewrite display mode
+				break;
+			default:
+				// nothing
+		} //end switch
+		//--
+		return array(
+			(string) $type, // mime type
+			(string) $disp.'; filename="'.Smart::safe_filename($file, '-').'"', // mime header disposition suffix
+			(string) $disp // mime disposition
+		);
+		//--
+	} //end if else
 	//--
 } //END FUNCTION
 //================================================================
@@ -1221,7 +1230,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.171004
+ * @version 	v.171008
  * @package 	Filesystem
  *
  */
@@ -1324,6 +1333,33 @@ public static function get_file_size($file_name) {
 	} //end if
 	//--
 	return (int) @filesize((string)$file_name); // should return INTEGER as some comparisons may fail if casted type
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * GET the File Creation Timestamp. If invalid file or not file or broken link will return 0 (zero).
+ * This provides a safe way to get the file creation timestamp (works also with symlinks) ...
+ *
+ * @param 	STRING 	$file_name 					:: The relative path to the file name to get the creation timestamp for (file or symlink)
+ *
+ * @return 	INTEGER								:: 0 (zero) if file does not exists or invalid file type ; the file creation timestamp for the rest of cases
+ */
+public static function get_file_ctime($file_name) {
+	//--
+	$file_name = (string) $file_name;
+	//--
+	if((string)trim((string)$file_name) == '') {
+		Smart::log_warning(__METHOD__.'() // Skip: Empty FileName');
+		return 0;
+	} //end if
+	if(!self::path_real_exists($file_name)) {
+		return 0;
+	} //end if
+	//--
+	return (int) @filectime((string)$file_name); // should return INTEGER as some comparisons may fail if casted type
 	//--
 } //END FUNCTION
 //================================================================

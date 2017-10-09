@@ -1,5 +1,5 @@
 
--- START :: PostgreSQL Functions and Tables for SmartFramework :: r.170411 #####
+-- START :: PostgreSQL Functions and Tables for SmartFramework :: r.171009 #####
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -66,11 +66,11 @@ $_$;
 
 -- Aggregate Functions: FIRST() and LAST() :: https://wiki.postgresql.org/wiki/First/last_(aggregate) ; This aggregate functions return the value from the first or last input row in each group, ignoring NULL rows. (NULLs are ignored automatically by the STRICT declaration, documented here: http://www.postgresql.org/docs/current/static/sql-createaggregate.html
 
-CREATE OR REPLACE FUNCTION smart_agg_first (anyelement, anyelement) RETURNS anyelement
+CREATE OR REPLACE FUNCTION smart_agg_first(anyelement, anyelement) RETURNS anyelement
 	LANGUAGE SQL IMMUTABLE STRICT
-	AS $$ -- Create a function that always returns the first non-NULL item, to be used with GROUP BY agg_smart_first() aggregate (v.170403)
+	AS $_$ -- Create a function that always returns the first non-NULL item, to be used with GROUP BY agg_smart_first() aggregate (v.170403)
 SELECT $1;
-$$;
+$_$;
 CREATE AGGREGATE agg_smart_first (
 	sfunc 		= smart_agg_first,
 	basetype 	= anyelement,
@@ -79,11 +79,11 @@ CREATE AGGREGATE agg_smart_first (
 COMMENT ON AGGREGATE agg_smart_first(anyelement) IS 'Use this aggregate to return the first non-NULL item on a GROUP BY statement ; needs the smart_agg_first() function (v.170403)';
 
 
-CREATE OR REPLACE FUNCTION smart_agg_last (anyelement, anyelement) RETURNS anyelement
+CREATE OR REPLACE FUNCTION smart_agg_last(anyelement, anyelement) RETURNS anyelement
 	LANGUAGE SQL IMMUTABLE STRICT
-	AS $$ -- Create a function that always returns the last non-NULL item, to be used with GROUP BY agg_smart_last() aggregate (v.170403)
+	AS $_$ -- Create a function that always returns the last non-NULL item, to be used with GROUP BY agg_smart_last() aggregate (v.170403)
 SELECT $2;
-$$;
+$_$;
 CREATE AGGREGATE agg_smart_last (
 	sfunc 		= smart_agg_last,
 	basetype 	= anyelement,
@@ -97,20 +97,20 @@ CREATE OR REPLACE FUNCTION smart_jsonb_arr_delete(data jsonb, rval text)
 RETURNS jsonb
 IMMUTABLE
 LANGUAGE sql
-AS $$ -- delete by value from jsonb array [] (v.170305)
+AS $_$ -- delete by value from jsonb array [] (v.170305)
 SELECT COALESCE(
 	json_agg(value)::jsonb
 , '[]')
 FROM (
 	SELECT value FROM jsonb_array_elements_text($1) WHERE value != $2
 ) t;
-$$;
+$_$;
 
 CREATE OR REPLACE FUNCTION smart_jsonb_arr_append(data jsonb, aval jsonb)
 RETURNS jsonb
 IMMUTABLE
 LANGUAGE sql
-AS $$ -- appends a jsonb array [] with another json array [] (v.170305)
+AS $_$ -- appends a jsonb array [] with another json array [] (v.170305)
 SELECT COALESCE(
 	json_agg(value)::jsonb
 , '[]')
@@ -119,7 +119,7 @@ FROM (
 	UNION
 	SELECT * FROM jsonb_array_elements_text($2)
 ) t;
-$$;
+$_$;
 
 -- JsonB Object Functions #####
 
@@ -127,7 +127,7 @@ CREATE OR REPLACE FUNCTION smart_jsonb_obj_delete(data jsonb, rkey text)
 RETURNS jsonb
 IMMUTABLE
 LANGUAGE sql
-AS $$ -- delete by key from jsonb object {} (v.170305)
+AS $_$ -- delete by key from jsonb object {} (v.170305)
 SELECT COALESCE(
 	json_object_agg(key, value)::jsonb
 , '{}')
@@ -135,13 +135,13 @@ FROM (
 	SELECT * FROM jsonb_each($1)
 	WHERE key != $2
 ) t;
-$$;
+$_$;
 
 CREATE OR REPLACE FUNCTION smart_jsonb_obj_append(data jsonb, aobj jsonb)
 RETURNS jsonb
 IMMUTABLE
 LANGUAGE sql
-AS $$ -- appends a jsonb object {} with another json object {} (v.170305)
+AS $_$ -- appends a jsonb object {} with another json object {} (v.170305)
 SELECT COALESCE(
 	json_object_agg(key, value)::jsonb
 , '{}')
@@ -150,7 +150,7 @@ FROM (
 	UNION ALL
 	SELECT * FROM jsonb_each($2)
 ) t;
-$$;
+$_$;
 
 -- Table _info #####
 

@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.170613
+ * @version 	v.171007
  * @package 	Network:HTTP
  *
  */
@@ -398,11 +398,11 @@ final class SmartHttpClient {
 		//--
 
 		//-- separations
-		$this->url_parts = (array) Smart::separe_url_parts($url);
+		$this->url_parts = (array) Smart::url_parse($url);
 		$protocol = (string) $this->url_parts['protocol'];
-		$server = (string) $this->url_parts['server'];
+		$host = (string) $this->url_parts['host'];
 		$port = (string) $this->url_parts['port'];
-		$path = (string) $this->url_parts['path'];
+		$path = (string) $this->url_parts['suffix']; // path + query
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Analize of the URL: '.@print_r($this->url_parts,1)."\n";
@@ -410,7 +410,7 @@ final class SmartHttpClient {
 		//--
 
 		//--
-		if((string)$server == '') {
+		if((string)$host == '') {
 			if($this->debug) {
 				$this->log .= '[ERR] Invalid Server to Browse'."\n";
 			} //end if
@@ -440,7 +440,7 @@ final class SmartHttpClient {
 				if($this->debug) {
 					$this->log .= '[ERR] PHP OpenSSL Extension is required to perform SSL requests'."\n";
 				} //end if
-				Smart::log_warning('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // PHP OpenSSL Extension not installed ...');
+				Smart::log_warning('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // PHP OpenSSL Extension not installed ...');
 				return 0;
 			} //end if
 			//--
@@ -467,7 +467,7 @@ final class SmartHttpClient {
 
 		//-- navigate
 		if($this->debug) {
-			$this->log .= 'Opening HTTP(S) Browser Connection to: '.$protocol.$server.':'.$port.$path.' using socket protocol: ['.$browser_protocol.']'."\n";
+			$this->log .= 'Opening HTTP(S) Browser Connection to: '.$protocol.$host.':'.$port.$path.' using socket protocol: ['.$browser_protocol.']'."\n";
 			$this->log .= '[INF] HTTP Protocol: '.$this->protocol."\n";
 			$this->log .= '[INF] Connection TimeOut: '.$this->connect_timeout."\n";
 		} //end if
@@ -496,12 +496,12 @@ final class SmartHttpClient {
 			@stream_context_set_option($stream_context, 'ssl', 'disable_compression', 	(bool)SMART_FRAMEWORK_SSL_DISABLE_COMPRESS); // help mitigate the CRIME attack vector
 			//--
 		} //end if else
-		$this->socket = @stream_socket_client($browser_protocol.$server.':'.$port, $errno, $errstr, $this->connect_timeout, STREAM_CLIENT_CONNECT, $stream_context);
+		$this->socket = @stream_socket_client($browser_protocol.$host.':'.$port, $errno, $errstr, $this->connect_timeout, STREAM_CLIENT_CONNECT, $stream_context);
 		//--
 		if(!is_resource($this->socket)) {
 			if($this->debug) {
 				$this->log .= '[ERR] Could not open connection. Error : '.$errno.': '.$errstr."\n";
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Could not open connection. Error : '.$errno.': '.$errstr.' #');
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Could not open connection. Error : '.$errno.': '.$errstr.' #');
 			} //end if
 			return 0;
 		} //end if
@@ -522,7 +522,7 @@ final class SmartHttpClient {
 			if(stripos($chk_crypto['stream_type'], '/ssl') === false) { // will return something like: tcp_socket/ssl
 				if($this->debug) {
 					$this->log .= '[ERR] Connection CRYPTO CHECK Failed ...'."\n";
-					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Connection CRYPTO CHECK Failed ...');
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Connection CRYPTO CHECK Failed ...');
 				} //end if
 				return 0;
 			} //end if
@@ -530,7 +530,7 @@ final class SmartHttpClient {
 		//--
 
 		//--
-		$this->raw_headers['Host'] = $server.':'.$port;
+		$this->raw_headers['Host'] = $host.':'.$port;
 		//--
 
 		//-- auth
@@ -639,7 +639,7 @@ final class SmartHttpClient {
 		if(@fwrite($this->socket, $request) === false) {
 			if($this->debug) {
 				$this->log .= '[ERR] Error writing Request type to socket'."\n";
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing Request type to socket ...');
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Error writing Request type to socket ...');
 			} //end if
 			return 0;
 		} //end if
@@ -660,7 +660,7 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $key.": ".$value."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing Raw-Headers to socket'."\n";
-					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing Raw-Headers to socket ...');
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Error writing Raw-Headers to socket ...');
 				} //end if
 				return 0;
 			} //end if
@@ -681,7 +681,7 @@ final class SmartHttpClient {
 		if(@fwrite($this->socket, "\r\n") === false) {
 			if($this->debug) {
 				$this->log .= '[ERR] Error writing End-Of-Line to socket'."\n";
-				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing End-Of-Line to socket ...');
+				Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Error writing End-Of-Line to socket ...');
 			} //end if
 			return 0;
 		} //end if
@@ -703,7 +703,7 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $this->jsonrequest."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing JSON Request data to socket'."\n";
-					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing JSON Request data to socket ...');
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Error writing JSON Request data to socket ...');
 				} //end if
 				return 0;
 			} //end if
@@ -723,7 +723,7 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $this->xmlrequest."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing XML Request data to socket'."\n";
-					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing XML Request data to socket ...');
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Error writing XML Request data to socket ...');
 				} //end if
 				return 0;
 			} //end if
@@ -743,7 +743,7 @@ final class SmartHttpClient {
 			if(@fwrite($this->socket, $post_string."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing POST data to socket'."\n";
-					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$server.':'.$port.$path.') // Error writing POST data to socket ...');
+					Smart::log_notice('LibHTTP // GetFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Error writing POST data to socket ...');
 				} //end if
 				return 0;
 			} //end if
@@ -814,7 +814,7 @@ if((string)$_SERVER['REQUEST_METHOD'] === 'PUT') {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.170613
+ * @version     v.171007
  * @package 	Network:HTTP
  *
  */

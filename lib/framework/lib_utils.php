@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.170928
+ * @version 	v.171007
  * @package 	Base
  *
  */
@@ -1196,14 +1196,13 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 			$tmp_current_protocol = 'http://';
 		} //end if else
 		//--
-		$tmp_current_server = self::get_server_current_domain_name();
-		$tmp_current_port = self::get_server_current_port();
+		$tmp_current_server = (string) self::get_server_current_domain_name();
+		$tmp_current_port 	= (string) self::get_server_current_port();
+		$tmp_current_path 	= (string) self::get_server_current_request_uri();
+		$tmp_current_script = (string) self::get_server_current_full_script();
 		//--
-		$tmp_current_path = self::get_server_current_request_uri();
-		$tmp_current_script = self::get_server_current_full_script();
-		//--
-		$tmp_test_url_arr = Smart::separe_url_parts($y_url_or_path);
-		$tmp_test_browser_id = self::get_os_browser_ip();
+		$tmp_test_url_arr 		= (array) Smart::url_parse($y_url_or_path);
+		$tmp_test_browser_id 	= (array) self::get_os_browser_ip();
 		//--
 		$tmp_extra_log = '';
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
@@ -1220,17 +1219,17 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 				$tmp_extra_log .= '[EXTRA]: I will try to detect if this is my current Domain and I will check if it is safe to send my sessionID COOKIE and my Auth CREDENTIALS ...'."\n";
 			} //end if
 			//--
-			if(((string)$tmp_current_protocol == (string)$tmp_test_url_arr['protocol']) AND ((string)$tmp_current_server == (string)$tmp_test_url_arr['server']) AND ((string)$tmp_current_port == (string)$tmp_test_url_arr['port'])) {
+			if(((string)$tmp_current_protocol == (string)$tmp_test_url_arr['protocol']) AND ((string)$tmp_current_server == (string)$tmp_test_url_arr['host']) AND ((string)$tmp_current_port == (string)$tmp_test_url_arr['port'])) {
 				//--
 				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-					$tmp_extra_log .= '[EXTRA]: OK, Seems that the browsed Domain is identical with my current Domain which is: '.$tmp_current_protocol.$tmp_current_server.':'.$tmp_current_port.' and the browsed one is: '.$tmp_test_url_arr['protocol'].$tmp_test_url_arr['server'].':'.$tmp_test_url_arr['port']."\n";
+					$tmp_extra_log .= '[EXTRA]: OK, Seems that the browsed Domain is identical with my current Domain which is: '.$tmp_current_protocol.$tmp_current_server.':'.$tmp_current_port.' and the browsed one is: '.$tmp_test_url_arr['protocol'].$tmp_test_url_arr['host'].':'.$tmp_test_url_arr['port']."\n";
 					$tmp_extra_log .= '[EXTRA]: I will also check if my current script and path are identical with the browsed ones ...'."\n";
 				} //end if
 				//--
-				if(((string)$tmp_current_script == (string)$tmp_test_url_arr['scriptname']) AND (substr($tmp_current_path, 0, strlen($tmp_current_script)) == (string)$tmp_test_url_arr['scriptname'])) {
+				if(((string)$tmp_current_script == (string)$tmp_test_url_arr['path']) AND (substr($tmp_current_path, 0, strlen($tmp_current_script)) == (string)$tmp_test_url_arr['path'])) {
 					//--
 					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-						$tmp_extra_log .= '[EXTRA]: OK, Seems that the current script is identical with the browsed one :: '.'Current Path is: \''.$tmp_current_script.'\' / Browsed Path is: \''.$tmp_test_url_arr['scriptname'].'\' !'."\n";
+						$tmp_extra_log .= '[EXTRA]: OK, Seems that the current script is identical with the browsed one :: '.'Current Path is: \''.$tmp_current_script.'\' / Browsed Path is: \''.$tmp_test_url_arr['path'].'\' !'."\n";
 						$tmp_extra_log .= '[EXTRA]: I will check if I have to send my SessionID so I will check the browserID ...'."\n";
 					} //end if
 					//--
@@ -1251,7 +1250,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 						} //end if
 					} //end if
 					//-- #end# sync
-					if(((string)SmartAuth::get_login_method() == 'HTTP-BASIC') AND ((string)$auth_name == '') AND ((string)$auth_pass == '') AND (strpos($tmp_current_script, '/admin.php') !== false) AND (strpos($tmp_test_url_arr['scriptname'], '/admin.php') !== false)) {
+					if(((string)SmartAuth::get_login_method() == 'HTTP-BASIC') AND ((string)$auth_name == '') AND ((string)$auth_pass == '') AND (strpos($tmp_current_script, '/admin.php') !== false) AND (strpos($tmp_test_url_arr['path'], '/admin.php') !== false)) {
 						//--
 						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 							$tmp_extra_log .= '[EXTRA]: HTTP-BASIC Auth method detected / Allowed to pass the Credentials - as the browsed URL belongs to this ADMIN Server as I run, the Auth credentials are set but passed as empty - everything seems to be safe I will send my credentials: USERNAME = \''.SmartAuth::get_login_id().'\' ; PASS = *****'."\n";
@@ -1265,7 +1264,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 				} else {
 					//--
 					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-						$tmp_extra_log .= '[EXTRA]: Seems that the scripts are NOT identical :: '.'Current Script is: \''.$tmp_current_script.'\' / Browsed Script is: \''.$tmp_test_url_arr['scriptname'].'\' !'."\n";
+						$tmp_extra_log .= '[EXTRA]: Seems that the scripts are NOT identical :: '.'Current Script is: \''.$tmp_current_script.'\' / Browsed Script is: \''.$tmp_test_url_arr['path'].'\' !'."\n";
 						$tmp_extra_log .= '[EXTRA]: This is the diff for having a comparation: '.substr($tmp_current_path, 0, strlen($tmp_current_script))."\n";
 					} //end if
 					//--

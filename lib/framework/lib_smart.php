@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.171006
+ * @version     v.171007
  * @package     Base
  *
  */
@@ -251,7 +251,7 @@ public static function url_make_semantic($y_url) {
 		return (string) $y_url; // it is already semantic or at least appear to be ...
 	} // end if
 	//--
-	$arr = parse_url((string)$y_url);
+	$arr = (array) self::url_parse((string)$y_url);
 	//print_r($arr);
 	//--
 	$arr['scheme'] 	= (string) trim((string)$arr['scheme']); 	// http / https
@@ -1732,23 +1732,25 @@ public static function uuid_45($prefix='') {
 
 //================================================================
 /**
- * Separe the URL parts 			:: a better replacement for parse_url()
+ * Safe Parse URL 					:: a better replacement for parse_url()
  *
  * @param STRING 	$y_url			:: The URL to be separed
  *
  * @return ARRAY 					:: The separed URL (associative array) as: protocol, server, port, path, scriptname
  */
-public static function separe_url_parts($y_url) {
+public static function url_parse($y_url) {
 	//--
 	$y_url = (string) $y_url;
 	//--
 	$parts = array();
-	preg_match("~([a-z]*://)?([^:^/]*)(:([0-9]{1,5}))?(/.*)?~i", (string)$y_url, $parts);
+	preg_match("~(([a-z]+:)?//)?([^:^/]*)(:([0-9]{1,5}))?(/.*)?~i", (string)$y_url, $parts);
 	//--
-	$protocol = (string) strtolower($parts[1]);
-	$server = (string) $parts[2];
-	$port = (string) $parts[4];
-	$path = (string) $parts[5];
+	$protocol 	= (string) strtolower((string)$parts[1]);
+	$scheme 	= (string) trim((string)str_replace(':', '', strtolower((string)$parts[2])));
+	$server 	= (string) strtolower((string)$parts[3]);
+	$port 		= (string) $parts[5];
+	$suffix 	= (string) $parts[6];
+	$parts = array();
 	//-- some fixes
 	if((string)$port == '') {
 		if((string)$protocol == 'https://') {
@@ -1758,14 +1760,19 @@ public static function separe_url_parts($y_url) {
 		} //end if else
 	} //end if
 	//--
-	if((string)$path == '') {
-		$path = '/';
+	if((string)$suffix == '') {
+		$suffix = '/';
 	} //end if
-	//-- script name
-	$tmp_arr = (array) explode('?', (string)$path);
-	$scriptname = (string) trim((string)$tmp_arr[0]);
 	//--
-	return array('protocol' => $protocol, 'server' => $server, 'port' => $port, 'path' => $path, 'scriptname' => $scriptname); // script must be compatible with: SmartUtils::get_server_current_full_script() as they may be used as comparation for security purposes
+	$tmp_arr 	= (array) explode('?', (string)$suffix);
+	$path 		= (string) trim((string)$tmp_arr[0]);
+	$query 		= (string) $tmp_arr[1];
+	$tmp_arr 	= (array) explode('#', (string)$query);
+	$query 		= (string) $tmp_arr[0];
+	$fragment 	= (string) $tmp_arr[1];
+	$tmp_arr = array(); // free mem
+	//--
+	return array('protocol' => $protocol, 'scheme' => $scheme, 'host' => $server, 'port' => $port, 'path' => $path, 'query' => $query, 'fragment' => $fragment, 'suffix' => $suffix); // script must be compatible with: parse_url() but may have extra entries
 	//--
 } //END FUNCTION
 //================================================================
