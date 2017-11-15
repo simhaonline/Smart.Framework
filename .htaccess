@@ -15,10 +15,9 @@
 #RewriteCond %{ENV:REDIRECT_STATUS} !=503
 #RewriteRule .* - [R=503,L]
 #</IfModule>
-
 ###
 
-### PHP recommended ini settings for Smart.Framework
+### PHP recommended ini settings for Smart.Framework (sync the below memory_limit with value in etc/init.php ; the value below in memory_limit must be set if expect larger POSTS than default php.ini max memory which are handled before loading the etc/init.php to set memory ...)
 php_value default_mimetype				text/html
 php_value variables_order				GPCS
 php_value request_order					GP
@@ -26,8 +25,9 @@ php_flag always_populate_raw_post_data	Off
 php_value max_input_vars				1500
 php_value max_input_nesting_level		5
 php_value max_input_time				60
-php_value output_buffering				0
-	#php_value output_buffering			4096
+	#php_value output_buffering			0
+php_value output_buffering				4096
+php_value memory_limit 					256M
 php_value post_max_size					108M
 php_value upload_max_filesize			102M
 php_flag session.auto_start				Off

@@ -30,7 +30,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //======================================================
 
 //-- defines the modules version (required for AppReleaseHash)
-define('SMART_APP_MODULES_RELEASE', 'm.171107'); // this can be used for tracking changes to custom app modules
+define('SMART_APP_MODULES_RELEASE', 'm.171115'); // this can be used for tracking changes to custom app modules
 //--
 
 //-- checks the minimum version of the Smart.Framework to run on

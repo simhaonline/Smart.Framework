@@ -40,7 +40,7 @@ define('SMART_FRAMEWORK_SESSION_LIFETIME', 	intval(60 * 60 * 24));							// Sess
 define('SMART_FRAMEWORK_SESSION_HANDLER', 	'files');										// Session Handler: 'files' (default / file storage: lightweight but in high concurencies may have locking issues) ; 'redis' (DB / in-memory, very fast)
 //define('SMART_FRAMEWORK_SESSION_ROBOTS', 	true);											// Uncomment this to enable session also for robots (robot identified user agents)
 //--------------------------------------- EXECUTION / RUNTIME LIMITS
-define('SMART_FRAMEWORK_MEMORY_LIMIT', 		'256M');										// Memory Limit Per Script (via PHP.INI) ; a good value for production is 256M or 384M ; for development, with Debugging turned ON be sure to set a big value like 512M or 1024M !!
+define('SMART_FRAMEWORK_MEMORY_LIMIT', 		'256M');										// Memory Limit Per Script (via PHP.INI) ; sync this with the value in .htaccess if defined ; a good value for production is 256M or 384M ; for development, with Debugging turned ON be sure to set a big value like 512M or 1024M !!
 define('SMART_FRAMEWORK_EXECUTION_TIMEOUT', 610);											// Script Max Execution Time (Sync with the web server Timeout and PHP.INI)
 define('SMART_FRAMEWORK_NETSOCKET_TIMEOUT', 120); 											// Network Socket (Stream) TimeOut in Seconds
 define('SMART_FRAMEWORK_NETSERVER_ID', 		'1'); 											// Load Balancing: Unique ID, integer+
