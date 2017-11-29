@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.171007
+ * @version 	v.171129
  * @package 	Base
  *
  */
@@ -794,6 +794,23 @@ public static function left_pad_str($y_string, $y_padnum, $y_padchar) {
 
 
 //================================================================
+public static function crypto_blowfish_algo() {
+	//--
+	$cipher = 'blowfish.cbc'; // default: internal
+	//--
+	if(defined('SMART_FRAMEWORK_SECURITY_OPENSSLBFCRYPTO')) {
+		if(SMART_FRAMEWORK_SECURITY_OPENSSLBFCRYPTO === true) {
+			$cipher = 'openssl/blowfish/CBC';
+		} //end if
+	} //end if
+	//--
+	return (string) $cipher;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 // This always provides a compatible layer with the JS Blowfish CBC
 // It must be used for safe exchanging data between PHP and Javascript
 public static function crypto_blowfish_encrypt($y_data, $y_key='') {
@@ -804,7 +821,9 @@ public static function crypto_blowfish_encrypt($y_data, $y_key='') {
 		$key = (string) $y_key;
 	} //end if
 	//--
-	return (string) SmartCipherCrypto::encrypt('blowfish.cbc', (string)$key, (string)$y_data);
+	$cipher = (string) self::crypto_blowfish_algo();
+	//--
+	return (string) SmartCipherCrypto::encrypt((string)$cipher, (string)$key, (string)$y_data);
 	//--
 } //END FUNCTION
 //================================================================
@@ -821,7 +840,26 @@ public static function crypto_blowfish_decrypt($y_data, $y_key='') {
 		$key = (string) $y_key;
 	} //end if
 	//--
-	return (string) SmartCipherCrypto::decrypt('blowfish.cbc', (string)$key, (string)$y_data);
+	$cipher = (string) self::crypto_blowfish_algo();
+	//--
+	return (string) SmartCipherCrypto::decrypt((string)$cipher, (string)$key, (string)$y_data);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function crypto_algo() {
+	//--
+	$cipher = 'hash/sha256'; // default: internal
+	//--
+	if(defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
+		if((string)trim((string)SMART_FRAMEWORK_SECURITY_CRYPTO) != '') {
+			$cipher = (string) trim((string)SMART_FRAMEWORK_SECURITY_CRYPTO);
+		} //end if
+	} //end if
+	//--
+	return (string) $cipher;
 	//--
 } //END FUNCTION
 //================================================================
@@ -829,7 +867,7 @@ public static function crypto_blowfish_decrypt($y_data, $y_key='') {
 
 //================================================================
 // This is intended for general use of symetric crypto api in Smart.Framework
-// It can use any of the: hash or mcrypt algos: blowfish, twofish, serpent, ghost
+// It can use any of the: hash or openssl algos: blowfish, twofish, serpent, ghost
 public static function crypto_encrypt($y_data, $y_key='') {
 	//--
 	if((string)$y_key == '') {
@@ -838,10 +876,7 @@ public static function crypto_encrypt($y_data, $y_key='') {
 		$key = (string) $y_key;
 	} //end if
 	//--
-	$cipher = 'hash/sha256'; // default
-	if(defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
-		$cipher = (string) SMART_FRAMEWORK_SECURITY_CRYPTO;
-	} //end if
+	$cipher = (string) self::crypto_algo();
 	//--
 	return (string) SmartCipherCrypto::encrypt((string)$cipher, (string)$key, (string)$y_data);
 	//--
@@ -851,7 +886,7 @@ public static function crypto_encrypt($y_data, $y_key='') {
 
 //================================================================
 // This is intended for general use of symetric crypto api in Smart.Framework
-// It can use any of the: hash or mcrypt algos: blowfish, twofish, serpent, ghost
+// It can use any of the: hash or openssl algos: blowfish, twofish, serpent, ghost
 public static function crypto_decrypt($y_data, $y_key='') {
 	//--
 	if((string)$y_key == '') {
@@ -860,10 +895,7 @@ public static function crypto_decrypt($y_data, $y_key='') {
 		$key = (string) $y_key;
 	} //end if
 	//--
-	$cipher = 'hash/sha256'; // default
-	if(defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
-		$cipher = (string) SMART_FRAMEWORK_SECURITY_CRYPTO;
-	} //end if
+	$cipher = (string) self::crypto_algo();
 	//--
 	return (string) SmartCipherCrypto::decrypt((string)$cipher, (string)$key, (string)$y_data);
 	//--

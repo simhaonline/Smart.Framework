@@ -43,7 +43,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160827
+ * @version 	v.171124
  * @package 	DATA:YAML
  *
  */
@@ -125,14 +125,16 @@ public function compose($array, $indent=2) {
 		$this->yaml_dump_indent = $indent;
 	} //end if
 	//-- New YAML document
-	$string = "---\n";
+	//$string = "---\n";
+	$string = '';
 	//-- Start at the base of the array and move through it.
 	if($array) {
-		$array = (array)$array;
 		$previous_key = -1;
-		foreach($array as $key => $value) {
-			if(!isset($first_key)) $first_key = $key;
-			$string .= $this->_yamlize($key, $value, 0, $previous_key, $first_key, $array);
+		foreach((array)$array as $key => $value) {
+			if(!isset($first_key)) {
+				$first_key = $key;
+			} //end if
+			$string .= (string) $this->_yamlize($key, $value, 0, $previous_key, $first_key, $array);
 			$previous_key = $key;
 		} //end foreach
 	} //end if

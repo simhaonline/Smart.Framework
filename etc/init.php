@@ -25,7 +25,8 @@ define('SMART_FRAMEWORK_TIMEZONE', 			'UTC'); 										// The timezone for PHP 
 //--------------------------------------- SECURITY
 define('SMART_FRAMEWORK_SECURITY_FILTER_INPUT', '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/');			// Safe Unicode Filter Input Variables (Strings) as: remove all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
 define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// Security Key ; *** YOU HAVE TO CHANGE IT *** ; will be used to generate secure hashes
-//define('SMART_FRAMEWORK_SECURITY_CRYPTO', 'mcrypt/twofish/CFB'); 							// *Optional, the crypto algo for general purpose encryption to be used ; default is hash/sha256 ; other modes: hash/sha1, hash/sha384, hash/sha512, mcrypt/{algo}/{mode} where mode can be: CBC or CFB ; algo can be: blowfish, twofish, serpent, ghost
+//define('SMART_FRAMEWORK_SECURITY_OPENSSLBFCRYPTO', true); 								// *Optional: if defined and set to TRUE will use the OpenSSL cipher openssl/blowfish/CBC (faster) instead of internal one blowfish.cbc (more compatible across platforms)
+//define('SMART_FRAMEWORK_SECURITY_CRYPTO', 'openssl/aes256/CBC'); 							// *Optional: the crypto algo for general purpose encryption to be used ; default is hash/sha256 ; other modes: hash/sha1, hash/sha384, hash/sha512, openssl/{algo}/{mode} where mode can be: CBC, CFB, OFB ; algo can be: blowfish, aes256, camellia256
 //--------------------------------------- COOKIES
 define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie name (if enabled)
 //define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN', '');									// LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; `` or `domain.tld` for all sub-domains of domain.tld cookies ; default is `` (empty) ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies

@@ -65,7 +65,7 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[####HASHCRYPT-OPTIO
 	htmlcode += 'Blowfish@Encrypted:&nbsp;<span style="color:#66AA00;">' + SmartJS_CoreUtils.escape_html(bf_enc) + '</span><br>';
 	htmlcode += 'Blowfish@Encrypted/LZS:&nbsp;<span style="color:#8CB23F;">' + SmartJS_CoreUtils.escape_html(arch_bf_lzs) + '</span><br>';
 	htmlcode += 'Blowfish@Decrypted:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(bf_dec) + '</span><br>';
-	htmlcode += 'Blowfish@Method:&nbsp;<span style="color:#CCCCCC;">JS:blowfish.cbc</span>' + '<br>';
+	htmlcode += 'Blowfish@Options:&nbsp;<span style="color:#CCCCCC;">JS:blowfish/CBC</span>' + '<br>';
 	$('#testunit-partial-crypto').html(htmlcode);
 	//-- JS Tests
 	if((b64dec !== unicodeText) || (SmartJS_CryptoHash.sha1(b64dec) !== the_sha1)) {
