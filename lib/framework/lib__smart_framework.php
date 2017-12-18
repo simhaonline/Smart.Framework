@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170928
+ * @version 	v.171218
  * @package 	Application
  *
  */
@@ -260,7 +260,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	private $pagesettings; 					// will allow keys just from $availsettings
 	private $pageview; 						// will allow any key since they are markers
 	private $availsettings = [ 				// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
-		'error', 'redirect-url', 			// 		error message for return non 2xx codes ; redirect url for return 3xx codes
+		'error', 'errhtml', 'redirect-url', // 		error message for return non 2xx/3xx codes ; optional error HTML message for return non 2xx/3xx codes ; redirect url for return 3xx codes
 		'expires', 'modified',				// 		expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now
 		'template-path', 'template-file',	// 		template path (@ for self module path or a relative path) ; template filename (ex: template.htm)
 		'rawpage', 'rawmime', 'rawdisp',	// 		raw page (yes/no) ; raw mime (any valid mime type, ex: image/png) ; raw disposition (ex: inline / attachment / attachment; filename="somefile.pdf")
@@ -869,16 +869,22 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * Set Error Status and Optional Message for a controller page
 	 * The Controller should stop the execution after calling this function using 'return;' or ending the 'Run()' main function
 	 *
-	 * @param 	ENUM 		$code		:: the HTTP Error Status Code: 400, 403, 404, 500, 503, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 500 will be used instead
-	 * @param 	STRING 		$message 	:: The detailed message that will be displayed public near the status code
-	 * @param 	BOOLEAN 	$logtype 	:: *Optional* ; Default is '' ; available values: '' | 'WARN' | 'NOTICE'
+	 * @param 	ENUM 			$code		:: the HTTP Error Status Code: 400, 403, 404, 500, 503, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 500 will be used instead
+	 * @param 	STRING/ARRAY 	$msg 		:: The detailed message that will be displayed public near the status code ; can be string or array [ 0 => message ; 1 => htmlmessage ]
+	 * @param 	BOOLEAN 		$logtype 	:: *Optional* ; Default is '' ; available values: '' | 'WARN' | 'NOTICE'
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
-	final public function PageViewSetErrorStatus($code, $message='', $logtype='') {
+	final public function PageViewSetErrorStatus($code, $msg='', $logtype='') {
 		//--
 		$code = (int) $code;
-		$message = (string) $message;
+		if(is_array($msg)) {
+			$message = (string) $msg[0];
+			$htmlmsg = (string) $msg[1];
+		} else {
+			$message = (string) $msg;
+			$htmlmsg = '';
+		} //end if else
 		//--
 		$out = true;
 		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesERR())) { // in the case that the error status code is n/a, use 500 instead
@@ -889,7 +895,8 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$this->PageViewSetCfgs([
 			'status-code' 	=> (int) $code,
-			'error' 		=> (string) $message
+			'error' 		=> (string) $message,
+			'errhtml' 		=> (string) $htmlmsg
 		]);
 		//--
 		switch((string)strtoupper((string)$logtype)) {

@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.5.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		171006
+ * @version		171218
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -335,40 +335,40 @@ public static function Run() {
 	switch((int)$appStatusCode) {
 		//-- server errors
 		case 504:
-			self::Raise504Error((string)$appSettings['error']);
+			self::Raise504Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		case 503:
-			self::Raise503Error((string)$appSettings['error']);
+			self::Raise503Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		case 502:
-			self::Raise502Error((string)$appSettings['error']);
+			self::Raise502Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		case 500:
-			self::Raise500Error((string)$appSettings['error']);
+			self::Raise500Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		//-- client errors
 		case 429:
-			self::Raise429Error((string)$appSettings['error']);
+			self::Raise429Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		case 404:
-			self::Raise404Error((string)$appSettings['error']);
+			self::Raise404Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		case 403:
-			self::Raise403Error((string)$appSettings['error']);
+			self::Raise403Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		case 401:
-			self::Raise401Error((string)$appSettings['error']);
+			self::Raise401Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		case 400:
-			self::Raise400Error((string)$appSettings['error']);
+			self::Raise400Error((string)$appSettings['error'], (string)$appSettings['errhtml']);
 			return;
 			break;
 		//-- redirect 3xx statuses

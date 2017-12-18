@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 //--
-if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime (not yet very well tested with PHP 7)
+if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime
 	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.4 / 5.5 / 5.6 / 7.0 / 7.1 / 7.2 or later');
 } //end if
 //--
@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // this is the real release version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.11.29'); // this is the real release version date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2017.12.18'); // this is the real release version date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 

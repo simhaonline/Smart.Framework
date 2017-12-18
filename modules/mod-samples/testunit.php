@@ -322,7 +322,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//#####
 			default:
 				//--
-				$this->PageViewSetErrorStatus(400, 'Invalid TestUnit Operation ! ...');
+				$this->PageViewSetErrorStatus(400, [ 'Invalid TestUnit Operation ! ...', '<div title="Extra Message HTML"><b><i>You must select a valid TestUnit Operation</i></b></div>' ]);
 				return;
 				//--
 		} //end switch
