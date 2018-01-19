@@ -55,7 +55,7 @@ if(!function_exists('mb_convert_encoding')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.180119
+ * @version 	v.180119.r2
  * @package 	Archivers
  *
  */
@@ -90,13 +90,13 @@ public static function compressToBase64($input) {
 	//--
 	$output = '';
 	//--
-	$chr1 = NAN;
-	$chr2 = NAN;
-	$chr3 = NAN;
-	$enc1 = NAN;
-	$enc2 = NAN;
-	$enc3 = NAN;
-	$enc4 = NAN;
+	$chr1 = false;
+	$chr2 = false;
+	$chr3 = false;
+	$enc1 = false;
+	$enc2 = false;
+	$enc3 = false;
+	$enc4 = false;
 	//--
 	$strlen = SmartUnicode::str_len($input);
 	//--
@@ -112,7 +112,7 @@ public static function compressToBase64($input) {
 			if((($i/2)+1) < $strlen) {
 				$chr3 = self::charCodeAt($input, (int)(($i/2)+1)) >> 8;
 			} else {
-				$chr3 = NAN;
+				$chr3 = false;
 			} //end if else
 			//--
 		} else {
@@ -123,23 +123,23 @@ public static function compressToBase64($input) {
 				$chr2 = self::charCodeAt($input, (int)(($i+1)/2)) >> 8;
 				$chr3 = self::charCodeAt($input, (int)(($i+1)/2)) & 255;
 			} else  {
-				$chr2 = NAN;
-				$chr3 = NAN;
+				$chr2 = false;
+				$chr3 = false;
 			} //end if else
 			//--
 		} //end if else
 		//--
 		$i += 3;
 		//--
-		$enc1 = (int) $chr1 >> 2;
-		$enc2 = (int) (($chr1 & 3) << 4) | ($chr2 >> 4);
-		$enc3 = (int) (($chr2 & 15) << 2) | ($chr3 >> 6);
-		$enc4 = (int) $chr3 & 63;
+		$enc1 = $chr1 >> 2;
+		$enc2 = (($chr1 & 3) << 4) | ($chr2 >> 4);
+		$enc3 = (($chr2 & 15) << 2) | ($chr3 >> 6);
+		$enc4 = $chr3 & 63;
 		//--
-		if(is_nan($chr2)) {
+		if($chr2 === false) {
 			$enc3 = 64;
 			$enc4 = 64;
-		} elseif(is_nan($chr3)) {
+		} elseif($chr3 === false) {
 			$enc4 = 64;
 		} //end if else
 		//--
@@ -714,7 +714,7 @@ private static function RawInflate($compressed) {
 final class SmartArchiverObjContextLZS {
 	//--
 	// ->
-	// v.180119
+	// v.180119.r2
 	//--
 	public $c = '';
 	public $w = '';
@@ -755,7 +755,7 @@ final class SmartArchiverObjContextLZS {
 final class SmartArchiverObjDataLZS {
 	//--
 	// ->
-	// v.170908
+	// v.180119.r2
 	//--
 	public $str;
 	public $val;
