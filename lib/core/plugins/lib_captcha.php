@@ -56,7 +56,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP XML ; classes: Smart
- * @version 	v.170917
+ * @version 	v.180119
  * @package 	Components:Captcha
  *
  */
@@ -602,14 +602,16 @@ private function img_draw_text($im, $word) {
 		if(function_exists('imagettftext') AND (substr($this->charfont, -4, 4) == '.ttf')) {
 			$font = (string) $this->charfont;
 			$use_ttf_font = true;
-		} else { // gdf font
+		} elseif(substr($this->charfont, -4, 4) == '.gdf') {
 			$font = @imageloadfont($this->charfont);
 			if($font === false) {
 				$font = 5; // on error
 			} //end if
+		} else { // gdf font
+			$font = 5 ; // default
 		} //end if else
 	} else {
-		$font = 5 ; // on error
+		$font = 5 ; // default
 	} //end if else
 	//--
 	$first_x = (int) Smart::random_number(min(10, $this->charxvar), max(10, $this->charxvar));

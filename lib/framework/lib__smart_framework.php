@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.171218
+ * @version 	v.180117
  * @package 	Application
  *
  */
@@ -835,6 +835,26 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$this->pagesettings = array();
 		//--
 		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get STATUS Code for a controller page
+	 *
+	 * @return 	ENUM 		$code		:: the HTTP Status Code: 2xx, 3xx, 4xx, 5xx, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 200 will be used instead
+	 */
+	final public function PageViewGetStatusCode() {
+		//--
+		$code = 200; // default
+		//--
+		if((int)$this->pagesettings['status-code'] > (int)$code) {
+			$code = (int) $this->pagesettings['status-code'];
+		} //end if
+		//--
+		return (int) $code;
 		//--
 	} //END FUNCTION
 	//=====
