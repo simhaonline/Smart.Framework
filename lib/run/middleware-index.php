@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.5.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		171218
+ * @version		180125
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -135,7 +135,7 @@ public static function Run() {
 	//--
 	if((string)$smartframeworkservice == 'status') {
 		//--
-		if(SMART_SOFTWARE_DISABLE_STATUS_POWERED === true) {
+		if(defined('SMART_SOFTWARE_DISABLE_STATUS_POWERED') AND SMART_SOFTWARE_DISABLE_STATUS_POWERED === true) {
 			$status_powered_info = '';
 		} else {
 			$status_powered_info = (string) SmartComponents::app_powered_info('no');
@@ -298,7 +298,7 @@ public static function Run() {
 	//--
 	$appModule = new SmartAppIndexController('index', $the_path_to_module, $base_script, $base_full_path, $base_full_url, $page, $the_controller_name);
 	//--
-	if(SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
+	if(!defined('SMART_APP_MODULE_DIRECT_OUTPUT') OR SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
 		ob_start();
 	} //end if
 	$appStatusCode = (int) $appModule->Run();
@@ -309,7 +309,7 @@ public static function Run() {
 	} //end if
 	$appRawHeads = (array) $appModule->PageViewGetRawHeaders();
 	$appData = (array) $appModule->PageViewGetVars();
-	if(SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
+	if(!defined('SMART_APP_MODULE_DIRECT_OUTPUT') OR SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
 		$ctrl_output = ob_get_contents();
 		ob_end_clean();
 		if((string)$ctrl_output != '') {
@@ -583,7 +583,7 @@ public static function Run() {
 		//--
 	} //end if else
 	//--
-	if(SMART_SOFTWARE_DISABLE_STATUS_POWERED !== true) {
+	if(!defined('SMART_SOFTWARE_DISABLE_STATUS_POWERED') OR SMART_SOFTWARE_DISABLE_STATUS_POWERED !== true) {
 		echo "\n".'<!-- Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.SMART_FRAMEWORK_RELEASE_URL.' -->';
 		echo "\n".'<!-- WebPage Server-Side Metrics '.$the_midmark.': '.str_pad('Total Execution Time = '.Smart::format_number_dec($res_time, 13, '.', '').' seconds', 55, ' ', STR_PAD_BOTH).' | '.str_pad('Memory Peak Usage = '.SmartUtils::pretty_print_bytes($res_memory, 2), 37, ' ', STR_PAD_BOTH).' -->'."\n";
 	} //end if

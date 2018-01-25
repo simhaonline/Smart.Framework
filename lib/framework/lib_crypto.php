@@ -45,7 +45,7 @@ if(!function_exists('hash_algos')) {
  *
  * @access      PUBLIC
  * @depends     PHP hash_algos() / hash()
- * @version     v.160827
+ * @version     v.180124
  * @package     Crypto
  *
  */
@@ -265,7 +265,7 @@ final class SmartHashCrypto {
  * @hints       Blowfish is a 64-bit (8 bytes) block cipher. Max Key is up to 56 chars length (56 bytes = 448 bits). The CBC mode requires a initialization vector (iv).
  *
  * @depends     classes: Smart
- * @version     v.171129.r5
+ * @version     v.180124
  * @package     Crypto
  *
  */
@@ -360,7 +360,7 @@ final class SmartCipherCrypto {
  * @internal
  *
  * @depends     extensions: PHP OpenSSL ; classes: Smart
- * @version     v.171129.r5
+ * @version     v.180124
  *
  */
 final class SmartCryptoOpenSSLCipher {
@@ -624,7 +624,7 @@ final class SmartCryptoOpenSSLCipher {
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.171129.r5
+ * @version     v.180124
  *
  */
 final class SmartCryptoCipherBlowfishCBC {
@@ -1228,7 +1228,7 @@ echo "plain text: $plaintext";
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.160827
+ * @version     v.180124
  *
  */
 final class SmartCryptoCipherHash {
@@ -1255,7 +1255,11 @@ final class SmartCryptoCipherHash {
 
 		// for the case: hash/sha256
 		if(substr((string)$mode, 0, 5) == 'hash/') {
-			$arr = (array) explode('/', (string)SMART_FRAMEWORK_SECURITY_CRYPTO);
+			$cfgcrypto = '';
+			if(defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
+				$cfgcrypto = (string) SMART_FRAMEWORK_SECURITY_CRYPTO;
+			} //end if
+			$arr = (array) explode('/', (string)$cfgcrypto);
 			$mode = (string) trim((string)$arr[1]);
 		} //end if
 

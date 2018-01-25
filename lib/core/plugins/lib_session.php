@@ -62,7 +62,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.171002
+ * @version 	v.180125
  * @package 	Application
  *
  */
@@ -169,7 +169,7 @@ public static function start() {
 	} //end if
 	//--
 	if((string)$browser_os_ip_identification['bw'] == 'bot') {
-		if(SMART_FRAMEWORK_SESSION_ROBOTS !== true) {
+		if(!defined('SMART_FRAMEWORK_SESSION_ROBOTS') OR SMART_FRAMEWORK_SESSION_ROBOTS !== true) {
 			return; // in this case start no session for robots (as they do not need to share info between many visits)
 		} //end if
 	} //end if
@@ -415,7 +415,7 @@ public static function start() {
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.170920
+	// v.180125
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

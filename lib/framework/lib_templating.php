@@ -56,7 +56,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.171005
+ * @version 	v.180125
  * @package 	Templating:Engines
  *
  */
@@ -107,8 +107,12 @@ public static function analyze_debug_template($mtemplate) {
 public static function analyze_debug_file_template($y_file_path, $y_arr_sub_templates=[]) {
 	//--
 	$y_file_path = (string) $y_file_path;
+	//--
+	if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
+		return '<h1>{#### ERROR: Invalid Marker-TPL File Path ['.Smart::escape_html($y_file_path).'] ####}</h1>';
+	} //end if
 	if(!SmartFileSystem::is_type_file($y_file_path)) {
-		return '<h1>{#### ERROR: Invalid Marker-TPL File ['.Smart::escape_html($y_file_path).'] ####}</h1>';
+		return '<h1>{#### ERROR: Invalid Marker-TPL File Type ['.Smart::escape_html($y_file_path).'] ####}</h1>';
 	} //end if
 	//--
 	$y_arr_sub_templates = (array) $y_arr_sub_templates;
@@ -213,9 +217,14 @@ public static function render_file_template($y_file_path, $y_arr_vars, $y_use_ca
 	// the replacement of sub-templates is made before injecting variables to avoid security issues
 	//--
 	$y_file_path = (string) $y_file_path;
+	//--
+	if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
+		Smart::log_warning('Invalid Marker-TPL File Path: '.$y_file_path);
+		return '{#### Invalid Marker-TPL File Path. See the ErrorLog for Details. ####}';
+	} //end if
 	if(!SmartFileSystem::is_type_file($y_file_path)) {
-		Smart::log_warning('Invalid Marker-TPL File: '.$y_file_path);
-		return '{#### Invalid Marker-TPL File. See the ErrorLog for Details. ####}';
+		Smart::log_warning('Invalid Marker-TPL File Type: '.$y_file_path);
+		return '{#### Invalid Marker-TPL File Type. See the ErrorLog for Details. ####}';
 	} //end if
 	//--
 	if(!is_array($y_arr_vars)) {
@@ -359,12 +368,21 @@ public static function read_template_file($y_file_path) {
 	//--
 	// This function uses static read from filesystem and if (memory) persistent cache is available will cache it and all future reads until key expire will be done from memory instead of overloading the file system
 	//--
+	$y_file_path = (string) $y_file_path;
+	//--
+	if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
+		Smart::log_warning('Invalid Path for Marker-TPL Read TPL File: '.$y_file_path);
+		return '';
+	} //end if
+	//--
 	$use_pcache = false;
+	$ptime_cache = 0;
 	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
 		if(defined('SMART_SOFTWARE_MKTPL_PCACHETIME')) {
 			if(is_int(SMART_SOFTWARE_MKTPL_PCACHETIME)) {
 				if(((int)SMART_SOFTWARE_MKTPL_PCACHETIME >= 0) AND ((int)SMART_SOFTWARE_MKTPL_PCACHETIME <= 31622400)) { // 0 unlimited ; 1 sec .. 366 days
 					$use_pcache = true;
+					$ptime_cache = (int) SMART_SOFTWARE_MKTPL_PCACHETIME;
 				} //end if
 			} //end if
 		} //end if
@@ -392,14 +410,15 @@ public static function read_template_file($y_file_path) {
 	} //end if
 	//--
 	$tpl = (string) SmartFileSystem::read((string)$y_file_path);
+	//--
 	if((string)$the_cache_key != '') {
 		if((string)$tpl != '') {
 			//Smart::log_info('TPL fs-read OK: '.$y_file_path);
 			$atpl = (string) SmartPersistentCache::varCompress((string)$tpl);
 			if((string)$atpl != '') {
 				//Smart::log_info('TPL saved in cache: '.$y_file_path);
-				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key.'__path', (string)$y_file_path, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
-				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key, (string)$atpl, (int)SMART_SOFTWARE_MKTPL_PCACHETIME); // set to persistent cache
+				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key.'__path', (string)$y_file_path, (int)$ptime_cache); // set to persistent cache
+				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key, (string)$atpl, (int)$ptime_cache); // set to persistent cache
 			} //end if
 			$atpl = '';
 		} //end if
@@ -1451,7 +1470,12 @@ private static function detect_subtemplates($mtemplate) {
 		} //end if
 		//--
 		$arr_matched_sub_templates = array();
-		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?]*)@@@@\]}', (string)$mtemplate, $arr_matched_sub_templates); // {{{SYNC-TPL-EXPR-SUBTPL}}} :: here the % is missing as must not be detected as it is reserved only for special purpose if SUB-TPLS are pre-defined
+		if(self::$MkTplAnalyzeLdDbg === true) {
+			$rgx = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}';
+		} else {
+			$rgx = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?]*)@@@@\]}';
+		} //end if else
+		preg_match_all($rgx, (string)$mtemplate, $arr_matched_sub_templates); // {{{SYNC-TPL-EXPR-SUBTPL}}} :: here the % is missing as must not be detected as it is reserved only for special purpose if SUB-TPLS are pre-defined
 		//print_r($arr_matched_sub_templates);
 		//--
 		if(Smart::array_size($arr_matched_sub_templates) > 0) {
@@ -1506,6 +1530,8 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 			$bench = microtime(true);
 		} //end if
 		//--
+		$dbgnfo = 'To check if this is an ERROR OR NOT try to debug this Marker-Template directly from the real usage context by using the master template (of which base path may be different) or by passing also the @SUB-TEMPLATES@ custom definition if used.';
+		//--
 		foreach($y_arr_vars_sub_templates as $key => $val) {
 			//--
 			$key = (string) $key;
@@ -1532,6 +1558,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					//--
 					$pfx = '';
 					$is_optional = false;
+					$is_variable = false;
 					if(((string)$y_use_caching != 'yes') AND (substr($key, 0, 1) == '?')) {
 						$key = (string) substr($key, 1);
 						$pfx = '?'; // optional sub-templates are only allowed in non-self-caching TPLs, else the results are unpredictable ; but these are not necessary except if a module may be n/a so linking with a n/a sub-tpl will raise error ; anyway, this feature was written mainly for main TPLs !
@@ -1539,10 +1566,15 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					} //end if
 					//--
 					if((substr($key, 0, 1) == '%') AND (substr($key, -1, 1) == '%')) { // variable, only can be set programatically, full path to the template file is specified
+						if(SmartFileSysUtils::check_if_safe_path($val) != 1) {
+							Smart::log_warning('Invalid Marker-TPL Sub-Template Path [%] as: '.$key.' # '.$val);
+							return 'Invalid Marker-TPL Sub-Template Syntax. See the ErrorLog for Details.';
+						} //end if
 						if(substr($val, 0, 2) == '@/') { // use a path suffix relative path to parent template, starting with @/ ; otherwise the full relative path is expected
 							$val = (string) SmartFileSysUtils::add_dir_last_slash((string)$y_base_path).substr($val, 2);
 						} //end if
 						$stpl_path = (string) $val;
+						$is_variable = true;
 					} elseif(strpos($key, '%') !== false) { // % is not valid in other circumstances
 						Smart::log_warning('Invalid Marker-TPL Sub-Template Syntax [%] as: '.$key);
 						return 'Invalid Marker-TPL Sub-Template Syntax. See the ErrorLog for Details.';
@@ -1552,6 +1584,10 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 						Smart::log_warning('Invalid Marker-TPL Sub-Template Syntax [!] as: '.$key);
 						return 'Invalid Marker-TPL Sub-Template Syntax. See the ErrorLog for Details.';
 					} else {
+						if(SmartFileSysUtils::check_if_safe_path($val) != 1) {
+							Smart::log_warning('Invalid Marker-TPL Sub-Template Path [*] as: '.$key.' # '.$val);
+							return 'Invalid Marker-TPL Sub-Template Syntax. See the ErrorLog for Details.';
+						} //end if
 						if((string)$val == '@') { // use the same dir as parent
 							$val = (string) $y_base_path;
 						} elseif(substr($val, 0, 2) == '@/') { // use a path suffix relative to parent template, starting with @/
@@ -1565,13 +1601,13 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 						if(SmartFileSystem::is_type_file((string)$stpl_path)) {
 							$stemplate = (string) self::read_template_or_subtemplate_file((string)$stpl_path, (string)$y_use_caching); // read
 						} elseif(self::$MkTplAnalyzeLdDbg === true) {
-							$dbgnfo = 'To check if this is an ERROR OR NOT try to debug this Marker-Template directly from the real usage context by using the master template (of which base path may be different) or by passing also the @SUB-TEMPLATES@ custom definition if used.';
-							if($is_optional === true) {
+							if($is_variable === true) {
+								$stemplate = "\n".'{@ *****'."\n".'Marker-TPL ANALYSIS INFO: THIS IS A *VARIABLE* SUB-TEMPLATE: '.$key.' # using the implicit base path: '.$val.' #'."\n".'The variable Sub-Templates must be specified in the real usage context using the @SUB-TEMPLATES@ custom definition.'."\n".'***** @}'."\n";
+							} elseif($is_optional === true) {
 								$stemplate = "\n".'{@ *****'."\n".'Marker-TPL ANALYSIS INFO: COULD NOT FIND TO INCLUDE THE *OPTIONAL* SUB-TEMPLATE: '.$key.' # using the implicit base path: '.$val.' #'."\n".'The optional Sub-Templates may be or may be not available or they can be specified in the real usage context using the @SUB-TEMPLATES@ custom definition or the base path of the master template may be different.'."\n".$dbgnfo."\n".'***** @}'."\n";
 							} else {
 								$stemplate = "\n".'{@ *****'."\n".'Marker-TPL ANALYSIS WARNING: FAILED TO INCLUDE THE SUB-TEMPLATE: '.$key.' # using the implicit base path: '.$val.' #'."\n".'If the PATHS for the Sub-Templates are defined in the real usage context using the @SUB-TEMPLATES@ custom definition or the base path of the master template is different THIS IS NOT AN ERROR.'."\n".'But if there is no @SUB-TEMPLATES@ custom definition in the real usage context and the base path of the master template is the same it means THIS IS AN ERROR and this particular Sub-Template cannot be found ...'."\n".$dbgnfo."\n".'***** @}'."\n";
 							} //end if else
-							$dbgnfo = '';
 						} //end if else
 					} else {
 						if(!SmartFileSystem::is_type_file((string)$stpl_path)) {
@@ -1630,7 +1666,9 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 	} //end if
 	//--
 	if(self::have_subtemplate((string)$mtemplate) === true) {
-		Smart::log_notice('Invalid or Undefined Marker-TPL: Marker Sub-Templates detected in Template:'."\n".self::log_template($mtemplate));
+		if(self::$MkTplAnalyzeLdDbg !== true) { // if analyze TPL don't log to notice (because the [@@@@SUB-TEMPLATE:%variable@@@@] may not load always the variable replacements !!!
+			Smart::log_notice('Invalid or Undefined Marker-TPL: Marker Sub-Templates detected in Template:'."\n".self::log_template($mtemplate));
+		} //end if
 		$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 	} //end if
 	//--
