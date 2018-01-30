@@ -13,6 +13,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // !!! Remove these Test ONLY Settings when using in real production environments !!! They are required just for Mod.Samples ...
 define('SMART_FRAMEWORK_TEST_MODE', true);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);
+define('SMART_FRAMEWORK_TESTUNIT_ALLOW_DAVFS_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS', false);
 //######################################### END TestOnly Settings

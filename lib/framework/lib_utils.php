@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.171129
+ * @version 	v.180129
  * @package 	Base
  *
  */
@@ -1436,6 +1436,140 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 	return $out;
 	//--
 
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// Handle Upload One File ; To handle many files upload at once must iterate using this function by var_index=0..n
+// returns FALSE if no file uploaded ; Empty String if OK ; Error String otherwise
+public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, $allow_rewrite=true, $max_size=0) {
+	//--
+	$dest_dir = (string) $dest_dir;
+	$var_name = (string) $var_name;
+	$var_index = (int) $var_index;
+	$allow_rewrite = (bool) $allow_rewrite;
+	$max_size = (int) Smart::format_number_int($max_size,'+');
+	if($max_size <= 0) {
+		$max_size = (int) SmartFileSysUtils::max_upload_size();
+	} //end if
+	//--
+	if(Smart::array_size($_FILES) <= 0) {
+		return false; // no files uploads detected ...
+	} //end if
+	//--
+	if(SmartFileSysUtils::check_if_safe_path((string)$dest_dir) != '1') {
+		return 'Invalid Destination Dir: Unsafe DirName';
+	} //end if
+	$dest_dir = (string) SmartFileSysUtils::add_dir_last_slash((string)$dest_dir);
+	if(SmartFileSysUtils::check_if_safe_path((string)$dest_dir) != '1') {
+		return 'Invalid Destination Dir: Unsafe Path';
+	} //end if
+	if(SmartFileSystem::is_type_dir((string)$dest_dir) !== true) {
+		return 'Invalid Destination Dir: Path must exist and it must be a directory';
+	} //end if
+	//--
+	if($var_index >= 0) {
+		$the_upld_file_name = (string) $_FILES[$var_name]['name'][$var_index];
+		$the_upld_file_tmpname = (string) $_FILES[$var_name]['tmp_name'][$var_index];
+		$the_upld_file_error = (int) $_FILES[$var_name]['error'][$var_index];
+	} else {
+		$the_upld_file_name = (string) $_FILES[$var_name]['name'];
+		$the_upld_file_tmpname = (string) $_FILES[$var_name]['tmp_name'];
+		$the_upld_file_error = (int) $_FILES[$var_name]['error'];
+	} //end if else
+	//-- fix file name
+	$the_upld_file_name = (string) SmartUnicode::deaccent_str($the_upld_file_name);
+	$the_upld_file_name = (string) Smart::safe_filename($the_upld_file_name, '-'); // {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
+	//-- remove versioning if any
+	$the_upld_file_name = (string) SmartFileSysUtils::version_remove($the_upld_file_name);
+	//-- remove dangerous characters
+	$the_upld_file_name = (string) trim((string)str_replace(['\\', ' ', '?'], ['-', '-', '-'], (string)$the_upld_file_name));
+	//-- hard limit for file name length for max 100 characters
+	if(strlen($the_upld_file_name) > 100) {
+		return 'Uploaded File Name is too long ...';
+	} //end if
+	//--
+	if(((string)$the_upld_file_name == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_upld_file_name))) {
+		return 'Uploaded File Name is Invalid (not Safe)';
+	} //end if
+	//-- protect against dot files .*
+	if(substr($the_upld_file_name, 0, 1) == '.') {
+		return 'Dot Files are not allowed for Uploads';
+	} //end if
+	//--
+	$tmp_fext = (string) strtolower((string)SmartFileSysUtils::get_file_extension_from_path($the_upld_file_name)); // get the extension
+	//-- {{{SYNC-CHK-ALLOWED-DENIED-EXT}}}
+	if(!defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+		return 'Upload Failed: The constant SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS must be defined in init.php ...';
+	} //end if
+	if(stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false) {
+		return 'Upload Failed: The uploaded file extension is denied by the current configuration ...';
+	} //end if
+	if(defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+		if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
+			return 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration ...';
+		} //end if
+	} //end if
+	//-- check for upload errors
+	$up_err = '';
+	switch((int)$the_upld_file_error) {
+		case UPLOAD_ERR_OK:
+			// OK, no error
+			break;
+		case UPLOAD_ERR_INI_SIZE:
+			$up_err = 'UPLOAD ERROR: The uploaded file exceeds the upload_max_filesize directive in php.ini';
+			break;
+		case UPLOAD_ERR_FORM_SIZE:
+			$up_err = 'UPLOAD ERROR: The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+			break;
+		case UPLOAD_ERR_PARTIAL:
+			$up_err = 'UPLOAD ERROR: The uploaded file was only partially uploaded';
+			break;
+		case UPLOAD_ERR_NO_FILE:
+			$up_err = 'UPLOAD ERROR: No file was uploaded';
+			break;
+		case UPLOAD_ERR_NO_TMP_DIR:
+			$up_err = 'UPLOAD ERROR: Missing a temporary folder';
+			break;
+		case UPLOAD_ERR_CANT_WRITE:
+			$up_err = 'UPLOAD ERROR: Failed to write file to disk';
+			break;
+		case UPLOAD_ERR_EXTENSION:
+			$up_err = 'UPLOAD ERROR: File upload stopped by extension';
+			break;
+		default:
+			$up_err =  'UPLOAD ERROR: Unknown error ...';
+	} //end switch
+	if((string)$up_err != '') {
+		return (string) $up_err;
+	} //end if
+	//--
+	if((string)$the_upld_file_tmpname == '') {
+		return 'Invalid temporary upload file ...';
+	} //end if
+	//-- rename or delete the existing file if exists already with the same name
+	if(((string)$the_upld_file_name != '') AND (SmartFileSystem::is_type_file($dest_dir.$the_upld_file_name))) {
+		if($allow_rewrite !== true) {
+			return 'Upload Failed: Destination File Exists and Allow Rewrite is turned off';
+		} elseif(!SmartFileSystem::delete($dest_dir.$the_upld_file_name)) { // try to remove the destination file (will be replaced with new uploaded version)
+			return 'Upload Failed: Destination File Exists and could not be removed';
+		} //end if else
+	} //end if
+	//-- do upload
+	if(!is_uploaded_file($the_upld_file_tmpname)) {
+		return 'FATAL ERROR: Uploaded File reports a wrong type ...';
+	} //end if
+	$fsize_upld = (int) SmartFileSystem::get_file_size($the_upld_file_tmpname);
+	if((int)$fsize_upld > (int)$max_size) {
+		return 'Upload Failed: File is oversized';
+	} //end if
+	if(!SmartFileSystem::move_uploaded($the_upld_file_tmpname, $dest_dir.$the_upld_file_name, true)) { // also check sha1-file
+		return 'Failed to Move the Uploaded File to the Destination Directory';
+	} //end if
+	//--
+	return ''; // OK
+	//--
 } //END FUNCTION
 //================================================================
 

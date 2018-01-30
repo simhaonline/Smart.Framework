@@ -1,0 +1,8 @@
+	<d:response>
+		<s:itemtype>DAV: item not-found</s:itemtype>
+		<d:href>[####DAV-REQUEST-URI|html####]</d:href>
+		<d:propstat>
+			<d:prop/>
+			<d:status>HTTP/1.1 404 Not Found</d:status>
+		</d:propstat>
+	</d:response>

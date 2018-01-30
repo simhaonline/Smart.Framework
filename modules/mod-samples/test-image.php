@@ -34,7 +34,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		// this is for INDEX area ; it will use framework buffered output
 
 		//-- dissalow run this sample if not test mode enabled
-		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
 			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
 			return;
 		} //end if

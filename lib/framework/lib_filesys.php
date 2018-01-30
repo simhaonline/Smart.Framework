@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.171008
+ * @version 	v.180129
  * @package 	Filesystem
  *
  */
@@ -76,7 +76,25 @@ final class SmartFileSysUtils {
  */
 public static function max_upload_size() {
 	//--
-	return (int) Smart::format_number_int(((int)ini_get('upload_max_filesize') * 1000 * 1000), '+');
+	$inival = (string) trim((string)ini_get('upload_max_filesize'));
+	if((string)$inival == '') {
+		return 0;
+	} //end if
+	//--
+	$last = (string) strtoupper(substr((string)$inival, -1, 1));
+	$value = (int) $inival;
+	//--
+	if((string)$last === 'K') {
+		$value *= 1000;
+	} elseif((string)$last === 'M') {
+		$value *= 1000 * 1000;
+	} elseif((string)$last === 'G') {
+		$value *= 1000 * 1000 * 1000;
+	} elseif((string)$last === 'T') {
+		$value *= 1000 * 1000 * 1000 * 1000;
+	} //end if else
+	//--
+	return (int) Smart::format_number_int($value, '+');
 	//--
 } //END FUNCTION
 //================================================================
@@ -1230,7 +1248,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.171008
+ * @version 	v.180129
  * @package 	Filesystem
  *
  */
@@ -2102,10 +2120,11 @@ public static function read_uploaded($file_name) {
  *
  * @param 	STRING 		$file_name 				:: The absolute path of the uploaded file to be moved
  * @param 	STRING 		$newlocation 			:: The relative path of the destination file (the path where to move)
+ * @param 	BOOLEAN 	$check_moved_contents 	:: If TRUE will compare the TMP File with Destination using SHA1-File
  *
  * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
  */
-public static function move_uploaded($file_name, $newlocation) {
+public static function move_uploaded($file_name, $newlocation, $check_moved_contents=true) {
 	//--
 	$file_name = (string) $file_name;
 	$newlocation = (string) $newlocation;
@@ -2155,11 +2174,22 @@ public static function move_uploaded($file_name, $newlocation) {
 				//--
 				self::delete($newlocation);
 				//--
+				if($check_moved_contents === true) {
+					$sha_tmp_f = sha1_file($file_name);
+				} //end if
 				$f_cx = @move_uploaded_file($file_name, $newlocation);
 				//--
 				if(self::is_type_file($newlocation)) {
 					@touch($newlocation, time()); // touch modified time to avoid upload differences in time
 					self::fix_file_chmod($newlocation); // apply chmod
+					if($check_moved_contents === true) {
+						$sha_new_f = sha1_file($newlocation);
+						if((string)$sha_tmp_f != (string)$sha_new_f) {
+							$f_cx = 0;
+							Smart::log_warning(__METHOD__.'() // MoveUploadedFile // Checksum Failed for: '.$file_name.' // to destination: '.$newlocation);
+							self::delete($newlocation);
+						} //end if
+					} //end if
 				} else {
 					Smart::log_warning(__METHOD__.'() // MoveUploadedFile // Failed to move uploaded file: '.$file_name.' // to destination: '.$newlocation);
 				} //end if

@@ -32,7 +32,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
-		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
 			if(!headers_sent()) {
 				http_response_code(500);
 			} //end if

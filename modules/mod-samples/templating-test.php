@@ -24,7 +24,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
-		if(SMART_FRAMEWORK_TEST_MODE !== true) {
+		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
 			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
 			return;
 		} //end if

@@ -66,15 +66,15 @@ define('SMART_FRAMEWORK_DOWNLOAD_EXPIRE',			1);										// Download expiration 
 //define('SMART_FRAMEWORK_DOWNLOAD_SKIP_LOG',			true);								// If defined will disable logging for Downloads
 define('SMART_FRAMEWORK_UPLOAD_PICTS', 				'<png>,<gif>,<jpeg>,<jpg>');			// Uploads images type ALLOWED extensions list
 define('SMART_FRAMEWORK_UPLOAD_MOVIES', 			'<webm>,<ogv>,<mp4>,<mov>');			// Uploads video type ALLOWED extensions list
-define('SMART_FRAMEWORK_UPLOAD_DOCS', 				'<txt>,<rtf>,<pdf>,<odt>,<ods>,<odp>');	// Uploads document type ALLOWED extensions list
-define('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS',	SMART_FRAMEWORK_UPLOAD_PICTS.','.SMART_FRAMEWORK_UPLOAD_MOVIES.','.SMART_FRAMEWORK_UPLOAD_DOCS.',<eml>,<7z>,<zip>,<rar>,<tar>,<tgz>,<tbz>,<gz>,<bz2>,<xz>,<csv>,<doc>,<xls>,<ppt>,<ps>,<eps>,<tif>,<tiff>,<wmf>,<bmp>,<swf>,<vcf>,<ics>'); // *OPTIONAL* list of allowed extensions (if this is not defined will allow any extension except ones listed at SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS)
-define('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS', 	'<htm>,<html>,<js>,<css>,<shtml>,<phtml>,<php>,<inc>,<tpl>,<twig>,<pl>,<py>,<sh>,<cgi>,<fcgi>,<scgi>,<wsgi>,<exe>,<bin>'); // Uploads scripts or executables DENIED extensions list
+define('SMART_FRAMEWORK_UPLOAD_DOCS', 				'<txt>,<rtf>,<pdf>,<odt>,<ods>,<odp>,<csv>,<doc>,<xls>,<ppt>'); // Uploads document type ALLOWED extensions list
+define('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS',	SMART_FRAMEWORK_UPLOAD_PICTS.','.SMART_FRAMEWORK_UPLOAD_MOVIES.','.SMART_FRAMEWORK_UPLOAD_DOCS.',<md>,<json>,<yaml>,<eml>,<ics>,<vcf>,<7z>,<zip>,<rar>,<tar>,<tgz>,<tbz>,<gz>,<bz2>,<xz>,<ps>,<eps>,<tif>,<tiff>,<wmf>,<bmp>,<swf>'); // *OPTIONAL* list of allowed extensions (if this is not defined will allow any extension except ones listed at SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS)
+define('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS', 	'<htm>,<html>,<js>,<sass>,<scss>,<css>,<shtml>,<phtml>,<php>,<sql>,<inc>,<tpl>,<twig>,<pl>,<py>,<pyc>,<pyo>,<rb>,<go>,<asp>,<jsp>,<sh>,<bash>,<cgi>,<fcgi>,<fastcgi>,<scgi>,<wsgi>,<exe>,<dll>,<dylib>,<bin>,<so>'); // Uploads scripts or executables DENIED extensions list
 //---------------------------------------- SPECIAL .htaccess FILES CONTENT :: These are set for Apache web server. If you are using another web server you may adjust them.
 //-- .htaccess DENY EXECUTION OF SCRIPTS
 define('SMART_FRAMEWORK_HTACCESS_NOEXECUTION', '
 # Prevent Scripts or Executable
 Options -ExecCGI
-<FilesMatch "\.(html|htm|js|scss|css|shtml|phtml|php|php*|inc|tpl|twig|pl|py|pyc|pyo|rb|asp|jsp|sh|bash|cgi|fcgi|fastcgi|scgi|wsgi|exe|bin)$">
+<FilesMatch "\.(html|htm|js|sass|scss|css|shtml|phtml|php|php*|sql|inc|tpl|twig|pl|py|pyc|pyo|rb|go|asp|jsp|sh|bash|cgi|fcgi|fastcgi|scgi|wsgi|exe|dll|dylib|bin|so)$">
 	SetHandler none
 	ForceType text/plain
 </FilesMatch>

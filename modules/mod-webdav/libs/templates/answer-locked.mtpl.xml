@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<d:lockinfo xmlns:d="DAV:" xmlns:s="NS_SMART_FRAMEWORK_WEBDAV:">
+	<s:info>
+		<s:response>Type: DAV/Lock</s:response>
+		<s:method>[####DAV-METHOD|html####]</s:method>
+		<s:path>[####DAV-REQ-PATH|html####]</s:path>
+		<s:owner>[####DAV-AUTHOR|html####]</s:owner>
+	</s:info>
+	<d:lockdiscovery>
+		<d:activelock>
+			<d:locktype>
+				<d:write/>
+			</d:locktype>
+			<d:lockscope>
+				<d:exclusive/>
+			</d:lockscope>
+			<d:depth>[####LOCK-DEPTH|html####]</d:depth>
+			<d:owner>[####DAV-AUTHOR|html####]</d:owner>
+			<d:timeout>Second-[####LOCK-TIME-SEC|int####]</d:timeout>
+			<d:locktoken>
+				<d:href>urn:uuid:[####LOCK-UUID|html####]</d:href>
+			</d:locktoken>
+			<d:lockroot>
+				<d:href>[####DAV-REQ-PATH|html####]</d:href>
+			</d:lockroot>
+		</d:activelock>
+	</d:lockdiscovery>
+</d:lockinfo>
+<!-- # xml # -->

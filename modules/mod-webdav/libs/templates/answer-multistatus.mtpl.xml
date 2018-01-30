@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<d:multistatus xmlns:d="DAV:" xmlns:s="NS_SMART_FRAMEWORK_WEBDAV:">
+	<s:info>
+		<s:response>Type: DAV/MultiStatus</s:response>
+		<s:method>[####DAV-METHOD|html####]</s:method>
+		<s:path>[####DAV-REQ-PATH|html####]</s:path>
+	</s:info>
+[%%%%IF:HTTP-STATUS:==207;%%%%]
+	[%%%%LOOP:ITEM%%%%]
+		[%%%%IF:ITEM.DAV-RESOURCE-TYPE:==collection;%%%%]
+	[@@@@SUB-TEMPLATE:item-collection.mtpl.inc.xml@@@@]
+		[%%%%ELSE:ITEM.DAV-RESOURCE-TYPE%%%%]
+	[@@@@SUB-TEMPLATE:item-noncollection.mtpl.inc.xml@@@@]
+		[%%%%/IF:ITEM.DAV-RESOURCE-TYPE%%%%]
+	[%%%%/LOOP:ITEM%%%%]
+[%%%%ELSE:HTTP-STATUS%%%%]
+	[@@@@SUB-TEMPLATE:item-notfound.mtpl.inc.xml@@@@]
+[%%%%/IF:HTTP-STATUS%%%%]
+</d:multistatus>
+<!-- # xml # -->

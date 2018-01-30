@@ -1,0 +1,245 @@
+<?php
+// Module Lib: \SmartModExtLib\Webdav\ControllerAdmDavFs
+
+namespace SmartModExtLib\Webdav;
+
+//----------------------------------------------------- PREVENT DIRECT EXECUTION
+if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+} //end if
+//-----------------------------------------------------
+
+//=====================================================================================
+//===================================================================================== CLASS START
+//=====================================================================================
+
+
+abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
+
+	// v.180130
+
+	private $dav_author = 'unknown';
+	private $dav_uri = '';
+	private $dav_url = '';
+	private $dav_method = '';
+	private $dav_request_path = '';
+	private $dav_request_back_path = '';
+	private $dav_vfs_path = '';
+	private $dav_vfs_root = 'none';
+	private $dav_is_root_path = true;
+
+
+	public function DavFsRunServer($dav_fs_root_path) {
+
+		//-- set nocache headers
+		header('Cache-Control: no-cache'); // HTTP 1.1
+		header('Pragma: no-cache'); // HTTP 1.0
+		//--
+
+		//--
+		if(!defined('SMART_WEBDAV_SHOW_USAGE_QUOTA')) {
+			define('SMART_WEBDAV_SHOW_USAGE_QUOTA', false);
+		} //end if
+		//--
+
+		//--
+		if(!defined('SMART_APP_MODULE_AREA') OR (strtoupper((string)SMART_APP_MODULE_AREA) !== 'ADMIN')) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Requires an Admin Module Area controller to run !');
+			return;
+		} //end if
+		//--
+
+		//--
+		if(!defined('SMART_APP_MODULE_DIRECT_OUTPUT') OR (SMART_APP_MODULE_DIRECT_OUTPUT !== true)) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Requires Direct Output set to True in the controller !');
+			return;
+		} //end if
+		//--
+
+		//-- check auth
+		if(!defined('SMART_APP_MODULE_AUTH') OR (SMART_APP_MODULE_AUTH !== true)) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Requires Module Auth set to True in the controller !');
+			return;
+		} //end if
+		//--
+		if(\SmartAuth::check_login() !== true) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Authentication required but not detected !');
+			return;
+		} //end if
+		//--
+		$this->dav_author = (string) \SmartAuth::get_login_id();
+		//--
+
+		//--
+		$dav_fs_root_path = (string) trim((string)$dav_fs_root_path);
+		if((string)$dav_fs_root_path == '') {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: DAV FS Root Path is Empty !');
+			return;
+		} //end if
+		//--
+		$dav_fs_root_path = (string) \SmartFileSysUtils::add_dir_last_slash((string)\Smart::safe_pathname((string)$dav_fs_root_path));
+		if(\SmartFileSysUtils::check_if_safe_path((string)$dav_fs_root_path) != '1') {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: DAV FS Root Path is Invalid: '.$dav_fs_root_path);
+			return;
+		} //end if
+		if(\SmartFileSystem::path_exists((string)$dav_fs_root_path) !== true) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: DAV FS Root Path does Not Exists: '.$dav_fs_root_path);
+			return;
+		} //end if
+		//--
+
+		//-- calculate base uri
+		$this->dav_request_path = (string) ltrim((string)$this->RequestPathGet(), '/');
+		$this->dav_request_path = (string) \SmartUnicode::deaccent_str($this->dav_request_path);
+		$this->dav_request_path = (string) \Smart::safe_pathname($this->dav_request_path, '-'); // FIX: allow only safe paths :: {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
+		if((string)$this->dav_request_path == '') {
+			$this->dav_is_root_path = true;
+			$this->dav_request_back_path = '';
+		} else {
+			$this->dav_is_root_path = false;
+			$this->dav_request_back_path = (string) trim((string)\Smart::dir_name((string)$this->dav_request_path));
+			if((string)$this->dav_request_back_path == '.') {
+				$this->dav_request_back_path = '';
+			} //end if
+			if((string)$this->dav_request_back_path != '') {
+				if(\SmartFileSysUtils::check_if_safe_path($this->dav_request_back_path) != '1') {
+					$this->dav_request_back_path = '';
+				} //end if
+			} //end if
+		} //end if
+		//--
+		$this->dav_uri = (string) \SmartUtils::get_server_current_full_script().\SmartUtils::get_server_current_request_path();
+		$this->dav_url = (string) \SmartUtils::get_server_current_url().\SmartUtils::get_server_current_script().\SmartUtils::get_server_current_request_path();
+		$this->dav_method = (string) strtoupper((string)$_SERVER['REQUEST_METHOD']);
+		$this->dav_vfs_root = (string) $dav_fs_root_path;
+		$this->dav_vfs_path = (string) \Smart::safe_pathname(rtrim((string)$this->dav_vfs_root.$this->dav_request_path, '/'));
+		//--
+
+		//--
+		// \Smart::log_notice($this->dav_method.': '.$this->dav_request_path.' @ '.$this->dav_vfs_path);
+		//--
+		switch((string)$this->dav_method) {
+
+			case 'OPTIONS':
+				\SmartModExtLib\Webdav\DavFileSystem::methodOptions();
+				break;
+
+			case 'HEAD':
+				\SmartModExtLib\Webdav\DavFileSystem::methodHead((string)$this->dav_vfs_path);
+				break;
+
+			case 'PROPFIND':
+				\SmartModExtLib\Webdav\DavFileSystem::methodPropfind(
+					(string) $this->dav_uri,
+					(string) $this->dav_request_path,
+					(string) $this->dav_vfs_path,
+					(bool)   $this->dav_is_root_path,
+					(string) $this->dav_vfs_root
+				);
+				break;
+
+			case 'LOCK':
+				\SmartModExtLib\Webdav\DavFileSystem::methodLock(
+					(string) $this->dav_request_path,
+					(string) $this->dav_author
+				);
+				break;
+
+			case 'UNLOCK':
+				\SmartModExtLib\Webdav\DavFileSystem::methodUnlock(
+					(string) $this->dav_request_path,
+					(string) $this->dav_author
+				);
+				break;
+
+			case 'MKCOL':
+				\SmartModExtLib\Webdav\DavFileSystem::methodMkcol((string)$this->dav_vfs_path);
+				break;
+
+			case 'PUT':
+				\SmartModExtLib\Webdav\DavFileSystem::methodPut((string)$this->dav_vfs_path);
+				break;
+
+			case 'COPY':
+				\SmartModExtLib\Webdav\DavFileSystem::methodCopy(
+					(string) $this->dav_request_path,
+					(string) $this->dav_vfs_path,
+					(string) $this->dav_vfs_root
+				);
+				break;
+
+			case 'MOVE':
+				\SmartModExtLib\Webdav\DavFileSystem::methodMove(
+					(string) $this->dav_request_path,
+					(string) $this->dav_vfs_path,
+					(string) $this->dav_vfs_root
+				);
+				break;
+
+			case 'DELETE':
+				\SmartModExtLib\Webdav\DavFileSystem::methodDelete((string)$this->dav_vfs_path);
+				break;
+
+			case 'GET':
+				\SmartModExtLib\Webdav\DavFileSystem::methodGet(
+					(string) $this->dav_method,
+					(string) $this->dav_author,
+					(string) $this->dav_url,
+					(string) $this->dav_request_path,
+					(string) $this->dav_vfs_path,
+					(bool)   $this->dav_is_root_path,
+					(string) $this->dav_vfs_root,
+					(string) $this->dav_request_back_path
+				);
+				break;
+
+			case 'POST':
+				$webdav_action = $this->RequestVarGet('webdav_action', '', 'string');
+				$new_dir_name  = $this->RequestVarGet('name', '', 'string');
+				switch((string)$webdav_action) {
+					case 'mkd':
+						if((string)trim((string)$new_dir_name != '')) {
+							if((int)\SmartModExtLib\Webdav\DavFileSystem::methodPostMkd((string)$this->dav_url, (string)$this->dav_vfs_path, (string)trim((string)$new_dir_name)) != 200) {
+								return;
+							} //end if
+						} //end if
+						break;
+					case 'upf':
+						if(\Smart::array_size($_FILES) > 0) {
+							if((int)\SmartModExtLib\Webdav\DavFileSystem::methodPostUpf((string)$this->dav_url, (string)$this->dav_vfs_path) != 200) {
+								return;
+							} //end if
+						} //end if
+					default:
+						// do nothing
+				} //end switch
+				http_response_code(302); // force redirect to get
+				header('Location: '.(string)$this->dav_url);
+				break;
+
+			default:
+				http_response_code(501); // not implemented
+				// \Smart::log_notice('Method NOT Implemented: '.(string)$this->dav_method);
+
+		} //end switch
+
+	} //END FUNCTION
+
+
+} //END CLASS
+
+
+//=====================================================================================
+//===================================================================================== CLASS END
+//=====================================================================================
+
+
+//end of php code
+?>
