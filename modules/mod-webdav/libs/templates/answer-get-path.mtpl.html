@@ -88,7 +88,17 @@
 </head>
 <body>
 <div id="top">
-	<h1 style="display:inline-block;"><a href="[####LINK-WELCOME|html####]" title="Cloud :: Home" style="margin-right:8px;"><img height="48" src="[####BASE-URL|html####]lib/core/img/app/server.svg" align="left"></a>[####INFO-HEADING|html####] &nbsp; </h1><h4 style="display:inline-block;"><span style="color:#FF3300;">{[####INFO-AUTHNAME|html####]}:</span>&nbsp;<span style="color:#778899;">&lt;[####CRR-PATH|html####]&gt;</span></h4>
+	<h1 style="display:inline-block;">
+[%%%%IF:LINK-WELCOME:!=;%%%%]
+		<a href="[####LINK-WELCOME|html####]" title="[####TEXT-WELCOME|html####]" style="margin-right:8px;">
+[%%%%/IF:LINK-WELCOME%%%%]
+			<img height="48" src="[####BASE-URL|html####][####IMG-SVG-LOGO|html####]" align="left">
+[%%%%IF:LINK-WELCOME:!=;%%%%]
+		</a>
+[%%%%ELSE:LINK-WELCOME%%%%]
+&nbsp;
+[%%%%/IF:LINK-WELCOME%%%%]
+		[####INFO-HEADING|html####] &nbsp; </h1><h4 style="display:inline-block;"><span style="color:#FF3300;">{[####INFO-AUTHNAME|html####]}:</span>&nbsp;<span style="color:#778899;">&lt;[####CRR-PATH|html####]&gt;</span></h4>
 </div>
 <br>
 <div id="lst">

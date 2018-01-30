@@ -35,6 +35,26 @@ final class DavServer {
 	} //END FUNCTION
 
 
+	public static function safePathName($path) { // on WebDAV there is an issue with #
+		//--
+		$path = (string) str_replace('#', '-', (string)$path); // {{{SYNC-WEBDAV-#-ISSUE}}}
+		$path = (string) \Smart::safe_pathname((string)$path, '-'); // FIX: allow only safe paths :: {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
+		//--
+		return (string) $path;
+		//--
+	} //END FUNCTION
+
+
+	public static function safeFileName($path) { // on WebDAV there is an issue with #
+		//--
+		$path = (string) str_replace('#', '-', (string)$path); // {{{SYNC-WEBDAV-#-ISSUE}}}
+		$path = (string) \Smart::safe_filename((string)$path, '-'); // FIX: allow only safe paths :: {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
+		//--
+		return (string) $path;
+		//--
+	} //END FUNCTION
+
+
 	// used to extract path from headers like MOVE ...
 	public static function extractPathFromCurrentURL($url, $urldecode=false) { // sync with SmartFrameworkRuntime::Parse_Semantic_URL()
 		//--

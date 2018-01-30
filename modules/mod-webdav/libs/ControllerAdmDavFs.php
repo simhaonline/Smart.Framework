@@ -29,7 +29,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 	private $dav_is_root_path = true;
 
 
-	public function DavFsRunServer($dav_fs_root_path) {
+	public function DavFsRunServer($dav_fs_root_path, $show_usage_quota=false, $nfo_title='DAV@webFS', $nfo_signature='Smart.Framework::WebDAV', $nfo_prefix_crrpath='DAV:', $nfo_lnk_welcome='', $nfo_txt_welcome='WebDAV :: Home', $nfo_svg_logo='lib/core/img/app/server.svg') {
 
 		//-- set nocache headers
 		header('Cache-Control: no-cache'); // HTTP 1.1
@@ -37,9 +37,13 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//--
 
 		//--
-		if(!defined('SMART_WEBDAV_SHOW_USAGE_QUOTA')) {
-			define('SMART_WEBDAV_SHOW_USAGE_QUOTA', false);
+		if(defined('SMART_WEBDAV_SHOW_USAGE_QUOTA')) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: The constant SMART_WEBDAV_SHOW_USAGE_QUOTA must NOT be defined outside DavRunServer !');
+			return;
 		} //end if
+		//--
+		define('SMART_WEBDAV_SHOW_USAGE_QUOTA', (bool)$show_usage_quota);
 		//--
 
 		//--
@@ -82,7 +86,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 			return;
 		} //end if
 		//--
-		$dav_fs_root_path = (string) \SmartFileSysUtils::add_dir_last_slash((string)\Smart::safe_pathname((string)$dav_fs_root_path));
+		$dav_fs_root_path = (string) \SmartFileSysUtils::add_dir_last_slash((string)\SmartModExtLib\Webdav\DavServer::safePathName((string)$dav_fs_root_path));
 		if(\SmartFileSysUtils::check_if_safe_path((string)$dav_fs_root_path) != '1') {
 			http_response_code(500);
 			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: DAV FS Root Path is Invalid: '.$dav_fs_root_path);
@@ -98,7 +102,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//-- calculate base uri
 		$this->dav_request_path = (string) ltrim((string)$this->RequestPathGet(), '/');
 		$this->dav_request_path = (string) \SmartUnicode::deaccent_str($this->dav_request_path);
-		$this->dav_request_path = (string) \Smart::safe_pathname($this->dav_request_path, '-'); // FIX: allow only safe paths :: {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
+		$this->dav_request_path = (string) \SmartModExtLib\Webdav\DavServer::safePathName($this->dav_request_path);
 		if((string)$this->dav_request_path == '') {
 			$this->dav_is_root_path = true;
 			$this->dav_request_back_path = '';
@@ -119,7 +123,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		$this->dav_url = (string) \SmartUtils::get_server_current_url().\SmartUtils::get_server_current_script().\SmartUtils::get_server_current_request_path();
 		$this->dav_method = (string) strtoupper((string)$_SERVER['REQUEST_METHOD']);
 		$this->dav_vfs_root = (string) $dav_fs_root_path;
-		$this->dav_vfs_path = (string) \Smart::safe_pathname(rtrim((string)$this->dav_vfs_root.$this->dav_request_path, '/'));
+		$this->dav_vfs_path = (string) \SmartModExtLib\Webdav\DavServer::safePathName(rtrim((string)$this->dav_vfs_root.$this->dav_request_path, '/'));
 		//--
 
 		//--
@@ -196,7 +200,13 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 					(string) $this->dav_vfs_path,
 					(bool)   $this->dav_is_root_path,
 					(string) $this->dav_vfs_root,
-					(string) $this->dav_request_back_path
+					(string) $this->dav_request_back_path,
+					(string) $nfo_title,
+					(string) $nfo_signature,
+					(string) $nfo_prefix_crrpath,
+					(string) $nfo_lnk_welcome,
+					(string) $nfo_txt_welcome,
+					(string) $nfo_svg_logo
 				);
 				break;
 

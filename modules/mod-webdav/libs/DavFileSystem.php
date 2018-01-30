@@ -66,7 +66,7 @@ final class DavFileSystem {
 
 	public static function methodLock($dav_request_path, $dav_author) {
 		//--
-		// Just FAKE, Emulate, to handle compatibility with MacOS
+		// No need for Real LOCK (the file PUT is safe by using a unique Temp.UUID) ; just Emulate the LOCK - to handle compatibility with MacOS
 		//--
 		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 day')).' '.date('H:i:s').' GMT'); // HTTP 1.0
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
@@ -78,7 +78,7 @@ final class DavFileSystem {
 			(int) $statuscode,
 			(string) 'infinity',
 			(int) 3600, // fixed 1h
-			(string) '00000000-0000-0000-0000-000000000000' // fake UUID
+			(string) '00000000-0000-0000-0000-000000000000' // just a fake UUID ...
 		);
 		//--
 		return (int) $statuscode;
@@ -88,8 +88,7 @@ final class DavFileSystem {
 
 	public static function methodUnlock($dav_request_path, $dav_author) {
 		//--
-		// Just FAKE, Emulate, to handle compatibility with MacOS
-		// The $dav_request_path, $dav_author must be used when a real unlock will be implemented ...
+		// Because the LOCK is just Emulate, no need for Real UNLOCK
 		//--
 		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 day')).' '.date('H:i:s').' GMT'); // HTTP 1.0
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
@@ -111,7 +110,7 @@ final class DavFileSystem {
 		} //end if
 		//--
 		$dir_name = (string) \SmartUnicode::deaccent_str($dir_name);
-		$dir_name = \Smart::safe_filename($dir_name, '-'); // {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
+		$dir_name = (string) \SmartModExtLib\Webdav\DavServer::safeFileName($dir_name); // {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
 		//--
 		if(\SmartFileSysUtils::check_if_safe_path($dav_vfs_path) != '1') {
 			echo self::answerPostErr400('Create Directory ERROR: Invalid Directory Name (2)', (string)$dav_url);
@@ -289,11 +288,20 @@ final class DavFileSystem {
 		} //end if
 		//--
 		if(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
-			http_response_code(405); // // the destination exists and is a directory
+			http_response_code(405); // the destination exists and is a directory
+			return 405;
+		} //end if
+		if(\SmartFileSystem::is_type_file($dav_vfs_path)) {
+			\SmartFileSystem::delete((string)$dav_vfs_path);
+		} //end if
+		if(\SmartFileSystem::path_exists($dav_vfs_path)) {
+			http_response_code(405); // the destination exists and could not be replaced
 			return 405;
 		} //end if
 		//--
-		$fd = fopen($dav_vfs_path, 'wb');
+		$tmp_vfs_path = (string) $dav_vfs_path.'__.TMP.__@'.\Smart::uuid_10_seq().'-'.\Smart::uuid_10_num().'-'.\Smart::uuid_10_str();
+		// $dav_vfs_path
+		$fd = fopen((string)$tmp_vfs_path, 'wb');
 		if(!$fd) {
 			http_response_code(423); // locked: could not achieve fopen advisory lock
 			return 423;
@@ -301,8 +309,25 @@ final class DavFileSystem {
 		while($data = fread($fp, 1024*8)) {
 			fwrite($fd, $data);
 		} //end while
+		//--
 		fclose($fd);
 		fclose($fp);
+		//--
+		if(!\SmartFileSystem::is_type_file((string)$tmp_vfs_path)) {
+			http_response_code(423); // locked: could not achieve fopen advisory lock
+			return 423;
+		} //end if
+		if(\SmartFileSystem::path_exists($dav_vfs_path)) {
+			http_response_code(405); // the destination exists and could not be replaced
+			return 405;
+		} //end if
+		if(!\SmartFileSystem::rename((string)$tmp_vfs_path, (string)$dav_vfs_path)) {
+			if(\SmartFileSystem::is_type_file((string)$tmp_vfs_path)) {
+				\SmartFileSystem::delete((string)$tmp_vfs_path);
+			} //end if
+			http_response_code(423); // locked: could not achieve fopen advisory lock
+			return 423;
+		} //end if
 		//--
 		http_response_code(201); // HTTP/1.1 201 Created
 		header('Content-length: 0');
@@ -343,7 +368,7 @@ final class DavFileSystem {
 	} //END FUNCTION
 
 
-	public static function methodGet($dav_method, $dav_author, $dav_url, $dav_request_path, $dav_vfs_path, $dav_is_root_path, $dav_vfs_root, $dav_request_back_path) { // 200 | 404 | 405 | 415 | 423
+	public static function methodGet($dav_method, $dav_author, $dav_url, $dav_request_path, $dav_vfs_path, $dav_is_root_path, $dav_vfs_root, $dav_request_back_path, $nfo_title, $nfo_signature, $nfo_prefix_crrpath, $nfo_lnk_welcome, $nfo_txt_welcome, $nfo_svg_logo) { // 200 | 404 | 405 | 415 | 423
 		//--
 		$dav_vfs_path = (string) $dav_vfs_path;
 		$dav_vfs_root = (string) $dav_vfs_root;
@@ -360,10 +385,7 @@ final class DavFileSystem {
 		//--
 		if(!\SmartFileSystem::is_type_file($dav_vfs_path)) {
 			//--
-$nfo_title = 'Files';
-$nfo_signature = 'Smart.Framework::WebDAV';
-$nfo_crrpath = 'DAV:'.$dav_request_path;
-$nfo_lnk_welcome = '#';
+			$nfo_crrpath = (string) $nfo_prefix_crrpath.$dav_request_path;
 			//--
 			$bw = (array) \SmartUtils::get_os_browser_ip();
 			//--
@@ -407,6 +429,8 @@ $nfo_lnk_welcome = '#';
 			$html = (string) \SmartMarkersTemplating::render_file_template(
 				\SmartModExtLib\Webdav\DavServer::getTplPath().'answer-get-path.mtpl.html',
 				[
+					'IMG-SVG-LOGO' 		=> (string) $nfo_svg_logo,
+					'TEXT-WELCOME' 		=> (string) $nfo_txt_welcome,
 					'LINK-WELCOME' 		=> (string) $nfo_lnk_welcome,
 					'INFO-HEADING' 		=> (string) $nfo_title,
 					'INFO-SIGNATURE' 	=> (string) $nfo_signature,
@@ -491,7 +515,7 @@ $nfo_lnk_welcome = '#';
 		} //end if
 		$path_raw_dest = (string) trim((string)$path_raw_dest);
 		$path_raw_dest = (string) \SmartUnicode::deaccent_str((string)$path_raw_dest);
-		$path_raw_dest = (string) \Smart::safe_pathname($path_raw_dest);
+		$path_raw_dest = (string) \SmartModExtLib\Webdav\DavServer::safePathName($path_raw_dest);
 		//--
 		if(((string)$dav_request_path == (string)$path_raw_dest) OR ((string)$path_raw_dest == '')) {
 		//	http_response_code(403); // forbidden ; destination and source are the same
@@ -499,7 +523,7 @@ $nfo_lnk_welcome = '#';
 			return 405;
 		} //end if
 		//--
-		$path_dest = (string) \Smart::safe_pathname(rtrim($dav_vfs_root.$path_raw_dest, '/'));
+		$path_dest = (string) \SmartModExtLib\Webdav\DavServer::safePathName(rtrim($dav_vfs_root.$path_raw_dest, '/'));
 		//\Smart::log_notice($dav_method.' # Src=`'.$dav_vfs_path.'` ; Dest=`'.$path_dest.'` ; OverWr='.(string)$heads['overwrite']);
 		//\Smart::log_notice(print_r($heads,1));
 		//--

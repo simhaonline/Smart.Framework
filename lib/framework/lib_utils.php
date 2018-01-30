@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.180129
+ * @version 	v.180130
  * @package 	Base
  *
  */
@@ -1480,6 +1480,7 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 	} //end if else
 	//-- fix file name
 	$the_upld_file_name = (string) SmartUnicode::deaccent_str($the_upld_file_name);
+	$the_upld_file_name = (string) str_replace('#', '-', $the_upld_file_name); // {{{SYNC-WEBDAV-#-ISSUE}}}
 	$the_upld_file_name = (string) Smart::safe_filename($the_upld_file_name, '-'); // {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
 	//-- remove versioning if any
 	$the_upld_file_name = (string) SmartFileSysUtils::version_remove($the_upld_file_name);

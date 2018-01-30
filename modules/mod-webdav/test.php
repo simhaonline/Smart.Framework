@@ -42,8 +42,10 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmDavFs 
 			return;
 		} //end if
 		//--
-		define('SMART_WEBDAV_SHOW_USAGE_QUOTA', true); // enable this on large webdav file systems to avoid huge calculations
-		$this->DavFsRunServer('wpub/webapps-content/test-webdav');
+		$this->DavFsRunServer(
+			'wpub/webapps-content/test-webdav',
+			true // you may disable this on large webdav file systems to avoid huge calculations
+		);
 		//--
 
 	} //END FUNCTION
