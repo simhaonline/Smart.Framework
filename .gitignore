@@ -20,4 +20,5 @@ modules/mod-svn
 modules/mod-kml
 modules/mod-maps-cache
 modules/mod-ui-w3
+modules/mod-cloud
 !.gitignore
