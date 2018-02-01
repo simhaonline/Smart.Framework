@@ -273,6 +273,20 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main .= '</pre>';
 				//--
 				break;
+			case 'test.calendar':
+				//--
+				$main = SmartCalendarComponent::display_html_calendar(
+					'',
+					'100%',
+					true,
+					[
+						[ 'date-start' => date('Y-m-d H:i:s'), 'event-html' => 'A test event for <b>Today</b> ...' ]
+					]
+				);
+				$main .= '<br><hr><br>';
+				$main .= SmartCalendarComponent::display_html_minicalendar();
+				//--
+				break;
 			case 'test.load-url':
 				//--
 				$browser = (array) SmartUtils::load_url_or_file('http://www.unix-world.org', 20, 'GET');
