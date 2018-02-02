@@ -153,10 +153,10 @@
 <br>
 <br>
 <!-- Forms -->
-<div style="position:fixed; top:5px; right:10px; border: 1px solid #CCCCCC; background: #ECECEC; opacity: 0.25; border-radius: 5px; padding: 4px;" onmouseover="this.style.opacity=0.95;" onmouseout="this.style.opacity=0.25;">
+<div style="position:fixed; top:5px; right:10px; border: 1px solid #CCCCCC; background: #ECECEC; opacity: 0.95; border-radius: 5px; padding: 4px;"> <!-- onmouseover="this.style.opacity=0.95;" onmouseout="this.style.opacity=0.55;" -->
 	<table border="0" cellpadding="0">
 		<tr valign="middle">
-			<td><h5 style="display:inline;">New Folder</h5></td>
+			<td title="[####DIR-NEW-INFO|html####]" style="cursor:help;"><h5 style="display:inline;">New Folder</h5></td>
 			<td>&nbsp;&nbsp;</td>
 			<td>
 				<form method="post" action="">
@@ -170,13 +170,13 @@
 			</td>
 		</tr>
 		<tr valign="middle">
-			<td><h5 style="display:inline;">New File</h5></td>
+			<td title="[####MAX-UPLOAD-INFO|html####]" style="cursor:help;"><h5 style="display:inline;">New File</h5></td>
 			<td>&nbsp;&nbsp;</td>
 			<td>
 				<form method="post" action="" enctype="multipart/form-data">
 					<table width="100%" cellpadding="0">
 						<tr>
-							<td><input type="hidden" name="webdav_action" value="upf"><input type="file" name="file[]"></td>
+							<td><input type="hidden" name="webdav_action" value="upf"><input type="file" name="file[]" multiple></td>
 							<td align="right"><input type="submit" value="Upload File"></td>
 						</tr>
 					</table>

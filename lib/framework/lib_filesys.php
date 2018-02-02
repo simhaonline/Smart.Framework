@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180129
+ * @version 	v.180202
  * @package 	Filesystem
  *
  */
@@ -122,6 +122,11 @@ public static function check_if_safe_file_or_dir_name($y_fname) {
 	if(self::test_valid_path($y_fname) !== 1) {
 		return 0;
 	} //end if
+	//--
+	if(strlen((string)$y_fname) > 255) {
+		return 0;
+	} //end if
+	//--
 	//--
 	// IMPORTANT: it should not test if filenames or dirnames start with a # (protected) as they are not paths !!!
 	//--
@@ -392,6 +397,21 @@ public static function add_dir_last_slash($y_path) {
 	self::raise_error_if_unsafe_path($y_path, 'yes', 'yes'); // deny absolute paths ; allow #special paths
 	//--
 	return (string) $y_path;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Generates a Standard File Version based on Microtime Float to use with version add
+ * Ex: 1517576620.6128
+ *
+ * @return 	STRING								:: The version as string to be used with version add
+ */
+public static function version_stdmtime() {
+	//--
+	return (string) microtime(true);
 	//--
 } //END FUNCTION
 //================================================================

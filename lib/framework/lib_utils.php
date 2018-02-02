@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.180130
+ * @version 	v.180202.r3
  * @package 	Base
  *
  */
@@ -1443,19 +1443,29 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 //================================================================
 // Handle Upload One File ; To handle many files upload at once must iterate using this function by var_index=0..n
 // returns FALSE if no file uploaded ; Empty String if OK ; Error String otherwise
-public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, $allow_rewrite=true, $max_size=0) {
+public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, $allow_rewrite=true, $max_size=0, $allowed_extensions='', $new_name='', $enforce_lowercase=false) {
 	//--
 	$dest_dir = (string) $dest_dir;
-	$var_name = (string) $var_name;
+	$var_name = (string) trim((string)$var_name);
 	$var_index = (int) $var_index;
-	$allow_rewrite = (bool) $allow_rewrite;
+	if((string)$allow_rewrite === 'versioning') {
+		$allow_rewrite = (string) $allow_rewrite;
+	} else {
+		$allow_rewrite = (bool) $allow_rewrite;
+	} //end if else
 	$max_size = (int) Smart::format_number_int($max_size,'+');
 	if($max_size <= 0) {
 		$max_size = (int) SmartFileSysUtils::max_upload_size();
 	} //end if
+	$allowed_extensions = (string) trim((string)$allowed_extensions);
+	$new_name = (string) $new_name; // an optional override file name (NO extension !!! The extension will be preserved from the uploaded file)
 	//--
 	if(Smart::array_size($_FILES) <= 0) {
-		return false; // no files uploads detected ...
+		return false; // no files uploads detected ; should return no error ...
+	} //end if
+	//--
+	if((string)$var_name == '') {
+		return 'Invalid File Var Name';
 	} //end if
 	//--
 	if(SmartFileSysUtils::check_if_safe_path((string)$dest_dir) != '1') {
@@ -1478,6 +1488,11 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 		$the_upld_file_tmpname = (string) $_FILES[$var_name]['tmp_name'];
 		$the_upld_file_error = (int) $_FILES[$var_name]['error'];
 	} //end if else
+	//-- check uploaded tmp name
+	$the_upld_file_tmpname = (string) trim((string)$the_upld_file_tmpname);
+	if((string)$the_upld_file_tmpname == '') {
+		return false; // should return no error because the file may not be uploaded
+	} //end if
 	//-- fix file name
 	$the_upld_file_name = (string) SmartUnicode::deaccent_str($the_upld_file_name);
 	$the_upld_file_name = (string) str_replace('#', '-', $the_upld_file_name); // {{{SYNC-WEBDAV-#-ISSUE}}}
@@ -1486,31 +1501,55 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 	$the_upld_file_name = (string) SmartFileSysUtils::version_remove($the_upld_file_name);
 	//-- remove dangerous characters
 	$the_upld_file_name = (string) trim((string)str_replace(['\\', ' ', '?'], ['-', '-', '-'], (string)$the_upld_file_name));
+	$the_upld_file_name = (string) trim((string)$the_upld_file_name);
 	//-- hard limit for file name length for max 100 characters
-	if(strlen($the_upld_file_name) > 100) {
-		return 'Uploaded File Name is too long ...';
+	if((string)$the_upld_file_name == '') {
+		return 'Uploaded File Name is Invalid (Empty)';
 	} //end if
-	//--
-	if(((string)$the_upld_file_name == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_upld_file_name))) {
-		return 'Uploaded File Name is Invalid (not Safe)';
+	if(strlen((string)$the_upld_file_name) > 100) {
+		return 'Uploaded File Name is too long (oversize 100 characters): '.$the_upld_file_name;
+	} //end if
+	if(!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_upld_file_name)) {
+		return 'Uploaded File Name is Invalid (not Safe): '.$the_upld_file_name;
 	} //end if
 	//-- protect against dot files .*
-	if(substr($the_upld_file_name, 0, 1) == '.') {
-		return 'Dot Files are not allowed for Uploads';
+	if(substr((string)$the_upld_file_name, 0, 1) == '.') {
+		return 'Uploaded File Name is Invalid (Dot .Files are not allowed for safety): '.$the_upld_file_name;
 	} //end if
 	//--
-	$tmp_fext = (string) strtolower((string)SmartFileSysUtils::get_file_extension_from_path($the_upld_file_name)); // get the extension
-	//-- {{{SYNC-CHK-ALLOWED-DENIED-EXT}}}
-	if(!defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
-		return 'Upload Failed: The constant SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS must be defined in init.php ...';
-	} //end if
-	if(stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false) {
-		return 'Upload Failed: The uploaded file extension is denied by the current configuration ...';
-	} //end if
-	if(defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
-		if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
-			return 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration ...';
+	$tmp_fext = (string) strtolower((string)SmartFileSysUtils::get_file_extension_from_path((string)$the_upld_file_name)); // get the extension
+	if((string)$new_name != '') {
+		if(!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$new_name)) {
+			return 'Uploaded File New Name: `'.$new_name.'` is Invalid for file name: '.$the_upld_file_name;
 		} //end if
+		if(substr((string)$new_name, 0, 1) == '.') {
+			return 'Uploaded File New Name: `'.$new_name.'` is Invalid (Dot .Files are not allowed for safety): '.$the_upld_file_name;
+		} //end if
+		$the_upld_file_name = (string) SmartFileSysUtils::version_remove((string)trim((string)$new_name)); // since the new name is provided programatically we do not check if > 100 chars ...
+		if($var_index >= 0) {
+			$the_upld_file_name .= ''.(int)$var_index;
+		} //end if
+		$the_upld_file_name .= '.'.$tmp_fext;
+		if(!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_upld_file_name)) {
+			return 'Uploaded New File Name `'.$the_upld_file_name.'` is Invalid (not Safe): '.$the_upld_file_name;
+		} //end if
+	} //end if
+	if($enforce_lowercase === true) {
+		$the_upld_file_name = (string) strtolower((string)$the_upld_file_name);
+	} //end if
+	//-- {{{SYNC-CHK-ALLOWED-DENIED-EXT}}}
+	if((string)$allowed_extensions != '') {
+		if(stripos((string)$allowed_extensions, '<'.$tmp_fext.'>') === false) {
+			return 'Upload Failed: The uploaded file extension is not in the current custom allowed extensions list for file: '.$the_upld_file_name;
+		} //end if
+	} //end if
+	if((defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) AND ((string)trim((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS) != '')) {
+		if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
+			return 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration for file: '.$the_upld_file_name;
+		} //end if
+	} //end if
+	if((!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) OR (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false)) {
+		return 'Upload Failed: The uploaded file extension is denied by the current configuration for file: '.$the_upld_file_name;
 	} //end if
 	//-- check for upload errors
 	$up_err = '';
@@ -1543,30 +1582,32 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 			$up_err =  'UPLOAD ERROR: Unknown error ...';
 	} //end switch
 	if((string)$up_err != '') {
-		return (string) $up_err;
+		return (string) $up_err.' for file: '.$the_upld_file_name;
 	} //end if
-	//--
-	if((string)$the_upld_file_tmpname == '') {
-		return 'Invalid temporary upload file ...';
-	} //end if
-	//-- rename or delete the existing file if exists already with the same name
-	if(((string)$the_upld_file_name != '') AND (SmartFileSystem::is_type_file($dest_dir.$the_upld_file_name))) {
-		if($allow_rewrite !== true) {
-			return 'Upload Failed: Destination File Exists and Allow Rewrite is turned off';
-		} elseif(!SmartFileSystem::delete($dest_dir.$the_upld_file_name)) { // try to remove the destination file (will be replaced with new uploaded version)
-			return 'Upload Failed: Destination File Exists and could not be removed';
+	//-- if there is an existing file already with the same name
+	if(SmartFileSystem::is_type_file($dest_dir.$the_upld_file_name)) {
+		if((string)$allow_rewrite === 'versioning') {
+			if(!SmartFileSystem::rename($dest_dir.$the_upld_file_name, $dest_dir.SmartFileSysUtils::version_add($the_upld_file_name, SmartFileSysUtils::version_stdmtime()))) {
+				return 'Upload Failed: Destination File Versioning Failed for file: '.$the_upld_file_name;
+			} //end if
+		} elseif($allow_rewrite === false) {
+			return 'Upload Failed: Destination File Exists and Allow Rewrite is turned off for file: '.$the_upld_file_name;
+		} else { // true
+			if(!SmartFileSystem::delete($dest_dir.$the_upld_file_name)) { // try to remove the destination file (will be replaced with new uploaded version)
+				return 'Upload Failed: Destination File Exists and could not be removed for file: '.$the_upld_file_name;
+			} //end if
 		} //end if else
 	} //end if
 	//-- do upload
-	if(!is_uploaded_file($the_upld_file_tmpname)) {
-		return 'FATAL ERROR: Uploaded File reports a wrong type ...';
+	if(!is_uploaded_file((string)$the_upld_file_tmpname)) {
+		return 'FATAL ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name;
 	} //end if
 	$fsize_upld = (int) SmartFileSystem::get_file_size($the_upld_file_tmpname);
 	if((int)$fsize_upld > (int)$max_size) {
-		return 'Upload Failed: File is oversized';
+		return 'Upload Failed: File is oversized: '.$the_upld_file_name;
 	} //end if
 	if(!SmartFileSystem::move_uploaded($the_upld_file_tmpname, $dest_dir.$the_upld_file_name, true)) { // also check sha1-file
-		return 'Failed to Move the Uploaded File to the Destination Directory';
+		return 'Failed to Move the Uploaded File: '.$the_upld_file_name.' to the Destination Directory';
 	} //end if
 	//--
 	return ''; // OK

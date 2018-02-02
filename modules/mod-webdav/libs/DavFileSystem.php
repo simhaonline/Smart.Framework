@@ -236,14 +236,22 @@ final class DavFileSystem {
 		// dot files and valid names are checked in the function below
 		//--
 		//print_r($_FILES);
-		$result = \SmartUtils::store_uploaded_file(
-			(string) $dav_vfs_path,
-			'file',
-			0
-		);
+		$result = '';
+		for($i=0; $i<10; $i++) {
+			// $result is mixed !!!
+			$result = \SmartUtils::store_uploaded_file(
+				(string) $dav_vfs_path,
+				'file', 		// var name
+				(int) $i, 		// var index: zero (first) of multi upload $_FILES array[]
+				'versioning' 	// for browser based uploads is safe to use versioning to avoid rewrite something (in webdav is not necessary because will prompt file overwrite)
+			);
+			if($result) {
+				break;
+			} //end if
+		} //end if
 		if($result) {
 			http_response_code(400); // upload failed for some reasons
-			echo self::answerPostErr400('File Upload: '.$result, (string)$dav_url);
+			echo self::answerPostErr400('File #'.($i+1).' Upload Errors @ '.$result, (string)$dav_url);
 			return 400;
 		} //end if
 		//--
@@ -426,6 +434,13 @@ final class DavFileSystem {
 			} else {
 				$detect_dav_url_back = '';
 			} //end if else
+			$info_extensions_list = '';
+			if((defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) AND ((string)trim((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS) != '')) {
+				$info_extensions_list = 'Allowed Extensions List: '.SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS;
+			} else {
+				$info_extensions_list = 'Disallowed Extensions List: '.SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS;
+			} //end if else
+			$info_restr_charset = 'restricted charset as [ _ a-z A-Z 0-9 - . @ ]';
 			$html = (string) \SmartMarkersTemplating::render_file_template(
 				\SmartModExtLib\Webdav\DavServer::getTplPath().'answer-get-path.mtpl.html',
 				[
@@ -451,7 +466,9 @@ final class DavFileSystem {
 					'BASE-URL' 			=> (string) $base_url,
 					'IS-ROOT' 			=> (string) ($dav_is_root_path ? 'yes' : 'no'),
 					'BACK-PATH' 		=> (string) $detect_dav_url_back,
-					'DISPLAY-QUOTA' 	=> (string) (defined('SMART_WEBDAV_SHOW_USAGE_QUOTA') AND (SMART_WEBDAV_SHOW_USAGE_QUOTA === true)) ? 'yes' : 'no'
+					'DISPLAY-QUOTA' 	=> (string) (defined('SMART_WEBDAV_SHOW_USAGE_QUOTA') AND (SMART_WEBDAV_SHOW_USAGE_QUOTA === true)) ? 'yes' : 'no',
+					'DIR-NEW-INFO' 		=> (string) 'INFO: For safety the creation of new directories is enforced as this: .dot directories are not allowed and all directory names will be converted using a '.$info_restr_charset.' only.',
+					'MAX-UPLOAD-INFO' 	=> (string) 'INFO: Can upload a max. of 10 files at once with a max total size of '.\SmartUtils::pretty_print_bytes(\SmartFileSysUtils::max_upload_size(), 0, '').'. For safety the .dot files are not allowed and all file names will be converted using a '.$info_restr_charset.' only. '.$info_extensions_list.'.'
 				],
 				'yes' // cache
 			);
