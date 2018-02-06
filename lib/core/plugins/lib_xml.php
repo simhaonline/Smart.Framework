@@ -46,7 +46,7 @@ if(!function_exists('simplexml_load_string')) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.170604
+ * @version     v.180205
  * @package     DATA:XML
  *
  */
@@ -116,14 +116,14 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 			$notice_log = '';
 			foreach($errors as $z => $error) {
 				if(is_object($error)) {
-					$notice_log .= 'PARSE-ERROR: ['.$the_ercode.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n";
+					$notice_log .= 'PARSE-ERROR: ['.$error->code.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Message: '.$error->message."\n";
 				} //end if
 			} //end foreach
 			if((string)$notice_log != '') {
-				Smart::log_notice(__CLASS__.' # NOTICE [SimpleXML / Encoding: '.$this->encoding.']:'."\n".$notice_log."\n".'#END'."\n");
+				Smart::log_notice(__METHOD__.' # NOTICE [SimpleXML / Encoding: '.$this->encoding.']:'."\n".$notice_log."\n".'#END'."\n");
 			} //end if
 			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-				Smart::log_notice(__CLASS__.' # Debug XML-String:'."\n".$xml_str."\n".'#END');
+				Smart::log_notice(__METHOD__.' # Debug XML-String:'."\n".$xml_str."\n".'#END');
 			} //end if
 		} //end if
 	} //end if
@@ -152,7 +152,7 @@ private function FixXmlRoot($xml_str) {
 	//--
 	if(!SmartValidator::validate_html_or_xml_code($xml_str)) { // fix parser bug if empty data passed
 		//--
-		Smart::log_notice(__CLASS__.' # GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xml_str."\n".'#END');
+		Smart::log_notice(__METHOD__.' # GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xml_str."\n".'#END');
 		$xml_str = '<'.'?'.'xml version="1.0" encoding="'.$this->encoding.'"'.'?'.'>'."\n".'<smart_framework_xml_data_parser_fix_tag>'."\n".'</smart_framework_xml_data_parser_fix_tag>';
 		//--
 	} else {
@@ -358,7 +358,7 @@ private function addArrToArr($arr, $val) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.170604
+ * @version     v.180205
  * @package     DATA:XML
  *
  */
@@ -405,7 +405,7 @@ private function create_from_array($y_array) {
 
 	//--
 	if(!is_array($y_array)) {
-		Smart::log_warning(__CLASS__.' # create_from_array expects an Array as parameter ...');
+		Smart::log_warning(__METHOD__.' # create_from_array expects an Array as parameter ...');
 		return '<error>XML Writer requires an Array as parameter</error>';
 	} //end if
 	//--

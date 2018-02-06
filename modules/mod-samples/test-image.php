@@ -35,7 +35,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
-			$this->PageViewSetErrorStatus(500, 'ERROR: Test mode is disabled ...');
+			$this->PageViewSetErrorStatus(503, 'ERROR: Test mode is disabled ...');
 			return;
 		} //end if
 		//--
@@ -116,9 +116,9 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//-- dissalow run this sample if not test mode enabled
 		if(SMART_FRAMEWORK_TEST_MODE !== true) {
 			if(!headers_sent()) {
-				http_response_code(500);
+				http_response_code(503);
 			} //end if
-			die(SmartComponents::http_message_500_internalerror('ERROR: Test mode is disabled ...'));
+			die(SmartComponents::http_message_503_serviceunavailable('ERROR: Test mode is disabled ...'));
 			return;
 		} //end if
 		//--

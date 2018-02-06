@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<d:lockinfo xmlns:d="DAV:" xmlns:s="NS_SMART_FRAMEWORK_WEBDAV:">
-	<s:info>
-		<s:response>Type: DAV/Lock</s:response>
-		<s:method>[####DAV-METHOD|html####]</s:method>
-		<s:path>[####DAV-REQ-PATH|html####]</s:path>
-		<s:owner>[####DAV-AUTHOR|html####]</s:owner>
-	</s:info>
+<d:lockinfo xmlns:d="DAV:" xmlns:s="NS_SMART_FRAMEWORK_WEBDAV:"[####DAV-XML-PREFIX####]>
 	<d:lockdiscovery>
+		<s:info>
+			Type: DAV/Lock
+			Method: [####DAV-METHOD|html####]
+			Path: [####DAV-REQ-PATH|html####]
+			Owner: [####DAV-AUTHOR|html####]
+		</s:info>
 		<d:activelock>
 			<d:locktype>
 				<d:write/>

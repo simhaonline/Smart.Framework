@@ -1,5 +1,5 @@
 <?php
-// Module Lib: \SmartModExtLib\Webdav\ControllerAdmDavFs
+// Module Lib: \SmartModExtLib\Webdav\ControllerAdmCalDavFs
 
 namespace SmartModExtLib\Webdav;
 
@@ -14,7 +14,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //=====================================================================================
 
 
-abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
+abstract class ControllerAdmCalDavFs extends \SmartAbstractAppController {
 
 	// v.180206
 
@@ -29,7 +29,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 	private $dav_is_root_path = true;
 
 
-	public function DavFsRunServer($dav_fs_root_path, $show_usage_quota=false, $nfo_title='DAV@webFS', $nfo_signature='Smart.Framework::WebDAV', $nfo_prefix_crrpath='DAV:', $nfo_lnk_welcome='', $nfo_txt_welcome='WebDAV :: Home', $nfo_svg_logo='modules/mod-webdav/libs/img/files.svg') {
+	public function DavFsRunServer($dav_fs_root_path, $show_usage_quota=false, $nfo_title='DAV@webICalendar', $nfo_signature='Smart.Framework::CalDAV', $nfo_prefix_crrpath='DAV:', $nfo_lnk_welcome='', $nfo_txt_welcome='CalDAV :: Home', $nfo_svg_logo='modules/mod-webdav/libs/img/ical.svg') {
 
 		//-- set nocache headers
 		header('Cache-Control: no-cache'); // HTTP 1.1
@@ -39,7 +39,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//--
 		if(defined('SMART_WEBDAV_SHOW_USAGE_QUOTA')) {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: The constant SMART_WEBDAV_SHOW_USAGE_QUOTA must NOT be defined outside DavRunServer !');
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: The constant SMART_WEBDAV_SHOW_USAGE_QUOTA must NOT be defined outside DavRunServer !');
 			return;
 		} //end if
 		//--
@@ -49,7 +49,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//--
 		if(!defined('SMART_APP_MODULE_AREA') OR (strtoupper((string)SMART_APP_MODULE_AREA) !== 'ADMIN')) {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Requires an Admin Module Area controller to run !');
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: Requires an Admin Module Area controller to run !');
 			return;
 		} //end if
 		//--
@@ -57,7 +57,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//--
 		if(!defined('SMART_APP_MODULE_DIRECT_OUTPUT') OR (SMART_APP_MODULE_DIRECT_OUTPUT !== true)) {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Requires Direct Output set to True in the controller !');
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: Requires Direct Output set to True in the controller !');
 			return;
 		} //end if
 		//--
@@ -65,13 +65,13 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//-- check auth
 		if(!defined('SMART_APP_MODULE_AUTH') OR (SMART_APP_MODULE_AUTH !== true)) {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Requires Module Auth set to True in the controller !');
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: Requires Module Auth set to True in the controller !');
 			return;
 		} //end if
 		//--
 		if(\SmartAuth::check_login() !== true) {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: Authentication required but not detected !');
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: Authentication required but not detected !');
 			return;
 		} //end if
 		//--
@@ -82,19 +82,19 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		$dav_fs_root_path = (string) trim((string)$dav_fs_root_path);
 		if((string)$dav_fs_root_path == '') {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: DAV FS Root Path is Empty !');
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: DAV FS Root Path is Empty !');
 			return;
 		} //end if
 		//--
 		$dav_fs_root_path = (string) \SmartFileSysUtils::add_dir_last_slash((string)\SmartModExtLib\Webdav\DavServer::safePathName((string)$dav_fs_root_path));
 		if(\SmartFileSysUtils::check_if_safe_path((string)$dav_fs_root_path) != '1') {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: DAV FS Root Path is Invalid: '.$dav_fs_root_path);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: DAV FS Root Path is Invalid: '.$dav_fs_root_path);
 			return;
 		} //end if
 		if(\SmartFileSystem::path_exists((string)$dav_fs_root_path) !== true) {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ WebDAV: DAV FS Root Path does Not Exists: '.$dav_fs_root_path);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: DAV FS Root Path does Not Exists: '.$dav_fs_root_path);
 			return;
 		} //end if
 		//--
@@ -127,20 +127,57 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//--
 
 		//--
+		if(defined('SMART_WEBDAV_CALDAV_ACC_PATH')) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: The constant SMART_WEBDAV_CALDAV_ACC_PATH must NOT be defined outside DavRunServer !');
+			return;
+		} //end if
+		define('SMART_WEBDAV_CALDAV_ACC_PATH', $this->dav_vfs_root.'principals/'); // proxys path
+		//--
+		if(defined('SMART_WEBDAV_CALDAV_ICAL_PATH')) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: The constant SMART_WEBDAV_CALDAV_ICAL_PATH must NOT be defined outside DavRunServer !');
+			return;
+		} //end if
+		define('SMART_WEBDAV_CALDAV_ICAL_PATH', $this->dav_vfs_root.'calendars/'.\Smart::safe_username($this->dav_author).'/'); // calendars path
+		//--
+		if(defined('SMART_WEBDAV_CALDAV_ICAL_HOME')) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: The constant SMART_WEBDAV_CALDAV_ICAL_HOME must NOT be defined outside DavRunServer !');
+			return;
+		} //end if
+		define('SMART_WEBDAV_CALDAV_ICAL_HOME', (string)\SmartUtils::get_server_current_full_script().'/page/'.$this->ControllerGetParam('url-page').'/~/calendars/'.\Smart::safe_username($this->dav_author).'/');
+		//--
+		if(defined('SMART_WEBDAV_CALDAV_ICAL_PPS')) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: The constant SMART_WEBDAV_CALDAV_ICAL_PPS must NOT be defined outside DavRunServer !');
+			return;
+		} //end if
+		define('SMART_WEBDAV_CALDAV_ICAL_PPS', (string)\SmartUtils::get_server_current_full_script().'/page/'.$this->ControllerGetParam('url-page').'/~/principals/');
+		//--
+		if(defined('SMART_WEBDAV_CALDAV_ICAL_ACC')) {
+			http_response_code(500);
+			echo \SmartComponents::http_message_500_internalerror('FATAL ERROR @ CalDAV: The constant SMART_WEBDAV_CALDAV_ICAL_ACC must NOT be defined outside DavRunServer !');
+			return;
+		} //end if
+		define('SMART_WEBDAV_CALDAV_ICAL_ACC', (string)\SmartUtils::get_server_current_full_script().'/page/'.$this->ControllerGetParam('url-page').'/~/principals/'.\Smart::safe_username($this->dav_author).'/');
+		//--
+
+		//--
 		// \Smart::log_notice($this->dav_method.': '.$this->dav_request_path.' @ '.$this->dav_vfs_path);
 		//--
 		switch((string)$this->dav_method) {
 
 			case 'OPTIONS':
-				\SmartModExtLib\Webdav\DavFileSystem::methodOptions();
+				\SmartModExtLib\Webdav\DavFsCalDav::methodOptions();
 				break;
 
 			case 'HEAD':
-				\SmartModExtLib\Webdav\DavFileSystem::methodHead((string)$this->dav_vfs_path);
+				\SmartModExtLib\Webdav\DavFsCalDav::methodHead((string)$this->dav_vfs_path);
 				break;
 
 			case 'PROPFIND':
-				\SmartModExtLib\Webdav\DavFileSystem::methodPropfind(
+				\SmartModExtLib\Webdav\DavFsCalDav::methodPropfind(
 					(string) $this->dav_uri,
 					(string) $this->dav_request_path,
 					(string) $this->dav_vfs_path,
@@ -149,50 +186,26 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 				);
 				break;
 
-			case 'LOCK':
-				\SmartModExtLib\Webdav\DavFileSystem::methodLock(
+			case 'REPORT':
+				\SmartModExtLib\Webdav\DavFsCalDav::methodReport(
+					(string) $this->dav_uri,
 					(string) $this->dav_request_path,
-					(string) $this->dav_author
+					(string) $this->dav_vfs_path,
+					(bool)   $this->dav_is_root_path,
+					(string) $this->dav_vfs_root
 				);
-				break;
-
-			case 'UNLOCK':
-				\SmartModExtLib\Webdav\DavFileSystem::methodUnlock(
-					(string) $this->dav_request_path,
-					(string) $this->dav_author
-				);
-				break;
-
-			case 'MKCOL':
-				\SmartModExtLib\Webdav\DavFileSystem::methodMkcol((string)$this->dav_vfs_path);
 				break;
 
 			case 'PUT':
-				\SmartModExtLib\Webdav\DavFileSystem::methodPut((string)$this->dav_vfs_path);
-				break;
-
-			case 'COPY':
-				\SmartModExtLib\Webdav\DavFileSystem::methodCopy(
-					(string) $this->dav_request_path,
-					(string) $this->dav_vfs_path,
-					(string) $this->dav_vfs_root
-				);
-				break;
-
-			case 'MOVE':
-				\SmartModExtLib\Webdav\DavFileSystem::methodMove(
-					(string) $this->dav_request_path,
-					(string) $this->dav_vfs_path,
-					(string) $this->dav_vfs_root
-				);
+				\SmartModExtLib\Webdav\DavFsCalDav::methodPut((string)$this->dav_vfs_path);
 				break;
 
 			case 'DELETE':
-				\SmartModExtLib\Webdav\DavFileSystem::methodDelete((string)$this->dav_vfs_path);
+				\SmartModExtLib\Webdav\DavFsCalDav::methodDelete((string)$this->dav_vfs_path);
 				break;
 
 			case 'GET':
-				\SmartModExtLib\Webdav\DavFileSystem::methodGet(
+				\SmartModExtLib\Webdav\DavFsCalDav::methodGet(
 					(string) $this->dav_method,
 					(string) $this->dav_author,
 					(string) $this->dav_url,
@@ -208,30 +221,6 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 					(string) $nfo_txt_welcome,
 					(string) $nfo_svg_logo
 				);
-				break;
-
-			case 'POST':
-				$webdav_action = $this->RequestVarGet('webdav_action', '', 'string');
-				$new_dir_name  = $this->RequestVarGet('name', '', 'string');
-				switch((string)$webdav_action) {
-					case 'mkd':
-						if((string)trim((string)$new_dir_name != '')) {
-							if((int)\SmartModExtLib\Webdav\DavFileSystem::methodPostMkd((string)$this->dav_url, (string)$this->dav_vfs_path, (string)trim((string)$new_dir_name)) != 200) {
-								return;
-							} //end if
-						} //end if
-						break;
-					case 'upf':
-						if(\Smart::array_size($_FILES) > 0) {
-							if((int)\SmartModExtLib\Webdav\DavFileSystem::methodPostUpf((string)$this->dav_url, (string)$this->dav_vfs_path) != 200) {
-								return;
-							} //end if
-						} //end if
-					default:
-						// do nothing
-				} //end switch
-				http_response_code(302); // force redirect to get
-				header('Location: '.(string)$this->dav_url);
 				break;
 
 			default:

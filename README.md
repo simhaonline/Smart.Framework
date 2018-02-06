@@ -1,11 +1,13 @@
 # Smart.Framework, a modern, high performance PHP / Javascript Framework for Web featuring MVC + Middlewares
 ## License: BSD
-(c) 2009 - 2017 unix-world.org
+(c) 2009 - 2018 unix-world.org
 <b>For support and questions: <i>support @ unix-world.org</i></b>
 <br>
 
 ### Smart.Framework design philosophy:
-* Web oriented approach: to offer a platform for building websites or web based applications for Desktops or Mobiles
+* Web oriented approach: to offer a platform for building websites or web based applications for Web Clients, Desktops or Mobiles
+* Native Cloud Server Services (built-in) for: WebDAV Server, CalDAV Server, CardDAV Server
+* Native Cloud Client Provider (built-in) for HTTP/HTTPS access which supports the full range of HTTP Methods: GET, POST, PUT, DELETE, ...
 * Clean Code: MVC code pattern with built-in Dependency-Injection
 * Hybrid Architecture: combined Multi-Tier and Middlewares architectures featuring the full MVC code pattern
 * Independent Packages: based on modules, plugins and 3rd party (vendor) libraries that can be integrated or developed
@@ -26,7 +28,7 @@ When used with SQL / Non-SQL Databases and combined with In-Memory DB like Redis
 * delivers ~ the same speed as Varnish but allows granulary level caching policy of zones in controllers
 * works also with HTTPS (by example, Varnish does not)
 * caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
-This framework is compatible, stable and tested with PHP 5.4 / 5.5 / 5.6 / 7.0 / 7.1 / 7.2 versions.
+This framework is compatible, stable and actively tested with PHP 5.6 / 7.0 / 7.1 / 7.2 versions.
 
 #### Demo URL:
 <a href="http://demo.unix-world.org/smart-framework/">http://demo.unix-world.org/smart-framework/</a>

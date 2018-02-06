@@ -1,5 +1,10 @@
 	<d:response>
-		<s:itemtype>DAV: item not-found</s:itemtype>
+		<s:info>
+			Type: DAV/MultiStatus
+			Method: [####DAV-METHOD|html####]
+			Path: [####DAV-REQ-PATH|html####]
+			Item: DAV / item not-found
+		</s:info>
 		<d:href>[####DAV-REQUEST-URI|html####]</d:href>
 		<d:propstat>
 			<d:prop/>

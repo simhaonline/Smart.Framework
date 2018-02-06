@@ -17,10 +17,11 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavServer {
 
 	// ::
-	// v.180130
+	// v.180206
 
-	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
+	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
+	const DAV_RESOURCE_TYPE_NOTFOUND = 'notfound';
 
 	private static $httpRequestHeaders = null; // must init to null
 	private static $httpRequestBody = null; // must init to null
@@ -82,11 +83,17 @@ final class DavServer {
 	} //END FUNCTION
 
 
-	public static function answerLocked($dav_req_path, $dav_author, $http_status, $lock_depth, $lock_time, $lock_uuid) {
+	public static function answerLocked($dav_prefix, $dav_req_path, $dav_author, $http_status, $lock_depth, $lock_time, $lock_uuid) {
+		//--
+		$dav_prefix = (string) trim((string)$dav_prefix);
+		if((string)$dav_prefix != '') {
+			$dav_prefix = (string) ' '.$dav_prefix;
+		} //end if
 		//--
 		$xml = (string) \SmartMarkersTemplating::render_file_template(
 			self::$tpl_path.'answer-locked.mtpl.xml',
 			[
+				'DAV-XML-PREFIX' 	=> (string) $dav_prefix,
 				'DAV-METHOD' 		=> (string) 'LOCK',
 				'DAV-REQ-PATH' 		=> (string) $dav_req_path,
 				'DAV-AUTHOR' 		=> (string) $dav_author,
@@ -111,7 +118,12 @@ final class DavServer {
 	} //END FUNCTION
 
 
-	public static function answerMultiStatus($dav_method, $dav_req_path, $is_root_path, $http_status, $dav_req_uri, $arr_items=[], $arr_quota=[]) {
+	public static function answerMultiStatus($dav_prefix, $dav_method, $dav_req_path, $is_root_path, $http_status, $dav_req_uri, $arr_items=[], $arr_quota=[]) {
+		//--
+		$dav_prefix = (string) trim((string)$dav_prefix);
+		if((string)$dav_prefix != '') {
+			$dav_prefix = (string) ' '.$dav_prefix;
+		} //end if
 		//--
 		$http_status = (int) $http_status;
 		if((int)$http_status != 207) {
@@ -127,18 +139,31 @@ final class DavServer {
 				if(\Smart::array_size($val) > 0) { // must check if array is non empty
 					if((string)$val['dav-resource-type'] == (string)self::DAV_RESOURCE_TYPE_COLLECTION) {
 						$val['dav-resource-type'] = (string) self::DAV_RESOURCE_TYPE_COLLECTION;
-					} else {
+						$val['c-xml-restype'] = (string) trim((string)$val['c-xml-restype']);
+						$val['c-xml-data'] = (string) $val['c-xml-data'];
+						if((string)trim((string)$val['c-xml-restype']) == '') {
+							$val['c-xml-restype'] = '<d:collection/>'; // default
+						} //end if else
+					} elseif((string)$val['dav-resource-type'] == (string)self::DAV_RESOURCE_TYPE_NONCOLLECTION) {
 						$val['dav-resource-type'] = (string) self::DAV_RESOURCE_TYPE_NONCOLLECTION;
+						$val['c-xml-restype'] = ''; // non-collection items does not use this
+						$val['c-xml-data'] = (string) $val['c-xml-data'];
+					} else {
+						$val['dav-resource-type'] = (string) self::DAV_RESOURCE_TYPE_NOTFOUND;
+						$val['c-xml-restype'] = ''; // not-found items does not use this
+						$val['c-xml-data'] = ''; // not-found items have no file data
 					} //end if else
 					$item_arr[] = (array) [
-						'IS-ROOT' 			=> (string) ($sett_is_root ? 'yes' : 'no'),
-						'DAV-RESOURCE-TYPE' => (string) $val['dav-resource-type'],
-						'DAV-REQUEST-PATH' 	=> (string) $val['dav-request-path'],
-						'DATE-CREATION' 	=> (string) gmdate('D, d M Y H:i:s O', (int)$val['date-creation-timestamp']),
-						'DATE-MODIFIED' 	=> (string) gmdate('D, d M Y H:i:s O', (int)$val['date-modified-timestamp']),
-						'SIZE-BYTES' 		=> (int)    $val['size-bytes'],
-						'MIME-TYPE' 		=> (string) $val['mime-type'],
-						'E-TAG' 			=> (string) $val['etag-hash']
+						'IS-ROOT' 				=> (string) ($sett_is_root ? 'yes' : 'no'),
+						'DAV-RESOURCE-TYPE' 	=> (string) $val['dav-resource-type'],
+						'DAV-REQUEST-PATH' 		=> (string) $val['dav-request-path'],
+						'DATE-CREATION' 		=> (string) gmdate('D, d M Y H:i:s O', (int)$val['date-creation-timestamp']),
+						'DATE-MODIFIED' 		=> (string) gmdate('D, d M Y H:i:s O', (int)$val['date-modified-timestamp']),
+						'SIZE-BYTES' 			=> (int)    $val['size-bytes'],
+						'MIME-TYPE' 			=> (string) $val['mime-type'],
+						'E-TAG' 				=> (string) $val['etag-hash'],
+						'C-XML-RESOURCE-TYPE' 	=> (string) $val['c-xml-restype'],
+						'C-XML-DATA' 			=> (string) $val['c-xml-data']
 					];
 					$sett_is_root = false; // set to false after first usage
 				} //end if
@@ -153,6 +178,7 @@ final class DavServer {
 		$xml = (string) \SmartMarkersTemplating::render_file_template(
 			self::$tpl_path.'answer-multistatus.mtpl.xml',
 			[
+				'DAV-XML-PREFIX' 	=> (string) $dav_prefix,
 				'DAV-METHOD' 		=> (string) $dav_method,
 				'DAV-REQ-PATH' 		=> (string) $dav_req_path,
 				'DAV-REQUEST-URI' 	=> (string) $dav_req_uri,
@@ -234,6 +260,74 @@ final class DavServer {
 		} //end if
 		//--
 		return self::$httpRequestBody; // mixed: string / resource
+		//--
+	} //END FUNCTION
+
+
+	public static function parseXMLBody($xml, $xns, $xkey) {
+		//--
+		if(!function_exists('simplexml_load_string')) {
+			//--
+			\Smart::raise_error('ERROR: The PHP SimpleXML Parser Extension is required for the SmartFramework XML Library');
+			//--
+			return array();
+			//--
+		} //end if
+		//--
+		@libxml_use_internal_errors(true);
+		@libxml_clear_errors();
+		//--
+		$sxe = @simplexml_load_string( // object not array !!
+			(string) $xml,
+			'SimpleXMLElement', // this element standard class
+			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
+		);
+		//--
+		$errors = (array) @libxml_get_errors();
+		//--
+		if(\Smart::array_size($errors) > 0) {
+			//--
+			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				$notice_log = '';
+				foreach($errors as $z => $error) {
+					if(is_object($error)) {
+						$notice_log .= 'PARSE-ERROR: ['.$error->code.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Message: '.$error->message."\n";
+					} //end if
+				} //end foreach
+				if((string)$notice_log != '') {
+					Smart::log_notice(__METHOD__.' # NOTICE [SimpleXML]:'."\n".$notice_log."\n".'#END'."\n");
+				} //end if
+				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					Smart::log_notice(__METHOD__.' # Debug XML-String:'."\n".$xml."\n".'#END');
+				} //end if
+			} //end if
+			//--
+			return array();
+			//--
+		} //end if
+		//--
+		$arr = array();
+		//--
+		$ns = $sxe->getNamespaces(true);
+		if(is_array($ns)) {
+			foreach($ns as $sp => $v) {
+				if(((string)$xns == '') OR ((string)strtolower((string)$xns) == (string)strtolower((string)$sp))) {
+					$child = $sxe->children($ns[(string)$sp]);
+					if(is_object($child)) {
+						foreach ($child as $k => $out_ns) {
+							if((string)strtolower((string)$k) == (string)strtolower((string)$xkey)) {
+								$arr[] = (string) $out_ns;
+							} //end if
+						} //end forach
+					} //end if
+				} //end if
+			} //end foreach
+		} //end if
+		//--
+		@libxml_clear_errors();
+		@libxml_use_internal_errors(false);
+		//--
+		return (array) $arr;
 		//--
 	} //END FUNCTION
 
