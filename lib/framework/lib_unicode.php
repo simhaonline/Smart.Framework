@@ -150,7 +150,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.170622
+ * @version     v.180209
  * @package     Base
  *
  */
@@ -391,6 +391,26 @@ public static function str_icontains($ystring, $ypart) {
 
 //================================================================
 /**
+ * Detect Charset 				:: Try to detect the charset
+ *
+ * @access 		private
+ * @internal
+ *
+ * @param STRING 	$ystr		:: The string
+ * @param STRING 	$csetlist 	:: The comma separed list of allowed charsets
+ *
+ * @return MIXED				:: The detected charset if any as string or bool FALSE if could not detect
+ */
+public static function detect_encoding($ystr, $csetlist='UTF-8, ISO-8859-1, ISO-8859-15, ISO-8859-2, ISO-8859-9, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-16, UTF-7, ASCII, SJIS, EUC-JP, JIS, ISO-2022-JP, EUC-CN, GB18030, ISO-2022-KR, KOI8-R, KOI8-U') {
+	//--
+	return @mb_detect_encoding((string)$ystr, (string)$csetlist, true); // mixed: (bool) FALSE or (string) 'CHARSET'
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
  * Unicode Safe strtolower() 	:: Make a Unicode string lowercase ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2
  *
  * @param STRING 	$ystr		:: The string
@@ -403,7 +423,7 @@ public static function str_tolower($ystr) {
 		return '';
 	} //end if
 	//--
-	return (string) @mb_convert_case((string)$ystr, MB_CASE_LOWER, @mb_detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-2', true)); // much better than mb_strtolower($ystr);
+	return (string) @mb_convert_case((string)$ystr, MB_CASE_LOWER, self::detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-2')); // much better than mb_strtolower($ystr);
 	//--
 } //END FUNCTION
 //================================================================
@@ -423,7 +443,7 @@ public static function str_toupper($ystr) {
 		return '';
 	} //end if
 	//--
-	return (string) @mb_convert_case((string)$ystr, MB_CASE_UPPER, @mb_detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-2', true)); // much better than mb_strtoupper($ystr);
+	return (string) @mb_convert_case((string)$ystr, MB_CASE_UPPER, self::detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-2')); // much better than mb_strtoupper($ystr);
 	//--
 } //END FUNCTION
 //================================================================
@@ -451,19 +471,21 @@ public static function convert_charset($ystr, $y_charset_from='', $y_charset_to=
 	$ystr = (string) SmartFrameworkSecurity::FilterUnsafeString((string)$ystr); // Fix: remove unsafe characters from original string
 	//--
 	if((string)$y_charset_from == '') { // if empty, try to detect it
-		$y_charset_from = @mb_detect_encoding((string)$ystr, 'UTF-8, ISO-8859-1, ISO-8859-15, ISO-8859-2, ISO-8859-9, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-16, UTF-7, ASCII, SJIS, EUC-JP, JIS, ISO-2022-JP, EUC-CN, GB18030, ISO-2022-KR, KOI8-R, KOI8-U', true);
+		$y_charset_from = self::detect_encoding((string)$ystr);
 	} //end if else
 	//--
 	if((string)$y_charset_to == '') { // if no charset provided use the default
 		$y_charset_to = (string) SMART_FRAMEWORK_CHARSET; // if default is defined is checked in the top of this lib
 	} //end if
 	//--
-	$y_charset_from = strtoupper((string)$y_charset_from);
+	if($y_charset_from) { // avoid make it string if bool FALSE !!
+		$y_charset_from = strtoupper((string)$y_charset_from);
+	} //end if
 	$y_charset_to = strtoupper((string)$y_charset_to);
 	//--
-	if(((string)$y_charset_from != '') AND ((string)$y_charset_to != '')) {
+	if(($y_charset_from) AND ((string)$y_charset_to != '')) {
 		//--
-		$ystr = (string) @mb_convert_encoding((string)$ystr, (string)$y_charset_to, (string)$y_charset_from);
+		$ystr = (string) @mb_convert_encoding((string)$ystr, (string)$y_charset_to, $y_charset_from);
 		//--
 		if((string)SMART_FRAMEWORK_CHARSET == 'UTF-8') {
 			if((string)$y_charset_to != (string)SMART_FRAMEWORK_CHARSET) {

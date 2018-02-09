@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.180206
+	// v.180209
 
 	public static function methodOptions() { // 200
 		//--
@@ -492,6 +492,8 @@ final class DavFileSystem {
 		} //end if
 		//--
 		http_response_code(200); // HTTP/1.1 200 OK
+		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 day')).' '.date('H:i:s').' GMT'); // HTTP 1.0
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		header('Content-length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
 		header('Content-Type: '.(string)self::mimeTypeFile($dav_vfs_path));
 		readfile($dav_vfs_path);

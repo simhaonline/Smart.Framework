@@ -2,12 +2,9 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=0">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta charset="utf-8">
 	<title>Monthly - A jQuery Calendar Plugin</title>
 	<meta name="description" content="A method for responsive tables">
-<!-- CSS ======================================================
-	<link rel="stylesheet" href="css/responsivetables.css">-->
 	<!-- Demo CSS (don't use) -->
 	<style type="text/css">
 		body, html {
@@ -124,20 +121,21 @@
 		<br>
 <!--	<a href="https://github.com/kthornbloom/Monthly" class="button">DOWNLOAD / DOCS</a> -->
 </div>
-<!-- JS ======================================================= -->
 <script type="text/javascript">
-//$(window).load( function() {
-$(function() {
+jQuery(function() {
 
-		$('#mycalendar').monthly({
+		// main calendar
+		jQuery('#mycalendar').monthly({
 			mode: 'event',
 			jsonUrl: 'events.json',
 			dataType: 'json'
+		//	events: { 'monthly': [] } // this can be used as alternate to jsonUrl (same structure as events.json)
 		//	dataType: 'xml',
 		//	xmlUrl: 'events.xml'
 		});
 
-		$('#mycalendar2').monthly({
+		// mini calendar, picker
+		jQuery('#mycalendar2').monthly({
 			mode: 'picker',
 			target: '#mytarget',
 			setWidth: '250px',
@@ -147,6 +145,7 @@ $(function() {
 			disablePast: true
 		});
 
+	// just test to see if ajax is working, as this example needs to run on URL not file protocol
 	switch(window.location.protocol) {
 		case 'http:':
 		case 'https:':
@@ -159,6 +158,5 @@ $(function() {
 
 });
 </script>
-
 </body>
 </html>

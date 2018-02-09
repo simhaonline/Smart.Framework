@@ -3,7 +3,7 @@
 // Controller: Webdav/TestCardDAV (FileSystem)
 // Route: admin.php/page/webdav.test-carddav/~
 // Author: unix-world.org
-// v.180206
+// v.180209
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -43,8 +43,9 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCardDa
 			return;
 		} //end if
 		//--
+		// !!! To SECURE the below folder for PRIVATE access, create a .htaccess in wpub/webapps-content to deny all access to this folder and sub-folders !!!
 		$this->DavFsRunServer(
-			'wpub/webapps-content/test-carddav', // !!! To SECURE the folder for PRIVATE access, create a .htaccess in wpub/webapps-content to deny all access to this folder and sub-folders !!!
+			'wpub/webapps-content/test-carddav',
 			true // you may disable this on large webdav file systems to avoid huge calculations
 		);
 		//--

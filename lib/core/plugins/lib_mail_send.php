@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170913
+ * @version 	v.180209
  * @package 	Mailer:Send
  *
  */
@@ -462,6 +462,7 @@ private function prepare_subject($subject) {
 
 //=====================================================================================
 // v.150119, added sha512 checksum
+// v.180209, added quoted printable fix
 private function build_message($part) {
 	//--
 	$part = (array) $part;
@@ -471,7 +472,7 @@ private function build_message($part) {
 	if((string)$part['encode'] == '7bit') {
 		// leave as is
 //	} elseif((string)$part['encode'] == 'quoted-printable') {
-//		$part['message'] = quoted_printable_encode((string)$part['message']);
+//		$part['message'] = str_replace(' ', '-', quoted_printable_encode((string)$part['message'])); // {{{SYNC-QUOTED-PRINTABLE-FIX}}}
 //	} elseif((string)$part['encode'] == 'uuencode') {
 //		$part['message'] = chunk_split(convert_uuencode((string)$part['message']), 76, "\r\n");
 	} else { // base64 encode

@@ -17,12 +17,12 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCardDav {
 
 	// ::
-	// v.180206
+	// v.180209
 
 	private static $carddav_ns = 'xmlns:card="urn:ietf:params:xml:ns:carddav"';
 	private static $carddav_urn = 'urn:ietf:params:xml:ns:carddav';
 	private static $carddav_rep_data = ':address-data';
-	private static $carddav_max_res_size = 2500000; // 2.5MB
+	private static $carddav_max_res_size = 1500000; // 1.5MB
 
 	public static function methodOptions() { // 200 @ https://tools.ietf.org/html/rfc6352
 		//--
@@ -164,9 +164,15 @@ final class DavFsCardDav {
 			return 405;
 		} //end if
 		//--
+		$oversized = false;
+		$max_res_size = \Smart::format_number_int(self::$carddav_max_res_size,'+');
 		$vcf_data = '';
 		while($data = fread($fp, 1024*8)) {
 			$vcf_data .= $data;
+			if((int)strlen((string)$vcf_data) > (int)$max_res_size) {
+				$oversized = true;
+				break;
+			} //end if
 		} //end while
 		//--
 		fclose($fp);
@@ -175,9 +181,8 @@ final class DavFsCardDav {
 			http_response_code(423); // locked: could not achieve fopen advisory lock
 			return 423;
 		} //end if
-		$max_res_size = \Smart::format_number_int(self::$carddav_max_res_size,'+');
-		if((int)strlen((string)$vcf_data) > (int)$max_res_size) {
-			http_response_code(507); // not enough space
+		if($oversized === true) {
+			http_response_code(507); // not enough space (for oversized)
 			return 507;
 		} //end if
 		//--
@@ -338,6 +343,8 @@ final class DavFsCardDav {
 		} //end if
 		//--
 		http_response_code(200); // HTTP/1.1 200 OK
+		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 day')).' '.date('H:i:s').' GMT'); // HTTP 1.0
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		header('Content-length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
 		header('Content-Type: '.(string)self::mimeTypeFile($dav_vfs_path));
 		readfile($dav_vfs_path);

@@ -676,7 +676,7 @@ private function printarray($array, $part_id) {
 final class SmartMailerMimeExtract {
 
 	// ->
-	// v.170609
+	// v.180209
 
 //================================================================
 	//--
@@ -1065,6 +1065,7 @@ private function _boundarySplit($input, $boundary) {
 
 
 //================================================================
+// UNIXW :: (FIXED)
 // Given a header, this function will decode it
 // according to RFC2047. Probably not *exactly*
 // conformant, but it does pass all the given
@@ -1079,10 +1080,10 @@ private function _decodeHeader($input) {
 	$matches = array();
 	while(preg_match('/(=\?([^?]+)\?(q|b)\?([^?]*)\?=)/i', (string)$input, $matches)) { // insensitive
 		//--
-		$encoded  = $matches[1];
-		$charset  = $matches[2];
-		$encoding = $matches[3];
-		$text     = $matches[4];
+		$encoded  = (string) $matches[1];
+		$charset  = (string) $matches[2];
+		$encoding = (string) $matches[3];
+		$text     = (string) $matches[4];
 		//--
 		if(((string)$charset == '') OR ((string)$charset == 'us-ascii')) {
 			$charset = 'iso-8859-1'; // correction :: {{{SYNC-CHARSET-FIX}}}
@@ -1094,6 +1095,7 @@ private function _decodeHeader($input) {
 				$text = SmartUnicode::convert_charset($text, $charset, $this->charset); // {{{SYNC-CHARSET-CONVERT}}}
 				break;
 			case 'Q':
+				$text = str_replace('_', ' ', $text); // // {{{SYNC-QUOTED-PRINTABLE-FIX}}} fix for google mail subjects ; normally on QP the _ must be encoded as =5F ; because google mail use the _ instead of space in all emails subject, it is considered a major enforcement to enforce this replacement
 				$text = quoted_printable_decode($text);
 				$text = SmartUnicode::convert_charset($text, $charset, $this->charset); // {{{SYNC-CHARSET-CONVERT}}}
 				break;
