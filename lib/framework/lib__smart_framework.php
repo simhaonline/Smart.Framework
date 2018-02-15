@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.180117
+ * @version 	v.180215
  * @package 	Application
  *
  */
@@ -1215,7 +1215,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageSetInCache($storage_namespace, $unique_key, $content, $expiration) {
 		//--
-		if(empty($content)) {
+		if($content === null) { // must allow empty array ; dissalow null as null is the returned result by get key if key not found
 			return false;
 		} //end if
 		//--
