@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.180202.r3
+ * @version 	v.180216
  * @package 	Base
  *
  */
@@ -1963,7 +1963,7 @@ public static function get_server_os() {
 		//--
 		$the_lower_os = (string) strtolower((string)$_SERVER['SERVER_SOFTWARE']);
 		//--
-		switch(strtolower(PHP_OS)) { // {{{SYNC-SRV-OS-ID}}}
+		switch(strtolower((string)PHP_OS)) { // {{{SYNC-SRV-OS-ID}}}
 			case 'mac':
 			case 'macos':
 			case 'darwin':
@@ -2000,6 +2000,8 @@ public static function get_server_os() {
 					$out = 'debian';
 				} elseif(strpos($the_lower_os, '(ubuntu') !== false) {
 					$out = 'ubuntu';
+				} elseif(strpos($the_lower_os, '(mint') !== false) {
+					$out = 'mint';
 				} elseif(strpos($the_lower_os, '(redhat') !== false) {
 					$out = 'redhat';
 				} elseif(strpos($the_lower_os, '(centos') !== false) {
@@ -2008,53 +2010,16 @@ public static function get_server_os() {
 					$out = 'fedora';
 				} elseif(strpos($the_lower_os, '(suse') !== false) {
 					$out = 'suse';
-				} elseif(strpos($the_lower_os, '(novell') !== false) {
-					$out = 'novell';
-				} elseif(strpos($the_lower_os, '(slack') !== false) {
-					$out = 'slack';
-				} elseif(strpos($the_lower_os, '(gentoo') !== false) {
-					$out = 'gentoo';
-				} elseif(strpos($the_lower_os, '(knoppix') !== false) {
-					$out = 'knoppix';
-				} elseif(strpos($the_lower_os, '(arch') !== false) {
-					$out = 'archlnx';
 				} //end if else
 				//-
-				break;
-			case 'ibmaix':
-			case 'aix':
-				$out = 'ibm-aix'; //IBM AIX
-				break;
-			case 'hp-ux':
-			case 'hpux':
-				$out = 'hp-ux'; //HP UNIX
 				break;
 			case 'opensolaris':
 			case 'openindiana':
-				$out = 'opensolaris'; // OPEN SOLARIS / OPEN INDIANA
-				break;
 			case 'nexenta':
-				$out = 'nexenta'; // NEXENTA SOLARIS
-				break;
 			case 'solaris':
-			case 'sun':
 			case 'sunos':
-				$out = 'solaris'; // SUN SOLARIS
-				//-
-				if((strpos($the_lower_os, '(opensolaris') !== false) OR (strpos($the_lower_os, '(openindiana') !== false)) {
-					$out = 'opensolaris';
-				} elseif(strpos($the_lower_os, '(nexenta') !== false) {
-					$out = 'nexenta';
-				} //end if else
-				//-
-				break;
-			case 'sgi':
-			case 'irix':
-				$out = 'sgi-irix'; //IRIX
-				break;
-			case 'sco':
-			case 'unixware':
-				$out = 'sco-uxw'; //SCO UNIXWARE
+			case 'sun':
+				$out = 'solaris'; // SOLARIS
 				break;
 			default:
 				// UNKNOWN
@@ -2159,6 +2124,7 @@ public static function get_os_browser_ip($y_mode='') {
 	if(Smart::array_size($xout) <= 0) {
 		//--
 		$wp_browser = '[?]';
+		$wp_class = '[?]';
 		$wp_os = '[?]';
 		$wp_ip = '[?]';
 		$wp_px = '[?]';
@@ -2167,43 +2133,53 @@ public static function get_os_browser_ip($y_mode='') {
 		$the_lower_signature = (string) strtolower((string)$_SERVER['HTTP_USER_AGENT']);
 		//--
 		// {{{SYNC-CLI-BW-ID}}}
-		//-- identify browser
+		//-- identify browser ; real supported browser classes: gk, ie, wk ; other classes as: xy are not trusted ... ;  tx / rb are text/robots browsers
 		if((strpos($the_lower_signature, 'firefox') !== false) OR (strpos($the_lower_signature, 'iceweasel') !== false) OR (strpos($the_lower_signature, ' fxios/') !== false)) {
 			$wp_browser = 'fox'; // firefox
+			$wp_class = 'gk'; // gecko class
+		} elseif(strpos($the_lower_signature, 'seamonkey') !== false) {
+			$wp_browser = 'smk'; // mozilla seamonkey
+			$wp_class = 'gk'; // gecko class
 		} elseif(strpos($the_lower_signature, ' edge/') !== false) {
 			$wp_browser = 'iee'; //microsoft edge
+			$wp_class = 'ie'; // trident class
 		} elseif((strpos($the_lower_signature, ' msie ') !== false) OR (strpos($the_lower_signature, ' trident/') !== false)) {
 			$wp_browser = 'iex'; // internet explorer (must be before any stealth browsers as ex.: opera)
+			$wp_class = 'ie'; // trident class
 		} elseif((strpos($the_lower_signature, 'opera') !== false) OR (strpos($the_lower_signature, ' opr/') !== false) OR (strpos($the_lower_signature, ' oupeng/') !== false) OR (strpos($the_lower_signature, ' opios/') !== false)) {
 			$wp_browser = 'opr'; // opera
-		} elseif((strpos($the_lower_signature, 'chrome') !== false) OR (strpos($the_lower_signature, 'chromium') !== false) OR (strpos($the_lower_signature, ' crios/') !== false)) {
+			$wp_class = 'wk'; // webkit class
+		} elseif((strpos($the_lower_signature, 'chrome') !== false) OR (strpos($the_lower_signature, 'chromium') !== false) OR (strpos($the_lower_signature, 'iridium') !== false) OR (strpos($the_lower_signature, ' crios/') !== false)) {
 			$wp_browser = 'crm'; // chrome
-		} elseif(strpos($the_lower_signature, 'galeon') !== false) {
-			$wp_browser = 'gal'; // galeon (gnome)
-		} elseif(strpos($the_lower_signature, 'epiphany') !== false) {
+			$wp_class = 'wk'; // webkit class
+		} elseif(strpos($the_lower_signature, 'epiphany') !== false) { // must be detected before safari because includes safari signature
 			$wp_browser = 'eph'; // epiphany (gnome)
-		} elseif(strpos($the_lower_signature, 'konqueror') !== false) {
+			$wp_class = 'xy'; // various class
+		} elseif(strpos($the_lower_signature, 'konqueror') !== false) { // must be detected before safari because includes safari signature
 			$wp_browser = 'knq'; // konqueror (kde)
-		} elseif((strpos($the_lower_signature, 'midori') !== false) AND (strpos($the_lower_signature, 'webkit/') !== false)) {
-			$wp_browser = 'mid'; // midori over webkit
-		} elseif((strpos($the_lower_signature, 'omniweb') !== false) AND (strpos($the_lower_signature, '(khtml, like gecko') !== false)) {
-			$wp_browser = 'omw'; // omniweb
-		} elseif((strpos($the_lower_signature, 'maxthon') !== false) OR (strpos($the_lower_signature, 'mxbrowser') !== false)) {
-			$wp_browser = 'mxt'; // maxthon
-		} elseif(strpos($the_lower_signature, 'netsurf/') !== false) {
+			$wp_class = 'xy'; // various class
+		} elseif((strpos($the_lower_signature, 'safari') !== false) OR (strpos($the_lower_signature, 'applewebkit') !== false)) {
+			$wp_browser = 'sfr'; // safari
+			$wp_class = 'wk'; // webkit class
+		} elseif(strpos($the_lower_signature, 'webkit') !== false) { // general webkit signature, untrusted
+			$wp_browser = 'wkt'; // webkit
+			$wp_class = 'xy'; // various class
+		} elseif((strpos($the_lower_signature, 'mozilla') !== false) OR (strpos($the_lower_signature, 'gecko') !== false)) { // general mozilla signature, untrusted
+			$wp_browser = 'moz'; // mozilla derivates
+			$wp_class = 'xy'; // various class
+		} elseif(strpos($the_lower_signature, 'netsurf/') !== false) { // it have just a simple signature
 			$wp_browser = 'nsf'; // netsurf
-		} elseif((strpos($the_lower_signature, 'safari') !== false) OR (strpos($the_lower_signature, 'webkit') !== false)) {
-			$wp_browser = 'sfr'; // safari / webkit
-		} elseif((strpos($the_lower_signature, 'mozilla') !== false) OR (strpos($the_lower_signature, 'seamonkey') !== false)) {
-			$wp_browser = 'moz'; // mozilla / seamonkey or other mozilla derivates
-		} elseif(strpos($the_lower_signature, 'lynx') !== false) {
-			$wp_browser = 'lyx'; // lynx (text)
+			$wp_class = 'xy'; // various class
+		} elseif((strpos($the_lower_signature, 'lynx') !== false) OR (strpos($the_lower_signature, 'links') !== false)) {
+			$wp_browser = 'lyx'; // lynx / links (text browser)
+			$wp_class = 'tx'; // text class
 		} elseif(defined('SMART_FRAMEWORK_IDENT_ROBOTS')) {
 			$robots = (array) Smart::list_to_array((string)SMART_FRAMEWORK_IDENT_ROBOTS, false);
 			$imax = Smart::array_size($robots);
 			for($i=0; $i<$imax; $i++) {
 				if(strpos($the_lower_signature, (string)$robots[$i]) !== false) {
 					$wp_browser = 'bot'; // Robot
+					$wp_class = 'rb'; // bot class
 					break;
 				} //end if
 			} //end for
@@ -2211,28 +2187,21 @@ public static function get_os_browser_ip($y_mode='') {
 		//-- this is just for self-robot which name is always unique and impossible to guess ; this must override the rest of detections just in the case that someone adds it to the ident robots in init ...
 		if((string)trim($the_lower_signature) == (string)strtolower(self::get_selfrobot_useragent_name())) {
 			$wp_browser = '@s#';
+			$wp_class = 'rb'; // bot class
 		} //end if
 		//--
 		// {{{SYNC-CLI-OS-ID}}}
 		//-- identify os
-		if(strpos($the_lower_signature, 'windows') !== false) {
+		if((strpos($the_lower_signature, 'windows') !== false) OR (strpos($the_lower_signature, 'winnt') !== false)) {
 			$wp_os = 'win'; // ms windows
-		} elseif((strpos($the_lower_signature, ' mac ') !== false) OR (strpos($the_lower_signature, 'os x') !== false) OR (strpos($the_lower_signature, 'osx') !== false) OR (strpos($the_lower_signature, 'darwin') !== false)) {
+		} elseif((strpos($the_lower_signature, ' mac ') !== false) OR (strpos($the_lower_signature, 'macos') !== false) OR (strpos($the_lower_signature, 'os x') !== false) OR (strpos($the_lower_signature, 'osx') !== false) OR (strpos($the_lower_signature, 'darwin') !== false)) {
 			$wp_os = 'mac'; // apple mac / osx / darwin
 		} elseif(strpos($the_lower_signature, 'linux') !== false) {
 			$wp_os = 'lnx'; // *linux
-		} elseif((strpos($the_lower_signature, 'netbsd') !== false) OR (strpos($the_lower_signature, 'openbsd') !== false) OR (strpos($the_lower_signature, 'freebsd') !== false) OR (strpos($the_lower_signature, ' bsd ') !== false)) {
+		} elseif((strpos($the_lower_signature, 'netbsd') !== false) OR (strpos($the_lower_signature, 'openbsd') !== false) OR (strpos($the_lower_signature, 'freebsd') !== false) OR (strpos($the_lower_signature, 'dragonfly') !== false) OR (strpos($the_lower_signature, ' bsd ') !== false)) {
 			$wp_os = 'bsd'; // *bsd
 		} elseif((strpos($the_lower_signature, 'solaris') !== false) OR (strpos($the_lower_signature, 'sunos') !== false) OR (strpos($the_lower_signature, 'nexenta') !== false) OR (strpos($the_lower_signature, 'openindiana') !== false)) {
 			$wp_os = 'sun'; // sun solaris incl clones
-		} elseif(strpos($the_lower_signature, 'hp/ux') !== false) {
-			$wp_os = 'hpx'; // hp/ux
-		} elseif(strpos($the_lower_signature, 'aix') !== false) {
-			$wp_os = 'aix'; // ibm/aix
-		} elseif((strpos($the_lower_signature, 'sco') !== false) OR (strpos($the_lower_signature, 'unixware') !== false)) {
-			$wp_os = 'sco'; // sco unixware
-		} elseif(strpos($the_lower_signature, 'irix') !== false) {
-			$wp_os = 'irx'; // silicon graphics' irix
 		} //end if
 		//-- identify mobile os
 		if((strpos($the_lower_signature, 'iphone') !== false) OR (strpos($the_lower_signature, 'ipad') !== false) OR (strpos($the_lower_signature, ' opios/') !== false)) {
@@ -2244,14 +2213,8 @@ public static function get_os_browser_ip($y_mode='') {
 		} elseif((strpos($the_lower_signature, 'windows ce') !== false) OR (strpos($the_lower_signature, 'windows phone') !== false) OR (strpos($the_lower_signature, 'windows mobile') !== false) OR (strpos($the_lower_signature, 'windows rt') !== false)) {
 			$wp_os = 'wmo'; // ms windows mobile
 			$wp_mb = 'yes';
-		} elseif((strpos($the_lower_signature, 'linux mobile') !== false) OR (strpos($the_lower_signature, 'ubuntu; mobile') !== false) OR (strpos($the_lower_signature, 'tizen') !== false)) {
+		} elseif((strpos($the_lower_signature, 'linux mobile') !== false) OR (strpos($the_lower_signature, 'ubuntu; mobile') !== false) OR (strpos($the_lower_signature, 'tizen') !== false) OR (strpos($the_lower_signature, 'blackberry') !== false)) {
 			$wp_os = 'lxm'; // linux mobile
-			$wp_mb = 'yes';
-		} elseif(strpos($the_lower_signature, 'blackberry') !== false) {
-			$wp_os = 'bby'; // blackberry
-			$wp_mb = 'yes';
-		} elseif((strpos($the_lower_signature, 'webos') !== false) OR (strpos($the_lower_signature, ' palm') !== false)) {
-			$wp_os = 'pwo'; // palm / web os
 			$wp_mb = 'yes';
 		} //end if
 		//-- identify ip addr
@@ -2260,12 +2223,13 @@ public static function get_os_browser_ip($y_mode='') {
 		$wp_px = self::get_ip_proxyclient();
 		//-- out data arr
 		$xout = array(
-			'signature'	=> (string)$_SERVER['HTTP_USER_AGENT'],
-			'mobile' 	=> (string)$wp_mb,
-			'os' 		=> (string)$wp_os,
-			'bw' 		=> (string)$wp_browser,
-			'ip' 		=> (string)$wp_ip,
-			'px' 		=> (string)$wp_px
+			'signature'	=> (string) $_SERVER['HTTP_USER_AGENT'],
+			'mobile' 	=> (string) $wp_mb,
+			'os' 		=> (string) $wp_os,
+			'bw' 		=> (string) $wp_browser,
+			'bc' 		=> (string) $wp_class,
+			'ip' 		=> (string) $wp_ip,
+			'px' 		=> (string) $wp_px
 		);
 		//--
 		self::$cache['get_os_browser_ip'] = (array) $xout;

@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.170920
+ * @version 	v.180216
  * @package 	Components:Core
  *
  */
@@ -2791,21 +2791,29 @@ public static function get_imgdesc_by_bw_id($y_bw) {
 			$desc = 'Lynx Text Browser';
 			$pict = 'browser/lyx';
 			break;
-		case 'moz':
-			$desc = 'Mozilla / Seamonkey';
-			$pict = 'browser/moz';
-			break;
 		case 'fox':
 			$desc = 'Mozilla Firefox';
 			$pict = 'browser/fox';
 			break;
+		case 'smk':
+			$desc = 'Mozilla Seamonkey';
+			$pict = 'browser/smk';
+			break;
+		case 'moz':
+			$desc = 'Mozilla (Derivate)';
+			$pict = 'browser/moz';
+			break;
 		case 'crm':
-			$desc = 'Google Chrome / Chromium';
+			$desc = 'Google Chromium / Chrome';
 			$pict = 'browser/crm';
 			break;
 		case 'sfr':
 			$desc = 'Apple Safari / Webkit';
 			$pict = 'browser/sfr';
+			break;
+		case 'wkt':
+			$desc = 'Webkit (Derivate)';
+			$pict = 'browser/wkt';
 			break;
 		case 'iee':
 			$desc = 'Microsoft Edge';
@@ -2819,37 +2827,21 @@ public static function get_imgdesc_by_bw_id($y_bw) {
 			$desc = 'Opera';
 			$pict = 'browser/opr';
 			break;
-		case 'mid':
-			$desc = 'Midori / Webkit';
-			$pict = 'browser/mid';
-			break;
-		case 'knq':
-			$desc = 'Konqueror';
-			$pict = 'browser/knq';
-			break;
 		case 'eph':
 			$desc = 'Epiphany';
 			$pict = 'browser/eph';
 			break;
-		case 'gal':
-			$desc = 'Galeon';
-			$pict = 'browser/gal';
-			break;
-		case 'omw':
-			$desc = 'OmniWeb';
-			$pict = 'browser/omw';
-			break;
-		case 'mxt':
-			$desc = 'Maxthon';
-			$pict = 'browser/mxt';
+		case 'knq':
+			$desc = 'Konqueror';
+			$pict = 'browser/knq';
 			break;
 		case 'nsf':
 			$desc = 'NetSurf';
 			$pict = 'browser/nsf';
 			break;
 		default:
-			$desc = '[UNKNOWN]: ('.(string)$y_bw.')';
-			$pict = 'browser/wkt';
+			$desc = '[Other]: ('.(string)$y_bw.')';
+			$pict = 'browser/xxx';
 	} //end switch
 	//--
 	return (array) [
@@ -2877,157 +2869,108 @@ public static function get_imgdesc_by_os_id($y_os_id) {
 	switch(strtolower((string)$y_os_id)) { // {{{SYNC-SRV-OS-ID}}} ; {{{SYNC-CLI-OS-ID}}}
 		//-
 		case 'macosx':
+		case 'macos':
 		case 'mac': // cli
-			$desc = 'Apple MacOSX';
-			$pict = 'os/mac_osx';
+			$desc = 'Apple MacOs';
+			$pict = 'os/mac-os';
 			break;
 		//-
+		case 'windows':
 		case 'winnt':
 		case 'win': // cli
 			$desc = 'Microsoft Windows';
-			$pict = 'os/windows';
+			$pict = 'os/windows-os';
 			break;
 		//-
-		case 'bsd-os':
-		case 'bsd': // cli
-			$desc = 'BSD';
-			$pict = 'os/bsd_generic';
+		case 'openbsd':
+			$desc = 'OpenBSD';
+			$pict = 'os/bsd-openbsd';
 			break;
 		case 'netbsd':
 			$desc = 'NetBSD';
-			$pict = 'os/bsd_netbsd';
-			break;
-		case 'openbsd':
-			$desc = 'OpenBSD';
-			$pict = 'os/bsd_openbsd';
+			$pict = 'os/bsd-netbsd';
 			break;
 		case 'freebsd':
 			$desc = 'FreeBSD';
-			$pict = 'os/bsd_freebsd';
+			$pict = 'os/bsd-freebsd';
 			break;
 		case 'dragonfly':
 			$desc = 'DragonFly-BSD';
-			$pict = 'os/bsd_dragonfly';
+			$pict = 'os/bsd-dragonfly';
+			break;
+		case 'bsd-os':
+		case 'bsd': // cli
+			$desc = 'BSD';
+			$pict = 'os/bsd-generic';
 			break;
 		//-
 		case 'linux':
 		case 'lnx': // cli
 			$desc = 'Linux';
-			$pict = 'os/linux_generic';
+			$pict = 'os/linux-generic';
 			break;
 		case 'debian':
 			$desc = 'Debian Linux';
-			$pict = 'os/linux_debian';
+			$pict = 'os/linux-debian';
 			break;
 		case 'ubuntu':
 			$desc = 'Ubuntu Linux';
-			$pict = 'os/linux_ubuntu';
+			$pict = 'os/linux-ubuntu';
+			break;
+		case 'mint':
+			$desc = 'Mint Linux';
+			$pict = 'os/linux-mint';
 			break;
 		case 'redhat':
 			$desc = 'RedHat Linux';
-			$pict = 'os/linux_redhat';
+			$pict = 'os/linux-redhat';
 			break;
 		case 'centos':
 			$desc = 'CentOS Linux';
-			$pict = 'os/linux_centos';
+			$pict = 'os/linux-centos';
 			break;
 		case 'fedora':
 			$desc = 'Fedora Linux';
-			$pict = 'os/linux_fedora';
+			$pict = 'os/linux-fedora';
 			break;
 		case 'suse':
 			$desc = 'SuSE Linux';
-			$pict = 'os/linux_suse';
-			break;
-		case 'novell':
-			$desc = 'Novell Linux';
-			$pict = 'os/linux_novell';
-			break;
-		case 'slack':
-			$desc = 'Slackware Linux';
-			$pict = 'os/linux_slackware';
-			break;
-		case 'gentoo':
-			$desc = 'Gentoo Linux';
-			$pict = 'os/linux_gentoo';
-			break;
-		case 'knoppix':
-			$desc = 'Knoppix Linux';
-			$pict = 'os/linux_knoppix';
-			break;
-		case 'archlnx':
-			$desc = 'Arch Linux';
-			$pict = 'os/linux_arch';
+			$pict = 'os/linux-suse';
 			break;
 		//-
-		case 'ibm-aix':
-		case 'aix': // cli
-			$desc = 'IBM / AIX';
-			$pict = 'os/unix_ibmaix';
-			break;
-		case 'hp-ux':
-		case 'hpx': // cli
-			$desc = 'HP-UX';
-			$pict = 'os/unix_hpux';
-			break;
-		case 'opensolaris':
-			$desc = 'Open Solaris';
-			$pict = 'os/unix_opensolaris';
-			break;
-		case 'nexenta':
-			$desc = 'Nexenta OS';
-			$pict = 'os/unix_nexentasolaris';
-			break;
 		case 'solaris':
 		case 'sun': // cli
-			$desc = 'Oracle (Sun) Solaris';
-			$pict = 'os/unix_solaris';
-			break;
-		case 'sgi-irix':
-		case 'irx': // cli
-			$desc = 'SGI Irix';
-			$pict = 'os/unix_sgiirix';
-			break;
-		case 'sco-uxw':
-		case 'sco': // cli
-			$desc = 'SCO Unixware';
-			$pict = 'os/unix_sco';
+			$desc = '(Open) Solaris';
+			$pict = 'os/unix-solaris';
 			break;
 		//- cli only
 		case 'ios':
 			$desc = 'Apple iOS Mobile';
 			$pict = 'os/mobile/ios';
 			break;
+		case 'android':
 		case 'and':
 			$desc = 'Google Android Mobile';
 			$pict = 'os/mobile/android';
 			break;
 		case 'wmo':
 			$desc = 'Microsoft Windows Mobile';
-			$pict = 'os/mobile/win_mobile';
+			$pict = 'os/mobile/windows-mobile';
 			break;
 		case 'lxm':
 			$desc = 'Linux Mobile';
-			$pict = 'os/mobile/linux_mobile';
-			break;
-		case 'bby':
-			$desc = 'BlackBerry Mobile';
-			$pict = 'os/mobile/blackberry';
-			break;
-		case 'pwo':
-			$desc = 'Palm / WebOs Mobile';
-			$pict = 'os/mobile/palm_webos';
+			$pict = 'os/mobile/linux-mobile';
 			break;
 		//-
 		case '[?]':
 		default:
 			$desc = '[UNKNOWN]: ('.$y_os_id.')';
-			$pict = 'os/linux_other';
+			$pict = 'os/other-os';
 		//-
 	} //end switch
 	//--
 	return (array) [
-		'img'  => (string) 'lib/core/img/'.$pict.'.png',
+		'img'  => (string) 'lib/core/img/'.$pict.'.svg',
 		'desc' => (string) $desc.' Operating System'
 	];
 	//--

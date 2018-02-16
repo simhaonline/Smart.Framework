@@ -186,7 +186,7 @@ final class TestUnitMain {
 				'TEST-ELEMENTS_AUTOCOMPLETE-MULTI'			=> 'Autocomplete Multi: '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;"><script type="text/javascript">'.\SmartComponents::js_code_init_select_autocomplete_multi('auto-complete-mfld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
 				'TEST-elements_Captcha' 					=> (string) \SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captchaFormName()),
 				'test-elements_limited-area' 				=> '<div>Limited TextArea:</div>'.\SmartComponents::html_js_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '90px'),
-				'POWERED-INFO' 								=> (string) \SmartComponents::app_powered_info('no').'<br><span title="'.\Smart::escape_html($arr_bw['desc']).'"><img width="32" height="32" src="'.\Smart::escape_html($arr_bw['img']).'"></span>',
+				'POWERED-INFO' 								=> (string) \SmartComponents::app_powered_info('no').'<br><span title="'.\Smart::escape_html($arr_bw['desc']).'"><img width="48" height="48" src="'.\Smart::escape_html($arr_bw['img']).'"></span>',
 				'STR-NUM' 									=> '1abc', // this will be converted to num !!
 				'NUM-NUM' 									=> '0.123456789',
 				'IFTEST' 									=> \Smart::random_number(1,2),
