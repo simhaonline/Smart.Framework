@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.02.16'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.02.19'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -63,7 +63,7 @@ if(!headers_sent()) {
 //--
 
 //--
-if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
+if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) { // {{{SYNC-DEFINE-DBGMODE}}}
 	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, set it here to avoid later modifications
 } //end if
 //--
@@ -526,6 +526,7 @@ final class SmartFrameworkRegistry {
 	private static $RequestLock = false; 	// request locking flag
 	private static $RequestPath = '';		// request path (from path-info)
 	private static $RequestVars = array(); 	// request registry
+	private static $CookieVars  = array();  // cookie registry
 
 
 	//##### Public Methods
@@ -551,9 +552,28 @@ final class SmartFrameworkRegistry {
 	} //END FUNCTION
 
 
+	public static function setRequestVar($key, $value) {
+		//--
+		if(self::$RequestLock !== false) {
+			return false; // request registry is locked
+		} //end if
+		//--
+		$key = (string) strtolower((string)trim((string)$key)); // {{{SYNC-REQVARS-LOWER-KEYS}}}
+		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key))) {
+			return false;
+		} //end if
+		//--
+		self::$RequestVars[(string)$key] = $value;
+		//--
+		return true; // OK
+		//--
+	} //END FUNCTION
+
+
 	public static function issetRequestVar($key) {
 		//--
-		if((string)$key == '') {
+		$key = (string) strtolower((string)trim((string)$key)); // {{{SYNC-REQVARS-LOWER-KEYS}}}
+		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key))) {
 			return false;
 		} //end if
 		//--
@@ -566,30 +586,9 @@ final class SmartFrameworkRegistry {
 	} //END FUNCTION
 
 
-	public static function setRequestVar($key, $value) {
-		//--
-		if(self::$RequestLock !== false) {
-			return false; // request registry is locked
-		} //end if
-		//--
-		self::$RequestVars[(string)$key] = $value;
-		//--
-		return true; // OK
-		//--
-	} //END FUNCTION
-
-
-	public static function getRequestVars() {
-		//--
-		return (array) self::$RequestVars; // array
-		//--
-	} //END FUNCTION
-
-
 	public static function getRequestVar($key, $defval=null, $type='') { // {{{SYNC-REQUEST-DEF-PARAMS}}}
 		//--
-		$key = (string) strtolower((string)trim((string)$key));
-		//--
+		$key = (string) strtolower((string)trim((string)$key)); // {{{SYNC-REQVARS-LOWER-KEYS}}}
 		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key))) {
 			return null;
 		} //end if
@@ -676,6 +675,72 @@ final class SmartFrameworkRegistry {
 		} //end if else
 		//--
 		return $val; // mixed
+		//--
+	} //END FUNCTION
+
+
+	public static function getRequestVars() {
+		//--
+		return (array) self::$RequestVars; // array
+		//--
+	} //END FUNCTION
+
+
+	public static function setCookieVar($key, $value) {
+		//--
+		if(self::$RequestLock !== false) {
+			return false; // request registry is locked
+		} //end if
+		//--
+		$key = (string) trim((string)$key); // {{{SYNC-COOKIEVARS-KEYS}}}
+		if((string)$key == '') {
+			return false;
+		} //end if
+		//--
+		self::$CookieVars[(string)$key] = (string) $value; // cookie vars can be only string types (also numeric will be stored as string)
+		//--
+		return true; // OK
+		//--
+	} //END FUNCTION
+
+
+	public static function issetCookieVar($key) {
+		//--
+		$key = (string) trim((string)$key); // {{{SYNC-COOKIEVARS-KEYS}}}
+		if((string)$key == '') {
+			return false;
+		} //end if
+		//--
+		if((array_key_exists((string)$key, self::$CookieVars)) AND (isset(self::$CookieVars[(string)$key]))) { // if is set and not null ; cookies are considered to be set if they exist and non-null
+			return true;
+		} else {
+			return false;
+		} //end if else
+		//--
+	} //END FUNCTION
+
+
+	public static function getCookieVar($key) {
+		//--
+		$key = (string) trim((string)$key); // {{{SYNC-COOKIEVARS-KEYS}}}
+		if((string)$key == '') {
+			return null;
+		} //end if
+		//--
+		if(self::issetCookieVar((string)$key) === true) {
+			$val = (string) self::$CookieVars[(string)$key]; // use the value from cookies :: string
+		} else {
+			$val = null; // init with the default value :: null
+		} //end if
+		//--
+		return $val; // mixed
+		//--
+	} //END FUNCTION
+
+
+	public static function getCookieVars() {
+		//--
+		return (array) self::$CookieVars; // array
 		//--
 	} //END FUNCTION
 
@@ -1059,21 +1124,22 @@ public static function Parse_Semantic_URL() {
 // This will run before loading the Smart.Framework and must not depend on it's classes
 public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $filter_____info) {
 
-	// FILTER INPUT VARIABLES v.160122 (with collision fix and private space check)
+	// FILTER INPUT GET/POST VARIABLES v.180218 (with collision fix and private space check)
 	// This no more limits the input variables as it is handled via prior checks to PHP.INI: max_input_vars and max_input_nesting_level
-	// If any of: GET / POST / COOKIE overflow the max_input_vars and max_input_nesting_level a PHP warning is issued !!
+	// If any of: GET / POST overflow the max_input_vars and max_input_nesting_level a PHP warning is issued !!
 	// The max_input_vars applies separately to each of the input variables, includding array(s) keys
 	// The max_input_nesting_level also must be at least 5
 
 	//-- check if can run
 	if(self::$RequestProcessed !== false) {
+		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Cannot Register Request/'.$filter_____info.' Vars, Registry is already locked !', E_USER_WARNING);
 		return; // avoid run after it was already processed
 	} //end if
 	//--
 
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-		self::DebugRequestLog('######################### FILTER NEW REQUEST:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'##### RAW REQUEST VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
+		self::DebugRequestLog('######################### FILTER REQUEST:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'##### RAW REQUEST VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
 	} //end if
 	//--
 
@@ -1086,12 +1152,12 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 			//--
 			if(substr($filter_____key, 0, 11) != 'filter_____') { // avoid collisions with the variables in this function
 				//--
-				if(SmartFrameworkSecurity::ValidateVariableName($filter_____key)) {
+				if(((string)trim((string)$filter_____key) != '') AND (SmartFrameworkSecurity::ValidateVariableName($filter_____key))) {
 					//--
 					if(is_array($filter_____val)) { // array
 						//--
 						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-							self::DebugRequestLog('#EXTRACT-FILTER-VAR-ARRAY:'."\n".$filter_____key.'='.print_r($filter_____val,1)."\n");
+							self::DebugRequestLog('#EXTRACT-FILTER-REQUEST-VAR-ARRAY:'."\n".$filter_____key.'='.print_r($filter_____val,1)."\n");
 						} //end if
 						SmartFrameworkRegistry::setRequestVar(
 							(string) $filter_____key,
@@ -1101,7 +1167,7 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 					} else { // string
 						//--
 						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-							self::DebugRequestLog('#EXTRACT-FILTER-VAR-STRING:'."\n".$filter_____key.'='.$filter_____val."\n");
+							self::DebugRequestLog('#EXTRACT-FILTER-REQUEST-VAR-STRING:'."\n".$filter_____key.'='.$filter_____val."\n");
 						} //end if
 						SmartFrameworkRegistry::setRequestVar(
 							(string) $filter_____key,
@@ -1122,6 +1188,76 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		self::DebugRequestLog('########## END REQUEST FILTER ##########'."\n\n");
+	} //end if
+	//--
+
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// This will run before loading the Smart.Framework and must not depend on it's classes
+public static function Extract_Filtered_Cookie_Vars($filter_____arr) {
+
+	// FILTER INPUT COOKIES VARIABLES v.180218 (with collision fix and private space check)
+
+	//--
+	$filter_____info = 'COOKIES';
+	//--
+
+	//-- check if can run
+	if(self::$RequestProcessed !== false) {
+		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Cannot Register Cookie Vars, Registry is already locked !', E_USER_WARNING);
+		return; // avoid run after it was already processed
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		self::DebugRequestLog('######################### FILTER COOKIES:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'##### RAW COOKIE VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
+	} //end if
+	//--
+
+	//-- process
+	if(is_array($filter_____arr)) {
+		//--
+		$num = 0;
+		//--
+		foreach($filter_____arr as $filter_____key => $filter_____val) {
+			//--
+			$num++;
+			//--
+			$filter_____key = (string) trim((string)$filter_____key); // force string + trim (for cookies use no validate var name ...)
+			//--
+			if(substr($filter_____key, 0, 11) != 'filter_____') { // avoid collisions with the variables in this function
+				//--
+				if((string)$filter_____key != '') {
+					//--
+					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+						self::DebugRequestLog('#EXTRACT-FILTER-COOKIE-VAR:'."\n".$filter_____key.'='.$filter_____val."\n");
+					} //end if
+					SmartFrameworkRegistry::setCookieVar(
+						(string) $filter_____key,
+						(string) SmartFrameworkSecurity::FilterGetPostCookieVars($filter_____val)
+					) OR @trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Failed to register a cookie variable: '.$filter_____key.' @ '.$filter_____info, E_USER_WARNING);
+					//--
+				} //end if
+				//--
+			} //end if
+			//--
+			if($num >= 1024) {
+				@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Too many cookie variables detected. Stoped to register at: #'.$num, E_USER_WARNING);
+				break;
+			} //end if
+			//--
+		} //end foreach
+		//--
+	} //end if
+	//--
+
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		self::DebugRequestLog('########## END COOKIES FILTER ##########'."\n\n");
 	} //end if
 	//--
 
@@ -1373,6 +1509,7 @@ public static function Redirection_Monitor() {
 	} //end if
 	if((SMART_SOFTWARE_BACKEND_ENABLED === false) AND ((string)$the_current_script == 'admin.php')) {
 		$url_redirect = $the_current_url.'index.php';
+	//	$url_redirect = $the_current_url; // reset index.php part of URL
 	} //end if
 	//--
 	if(((string)$url_redirect == '') AND (isset($_SERVER['PATH_INFO']))) {
@@ -1381,12 +1518,16 @@ public static function Redirection_Monitor() {
 			//--
 			if((string)$the_current_script == 'index.php') {
 				if(self::PathInfo_Enabled() === true) {
-					return;
+					if((string)$_SERVER['PATH_INFO'] != '/') { // avoid common mistake to use just a / after script.php
+						return;
+					} //end if
 				} //end if
-				$the_current_script = '';
+			//	$the_current_script = ''; // reset index.php part of URL
 			} elseif((string)$the_current_script == 'admin.php') {
 				if(self::PathInfo_Enabled() === true) {
-					return;
+					if((string)$_SERVER['PATH_INFO'] != '/') { // avoid common mistake to use just a / after script.php
+						return;
+					} //end if
 				} //end if
 			} //end if
 			//--

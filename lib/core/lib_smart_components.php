@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180216
+ * @version 	v.180217
  * @package 	Components:Core
  *
  */
@@ -2547,104 +2547,145 @@ public static function html_js_htmlarea_fm_callback($yurl, $is_popup=false) {
  * @internal
  *
  */
-public static function app_powered_info($y_show_versions, $y_software_name='', $y_software_powered_logo='', $y_software_powered_url='') {
+public static function app_powered_info($y_show_versions='no', $y_plugins=array()) {
 	//--
 	global $configs;
 	//--
+	$base_url = (string) SmartUtils::get_server_current_url();
+	//-- framework
+	$software_name = 'Smart.Framework, a PHP / Javascript Web Framework';
+	if((string)$y_show_versions == 'yes') { // expose versions (not recommended in web area, except for auth admins)
+		$software_name .= ' :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.SMART_SOFTWARE_APP_NAME;
+	} //end if
+	$software_logo = $base_url.'lib/framework/img/sf-logo.svg';
+	$software_url = (string) SMART_FRAMEWORK_RELEASE_URL;
+	//--
+	$arr_powered_sside = [];
+	//-- os
 	$arr_os = (array) self::get_imgdesc_by_os_id((string)SmartUtils::get_server_os());
 	$os_pict = (string) $arr_os['img'];
 	$os_desc = (string) $arr_os['desc'];
-	$os_desc = 'Server Powered by '.$os_desc;
-	//--
-	if(((string)$y_software_name == '') OR ((string)$y_software_powered_logo == '')) {
-		$y_software_name = 'Smart.Framework, a PHP / Javascript Web Framework';
-		$y_software_powered_logo = 'lib/framework/img/powered_by_smart_framework.png';
-		$y_software_powered_url = (string) SMART_FRAMEWORK_RELEASE_URL;
-	} //end if
-	//--
+	$arr_powered_sside[] = [
+		'name' 	=> (string) $os_desc,
+		'logo' 	=> (string) $base_url.$os_pict,
+		'url' 	=> (string) ''
+	];
+	//-- web server
 	$tmp_arr_web_server = SmartUtils::get_webserver_version();
-	$name_webserver = (string) $tmp_arr_web_server['name'];
-	//--
+	$name_webserver = (string) $tmp_arr_web_server['name'].' Web Server';
 	if((string)$y_show_versions == 'yes') { // expose versions (not recommended in web area, except for auth admins)
-		$y_software_name .= ' :: '.SMART_SOFTWARE_APP_NAME;
-		$version_webserver = ' :: '.$tmp_arr_web_server['version'];
-		$version_php = ' :: '.PHP_VERSION;
-	} else { // avoid expose versions
-		$version_webserver = '';
-		$version_php = '';
-	} //end if else
-	//--
-	if(trim(strtolower($name_webserver)) == 'apache') {
-		$name_webserver = 'Apache';
-		$icon_webserver_powered = 'lib/framework/img/powered_by_apache.png';
-		$icon_webserver_logo = 'lib/framework/img/apache-logo.svg';
+		$name_webserver .= ' :: '.$tmp_arr_web_server['version'];
+	} //end if
+	if(stripos((string)$name_webserver, 'apache') !== false) {
+		$logo_webserver = 'lib/framework/img/apache-logo.svg';
+		$url_webserver = 'https://httpd.apache.org';
+	} elseif(stripos((string)$name_webserver, 'nginx') !== false) {
+		$logo_webserver = 'lib/framework/img/nginx-logo.svg';
+		$url_webserver = 'https://www.nginx.com';
 	} else {
-		$name_webserver = 'Nginx / '.$name_webserver;
-		$icon_webserver_powered = 'lib/framework/img/powered_by_nginx.png';
-		$icon_webserver_logo = 'lib/framework/img/nginx-logo.svg';
+		$logo_webserver = 'lib/framework/img/sign-info.svg';
+		$url_webserver = '';
 	} //end if else
-	//--
-	$version_dbserver = '';
-	if(is_array($configs['pgsql'])) {
-		if((defined('SMART_FRAMEWORK_DB_VERSION_PostgreSQL')) AND ((string)$y_show_versions == 'yes')) {
-			$version_dbserver = ' :: '.SMART_FRAMEWORK_DB_VERSION_PostgreSQL;
-		} //end if
-		$name_dbserver = 'PostgreSQL';
-		$icon_dbserver_powered = 'lib/core/img/db/powered_by_postgresql.png';
-		$icon_dbserver_logo = 'lib/core/img/db/postgresql-logo.svg';
-	} else {
-		$name_dbserver = '';
-		$icon_dbserver_powered = '';
-		$icon_dbserver_logo = '';
-	} //end if else
-	//--
+	$arr_powered_sside[] = [
+		'name' 	=> (string) $name_webserver,
+		'logo' 	=> (string) $base_url.$logo_webserver,
+		'url' 	=> (string) $url_webserver
+	];
+	//-- php
+	$php_name = 'PHP Server-Side Scripting Language';
+	if((string)$y_show_versions == 'yes') { // expose versions (not recommended in web area, except for auth admins)
+		$php_name .= ' :: '.PHP_VERSION;
+	} //end if
+	$arr_powered_sside[] = [
+		'name' 	=> (string) $php_name,
+		'logo' 	=> (string) $base_url.'lib/framework/img/php-logo.svg',
+		'url' 	=> (string) 'http://www.php.net'
+	];
+	//-- redis
 	if(is_array($configs['redis'])) {
-		$name_cacheserver = 'Redis';
-		$icon_cacheserver_powered = 'lib/core/img/db/powered_by_redis.png';
-		$icon_cacheserver_logo = 'lib/core/img/db/redis-logo.svg';
-	} else {
-		$name_cacheserver = '';
-		$icon_cacheserver_powered = '';
-		$icon_cacheserver_logo = '';
+		$arr_powered_sside[] = [
+			'name' 	=> (string) 'Redis In-Memory Distributed Key-Value Store (Caching Data Store)',
+			'logo' 	=> (string) $base_url.'lib/core/img/db/redis-logo.svg',
+			'url' 	=> (string) 'https://redis.io'
+		];
+	} //end if
+	//-- pgsql
+	if(is_array($configs['pgsql'])) {
+		$arr_powered_sside[] = [
+			'name' 	=> (string) 'PostgreSQL Database Server',
+			'logo' 	=> (string) $base_url.'lib/core/img/db/postgresql-logo.svg',
+			'url' 	=> (string) 'https://www.postgresql.org'
+		];
+	} //end if
+	//-- sqlite
+	if(is_array($configs['sqlite'])) {
+		$arr_powered_sside[] = [
+			'name' 	=> (string) 'SQLite Embedded Database',
+			'logo' 	=> (string) $base_url.'lib/core/img/db/sqlite-logo.svg',
+			'url' 	=> (string) 'https://www.sqlite.org'
+		];
 	} //end if
 	//--
-	if(is_array($configs['sqlite'])) {
-		$show_last_entry = 'sqlite';
-		$name_db_embedded = 'SQLite Embedded Database';
-		$icon_db_embedded_powered = 'lib/core/img/db/powered_by_sqlite.png';
-		$icon_db_embedded_logo = 'lib/core/img/db/sqlite-logo.svg';
-	} else {
-		$show_last_entry = 'firefox';
-		$name_db_embedded = 'Firefox - The Open-Source Web Browser';
-		$icon_db_embedded_powered = 'lib/framework/img/powered_optimized_firefox.png';
-		$icon_db_embedded_logo = 'lib/core/img/browser/fox.svg';
-	} //end if else
+	$arr_powered_cside = [];
+	//-- html
+	$arr_powered_cside[] = [
+		'name' 	=> (string) 'HTML Markup Language for World Wide Web',
+		'logo' 	=> (string) $base_url.'lib/framework/img/html-logo.svg',
+		'url' 	=> (string) 'https://www.w3.org/TR/html/'
+	];
+	//-- css
+	$arr_powered_cside[] = [
+		'name' 	=> (string) 'CSS Style Sheet Language for World Wide Web',
+		'logo' 	=> (string) $base_url.'lib/framework/img/css-logo.svg',
+		'url' 	=> (string) 'https://www.w3.org/TR/CSS/'
+	];
+	//-- javascript
+	$arr_powered_cside[] = [
+		'name' 	=> (string) 'Javascript Client-Side Scripting Language for World Wide Web',
+		'logo' 	=> (string) $base_url.'lib/framework/img/javascript-logo.svg',
+		'url' 	=> (string) 'https://developer.mozilla.org/en-US/docs/Web/JavaScript'
+	];
+	//-- jquery
+	$arr_powered_cside[] = [
+		'name' 	=> (string) 'jQuery Javascript Library',
+		'logo' 	=> (string) $base_url.'lib/framework/img/jquery-logo.svg',
+		'url' 	=> (string) 'https://jquery.com'
+	];
+	//--
+	if(Smart::array_size($y_plugins) > 0) {
+		for($i=0; $i<Smart::array_size($y_plugins); $i++) {
+			$tmp_arr = [];
+			if(is_array($y_plugins[$i])) {
+				if(((string)$y_plugins[$i]['name'] != '') AND ((string)$y_plugins[$i]['logo'] != '')) {
+					$tmp_arr = [
+						'name' 	=> (string) $y_plugins[$i]['name'],
+						'logo' 	=> (string) $y_plugins[$i]['logo'],
+						'url' 	=> (string) $y_plugins[$i]['url']
+					];
+					if((string)$y_plugins[$i]['type'] == 'sside') {
+						$arr_powered_sside[] = (array) $tmp_arr;
+					} elseif((string)$y_plugins[$i]['type'] == 'cside') {
+						$arr_powered_cside[] = (array) $tmp_arr;
+					} //end if else
+				} else {
+					$arr_powered_cside[] = [
+						'name' 	=> '',
+						'logo' 	=> '',
+						'url' 	=> ''
+					];
+				} //end if
+			} //end if
+		} //end for
+	} //end if
 	//--
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/app-powered-info.inc.htm',
 		[
-			'OS-LOGO-IMG' 					=> (string) $os_pict,
-			'OS-LOGO-DESC' 					=> (string) $os_desc,
-			'WEB-SERVER-NAME' 				=> (string) $name_webserver,
-			'WEB-SERVER-POWERED-VERSION' 	=> (string) $name_webserver.$version_webserver,
-			'WEB-SERVER-POWERED-ICON' 		=> (string) $icon_webserver_powered,
-			'WEB-SERVER-VERSION' 			=> (string) $name_webserver.' Web Server',
-			'WEB-SERVER-ICON' 				=> (string) $icon_webserver_logo,
-			'PHP-VERSION' 					=> (string) $version_php,
-			'DBSERVER-NAME' 				=> (string) $name_dbserver,
-			'DBSERVER-VERSION' 				=> (string) $version_dbserver,
-			'DBSERVER-POWERED-ICON' 		=> (string) $icon_dbserver_powered,
-			'DBSERVER-POWERED-LOGO' 		=> (string) $icon_dbserver_logo,
-			'CACHESERVER-NAME' 				=> (string) $name_cacheserver,
-			'CACHESERVER-POWERED-ICON' 		=> (string) $icon_cacheserver_powered,
-			'CACHESERVER-POWERED-LOGO' 		=> (string) $icon_cacheserver_logo,
-			'LAST-ENTRY-TYPE' 				=> (string) $show_last_entry,
-			'DBEMBEDDED-NAME' 				=> (string) $name_db_embedded,
-			'DBEMBEDDED-POWERED-ICON' 		=> (string) $icon_db_embedded_powered,
-			'DBEMBEDDED-POWERED-LOGO' 		=> (string) $icon_db_embedded_logo,
-			'SOFTWARE-NAME' 				=> (string) $y_software_name,
-			'SOFTWARE-POWERED-LOGO' 		=> (string) $y_software_powered_logo,
-			'SOFTWARE-POWERED-URL' 			=> (string) $y_software_powered_url
+			'APP-NAME' 	=> (string) $software_name,
+			'APP-LOGO' 	=> (string) $software_logo,
+			'APP-URL' 	=> (string) $software_url,
+			'ARR-SSIDE' => (array) $arr_powered_sside,
+			'ARR-CSIDE' => (array) $arr_powered_cside
 		]
 	);
 	//--

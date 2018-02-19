@@ -35,7 +35,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.5.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		180125
+ * @version		180219
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -113,23 +113,16 @@ public static function Run() {
 	//-- switch language by url var (lang) or by cookie
 	$lang = (string) trim((string)SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getRequestVar('lang', '', (array)SmartTextTranslations::getAvailableLanguages())));
 	if((string)$lang == '') {
-		if((string)$_COOKIE['SmartApp_ADM_LANGUAGE_SET'] != '') {
-			$lang = (string) $_COOKIE['SmartApp_ADM_LANGUAGE_SET'];
+		$lang = (string) trim((string)SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getCookieVar('SmartApp_ADM_LANGUAGE_SET')));
+		if((string)$lang == '') {
+			if(!in_array((string)$lang, (array)SmartTextTranslations::getAvailableLanguages())) {
+				$lang = '';
+			} //end if
 		} //end if
 	} //end if
 	if(strlen(trim((string)$lang)) > 0) {
 		SmartTextTranslations::setLanguage(trim((string)$lang));
 	} //end if
-	/*
-	//-- switch language by print cookie (this needs to be before loading the app core and after language by cookie)
-	if(SmartFrameworkRegistry::issetRequestVar((string)SMART_FRAMEWORK_URL_PARAM_PRINTABLE) === true) {
-		if(strtolower((string)SmartFrameworkRegistry::getRequestVar((string)SMART_FRAMEWORK_URL_PARAM_PRINTABLE)) == strtolower((string)SMART_FRAMEWORK_URL_VALUE_ENABLED)) {
-			if(strlen(trim((string)$_COOKIE['SmartApp_ADM_PRINT_LANGUAGE_SET'])) > 0) {
-				SmartTextTranslations::setLanguage(trim((string)$_COOKIE['SmartApp_ADM_PRINT_LANGUAGE_SET']));
-			} //end if
-		} //end if
-	} //end if
-	*/
 	//--
 	//== RAW OUTPUT FOR STATUS
 	//--

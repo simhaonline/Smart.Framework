@@ -158,7 +158,7 @@ public static function verify($y_form_name, $y_mode, $y_clear=true) {
 	$var_value = trim((string)$_COOKIE[(string)$var_name]);
 	//--
 	if((string)$var_value != '') {
-		$arr_value = explode('!', base64_decode(SmartUtils::crypto_blowfish_decrypt(SmartArchiverLZS::decompressFromBase64((string)$var_value), sha1($y_form_name.SMART_FRAMEWORK_SECURITY_KEY)))); // explode by '!'
+		$arr_value = explode('!', (string)base64_decode(SmartUtils::crypto_blowfish_decrypt(SmartArchiverLZS::decompressFromBase64((string)$var_value), sha1($y_form_name.SMART_FRAMEWORK_SECURITY_KEY)))); // explode by '!'
 	} //end if
 	//--
 	$ok = 0; // error check by default

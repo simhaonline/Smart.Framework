@@ -21,7 +21,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
-// This part registers the request variables in the right order (according with security standards: G=Get/P=Post from GPCS ; the C=Cookie or S=Server will not be processed here and must be used from PHP super-globals: $_COOKIE and $_SERVER)
+// This part registers the request variables in the right order (according with security standards: G=Get/P=Post and C=Cookie from GPCS ; S=Server will not be processed here and must be used from PHP super-globals: $_SERVER)
 //####################
 
 
@@ -29,9 +29,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 SmartFrameworkRuntime::Parse_Semantic_URL();
 SmartFrameworkRuntime::Extract_Filtered_Request_Get_Post_Vars((array)$_GET, 'GET'); 	// extract and filter $_GET
 SmartFrameworkRuntime::Extract_Filtered_Request_Get_Post_Vars((array)$_POST, 'POST'); 	// extract and filter $_POST
+SmartFrameworkRuntime::Extract_Filtered_Cookie_Vars((array)$_COOKIE); 					// extract and filter $_COOKIE
 SmartFrameworkRuntime::Lock_Request_Processing(); 										// prevent re-processing Request variables after they were processed 1st time (this is mandatory from security point of view)
 //--
-// $_COOKIE will not be processed, use $_COOKIE['cookie_name'] for reading cookies
 // $_SERVER will not be processed, use $_SERVER['some-key'] for reading server variables
 //--
 

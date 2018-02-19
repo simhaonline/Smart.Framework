@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// # r.170919 # this should be loaded from app web root only
+// # r.180219 # this should be loaded from app web root only
 
 // ===== ATTENTION =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES
@@ -23,6 +23,10 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
 //####################
 
+//--
+if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) { // {{{SYNC-DEFINE-DBGMODE}}}
+	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, set it here to avoid PHP 7.2+ warnings
+} //end if
 //--
 if(defined('SMART_ERROR_LOG_MANAGEMENT')) {
 	die('SmartFramework / Errors Management already loaded ...'); // avoid load more than once
@@ -150,6 +154,8 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 //==
 set_exception_handler(function($exception) { // no type for EXCEPTION to be PHP 7 compatible
 	//--
+	global $smart_____framework_____last__error; // presume it is already html special chars safe
+	//--
 	//print_r($exception);
 	//print_r($exception->getTrace());
 	//--
@@ -158,7 +164,13 @@ set_exception_handler(function($exception) { // no type for EXCEPTION to be PHP 
 	$exid = sha1('ExceptionID:'.$message.'/'.$details);
 	//--
 	if(is_array($exception->getTrace())) {
+		//--
 		$arr = (array) $exception->getTrace();
+		//--
+		if(((string)SMART_ERROR_HANDLER != 'log') OR ((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes')) {
+			$smart_____framework_____last__error .= ini_get('error_prepend_string').'<b><i>Exception [#'.$exid.']</i><br>Error-Message: '.htmlspecialchars((string)$message, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, 'ISO-8859-1').'</b><br>Line / File: '.htmlspecialchars((string)$details, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, 'ISO-8859-1').ini_get('error_append_string'); // fix for PHP 7+
+		} //end if
+		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			//--
 			$details .= "\n".print_r($arr,1);
@@ -171,6 +183,7 @@ set_exception_handler(function($exception) { // no type for EXCEPTION to be PHP 
 			} //end for
 			//--
 		} //end if else
+		//--
 	} //end if
 	//--
 	@trigger_error('***** EXCEPTION ***** [#'.$exid.']:'."\n"."\n".'Error-Message: '.$message."\n".$details, E_USER_ERROR); // log the exception as ERROR
@@ -189,8 +202,8 @@ if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MOD
 	register_shutdown_function('smart__framework__err__handler__catch_fatal_errs');
 } else { // dev
 	ini_set('ignore_repeated_errors', '0'); // do not ignore repeated errors
-	ini_set('error_prepend_string', '<style type="text/css">* { font-family: arial,sans-serif; font-smooth: always; }</style> &nbsp; <font size="7" color="#4E5A92"><b>Code Execution ERROR <img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/sign-crit-error.svg"> PHP '.PHP_VERSION.' <img width="48" align="right" src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/php-logo.svg"></b></font><div><hr size="1"><pre>');
-	ini_set('error_append_string', '</pre></div><br><div>'.'<small>'.date('Y-m-d H:i:s O').'</small>'.'<hr size="1"></div><span title="Powered by Smart.Framework"><img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/powered_by_smart_framework.png"></span><span title="PHP Version: '.PHP_VERSION.'"><img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/powered_by_php.png" align="right"></span>');
+	ini_set('error_prepend_string', '<div align="left"><style type="text/css">* { font-family: arial,sans-serif; font-smooth: always; }</style> &nbsp; <font size="7" color="#4E5A92"><b>Code Execution ERROR <img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/sign-crit-error.svg"> PHP '.PHP_VERSION.' <img width="48" align="right" src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/php-logo.svg"></b></font><div><hr size="1"><pre>');
+	ini_set('error_append_string', '</pre></div><br><div>'.'<small>'.date('Y-m-d H:i:s O').'</small>'.'<hr size="1"></div><span title="Powered by Smart.Framework"><img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/sf-logo.svg"></span><span title="PHP Version: '.PHP_VERSION.'"><img src="'.smart__framework__err__handler__get__basepath().'lib/framework/img/sign-crit-warn.svg" align="right"></span></div>');
 	ini_set('log_errors_max_len', 16384); // max size of one error to log 16k
 } //end if else
 ini_set('html_errors', '0'); // display errors in TEXT format

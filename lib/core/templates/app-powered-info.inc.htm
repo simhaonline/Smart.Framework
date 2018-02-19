@@ -1,33 +1,34 @@
 <!-- Partial Template: Core.AppPoweredInfo -->
-<div id="Powered-Info">
-	<table border="0" cellpadding="5" cellspacing="0">
-	<tr valign="top">
-		<td align="center"><span title="Server Powered by [####WEB-SERVER-POWERED-VERSION|html####]">[%%%%IF:WEB-SERVER-NAME:==Apache;%%%%]<a href="http://httpd.apache.org/" target="_blank">[%%%%/IF:WEB-SERVER-NAME%%%%]<img src="[####WEB-SERVER-POWERED-ICON|html####]">[%%%%IF:WEB-SERVER-NAME:==Apache;%%%%]</a>[%%%%/IF:WEB-SERVER-NAME%%%%]</span></td>
-		<td align="center"><span title="Server Powered by PHP[####PHP-VERSION|html####]"><a href="http://www.php.net/" target="_blank"><img src="lib/framework/img/powered_by_php.png"></a></span></td>
-		[%%%%IF:DBSERVER-NAME:!=;%%%%]<td align="center"><span title="Server Powered by [####DBSERVER-NAME|html####][####DBSERVER-VERSION|html####]"><a href="https://www.postgresql.org/" target="_blank"><img src="[####DBSERVER-POWERED-ICON|html####]"></a></span></td>[%%%%/IF:DBSERVER-NAME%%%%]
-		[%%%%IF:CACHESERVER-NAME:!=;%%%%]<td align="center"><span title="Server Powered by [####CACHESERVER-NAME|html####]"><a href="https://redis.io/" target="_blank"><img src="[####CACHESERVER-POWERED-ICON|html####]"></a></span></td>[%%%%/IF:CACHESERVER-NAME%%%%]
-		<td align="center"><span title="Server Powered by [####DBEMBEDDED-NAME|html####]">[%%%%IF:LAST-ENTRY-TYPE:==sqlite;%%%%]<a href="https://www.sqlite.org/" target="_blank">[%%%%/IF:LAST-ENTRY-TYPE%%%%]<img src="[####DBEMBEDDED-POWERED-ICON|html####]">[%%%%IF:LAST-ENTRY-TYPE:==sqlite;%%%%]</a>[%%%%/IF:LAST-ENTRY-TYPE%%%%]</span></td>
-	</tr>
-	<tr valign="top">
-		<td align="center"><span title="[####WEB-SERVER-VERSION|html####]"><img width="48" height="48" src="[####WEB-SERVER-ICON|html####]"></span></td>
-		<td align="center"><span title="PHP Server-Side Scripting Language"><img width="48" height="48" src="lib/framework/img/php-logo.svg"></span></td>
-		[%%%%IF:DBSERVER-NAME:!=;%%%%]<td align="center"><span title="[####DBSERVER-NAME|html####] / SQL Database Server"><img width="48" height="48" src="[####DBSERVER-POWERED-LOGO|html####]"></span></td>[%%%%/IF:DBSERVER-NAME%%%%]
-		[%%%%IF:CACHESERVER-NAME:!=;%%%%]<td align="center"><span title="[####CACHESERVER-NAME|html####] / Cache Server"><img width="48" height="48" src="[####CACHESERVER-POWERED-LOGO|html####]"></span></td>[%%%%/IF:CACHESERVER-NAME%%%%]
-		<td align="center"><span title="[####DBEMBEDDED-NAME|html####]"><img width="48" height="48" src="[####DBEMBEDDED-POWERED-LOGO|html####]"></span></td>
-	</tr>
-	<tr valign="top">
-		<td align="center"><span title="App Powered by HTML"><a href="https://www.w3.org/TR/html/" target="_blank"><img src="lib/framework/img/powered_code_html.png"></a></span><br><span title="App Powered by CSS"><a href="https://www.w3.org/TR/CSS/" target="_blank"><img src="lib/framework/img/powered_code_css.png"></a></span></td>
-		<td align="center"><span title="App Powered by JavaScript"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank"><img src="lib/framework/img/powered_code_javascript.png"></a></span><br><span title="App Powered by jQuery"><a href="https://jquery.com/" target="_blank"><img src="lib/framework/img/powered_code_jquery.png"></a></span></td>
-		[%%%%IF:DBSERVER-NAME:!=;%%%%]<td align="center"></td>[%%%%/IF:DBSERVER-NAME%%%%]
-		[%%%%IF:CACHESERVER-NAME:!=;%%%%]<td align="center"></td>[%%%%/IF:CACHESERVER-NAME%%%%]
-		<td align="center"><span title="App Powered by Open Source Software"><a href="https://opensource.org/" target="_blank"><img src="lib/framework/img/powered_by_open_source.png"></a></span></td>
-	</tr>
-	<tr valign="bottom">
-		<td align="left"><span title="App Powered by [####SOFTWARE-NAME|html####]"><a href="[####SOFTWARE-POWERED-URL|html####]" target="_blank"><img src="[####SOFTWARE-POWERED-LOGO|html####]"></a></span></td>
-		[%%%%IF:DBSERVER-NAME:!=;%%%%]<td></td>[%%%%/IF:DBSERVER-NAME%%%%]
-		[%%%%IF:CACHESERVER-NAME:!=;%%%%]<td></td>[%%%%/IF:CACHESERVER-NAME%%%%]
-		<td colspan="2" align="right"><span title="[####OS-LOGO-DESC|html####]"><img width="48" height="48" src="[####OS-LOGO-IMG|html####]"></span></td>
-	</tr>
-	</table>
+<div id="Powered-Info" style="position:relative!important; display:block!important; background:#FFFFFF!important; color:#cccccc!important; max-width:800px!important; border:1px solid #ECECEC; border-radius:3px;">
+	<div style="display:block!important; padding:0px!important; margin:0px!important;">
+		<div style="display:inline-block!important; margin:10px!important; cursor:pointer;">
+			<a href="[####APP-URL|html####]" target="_blank" style="cursor:pointer!important;"><img width="64" height="64" alt="[####APP-NAME|html####]" title="[####APP-NAME|html####]" src="[####APP-LOGO|html####]"></a>
+		</div>
+		<div style="display:inline-block!important; cursor:default; position:absolute!important; top:10px; left:96px;">
+			<span style="line-height:64px!important; font-size:20px!important; font-weight:normal!important; font-style:italic!important;">app::powered.by</span>
+		</div>
+	</div>
+	<div style="display:block!important; padding:0px!important; margin:0px!important;">
+	[%%%%LOOP:ARR-SSIDE%%%%]
+		<div style="display:inline-block!important; margin:10px!important; cursor:help;">
+		[%%%%IF:ARR-SSIDE.NAME:!=;%%%%]
+			[%%%%IF:ARR-SSIDE.URL:!=;%%%%]<a href="[####ARR-SSIDE.URL|html####]" target="_blank" style="cursor:pointer!important;">[%%%%/IF:ARR-SSIDE.URL%%%%]<img width="64" height="64" alt="[####ARR-SSIDE.NAME|html####]" title="[####ARR-SSIDE.NAME|html####]" src="[####ARR-SSIDE.LOGO|html####]">[%%%%IF:ARR-SSIDE.URL:!=;%%%%]</a>[%%%%/IF:ARR-SSIDE.URL%%%%]
+		[%%%%ELSE:ARR-SSIDE.NAME%%%%]
+			<div style="width:64px; height:64px; cursor:default!important;"></div>
+		[%%%%/IF:ARR-SSIDE.NAME%%%%]
+		</div>
+	[%%%%/LOOP:ARR-SSIDE%%%%]
+	</div>
+	<div style="display:block!important; padding:0px!important; margin:0px!important;">
+	[%%%%LOOP:ARR-CSIDE%%%%]
+		<div style="display:inline-block!important; margin:10px!important; cursor:help;">
+		[%%%%IF:ARR-CSIDE.NAME:!=;%%%%]
+			[%%%%IF:ARR-CSIDE.URL:!=;%%%%]<a href="[####ARR-CSIDE.URL|html####]" target="_blank" style="cursor:pointer!important;">[%%%%/IF:ARR-CSIDE.URL%%%%]<img width="64" height="64" alt="[####ARR-CSIDE.NAME|html####]" title="[####ARR-CSIDE.NAME|html####]" src="[####ARR-CSIDE.LOGO|html####]">[%%%%IF:ARR-CSIDE.URL:!=;%%%%]</a>[%%%%/IF:ARR-CSIDE.URL%%%%]
+		[%%%%ELSE:ARR-CSIDE.NAME%%%%]
+			<div style="width:64px; height:64px; cursor:default!important;"></div>
+		[%%%%/IF:ARR-CSIDE.NAME%%%%]
+		</div>
+	[%%%%/LOOP:ARR-CSIDE%%%%]
+	</div>
 </div>
 <!-- #END :: Partial Template: Core.AppPoweredInfo -->

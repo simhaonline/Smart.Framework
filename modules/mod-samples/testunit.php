@@ -62,9 +62,16 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		$release_hash = (string) $this->ControllerGetParam('release-hash');
 		//--
 		$op = $this->RequestVarGet('op', 'testunit.main', 'string');
+		$test_cookie = $this->CookieVarGet((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME);
 		//--
 		switch((string)$op) {
 		//#####
+			case 'testunit.cookies':
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = 'COOKIE-TEST: '.SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME.' = '.$test_cookie;
+				//--
+				break;
 			case 'testunit.strings-test':
 				//--
 				sleep(1);

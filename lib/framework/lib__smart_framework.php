@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.180215
+ * @version 	v.180219
  * @package 	Application
  *
  */
@@ -571,6 +571,22 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	final public function RequestVarGet($key, $defval=null, $type='') { // {{{SYNC-REQUEST-DEF-PARAMS}}}
 		//--
 		return SmartFrameworkRegistry::getRequestVar($key, $defval, $type); // mixed
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get a Cookie Variable (COOKIES) in a controller
+	 *
+	 * @param 	STRING 		$key		:: The name (key) of the COOKIES variable.
+	 *
+	 * @return 	MIXED					:: The value of the choosen Cookie variable
+	 */
+	final public function CookieVarGet($key) {
+		//--
+		return SmartFrameworkRegistry::getCookieVar($key); // mixed: null / string
 		//--
 	} //END FUNCTION
 	//=====

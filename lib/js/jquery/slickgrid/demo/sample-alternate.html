@@ -1,175 +1,162 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>SlickGrid Example: Alternative display</title>
+<head>
+	<meta charset="UTF-8">
+	<title>SlickGrid Example: Alternative display (Addressbook)</title>
 
-		<style>
-		.slick-cell {
-			background: white!important;
-			border-color: transparent!important;
-			line-height: 19px!important;
-		}
+	<style>
+	.slick-cell {
+		background: white!important;
+		border-color: transparent!important;
+		line-height: 19px!important;
+	}
 
-		/* alternating offsets */
-		.slick-row .cell-inner {
-			margin-right: 60px;
-		}
+	/* alternating offsets */
+	.slick-row .cell-inner {
+		margin-right: 60px;
+	}
 
-		.slick-row[row$="1"] .cell-inner,  .slick-row[row$="3"] .cell-inner,  .slick-row[row$="5"] .cell-inner,
-		.slick-row[row$="7"] .cell-inner, .slick-row[row$="9"] .cell-inner {
-			margin-left: 60px;
-			margin-right: 0;
-		}
+	.slick-row[row$="1"] .cell-inner,  .slick-row[row$="3"] .cell-inner,  .slick-row[row$="5"] .cell-inner,
+	.slick-row[row$="7"] .cell-inner, .slick-row[row$="9"] .cell-inner {
+		margin-left: 60px;
+		margin-right: 0;
+	}
 
-		.contact-card-cell {
-			border-color: transparent!important;
-		}
+	.contact-card-cell {
+		border-color: transparent!important;
+	}
 
-		.cell-inner {
-			height: 80px;
-			margin: 10px;
-			padding: 10px;
-			background: #fafafa;
-			border: 1px solid gray;
-			border-radius: 10px;
-			box-shadow: 1px 1px 5px silver;
-/* deprecated
-			-moz-border-radius: 10px;
-			-webkit-border-radius: 10px;
-			-moz-box-shadow: 1px 1px 5px silver;
-			-webkit-box-shadow: 1px 1px 5px silver;
-			-webkit-transition: all 0.5s;
-*/
-		}
+	.cell-inner {
+		height: 80px;
+		margin: 10px;
+		padding: 10px;
+		background: #fafafa;
+		border: 1px solid gray;
+		border-radius: 10px;
+		box-shadow: 1px 1px 5px silver;
+	}
 
-		.cell-inner:hover {
-			background: #f0f0f0;
-		}
+	.cell-inner:hover {
+		background: #f0f0f0;
+	}
 
-		.cell-left {
-			width: 40px;
-			height: 100%;
-			float: left;
-			border-right: 1px dotted gray;
-			background: url("assets/user_identity.gif") no-repeat top center;
-		}
+	.cell-left {
+		width: 40px;
+		height: 100%;
+		float: left;
+		border-right: 1px dotted gray;
+		background: url("assets/user_identity.gif") no-repeat top center;
+	}
 
-		.cell-main {
-			margin-left: 50px;
-		}
-	</style>
+	.cell-main {
+		margin-left: 50px;
+	}
+</style>
 
-		<link rel="stylesheet" type="text/css" href="../slick.grid.css">
-		<script type="text/javascript" src="../../jquery.js"></script>
-		<script type="text/javascript" src="../../jquery.smart.compat.js"></script>
-		<script type="text/javascript" src="../../jquery.event.drag.js"></script>
-		<script type="text/javascript" src="../../jquery.event.drop.js"></script>
-		<script type="text/javascript" src="../slick.grid.js"></script>
-		<script type="text/javascript" src="../../jquery.sparkline.js"></script>
+	<link rel="stylesheet" type="text/css" href="../slick.grid.css">
+	<script type="text/javascript" src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../jquery.smart.compat.js"></script>
+	<script type="text/javascript" src="../../jquery.event.drag.js"></script>
+	<script type="text/javascript" src="../../jquery.event.drop.js"></script>
+	<script type="text/javascript" src="../slick.grid.js"></script>
+	<script type="text/javascript" src="../../jquery.sparkline.js"></script>
 
+	<script type="text/javascript" src="../../../framework/src/core_utils.js"></script>
 
-	</head>
-	<body>
+</head>
+<body>
 		<table width="100%">
 		<tr>
 			<td valign="top" width="50%">
-				<div id="myGrid" style="font-size:12px;width:600px;height:500px;"></div>
+				<div id="myGrid" style="font-size:12px;width:600px;height:500px; border:1px solid #ECECEC;"></div>
 			</td>
 			<td valign="top">
 				<h2>Demonstrates:</h2>
 
 				<ul>
-					<li>Template-based rendering using John Resig's <a href="http://ejohn.org/blog/javascript-micro-templating/" target=_blank>micro-templates</a> while still using SlickGrid's virtual rendering technology.</li>
+					<li id="txt-info"></li>
 				</ul>
 			</td>
 		</tr>
 		</table>
 
 		<!-- cell template -->
-		<script type="text/html" id="cell_template">
-			<div class="cell-inner">
-				<div class="cell-left"></div>
-				<div class="cell-main">
-					<b><%=name%></b><br/>
-					<%=title%><br/>
-					<%=email%><br/>
-					<%=phone%>
-				</div>
-			</div>
-		</script>
+<script>
+var tpl = '<div class="cell-inner">\
+	<div class="cell-left"></div>\
+	<div class="cell-main">\
+		<b>[####NAME|html####]</b><br>\
+		[####TITLE|html####]<br>\
+		[####EMAIL|html####]<br>\
+		[####PHONE|html####]\
+	</div>\
+</div>';
+</script>
+<script>
 
+	var asyncDisplay = (Math.random() >= 0.5);
 
-		<script>
-		// Simple JavaScript Templating
-		// John Resig - http://ejohn.org/ - MIT Licensed
-		(function(){
-		  var cache = {};
+	var grid;
+	var data = [];
 
-		  this.tmpl = function tmpl(str, data){
-			// Figure out if we're getting a template, or if we need to
-			// load the template - and be sure to cache the result.
-			var fn = !/\W/.test(str) ?
-			  cache[str] = cache[str] ||
-				tmpl(document.getElementById(str).innerHTML) :
-
-			  // Generate a reusable function that will serve as a template
-			  // generator (and which will be cached).
-			  new Function("obj",
-				"var p=[],print=function(){p.push.apply(p,arguments);};" +
-
-				// Introduce the data as local variables using with(){}
-				"with(obj){p.push('" +
-
-				// Convert the template into pure JavaScript
-				str
-				  .replace(/[\r\t\n]/g, " ")
-				  .split("<%").join("\t")
-				  .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-				  .replace(/\t=(.*?)%>/g, "',$1,'")
-				  .split("\t").join("');")
-				  .split("%>").join("p.push('")
-				  .split("\r").join("\\'")
-			  + "');}return p.join('');");
-
-			// Provide some basic currying to the user
-			return data ? fn( data ) : fn;
-		  };
-		})();
-
-
-		var grid;
-		var data = [];
-
-		var columns = [
-			{id:"contact-card", name:"Contacts", formatter:renderCell, width:500, cssClass:"contact-card-cell"}
-		];
-
-		var options = {
-			rowHeight: 140,
-			editable: false,
-			enableAddRow: false,
-			enableCellNavigation: false,
-			enableColumnReorder: false
-		};
-
-		var compiled_template = tmpl("cell_template");
-
-		function renderCell(row, cell, value, columnDef, dataContext) {
-			return compiled_template(dataContext);
-		}
-
-		$(function() {
-			for (var i=0; i<100; i++) {
-				var d = (data[i] = {});
-				d["name"] = "User " + i;
-				d["email"] = "test.user@nospam.org";
-				d["title"] = "Regional sales manager";
-				d["phone"] = "206-000-0000";
-			}
-			grid = new Slick.Grid($("#myGrid"), data, columns, options);
+	function renderCell(row, cell, value, columnDef, dataContext) {
+		return SmartJS_CoreUtils.render_markers_template(tpl, {
+			'NAME': String(dataContext.name),
+			'TITLE': String(dataContext.title),
+			'EMAIL': String(dataContext.email),
+			'PHONE': String(dataContext.phone),
 		});
+	}
 
-		</script>
-	</body>
+	function waitingFormatter(row, cell, value, columnDef, dataContext) {
+		return '<span style="color:#FFFFFF; background:#778899;">... ASYNC rendering vCard ...</span>';
+	}
+
+	function renderAsyncCell(cellNode, row, dataContext, colDef) {
+		var cell = SmartJS_CoreUtils.render_markers_template(tpl, {
+			'NAME': String(dataContext.name),
+			'TITLE': String(dataContext.title),
+			'EMAIL': String(dataContext.email),
+			'PHONE': String(dataContext.phone),
+		});
+		$(cellNode).empty().html(cell);
+	}
+
+	var txtInfo = '';
+	var gRow = {};
+
+	if(asyncDisplay === true) {
+		txtInfo = 'Template-based ASYNC rendering using Smart.Framework JS-MarkerTpl while still using SlickGrid`s virtual rendering technology.';
+		gRow = { id:'contact-card', name:'Contacts', width:550, cssClass:'contact-card-cell', formatter:waitingFormatter, rerenderOnResize:true, asyncPostRenderDelay:25, asyncPostRender:renderAsyncCell };
+	} else {
+		txtInfo = 'Template-based rendering using Smart.Framework JS-MarkerTpl while still using SlickGrid`s virtual rendering technology.';
+		gRow = { id:"contact-card", name:"Contacts", width:550, cssClass:"contact-card-cell", formatter:renderCell };
+	} //end if else
+
+	$('#txt-info').empty().text(txtInfo);
+
+	var columns = [ gRow ];
+
+	var options = {
+		rowHeight: 140,
+		editable: false,
+		enableAddRow: false,
+		enableCellNavigation: false,
+		enableColumnReorder: false,
+		enableAsyncPostRender: true, // req. by async example
+	};
+
+	$(function() {
+		for (var i=0; i<10000; i++) {
+			var d = (data[i] = {});
+			d["name"] = "User " + (i+1);
+			d["email"] = "test.user@nospam.org";
+			d["title"] = "Regional sales manager";
+			d["phone"] = "206-000-0000";
+		}
+		grid = new Slick.Grid($("#myGrid"), data, columns, options);
+	});
+
+</script>
+</body>
 </html>
