@@ -1268,7 +1268,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.180129
+ * @version 	v.180220
  * @package 	Filesystem
  *
  */
@@ -3011,6 +3011,12 @@ public static function compare_folders($dir1, $dir2, $include_dot_files=true, $r
 	//-- paths are not identical, so wipe out of compare
 	unset($arr_dir1['path']);
 	unset($arr_dir2['path']);
+	//-- size dirs are not identical if on different file systems (EXT4 / FFS / NFS)
+	unset($arr_dir1['size-dirs']);
+	unset($arr_dir2['size-dirs']);
+	//-- because size dirs is includded in (total) size unset this also (will remain to compare just 'size-files') !!
+	unset($arr_dir1['size']);
+	unset($arr_dir2['size']);
 	//-- compute array diffs (must be on both directions)
 	$arr_diff1 = array_diff_assoc($arr_dir1, $arr_dir2);
 	$arr_diff2 = array_diff_assoc($arr_dir2, $arr_dir1);
