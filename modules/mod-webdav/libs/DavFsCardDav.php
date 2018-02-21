@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCardDav {
 
 	// ::
-	// v.180209
+	// v.180221.1843
 
 	private static $carddav_ns = 'xmlns:card="urn:ietf:params:xml:ns:carddav"';
 	private static $carddav_urn = 'urn:ietf:params:xml:ns:carddav';
@@ -120,6 +120,25 @@ final class DavFsCardDav {
 
 	public static function methodPut($dav_vfs_path) { // 201 | 405 | 415 | 423 | 500
 		//--
+		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
+		//--
+		if(((string)trim((string)$heads['range']) != '') OR ((string)trim((string)$heads['content-range']) != '')) { // (SabreDAV)
+			// Content-Range is dangerous for PUT requests:  PUT per definition
+			// stores a full resource.  draft-ietf-httpbis-p2-semantics-15 says
+			// in section 7.6:
+			//   An origin server SHOULD reject any PUT request that contains a
+			//   Content-Range header field, since it might be misinterpreted as
+			//   partial content (or might be partial content that is being mistakenly
+			//   PUT as a full representation).  Partial content updates are possible
+			//   by targeting a separately identified resource with state that
+			//   overlaps a portion of the larger resource, or by using a different
+			//   method that has been specifically defined for partial updates (for
+			//   example, the PATCH method defined in [RFC5789]).
+			header('Accept-Ranges: none');
+			http_response_code(400); // unsupported: ranges
+			return 400;
+		} //end if
+		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
 			http_response_code(415); // unsupported media type
 			return 415;
@@ -191,7 +210,24 @@ final class DavFsCardDav {
 			return 423;
 		} //end if
 		//--
+		$fsize = (int) strlen((string)$vcf_data);
+		//--
 		$vcf_data = ''; // free mem
+		//--
+		if((int)trim((string)$heads['x-expected-entity-length']) > 0) { // intercepting the MacOS Finder problem (SabreDAV)
+			// Many webservers will not cooperate well with Finder PUT requests, because it uses 'Chunked' transfer encoding for the request body.
+			// The symptom of this problem is that Finder sends files to the server, but they arrive as 0-lenght files in PHP.
+			// If we don't do anything, the user might think they are uploading files successfully, but they end up empty on the server.
+			// Instead, we throw back an error if we detect this.
+			// The reason Finder uses Chunked, is because it thinks the files might change as it's being uploaded, and therefore the
+			// Content-Length can vary.
+			// Instead it sends the X-Expected-Entity-Length header with the size of the file at the very start of the request.
+			// If this header is set, but we don't get a request body we will fail the request to protect the end-user.
+			if((int)$fsize <= 0) {
+				http_response_code(411); // length required
+				return 411;
+			} //end if
+		} //end if
 		//--
 		http_response_code(201); // HTTP/1.1 201 Created
 		header('Content-length: 0');
@@ -234,6 +270,14 @@ final class DavFsCardDav {
 
 
 	public static function methodGet($dav_method, $dav_author, $dav_url, $dav_request_path, $dav_vfs_path, $dav_is_root_path, $dav_vfs_root, $dav_request_back_path, $nfo_title, $nfo_signature, $nfo_prefix_crrpath, $nfo_lnk_welcome, $nfo_txt_welcome, $nfo_svg_logo) { // 200 | 404 | 405 | 415 | 423
+		//--
+		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
+		//--
+		if(((string)trim((string)$heads['range']) != '') OR ((string)trim((string)$heads['content-range']) != '')) {
+			header('Accept-Ranges: none'); // !!! IMPORTANT BUG FIX: without this, if the client ask a partial range content will result in corrupted file content: MacOS Finder with GET files > 8.5 MB) !!!
+			http_response_code(400); // unsupported: ranges
+			return 400;
+		} //end if
 		//--
 		$dav_vfs_path = (string) $dav_vfs_path;
 		$dav_vfs_root = (string) $dav_vfs_root;
