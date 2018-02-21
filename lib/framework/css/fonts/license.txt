@@ -1,19 +1,20 @@
 
 ===========================================================================================================================================
-Font Awesome Licenses:
+Font Awesome version 4.7.0 - Licenses:
 ===========================================================================================================================================
   *  The Font Awesome font is licensed under the SIL OFL 1.1 License: http://scripts.sil.org/OFL
   *  Font Awesome CSS, LESS, and Sass files are licensed under the MIT License: https://opensource.org/licenses/mit-license.html
   *  The Font Awesome documentation is licensed under the CC BY 3.0 License: http://creativecommons.org/licenses/by/3.0/
-     (Attribution is no longer required as of Font Awesome 3.0, but much appreciated: Font Awesome by Dave Gandy - http://fontawesome.io)
+     The CC BY Attribution is no longer required as of Font Awesome 3.0,
+     but much appreciated: Font Awesome by Dave Gandy - https://github.com/FortAwesome/Font-Awesome/tree/v4.7.0
 ===========================================================================================================================================
 
 
-##########################################################################################################
-##### Font Awesome License (Font Files: WOFF / WOFF2 / TTF / SVG / EOT / OTF / Sources): SIL OFL 1.1 #####
-##########################################################################################################
+################################################################################################################
+##### Font Awesome 4.7 - License (Font Files: WOFF / WOFF2 / TTF / SVG / EOT / OTF / Sources): SIL OFL 1.1 #####
+################################################################################################################
 
-Copyright (c) 2016, Dave Gandy - http://fontawesome.io,
+Copyright (c) 2016, Dave Gandy - https://github.com/FortAwesome/Font-Awesome/tree/v4.7.0,
 with Reserved Font Name "Font Awesome".
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
@@ -109,15 +110,15 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 
 
-##############################################################################
-##### Font Awesome License (HTML Styles: CSS / LESS / SASS): MIT License #####
-##############################################################################
+####################################################################################
+##### Font Awesome 4.7 - License (HTML Styles: CSS / LESS / SASS): MIT License #####
+####################################################################################
 
 -----------------------------------------------------------
 The MIT License
 -----------------------------------------------------------
 
-Copyright 2016, Dave Gandy - http://fontawesome.io
+Copyright 2016, Dave Gandy - https://github.com/FortAwesome/Font-Awesome/tree/v4.7.0
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -139,9 +140,9 @@ SOFTWARE.
 
 
 
-################################################################################
-##### Font Awesome License (Documentation: TEXT / HTML): CC BY 3.0 License #####
-################################################################################
+######################################################################################
+##### Font Awesome 4.7 - License (Documentation: TEXT / HTML): CC BY 3.0 License #####
+######################################################################################
 
 -----------------------------------------------------------
 CC BY 3.0 License
@@ -149,7 +150,7 @@ CC BY 3.0 License
 
 Creative Commons Legal Code
 
-Attribution 3.0 Unported # Font Awesome by Dave Gandy - http://fontawesome.io
+Attribution 3.0 Unported # Font Awesome by Dave Gandy - https://github.com/FortAwesome/Font-Awesome/tree/v4.7.0
 
     CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
     LEGAL SERVICES. DISTRIBUTION OF THIS LICENSE DOES NOT CREATE AN
