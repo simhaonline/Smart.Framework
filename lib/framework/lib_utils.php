@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.180216
+ * @version 	v.180222
  * @package 	Base
  *
  */
@@ -1603,7 +1603,9 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 		return 'FATAL ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name;
 	} //end if
 	$fsize_upld = (int) SmartFileSystem::get_file_size($the_upld_file_tmpname);
-	if((int)$fsize_upld > (int)$max_size) {
+	if((int)$fsize_upld <= 0) { // dissalow upload empty files, does not make sense or there was an error !!!
+		return 'Upload Failed: File is empty: '.$the_upld_file_name;
+	} elseif((int)$fsize_upld > (int)$max_size) {
 		return 'Upload Failed: File is oversized: '.$the_upld_file_name;
 	} //end if
 	if(!SmartFileSystem::move_uploaded($the_upld_file_tmpname, $dest_dir.$the_upld_file_name, true)) { // also check sha1-file

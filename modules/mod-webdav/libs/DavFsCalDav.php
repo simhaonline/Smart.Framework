@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCalDav {
 
 	// ::
-	// v.180222.1343
+	// v.180222.1443
 
 	private static $caldav_ns = 'xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/"';
 	private static $caldav_urn = 'urn:ietf:params:xml:ns:caldav';
@@ -145,9 +145,13 @@ final class DavFsCalDav {
 			return 411;
 		} //end if
 		$head_content_length = (int) $head_content_length;
-		if($head_content_length < 0) {
+	/*	if($head_content_length < 0) {
 			http_response_code(400); // invalid content length
 			return 400;
+		} //end if */
+		if($head_content_length <= 0) {
+			http_response_code(411); // dissalow empty files (0 bytes)
+			return 411;
 		} //end if
 		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
