@@ -1,9 +1,9 @@
 <?php
 // [@[#[!SF.DEV-ONLY!]#]@]
-// Controller: Webdav/TestCalDAV (FileSystem)
+// Controller: Webdav/TestCalDAV (CalDAV:FileSystem)
 // Route: admin.php/page/webdav.test-caldav/~
 // Author: unix-world.org
-// v.180209
+// v.180222.1343
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application

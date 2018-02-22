@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.180221.1843
+	// v.180222.1343
 
 	public static function methodOptions() { // 200
 		//--
@@ -26,8 +26,8 @@ final class DavFileSystem {
 		header('Date: '.date('D, d M Y H:i:s O'));
 		header('Content-length: 0');
 		header('MS-Author-Via: DAV'); // Microsoft clients are set default to the Frontpage protocol unless we tell them to use DAV
-		header('DAV: 1, 2'); // [DAV 1, 2] must allow LOCK / UNLOCK ; may here list CalDAV / CardDAV ; DAV version 2 is req. for MacOS
-		header('Allow: OPTIONS, HEAD, GET, PROPFIND, MKCOL, PUT, DELETE, COPY, MOVE, LOCK, UNLOCK'); // not yet supported: PROPPATCH ; LOCK / UNLOCK are req. for MacOS
+		header('DAV: 1, 2'); // [DAV 2 is supposed to allow LOCK / UNLOCK, but is not necessary because file PUT are using UUIDs to avoid conflicts or temporary overlapings ] ; DAV version 2 is req. for MacOS Finder to enable non-readonly mode
+		header('Allow: OPTIONS, HEAD, GET, PROPFIND, MKCOL, PUT, DELETE, COPY, MOVE'); // [ LOCK, UNLOCK : disabled, since MacOS Finder is buggy and they were only provided for it ] not yet supported: PROPPATCH ; LOCK / UNLOCK are req. for MacOS
 		header('Accept-Ranges: none');
 		header('Z-Cloud-Service: WebDAV Server');
 		//--
@@ -265,9 +265,17 @@ final class DavFileSystem {
 	} //END FUNCTION
 
 
-	public static function methodPut($dav_vfs_path) { // 201 | 400 | 405 | 415 | 423 | 500
+	public static function methodPut($dav_vfs_path) { // 201 | 400 | 405 | 409 | 415 | 423 | 500
 		//--
 		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
+		//--
+		// TODO: MacOS Finder with PUT files > 8.5 MB still fails ...
+		// !! without the below restriction which is just an idea, not full functional, the MacOS Finder works with files under the above limit !!
+	/*	if(stripos((string)$heads['transfer-encoding'], 'chunked') !== false) {
+			header('Accept-Encoding: gzip, deflate, identity');
+			http_response_code(406); // not acceptable: chunked
+			return 406;
+		} //end if */
 		//--
 		if(((string)trim((string)$heads['range']) != '') OR ((string)trim((string)$heads['content-range']) != '')) { // (SabreDAV)
 			// Content-Range is dangerous for PUT requests:  PUT per definition
@@ -286,23 +294,43 @@ final class DavFileSystem {
 			return 400;
 		} //end if
 		//--
-		// TODO: MacOS Finder with PUT files > 8.5 MB still fails ...
-		// !! without the below restriction which is just an idea, not full functional, the MacOS Finder works with files under the above limit !!
-	/*	if(stripos((string)$heads['transfer-encoding'], 'chunked') !== false) {
-			header('Accept-Encoding: gzip, deflate, identity');
-			http_response_code(406); // not acceptable: chunked
-			return 406;
-		} //end if */
+		$head_content_length = (string) trim((string)$heads['content-length']);
+		if((string)$head_content_length == '') {
+			http_response_code(411); // content length required
+			return 411;
+		} //end if
+		$head_content_length = (int) $head_content_length;
+		if($head_content_length < 0) {
+			http_response_code(400); // invalid content length
+			return 400;
+		} //end if
 		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
 			http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
 		//--
-		$the_fname = (string) trim((string)\SmartFileSysUtils::get_file_name_from_path((string)$dav_vfs_path));
-		if(((string)$the_fname == '') OR (substr($the_fname, 0, 1) == '.')) {
-			http_response_code(415); // do not allow: empty or dot files not allowed (previous answer was 415)
+		$the_dname = (string) trim((string)\SmartFileSysUtils::get_dir_from_path((string)$dav_vfs_path));
+		if(((string)$the_dname == '') OR (!\SmartFileSysUtils::check_if_safe_path($the_dname))) {
+			http_response_code(415); // do not allow: (empty / unsafe dir paths are not allowed)
 			return 415;
+		} //end if
+		$the_dname = (string) \SmartFileSysUtils::add_dir_last_slash((string)$the_dname);
+		if((!\SmartFileSysUtils::check_if_safe_path($the_dname)) OR (!\SmartFileSystem::is_type_dir($the_dname))) {
+			http_response_code(409); // conflict: cannot PUT a resource if all ancestors do not already exist
+			return 409;
+		} //end if
+		//--
+		$the_fname = (string) trim((string)\SmartFileSysUtils::get_file_name_from_path((string)$dav_vfs_path));
+		if(((string)$the_fname == '') OR (substr($the_fname, 0, 1) == '.') OR (!\SmartFileSysUtils::check_if_safe_file_or_dir_name($the_fname))) {
+			http_response_code(415); // unsupported media type (empty / dot / unsafe file names are not allowed)
+			return 415;
+		} //end if
+		//--
+		if((string)$the_dname.$the_fname != (string)$dav_vfs_path) {
+			\Smart::log_warning(__METHOD__.'() : Unsafe recompose path: '.$the_dname.$the_fname.' # '.$dav_vfs_path);
+			http_response_code(406); // not acceptable: weird path ... failed to decompose
+			return 406;
 		} //end if
 		//--
 		$the_ext = (string) strtolower(trim((string)\SmartFileSysUtils::get_file_extension_from_path((string)$dav_vfs_path)));
@@ -339,10 +367,26 @@ final class DavFileSystem {
 			return 405;
 		} //end if
 		//--
-		$tmp_vfs_path = (string) $dav_vfs_path.'__.TMP.__@'.\Smart::uuid_10_seq().'-'.\Smart::uuid_10_num().'-'.\Smart::uuid_10_str();
-		// $dav_vfs_path
+		$tmp_vfs_path = (string) $the_dname.'.'.$the_fname.'__.TMP@-'.\Smart::uuid_10_seq().'-'.\Smart::uuid_10_num().'-'.\Smart::uuid_10_str(); // temporary file will start with a dot ; supposed that dir name ends with a slash ; !IMPORTANT! because dot files are restricted in this DAV env and thus cannot be overwritten by other processes ; more, the dot files are not listed by GET in this DAV env
+		if(!\SmartFileSysUtils::check_if_safe_path($tmp_vfs_path)) {
+			\Smart::log_warning(__METHOD__.'() : Unsafe temporary file: '.$tmp_vfs_path);
+			http_response_code(415); // unsupported media type
+			return 415;
+		} //end if
+		if(\SmartFileSystem::is_type_dir($tmp_vfs_path)) {
+			\Smart::log_warning(__METHOD__.'() : Temporary file is a dir: '.$tmp_vfs_path);
+			http_response_code(405); // the destination exists and is a directory
+			return 405;
+		} //end if
+		if(\SmartFileSystem::path_exists($tmp_vfs_path)) {
+			\Smart::log_warning(__METHOD__.'() : Temporary file already exists: '.$tmp_vfs_path);
+			http_response_code(405); // the destination exists and could not be replaced
+			return 405;
+		} //end if
+		//--
 		$fd = fopen((string)$tmp_vfs_path, 'wb');
 		if(!$fd) {
+			\Smart::log_warning(__METHOD__.'() : Failed to Open a new File: '.$tmp_vfs_path);
 			http_response_code(423); // locked: could not achieve fopen advisory lock
 			return 423;
 		} //end if
@@ -354,24 +398,37 @@ final class DavFileSystem {
 		fclose($fp);
 		//--
 		if(!\SmartFileSystem::is_type_file((string)$tmp_vfs_path)) {
+			\Smart::log_warning(__METHOD__.'() : Failed to Write the new File: '.$tmp_vfs_path);
 			http_response_code(423); // locked: could not achieve fopen advisory lock
 			return 423;
 		} //end if
 		if(\SmartFileSystem::path_exists((string)$dav_vfs_path)) {
-			http_response_code(405); // the destination exists and could not be replaced
-			return 405;
+		//	http_response_code(405); // the destination exists and could not be replaced
+		//	return 405;
+			// this may be a fix for buggy dav clients (no return but delete and replace)
+			\SmartFileSystem::delete((string)$dav_vfs_path); // delete file to be replaced with new one
 		} //end if
 		if(!\SmartFileSystem::rename((string)$tmp_vfs_path, (string)$dav_vfs_path)) {
+			\Smart::log_warning(__METHOD__.'() : Failed to rename the temporary file: '.$tmp_vfs_path.' to file: '.$dav_vfs_path);
 			if(\SmartFileSystem::is_type_file((string)$tmp_vfs_path)) {
-				\SmartFileSystem::delete((string)$tmp_vfs_path);
+				if(!\SmartFileSystem::delete((string)$tmp_vfs_path)) {
+					\Smart::log_warning(__METHOD__.'() : Failed to remove temporary file: '.$tmp_vfs_path);
+				} //end if
 			} //end if
 			http_response_code(423); // locked: could not achieve fopen advisory lock
 			return 423;
 		} //end if
 		//--
 		$fsize = (int) \SmartFileSystem::get_file_size((string)$dav_vfs_path);
+		if((int)$fsize != (int)$head_content_length) {
+			if(!\SmartFileSystem::delete((string)$dav_vfs_path)) {
+				\Smart::log_warning(__METHOD__.'() : Failed to remove invalid content length file: '.$dav_vfs_path);
+			} //end if
+			http_response_code(408); // request timeout (delivered a smaller size content than expected)
+			return 408;
+		} //end if
 		//--
-		if((int)trim((string)$heads['x-expected-entity-length']) > 0) { // intercepting the MacOS Finder problem (SabreDAV)
+	/*	if((int)trim((string)$heads['x-expected-entity-length']) > 0) { // intercepting the MacOS Finder problem (SabreDAV)
 			// Many webservers will not cooperate well with Finder PUT requests, because it uses 'Chunked' transfer encoding for the request body.
 			// The symptom of this problem is that Finder sends files to the server, but they arrive as 0-lenght files in PHP.
 			// If we don't do anything, the user might think they are uploading files successfully, but they end up empty on the server.
@@ -381,10 +438,10 @@ final class DavFileSystem {
 			// Instead it sends the X-Expected-Entity-Length header with the size of the file at the very start of the request.
 			// If this header is set, but we don't get a request body we will fail the request to protect the end-user.
 			if((int)$fsize <= 0) {
-				http_response_code(411); // length required
+				http_response_code(411); // content length required
 				return 411;
 			} //end if
-		} //end if
+		} //end if */
 		//--
 		http_response_code(201); // HTTP/1.1 201 Created
 		header('Content-length: 0');
@@ -462,7 +519,7 @@ final class DavFileSystem {
 			//--
 			http_response_code(200);
 			$arr_quota = (array) self::getQuotaAndUsageInfo($dav_vfs_root);
-			$files_n_dirs = (array) (new \SmartGetFileSystem(true))->get_storage($dav_vfs_path, false, false, ''); // non-recuring
+			$files_n_dirs = (array) (new \SmartGetFileSystem(true))->get_storage($dav_vfs_path, false, false, ''); // non-recuring, no dot files
 			$fixed_vfs_dir = (string) \SmartFileSysUtils::add_dir_last_slash($dav_vfs_path);
 			$fixed_dav_url = (string) rtrim((string)$dav_url, '/').'/';
 			$base_url = (string) \SmartUtils::get_server_current_url();
@@ -708,7 +765,7 @@ final class DavFileSystem {
 			return array(); // skip quota info if not express specified
 		} //end if
 		//--
-		$arr_storage = (new \SmartGetFileSystem())->get_storage((string)$dav_vfs_root); // recuring
+		$arr_storage = (new \SmartGetFileSystem())->get_storage((string)$dav_vfs_root, true, true, ''); // recuring, with dot files
 		// \Smart::log_notice(print_r($arr_storage,1));
 		$used_space = (int) $arr_storage['size-files']; // 'size'
 		$free_space = (int) floor(disk_free_space((string)$dav_vfs_root));
@@ -743,7 +800,7 @@ final class DavFileSystem {
 			$arr[] = (array) self::getItemTypeNonCollection($dav_request_path, $dav_vfs_path);
 		} elseif(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
 			$arr[] = (array) self::getItemTypeCollection($dav_request_path, $dav_vfs_path);
-			$files_n_dirs = (array) (new \SmartGetFileSystem(true))->get_storage($dav_vfs_path, false, false, ''); // non-recuring
+			$files_n_dirs = (array) (new \SmartGetFileSystem(true))->get_storage($dav_vfs_path, false, false, ''); // non-recuring, no dot files
 			//print_r($files_n_dirs); die();
 			//print_r($arr); die();
 			$arr = self::addSubItem($dav_request_path, $dav_vfs_path, $arr, $files_n_dirs['list-dirs'], 'dirs');

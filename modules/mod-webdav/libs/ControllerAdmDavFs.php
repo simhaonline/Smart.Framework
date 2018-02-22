@@ -16,7 +16,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 
-	// v.180209
+	// v.180222.1343
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';
@@ -149,19 +149,19 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 				);
 				break;
 
-			case 'LOCK':
+		/*	case 'LOCK':
 				\SmartModExtLib\Webdav\DavFileSystem::methodLock(
 					(string) $this->dav_request_path,
 					(string) $this->dav_author
 				);
 				break;
-
+// LOCK / UNLOCK are needed only by MacOS Finder which is very buggy atm, so commenting this out will force MacOS Finder to run in read-only mode over this webDAV share(s)
 			case 'UNLOCK':
 				\SmartModExtLib\Webdav\DavFileSystem::methodUnlock(
 					(string) $this->dav_request_path,
 					(string) $this->dav_author
 				);
-				break;
+				break; */
 
 			case 'MKCOL':
 				\SmartModExtLib\Webdav\DavFileSystem::methodMkcol((string)$this->dav_vfs_path);
