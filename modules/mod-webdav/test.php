@@ -3,7 +3,7 @@
 // Controller: Webdav/Test (WebDAV:FileSystem)
 // Route: admin.php/page/webdav.test/~
 // Author: unix-world.org
-// v.180222.1343
+// v.180222.1945
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -44,6 +44,7 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmDavFs 
 		} //end if
 		//--
 		// !!! To SECURE the below folder for PRIVATE access, create a .htaccess in wpub/webapps-content to deny all access to this folder and sub-folders !!!
+		//define('SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE', -1); // etags on PROPFIND :: set = -2 to disable etags ; set to -1 to show etags for all files ; if >= 0, if the file size is >= with this limit will only calculate the etag (etag on PROPFIND is not mandatory for WebDAV and may impact performance if there are a large number of files in a directory or big size files ...) ; etags will always show on HEAD method
 		$this->DavFsRunServer(
 			'wpub/webapps-content/test-webdav',
 			true // you may disable this on large webdav file systems to avoid huge calculations

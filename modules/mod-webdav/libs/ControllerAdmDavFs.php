@@ -16,7 +16,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 
-	// v.180222.1343
+	// v.180222.1945
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';
@@ -34,6 +34,12 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//-- set nocache headers
 		header('Cache-Control: no-cache'); // HTTP 1.1
 		header('Pragma: no-cache'); // HTTP 1.0
+		//--
+
+		//--
+		if(!defined('SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE')) { // {{{SYNC-DEFAULT-PROPFIND-ETAG-MAX-FSIZE}}}
+			define('SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE', -2); // etags on PROPFIND :: set = -2 to disable etags ; set to -1 to show etags for all files ; if >= 0, if the file size is >= with this limit will only calculate the etag
+		} //end if
 		//--
 
 		//--

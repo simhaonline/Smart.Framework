@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCalDav {
 
 	// ::
-	// v.180222.1443
+	// v.180222.1945
 
 	private static $caldav_ns = 'xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/"';
 	private static $caldav_urn = 'urn:ietf:params:xml:ns:caldav';
@@ -45,7 +45,10 @@ final class DavFsCalDav {
 		//--
 		$dav_vfs_path = (string) $dav_vfs_path;
 		//--
-		header('Content-length: 0');
+		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
+			http_response_code(415); // unsupported media type
+			return 415;
+		} //end if
 		//--
 		if(!\SmartFileSystem::path_exists($dav_vfs_path)) {
 			http_response_code(404);
@@ -55,10 +58,12 @@ final class DavFsCalDav {
 		if(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
 			http_response_code(200);
 			header('Content-Type: '.self::mimeTypeDir($dav_vfs_path)); // directory
+			header('Content-length: 0');
 		} elseif(\SmartFileSystem::is_type_file($dav_vfs_path)) {
 			http_response_code(200);
 			header('Content-Type: '.self::mimeTypeFile($dav_vfs_path));
 			header('Content-Length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
+			header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
 		} else { // unknown media type
 			http_response_code(415);
 			return 415;

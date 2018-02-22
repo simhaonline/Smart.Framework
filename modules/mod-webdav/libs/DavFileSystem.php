@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.180222.1443
+	// v.180222.1945
 
 	public static function methodOptions() { // 200
 		//--
@@ -40,7 +40,10 @@ final class DavFileSystem {
 		//--
 		$dav_vfs_path = (string) $dav_vfs_path;
 		//--
-		header('Content-length: 0');
+		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
+			http_response_code(415); // unsupported media type
+			return 415;
+		} //end if
 		//--
 		if(!\SmartFileSystem::path_exists($dav_vfs_path)) {
 			http_response_code(404);
@@ -50,10 +53,12 @@ final class DavFileSystem {
 		if(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
 			http_response_code(200);
 			header('Content-Type: '.self::mimeTypeDir($dav_vfs_path)); // directory
+			header('Content-length: 0');
 		} elseif(\SmartFileSystem::is_type_file($dav_vfs_path)) {
 			http_response_code(200);
 			header('Content-Type: '.self::mimeTypeFile($dav_vfs_path));
 			header('Content-Length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
+			header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
 		} else { // unknown media type
 			http_response_code(415);
 			return 415;
@@ -449,7 +454,7 @@ final class DavFileSystem {
 		//--
 		http_response_code(201); // HTTP/1.1 201 Created
 		header('Content-length: 0');
-	//	header('ETag: "'.md5_file((string)$dav_vfs_path).'"');
+		header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
 		return 201;
 		//--
 	} //END FUNCTION
@@ -886,14 +891,33 @@ final class DavFileSystem {
 			return array();
 		} //end if
 		//--
+		$fsize_bytes = (int) \SmartFileSystem::get_file_size($dav_vfs_path);
+		//--
+		$etag_file = '';
+		$max_fsize_etag = -2; // {{{SYNC-DEFAULT-PROPFIND-ETAG-MAX-FSIZE}}} by default don't calculate etags, is not mandatory ; // etags on PROPFIND :: set = -2 to disable etags ; set to -1 to show etags for all files ; if >= 0, if the file size is >= with this limit will only calculate the etag
+		if(defined('SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE')) {
+			$max_fsize_etag = (int) SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE;
+		} //end if
+		$display_etag = false;
+		if((int)$max_fsize_etag == -1) { // show for all files, no size matter
+			$display_etag = true;
+		} elseif((int)$max_fsize_etag >= 0) { // show only for files <= with this size
+			if((int)$fsize_bytes <= (int)$max_fsize_etag) {
+				$display_etag = true;
+			} //end if
+		} //end if
+		if($display_etag === true) {
+			$etag_file = (string) md5_file((string)$dav_vfs_path);
+		} //end if
+		//--
 		return (array) [
 			'dav-resource-type' 		=> (string) \SmartModExtLib\Webdav\DavServer::DAV_RESOURCE_TYPE_NONCOLLECTION,
 			'dav-request-path' 			=> (string) $dav_request_path,
 			'dav-vfs-path' 				=> (string) $dav_vfs_path, // private
 			'date-creation-timestamp' 	=> (int) 	0, // \SmartFileSystem::get_file_ctime($dav_vfs_path), // currently is unused
 			'date-modified-timestamp' 	=> (int) 	\SmartFileSystem::get_file_mtime($dav_vfs_path),
-			'size-bytes' 				=> (int)    \SmartFileSystem::get_file_size($dav_vfs_path),
-		//	'etag-hash' 				=> (string) md5_file($dav_vfs_path),
+			'size-bytes' 				=> (int)    $fsize_bytes,
+			'etag-hash' 				=> (string) $etag_file,
 			'mime-type' 				=> (string) self::mimeTypeFile($dav_vfs_path)
 		];
 		//--
