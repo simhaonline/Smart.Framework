@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.180222.1945
+	// v.180223.1139
 
 	public static function methodOptions() { // 200
 		//--
@@ -198,6 +198,14 @@ final class DavFileSystem {
 		$dav_method = 'PROPFIND';
 		$dav_vfs_path = (string) $dav_vfs_path;
 		//--
+		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
+		//$body = (string) \SmartModExtLib\Webdav\DavServer::getRequestBody(); // not used ; if ever used this may contain extra XML info about making this request more particular
+		//--
+		$etags = false;
+		if(stripos((string)$heads['z-cloud-webdav-response-include'], 'etags') !== false) { // If this head is includded in client request [ Z-Cloud-Webdav-Response-Include: etags ] will force include etags for that request, for this method (propfind)
+			$etags = true;
+		} //end if
+		//--
 		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 day')).' '.date('H:i:s').' GMT'); // HTTP 1.0
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		//--
@@ -210,7 +218,7 @@ final class DavFileSystem {
 				(bool)   $dav_is_root_path,
 				(int)    $statuscode,
 				(string) $dav_uri,
-				(array)  self::getItem($dav_uri, $dav_vfs_path)
+				(array)  self::getItem($dav_uri, $dav_vfs_path, (bool)$etags)
 			);
 		} elseif(\SmartFileSystem::is_type_dir($dav_vfs_path)) { // dir
 			$statuscode = 207;
@@ -221,7 +229,7 @@ final class DavFileSystem {
 				(bool)   $dav_is_root_path,
 				(int)    $statuscode,
 				(string) $dav_uri,
-				(array)  self::getItem($dav_uri, $dav_vfs_path),
+				(array)  self::getItem($dav_uri, $dav_vfs_path, (bool)$etags),
 				(array)  self::getQuotaAndUsageInfo($dav_vfs_root)
 			);
 		} else { // not found
@@ -647,6 +655,7 @@ final class DavFileSystem {
 	private static function methodCopyOrMove($dav_method, $dav_request_path, $dav_vfs_path, $dav_vfs_root) {
 		//--
 		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
+		//$body = (string) \SmartModExtLib\Webdav\DavServer::getRequestBody(); // not used
 		//--
 		if((string)trim((string)$heads['destination']) == '') {
 			http_response_code(400); // bad request ; destination must be non-empty
@@ -662,14 +671,12 @@ final class DavFileSystem {
 		$path_raw_dest = (string) \SmartModExtLib\Webdav\DavServer::safePathName($path_raw_dest);
 		//--
 		if(((string)$dav_request_path == (string)$path_raw_dest) OR ((string)$path_raw_dest == '')) {
-		//	http_response_code(403); // forbidden ; destination and source are the same
 			http_response_code(405); // not allowed ; destination and source are the same
 			return 405;
 		} //end if
 		//--
 		$path_dest = (string) \SmartModExtLib\Webdav\DavServer::safePathName(rtrim($dav_vfs_root.$path_raw_dest, '/'));
-		//\Smart::log_notice($dav_method.' # Src=`'.$dav_vfs_path.'` ; Dest=`'.$path_dest.'` ; OverWr='.(string)$heads['overwrite']);
-		//\Smart::log_notice(print_r($heads,1));
+		// \Smart::log_notice($dav_method.' # Src=`'.$dav_vfs_path.'` ; Dest=`'.$path_dest.'` ; OverWr='.(string)$heads['overwrite']);
 		//--
 		if((string)strtoupper(trim((string)$heads['overwrite'])) == 'T') {
 			$overwrite = true; // this should create a version to avoid rewrite, just on files ; on dirs will not allow
@@ -741,9 +748,6 @@ final class DavFileSystem {
 			return 502;
 		} //end if else
 		//--
-		//$body = (string) \SmartModExtLib\Webdav\DavServer::getRequestBody();
-		//\Smart::log_notice($body);
-		//--
 		if($ok != 1) {
 			if((string)$dav_method == 'COPY') {
 				http_response_code(507); // not enough space
@@ -791,7 +795,7 @@ final class DavFileSystem {
 	} //END FUNCTION
 
 
-	private static function getItem($dav_request_path, $dav_vfs_path) {
+	private static function getItem($dav_request_path, $dav_vfs_path, $etags=false) {
 		//--
 		$dav_request_path = (string) trim((string)$dav_request_path);
 		$dav_vfs_path = (string) trim((string)$dav_vfs_path);
@@ -806,14 +810,14 @@ final class DavFileSystem {
 		$arr = array();
 		//--
 		if(\SmartFileSystem::is_type_file($dav_vfs_path)) {
-			$arr[] = (array) self::getItemTypeNonCollection($dav_request_path, $dav_vfs_path);
+			$arr[] = (array) self::getItemTypeNonCollection($dav_request_path, $dav_vfs_path, (bool)$etags);
 		} elseif(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
 			$arr[] = (array) self::getItemTypeCollection($dav_request_path, $dav_vfs_path);
 			$files_n_dirs = (array) (new \SmartGetFileSystem(true))->get_storage($dav_vfs_path, false, false, ''); // non-recuring, no dot files
 			//print_r($files_n_dirs); die();
 			//print_r($arr); die();
 			$arr = self::addSubItem($dav_request_path, $dav_vfs_path, $arr, $files_n_dirs['list-dirs'], 'dirs');
-			$arr = self::addSubItem($dav_request_path, $dav_vfs_path, $arr, $files_n_dirs['list-files'], 'files');
+			$arr = self::addSubItem($dav_request_path, $dav_vfs_path, $arr, $files_n_dirs['list-files'], 'files', (bool)$etags);
 			//print_r($arr); die();
 		} //end if else
 		//--
@@ -839,7 +843,7 @@ final class DavFileSystem {
 	} //END FUNCTION
 
 
-	private static function addSubItem($dav_request_path, $dav_vfs_path, $arr, $subitems, $type) {
+	private static function addSubItem($dav_request_path, $dav_vfs_path, $arr, $subitems, $type, $etags=false) {
 		//--
 		$arr = (array) $arr;
 		$subitems = (array) $subitems;
@@ -859,7 +863,8 @@ final class DavFileSystem {
 							} elseif(((string)$type == 'files') AND (\SmartFileSystem::is_type_file($tmp_new_vfs_path))) {
 								$tmp_new_arr = (array) self::getItemTypeNonCollection(
 									(string) $tmp_new_req_path,
-									(string) $tmp_new_vfs_path
+									(string) $tmp_new_vfs_path,
+									(bool)   $etags
 								);
 							} //end if else
 							if(\Smart::array_size($tmp_new_arr) > 0) {
@@ -876,7 +881,7 @@ final class DavFileSystem {
 	} //END FUNCTION
 
 
-	private static function getItemTypeNonCollection($dav_request_path, $dav_vfs_path) {
+	private static function getItemTypeNonCollection($dav_request_path, $dav_vfs_path, $etags=false) {
 		//--
 		$dav_request_path = (string) trim((string)$dav_request_path);
 		$dav_vfs_path = (string) trim((string)$dav_vfs_path);
@@ -905,6 +910,9 @@ final class DavFileSystem {
 			if((int)$fsize_bytes <= (int)$max_fsize_etag) {
 				$display_etag = true;
 			} //end if
+		} //end if
+		if($etags === true) { // if specific ask for etag, include it (no matter what settings are ...)
+			$display_etag = true;
 		} //end if
 		if($display_etag === true) {
 			$etag_file = (string) md5_file((string)$dav_vfs_path);
