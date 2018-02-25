@@ -7,8 +7,6 @@
   <link rel="stylesheet" href="../css/atom-one-light.css">
   <script type="text/javascript" src="../highlight.js"></script>
   <script type="text/javascript" src="../syntax/lnx/perl.js"></script>
-  <script type="text/javascript" src="../syntax/lnx/awk.js"></script>
-  <script type="text/javascript" src="../syntax/lnx/bash.js"></script>
   <script type="text/javascript" src="../syntax/lnx/shell.js"></script>
 
   <script type="text/javascript" src="../../jquery/jquery.js"></script>
@@ -66,19 +64,6 @@ print "$aa $bb\n";
 </code></pre>
 </div>
 
-<!-- AWK -->
-
-<div>
-<h2>Awk</h2>
-<pre><code class="awk">
-awk 'length($0) > 80' data
-
-awk '{ if (length($0) > max) max = length($0) }
-     END { print max }' data
-
-</code></pre>
-</div>
-
 <!-- Shell -->
 
 <div>
@@ -94,28 +79,6 @@ $ echo &#39;All
 &gt; done!&#39;
 All
 done!
-</code></pre>
-</div>
-
-<!-- Bash -->
-
-<div>
-<h2>Shell Script - Bash</h2>
-<pre><code class="bash">#!/bin/bash
-
-###### CONFIG
-ACCEPTED_HOSTS=&quot;/root/.hag_accepted.conf&quot;
-BE_VERBOSE=false
-
-if [ &quot;$UID&quot; -ne 0 ]
-then
- echo &quot;Superuser rights required&quot;
- exit 2
-fi
-
-genApacheConf(){
- echo -e &quot;# Host ${HOME_DIR}$1/$2 :&quot;
-}
 </code></pre>
 </div>
 

@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180219
+ * @version 	v.180225
  * @package 	Components:Core
  *
  */
@@ -1843,22 +1843,12 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 	//--
 	$theme = (string) strtolower((string)$theme);
 	switch((string)$theme) {
-		case 'arta':
 		case 'atom-one-light':
-		case 'codepen-embed':
-		case 'dracula':
 		case 'github-gist':
 		case 'github':
 		case 'googlecode':
 		case 'grayscale':
-		case 'mono-blue':
-		case 'monokai-sublime':
 		case 'ocean':
-		case 'rainbow':
-		case 'solarized-dark':
-		case 'sunburst':
-		case 'tomorrow-night-blue':
-		case 'tomorrow':
 		case 'xcode':
 		case 'zenburn':
 			$theme = (string) $theme;
@@ -1870,13 +1860,11 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 	//--
 	$arr_packs = [
 		'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, xml, yaml',
-		'tpl'  => 'markertpl, tex, twig',
-		'lnx'  => 'awk, bash, perl, shell',
+		'tpl'  => 'markertpl',
+		'lnx'  => 'perl, shell',
 		'srv'  => 'accesslog, apache, dns, nginx, pf',
-		'net'  => 'csp, http, ldif, protobuf',
-		'lang' => 'basic, cmake, coffeescript, cpp, cs, delphi, erlang, fortran, fsharp, go, haskell, java, lua, makefile, objectivec, ocaml, openscad, python, r, ruby, scala, swift, tcl, vala',
-		'ms'   => 'dos, powershell, typescript, vbnet, vbscript',
-		'hw'   => 'armasm, llvm, mipsasm, vhdl, x86asm'
+		'net'  => 'csp, http',
+		'lang' => 'cmake, coffeescript, cpp, go, haxe, lua, makefile, python, rust, tcl, vala'
 	];
 	//--
 	$arr_stx_plugs = [];

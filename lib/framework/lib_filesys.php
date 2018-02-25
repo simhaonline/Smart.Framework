@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180202
+ * @version 	v.180225
  * @package 	Filesystem
  *
  */
@@ -812,6 +812,8 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'tcl': // TCL
 		case 'tk': // Tk
 		case 'lua': // Lua
+		case 'toml': // Tom's Obvious, Minimal Language (used with Rust defs)
+		case 'rs': // Rust Language
 		case 'go': // Go Lang
 		case 'coffee': // Coffee Script
 		case 'cson': // Coffee Script
