@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180225
+ * @version 	v.180227.r2
  * @package 	Components:Core
  *
  */
@@ -1826,6 +1826,193 @@ public static function html_js_limited_text_area($y_field_id, $y_var_name, $y_va
 
 
 //================================================================
+public static function filetype_highlightsyntax($path) {
+	//--
+	$path = (string) $path;
+	//--
+	$fname = (string) SmartFileSysUtils::get_file_name_from_path((string)$path);
+	$fext = (string) SmartFileSysUtils::get_file_extension_from_path((string)$fname);
+	$fext = (string) strtolower((string)trim((string)$fext));
+	//--
+	$fpack = '';
+	$ftype = '';
+	switch((string)$fext) { // {{{SYNC-HIGHLIGHT-FTYPE-PACK}}}
+		//-- web
+		case 'css':
+			$fpack = 'web';
+			$ftype = 'css';
+			break;
+		case 'diff':
+		case 'patch':
+			$fpack = 'web';
+			$ftype = 'diff';
+			break;
+		case 'ini':
+		case 'toml': // rust cargo def
+			$fpack = 'web';
+			$ftype = 'ini';
+			break;
+		case 'js':
+		case 'gjs':
+			$fpack = 'web';
+			$ftype = 'javascript';
+			break;
+		case 'json':
+			$fpack = 'web';
+			$ftype = 'json';
+			break;
+		case 'less':
+			$fpack = 'web';
+			$ftype = 'less';
+			break;
+		case 'md':
+		case 'markdown':
+			$fpack = 'web';
+			$ftype = 'markdown';
+			break;
+		case 'php':
+		case 'php3':
+		case 'php4':
+		case 'php5':
+		case 'php6':
+		case 'php7':
+		case 'hh': // hip hop, a kind of static PHP
+			$fpack = 'web';
+			$ftype = 'php';
+			break;
+		case 'scss':
+			$fpack = 'web';
+			$ftype = 'scss';
+			break;
+		case 'sql':
+			$fpack = 'web';
+			$ftype = 'sql';
+			break;
+		case 'yaml':
+		case 'yml':
+			$fpack = 'web';
+			$ftype = 'yaml';
+			break;
+			break;
+		case 'xml':
+		case 'svg':
+		case 'html':
+			$fpack = 'web';
+			$ftype = 'xml';
+			break;
+		//-- tpl (depends on web)
+		case 'htm':
+			$fpack = 'web,tpl';
+			$ftype = 'markertpl';
+			break;
+		//-- lnx
+		case 'awk':
+			$fpack = 'lnx';
+			$ftype = 'awk';
+			break;
+		case 'pl':
+		case 'pm':
+			$fpack = 'lnx';
+			$ftype = 'perl';
+			break;
+		case 'bash':
+			$fpack = 'lnx';
+			$ftype = 'bash';
+			break;
+		case 'sh':
+			$fpack = 'lnx';
+			$ftype = 'shell';
+			break;
+		//-- srv
+		case 'dns':
+			$fpack = 'srv';
+			$ftype = 'dns';
+			break;
+		//-- net
+		case 'csp':
+			$fpack = 'net';
+			$ftype = 'csp';
+			break;
+		case 'httph':
+			$fpack = 'net';
+			$ftype = 'http';
+			break;
+		//-- lang
+		case 'coffee':
+		case 'cson':
+			$fpack = 'lang';
+			$ftype = 'coffeescript';
+			break;
+		case 'c':
+		case 'h':
+		case 'cpp':
+		case 'hpp':
+		case 'cxx':
+		case 'hxx':
+			$fpack = 'lang';
+			$ftype = 'cpp';
+			break;
+		case 'go':
+			$fpack = 'lang';
+			$ftype = 'go';
+			break;
+		case 'hx':
+			$fpack = 'lang';
+			$ftype = 'haxe';
+			break;
+		case 'lua':
+			$fpack = 'lang';
+			$ftype = 'lua';
+			break;
+		case 'py':
+			$fpack = 'lang';
+			$ftype = 'python';
+			break;
+		case 'rs':
+			$fpack = 'lang';
+			$ftype = 'rust';
+			break;
+		case 'tcl':
+		case 'tk':
+			$fpack = 'lang';
+			$ftype = 'tcl';
+			break;
+		case 'vala':
+		case 'vapi':
+			$fpack = 'lang';
+			$ftype = 'vala';
+			break;
+		//--
+		default:
+			// no handler
+	} //end switch
+	//--
+	if((string)strtolower((string)$fname) == 'cmake') {
+		$fpack = 'lang';
+		$ftype = 'cmake';
+	} elseif((string)strtolower((string)$fname) == 'makefile') {
+		$fpack = 'lang';
+		$ftype = 'makefile';
+	} elseif((string)$fname == 'pf.conf') {
+		$fpack = 'srv';
+		$ftype = 'pf';
+	} elseif((in_array((string)$ftype, ['xml', 'html', 'md', 'json'])) OR ((string)$fext == 'txt')) {
+		if((stripos((string)$fname, '.mtpl.') !== false) OR (stripos((string)$fname, '.inc.') !== false)) {
+			$fpack = 'web,tpl';
+			$ftype = 'markertpl';
+		} //end if
+	} //end if
+	//--
+	return array(
+		'type' => (string) $ftype,
+		'pack' => (array)  explode(',', (string)$fpack)
+	);
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 /**
  * Return the HTML / CSS / Javascript code to Load the required Javascripts for the Highlight.Js
  * Should be called just once per a HTML page
@@ -1858,10 +2045,10 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 			$theme = 'default';
 	} //end switch
 	//--
-	$arr_packs = [
+	$arr_packs = [ // {{{SYNC-HIGHLIGHT-FTYPE-PACK}}}
 		'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, xml, yaml',
 		'tpl'  => 'markertpl',
-		'lnx'  => 'perl, shell',
+		'lnx'  => 'awk, bash, perl, shell',
 		'srv'  => 'accesslog, apache, dns, nginx, pf',
 		'net'  => 'csp, http',
 		'lang' => 'cmake, coffeescript, cpp, go, haxe, lua, makefile, python, rust, tcl, vala'

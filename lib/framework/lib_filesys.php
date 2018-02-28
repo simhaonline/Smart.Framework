@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180225
+ * @version 	v.180227
  * @package 	Filesystem
  *
  */
@@ -783,10 +783,12 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'txt': // text
 		case 'log': // log file
 		case 'sql': // sql file
+		case 'cf': // config file
 		case 'cfg': // config file
 		case 'conf': // config file
 		case 'config': // config file
 		case 'sh': // shell script
+		case 'bash': // bash (shell) script
 		case 'awk': // AWK script
 		case 'asm': // assembler
 		case 'cmd': // windows command file
@@ -812,7 +814,8 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'tcl': // TCL
 		case 'tk': // Tk
 		case 'lua': // Lua
-		case 'toml': // Tom's Obvious, Minimal Language (used with Rust defs)
+		case 'gjs': // gnome js
+		case 'toml': // Tom's Obvious, Minimal Language (used with Cargo / Rust definitions)
 		case 'rs': // Rust Language
 		case 'go': // Go Lang
 		case 'coffee': // Coffee Script
@@ -821,7 +824,15 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'ml': // Ocaml ML
 		case 'erl': // Erlang
 		case 'pl': // perl
+		case 'pm': // perl module
 		case 'py': // python
+		case 'hh': // hip-hop (a kind of PHP for HipHop VM)
+		case 'vala': // vala language
+		case 'vapi': // vala vapi
+		case 'hx': // haxe
+		case 'hxml': // haxe compiler arguments
+		case 'hs': // haskell
+		case 'lhs': // haskell literate
 		case 'scala': // Scala
 		case 'java': // java source code
 		case 'jsp': // java server page
@@ -842,6 +853,9 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case '.htaccess': // .htaccess
 		case '.htpasswd': // .htpasswd
 		case 'pem': // PEM Certificate File
+		case 'dns': // DNS Config
+		case 'csp': // content security policy
+		case 'httph': // http header
 			$type = 'text/plain';
 			$disp = 'attachment';
 			//---

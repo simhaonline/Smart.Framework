@@ -6,6 +6,7 @@
 
   <link rel="stylesheet" href="../css/xcode.css">
   <script type="text/javascript" src="../highlight.js"></script>
+  <script type="text/javascript" src="../syntax/web/xml.js"></script>
   <script type="text/javascript" src="../syntax/tpl/markertpl.js"></script>
 
   <script type="text/javascript" src="../../jquery/jquery.js"></script>
@@ -32,6 +33,7 @@
 <pre><code class="markertpl">
 This is a line [####VAR1|html####]
 This is a URL: https://test.dom/test/v=[####VAR1|url####]
+&lt;a id=&quot;test&quot;&gt;This is a link&lt;/a&gt;
 [%%%%IF:VAR3:==yes;%%%%]
 	[%%%%LOOP:VAR4%%%%]
 		[####VAR4.NAME|html####], [####VAR4.PNAME|html####]
