@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCardDav {
 
 	// ::
-	// v.180222.1945
+	// v.180301.1901
 
 	private static $carddav_ns = 'xmlns:card="urn:ietf:params:xml:ns:carddav"';
 	private static $carddav_urn = 'urn:ietf:params:xml:ns:carddav';

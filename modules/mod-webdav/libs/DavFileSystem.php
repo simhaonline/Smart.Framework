@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.180223.1139
+	// v.180301.1901
 
 	public static function methodOptions() { // 200
 		//--
@@ -51,14 +51,37 @@ final class DavFileSystem {
 		} //end if
 		//--
 		if(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
+			//--
 			http_response_code(200);
 			header('Content-Type: '.self::mimeTypeDir($dav_vfs_path)); // directory
 			header('Content-length: 0');
+			//--
 		} elseif(\SmartFileSystem::is_type_file($dav_vfs_path)) {
+			//--
 			http_response_code(200);
 			header('Content-Type: '.self::mimeTypeFile($dav_vfs_path));
-			header('Content-Length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
-			header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
+			$fsize_bytes = (int) \SmartFileSystem::get_file_size($dav_vfs_path);
+			header('Content-Length: '.(int)$fsize_bytes);
+			//--
+			$max_fsize_etag = -2; // {{{SYNC-DEFAULT-PROPFIND-ETAG-MAX-FSIZE}}} by default don't calculate etags, is not mandatory ; !!! etags on PROPFIND / HEAD :: set = -2 to disable etags ; set to -1 to show etags for all files ; if >= 0, will show the etag only if the file size is <= with this limit (etag on PROPFIND / HEAD is not mandatory for WebDAV and may impact performance if there are a large number of files in a directory or big size files ...) ; etags will always show on PUT method
+			if(defined('SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE')) {
+				$max_fsize_etag = (int) SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE;
+			} //end if
+			$display_etag = false;
+			if((int)$max_fsize_etag == -1) { // show for all files, no size matter
+				$display_etag = true;
+			} elseif((int)$max_fsize_etag >= 0) { // show only for files <= with this size
+				if((int)$fsize_bytes <= (int)$max_fsize_etag) {
+					$display_etag = true;
+				} //end if
+			} //end if
+			if($etags === true) { // if specific ask for etag, include it (no matter what settings are ...)
+				$display_etag = true;
+			} //end if
+			if($display_etag === true) {
+				header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
+			} //end if
+			//--
 		} else { // unknown media type
 			http_response_code(415);
 			return 415;
@@ -899,7 +922,7 @@ final class DavFileSystem {
 		$fsize_bytes = (int) \SmartFileSystem::get_file_size($dav_vfs_path);
 		//--
 		$etag_file = '';
-		$max_fsize_etag = -2; // {{{SYNC-DEFAULT-PROPFIND-ETAG-MAX-FSIZE}}} by default don't calculate etags, is not mandatory ; // etags on PROPFIND :: set = -2 to disable etags ; set to -1 to show etags for all files ; if >= 0, if the file size is >= with this limit will only calculate the etag
+		$max_fsize_etag = -2; // {{{SYNC-DEFAULT-PROPFIND-ETAG-MAX-FSIZE}}} by default don't calculate etags, is not mandatory ; !!! etags on PROPFIND / HEAD :: set = -2 to disable etags ; set to -1 to show etags for all files ; if >= 0, will show the etag only if the file size is <= with this limit (etag on PROPFIND / HEAD is not mandatory for WebDAV and may impact performance if there are a large number of files in a directory or big size files ...) ; etags will always show on PUT method
 		if(defined('SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE')) {
 			$max_fsize_etag = (int) SMART_WEBDAV_PROPFIND_ETAG_MAX_FSIZE;
 		} //end if
