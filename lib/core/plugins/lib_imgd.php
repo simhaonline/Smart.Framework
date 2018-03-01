@@ -70,7 +70,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.180301.r2
+ * @version 	v.180301.r3
  * @package 	Media:ImageProcessing
  *
  */
@@ -497,17 +497,8 @@ public function resizeImage($resize_width, $resize_height, $crop=0, $mode=0, $bg
 		return false;
 	} //end if
 	//--
-	if(Smart::array_size($bg_color_rgb) >= 4) {
-		$bgcolor = @imagecolorexactalpha($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
-		if($bgcolor === -1) { // returns -1 if color does not exists in palette
-			$bgcolor = @imagecolorallocatealpha($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
-		} //end if
-	} else {
-		$bgcolor = @imagecolorallocate($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2]);
-	} //end if else
-	@imagefill($imgnew, 0, 0, $bgcolor); // fill with bg
+	@imagefill($imgnew, 0, 0, @imagecolorallocate($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2])); // fill with bg
 	@imagecopyresampled($imgnew, $this->img, 0, 0, 0, 0, $newImgW, $newImgH, $this->width, $this->height); // copy image in the new created image
-	$bgcolor = null;
 	//--
 	if(!is_resource($imgnew)) {
 		$imgnew = null;
@@ -550,18 +541,8 @@ public function resizeImage($resize_width, $resize_height, $crop=0, $mode=0, $bg
 		$this->status = false;
 		return false;
 	} //end if
-
-	if(Smart::array_size($bg_color_rgb) >= 4) {
-		$bgcolor = @imagecolorexactalpha($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
-		if($bgcolor === -1) { // returns -1 if color does not exists in palette
-			$bgcolor = @imagecolorallocatealpha($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
-		} //end if
-	} else {
-		$bgcolor = @imagecolorallocate($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2]);
-	} //end if else
-	@imagefill($this->img, 0, 0, $bgcolor); // fill with bg again (needed after resampling)
+	@imagefill($this->img, 0, 0, @imagecolorallocate($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2])); // fill with bg again (needed after resampling)
 	@imagecopy($this->img, $imgnew, $center_w, $center_h, 0, 0, $newImgW, $newImgH); // save back must clone, as it is resource ; not work direct as: $this->img = $imgnew;
-	$bgcolor = null;
 	@imagedestroy($imgnew);
 	if(!is_resource($this->img)) {
 		$this->_debugMsg((string)__METHOD__.' :: '.'Invalid Image Export Data');
