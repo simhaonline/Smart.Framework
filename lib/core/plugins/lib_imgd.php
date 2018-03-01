@@ -70,7 +70,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.170917
+ * @version 	v.180301
  * @package 	Media:ImageProcessing
  *
  */
@@ -377,11 +377,11 @@ public function getImageData($type='', $quality=100, $compression=6, $filters=''
 
 //================================================================
 /**
- * Resize (Resample) an image: GIF / PNG / JPG
+ * Resize (Resample) +/- Crop an image: GIF / PNG / JPG
  *
- * @param INTEGER+ 	$resize_width 		:: The width of the resized image: 16..1920 ; can be zero just for $mode=1 (but only when $resize_height > 0) ; if zero, will become relative and calculated by aspect ratio based on resize height
- * @param INTEGER+ 	$resize_height 		:: The height of the resized image: 16..1920 ; can be zero just for $mode=1 (but only when $resize_width > 0) ; if zero, will become relative and calculated by aspect ratio based on resize width
- * @param BOOLEAN 	$crop 				:: *Optional* ; Default is FALSE ; If TRUE will crop the resampling (aspect fill) ; If FALSE will do a normal resize (aspect fit)
+ * @param INTEGER+ 	$resize_width 		:: The width of the resized image: 16..1920 ; can be zero only when $resize_height > 0 ; if zero, will become relative and calculated by aspect ratio based on resize height
+ * @param INTEGER+ 	$resize_height 		:: The height of the resized image: 16..1920 ; can be zero only when $resize_width > 0 ; if zero, will become relative and calculated by aspect ratio based on resize width
+ * @param BOOLEAN 	$crop 				:: *Optional* ; Default is 0 ; If 0 will do a normal resize (aspect fit) ; If > 0 will crop the resampled image (aspect fill) as 1=top-left ; 2=top-center ; 3=center-center
  * @param ENUM 		$mode 				:: *Optional* 0 | 1 | 2 ; Default is 0 = absolute resample ; 1 = absolute resample + preserve dimensions if lower ; 2 = preserve if lower + relative dimensions ; 3 = relative dimensions
  * @param ARRAY 	$bg_color_rgb 		:: The RGB color as Array [0..255, 0..255, 0..255]
  *
@@ -389,7 +389,7 @@ public function getImageData($type='', $quality=100, $compression=6, $filters=''
  *
  * @return BOOLEAN 						:: TRUE on success ; FALSE on error / fail
  */
-public function resizeImage($resize_width, $resize_height, $crop=false, $mode=0, $bg_color_rgb=[0, 0, 0]) {
+public function resizeImage($resize_width, $resize_height, $crop=0, $mode=0, $bg_color_rgb=[0, 0, 0]) {
 
 	//--
 	if($this->status !== true) {
@@ -420,10 +420,8 @@ public function resizeImage($resize_width, $resize_height, $crop=false, $mode=0,
 	//-- check for relative sizes
 	$fixratio = $this->width / $this->height;
 	if($resize_height <= 0) {
-		//$crop = true;
 		$resize_height = ceil($resize_width / $fixratio);
 	} elseif($resize_width <= 0) {
-		//$crop = true;
 		$resize_width = ceil($resize_height * $fixratio);
 	} //end if
 	unset($fixratio);
@@ -447,9 +445,19 @@ public function resizeImage($resize_width, $resize_height, $crop=false, $mode=0,
 	} //end if
 	//--
 
+	//--
+	$crop = (int) $crop;
+	if($crop < 0) {
+		$crop = 0;
+	} elseif($crop > 3) {
+		$crop = 3;
+	} //end if
+	//--
+
 	//-- crop mode
 	$ratio = 1;
-	if($crop === true) {
+	//--
+	if($crop) {
 		$ratio = max(array($resize_width / $this->width, $resize_height / $this->height)); // aspect Fill (crop)
 	} else {
 		$ratio = min(array($resize_width / $this->width, $resize_height / $this->height)); // aspect Fit
@@ -503,25 +511,20 @@ public function resizeImage($resize_width, $resize_height, $crop=false, $mode=0,
 	//-- calculate center
 	$center_w = floor($resize_width/2 - $newImgW/2);
 	if($center_w < 0) {
-		$center_w = 0;
+		if((int)$crop == 1) {
+			$center_w = 0;
+		} //end if
 	} //end if
+	//--
 	$center_h = floor($resize_height/2 - $newImgH/2);
 	if($center_h < 0) {
-		$center_h = 0;
+		if(((int)$crop == 1) OR ((int)$crop == 2)) {
+			$center_h = 0;
+		} //end if
 	} //end if
 	//--
 
 	//-- finalize
-	if(!is_resource($imgnew)) {
-		//--
-		$imgnew = null;
-		@imagedestroy($this->img);
-		$this->_debugMsg((string)__METHOD__.' :: '.'Failed to Resample ...');
-		$this->status = false;
-		return false;
-		//--
-	} //end if
-	//--
 	@imagedestroy($this->img);
 	if(is_resource($this->img)) {
 		@imagedestroy($imgnew);
@@ -548,6 +551,8 @@ public function resizeImage($resize_width, $resize_height, $crop=false, $mode=0,
 	} //end if
 	$this->width = $resize_width;
 	$this->height = $resize_height;
+	//--
+
 	//--
 	return true;
 	//--
@@ -679,6 +684,9 @@ public function applyWatermark($wtistr, $gravity, $offsx=0, $offsy=0) {
 		$this->status = false;
 		return false;
 	} //end if
+	//--
+
+	//--
 	return true;
 	//--
 
@@ -872,6 +880,9 @@ public function applyText($text, $offsx=0, $offsy=0, $angle=0, $size=10, $font='
 		$this->status = false;
 		return false;
 	} //end if
+	//--
+
+	//--
 	return true;
 	//--
 
