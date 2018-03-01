@@ -70,7 +70,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.180301
+ * @version 	v.180301.r2
  * @package 	Media:ImageProcessing
  *
  */
@@ -347,7 +347,7 @@ public function getImageData($type='', $quality=100, $compression=6, $filters=''
 			} elseif($filters === false) {
 				$this->_debugMsg((string)__METHOD__.' :: '.'Using PNG Filter: PNG_NO_FILTER', false); // notice
 				@imagepng($this->img, null, $compression, PNG_NO_FILTER);
-			} elseif(is_array($filters) && count($filters)>0) { // (depends on libpng)
+			} elseif(Smart::array_size($filters) > 0) { // (depends on libpng)
 				$this->_debugMsg((string)__METHOD__.' :: '.'Using PNG Filters: '.implode(' | ', (array)$filters), false); // notice
 				@imagepng($this->img, null, $compression, implode(' | ', (array)$filters));
 			} else { // default
@@ -497,8 +497,17 @@ public function resizeImage($resize_width, $resize_height, $crop=0, $mode=0, $bg
 		return false;
 	} //end if
 	//--
-	@imagefill($imgnew, 0, 0, @imagecolorallocate($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2])); // fill with bg
+	if(Smart::array_size($bg_color_rgb) >= 4) {
+		$bgcolor = @imagecolorexactalpha($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
+		if($bgcolor === -1) { // returns -1 if color does not exists in palette
+			$bgcolor = @imagecolorallocatealpha($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
+		} //end if
+	} else {
+		$bgcolor = @imagecolorallocate($imgnew, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2]);
+	} //end if else
+	@imagefill($imgnew, 0, 0, $bgcolor); // fill with bg
 	@imagecopyresampled($imgnew, $this->img, 0, 0, 0, 0, $newImgW, $newImgH, $this->width, $this->height); // copy image in the new created image
+	$bgcolor = null;
 	//--
 	if(!is_resource($imgnew)) {
 		$imgnew = null;
@@ -541,8 +550,18 @@ public function resizeImage($resize_width, $resize_height, $crop=0, $mode=0, $bg
 		$this->status = false;
 		return false;
 	} //end if
-	@imagefill($this->img, 0, 0, @imagecolorallocate($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2])); // fill with bg again (needed after resampling)
+
+	if(Smart::array_size($bg_color_rgb) >= 4) {
+		$bgcolor = @imagecolorexactalpha($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
+		if($bgcolor === -1) { // returns -1 if color does not exists in palette
+			$bgcolor = @imagecolorallocatealpha($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2], (int)$bg_color_rgb[3]);
+		} //end if
+	} else {
+		$bgcolor = @imagecolorallocate($this->img, (int)$bg_color_rgb[0], (int)$bg_color_rgb[1], (int)$bg_color_rgb[2]);
+	} //end if else
+	@imagefill($this->img, 0, 0, $bgcolor); // fill with bg again (needed after resampling)
 	@imagecopy($this->img, $imgnew, $center_w, $center_h, 0, 0, $newImgW, $newImgH); // save back must clone, as it is resource ; not work direct as: $this->img = $imgnew;
+	$bgcolor = null;
 	@imagedestroy($imgnew);
 	if(!is_resource($this->img)) {
 		$this->_debugMsg((string)__METHOD__.' :: '.'Invalid Image Export Data');
@@ -846,7 +865,7 @@ public function applyText($text, $offsx=0, $offsy=0, $angle=0, $size=10, $font='
 	//--
 
 	//--
-	if(count($color_rgb) >= 4) {
+	if(Smart::array_size($color_rgb) >= 4) {
 		$color = @imagecolorexactalpha($this->img, (int)$color_rgb[0], (int)$color_rgb[1], (int)$color_rgb[2], (int)$color_rgb[3]);
 		if($color === -1) { // returns -1 if color does not exists in palette
 			$color = @imagecolorallocatealpha($this->img, (int)$color_rgb[0], (int)$color_rgb[1], (int)$color_rgb[2], (int)$color_rgb[3]);
@@ -965,7 +984,7 @@ private function _fixColorArray($input_color_rgb) {
 	//--
 
 	//-- ALPHA CHANNEL
-	if(count($input_color_rgb) > 3) {
+	if(Smart::array_size($input_color_rgb) > 3) {
 		//--
 		$color_rgb[3] = (int) $input_color_rgb[3];
 		if($color_rgb[3] < 0) {
