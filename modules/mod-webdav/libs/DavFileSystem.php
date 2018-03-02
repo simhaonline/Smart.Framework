@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.180301.1901
+	// v.180302.1235
 
 	public static function methodOptions() { // 200
 		//--

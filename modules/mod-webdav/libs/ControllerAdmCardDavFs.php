@@ -16,7 +16,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 abstract class ControllerAdmCardDavFs extends \SmartAbstractAppController {
 
-	// v.180301.1901
+	// v.180302.1235
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';

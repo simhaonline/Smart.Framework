@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavServer {
 
 	// ::
-	// v.180301.1901
+	// v.180302.1409
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
@@ -295,10 +295,10 @@ final class DavServer {
 					} //end if
 				} //end foreach
 				if((string)$notice_log != '') {
-					Smart::log_notice(__METHOD__.' # NOTICE [SimpleXML]:'."\n".$notice_log."\n".'#END'."\n");
+					\Smart::log_notice(__METHOD__.' # NOTICE [SimpleXML]:'."\n".$notice_log."\n".'#END'."\n");
 				} //end if
 				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-					Smart::log_notice(__METHOD__.' # Debug XML-String:'."\n".$xml."\n".'#END');
+					\Smart::log_notice(__METHOD__.' # Debug XML-String:'."\n".$xml."\n".'#END');
 				} //end if
 			} //end if
 			//--
@@ -315,8 +315,22 @@ final class DavServer {
 					$child = $sxe->children($ns[(string)$sp]);
 					if(is_object($child)) {
 						foreach ($child as $k => $out_ns) {
-							if((string)strtolower((string)$k) == (string)strtolower((string)$xkey)) {
-								$arr[] = (string) $out_ns;
+							if(((string)$xkey == '') OR ((string)strtolower((string)$k) == (string)strtolower((string)$xkey))) {
+							//	$arr[] = (string) $out_ns; // this enforcing to a string was used just for a particular situation, getting href from REPORT links ; below the code extends the xml parsing to get also arrays
+								$tmp_val = \Smart::json_decode((string)\Smart::json_encode($out_ns)); // mixed, normalize via json:encode/decode ; accept below only array or string
+								if(is_array($tmp_val)) {
+									if(\Smart::array_size($tmp_val) <= 0) {
+										$tmp_val = ''; // fix: empty array :: convert to string
+									} elseif(\Smart::array_size($tmp_val) == 1) {
+										if(array_key_exists('0', $tmp_val)) {
+											$tmp_val = $tmp_val[0]; // mixed ; fix: arrays with only one element [0] :: assign the element zero to the parent ; by example the REPORT href will be in this situation, thus we get it from arra[0] to *string
+										} //end if
+									} //end if
+								} else {
+									$tmp_val = (string) $tmp_val;
+								} //end if
+								$arr[] = $tmp_val; // mixed
+								$tmp_val = ''; // reset
 							} //end if
 						} //end forach
 					} //end if
