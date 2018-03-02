@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCalDav {
 
 	// ::
-	// v.180302.1235
+	// v.180302.1810
 
 	private static $caldav_ns = 'xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/"';
 	private static $caldav_urn = 'urn:ietf:params:xml:ns:caldav';
@@ -273,6 +273,7 @@ final class DavFsCalDav {
 		http_response_code(201); // HTTP/1.1 201 Created
 		header('Content-length: 0');
 		header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
+		header('Z-Cloud-DAV-Put-FileSize: '.$fsize);
 		return 201;
 		//--
 	} //END FUNCTION

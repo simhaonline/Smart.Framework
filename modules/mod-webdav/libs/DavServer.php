@@ -17,7 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavServer {
 
 	// ::
-	// v.180302.1409
+	// v.180302.1810
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
@@ -264,7 +264,7 @@ final class DavServer {
 	} //END FUNCTION
 
 
-	public static function parseXMLBody($xml, $xns, $xkey) {
+	public static function parseXMLBody($xml, $xns='', $xkey='') {
 		//--
 		if(!function_exists('simplexml_load_string')) {
 			//--
@@ -272,6 +272,10 @@ final class DavServer {
 			//--
 			return array();
 			//--
+		} //end if
+		//--
+		if((string)trim((string)$xml) == '') {
+			return array();
 		} //end if
 		//--
 		@libxml_use_internal_errors(true);
@@ -307,6 +311,11 @@ final class DavServer {
 		} //end if
 		//--
 		$arr = array();
+		//--
+		if(!is_object($sxe)) {
+			\Smart::log_notice(__METHOD__.' # NOTICE [SimpleXML Object is Empty]');
+			return array();
+		} //end if
 		//--
 		$ns = $sxe->getNamespaces(true);
 		if(is_array($ns)) {
