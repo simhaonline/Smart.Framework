@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.180126.r2
+ * @version 	v.180302
  * @package 	Network:HTTP
  *
  */
@@ -143,14 +143,16 @@ final class SmartHttpClient {
 			'url' 			=> (string) $url,
 			'ssl'			=> (string) $ssl_version,
 			'auth-user' 	=> (string) $user,
-			'cookies-len' 	=> (int) Smart::array_size($this->cookies),
-			'post-vars-len' => (int) Smart::array_size($this->postvars),
-			'post-str-len' 	=> (int) strlen($this->poststring),
+			'cookies-len' 	=> (int)    Smart::array_size($this->cookies),
+			'post-vars-len' => (int)    Smart::array_size($this->postvars),
+			'post-str-len' 	=> (int)    strlen($this->poststring),
 			'put-resource' 	=> (string) substr($this->putbodyres, 0, 255).' ...',
 			'put-res-mode' 	=> (string) $this->putbodymode,
-			'put-body-len' 	=> (int) $this->put_body_len,
+			'put-body-len' 	=> (int)    $this->put_body_len,
 			'mode' 			=> (string) trim((string)$this->url_parts['protocol']),
-			'result' 		=> (int) $result,
+			'result' 		=> (int)    $result,
+			'pre-code' 		=> (string) $this->pre_status, // if 100-continue, this is the HTTP 1.1 Pre-Status
+			'pre-headers' 	=> (string) $this->pre_header, // if 100-continue, this is the HTTP 1.1 Pre-Header
 			'code' 			=> (string) $this->status,
 			'headers' 		=> (string) $this->header,
 			'content' 		=> (string) $this->body,
@@ -338,6 +340,8 @@ final class SmartHttpClient {
 		//-- the log
 		$this->log = '';
 		//-- outputs
+		$this->pre_status = '';
+		$this->pre_header = '';
 		$this->status = '';
 		$this->header = '';
 		$this->body = '';
@@ -733,13 +737,24 @@ final class SmartHttpClient {
 			//Smart::log_notice('Path: '.$path."\n".'Method: '.$this->method);
 			if((string)$this->protocol == '1.1') { // on HTTP 1.1 will get an earlier header as: HTTP/1.1 100 Continue
 				if($this->put_body_len > 0) { // this comes ONLY if file or string to put is non-empty !!!
-					$this->header = (string) @fgets($this->socket, 4096);
-					$this->status = (string) trim(substr(trim($this->header), 9, 3));
-					//Smart::log_notice('Status: '.$this->status.' @ Header: '."\n".$this->header);
-					if($this->status != '100') {
+					$this->pre_header = (string) @fgets($this->socket, 4096);
+					$this->pre_status = (string) trim(substr(trim($this->pre_header), 9, 3));
+					//Smart::log_notice('Status: '.$this->pre_status.' @ Header: '."\n".$this->pre_header);
+					if(((string)$this->pre_status == '100') AND ((string)$this->pre_header != '')) {
+						while(($this->socket) && (trim($line = @fgets($this->socket, 4096)) != '') && (!feof($this->socket))) {
+							$this->pre_header .= (string) $line; // this is required after 100-continue !!!
+							if(!$this->socket) {
+								if($this->debug) {
+									$this->log .= '[ERR] Premature connection end (1.8)'."\n";
+									Smart::log_notice('LibHTTP // RequestFromURL // Premature connection end (1.8) ... '.$url);
+								} //end if
+								return 0;
+							} //end if
+						} //end while
+					} else {
 						if($this->debug) {
-							$this->log .= '[NOTICE] No 100 Continue Received from Server as Expected ...'."\n";
-							Smart::log_notice('LibHTTP // PutToURL ('.$browser_protocol.$host.':'.$port.$path.') // Invalid Expect Code 100 but get back: '.$this->status);
+							$this->log .= '[NOTICE] No 100-Continue Received from Server as Expected on HTTP 1.1 PUT Method ...'."\n";
+							Smart::log_notice('LibHTTP // PutToURL 1.1 ('.$browser_protocol.$host.':'.$port.$path.') // Invalid Expect Code 100 but get back: '.$this->pre_status);
 						} //end if
 						return 0;
 					} //end if
