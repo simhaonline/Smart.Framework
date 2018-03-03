@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.180302
+ * @version 	v.180303
  * @package 	Network:HTTP
  *
  */
@@ -45,16 +45,22 @@ final class SmartHttpClient {
 
 	//==============================================
 	//--
-	public $useragent = 'SmartFramework :: PHP/Robot'; 		// User agent (must have the robot in the name to avoid start un-necessary sessions)
-	public $connect_timeout = 30;							// Connect timeout in seconds
-	public $debug = 0;										// DEBUG
+	public $useragent; 										// User agent (must have the robot in the name to avoid start un-necessary sessions)
+	public $connect_timeout;								// Connect timeout in seconds
 	//--
 	public $rawheaders;										// Array of RawHeaders (to send)
 	public $cookies;										// Array of Cookies (to send)
+	//--
 	public $postvars;										// Array of PostVars (to send)
 	public $poststring;										// Pre-Built Post String (as alternative to PostVars) ; must not contain unencoded \r\n ; must use the RFC 3986 standard.
-	public $putbodyres;										// PUT Request (to send) :: string or file path
+	//--
 	public $putbodymode;									// PUT Request (to send) :: mode: string/file
+	public $putbodyres;										// PUT Request (to send) :: string or file path
+	//--
+	public $skipcontentif401;								// Return no Content (response body) if Not Auth (401)
+	public $skip100continue;								// Apply just for HTTP 1.1 and if set to TRUE will disable expect-100-continue and will skip parsing 100-continue header from server (this is a fix for those servers that does no t comply with situations where 100-continue is required on HTTP 1.1)
+	//--
+	public $debug;											// DEBUG
 	//--
 	//============================================== privates
 	//-- set
@@ -71,7 +77,6 @@ final class SmartHttpClient {
 	private $raw_headers = array();							// Raw-Headers (internals)
 	private $url_parts = array();							// URL Parts
 	private $method = 'GET';								// method: GET / POST / HEAD + WebDAV methods (HTTP 1.1 is recommended): PUT / DELETE / MKCOL / OPTIONS / MOVE / COPY / PROPFIND ...
-	private $no_content_stop_if_unauth = true;				// Return no Content (response body) if Not Auth (401)
 	//--
 	private $cafile = '';									// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
 	//--
@@ -80,39 +85,47 @@ final class SmartHttpClient {
 
 	//==============================================
 	// [CONSTRUCTOR] :: init object
-	public function __construct($y_protocol='', $y_no_content_stop_if_unauth=true) {
+	public function __construct($http_protocol='1.0') {
 
-		//-- preset debugging
-		$this->debug = 0;
+		//-- signature (fake) as NetSurf Browser - which is a real browser but have no default support for Javascript
+		$this->useragent = 'NetSurf/3.7 ('.'SmartFramework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.'; '.php_uname('s').' '.php_uname('r').' '.php_uname('m').'; '.'PHP/'.PHP_VERSION.')';
 		//--
 
-		//-- set protocol: 1.0 or 1.1
-		switch((string)$y_protocol) {
+		//-- connection timeout
+		$this->connect_timeout = 30;
+		//--
+
+		//-- HTTP protocol: 1.0 or 1.1
+		switch((string)$http_protocol) {
 			case '1.1':
-				$this->protocol = '1.1'; // for 1.1 the time can be significant LONGER than 1.0
+				$this->protocol = '1.1'; // for extended methods (Ex: WebDAV this is safer than 1.0)
 				break;
-			default:
 			case '1.0':
-				$this->protocol = '1.0'; // default is 1.0
+			default:
+				$this->protocol = '1.0'; // default is 1.0 (is faster than 1.1 for GET / POST)
 		} //end switch
+		//--
+
+		//-- misc
+		$this->rawheaders = array();
+		$this->cookies = array();
+		//--
+		$this->postvars = array();
+		$this->poststring = '';
+		//--
+		$this->putbodymode = 'string';
+		$this->putbodyres = '';
+		//--
+		$this->skipcontentif401 = true;
+		$this->skip100continue = false;
+		//--
+
+		//-- debugging (set to 1 to enable)
+		$this->debug = 0;
 		//--
 
 		//-- reset
 		$this->reset();
-		//--
-
-		//-- inits
-		$this->cookies = array();
-		$this->postvars = array();
-		$this->rawheaders = array();
-		//--
-
-		//-- signature (fake NetSurf which is a real browser but have no real support for Javascript)
-		$this->useragent = 'NetSurf/3.7 ('.'SmartFramework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.'; '.php_uname('s').' '.php_uname('r').' '.php_uname('m').'; '.'PHP/'.PHP_VERSION.')';
-		//--
-
-		//-- option
-		$this->no_content_stop_if_unauth = (bool) $y_no_content_stop_if_unauth;
 		//--
 
 	} //END FUNCTION
@@ -120,10 +133,13 @@ final class SmartHttpClient {
 
 
 	//==============================================
-	// [PUBLIC] :: set the SSL/TLS Certificate Authority File
+	// [PUBLIC] :: set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
 	public function set_ssl_tls_ca_file($cafile) {
 		//--
-		$this->cafile = (string) $cafile;
+		$this->cafile = '';
+		if(SmartFileSysUtils::check_if_safe_path((string)$cafile) == '1') {
+			$this->cafile = (string) $cafile;
+		} //end if
 		//--
 	} //END FUNCTION
 	//==============================================
@@ -162,6 +178,9 @@ final class SmartHttpClient {
 		//--
 	} //END FUNCTION
 	//==============================================
+
+
+	## PRIVATES
 
 
 	//==============================================
@@ -272,7 +291,7 @@ final class SmartHttpClient {
 			//--
 		} //end while
 		//--
-		if(($is_unauth) AND ($this->no_content_stop_if_unauth)) { // in this case (by settings) no content (response body) should be returned
+		if(($is_unauth === true) AND ($this->skipcontentif401 !== false)) { // in this case (by settings) skip the response body and stop here
 			$this->close_connection();
 			return 0;
 		} //end if
@@ -330,9 +349,6 @@ final class SmartHttpClient {
 
 	} //END FUNCTION
 	//==============================================
-
-
-	## PRIVATES
 
 
 	//==============================================
