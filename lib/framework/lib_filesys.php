@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180227
+ * @version 	v.180305
  * @package 	Filesystem
  *
  */
@@ -1284,7 +1284,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.180220
+ * @version 	v.180305
  * @package 	Filesystem
  *
  */
@@ -1323,7 +1323,12 @@ public static function fix_dir_chmod($dir_name) {
 		return true;
 	} //end if
 	//--
-	return (bool) @chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
+	$chmod = (bool) @chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
+	if(!$chmod) {
+		Smart::log_notice(__METHOD__.'() // Failed to CHMOD ('.SMART_FRAMEWORK_CHMOD_DIRS.') a Directory: '.$dir_name);
+	} //end if
+	//--
+	return (bool) $chmod;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1359,7 +1364,12 @@ public static function fix_file_chmod($file_name) {
 		return true;
 	} //end if
 	//--
-	return (bool) @chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES);
+	$chmod = (bool) @chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES);
+	if(!$chmod) {
+		Smart::log_notice(__METHOD__.'() // Failed to CHMOD ('.SMART_FRAMEWORK_CHMOD_FILES.') a File: '.$file_name);
+	} //end if
+	//--
+	return (bool) $chmod;
 	//--
 } //END FUNCTION
 //================================================================
