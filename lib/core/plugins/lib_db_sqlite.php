@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170917
+ * @version 	v.180305
  * @package 	Database:SQLite
  *
  */
@@ -443,7 +443,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.170917
+ * @version 	v.180305
  * @package 	Database:SQLite
  *
  */
@@ -572,7 +572,14 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	} //end try catch
 	//--
 	if(SmartFileSystem::is_type_file($file_name)) {
-		SmartFileSystem::fix_file_chmod($file_name); // apply file chmod
+		if(SmartFileSystem::get_file_size($file_name) <= 0) {
+			SmartFileSystem::fix_file_chmod($file_name); // apply initial file chmod
+		} //end if
+		if(!SmartFileSystem::have_access_read($file_name)) { // MUST NOT check Write Access since in some situations the DB can be in Read-Only Mode !!!
+			self::error((string)$file_name, 'OPEN', 'The DB File have not read access', 'Failed to set Fix CHMOD on this file !', $file_name);
+			return;
+		} //end if
+		// the write access will result in write query fail and must not be checked here ... (when DB is read-only)
 	} //end if
 	//--
 	self::check_connection($db);

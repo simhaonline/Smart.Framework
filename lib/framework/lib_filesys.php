@@ -1325,7 +1325,7 @@ public static function fix_dir_chmod($dir_name) {
 	//--
 	$chmod = (bool) @chmod($dir_name, SMART_FRAMEWORK_CHMOD_DIRS);
 	if(!$chmod) {
-		Smart::log_notice(__METHOD__.'() // Failed to CHMOD ('.SMART_FRAMEWORK_CHMOD_DIRS.') a Directory: '.$dir_name);
+		Smart::log_warning(__METHOD__.'() // Failed to CHMOD ('.SMART_FRAMEWORK_CHMOD_DIRS.') a Directory: '.$dir_name);
 	} //end if
 	//--
 	return (bool) $chmod;
@@ -1366,7 +1366,7 @@ public static function fix_file_chmod($file_name) {
 	//--
 	$chmod = (bool) @chmod($file_name, SMART_FRAMEWORK_CHMOD_FILES);
 	if(!$chmod) {
-		Smart::log_notice(__METHOD__.'() // Failed to CHMOD ('.SMART_FRAMEWORK_CHMOD_FILES.') a File: '.$file_name);
+		Smart::log_warning(__METHOD__.'() // Failed to CHMOD ('.SMART_FRAMEWORK_CHMOD_FILES.') a File: '.$file_name);
 	} //end if
 	//--
 	return (bool) $chmod;
@@ -1708,13 +1708,13 @@ public static function read($file_name, $file_len=0, $markchmod='no') {
 				//--
 				if((string)$markchmod == 'yes') {
 					self::fix_file_chmod($file_name); // force chmod
-				} //end if
-				if(!self::have_access_read($file_name)) {
+				} elseif(!self::have_access_read($file_name)) {
 					self::fix_file_chmod($file_name); // try to make ir readable by applying chmod
-					if(!self::have_access_read($file_name)) {
-						Smart::log_warning(__METHOD__.'() // ReadFile // A file is not readable: '.$file_name);
-						return '';
-					} //end if
+				} //end if
+				//--
+				if(!self::have_access_read($file_name)) {
+					Smart::log_warning(__METHOD__.'() // ReadFile // A file is not readable: '.$file_name);
+					return '';
 				} //end if
 				//--
 				if($file_len > 0) {
@@ -1800,7 +1800,13 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 			} //end if
 			//--
 			if(self::is_type_file($file_name)) {
-				self::fix_file_chmod($file_name); // apply chmod first to be sure file is writable
+				if(!self::have_access_write($file_name)) {
+					self::fix_file_chmod($file_name); // apply chmod first to be sure file is writable
+				} //end if
+				if(!self::have_access_write($file_name)) {
+					Smart::log_warning(__METHOD__.'() // WriteFile // A file is not writable: '.$file_name);
+					return 0;
+				} //end if
 			} //end if
 			//-- fopen/fwrite method lacks the real locking which can be achieved just with flock which is not as safe as doing at once with: file_put_contents
 			if((string)$write_mode == 'w') { // wb (write, binary safe)
@@ -1810,13 +1816,10 @@ public static function write($file_name, $file_content='', $write_mode='w') {
 			} //end if else
 			//--
 			if(self::is_type_file($file_name)) {
-				//--
-				self::fix_file_chmod($file_name); // apply chmod
-				//--
+				self::fix_file_chmod($file_name); // apply chmod afer write (fix as the file create chmod may be different !!)
 				if(!self::have_access_write($file_name)) {
 					Smart::log_warning(__METHOD__.'() // WriteFile // A file is not writable: '.$file_name);
 				} //end if
-				//--
 			} //end if
 			//-- check the write result (number of bytes written)
 			if($result === false) {
