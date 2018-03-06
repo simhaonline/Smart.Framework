@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180227.r2
+ * @version 	v.180306
  * @package 	Components:Core
  *
  */
@@ -3087,7 +3087,7 @@ public static function get_imgdesc_by_os_id($y_os_id) {
 		case 'macosx':
 		case 'macos':
 		case 'mac': // cli
-			$desc = 'Apple MacOs';
+			$desc = 'Apple MacOS';
 			$pict = 'os/mac-os';
 			break;
 		//-
