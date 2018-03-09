@@ -1,15 +1,14 @@
 <?php
 // [LIB - SmartFramework / Crypto Support]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
-//die(print_r(openssl_get_cipher_methods()));
 
 //======================================================
 // Smart-Framework - Crypto Support: BlowFish (CBC) built-in / BlowFish/AES256/Camellia256 (CBC/CFB/OFB via OpenSSL)

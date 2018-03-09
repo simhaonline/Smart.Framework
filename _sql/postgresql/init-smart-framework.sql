@@ -161,7 +161,7 @@ CREATE TABLE _info (
 	CONSTRAINT _info__check__variable CHECK ((char_length((variable)::text) >= 1))
 );
 ALTER TABLE ONLY _info ADD CONSTRAINT _info__variable PRIMARY KEY (variable);
-COMMENT ON TABLE _info IS 'Smart.Framework MetaInfo v.2017.03.05';
+COMMENT ON TABLE _info IS 'Smart.Framework MetaInfo v.2018.03.09';
 COMMENT ON COLUMN _info.variable IS 'The Variable';
 COMMENT ON COLUMN _info.value IS 'The Value';
 COMMENT ON COLUMN _info.comments IS 'The Comments';

@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Plugins / StaticLoad]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -38,6 +38,7 @@ require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
 require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
 require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
 require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
+require_once('lib/core/plugins/lib_db_mongo.php');			// mongo db connector
 //--
 require_once('lib/core/plugins/lib_session.php');			// session storage
 //--

@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Samples / Test FileSystem]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 // Class: \SmartModExtLib\Samples\TestUnitFileSystem
 // Type: Module Library

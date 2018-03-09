@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / SQLite 3 Database Client]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.180305
+ * @version 	v.180307
  * @package 	Database:SQLite
  *
  */
@@ -209,12 +209,13 @@ public function check_if_table_exists($table_name) {
  * This function is intended to be used for count type queries: SELECT COUNT().
  *
  * @param STRING $query 						:: the SQLite Query
- * @param STRING $params_or_title 				:: *optional* array of parameters (?, ?, ... ?) or query title for easy debugging
+ * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
+ * @param STRING $qtitle 						:: *optional* query title for easy debugging
  * @return INTEGER 								:: the result of COUNT()
  */
-public function count_data($query, $params_or_title='') {
+public function count_data($query, $qparams='', $qtitle='') {
 	$this->check_opened();
-	return SmartSQliteUtilDb::count_data($this->db, $query, $params_or_title);
+	return SmartSQliteUtilDb::count_data($this->db, $query, $qparams, $qtitle);
 } //END FUNCTION
 //--
 
@@ -225,12 +226,13 @@ public function count_data($query, $params_or_title='') {
  * This function is intended to be used for read type queries: SELECT.
  *
  * @param STRING $query 						:: the SQLite Query
- * @param STRING $params_or_title 				:: *optional* array of parameters (?, ?, ... ?) or query title for easy debugging
+ * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
+ * @param STRING $qtitle 						:: *optional* query title for easy debugging
  * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
  */
-public function read_data($query, $params_or_title='') {
+public function read_data($query, $qparams='', $qtitle='') {
 	$this->check_opened();
-	return SmartSQliteUtilDb::read_data($this->db, $query, $params_or_title);
+	return SmartSQliteUtilDb::read_data($this->db, $query, $qparams, $qtitle);
 } //END FUNCTION
 //--
 
@@ -241,12 +243,13 @@ public function read_data($query, $params_or_title='') {
  * This function is intended to be used for read type queries: SELECT.
  *
  * @param STRING $query 						:: the SQLite Query
- * @param STRING $params_or_title 				:: *optional* array of parameters (?, ?, ... ?) or query title for easy debugging
+ * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
+ * @param STRING $qtitle 						:: *optional* query title for easy debugging
  * @return ARRAY (asociative) of results		:: array(0 => array('column1', 'column2', ... 'column-n'), 1 => array('column1', 'column2', ... 'column-n'), ..., m => array('column1', 'column2', ... 'column-n'))
  */
-public function read_adata($query, $params_or_title='') {
+public function read_adata($query, $qparams='', $qtitle='') {
 	$this->check_opened();
-	return SmartSQliteUtilDb::read_adata($this->db, $query, $params_or_title);
+	return SmartSQliteUtilDb::read_adata($this->db, $query, $qparams, $qtitle);
 } //END FUNCTION
 //--
 
@@ -262,12 +265,13 @@ public function read_adata($query, $params_or_title='') {
  * @hints	ALWAYS use a LIMIT 1 OFFSET 0 with all queries using this function to avoid situations that will return more than 1 rows and will raise ERROR with this function.
  *
  * @param STRING $query 						:: the SQLite Query
- * @param STRING $params_or_title 				:: *optional* array of parameters (?, ?, ... ?) or query title for easy debugging
+ * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
+ * @param STRING $qtitle 						:: *optional* query title for easy debugging
  * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')
  */
-public function read_asdata($query, $params_or_title='') {
+public function read_asdata($query, $qparams='', $qtitle='') {
 	$this->check_opened();
-	return SmartSQliteUtilDb::read_asdata($this->db, $query, $params_or_title);
+	return SmartSQliteUtilDb::read_asdata($this->db, $query, $qparams, $qtitle);
 } //END FUNCTION
 //--
 
@@ -278,12 +282,13 @@ public function read_asdata($query, $params_or_title='') {
  * This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ; CREATE SCHEMAS ; CALLING STORED PROCEDURES ...
  *
  * @param STRING $query 						:: the SQLite Query
- * @param STRING $params_or_title 				:: *optional* array of parameters (?, ?, ... ?) or query title for easy debugging
+ * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
+ * @param STRING $qtitle 						:: *optional* query title for easy debugging
  * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
  */
-public function write_data($query, $params_or_title='') {
+public function write_data($query, $qparams='', $qtitle='') {
 	$this->check_opened();
-	return SmartSQliteUtilDb::write_data($this->db, $query, $params_or_title);
+	return SmartSQliteUtilDb::write_data($this->db, $query, $qparams, $qtitle);
 } //END FUNCTION
 //--
 
@@ -443,7 +448,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.180305
+ * @version 	v.180307
  * @package 	Database:SQLite
  *
  */
@@ -722,7 +727,7 @@ public static function check_if_table_exists($db, $table_name) {
 
 
 //======================================================
-public static function count_data($db, $query, $params_or_title='') {
+public static function count_data($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
@@ -732,11 +737,13 @@ public static function count_data($db, $query, $params_or_title='') {
 		//--
 	} //end if
 	//--
-	if(is_array($params_or_title)) {
-		$query = self::prepare_param_query($db, $query, $params_or_title);
+	if(is_array($qparams)) {
+		$query = self::prepare_param_query($db, $query, $qparams);
 	} //end if
 	//--
 	$result = @$db->query($query);
+	//--
+	$num_count = 0;
 	//--
 	if($result) {
 		//--
@@ -748,7 +755,7 @@ public static function count_data($db, $query, $params_or_title='') {
 		//--
 		if(is_array($res)) {
 			//--
-			$num_count = $res[0];
+			$num_count = (int) $res[0];
 			//--
 		} else {
 			//--
@@ -775,16 +782,11 @@ public static function count_data($db, $query, $params_or_title='') {
 		$time_end = (float) (microtime(true) - (float)$time_start);
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
 		//--
-		if(is_array($params_or_title)) {
-			$the_query_title = '';
-		} else {
-			$the_query_title = (string) $params_or_title;
-		} //end if else
-		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 			'type' => 'count',
-			'data' => 'COUNT :: '.$the_query_title,
+			'data' => 'COUNT :: '.$qtitle,
 			'query' => $query,
+			'rows' => $num_count,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) self::get_connection_id($db)
 		]);
@@ -792,7 +794,7 @@ public static function count_data($db, $query, $params_or_title='') {
 	} //end if
 	//--
 	if(strlen($sqlite_error) > 0) {
-		self::error($db, 'COUNT', $sqlite_error, $query, $params_or_title);
+		self::error($db, 'COUNT', $sqlite_error, $query, $qparams);
 		return 0;
 	} //end if
 	//--
@@ -803,7 +805,7 @@ public static function count_data($db, $query, $params_or_title='') {
 
 
 //======================================================
-public static function read_data($db, $query, $params_or_title='') {
+public static function read_data($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
@@ -813,20 +815,20 @@ public static function read_data($db, $query, $params_or_title='') {
 		//--
 	} //end if
 	//--
-	if(is_array($params_or_title)) {
-		$query = self::prepare_param_query($db, $query, $params_or_title);
+	if(is_array($qparams)) {
+		$query = self::prepare_param_query($db, $query, $qparams);
 	} //end if
 	//--
 	$result = @$db->query($query);
+	//--
+	$number_of_rows = 0;
+	$number_of_fields = 0;
 	//--
 	if($result) {
 		//--
 		$sqlite_error = '';
 		//--
 		$arr_data = array();
-		//--
-		$number_of_rows = 0;
-		$number_of_fields = 0;
 		//--
 		while($res = @$result->fetchArray(SQLITE3_NUM)) {
 			//--
@@ -872,16 +874,11 @@ public static function read_data($db, $query, $params_or_title='') {
 		$time_end = (float) (microtime(true) - (float)$time_start);
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
 		//--
-		if(is_array($params_or_title)) {
-			$the_query_title = '';
-		} else {
-			$the_query_title = (string) $params_or_title;
-		} //end if else
-		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 			'type' => 'read',
-			'data' => 'READ [NON-ASSOCIATIVE] :: '.$the_query_title,
+			'data' => 'READ [NON-ASSOCIATIVE] :: '.$qtitle,
 			'query' => $query,
+			'rows' => $number_of_rows,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) self::get_connection_id($db)
 		]);
@@ -889,7 +886,7 @@ public static function read_data($db, $query, $params_or_title='') {
 	} //end if
 	//--
 	if(strlen($sqlite_error) > 0) {
-		self::error($db, 'READ-DATA', $sqlite_error, $query, $params_or_title);
+		self::error($db, 'READ-DATA', $sqlite_error, $query, $qparams);
 		return array();
 	} //end if
 	//--
@@ -900,7 +897,7 @@ public static function read_data($db, $query, $params_or_title='') {
 
 
 //======================================================
-public static function read_adata($db, $query, $params_or_title='') {
+public static function read_adata($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
@@ -910,20 +907,20 @@ public static function read_adata($db, $query, $params_or_title='') {
 		//--
 	} //end if
 	//--
-	if(is_array($params_or_title)) {
-		$query = self::prepare_param_query($db, $query, $params_or_title);
+	if(is_array($qparams)) {
+		$query = self::prepare_param_query($db, $query, $qparams);
 	} //end if
 	//--
 	$result = @$db->query($query);
+	//--
+	$number_of_rows = 0;
+	$number_of_fields = 0;
 	//--
 	if($result) {
 		//--
 		$sqlite_error = '';
 		//--
 		$arr_data = array();
-		//--
-		$number_of_rows = 0;
-		$number_of_fields = 0;
 		//--
 		while($res = @$result->fetchArray(SQLITE3_ASSOC)) {
 			//--
@@ -973,16 +970,11 @@ public static function read_adata($db, $query, $params_or_title='') {
 		$time_end = (float) (microtime(true) - (float)$time_start);
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
 		//--
-		if(is_array($params_or_title)) {
-			$the_query_title = '';
-		} else {
-			$the_query_title = (string) $params_or_title;
-		} //end if else
-		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 			'type' => 'read',
-			'data' => 'aREAD [ASSOCIATIVE] :: '.$the_query_title,
+			'data' => 'aREAD [ASSOCIATIVE] :: '.$qtitle,
 			'query' => $query,
+			'rows' => $number_of_rows,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) self::get_connection_id($db)
 		]);
@@ -990,7 +982,7 @@ public static function read_adata($db, $query, $params_or_title='') {
 	} //end if
 	//--
 	if(strlen($sqlite_error) > 0) {
-		self::error($db, 'READ-aDATA', $sqlite_error, $query, $params_or_title);
+		self::error($db, 'READ-aDATA', $sqlite_error, $query, $qparams);
 		return array();
 	} //end if
 	//--
@@ -1002,7 +994,7 @@ public static function read_adata($db, $query, $params_or_title='') {
 
 //======================================================
 // CAN BE USED JUST WITH ONE ROW !!!
-public static function read_asdata($db, $query, $params_or_title='') {
+public static function read_asdata($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
@@ -1012,20 +1004,20 @@ public static function read_asdata($db, $query, $params_or_title='') {
 		//--
 	} //end if
 	//--
-	if(is_array($params_or_title)) {
-		$query = self::prepare_param_query($db, $query, $params_or_title);
+	if(is_array($qparams)) {
+		$query = self::prepare_param_query($db, $query, $qparams);
 	} //end if
 	//--
 	$result = @$db->query($query);
+	//--
+	$number_of_rows = 0;
+	$number_of_fields = 0;
 	//--
 	if($result) {
 		//--
 		$sqlite_error = '';
 		//--
 		$arr_data = array();
-		//--
-		$number_of_rows = 0;
-		$number_of_fields = 0;
 		//--
 		while($res = @$result->fetchArray(SQLITE3_ASSOC)) {
 			//--
@@ -1079,16 +1071,11 @@ public static function read_asdata($db, $query, $params_or_title='') {
 		$time_end = (float) (microtime(true) - (float)$time_start);
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
 		//--
-		if(is_array($params_or_title)) {
-			$the_query_title = '';
-		} else {
-			$the_query_title = (string) $params_or_title;
-		} //end if else
-		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 			'type' => 'read',
-			'data' => 'asREAD [SINGLE-ROW-ASSOCIATIVE] :: '.$the_query_title,
+			'data' => 'asREAD [SINGLE-ROW-ASSOCIATIVE] :: '.$qtitle,
 			'query' => $query,
+			'rows' => $number_of_rows,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) self::get_connection_id($db)
 		]);
@@ -1096,7 +1083,7 @@ public static function read_asdata($db, $query, $params_or_title='') {
 	} //end if
 	//--
 	if(strlen($sqlite_error) > 0) {
-		self::error($db, 'READ-asDATA', $sqlite_error, $query, $params_or_title);
+		self::error($db, 'READ-asDATA', $sqlite_error, $query, $qparams);
 		return array();
 	} //end if
 	//--
@@ -1107,7 +1094,7 @@ public static function read_asdata($db, $query, $params_or_title='') {
 
 
 //======================================================
-public static function write_data($db, $query, $params_or_title='') {
+public static function write_data($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
@@ -1117,14 +1104,14 @@ public static function write_data($db, $query, $params_or_title='') {
 		//--
 	} //end if
 	//--
-	if(is_array($params_or_title)) {
-		$query = self::prepare_param_query($db, $query, $params_or_title);
+	if(is_array($qparams)) {
+		$query = self::prepare_param_query($db, $query, $qparams);
 	} //end if
 	//--
 	$result = @$db->exec($query);
 	//--
 	if($result) {
-		$affected_rows = @$db->changes();
+		$affected_rows = (int) @$db->changes();
 		// free result is not available for exec, but just for query
 		$sqlite_error = '';
 	} else {
@@ -1139,16 +1126,10 @@ public static function write_data($db, $query, $params_or_title='') {
 		$time_end = (float) (microtime(true) - (float)$time_start);
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
 		//--
-		if(is_array($params_or_title)) {
-			$the_query_title = '';
-		} else {
-			$the_query_title = (string) $params_or_title;
-		} //end if else
-		//--
 		if((strtoupper(substr(trim($query), 0, 5)) == 'BEGIN') OR (strtoupper(substr(trim($query), 0, 6)) == 'COMMIT') OR (strtoupper(substr(trim($query), 0, 8)) == 'ROLLBACK')) {
 			SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 				'type' => 'transaction',
-				'data' => 'TRANSACTION :: '.$the_query_title,
+				'data' => 'TRANSACTION :: '.$qtitle,
 				'query' => $query,
 				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 				'connection' => (string) self::get_connection_id($db)
@@ -1156,7 +1137,7 @@ public static function write_data($db, $query, $params_or_title='') {
 		} else {
 			SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 				'type' => 'write',
-				'data' => 'WRITE :: '.$the_query_title,
+				'data' => 'WRITE :: '.$qtitle,
 				'query' => $query,
 				'rows' => $affected_rows,
 				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
@@ -1168,7 +1149,7 @@ public static function write_data($db, $query, $params_or_title='') {
 	//--
 	if(strlen($sqlite_error) > 0) {
 		$message = 'errorsqlwriteoperation: '.$sqlite_error;
-		self::error($db, 'WRITE-DATA', $sqlite_error, $query, $params_or_title);
+		self::error($db, 'WRITE-DATA', $sqlite_error, $query, $qparams);
 		return array($message, 0);
 	} else {
 		$message = 'oksqlwriteoperation';

@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / Plugins / Redis Database Client]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.170927
+ * @version 	v.180308
  * @package 	Database:Redis
  *
  * @method	STRING		ping()										# Ping the Redis server ; returns: the test answer which is always PONG
@@ -387,8 +387,9 @@ private function run_command($method, array $args) {
 		SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 			'type' => 'nosql',
 			'data' => strtoupper($method).' :: '.$this->description,
-			'command' => Smart::text_cut_by_limit((string)$cmd, 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]'),
+			'command' => Smart::text_cut_by_limit((string)implode(' ', (array)$args), 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]'),
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+			'rows' => is_array($response) ? count($response) : strlen((string)$response),
 			'connection' => (string) $this->socket
 		]);
 		//--
@@ -485,7 +486,7 @@ private function connect() {
 	//--
 	if(!is_resource($this->socket)) { // try to connect or re-use the connection
 		//--
-		if(array_key_exists((string)$this->server.'@'.$this->db, (array)SmartFrameworkRegistry::$Connections['redis'])) {
+		if(array_key_exists((string)$this->server.'@'.$this->db, (array)SmartFrameworkRegistry::$Connections['redis']) AND is_resource(SmartFrameworkRegistry::$Connections['redis'][(string)$this->server.'@'.$this->db])) {
 			//--
 			$this->socket = SmartFrameworkRegistry::$Connections['redis'][(string)$this->server.'@'.$this->db]; // re-use conection (import)
 			//--
@@ -576,7 +577,7 @@ private function disconnect() {
 	//--
 	if($this->socket) {
 		//--
-		@fclose($this->socket);
+		@fclose($this->socket); // closing the local connection (the global might remain opened ...)
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			//--

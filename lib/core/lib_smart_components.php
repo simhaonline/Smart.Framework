@@ -1,14 +1,14 @@
 <?php
 // [LIB - SmartFramework / Smart Components]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180306
+ * @version 	v.180309
  * @package 	Components:Core
  *
  */
@@ -226,6 +226,7 @@ public static function app_error_message($y_title, $y_name, $y_mode, $y_type, $y
 			'ERR-MSG' 	=> (string) $y_errmsg,
 			'AREA-ONE' 	=> (string) $y_area_one,
 			'AREA-TWO' 	=> (string) $y_area_two,
+			'CRR-URL' 	=> (string) SmartUtils::get_server_current_url()
 		],
 		'no'
 	);
@@ -2790,6 +2791,14 @@ public static function app_powered_info($y_show_versions='no', $y_plugins=array(
 			'name' 	=> (string) 'PostgreSQL Database Server',
 			'logo' 	=> (string) $base_url.'lib/core/img/db/postgresql-logo.svg',
 			'url' 	=> (string) 'https://www.postgresql.org'
+		];
+	} //end if
+	//-- mongodb
+	if(is_array($configs['mongodb'])) {
+		$arr_powered_sside[] = [
+			'name' 	=> (string) 'MongoDB BigData Server',
+			'logo' 	=> (string) $base_url.'lib/core/img/db/mongodb-logo.svg',
+			'url' 	=> (string) 'https://docs.mongodb.com'
 		];
 	} //end if
 	//-- sqlite

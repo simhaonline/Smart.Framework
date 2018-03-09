@@ -1,10 +1,10 @@
 <?php
 // [LIB - SmartFramework / PostgreSQL Database Client]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170430
+ * @version 	v.180308
  * @package 	Database:PostgreSQL
  *
  */
@@ -195,7 +195,7 @@ public static function server_connect($yhost, $yport, $ydb, $yuser, $ypass, $yti
 	//--
 
 	//-- {{{SYNC-CONNECTIONS-IDS}}}
-	$the_conn_key = (string) $yhost.':'.$yport.'@'.$ydb.'#'.$yuser.'>'.trim(strtoupper(str_replace(' ','',(string)$y_transact_mode))).'.';
+	$the_conn_key = (string) $yhost.':'.$yport.'@'.$ydb.'#'.$yuser;
 	//--
 	$connection = @pg_connect('host='.$yhost.' port='.$yport.' dbname='.$ydb.' user='.$yuser.' password='.$password.' connect_timeout='.$timeout);
 	// @pg_close($connection) (if is resource) ; but reusing connections policy dissalow disconnects
@@ -237,7 +237,7 @@ public static function server_connect($yhost, $yport, $ydb, $yuser, $ypass, $yti
 		return;
 	} //end if
 	$server_encoding = @pg_fetch_row($result);
-	if(trim($server_encoding[0]) != trim(SMART_FRAMEWORK_DBSQL_CHARSET)) {
+	if((!is_array($server_encoding)) OR ((string)trim((string)$server_encoding[0]) != (string)trim((string)SMART_FRAMEWORK_DBSQL_CHARSET))) {
 		self::error($connection, 'Encoding-Get-Charset', 'Wrong Server Encoding on PgSQL Server', 'Server='.$server_encoding[0], 'Client='.SMART_FRAMEWORK_DBSQL_CHARSET);
 		return;
 	} //end if
@@ -278,7 +278,7 @@ public static function server_connect($yhost, $yport, $ydb, $yuser, $ypass, $yti
 			//--
 			$result = @pg_query('SHOW transaction_isolation');
 			$chk = @pg_fetch_row($result);
-			if(((string)trim($chk[0]) == '') OR ((string)$transact != (string)strtoupper(trim($chk[0])))) {
+			if((!is_array($chk)) OR ((string)trim((string)$chk[0]) == '') OR ((string)$transact != (string)strtoupper((string)trim((string)$chk[0])))) {
 				self::error($connection, 'Check-Session-Transaction-Level', 'Failed to Set Session Transaction Level as '.$transact, 'Error='.@pg_last_error($connection), 'DB='.$ydb);
 				return;
 			} //end if
@@ -462,7 +462,7 @@ public static function escape_identifier($y_identifier, $y_connection='DEFAULT')
  * Fix charset for param queries
  * Used for: pg_query_params()
  *
- * @param ARRAY $arr_params				:: A mixed variable
+ * @param ARRAY $arr_params						:: A mixed variable
  * @return STRING 								:: JSON string
  *
  */
@@ -477,7 +477,7 @@ private static function escape_arr_params($arr_params) {
 	//--
 
 	//--
-	return $arr_params; // this should not be enforced to a type ... must remain as it is
+	return $arr_params; // mixed: this should not be enforced to a type ... must remain as it is
 	//--
 
 } //END FUNCTION
@@ -613,6 +613,14 @@ public static function count_data($queryval, $params_or_title='', $y_connection=
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		if(array_key_exists('@title', $params_or_title) OR array_key_exists('@params', $params_or_title)) {
+			$the_query_title = (string) $params_or_title['@title'];
+			if(is_array($params_or_title['@params'])) {
+				$params_or_title = (array) $params_or_title['@params'];
+			} else {
+				$params_or_title = array();
+			} //end if else
+		} //end if
 		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
@@ -636,6 +644,16 @@ public static function count_data($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//--
+	$pgsql_result_count = 0; // store COUNT data
+	if((string)$error == '') {
+		$record = @pg_fetch_row($result);
+		if(is_array($record)) {
+			$pgsql_result_count = Smart::format_number_int($record[0]);
+		} //end if
+	} //end if
+	//--
+
+	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
@@ -653,6 +671,7 @@ public static function count_data($queryval, $params_or_title='', $y_connection=
 			'data' => 'COUNT :: '.$the_query_title,
 			'query' => $queryval,
 			'params' => $dbg_query_params,
+			'rows' => $pgsql_result_count,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) $y_connection
 		]);
@@ -661,18 +680,10 @@ public static function count_data($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//-- init vars
-	$pgsql_result_count = 0; // store COUNT data
-	//--
-	if(strlen($error) > 0) {
+	if((string)$error != '') {
 		//--
 		self::error($y_connection, 'COUNT', $error, $queryval, $params_or_title);
 		return 0;
-		//--
-	} else {
-		//--
-		$record = @pg_fetch_row($result);
-		//--
-		$pgsql_result_count = Smart::format_number_int($record[0]);
 		//--
 	} //end else
 	//--
@@ -724,6 +735,14 @@ public static function read_data($queryval, $params_or_title='', $y_connection='
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		if(array_key_exists('@title', $params_or_title) OR array_key_exists('@params', $params_or_title)) {
+			$the_query_title = (string) $params_or_title['@title'];
+			if(is_array($params_or_title['@params'])) {
+				$params_or_title = (array) $params_or_title['@params'];
+			} else {
+				$params_or_title = array();
+			} //end if else
+		} //end if
 		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
@@ -747,6 +766,15 @@ public static function read_data($queryval, $params_or_title='', $y_connection='
 	//--
 
 	//--
+	$number_of_rows = 0;
+	$number_of_fields = 0;
+	if((string)$error == '') {
+		$number_of_rows = @pg_num_rows($result);
+		$number_of_fields = @pg_num_fields($result);
+	} //end if
+	//--
+
+	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
@@ -764,6 +792,7 @@ public static function read_data($queryval, $params_or_title='', $y_connection='
 			'data' => 'READ [NON-ASSOCIATIVE] :: '.$the_query_title,
 			'query' => $queryval,
 			'params' => $dbg_query_params,
+			'rows' => $number_of_rows,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) $y_connection
 		]);
@@ -774,23 +803,22 @@ public static function read_data($queryval, $params_or_title='', $y_connection='
 	//-- init vars
 	$pgsql_result_arr = array(); // store SELECT data
 	//--
-	if(strlen($error) > 0) {
+	if((string)$error != '') {
 		//--
 		self::error($y_connection, 'READ-DATA', $error, $queryval, $params_or_title);
 		return array();
 		//--
 	} else {
 		//--
-		$number_of_rows = @pg_num_rows($result);
-		$number_of_fields = @pg_num_fields($result);
-		//--
 		for($i=0; $i<$number_of_rows; $i++) {
 			//--
 			$record = @pg_fetch_row($result);
 			//--
-			for($ii=0; $ii<$number_of_fields; $ii++) {
-				$pgsql_result_arr[] = (string) $record[$ii]; // force string
-			} // end for
+			if(is_array($record)) {
+				for($ii=0; $ii<$number_of_fields; $ii++) {
+					$pgsql_result_arr[] = (string) $record[$ii]; // force string
+				} // end for
+			} //end if
 			//--
 		} //end for
 		//--
@@ -844,6 +872,14 @@ public static function read_adata($queryval, $params_or_title='', $y_connection=
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		if(array_key_exists('@title', $params_or_title) OR array_key_exists('@params', $params_or_title)) {
+			$the_query_title = (string) $params_or_title['@title'];
+			if(is_array($params_or_title['@params'])) {
+				$params_or_title = (array) $params_or_title['@params'];
+			} else {
+				$params_or_title = array();
+			} //end if else
+		} //end if
 		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
@@ -867,6 +903,15 @@ public static function read_adata($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//--
+	$number_of_rows = 0;
+	$number_of_fields = 0;
+	if((string)$error == '') {
+		$number_of_rows = @pg_num_rows($result);
+		$number_of_fields = @pg_num_fields($result);
+	} //end if
+	//--
+
+	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
@@ -884,6 +929,7 @@ public static function read_adata($queryval, $params_or_title='', $y_connection=
 			'data' => 'aREAD [ASSOCIATIVE] :: '.$the_query_title,
 			'query' => $queryval,
 			'params' => $dbg_query_params,
+			'rows' => $number_of_rows,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) $y_connection
 		]);
@@ -894,15 +940,12 @@ public static function read_adata($queryval, $params_or_title='', $y_connection=
 	//-- init vars
 	$pgsql_result_arr = array(); // store SELECT data
 	//--
-	if(strlen($error) > 0) {
+	if((string)$error != '') {
 		//--
 		self::error($y_connection, 'READ-aDATA', $error, $queryval, $params_or_title);
 		return array();
 		//--
 	} else {
-		//--
-		$number_of_rows = @pg_num_rows($result);
-		$number_of_fields = @pg_num_fields($result);
 		//--
 		if($number_of_rows > 0) {
 			//--
@@ -983,6 +1026,14 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		if(array_key_exists('@title', $params_or_title) OR array_key_exists('@params', $params_or_title)) {
+			$the_query_title = (string) $params_or_title['@title'];
+			if(is_array($params_or_title['@params'])) {
+				$params_or_title = (array) $params_or_title['@params'];
+			} else {
+				$params_or_title = array();
+			} //end if else
+		} //end if
 		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title);
 	} else {
@@ -1006,6 +1057,15 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
 	//--
 
 	//--
+	$number_of_rows = 0;
+	$number_of_fields = 0;
+	if((string)$error == '') {
+		$number_of_rows = @pg_num_rows($result);
+		$number_of_fields = @pg_num_fields($result);
+	} //end if
+	//--
+
+	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|total-queries', 1, '+');
@@ -1023,6 +1083,7 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
 			'data' => 'asREAD [SINGLE-ROW-ASSOCIATIVE] :: '.$the_query_title,
 			'query' => $queryval,
 			'params' => $dbg_query_params,
+			'rows' => $number_of_rows,
 			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 			'connection' => (string) $y_connection
 		]);
@@ -1033,15 +1094,12 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
 	//-- init vars
 	$pgsql_result_arr = array(); // store SELECT data
 	//--
-	if(strlen($error) > 0) {
+	if((string)$error != '') {
 		//--
 		self::error($y_connection, 'READ-asDATA', $error, $queryval, $params_or_title);
 		return array();
 		//--
 	} else {
-		//--
-		$number_of_rows = @pg_num_rows($result);
-		$number_of_fields = @pg_num_fields($result);
 		//--
 		if($number_of_rows == 1) {
 			//--
@@ -1053,12 +1111,10 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
 				} //end foreach
 			} //end if
 			//--
-		} else {
+		} elseif($number_of_rows > 1) {
 			//--
-			if($number_of_rows > 1) {
-				self::error($y_connection, 'READ-asDATA', 'The Result contains more than one row ...', $queryval, $params_or_title);
-				return array();
-			} //end if
+			self::error($y_connection, 'READ-asDATA', 'The Result contains more than one row ...', $queryval, $params_or_title);
+			return array();
 			//--
 		} //end if else
 		//--
@@ -1117,6 +1173,14 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//--
 	if($use_param_query === true) {
 		$the_query_title = '';
+		if(array_key_exists('@title', $params_or_title) OR array_key_exists('@params', $params_or_title)) {
+			$the_query_title = (string) $params_or_title['@title'];
+			if(is_array($params_or_title['@params'])) {
+				$params_or_title = (array) $params_or_title['@params'];
+			} else {
+				$params_or_title = array();
+			} //end if else
+		} //end if
 		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 		$result = @pg_query_params($y_connection, $queryval, $params_or_title); // NOTICE: parameters are only allowed in ONE command not combined statements
 	} else {
@@ -1189,7 +1253,7 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//--
-	if(strlen($error) > 0) {
+	if((string)$error != '') {
 		//--
 		$message = 'errorsqlwriteoperation: '.$error;
 		//--
@@ -1273,10 +1337,21 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 		$use_param_query = true;
 	} //end if
 	//--
+	$the_query_title = '';
 	if($use_param_query === true) {
-		$the_query_title = '';
+		if(array_key_exists('@title', $params_or_title) OR array_key_exists('@params', $params_or_title)) {
+			$the_query_title = (string) $params_or_title['@title'];
+			if(is_array($params_or_title['@params'])) {
+				$params_or_title = (array) $params_or_title['@params'];
+			} else {
+				$params_or_title = array();
+			} //end if else
+		} //end if
+		$params_or_title = self::escape_arr_params($params_or_title); // fix charset
 	} else {
-		$the_query_title = (string) $params_or_title;
+		if(!is_array($params_or_title)) {
+			$the_query_title = (string) $params_or_title;
+		} //end if
 	} //end if else
 	//--
 
@@ -1389,7 +1464,7 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 	//--
 
 	//--
-	if(strlen($error) > 0) {
+	if((string)$error != '') {
 		//--
 		$message = 'errorsqlwriteoperation: '.$error;
 		//--
@@ -1891,16 +1966,19 @@ public static function check_server_version($y_connection='DEFAULT', $y_revalida
 	//--
 
 	//--
-	$pgsql_version = trim((string)$record[0]);
-	$pgsql_txt_version = strtoupper('PostgreSQL');
-	$pgsql_num_version = strtolower((string)$pgsql_version);
+	$pgsql_version = '0.0';
+	if(is_array($record)) {
+		$pgsql_version = (string) trim((string)$record[0]);
+	} //end if
+	$pgsql_txt_version = (string) strtoupper('PostgreSQL');
+	$pgsql_num_version = (string) strtolower((string)$pgsql_version);
 	//--
 
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		SmartFrameworkRegistry::setDebugMsg('db', 'pgsql|log', [
-			'type' => 'set',
-			'data' => 'Detect PostgreSQL Server Version: '.$pgsql_version,
+			'type' => 'metainfo',
+			'data' => 'PostgreSQL Server Version: '.$pgsql_version,
 			'connection' => (string) $y_connection,
 			'skip-count' => 'yes'
 		]);
@@ -2001,7 +2079,7 @@ private static function check_connection($y_connection, $y_description) {
 				return null;
 			} //end if
 			//-- {{{SYNC-CONNECTIONS-IDS}}}
-			$the_conn_key = (string) $configs['pgsql']['server-host'].':'.$configs['pgsql']['server-port'].'@'.$configs['pgsql']['dbname'].'#'.$configs['pgsql']['username'].'>'.trim(strtoupper(str_replace(' ','',(string)$configs['pgsql']['transact']))).'.';
+			$the_conn_key = (string) $configs['pgsql']['server-host'].':'.$configs['pgsql']['server-port'].'@'.$configs['pgsql']['dbname'].'#'.$configs['pgsql']['username'];
 			if(array_key_exists((string)$the_conn_key, (array)SmartFrameworkRegistry::$Connections['pgsql'])) { // if the connection was made before using the SmartPgsqlExtDb
 				//--
 				$y_connection = SmartFrameworkRegistry::$Connections['pgsql'][(string)$the_conn_key];
@@ -2230,7 +2308,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.170430
+ * @version 	v.180308
  * @package 	Database:PostgreSQL
  *
  */
@@ -2258,7 +2336,7 @@ public function __construct($y_configs_arr) {
 	//--
 	$y_configs_arr = (array) $y_configs_arr;
 	//-- {{{SYNC-CONNECTIONS-IDS}}}
-	$the_conn_key = (string) $y_configs_arr['server-host'].':'.$y_configs_arr['server-port'].'@'.$y_configs_arr['dbname'].'#'.$y_configs_arr['username'].'>'.trim(strtoupper(str_replace(' ','',(string)$y_configs_arr['transact']))).'.';
+	$the_conn_key = (string) $y_configs_arr['server-host'].':'.$y_configs_arr['server-port'].'@'.$y_configs_arr['dbname'].'#'.$y_configs_arr['username'];
 	if(array_key_exists((string)$the_conn_key, (array)SmartFrameworkRegistry::$Connections['pgsql'])) {
 		//-- try to reuse the connection :: only check if array key exists, not if it is a valid resource ; this should be as so to avoid mismatching connection mixings (if by example will re-use the connection of another server, and connection is broken in the middle of a transaction, it will fail ugly ;) and out of any control !
 		$this->connection = SmartFrameworkRegistry::$Connections['pgsql'][(string)$the_conn_key];

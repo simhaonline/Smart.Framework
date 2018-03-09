@@ -1,14 +1,14 @@
 <?php
 // [LIB - SmartFramework / Debug]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.171005
+ * @version 	v.180309
  *
  */
 final class SmartDebugProfiler {
@@ -919,7 +919,7 @@ private static function print_log_database($title, $db_log) {
 					//--
 					$num++;
 					//--
-					$tmp_color = '#003399';
+					$tmp_color = '#339900';
 					//--
 					$log .= '<div class="smartframework_debugbar_inforow" style="font-size:12px; color:'.$tmp_color.';">';
 					$log .= $num.'. '.'<b>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['data']), true).'</b>';
@@ -945,16 +945,16 @@ private static function print_log_database($title, $db_log) {
 						$num++;
 					} //end if
 					//--
-					if((string)$tmp_arr['type'] == 'write') {
-						$tmp_color = '#666699';
+					if((string)$tmp_arr['type'] == 'count') {
+						$tmp_color = '#557788';
 					} elseif((string)$tmp_arr['type'] == 'read') {
-						$tmp_color = '#333333';
-					} elseif((string)$tmp_arr['type'] == 'count') {
-						$tmp_color = '#339900';
+						$tmp_color = '#665599';
+					} elseif((string)$tmp_arr['type'] == 'write') {
+						$tmp_color = '#113377';
 					} elseif((string)$tmp_arr['type'] == 'set') {
-						$tmp_color = '#778899';
+						$tmp_color = '#333333';
 					} else { // nosql
-						$tmp_color = '#000000';
+						$tmp_color = '#111111';
 					} //end if else
 					//--
 					$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:'.$tmp_color.';">';
@@ -965,18 +965,37 @@ private static function print_log_database($title, $db_log) {
 					if((string)$tmp_arr['connection'] != '') {
 						$log .= ' @ '.Smart::escape_html($tmp_arr['connection']);
 					} //end if
+					$log .= '<br>';
 					if($tmp_arr['time'] > 0) {
 						if($tmp_arr['time'] <= $db_log['slow-time']) {
-							$log .= '<br><span style="padding:1px;"><b>@Time: '.Smart::format_number_dec($tmp_arr['time'], 9, '.', '').' sec.</b></span>';
+							$log .= '<span style="padding:1px;"><b>@Time: '.Smart::format_number_dec($tmp_arr['time'], 9, '.', '').' sec.</b></span>';
 						} else {
-							$log .= '<br><span class="smartframework_debugbar_status_warn" style="padding:1px;" title="Slow-Time: '.Smart::escape_html($db_log['slow-time']).'"><b>@Time: '.Smart::format_number_dec($tmp_arr['time'], 9, '.', '').' sec.'.'</b></span>';
+							$log .= '<span class="smartframework_debugbar_status_warn" style="padding:1px;" title="Slow-Time: '.Smart::escape_html($db_log['slow-time']).'"><b>@Time: '.Smart::format_number_dec($tmp_arr['time'], 9, '.', '').' sec.'.'</b></span>';
 						} //end if else
+					} //end if
+					if(is_array($tmp_arr['command'])) {
+						$datmod = 'DATA-SETS';
+					} elseif((string)$tmp_arr['command'] != '') {
+						$datmod = 'DATA-SIZE';
+					} else {
+						$datmod = 'ROWS';
+					} //end if else
+					if((string)$tmp_arr['rows'] != '') {
+						if($tmp_arr['time'] > 0) {
+							$log .= ' &nbsp;/&nbsp; ';
+						} //end if
+						if((string)$tmp_arr['type'] == 'count') {
+							$log .= '<i>'.'MATCHED '.$datmod.': '.(int)$tmp_arr['rows'].'</i>';
+						} elseif((string)$tmp_arr['type'] == 'read') {
+							$log .= '<i>'.'RETURNED '.$datmod.': '.(int)$tmp_arr['rows'].'</i>';
+						} elseif((string)$tmp_arr['type'] == 'write') {
+							$log .= '<i>'.'AFFECTED '.$datmod.': '.(int)$tmp_arr['rows'].'</i>';
+						} else {
+							$log .= '<i>'.'#'.$datmod.': '.(int)$tmp_arr['rows'].'</i>';
+						} //end if
 					} //end if
 					if((string)$tmp_arr['query'] != '') {
 						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['query']), true);
-						if((string)$tmp_arr['type'] == 'write') {
-							$log .= '<br>'.'AFFECTED ROWS: #'.$tmp_arr['rows'];
-						} //end if
 						if(Smart::array_size($tmp_arr['params']) > 0) {
 							$tmp_params = array();
 							foreach($tmp_arr['params'] as $key => $val) {
@@ -987,7 +1006,7 @@ private static function print_log_database($title, $db_log) {
 						} //end if
 					} //end if
 					if(is_array($tmp_arr['command'])) {
-						$log .= '<br>'.'@COMMAND-PARAMS:&nbsp;( <pre style="display:inline;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type((array)$tmp_arr['command'])), true).' )</pre>';
+						$log .= '<br>'.'@COMMAND-PARAMS:&nbsp;( <pre style="display:inline; color:'.$tmp_color.';">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(self::print_value_by_type((array)$tmp_arr['command'])), true).' )</pre>';
 					} elseif((string)$tmp_arr['command'] != '') {
 						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::nl_2_br(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), (string)$tmp_arr['command']))), true);
 					} //end if

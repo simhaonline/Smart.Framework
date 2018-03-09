@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [CFG - SETTINGS]
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -18,49 +18,29 @@ define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS', false);
 //######################################### END TestOnly Settings
 
+
 //--------------------------------------- Info URL
 $configs['app']['info-url'] 		= 'smart-framework.demo';				// Info URL: this must be someting like `www . mydomain . net`
 //---------------------------------------
 
-//--------------------------------------- SQLite related configuration
-$configs['sqlite']['timeout'] 		= 60;									// connection timeout
-$configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugging)
+
+//--------------------------------------- REGIONAL SETTINGS
+$configs['regional']['language-id']					= 'en';					// Language `en` | `ro` (must exists as defined)
+$configs['regional']['decimal-separator']			= '.';					// decimal separator `.` | `,`
+$configs['regional']['thousands-separator']			= ',';					// thousand separator `,` | `.` | ` `
+$configs['regional']['calendar-week-start']			= '0';					// 0=start on sunday | 1=start on Monday ; used for both PHP and Javascript
+$configs['regional']['calendar-date-format-client'] = 'dd.mm.yy';			// Client Date Format - Javascript (allow only these characters: yy mm dd . - [space])
+$configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date Format - PHP (allow only these characters: Y m d . - [space])
+//---------------------------------------
+$languages = array('en' => '[EN]');											// default associative array of available languages for this software (do not change without installing new languages support files)
+//$languages = array('en' => '[EN]', 'ro' => [ 'name'=>'[RO]', 'decimal-separator'=>',', 'thousands-separator'=>'.', 'calendar-week-start'=>'1' ]);						// extended associative array of available languages for this software (do not change without installing new languages support files)
 //---------------------------------------
 
-// NOTICE on DB Connectors:
-//		The standard DB connectors includded in Smart.Framework are below:
-//			* Redis (persistent caching)
-// 			* PostgreSQL
-// 			* SQLite
-//		Other DB Connectors are (below); they are available via Smart.Framework.Modules in modules/smart-extra-libs (copy smart-extra-libs/ to the modules/ folder of Smart.Framework) ; to add them to your project uncomment this line into modules/app/app-custom-bootstrap.inc.php # require_once('modules/smart-extra-libs/autoload.php'); :
-//			* MySQL 	(includded separately because MySQL (Oracle) Server License is not free if you build a commercial project with MySQL ...)
-// 			* SoLR 		(includded separately because needs a special PHP extensions available only in PECL)
 
-//--------------------------------------- Redis related configuration (used for Persistent Memory Cache but also for Redis Based Sessions)
-/*
-$configs['redis']['server-host']	= '127.0.0.1';							// redis host
-$configs['redis']['server-port']	= '6379';								// redis port
-$configs['redis']['dbnum']			= 5;									// redis db number 0..15
-$configs['redis']['password']		= '';									// redis Base64-Encoded password ; by default is empty
-$configs['redis']['timeout']		= 3;									// redis connect timeout in seconds
-$configs['redis']['slowtime']		= 0.0005;								// 0.0010 .. 0.0001 slow query time (for debugging)
-*/
+//--------------------------------------- OTHER SPECIAL SETTINGS :: DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU ARE DOING, really ...
+//define('SMART_FRAMEWORK_CUSTOM_ERR_PAGES', 'modules/app/error-pages/');	// `` or custom path to error pages: 400.php, 401.php, 403.php, 404.php, 500.php, 503.php
 //---------------------------------------
 
-//--------------------------------------- PostgreSQL related configuration of Default SQL Server
-/*
-$configs['pgsql']['type'] 			= 'postgresql'; 						// postgresql / pgpool2
-$configs['pgsql']['server-id']		= '1';									// database server ID (default=1) :: this will use for getting true unique UUIDs in DB across many DB servers
-$configs['pgsql']['server-host'] 	= '127.0.0.1';							// database host (default is 127.0.0.1)
-$configs['pgsql']['server-port']	= '5432';								// database port (default is 5432)
-$configs['pgsql']['dbname']			= 'smart_framework';					// database name
-$configs['pgsql']['username']		= 'pgsql';								// sql server user name
-$configs['pgsql']['password']		= base64_encode('pgsql');				// sql server Base64-Encoded password for that user name B64
-$configs['pgsql']['timeout']		= 30;									// connection timeout (how many seconds to wait for a valid PgSQL Connection)
-$configs['pgsql']['slowtime']		= 0.0050; 								// 0.0025 .. 0.0090 slow query time (for debugging)
-$configs['pgsql']['transact']		= 'READ COMMITTED';						// Default Transaction Level: 'READ COMMITTED' | 'REPEATABLE READ' | 'SERIALIZABLE' | '' to leave it as default
-*/
-//---------------------------------------
 
 //--------------------------------------- MAIL SEND (SMTP)
 /*
@@ -76,21 +56,64 @@ $configs['sendmail']['log-messages']		= 'no';							// `no` | `yes` :: // Log Se
 */
 //---------------------------------------
 
-//--------------------------------------- REGIONAL SETTINGS
-$configs['regional']['language-id']					= 'en';					// Language `en` | `ro` (must exists as defined)
-$configs['regional']['decimal-separator']			= '.';					// decimal separator `.` | `,`
-$configs['regional']['thousands-separator']			= ',';					// thousand separator `,` | `.` | ` `
-$configs['regional']['calendar-week-start']			= '0';					// 0=start on sunday | 1=start on Monday ; used for both PHP and Javascript
-$configs['regional']['calendar-date-format-client'] = 'dd.mm.yy';			// Client Date Format - Javascript (allow only these characters: yy mm dd . - [space])
-$configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date Format - PHP (allow only these characters: Y m d . - [space])
-//---------------------------------------
-$languages = array('en' => '[EN]');											// default associative array of available languages for this software (do not change without installing new languages support files)
-//$languages = array('en' => '[EN]', 'ro' => [ 'name'=>'[RO]', 'decimal-separator'=>',', 'thousands-separator'=>'.', 'calendar-week-start'=>'1' ]);						// extended associative array of available languages for this software (do not change without installing new languages support files)
+
+//===== NOTICE on DB Connectors:
+//
+//		The standard DB connectors includded in Smart.Framework are available to config below, in this config file:
+//			* Redis (Persistent Caching memory Server)
+// 			* PostgreSQL (SQL Server w. many advanced features incl. jsonb ... ; requires the PHP PgSQL extension)
+// 			* MongoDB (NoSQL, BigData Server ; requires the MongoDB PHP extensions available in PECL)
+// 			* SQLite (embedded sql ; requires the PHP SQLite3 extension)
+//
+//		Other DB Connectors are (below): # they are only available via Smart.Framework.Modules, located in modules/smart-extra-libs ; to install them you must copy smart-extra-libs/ to the modules/ folder of Smart.Framework ; after load them to your project by uncomment this line into modules/app/app-custom-bootstrap.inc.php # require_once('modules/smart-extra-libs/autoload.php');
+//			* MySQL 	(includded separately in extra modules ; requires the PHP MySQLi extension)
+// 			* SoLR 		(includded separately in extra modules ; requires the PHP Solr extensions available in PECL)
+//=====
+
+//--------------------------------------- SQLite related configuration
+$configs['sqlite']['timeout'] 		= 60;									// connection timeout
+$configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugging)
 //---------------------------------------
 
-//--------------------------------------- OTHER SPECIAL SETTINGS :: DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU ARE DOING, really ...
-//define('SMART_FRAMEWORK_CUSTOM_ERR_PAGES', 'modules/app/error-pages/');	// `` or custom path to error pages: 400.php, 401.php, 403.php, 404.php, 500.php, 503.php
+//--------------------------------------- DB Redis related configuration (used for Persistent Memory Cache but also for Redis Based Sessions)
+/*
+$configs['redis']['server-host']	= '127.0.0.1';							// redis host
+$configs['redis']['server-port']	= '6379';								// redis port
+$configs['redis']['dbnum']			= 5;									// redis db number 0..15
+$configs['redis']['password']		= '';									// redis Base64-Encoded password ; by default is empty
+$configs['redis']['timeout']		= 3;									// redis connect timeout in seconds
+$configs['redis']['slowtime']		= 0.0005;								// 0.0010 .. 0.0001 slow query time (for debugging)
+*/
 //---------------------------------------
+
+//--------------------------------------- DB PostgreSQL related configuration of Default SQL Server
+/*
+$configs['pgsql']['type'] 			= 'postgresql'; 						// postgresql / pgpool2
+$configs['pgsql']['server-id']		= '1';									// database server ID (default=1) :: this will use for getting true unique UUIDs in DB across many DB servers
+$configs['pgsql']['server-host'] 	= '127.0.0.1';							// database host (default is 127.0.0.1)
+$configs['pgsql']['server-port']	= '5432';								// database port (default is 5432)
+$configs['pgsql']['dbname']			= 'smart_framework';					// database name
+$configs['pgsql']['username']		= 'pgsql';								// sql server user name
+$configs['pgsql']['password']		= base64_encode('pgsql');				// sql server Base64-Encoded password for that user name B64
+$configs['pgsql']['timeout']		= 30;									// connection timeout (how many seconds to wait for a valid PgSQL Connection)
+$configs['pgsql']['slowtime']		= 0.0050; 								// 0.0025 .. 0.0090 slow query time (for debugging)
+$configs['pgsql']['transact']		= 'READ COMMITTED';						// Default Transaction Level: 'READ COMMITTED' | 'REPEATABLE READ' | 'SERIALIZABLE' | '' to leave it as default
+*/
+//---------------------------------------
+
+//--------------------------------------- DB Mongo related configuration of Default MongoDB Server (standalone / cluster)
+/*
+$configs['mongodb']['type'] 		= 'mongo-standalone'; 					// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
+$configs['mongodb']['server-host']	= 'localhost';							// mongodb host
+$configs['mongodb']['server-port']	= '27017';								// mongodb port
+$configs['mongodb']['db']			= 'smart_framework';					// mongodb database
+$configs['mongodb']['username'] 	= '';									// mongodb username
+$configs['mongodb']['password'] 	= '';									// mongodb Base64-Encoded password
+$configs['mongodb']['timeout']		= 5;									// mongodb connect timeout in seconds
+$configs['mongodb']['slowtime']		= 0.0035;								// 0.0025 .. 0.0090 slow query time (for debugging)
+*/
+//---------------------------------------
+
 
 // end of php code
 ?>

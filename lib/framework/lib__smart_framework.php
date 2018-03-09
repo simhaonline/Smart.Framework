@@ -1,7 +1,7 @@
 <?php
 // [Smart-Framework]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -11,9 +11,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 
 //======================================================
-// Smart-Framework v.3.5
+// Smart-Framework v.3.7
 //======================================================
-// Requires PHP 5.4.20 or later
+// Requires PHP 5.6 or later
 //======================================================
 // this library should be loaded from app web root only
 //======================================================
@@ -21,7 +21,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // [REGEX-SAFE-OK]
 
 //--------------------------------------------------
-define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.3.5'); // required for framework to function
+define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.3.7'); // required for framework to function
 //--------------------------------------------------
 
 
@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.180219
+ * @version 	v.180309
  * @package 	Application
  *
  */

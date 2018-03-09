@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / App Runtime]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -26,8 +26,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 //--
-if(version_compare(phpversion(), '5.4.20') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime
-	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.4 / 5.5 / 5.6 / 7.0 / 7.1 / 7.2 or later');
+if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime, but mark 5.6  as minimum for latest optimizations ; since 5.4 / 5.5 are deprecated the framework is no more actively tested on PHP versions < 5.6
+	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 or later');
 } //end if
 //--
 if(!function_exists('preg_match')) {
@@ -40,8 +40,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.5.7'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.03.05'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.5'); // version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.03.09'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -240,7 +240,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 	require('lib/core/lib_debug_profiler.php');
 } //end if
 //---------------------------------------
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.5')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //---------------------------------------
@@ -324,7 +324,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @access 		PUBLIC
  *
  * @depends 	-
- * @version 	v.170523
+ * @version 	v.180309
  * @package 	Application
  *
  */
@@ -503,7 +503,7 @@ public static function urlVarDecodeStr($y_urlencoded_str_var, $y_filter=true) {
  * @internal
  *
  * @depends 	-
- * @version 	v.170523
+ * @version 	v.180309
  * @package 	Application
  *
  */
@@ -906,7 +906,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		170913
+ * @version		180309
  * @package 	Application
  *
  */

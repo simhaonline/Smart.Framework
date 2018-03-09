@@ -1,5 +1,10 @@
 <?php
+// [LIB - SmartFramework / Webdav / Library Admin DavServer]
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+
 // Module Lib: \SmartModExtLib\Webdav\DavServer
+// Type: Module Library
 
 namespace SmartModExtLib\Webdav;
 
@@ -17,7 +22,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavServer {
 
 	// ::
-	// v.180302.1810
+	// v.180309
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
@@ -326,7 +331,15 @@ final class DavServer {
 						foreach ($child as $k => $out_ns) {
 							if(((string)$xkey == '') OR ((string)strtolower((string)$k) == (string)strtolower((string)$xkey))) {
 							//	$arr[] = (string) $out_ns; // this enforcing to a string was used just for a particular situation, getting href from REPORT links ; below the code extends the xml parsing to get also arrays
-								$tmp_val = \Smart::json_decode((string)\Smart::json_encode($out_ns)); // mixed, normalize via json:encode/decode ; accept below only array or string
+								$tmp_val = \Smart::json_decode(
+									(string) \Smart::json_encode(
+										$out_ns, // mixed type
+										false, // no pretty print
+										true, // unescaped unicode
+										false // html safe
+									),
+									true // return array
+								); // mixed, normalize via json:encode/decode ; accept below only array or string
 								if(is_array($tmp_val)) {
 									if(\Smart::array_size($tmp_val) <= 0) {
 										$tmp_val = ''; // fix: empty array :: convert to string

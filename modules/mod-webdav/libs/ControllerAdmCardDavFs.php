@@ -1,5 +1,10 @@
 <?php
+// [LIB - SmartFramework / Webdav / AbstractController Admin CardDav:Fs]
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+
 // Module Lib: \SmartModExtLib\Webdav\ControllerAdmCardDavFs
+// Type: Module Library
 
 namespace SmartModExtLib\Webdav;
 
@@ -16,7 +21,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 abstract class ControllerAdmCardDavFs extends \SmartAbstractAppController {
 
-	// v.180302.1235
+	// v.180309
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';

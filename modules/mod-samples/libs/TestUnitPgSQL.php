@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Samples / Test PostgreSQL]
-// (c) 2006-2017 unix-world.org - all rights reserved
-// v.3.5.7 r.2017.09.05 / smart.framework.v.3.5
+// (c) 2006-2018 unix-world.org - all rights reserved
+// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
 // Class: \SmartModExtLib\Samples\TestUnitPgSQL
 // Type: Module Library
@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170519
+ * @version 	v.180307
  *
  */
 final class TestUnitPgSQL {
@@ -117,7 +117,7 @@ final class TestUnitPgSQL {
 		if((string)$err == '') {
 			$tests[] = 'Write [ Insert ]';
 			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.\SmartPgsqlDb::prepare_statement(['variable'=>$variable, 'value'=>$value, 'comments'=>$comments], 'insert');
-			$data = \SmartPgsqlDb::write_data($quer_str);
+			$data = \SmartPgsqlDb::write_data($quer_str, 'Test Write Insert');
 			if($data[1] !== 1) {
 				$err = 'Write / Insert Test Failed, should return 1 but returned: '.$data[1];
 			} //end if
@@ -135,9 +135,27 @@ final class TestUnitPgSQL {
 		if((string)$err == '') {
 			$tests[] = 'Write Ignore [ Update ]';
 			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" SET "comments" = $2 WHERE ("variable" = $1)';
-			$data = \SmartPgsqlDb::write_igdata($quer_str, array($variable, $comments));
+			$data = \SmartPgsqlDb::write_igdata($quer_str, [ $variable, $comments ]);
 			if($data[1] !== 1) {
 				$err = 'Write Ignore / Update Test Failed, should return 1 but returned: '.$data[1];
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Write Ignore [ Update w. Params and Title ]';
+			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" SET "comments" = $2 WHERE ("variable" = $1)';
+			$data = \SmartPgsqlDb::write_igdata($quer_str, [ '@title' => 'Write Ignore Test with Params and Title', '@params' => [ $variable, $comments ] ]);
+			if($data[1] !== 1) {
+				$err = 'Write Ignore / Update w. Params and Title Test Failed, should return 1 but returned: '.$data[1];
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Write [ Update w. Params and Title ]';
+			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" SET "comments" = $2 WHERE ("variable" = $1)';
+			$data = \SmartPgsqlDb::write_data($quer_str, [ '@title' => 'Write Test with Params and Title', '@params' => [ $variable, $comments ] ]);
+			if($data[1] !== 1) {
+				$err = 'Write / Update w. Params and Title Test Failed, should return 1 but returned: '.$data[1];
 			} //end if
 		} //end if
 		//--
@@ -146,9 +164,18 @@ final class TestUnitPgSQL {
 		if((string)$err == '') {
 			$tests[] = 'Count [ One Row ]';
 			$quer_str = 'SELECT COUNT(1) FROM "public"."_test_unit_db_server_tests" WHERE (("variable" = $1) AND ("comments" = '.\SmartPgsqlDb::escape_literal($comments).'))';
-			$data = \SmartPgsqlDb::count_data($quer_str, array($variable));
+			$data = \SmartPgsqlDb::count_data($quer_str, [ $variable ]);
 			if($data !== 1) {
 				$err = 'Count Test Failed, should return 1 but returned: '.$data;
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Count [ One Row w. Params and Title ]';
+			$quer_str = 'SELECT COUNT(1) FROM "public"."_test_unit_db_server_tests" WHERE (("variable" = $1) AND ("comments" = '.\SmartPgsqlDb::escape_literal($comments).'))';
+			$data = \SmartPgsqlDb::count_data($quer_str, [ '@title' => 'Count One Row Test with Params and Title', '@params' => [ $variable ] ]);
+			if($data !== 1) {
+				$err = 'Count Test w. Params and Title Failed, should return 1 but returned: '.$data;
 			} //end if
 		} //end if
 		//--
@@ -244,17 +271,41 @@ final class TestUnitPgSQL {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Read [ Associative: One-Row ]';
-			$data = \SmartPgsqlDb::read_asdata($quer_str, array($variable));
+			$data = \SmartPgsqlDb::read_asdata($quer_str, [ $variable ]);
 			if(trim($data['comments']) !== (string)$comments) {
 				$err = 'Read / Associative / One-Row Test Failed, should return `'.$comments.'` but returned `'.$data['comments'].'`';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
+			$tests[] = 'Read [ Associative: One-Row w. Params and Title ]';
+			$data = \SmartPgsqlDb::read_asdata($quer_str, [ '@title' => 'Read Associative One-Row with Params and Title', '@params' => [ $variable ] ]);
+			if(trim($data['comments']) !== (string)$comments) {
+				$err = 'Read / Associative / One-Row Test w. Params and Title Failed, should return `'.$comments.'` but returned `'.$data['comments'].'`';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
 			$tests[] = 'Read [ Associative: Multi-Rows ]';
-			$data = \SmartPgsqlDb::read_adata($quer_str, array($variable));
+			$data = \SmartPgsqlDb::read_adata($quer_str, [ $variable ]);
 			if(trim($data[0]['comments']) !== (string)$comments) {
 				$err = 'Read / Associative / Multi-Rows Test Failed, should return `'.$comments.'` but returned `'.$data[0]['comments'].'`';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Read [ Associative: Multi-Rows w. Params and Title ]';
+			$data = \SmartPgsqlDb::read_adata($quer_str, [ '@title' => 'Read Associative Multi-Rows with Params and Title', '@params' => [ $variable ] ]);
+			if(trim($data[0]['comments']) !== (string)$comments) {
+				$err = 'Read / Associative / Multi-Rows Test w. Params and Title Failed, should return `'.$comments.'` but returned `'.$data[0]['comments'].'`';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Read [ Non-Associative: Multi-Rows w. Params and Title ]';
+			$data = \SmartPgsqlDb::read_data($quer_str, [ '@title' => 'Read Non-Associative Multi-Rows with Params and Title', '@params' => [ $variable ] ]);
+			if(trim($data[0]) !== (string)$comments) {
+				$err = 'Read / Non-Associative / Multi-Rows Test w. Params and Title Failed, should return `'.$comments.'` but returned `'.$data[0]['comments'].'`';
 			} //end if
 		} //end if
 		//--
