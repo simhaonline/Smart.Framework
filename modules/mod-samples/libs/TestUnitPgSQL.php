@@ -1,5 +1,5 @@
 <?php
-// [LIB - SmartFramework / Samples / Test PostgreSQL]
+// [LIB - SmartFramework / Samples / Test PostgreSQL Server]
 // (c) 2006-2018 unix-world.org - all rights reserved
 // v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
 
@@ -40,7 +40,7 @@ final class TestUnitPgSQL {
 		//--
 		if(SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS !== true) {
 			//--
-			return (string) \SmartComponents::operation_notice('Test Unit for PgSQL Server is DISABLED ...');
+			return (string) \SmartComponents::operation_notice('Test Unit for PostgreSQL Server is DISABLED ...');
 			//--
 		} //end if
 		//--
@@ -52,7 +52,7 @@ final class TestUnitPgSQL {
 		//--
 		if(((string)$cfg_pgsql['server-host'] == '') OR ((string)$cfg_pgsql['server-port'] == '') OR ((string)$cfg_pgsql['dbname'] == '') OR ((string)$cfg_pgsql['username'] == '')) {
 			//--
-			return (string) \SmartComponents::operation_warn('Test Unit for PgSQL Server: NO PostgreSQL server configuration available in configs ...');
+			return (string) \SmartComponents::operation_warn('Test Unit for PgSQL Server: INVALID PostgreSQL server configuration available in configs ...');
 			//--
 		} //end if
 		//--

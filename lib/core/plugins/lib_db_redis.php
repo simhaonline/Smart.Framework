@@ -668,7 +668,7 @@ if($is_fatal !== false) { // FATAL ERROR
 		//--
 	} //end if
 	//--
-	Smart::log_warning('#REDIS@'.$this->socket.'# :: Q# // Redis :: WARNING :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query);
+	Smart::log_warning('#REDIS@'.$this->socket.' :: Q# // Redis :: WARNING :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query);
 	//--
 } //end if else
 //--

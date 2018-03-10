@@ -109,6 +109,13 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = \SmartModExtLib\Samples\TestUnitPgSQL::testPgServer();
 				//--
 				break;
+			case 'testunit.mongodb-server-test':
+				//--
+				sleep(1);
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitMongoDB::testMongoServer();
+				//--
+				break;
 			case 'testunit.json-sqlite3-smartgrid':
 				//--
 				$this->PageViewSetCfg('rawpage', true);

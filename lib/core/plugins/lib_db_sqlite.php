@@ -1579,7 +1579,7 @@ if(!($db instanceof SQLite3)) {
 } //end if else
 //--
 Smart::raise_error(
-	'#SQLITE-DB@'.$the_conn.'# :: Q# // SQLite Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Params / Title:'."\n".print_r($y_params_or_title,1)."\n".'*** Query:'."\n".$y_query,
+	'#SQLITE-DB@'.$the_conn.' :: Q# // SQLite Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Params / Title:'."\n".print_r($y_params_or_title,1)."\n".'*** Query:'."\n".$y_query,
 	$out // msg to display
 );
 die(''); // just in case

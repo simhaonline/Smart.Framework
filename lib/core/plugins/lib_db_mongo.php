@@ -13,7 +13,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - MongoDB Client
 // DEPENDS:
 //	* Smart::
-// DEPENDS-EXT: PHP MongoDB / PECL (v.1.2.1 or later)
+// DEPENDS-EXT: PHP MongoDB / PECL (v.1.0.1 or later)
 //======================================================
 // Tested and Stable on MongoDB Server versions:
 // 3.2 / 3.3 / 3.4 / 3.5 / 3.6
@@ -26,22 +26,24 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 /**
- * Class Smart MongoDB Client (for PHP-MongoDB v.1.2.1 or later)
+ * Class Smart MongoDB Client (for PHP-MongoDB v.1.0.1 or later)
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @access 		PUBLIC
- * @depends 	extensions: PHP MongoDB (v.1.2.1 or later) ; classes: Smart
- * @version 	v.180309
+ * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
+ * @version 	v.180310
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)										# count documents in a collection
  * @method MIXED		find($strCollection, $arrQuery, $arrProjFields, $arrOptions)			# find single or multiple ddocument(s) in a collection with optional filter criteria / limit
+ * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)			# find single document in a collection with optional filter criteria / limit
  * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)								# add multiple documents to a collection
  * @method MIXED		insert($strCollection, $arrDoc)											# add single document to a collection
  * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)					# modify single or many document(s) in a collection that are matching the filter criteria
  * @method MIXED		delete($strCollection, $arrFilter)										# delete single or many document(s) from a collection that are matching the filter criteria
  * @method MIXED		command($arrCmd)														# run a command over database like: distinct, groupBy, mapReduce, createCollection, dropCollection
+ * @method MIXED		igcommand($arrCmd)														# run a command over database (but in case of error will ignore stop execution and will return the errors instead of result) like: createCollection which may throw errors if collection already exists, dropCollection (similar if does not exists), ...
  *
  */
 final class SmartMongoDb {
@@ -51,6 +53,7 @@ final class SmartMongoDb {
 
 /** @var string */
 private $server;
+private $srvver;
 
 /** @var string */
 private $db;
@@ -71,6 +74,7 @@ private $collection;
 private $slow_time = 0.0035;
 
 private $connex_key = '';
+private $connected = false;
 
 
 //======================================================
@@ -84,8 +88,8 @@ private $connex_key = '';
 public function __construct($y_configs_arr=array()) {
 
 	//--
-	if(version_compare(phpversion('mongodb'), '1.2.1') < 0) {
-		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.2.1 or later');
+	if(version_compare(phpversion('mongodb'), '1.0.1') < 0) {
+		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.0.1 or later');
 		return;
 	} //end if
 	//--
@@ -99,7 +103,7 @@ public function __construct($y_configs_arr=array()) {
 	//--
 	if(Smart::array_size($y_configs_arr) > 0) {
 		$type 		= (string) $y_configs_arr['type'];
-		$db 		= (string) $y_configs_arr['db'];
+		$db 		= (string) $y_configs_arr['dbname'];
 		$host 		= (string) $y_configs_arr['server-host'];
 		$port 		= (string) $y_configs_arr['server-port'];
 		$timeout 	= (string) $y_configs_arr['timeout'];
@@ -125,6 +129,7 @@ public function __construct($y_configs_arr=array()) {
 		return;
 	} //end if
 	//--
+	$this->srvver = '';
 	$this->server = (string) $host.':'.$port;
 	$this->db = (string) $db;
 	//--
@@ -140,7 +145,7 @@ public function __construct($y_configs_arr=array()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 			'type' => 'metainfo',
-			'data' => 'MongoDB App Connector Version: '.SMART_APP_MODULES_EXTRALIBS_VER
+			'data' => 'MongoDB App Connector Version: '.SMART_FRAMEWORK_VERSION
 		]);
 		//--
 		if((float)$timeslow > 0) {
@@ -173,9 +178,96 @@ public function __construct($y_configs_arr=array()) {
 		return;
 	} //end if
 	//--
+	if(!class_exists('\\MongoDB\\Driver\\Command')) {
+		$this->error((string)$this->connex_key, 'MongoDB Driver', 'PHP MongoDB Driver Command is not available', '');
+		return;
+	} //end if
+	//--
+	if(!class_exists('\\MongoDB\\Driver\\Query')) {
+		$this->error((string)$this->connex_key, 'MongoDB Driver', 'PHP MongoDB Driver Query is not available', '');
+		return;
+	} //end if
+	//--
+	if(!class_exists('\\MongoDB\\Driver\\BulkWrite')) {
+		$this->error((string)$this->connex_key, 'MongoDB Driver', 'PHP MongoDB Driver BulkWrite is not available', '');
+		return;
+	} //end if
+	//--
+	if(!class_exists('\\MongoDB\\Driver\\WriteResult')) {
+		$this->error((string)$this->connex_key, 'MongoDB Driver', 'PHP MongoDB Driver WriteResult is not available', '');
+		return;
+	} //end if
+	//--
 
 	//--
 	$this->connect($type, $username, $password);
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+// a replacement for the default MongoDB object ID, will generate a 32 characters very unique UUID (base36)
+public function assign_uuid() {
+
+	//--
+	return (string) Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str();
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+public function get_server_version() {
+
+	//--
+	if((string)trim((string)$this->srvver) == '') {
+		//--
+		$arr_build_info = $this->command(['buildinfo' => true]);
+		//--
+		if(is_array($arr_build_info)) {
+			if(is_array($arr_build_info[0])) {
+				$this->srvver = (string) trim((string)$arr_build_info[0]['version']);
+			} //end if
+		} //end if
+		//--
+		$arr_build_info = null;
+		//--
+	} //end if
+	//--
+	if((string)trim((string)$this->srvver) == '') {
+		$this->srvver = '0.0'; // avoid requery
+	} //end if
+	//--
+
+	//--
+	return (string) $this->srvver;
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+// test a command output for 0/OK=1
+public function command_is_ok($result) {
+
+	//--
+	$is_ok = false;
+	//--
+	if(is_array($result)) {
+		if(is_array($result[0])) {
+			if((int)$result[0]['ok'] == 1) {
+				$is_ok = true;
+			} //end if
+		} //end if
+	} //end if
+	//--
+
+	//--
+	return (bool) $is_ok;
 	//--
 
 } //END FUNCTION
@@ -223,8 +315,8 @@ public function __call($method, array $args) {
 			//--
 			$this->collection = trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
-				$this->error((string)$this->connex_key, 'MongoDB Count', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Empty Collection name ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Count', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
+				return 0;
 			} //end if
 			//--
 			$qry = (array) $args[1]; // arrQuery
@@ -234,25 +326,25 @@ public function __call($method, array $args) {
 				'query' => (array) $qry
 			]);
 			if(!is_object($command)) {
-				$this->error((string)$this->connex_key, 'MongoDB Count', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Command Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Count', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Command Object is null ...', $args);
+				return 0;
 			} //end if
 			//--
 			try {
 				$cursor = $this->mongodbclient->executeCommand($this->db, $command);
 			} catch(Exception $err) {
-				$this->error((string)$this->connex_key, 'MongoDB Count Execute', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: '.$err->getMessage());
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Count Execute', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: '.$err->getMessage(), $args);
+				return 0;
 			} //end try
 			if(!is_object($cursor)) {
-				$this->error((string)$this->connex_key, 'MongoDB Count Cursor', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Cursor Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Count Cursor', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Cursor Object is null ...', $args);
+				return 0;
 			} //end if
 			$cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
 			//print_r($cursor->toArray()); die();
+			$obj = 0;
 			if(is_object($cursor)) {
 				$tmp_obj = (array) $cursor->toArray();
-				$obj = 0;
 				if(is_array($tmp_obj[0])) {
 					$tmp_obj = (array) $tmp_obj[0];
 					if(array_key_exists('n', (array)$tmp_obj)) {
@@ -270,20 +362,25 @@ public function __call($method, array $args) {
 			//--
 			break;
 		//--
-		case 'find': // ARGS [ strCollection, arrQuery, arrProjFields, arrOptions ]
+		case 'find': 	// ARGS [ strCollection, arrQuery, arrProjFields, arrOptions ]
+		case 'findone': // ARGS [ strCollection, arrQuery, arrProjFields, arrOptions ]
 			//--
 			$dcmd = 'read';
 			//--
 			$this->collection = trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
-				$this->error((string)$this->connex_key, 'MongoDB Read', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Empty Collection name ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Read', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
+				return array();
 			} //end if
 			//--
 			$qry = (array) $args[1]; // arrQuery
 			//--
 			if(is_array($args[3])) {
 				$opts = (array) $args[3]; // arrOptions
+			} //end if
+			//-- fix: find one must have limit 1
+			if((string)$method == 'findone') {
+				$opts['limit'] = 1;
 			} //end if
 			//-- fix: select just particular fields
 			$opts['projection'] = array(); // arrProjFields
@@ -303,22 +400,23 @@ public function __call($method, array $args) {
 			);
 			//print_r($query); die();
 			if(!is_object($query)) {
-				$this->error((string)$this->connex_key, 'MongoDB Read', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Query Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Read', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Query Object is null ...', $args);
+				return array();
 			} //end if
 			//--
 			try {
 				$cursor = $this->mongodbclient->executeQuery($this->db.'.'.$this->collection, $query);
 			} catch(Exception $err) {
-				$this->error((string)$this->connex_key, 'MongoDB Read Execute', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: '.$err->getMessage());
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Read Execute', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: '.$err->getMessage(), $args);
+				return array();
 			} //end try
 			if(!is_object($cursor)) {
-				$this->error((string)$this->connex_key, 'MongoDB Read Cursor', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Cursor Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Read Cursor', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Cursor Object is null ...', $args);
+				return array();
 			} //end if
 			$cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
 			//print_r($cursor->toArray()); die();
+			$obj = array();
 			if(is_object($cursor)) {
 				$obj = \Smart::json_decode(
 					(string) \Smart::json_encode(
@@ -333,6 +431,15 @@ public function __call($method, array $args) {
 					$obj = array();
 				} //end if
 				$drows = (int) Smart::array_size($obj);
+				if((string)$method == 'findone') {
+					if(is_array($obj[0])) {
+						$obj = (array) $obj[0];
+						$drows = 1;
+					} else {
+						$obj = array();
+						$drows = 0;
+					} //end if
+				} //end if
 			} //end if object
 			//--
 			unset($cursor);
@@ -350,14 +457,14 @@ public function __call($method, array $args) {
 			//--
 			$this->collection = trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
-				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Empty Collection name ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
+				return array();
 			} //end if
 			//--
 			$write = new \MongoDB\Driver\BulkWrite();
 			if(!is_object($write)) {
-				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Write Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Write Object is null ...', $args);
+				return array();
 			} //end if
 			//--
 			$num_docs = 0;
@@ -373,14 +480,14 @@ public function __call($method, array $args) {
 							);
 							$num_docs++;
 						} else {
-							$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Multi-Document #'.$i.' is empty or not array ...');
-							return null;
+							$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Multi-Document #'.$i.' is empty or not array ...', $args);
+							return array();
 							break;
 						} //end if
 					} //end for
 				} else {
-					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Invalid Multi-Document structure ...');
-					return null;
+					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Invalid Multi-Document structure ...', $args);
+					return array();
 				} //end if else
 			} elseif((string)$method == 'insert') {
 				$qry = 'insert';
@@ -391,14 +498,14 @@ public function __call($method, array $args) {
 					);
 					$num_docs++;
 				} else {
-					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Document is empty or not array ...');
-					return null;
+					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Document is empty or not array ...', $args);
+					return array();
 					break;
 				} //end if
 			} elseif((string)$method == 'update') {
 				if(!is_array($args[1])) {
-					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Invalid Filter provided ...');
-					return null;
+					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Invalid Filter provided ...', $args);
+					return array();
 				} //end if
 				$qry = (string) 'update:'.$args[2];
 				$opts = [ // update options
@@ -413,29 +520,29 @@ public function __call($method, array $args) {
 					);
 					$num_docs++;
 				} else {
-					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Document is empty or not array or invalid format ...');
-					return null;
+					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Document is empty or not array or invalid format ...', $args);
+					return array();
 					break;
 				} //end if
 			} //end if else
 			//--
 			if($num_docs <= 0) {
-				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: No valid document(s) found ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: No valid document(s) found ...', $args);
+				return array();
 			} //end if
 			//--
 			try {
-				$result = $this->mongodbclient->executeBulkWrite($this->db.'.'.$this->collection, $write); // \MongoDB\Driver\WriteResult
+				$result = $this->mongodbclient->executeBulkWrite($this->db.'.'.$this->collection, $write);
 			} catch(Exception $err) {
-				$this->error((string)$this->connex_key, 'MongoDB Write Execute', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: '.$err->getMessage());
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Write Execute', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: '.$err->getMessage(), $args);
+				return array();
 			} //end try
 			if(!is_object($result)) {
-				$this->error((string)$this->connex_key, 'MongoDB Write Result', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Result Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Write Result', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is null ...', $args);
+				return array();
 			} //end if
+			$obj = array();
 			if($result instanceof \MongoDB\Driver\WriteResult) {
-				$obj = array();
 				$msg = (string) implode("\n", (array)$result->getWriteErrors());
 				$msg = (string) trim((string)$msg);
 				if((string)$msg == '') {
@@ -452,8 +559,8 @@ public function __call($method, array $args) {
 				$msg = '';
 				$drows = (int) $obj[1];
 			} else {
-				$this->error((string)$this->connex_key, 'MongoDB Write Result Type', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Result Object is not instance of WriteResult ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Write Result Type', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is not instance of WriteResult ...', $args);
+				return array();
 			} //end if
 			//--
 			//print_r($result); die();
@@ -471,19 +578,19 @@ public function __call($method, array $args) {
 			//--
 			$this->collection = trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
-				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Empty Collection name ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
+				return array();
 			} //end if
 			//--
 			$write = new \MongoDB\Driver\BulkWrite();
 			if(!is_object($write)) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Write Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Write Object is null ...', $args);
+				return array();
 			} //end if
 			//--
 			if(!is_array($args[1])) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Invalid Filter provided ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Invalid Filter provided ...', $args);
+				return array();
 			} //end if
 			$qry = 'delete';
 			$opts = [ // delete options
@@ -494,17 +601,17 @@ public function __call($method, array $args) {
 				(array) $opts										// options
 			);
 			try {
-				$result = $this->mongodbclient->executeBulkWrite($this->db.'.'.$this->collection, $write); // \MongoDB\Driver\WriteResult
+				$result = $this->mongodbclient->executeBulkWrite($this->db.'.'.$this->collection, $write);
 			} catch(Exception $err) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete Execute', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: '.$err->getMessage());
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Delete Execute', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: '.$err->getMessage(), $args);
+				return array();
 			} //end try
 			if(!is_object($result)) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete Result', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Result Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Delete Result', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is null ...', $args);
+				return array();
 			} //end if
+			$obj = array();
 			if($result instanceof \MongoDB\Driver\WriteResult) {
-				$obj = array();
 				$msg = (string) implode("\n", (array)$result->getWriteErrors());
 				$msg = (string) trim((string)$msg);
 				if((string)$msg == '') {
@@ -516,8 +623,8 @@ public function __call($method, array $args) {
 				$msg = '';
 				$drows = (int) $obj[1];
 			} else {
-				$this->error((string)$this->connex_key, 'MongoDB Delete Result Type', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Result Object is not instance of WriteResult ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Delete Result Type', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is not instance of WriteResult ...', $args);
+				return array();
 			} //end if
 			//--
 			//print_r($result); die();
@@ -529,43 +636,62 @@ public function __call($method, array $args) {
 			//--
 			break;
 		//--
-		case 'command': // ARGS [ arrCmd ]
+		case 'command': 	// ARGS [ arrCmd ]
+		case 'igcommand': 	// ARGS [ arrCmd ]
 			//--
 			$qry = (array) $args[0]; // arrQuery
 			//--
 			$command = new \MongoDB\Driver\Command((array)$qry);
 			if(!is_object($command)) {
-				$this->error((string)$this->connex_key, 'MongoDB Command', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Command Object is null ...');
-				return null;
+				$this->error((string)$this->connex_key, 'MongoDB Command', 'MongoDB->'.$method.'()', 'ERROR: Command Object is null ...', $args);
+				return array();
 			} //end if
 			//--
+			$igerr = false;
 			try {
 				$cursor = $this->mongodbclient->executeCommand($this->db, $command);
 			} catch(Exception $err) {
-				$this->error((string)$this->connex_key, 'MongoDB Command Execute', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: '.$err->getMessage());
-				return null;
+				if((string)$method == 'igcommand') {
+					$igerr = (string) $err->getMessage(); // must be type string
+				} else {
+					$this->error((string)$this->connex_key, 'MongoDB Command Execute', 'MongoDB->'.$method.'()', 'ERROR: '.$err->getMessage(), $args);
+					return array();
+				} //end if else
 			} //end try
-			if(!is_object($cursor)) {
-				$this->error((string)$this->connex_key, 'MongoDB Command Cursor', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: Cursor Object is null ...');
-				return null;
-			} //end if
-			$cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
-			//print_r($cursor->toArray()); die();
-			if(is_object($cursor)) {
-				$obj = \Smart::json_decode(
-					(string) \Smart::json_encode(
-						(array)$cursor->toArray(),
-						false, // no pretty print
-						true, // unescaped unicode
-						false // html safe
-					),
-					true // return array
-				); // mixed, normalize via json:encode/decode
-				if(!is_array($obj)) {
-					$obj = array();
+			$obj = array();
+			if(((string)$method == 'command') OR ($igerr === false)) {
+				if(!is_object($cursor)) {
+					$this->error((string)$this->connex_key, 'MongoDB Command Cursor', 'MongoDB->'.$method.'()', 'ERROR: Cursor Object is null ...', $args);
+					return array();
 				} //end if
-				$drows = (int) Smart::array_size($obj);
-			} //end if object
+				$cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
+				//print_r($cursor->toArray()); die();
+				if(is_object($cursor)) {
+					$obj = \Smart::json_decode(
+						(string) \Smart::json_encode(
+							(array)$cursor->toArray(),
+							false, // no pretty print
+							true, // unescaped unicode
+							false // html safe
+						),
+						true // return array
+					); // mixed, normalize via json:encode/decode
+					if(!is_array($obj)) {
+						$obj = array();
+					} //end if
+					$drows = (int) Smart::array_size($obj);
+				} //end if object
+			} else {
+				$obj = array(
+					'ERRORS' => [
+						'err-msg' 	=> (string) $igerr,
+						'type' 		=> 'catcheable PHP Exception / MongoDB Manager: executeCommand',
+						'class' 	=> (string) __CLASS__,
+						'function' 	=> (string) __FUNCTION__,
+						'method' 	=> (string) $method
+					]
+				);
+			} //end if else
 			//--
 			unset($cursor);
 			unset($command);
@@ -575,30 +701,32 @@ public function __call($method, array $args) {
 		//--
 		default:
 			//--
-			$this->error((string)$this->connex_key, 'MongoDB Method', 'MongoDB->'.$method.'() :: '.$this->connex_key.'/'.$this->collection, 'ERROR: The selected method ['.$method.'] is NOT implemented ...');
+			$this->error((string)$this->connex_key, 'MongoDB Method', 'MongoDB->'.$method.'()', 'ERROR: The selected method ['.$method.'] is NOT implemented ...', $args);
 			return null;
 			//--
 	} //end switch
 	//--
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-		//--
-		SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-queries', 1, '+');
-		//--
-		$time_end = (float) (microtime(true) - (float)$time_start);
-		//--
-		SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-time', $time_end, '+');
-		//--
-		SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
-			'type' => (string) $dcmd,
-			'data' => strtoupper($method),
-			'command' => array('Collection' => (string)$this->collection, 'Query' => (array)$qry, 'Options' => (array)$opts),
-			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
-			'rows' => (int) $drows,
-			'connection' => (string)$this->connex_key,
-		]);
-		//--
+	if($this->connected === true) { // avoid register pre-connect commands like version)
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			//--
+			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-queries', 1, '+');
+			//--
+			$time_end = (float) (microtime(true) - (float)$time_start);
+			//--
+			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-time', $time_end, '+');
+			//--
+			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
+				'type' => (string) $dcmd,
+				'data' => strtoupper($method),
+				'command' => array('Collection' => (string)$this->collection, 'Query' => (array)$qry, 'Options' => (array)$opts),
+				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+				'rows' => (int) $drows,
+				'connection' => (string)$this->connex_key,
+			]);
+			//--
+		} //end if
 	} //end if
 	//--
 
@@ -653,6 +781,7 @@ private function connect($type, $username, $password) {
 	if(is_object(SmartFrameworkRegistry::$Connections['mongodb'][(string)$this->connex_key])) {
 		//--
 		$this->mongodbclient = &SmartFrameworkRegistry::$Connections['mongodb'][(string)$this->connex_key];
+		$this->connected = true;
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
@@ -674,14 +803,33 @@ private function connect($type, $username, $password) {
 			return false;
 		} //end try catch
 		//--
-		SmartFrameworkRegistry::$Connections['mongodb'][(string)$this->connex_key] = &$this->mongodbclient; // export connection
-		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 				'type' => 'open-close',
 				'data' => 'Creating MongoDB Manager Instance :: ServerType ['.$type.']: '.$this->connex_key
 			]);
 		} //end if
+		//--
+		$this->get_server_version(); // this will register the $this->srvver if req.
+		//--
+		$min_ver_srv = '2.4.0';
+		if(((string)$this->srvver == '') OR (version_compare((string)$min_ver_srv, (string)$this->srvver) > 0)) {
+			$this->mongodbclient = null;
+			$this->error((string)$this->connex_key, 'MongoDB Manager', 'Invalid MongoDB Server Version on '.$this->server, 'ERROR: Minimum MongoDB supported Server version is: '.$min_ver_srv.' but this Server version is: '.$this->srvver);
+			return false;
+		} //end if
+		//--
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			//--
+			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
+				'type' => 'metainfo',
+				'data' => 'MongoDB Server Version: '.$this->srvver
+			]);
+			//--
+		} //end if
+		//--
+		SmartFrameworkRegistry::$Connections['mongodb'][(string)$this->connex_key] = &$this->mongodbclient; // export connection
+		$this->connected = true;
 		//--
 	} //end if else
 	//--
@@ -743,10 +891,14 @@ public function disconnect() {
  * @return :: HALT EXECUTION WITH ERROR MESSAGE
  *
  */
-private function error($y_conhash, $y_area, $y_error_message, $y_query='', $y_warning='') {
+private function error($y_conhash, $y_area, $y_info, $y_error_message, $y_query='', $y_warning='') {
 //--
 $def_warn = 'Execution Halted !';
 $y_warning = (string) trim((string)$y_warning);
+if(Smart::array_size($y_query) > 0) {
+	$y_query = (string) print_r($y_query,1);
+} //end if
+$the_params = '- '.'MongoDB Manager v.'.phpversion('mongodb').' -';
 if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 	$width = 750;
 	$the_area = (string) $y_area;
@@ -754,17 +906,15 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		$y_warning = (string) $def_warn;
 	} //end if
 	$the_error_message = 'Operation FAILED: '.$def_warn."\n".$y_error_message;
-	$the_params = '- '.'MongoDB Manager v.'.phpversion('mongodb').' -';
-	$the_query_info = (string) $y_query;
-	if((string)$the_query_info == '') {
-		$the_query_info = '-'; // query cannot e empty in this case (templating enforcement)
-	} //end if
+	$the_query_info = (string) trim((string)$y_query);
+	$y_query = ' '.trim((string)$the_params."\n".$y_info."\n".$y_query);
 } else {
 	$width = 550;
 	$the_area = '';
 	$the_error_message = 'Operation FAILED: '.$def_warn;
-	$the_params = '';
+	$y_query = ' '.trim((string)$the_params."\n".$y_info."\n".$y_query);
 	$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
+	$the_params = '';
 } //end if else
 //--
 $out = SmartComponents::app_error_message(
@@ -781,7 +931,7 @@ $out = SmartComponents::app_error_message(
 );
 //--
 Smart::raise_error(
-	'#MONGO-DB@'.$y_conhash.'# :: Q# // MongoDB :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Statement:'."\n".$y_query,
+	'#MONGO-DB@'.$y_conhash.' :: Q# // MongoDB :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Statement:'.$y_query,
 	$out // msg to display
 );
 die(''); // just in case

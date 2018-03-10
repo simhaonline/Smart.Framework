@@ -14,8 +14,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 define('SMART_FRAMEWORK_TEST_MODE', true);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_DAVFS_TESTS', false);
-define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', false);
+define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', false); // redis
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS', false);
+define('SMART_FRAMEWORK_TESTUNIT_ALLOW_MONGO_TESTS', false);
 //######################################### END TestOnly Settings
 
 
@@ -104,9 +105,9 @@ $configs['pgsql']['transact']		= 'READ COMMITTED';						// Default Transaction L
 //--------------------------------------- DB Mongo related configuration of Default MongoDB Server (standalone / cluster)
 /*
 $configs['mongodb']['type'] 		= 'mongo-standalone'; 					// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
-$configs['mongodb']['server-host']	= 'localhost';							// mongodb host
+$configs['mongodb']['server-host']	= '127.0.0.1';							// mongodb host
 $configs['mongodb']['server-port']	= '27017';								// mongodb port
-$configs['mongodb']['db']			= 'smart_framework';					// mongodb database
+$configs['mongodb']['dbname']		= 'smart_framework';					// mongodb database
 $configs['mongodb']['username'] 	= '';									// mongodb username
 $configs['mongodb']['password'] 	= '';									// mongodb Base64-Encoded password
 $configs['mongodb']['timeout']		= 5;									// mongodb connect timeout in seconds

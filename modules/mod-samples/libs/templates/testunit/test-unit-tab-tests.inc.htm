@@ -8,6 +8,7 @@
 			<button class="ux-button" id="btn_ajx_loadr_test_fs"><i class="fa fa-folder-open" style="color:#555555;"></i> &nbsp; Test: FileSystem Operations</button> &nbsp;
 			<button class="ux-button" id="btn_ajx_loadr_test_pcache"><i class="fa fa-cube" style="color:#555555;"></i> &nbsp; Test: Persistent Cache</button> &nbsp;
 			<button class="ux-button" id="btn_ajx_loadr_test_pgsql"><i class="fa fa-database" style="color:#555555;"></i> &nbsp; Test: PostgreSQL Server</button> &nbsp;
+			<button class="ux-button" id="btn_ajx_loadr_test_mongo"><i class="fa fa-leaf" style="color:#555555;"></i> &nbsp; Test: MongoDB Server</button> &nbsp;
 			<script type="text/javascript">
 			var the_url_test_unicode_str = '[####TEST-URL-UNICODE-STR|js####]';
 			jQuery(function() {
@@ -40,6 +41,11 @@
 				jQuery('#btn_ajx_loadr_test_pgsql').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the PostgreSQL Server Test Suite ...</span>');
 					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-bubbles.svg', '[####TESTUNIT_BASE_URL|js####]testunit.pgsql-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+				});
+				//--
+				jQuery('#btn_ajx_loadr_test_mongo').click(function() {
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the MongoDB Server Test Suite ...</span>');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spinning-bubbles.svg', '[####TESTUNIT_BASE_URL|js####]testunit.mongodb-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
 			});
