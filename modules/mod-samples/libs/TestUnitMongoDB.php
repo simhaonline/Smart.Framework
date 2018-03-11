@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.180310
+ * @version 	v.180311
  *
  */
 final class TestUnitMongoDB {
@@ -407,9 +407,10 @@ final class TestUnitMongoDB {
 					[
 						'$sort' => [ '_id' => -1 ]
 					]
-				]
+				],
+				'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
 			]);
-			if((!$mongo->command_is_ok($result)) OR (!is_array($result[0])) OR (\Smart::array_size($result[0]['result']) != 5) OR (!is_array($result[0]['result'][0])) OR (!is_array($result[0]['result'][1])) OR (!is_array($result[0]['result'][2])) OR (!is_array($result[0]['result'][3])) OR (!is_array($result[0]['result'][4]))) {
+			if((\Smart::array_size($result) != 5) OR (!is_array($result[0])) OR (!is_array($result[1])) OR (!is_array($result[2])) OR (!is_array($result[3])) OR (!is_array($result[4]))) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document is different: '.print_r($result,1);
 			} //end if
 		} //end if
