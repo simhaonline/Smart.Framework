@@ -22,5 +22,6 @@ modules/mod-maps-cache
 modules/mod-ui-w3
 modules/mod-cloud
 modules/mod-cms
+modules/mod-tests
 modules/vendor
 !.gitignore
