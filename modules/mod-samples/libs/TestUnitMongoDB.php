@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.180311
+ * @version 	v.180311.r2
  *
  */
 final class TestUnitMongoDB {
@@ -406,7 +406,8 @@ final class TestUnitMongoDB {
 					],
 					[
 						'$sort' => [ '_id' => -1 ]
-					]
+					],
+					[	'$limit' => 5 ]
 				],
 				'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
 			]);
