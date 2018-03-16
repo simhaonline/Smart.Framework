@@ -1,11 +1,56 @@
-<!-- #START :: SMART.FRAMEWORK / DEBUG UTIL :: v.170513 -->
+<!-- #START :: SMART.FRAMEWORK / DEBUG UTIL :: v.180315 -->
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="[####CHARSET####]">
 	<title>[####TITLE####]</title>
 	[@@@@SUB-TEMPLATE:base-html-styles.inc.htm@@@@]
-	[@@@@SUB-TEMPLATE:base-html-toolkit.inc.htm@@@@]
+	<style type="text/css">
+	.debug-table {
+		border-collapse: collapse;
+		border-spacing: 0;
+		empty-cells: show;
+		border: 1px solid #cbcbcb;
+	}
+	.debug-table caption {
+		color: #000;
+		font-size: 85%/1;
+		padding: 1em 0;
+		text-align: center;
+	}
+	.debug-table td,
+	.debug-table th {
+		border-left: 1px solid #cbcbcb;
+		border-width: 0 0 0 1px;
+		font-size: inherit;
+		margin: 0;
+		overflow: visible;
+		padding: 0.5em 1em;
+	}
+	.debug-table td:first-child,
+	.debug-table th:first-child {
+		border-left-width: 0;
+	}
+	.debug-table thead {
+		background-color: #e0e0e0;
+		color: #000;
+		text-align: left;
+		vertical-align: bottom;
+	}
+	.debug-table td {
+		background-color: transparent;
+	}
+	.debug-table-striped tbody tr:nth-child(2n) {
+		background-color: #FFFFFF;
+	}
+	.debug-table-striped tbody tr:nth-child(2n-1) {
+		background-color: #F2F2F2;
+	}
+	.debug-table-striped tbody tr:hover {
+		background-color: #FFFDD0;
+	}
+	</style>
+	<script type="text/javascript" src="lib/js/jquery/jquery.js"></script>
 </head>
 <body>
 	<div style="background:#FFFF3D;">

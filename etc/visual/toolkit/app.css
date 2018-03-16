@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / App :: r.170830 -- */
+/* -- CSS Start :: SmartFramework / App :: r.180315 -- */
 
 /* NOTICE:
 DO NOT modify the CSS original files except if located in the etc/ folder.
@@ -13,9 +13,7 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 /* -- framework -- */
 
-@import url("../../../lib/framework/css/ux-toolkit.css");
-
-@import url("../../../lib/framework/css/fonts/fontawesome.css");
+@import url("../../../lib/css/toolkit/ux-toolkit.css");
 
 /* -- core -- */
 
@@ -41,6 +39,9 @@ The CSS from lib/ folder WILL BE REWRITTEN ON ANY FRAMEWORK FUTURE UPDATES.
 
 /* optional, required just for Email Mime Parser */
 @import url("../../../lib/core/plugins/css/email.css");
+
+/* optional, required just by Samples or Custom Modules */
+@import url("../../../lib/core/plugins/fonts/icons/fontawesome.css");
 
 /* ----------------------------- */
 

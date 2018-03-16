@@ -6,7 +6,7 @@
 [%%%%ELSE:NO-RESULTS%%%%]
 	[%%%%IF:SHOW-FIRST:!=no;(1)%%%%]
 		[%%%%IF:PREV-PAGE:!=;%%%%]
-		<a id="nav-pager-item" href="[####PREV-LINK|html####]" title="[####PREV-PAGE####]"><i class="fa fa-arrow-left"></i></a>
+		<a id="nav-pager-item" href="[####PREV-LINK|html####]" title="[####PREV-PAGE####]">&lt;</a>
 		[%%%%/IF:PREV-PAGE%%%%]
 	[%%%%/IF:SHOW-FIRST(1)%%%%]
 	[%%%%LOOP:DATA-ARR%%%%]
@@ -28,7 +28,7 @@
 	[%%%%/LOOP:DATA-ARR%%%%]
 	[%%%%IF:SHOW-FIRST:!=no;(2)%%%%]
 		[%%%%IF:NEXT-PAGE:!=;%%%%]
-		<a id="nav-pager-item" href="[####NEXT-LINK|html####]" title="[####NEXT-PAGE####]"><i class="fa fa-arrow-right"></i></a>
+		<a id="nav-pager-item" href="[####NEXT-LINK|html####]" title="[####NEXT-PAGE####]">&gt;</a>
 		[%%%%/IF:NEXT-PAGE%%%%]
 	[%%%%/IF:SHOW-FIRST(2)%%%%]
 [%%%%/IF:NO-RESULTS%%%%]

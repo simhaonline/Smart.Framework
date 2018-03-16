@@ -7,7 +7,6 @@
 	<meta charset="UTF-8">
 	<title>Smart :: UX CSS Toolkit / Test</title>
 	<link rel="stylesheet" href="ux-toolkit.css">
-	<link rel="stylesheet" href="fonts/fontawesome.css">
 	<style>
 	* {
 		font-family: arial,sans-serif;
@@ -88,50 +87,36 @@
 	<h3>Custom Buttons with Various Icons</h3>
 	<p>
 		<button class="ux-button ux-button-custom ux-button-responsive">
-			<span class="fa fa-film"></span>
+			&clubs;
 			Custom Button
 		</button>
 		<a class="ux-button ux-button-custom ux-button-responsive" href="#">
-			<span class="fa fa-leaf" style="color:#5CB85C"></span>
+			<span style="color:#5CB85C;">&clubs;</span>
 			Custom anchor Button
 		</a>
 		<button class="ux-button ux-button-custom ux-button-disabled ux-button-responsive">
-			<span class="fa fa-send" style="color:#FF6600"></span>
+			<span style="color:#FF6600;">&clubs;</span>
 			Custom Button disabled
 		</button>
 		<a class="ux-button ux-button-custom ux-button-disabled ux-button-responsive" href="#">
-			<span class="fa fa-pie-chart"></span>
+			&clubs;
 			Custom anchor Button disabled
 		</a>
 	</p>
 
 	<h3>Send Buttons</h3>
 	<p>
-		<button class="ux-button ux-button-primary ux-button-xlarge"><span class="fa fa-send fa-lg"></span> &nbsp; Submit Button</button> &nbsp;
-		<button class="ux-button ux-button-secondary ux-button-large"><span class="fa fa-send fa-lg"></span> &nbsp; Submit Button</button> &nbsp;
-		<button class="ux-button ux-button-regular"><span class="fa fa-send"></span> &nbsp; Submit (Button)</button> &nbsp;
-		<button class="ux-button ux-button-highlight ux-button-small"><span class="fa fa-send fa-sm"></span> &nbsp; Submit Button</button> &nbsp;
-		<button class="ux-button ux-button-special ux-button-xsmall"><span class="fa fa-send fa-sm"></span> &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-primary ux-button-xlarge">&#9973; &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-secondary ux-button-large">&#9973; &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-regular">&#9973; &nbsp; Submit (Button)</button> &nbsp;
+		<button class="ux-button ux-button-highlight ux-button-small">&#9973; &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-special ux-button-xsmall">&#9973; &nbsp; Submit Button</button> &nbsp;
 		<br>
 		<input class="ux-button ux-button-special ux-button-xlarge" type="submit" value="Submit Input"> &nbsp;
 		<input class="ux-button ux-button-highlight ux-button-large" type="button" value="Submit Input"> &nbsp;
 		<input class="ux-button ux-button-regular" type="reset" value="Submit Input"> &nbsp;
 		<input class="ux-button ux-button-highlight ux-button-small" type="button" value="Submit Input"> &nbsp;
 		<input class="ux-button ux-button-special ux-button-xsmall" type="submit" value="Submit Input"> &nbsp;
-	</p>
-
-	<br>
-
-	<h3>Font Awesome Icons</h3>
-	<p>
-		<i class="fa fa-snowflake-o fa-sm"></i>
-		<i class="fa fa-snowflake-o"></i>
-		<i class="fa fa-snowflake-o fa-lg"></i>
-		<i class="fa fa-snowflake-o fa-xl"></i>
-		<i class="fa fa-snowflake-o fa-2x"></i>
-		<i class="fa fa-snowflake-o fa-3x"></i>
-		<i class="fa fa-snowflake-o fa-4x"></i>
-		<i class="fa fa-snowflake-o fa-5x"></i>
 	</p>
 
 	<br>
@@ -711,7 +696,7 @@
 			<textarea rows="7" cols="50">This is some text ...</textarea>
 		</fieldset>
 		<fieldset>
-			<button type="submit" class="ux-button ux-button-primary ux-button-responsive">Sign in &nbsp; <i class="fa fa-sign-in"></i></button>
+			<button type="submit" class="ux-button ux-button-primary ux-button-responsive">Sign in &nbsp; &#9752;</button>
 		</fieldset>
 	</form>
 
@@ -728,7 +713,7 @@
 				<input type="checkbox"> Remember me
 			</label>
 
-			<button type="submit" class="ux-button">Sign in &nbsp; <i class="fa fa-sign-in"></i></button>
+			<button type="submit" class="ux-button">Sign in &nbsp; &#9752;</button>
 		</fieldset>
 	</form>
 
@@ -772,8 +757,8 @@
 				<input type="checkbox"> I've read the terms and conditions
 			</label>
 
-			<button type="submit" class="ux-button ux-button-primary">Submit &nbsp; <i class="fa fa-check-square-o"></i></button>
-			<button type="reset" class="ux-button ux-button-special">Reset &nbsp; <i class="fa fa-times"></i></button>
+			<button type="submit" class="ux-button ux-button-primary">Submit &nbsp; &#9973;</button>
+			<button type="reset" class="ux-button ux-button-special">Reset &nbsp; &#9730;</button>
 		</fieldset>
 	</form>
 
@@ -814,8 +799,8 @@
 				<input type="checkbox"> I've read the terms and conditions
 			</label>
 
-			<button type="submit" class="ux-button notice">Submit &nbsp; <i class="fa fa-check-square"></i></button>
-			<button type="reset" class="ux-button">Reset &nbsp; <i class="fa fa-times"></i></button>
+			<button type="submit" class="ux-button notice">Submit &nbsp; &#9973;</button>
+			<button type="reset" class="ux-button">Reset &nbsp; &#9730;</button>
 		</fieldset>
 	</form>
 
@@ -856,7 +841,7 @@
 					<input type="checkbox"> Remember Me
 				</label>
 
-				<button type="submit" class="ux-button">Submit &nbsp; <i class="fa fa-check-circle"></i></button>
+				<button type="submit" class="ux-button">Submit &nbsp; &#9973;</button>
 			</div>
 		</fieldset>
 	</form>
@@ -877,7 +862,7 @@
 			<input type="text" class="ux-input-1-2" placeholder="Even More Stuff">
 			<input type="text" class="ux-input-1-2" placeholder="Last Item">
 		</fieldset>
-		<button type="submit" class="ux-button ux-button-primary ux-input-1-2">Sign in &nbsp; <i class="fa fa-sign-in"></i></button>
+		<button type="submit" class="ux-button ux-button-primary ux-input-1-2">Sign in &nbsp; &#9752;</button>
 	</form>
 
 
@@ -899,8 +884,8 @@
 		}
 		</script>
 		<fieldset class="ux-group">
-			<button type="submit" class="ux-button" onclick="testDynamicGroupAdd()"><i class="fa fa-plus"></i> &nbsp; Add field</button>
-			<button type="submit" class="ux-button" onclick="testDynamicGroupRemove()"><i class="fa fa-minus"></i> &nbsp; Remove field</button>
+			<button type="submit" class="ux-button" onclick="testDynamicGroupAdd()">+ &nbsp; Add field</button>
+			<button type="submit" class="ux-button" onclick="testDynamicGroupRemove()">- &nbsp; Remove field</button>
 		</fieldset>
 		<fieldset class="ux-group" id="test-dynamic-group">
 			<input type="text" class="ux-input-1-3" placeholder="Add or remove fields to test">
@@ -947,8 +932,8 @@
 		<input type="text" class="ux-input-rounded" placeholder="Subject">
 		<label>Message</label>
 		<textarea class="ux-input-rounded" rows="5" cols="40" placeholder="Message..."></textarea>
-		<button type="submit" class="ux-button ux-input-rounded"><i class="fa fa-search"></i> &nbsp; Search</button>
-		<button type="reset" class="ux-button ux-input-rounded">Reset &nbsp; <i class="fa fa-times"></i></button>
+		<button type="submit" class="ux-button ux-input-rounded">&#9740; &nbsp; Search</button>
+		<button type="reset" class="ux-button ux-input-rounded">Reset x</button>
 	</form>
 
 
@@ -1008,11 +993,11 @@
 	<h3>Form Button</h3>
 
 	<form class="ux-form">
-		<a class="ux-button"><i class="fa fa-anchor"></i> &nbsp; Anchor</a>
-		<a class="ux-button ux-button-special" href="#"><i class="fa fa-link"></i> &nbsp; Link</a>
-		<button class="ux-button ux-button-primary">Button &nbsp; <i class="fa fa-paperclip"></i></button>
-		<a class="ux-button ux-button-dark" href="#"><i class="fa fa-link"></i> &nbsp; Link</a>
-		<button type="submit" class="ux-button ux-button-secondary">Submit &nbsp; <i class="fa fa-paper-plane-o"></i></button>
+		<a class="ux-button">&#9875; &nbsp; Anchor</a>
+		<a class="ux-button ux-button-special" href="#">&raquo; &nbsp; Link</a>
+		<button class="ux-button ux-button-primary">Button &nbsp; &middot;</button>
+		<a class="ux-button ux-button-dark" href="#">&laquo; &nbsp; Link</a>
+		<button type="submit" class="ux-button ux-button-secondary">Submit &nbsp; &#9973;</button>
 		<input type="button" class="ux-button ux-button-regular" value="Input Button">
 		<input type="reset" class="ux-button ux-button-highlight" value="Reset">
 	</form>
@@ -1027,14 +1012,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-darkblue">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1042,14 +1027,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-lightblue">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1057,14 +1042,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-red">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1072,14 +1057,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-lightgreen">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1087,14 +1072,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-orange">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1102,14 +1087,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-grey">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1117,14 +1102,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-black">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1132,14 +1117,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-bluegrey">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>
@@ -1147,14 +1132,14 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-purplegrey">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><i class="fa fa-home"></i>&nbsp; MenuBar Entry One</a>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; MenuBar Entry One</a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;<i class="fa fa-caret-down"></i></button>
+			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;<i class="fa fa-cloud"></i></a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
 			</div>
 		</div>
 	</div>

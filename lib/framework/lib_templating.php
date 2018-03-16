@@ -56,7 +56,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.180220
+ * @version 	v.180315
  * @package 	Templating:Engines
  *
  */
@@ -580,7 +580,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	$html .= '<tr valign="top" align="center">';
 	//-- loaded sub-tpls
 	$html .= '<td align="left" colspan="2">';
-	$html .= '<table id="'.'__marker__template__analyzer-ldsubtpls_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="950" style="font-size:0.750em!important;">';
+	$html .= '<table id="'.'__marker__template__analyzer-ldsubtpls_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="950" style="font-size:0.750em!important;">';
 	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:LOADED@@@@]<br><small>*** All Loaded Sub-Templates are listed below ***</small></th><th>#</th></tr>';
 	if(Smart::array_size(self::$MkTplAnalyzeLdRegDbg) > 0) {
 		foreach(self::$MkTplAnalyzeLdRegDbg as $key => $val) {
@@ -602,7 +602,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 		} //end if
 	} //end for
 	$html .= '<td align="center">';
-	$html .= '<table id="'.'__marker__template__analyzer-subtpls_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;">';
+	$html .= '<table id="'.'__marker__template__analyzer-subtpls_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;">';
 	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:SLOTS@LEVEL-1@@@@]<br><small>*** Only Level-1 Sub-Templates slots are listed below ***</small></th><th>#</th></tr>';
 	ksort($arr_subtpls);
 	foreach($arr_subtpls as $key => $val) {
@@ -625,7 +625,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 			$arr_marks[(string)strtoupper((string)$var_part[$i])] += 1;
 		} //end if
 	} //end for
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[####MARKER-VARIABLES####]</th><th>#</th></tr>';
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[####MARKER-VARIABLES####]</th><th>#</th></tr>';
 	ksort($arr_marks);
 	foreach($arr_marks as $key => $val) {
 		if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
@@ -654,7 +654,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 			$arr_loops[(string)strtoupper((string)$var_part[$i])] += 1;
 		} //end if
 	} //end for
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%LOOP:VARIABLES%%%%]<br>[%%%%/LOOP:VARIABLES%%%%]</th><th>#</th></tr>';
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%LOOP:VARIABLES%%%%]<br>[%%%%/LOOP:VARIABLES%%%%]</th><th>#</th></tr>';
 	ksort($arr_loops);
 	foreach($arr_loops as $key => $val) {
 		if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
@@ -683,7 +683,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 			$arr_ifs[(string)strtoupper((string)$var_part[$i])] += 1;
 		} //end if
 	} //end for
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" class="ux-table ux-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%IF:VARIABLES:@=;%%%%]<br>[%%%%ELSE:VARIABLES%%%%]<br>[%%%%/IF:VARIABLES%%%%]</th><th>#</th></tr>';
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%IF:VARIABLES:@=;%%%%]<br>[%%%%ELSE:VARIABLES%%%%]<br>[%%%%/IF:VARIABLES%%%%]</th><th>#</th></tr>';
 	ksort($arr_ifs);
 	foreach($arr_ifs as $key => $val) {
 		if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
