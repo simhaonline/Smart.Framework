@@ -56,7 +56,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.180315
+ * @version 	v.180319
  * @package 	Templating:Engines
  *
  */
@@ -824,12 +824,14 @@ private static function have_subtemplate($mtemplate) {
 [####MARKER|js|html####] 				** not necessary unless special purpose **
 [####MARKER|html####]
 [####MARKER|html|nl2br####]
+[####MARKER|html|nl2br|url|js####]
+[####MARKER|html|nl2br|js|url####]
 */
-private static function replace_marker($mtemplate, $key, $val) {
+private static function replace_marker($mtemplate, $key, $val) { // v.180319
 	//-- {{{SYNC-TPL-EXPR-MARKER}}}
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
+		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?(\|url|\|js)?(\|js|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
 		//--
 		if((string)$val != '') {
 			//--
@@ -860,7 +862,11 @@ private static function replace_marker($mtemplate, $key, $val) {
 			} //end if
 			//--
 			if((Smart::array_size($arr_fix_one) > 0) AND (Smart::array_size($arr_fix_two) > 0) AND (Smart::array_size($arr_fix_one) == Smart::array_size($arr_fix_two))) {
-				Smart::log_notice('Invalid or Undefined Marker-TPL: '.implode(', ', (array)$arr_fix_three).' - detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					// this notice is too complex to fix in all situations, thus make it show just on Debug !
+					// because many times the values come from variable sources: user input, database, ... this notice make non-sense anymore !!
+					Smart::log_notice('Invalid or Undefined Marker-TPL: '.implode(', ', (array)$arr_fix_three).' - detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+				} //end if
 				$val = (string) str_replace(
 					(array) $arr_fix_one, // dissalowed markers / syntax / sub-tpls
 					(array) $arr_fix_two, // fixed content, marked with +
@@ -927,10 +933,22 @@ private static function replace_marker($mtemplate, $key, $val) {
 				} elseif((string)$matches[4] == '|js') {
 					$val = (string) Smart::escape_js((string)$val);
 				} //end if
-				//-- #5 NL2BR / URL
+				//-- #5 Format NL2BR / Escape URL
 				if((string)$matches[5] == '|nl2br') {
 					$val = (string) Smart::nl_2_br((string)$val);
 				} elseif((string)$matches[5] == '|url') {
+					$val = (string) Smart::escape_url((string)$val);
+				} //end if
+				//-- #6 Escape URL / JS
+				if((string)$matches[6] == '|url') {
+					$val = (string) Smart::escape_url((string)$val);
+				} elseif((string)$matches[6] == '|js') {
+					$val = (string) Smart::escape_js((string)$val);
+				} //end if
+				//-- #7 Escape JS / URL
+				if((string)$matches[7] == '|js') {
+					$val = (string) Smart::escape_js((string)$val);
+				} elseif((string)$matches[7] == '|url') {
 					$val = (string) Smart::escape_url((string)$val);
 				} //end if
 				//--

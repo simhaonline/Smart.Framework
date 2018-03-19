@@ -4,6 +4,6 @@ TRANSLATIONS:
   @area: mod-samples
   @version: 2017-05-03
   samples:
-    hello-world: 'Hello World'
+    hello-world: 'Hey World'
     this-is: 'acest framework este'
 #END

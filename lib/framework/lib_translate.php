@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.170811
+ * @version 	v.180319
  * @package 	Application
  *
  */
@@ -68,7 +68,7 @@ final class SmartTextTranslations {
 
 	//=====
 	/**
-	 * Regional Text :: Get Language
+	 * Regional Text :: Get the Current Language for the current session as Set by Config / URL / Cookie / Method-Set
 	 *
 	 * @return 	STRING						:: The language ID ; sample (for English) will return: 'en'
 	 */
@@ -88,27 +88,19 @@ final class SmartTextTranslations {
 			return (string) self::$cache['#LANGUAGE#'];
 		} //end if
 		//--
-		$all_languages = (array) self::getSafeLanguagesArr();
-		//--
 		$the_lang = 'en'; // default
 		//--
 		if(is_array($configs)) {
 			if(is_array($configs['regional'])) {
 				$tmp_lang = (string) strtolower((string)$configs['regional']['language-id']);
-				if(strlen((string)$tmp_lang) == 2) { // if language id have only 2 characters
-					if(preg_match('/^[a-z]+$/', (string)$tmp_lang)) { // language id must contain only a..z characters (iso-8859-1)
-						if(is_array($all_languages)) {
-							if($all_languages[(string)$tmp_lang]) { // if that lang is set in languages array
-								$the_lang = (string) $tmp_lang;
-								if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-									if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-										SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
-											'title' => 'Get Language from Configs',
-											'data' => 'Content: '.$the_lang
-										]);
-									} //end if
-								} //end if
-							} //end if
+				if(self::validateLanguage($tmp_lang)) {
+					$the_lang = (string) $tmp_lang;
+					if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
+						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+							SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
+								'title' => 'Get Language from Configs',
+								'data' => 'Content: '.$the_lang
+							]);
 						} //end if
 					} //end if
 				} //end if
@@ -125,7 +117,7 @@ final class SmartTextTranslations {
 
 	//=====
 	/**
-	 * Regional Text :: Set Language
+	 * Regional Text :: Set the Language for current session
 	 *
 	 * @param 	STRING 	$y_language 		:: The language ID ; sample (for English) will be: 'en'
 	 *
@@ -189,16 +181,21 @@ final class SmartTextTranslations {
 	 *
 	 * @return 	OBJECT							:: An Instance of SmartTextTranslator->
 	 */
-	public static function getTranslator($y_area, $y_subarea) {
+	public static function getTranslator($y_area, $y_subarea, $y_custom_language='') {
 		//--
 		$y_area 	= (string) self::validateArea($y_area);
 		$y_subarea 	= (string) self::validateSubArea($y_subarea);
 		//--
-		$the_lang = self::getLanguage();
+		if(((string)$y_custom_language != '') AND (self::validateLanguage($y_custom_language) === true)) { // get for a custom language
+			$the_lang = (string) $y_custom_language;
+		} else {
+			$the_lang = (string) self::getLanguage(); // use default language
+		} //end if else
+		//--
 		$translator_key = (string) $the_lang.'.'.$y_area.'.'.$y_subarea; // must use . as separator as it is the only character that is not allowed in lang / area / sub-area but is allowed in persistent cache
 		//--
 		if(!is_object(self::$translators[(string)$translator_key])) {
-			self::$translators[(string)$translator_key] = new SmartTextTranslator((string)$y_area, (string)$y_subarea);
+			self::$translators[(string)$translator_key] = new SmartTextTranslator((string)$the_lang, (string)$y_area, (string)$y_subarea);
 			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
 				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
@@ -224,7 +221,7 @@ final class SmartTextTranslations {
 	//=====
 
 
-	//#####
+	//##### INTERNAL USE PUBLICS
 
 
 	//=====
@@ -244,12 +241,18 @@ final class SmartTextTranslations {
 	 * @internal
 	 *
 	 */
-	public static function getTranslationByKey($y_area, $y_subarea, $y_textkey) {
+	public static function getTranslationByKey($y_area, $y_subarea, $y_textkey, $y_custom_language='') {
 		//--
 		$y_area 	= (string) self::validateArea($y_area);
 		$y_subarea 	= (string) self::validateSubArea($y_subarea);
 		//--
-		$translations = (array) self::getFromOptimalPlace($y_area, $y_subarea);
+		if(((string)$y_custom_language != '') AND (self::validateLanguage($y_custom_language) === true)) { // get for a custom language
+			$the_lang = (string) $y_custom_language;
+		} else {
+			$the_lang = (string) self::getLanguage(); // use default language
+		} //end if else
+		//--
+		$translations = (array) self::getFromOptimalPlace($the_lang, $y_area, $y_subarea);
 		//--
 		return (string) $translations[(string)$y_textkey];
 		//--
@@ -273,12 +276,18 @@ final class SmartTextTranslations {
 	 * @internal
 	 *
 	 */
-	public static function getAllTranslations($y_area, $y_subarea) {
+	public static function getAllTranslations($y_area, $y_subarea, $y_custom_language='') {
 		//--
 		$y_area 	= (string) self::validateArea($y_area);
 		$y_subarea 	= (string) self::validateSubArea($y_subarea);
 		//--
-		return (array) self::getFromOptimalPlace($y_area, $y_subarea);
+		if(((string)$y_custom_language != '') AND (self::validateLanguage($y_custom_language) === true)) { // get for a custom language
+			$the_lang = (string) $y_custom_language;
+		} else {
+			$the_lang = (string) self::getLanguage(); // use default language
+		} //end if else
+		//--
+		return (array) self::getFromOptimalPlace($the_lang, $y_area, $y_subarea);
 		//--
 	} //END FUNCTION
 	//=====
@@ -300,6 +309,41 @@ final class SmartTextTranslations {
 		} //end if
 		//--
 		return (array) $languages;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Validate Language
+	 *
+	 * @param 	STRING 	$y_language 		:: The language ID ; sample (for English) will be: 'en'
+	 *
+	 * @return 	BOOLEAN						:: TRUE if language defined in configs, FALSE if not
+	 *
+	 */
+	private static function validateLanguage($y_language) {
+		//--
+		if((string)trim((string)$y_language) == '') {
+			return false;
+		} //end if
+		//--
+		$all_languages = (array) self::getSafeLanguagesArr();
+		//--
+		$ok = false;
+		//--
+		if(strlen((string)$y_language) == 2) { // if language id have only 2 characters
+			if(preg_match('/^[a-z]+$/', (string)$y_language)) { // language id must contain only a..z characters (iso-8859-1)
+				if(is_array($all_languages)) {
+					if($all_languages[(string)$y_language]) { // if that lang is set in languages array
+						$ok = true;
+					} //end if
+				} //end if
+			} //end if
+		} //end if
+		//--
+		return (bool) $ok;
 		//--
 	} //END FUNCTION
 	//=====
@@ -395,14 +439,13 @@ final class SmartTextTranslations {
 
 	//=====
 	// try to get from (in this order): Internal (in-memory) cache ; Persistent Cache ; Source
-	private static function getFromOptimalPlace($y_area, $y_subarea) {
+	private static function getFromOptimalPlace($y_language, $y_area, $y_subarea) {
 		//-- normalize params
+		$y_language = (string) $y_language;
 		$y_area = (string) $y_area;
 		$y_subarea = (string) $y_subarea;
-		//-- get the current language
-		$the_lang = self::getLanguage();
 		//-- built the cache key
-		$the_cache_key = (string) $the_lang.'.'.$y_area.'.'.$y_subarea; // must use . as separator as it is the only character that is not allowed in lang / area / sub-area but is allowed in persistent cache
+		$the_cache_key = (string) $y_language.'.'.$y_area.'.'.$y_subarea; // must use . as separator as it is the only character that is not allowed in lang / area / sub-area but is allowed in persistent cache
 		//-- try to get from internal (in-memory) cache
 		$translations = (array) self::$cache['translations@'.$the_cache_key];
 		if(Smart::array_size($translations) > 0) {
@@ -432,7 +475,7 @@ final class SmartTextTranslations {
 			return (array) $translations;
 		} //end if
 		//-- try to get from source
-		$translations = (array) self::getFromSource($the_lang, $y_area, $y_subarea);
+		$translations = (array) self::getFromSource($y_language, $y_area, $y_subarea);
 		if(Smart::array_size($translations) > 0) {
 			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
 				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
@@ -547,7 +590,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.170511
+ * @version 	v.180319
  *
  * @access 		private
  * @internal
@@ -557,42 +600,63 @@ final class SmartTextTranslator {
 
 	// ->
 
+	private $language = '';
 	private $area = '';
 	private $subarea = '';
 
 
-	public function __construct($y_area, $y_subarea) {
+	public function __construct($y_language, $y_area, $y_subarea) {
+		//--
+		if((string)$y_language != '') {
+			$this->language = (string) $y_language;
+		} else {
+			$this->language = '??';
+			Smart::log_warning('Invalid Language for Text Context Translator Area ['.$y_language.']: '.$y_area.' ; SubArea: '.$y_subarea);
+		} //end if else
 		//--
 		if((string)$y_area != '') {
 			$this->area = (string) $y_area;
 		} else {
 			$this->area = 'undefined__area';
-			Smart::log_warning('Invalid Area for Text Context Translator Area: '.$y_area.' ; SubArea: '.$y_subarea);
+			Smart::log_warning('Invalid Area for Text Context Translator Area ['.$y_language.']: '.$y_area.' ; SubArea: '.$y_subarea);
 		} //end if else
 		//--
 		if((string)$y_subarea != '') {
 			$this->subarea = (string) $y_subarea;
 		} else {
-			Smart::log_warning('Invalid Sub-Area for Text Context Translator Area: '.$y_area.' ; SubArea: '.$y_subarea);
+			Smart::log_warning('Invalid Sub-Area for Text Context Translator Area['.$y_language.']: '.$y_area.' ; SubArea: '.$y_subarea);
 			$this->subarea = 'undefined__subarea';
 		} //end if
 		//--
 	} //END FUNCTION
 
 
+	public function getinfo() {
+		//--
+		return [
+			'language' 	=> (string) $this->language,
+			'area' 		=> (string) $this->area,
+			'sub-area' 	=> (string) $this->subarea
+		];
+		//--
+	} //END FUNCTION
+
+
 	// Texts are automatically HTML Escaped, except if the 2nd param is set to TRUE to get them as RAW ...
-	public function text($y_textkey, $y_raw=false) {
+	public function text($y_textkey, $y_raw=false, $y_fallback_language='') {
 		//--
 		if((string)$y_textkey == '') {
 			Smart::log_warning('Empty Key for Text Context Translator - Area: '.$this->area.' ; SubArea: '.$this->subarea);
 			return '{Empty Translation Key}';
 		} //end if
 		//--
-		$text = (string) SmartTextTranslations::getTranslationByKey($this->area, $this->subarea, $y_textkey);
-		//--
+		$text = (string) SmartTextTranslations::getTranslationByKey($this->area, $this->subarea, (string)$y_textkey, $this->language);
+		if(((string)trim((string)$text) == '') AND ((string)$y_fallback_language != '') AND ((string)$y_fallback_language != (string)$this->language)) {
+			$text = (string) SmartTextTranslations::getTranslationByKey($this->area, $this->subarea, (string)$y_textkey, (string)$y_fallback_language);
+		} //end if
 		if((string)trim((string)$text) == '') {
-			Smart::log_warning('Undefined Key: ['.$y_textkey.'] for Text Context Translator - Area: '.$this->area.' ; SubArea: '.$this->subarea);
-			$text = '{Undefined Translation Key: '.$y_textkey.'}';
+			Smart::log_warning('Undefined Key: ['.$y_textkey.'] for Text Context Translator ['.$this->language.'] - Area: '.$this->area.' ; SubArea: '.$this->subarea);
+			$text = '{Undefined Translation Key ['.$this->language.']: '.$y_textkey.'}';
 		} //end if
 		//--
 		if($y_raw !== true) {

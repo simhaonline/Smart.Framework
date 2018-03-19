@@ -1063,19 +1063,19 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 			$priority_img = '';
 			switch((string)$head['priority']) {
 				case '1': // high
-					$priority_img = '<img src="lib/core/plugins/img/email/priority_high.png" align="left" alt="High Priority" title="High Priority">';
+					$priority_img = '<img src="lib/core/plugins/img/email/priority-high.svg" align="left" alt="High Priority" title="High Priority">';
 					break;
 				case '5': // low
-					$priority_img = '<img src="lib/core/plugins/img/email/priority_low.png" align="left" alt="Low Priority" title="Low Priority">';
+					$priority_img = '<img src="lib/core/plugins/img/email/priority-low.svg" align="left" alt="Low Priority" title="Low Priority">';
 					break;
 				case '3': // medium
 				default:
-					$priority_img = '';
-					//$priority_img = '<img src="lib/core/plugins/img/email/priority_normal.png" align="left" alt="Normal Priority" title="Normal Priority">';
+					//$priority_img = '';
+					$priority_img = '<img src="lib/core/plugins/img/email/priority-normal.svg" align="left" alt="Normal Priority" title="Normal Priority">';
 			} //end switch
 			//--
 			if((string)$skip_part_linking != 'yes') { // avoid display the print link when only a part is displayed
-				$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, $eval_arr[0], $eval_arr[1], 'print').'" target="'.$y_target.'__mimepart" data-smart="open.modal">'.'<img align="right" src="lib/core/plugins/img/email/bttn_print.png">'.'</a>';
+				$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, $eval_arr[0], $eval_arr[1], 'print').'" target="'.$y_target.'__mimepart" data-smart="open.modal">'.'<img align="right" src="lib/core/plugins/img/email/bttn-print.svg" title="Print" alt="Print">'.'</a>';
 			} //end if
 			//--
 			switch((string)$y_show_headers) {
@@ -1130,7 +1130,7 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 				$atts = ''; // atts with link
 				$xatts = ''; // atts without link
 				//--
-				$tmp_att_img = '<img src="lib/core/plugins/img/email/attachment.png">';
+				$tmp_att_img = '<img src="lib/core/plugins/img/email/attachment.svg">';
 				//--
 				foreach ($msg['attachments'] as $key => $val) {
 					//--
@@ -1291,7 +1291,7 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 						if((string)$skip_part_linking == 'yes') { // avoid display sub-text part links when only a part is displayed
 							$tmp_pict_img = '';
 						} else {
-							$tmp_pict_img = '<div align="right">'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mark_right.gif">'.$tmp_link_pst.'</div>';
+							$tmp_pict_img = '<div align="right">'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mime-part.svg">'.$tmp_link_pst.'</div>';
 						} //end if
 						//--
 						if((string)$y_process_mode == 'data-reply') {
@@ -1310,7 +1310,7 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 							if((string)$y_process_mode == 'data-reply') {
 								// nothing
 							} else {
-								$out .= '<div align="right">'.'<span title="'.'~'.Smart::escape_html(Smart::format_number_dec($skips[$key], 0, '.', ',').'%').'">&nbsp;</span>'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mark_check.gif">'.$tmp_link_pst.'</div>';
+								$out .= '<div align="right">'.'<span title="'.'~'.Smart::escape_html(Smart::format_number_dec($skips[$key], 0, '.', ',').'%').'">&nbsp;</span>'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mime-alt-part.svg">'.$tmp_link_pst.'</div>';
 							} //end if else
 						} //end if
 						//--

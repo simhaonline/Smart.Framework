@@ -84,24 +84,24 @@ a.nav-arrows-link {
 /*	border-bottom: dotted 1px #666666; */
 }
 div.nav-arrows-start {
-	width: 21px;
-	height: 13px;
-	background: url(img/navbox/nav_start.png) no-repeat left top;
+	width: 10px;
+	height: 16px;
+	background: url(img/navbox/nav-start.svg) no-repeat left top;
 }
 div.nav-arrows-prev {
-	width: 13px;
-	height: 13px;
-	background: url(img/navbox/nav_prev.png) no-repeat left top;
+	width: 6px;
+	height: 16px;
+	background: url(img/navbox/nav-prev.svg) no-repeat left top;
 }
 div.nav-arrows-next {
-	width: 13px;
-	height: 13px;
-	background: url(img/navbox/nav_next.png) no-repeat left top;
+	width: 6px;
+	height: 16px;
+	background: url(img/navbox/nav-next.svg) no-repeat left top;
 }
 div.nav-arrows-end {
-	width: 21px;
-	height: 13px;
-	background: url(img/navbox/nav_end.png) no-repeat left top;
+	width: 10px;
+	height: 16px;
+	background: url(img/navbox/nav-end.svg) no-repeat left top;
 }
 /* -- */
 
