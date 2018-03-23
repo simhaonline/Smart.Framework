@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- Smart UX CSS Toolkit :: v.3.7.5 r.2018.03.09 / smart.framework.v.3.7 -->
-<!-- extended by unixman (stable.171005), (c) 2015-2018 unix-world.org :: License: BSD :: based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ -->
+<!-- extended by unixman (stable.180323), (c) 2015-2018 unix-world.org :: License: BSD :: based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ -->
 <html>
 <head>
 	<!-- basepath -->
@@ -28,15 +28,17 @@
 
 <div style="width:100% !important; padding-left:10px; padding-top:2px; padding-right:10px; box-sizing: border-box !important; -moz-box-sizing: border-box !important; -webkit-box-sizing: border-box !important;">
 
-	<h1>UX Toolkit - Overview</h1>
+	<div class="ux-section">
+		<h1>UX Toolkit <span style="color:#CCCCCC!important; font-weight:normal!important; font-size:75%!important;">r.180323</span> - Overview</h1>
+	</div>
 
 	<br>
 
 <!-- Buttons -->
 
-	<h2>Buttons</h2>
+	<div class="ux-subsection"><h2>Buttons</h2></div>
 
-	<h3>Regular Buttons</h3>
+	<h3>Regular (Light) Buttons</h3>
 	<p>
 		<button class="ux-button">Regular Button</button>
 		<a class="ux-button" href="#">Regular anchor Button</a>
@@ -83,6 +85,12 @@
 		<button class="ux-button ux-button-special ux-button-disabled">Special Button disabled</button>
 		<a class="ux-button ux-button-special ux-button-disabled" href="#">Special anchor Button disabled</a>
 	</p>
+	<p>
+		<button class="ux-button ux-button-info">Info Button</button>
+		<a class="ux-button ux-button-info" href="#">Info anchor Button</a>
+		<button class="ux-button ux-button-info ux-button-disabled">Info Button disabled</button>
+		<a class="ux-button ux-button-info ux-button-disabled" href="#">Info anchor Button disabled</a>
+	</p>
 
 	<h3>Custom Buttons with Various Icons</h3>
 	<p>
@@ -113,17 +121,17 @@
 		<button class="ux-button ux-button-special ux-button-xsmall">&#9973; &nbsp; Submit Button</button> &nbsp;
 		<br>
 		<input class="ux-button ux-button-special ux-button-xlarge" type="submit" value="Submit Input"> &nbsp;
-		<input class="ux-button ux-button-highlight ux-button-large" type="button" value="Submit Input"> &nbsp;
-		<input class="ux-button ux-button-regular" type="reset" value="Submit Input"> &nbsp;
-		<input class="ux-button ux-button-highlight ux-button-small" type="button" value="Submit Input"> &nbsp;
-		<input class="ux-button ux-button-special ux-button-xsmall" type="submit" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-info ux-button-large" type="button" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-dark" type="reset" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-small" type="button" value="Submit Input"> &nbsp;
+		<input class="ux-button ux-button-secondary ux-button-xsmall" type="submit" value="Submit Input"> &nbsp;
 	</p>
 
 	<br>
 
 <!-- Grid -->
 
-	<h2>Fluid Responsive Layout Grid, 12 columns, featuring screens: v=very-small ; s=small ; m=medium ; l=large</h2>
+	<div class="ux-subsection"><h2>Fluid Responsive Layout Grid, 12 columns, featuring screens: v=very-small ; s=small ; m=medium ; l=large</h2></div>
 	<div title="Responsive Fluid Grid" class="ux-border">
 		<div class="ux-grid-row">
 			<div class="ux-grid-col s1 ux-center">1</div>
@@ -169,7 +177,7 @@
 	<br>
 	<br>
 
-	<h2>Fluid (Div Based) Responsive Table</h2>
+	<div class="ux-subsection"><h2>Fluid (Div Based) Responsive Table</h2></div>
 
 	<style type="text/css">
 	#myFluidTable {
@@ -261,7 +269,7 @@
 	<br>
 	<br>
 
-	<h2>Misc Tables</h2>
+	<div class="ux-subsection"><h2>Misc Tables</h2></div>
 
 	<h3>Default Table</h3>
 
@@ -678,7 +686,7 @@
 
 <!-- Forms -->
 
-	<h2>Form Elements</h2>
+	<div class="ux-subsection"><h2>Form Elements</h2></div>
 
 	<h3>Form Input normalization</h3>
 
@@ -997,6 +1005,7 @@
 		<a class="ux-button ux-button-special" href="#">&raquo; &nbsp; Link</a>
 		<button class="ux-button ux-button-primary">Button &nbsp; &middot;</button>
 		<a class="ux-button ux-button-dark" href="#">&laquo; &nbsp; Link</a>
+		<button type="submit" class="ux-button ux-button-info">Search</button>
 		<button type="submit" class="ux-button ux-button-secondary">Submit &nbsp; &#9973;</button>
 		<input type="button" class="ux-button ux-button-regular" value="Input Button">
 		<input type="reset" class="ux-button ux-button-highlight" value="Reset">
@@ -1007,7 +1016,7 @@
 
 <!-- Menu Bars -->
 
-	<h2>Menu Bars</h2>
+	<div class="ux-subsection"><h2>Menu Bars</h2></div>
 
 	<br>
 
@@ -1149,7 +1158,7 @@
 
 <!-- Menus -->
 
-	<h2>Menus</h2>
+	<div class="ux-subsection"><h2>Menus</h2></div>
 
 	<br>
 	<h3>Horizontal Flat Menu</h3>
@@ -1199,25 +1208,56 @@
 
 <!-- Breadcrumbs -->
 
-	<h2 id="breadcrumbs">Breadcrumbs</h2>
+	<div class="ux-subsection"><h2 id="steps">Breadcrumbs</h2></div>
+
+	<br>
+	<nav aria-label="breadcrumb">
+		<ul class="ux-breadcrumb">
+			<li>Home</li>
+		</ul>
+	</nav>
+
+	<br>
+	<nav aria-label="breadcrumb">
+		<ul class="ux-breadcrumb">
+			<li><a href="#breadcrumb-home">Home</a></li>
+			<li>Current Page</li>
+		</ul>
+	</nav>
+
+	<br>
+	<nav aria-label="breadcrumb">
+		<ul class="ux-breadcrumb">
+			<li><a href="#breadcrumb-home">Home</a></li>
+			<li><a href="#breadcrumb-other">Some Other Page</a></li>
+			<li>Current Page</li>
+		</ul>
+	</nav>
+
+	<br>
+	<br>
+
+<!-- Step Bars -->
+
+	<div class="ux-subsection"><h2>Step Bars</h2></div>
 
 	<br>
 	<div align="left">
 		<!-- a simple div with some links -->
-		<div class="ux-breadcrumb">
-			<a href="#breadcrumbs" class="active">Browse</a>
-			<a href="#breadcrumbs">Compare</a>
-			<a href="#breadcrumbs">Order Confirmation</a>
-			<a href="#breadcrumbs">Checkout</a>
+		<div class="ux-stepsbar">
+			<a href="#steps" class="active">Browse</a>
+			<a href="#steps">Compare</a>
+			<a href="#steps">Order Confirmation</a>
+			<a href="#steps">Checkout</a>
 		</div>
 		<br>
 		<br>
 		<!-- another version - flat style with animated hover effect -->
-		<div class="ux-breadcrumb ux-flat-breadcrumb">
-			<a href="#breadcrumbs">Browse</a>
-			<a href="#breadcrumbs" class="active">Compare</a>
-			<a href="#breadcrumbs">Order Confirmation</a>
-			<a href="#breadcrumbs">Checkout</a>
+		<div class="ux-stepsbar ux-stepsbar-light">
+			<a href="#steps">Browse</a>
+			<a href="#steps" class="active">Compare</a>
+			<a href="#steps">Order Confirmation</a>
+			<a href="#steps">Checkout</a>
 		</div>
 	</div>
 
@@ -1226,10 +1266,13 @@
 
 <!-- END -->
 
-	<h1># END</h1>
+	<br>
+	<div class="ux-section">
+		<h1># END</h1>
+	</div>
 
-<br>
-<br>
+	<br>
+	<br>
 
 </div>
 
