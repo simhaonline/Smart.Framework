@@ -13,12 +13,21 @@
 }
 
 .fa {
+	font-family: 'FontAwesome' !important;
+	font-style: normal !important;
+	font-weight: normal !important;
+	font-variant: normal !important;
 	display: inline-block;
-	font: normal normal normal 14px/1 FontAwesome !important;
-	font-size: inherit;
+	font-size: 14px;
+	line-height: 1;
+	text-decoration: none;
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .fa-sm {

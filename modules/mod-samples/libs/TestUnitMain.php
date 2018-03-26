@@ -65,8 +65,8 @@ final class TestUnitMain {
 		$basic_form_start 	= '<form class="ux-form ux-inline-block" id="form_for_test" action="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.main&tab=1'.'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='.SMART_FRAMEWORK_URL_VALUE_ENABLED.'" method="post" target="_blank"><input type="hidden" name="testformdata[test]" value="Testing ..."><input type="hidden" name="testformdata[another-test]" value="Testing more ...">';
 		$basic_form_end 	= '</form>';
 		//--
-		$basic_form_send_modal = '<input class="ux-button ux-button-info" style="min-width:320px;" type="submit" value="Submit Form (with Confirmation / Modal)" OnClick="'.\SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [MODAL] ?</b></h3></div>', 'my_form').'">';
-		$basic_form_send_popup = '<input class="ux-button ux-button-dark" style="min-width:320px;" type="submit" value="Submit Form (with Confirmation / PopUp)" OnClick="'.\SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [POPUP] ?</b></h3></div>', 'my_form', '780', '420', '1').'">';
+		$basic_form_send_modal = '<input class="ux-button ux-button-info" style="min-width:320px;" type="submit" value="Submit Form with Confirmation / Modal" OnClick="'.\SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [MODAL] ?</b></h3></div>', 'my_form').'">';
+		$basic_form_send_popup = '<input class="ux-button ux-button-dark" style="min-width:320px;" type="submit" value="Submit Form with Confirmation / PopUp" OnClick="'.\SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [POPUP] ?</b></h3></div>', 'my_form', '780', '420', '1').'">';
 		//--
 
 		//-- ajax post form
