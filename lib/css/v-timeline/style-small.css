@@ -1,6 +1,6 @@
 
 /***** V-TimeLine CSS - Small :: v.3.7.5 r.2018.03.09 / smart.framework.v.3.7 *****/
-/* V-TimeLine
+/* V-TimeLine r.180326
 	License: BSD
 	(c) 2015-2018 unix-world.org
 */
@@ -22,8 +22,9 @@
 	width: 24px;
 	height: 24px;
 	margin-left: 9px;
-	margin-top: 9px;
+	margin-top: 7px;
 	text-align:center;
+	font-size: 20px;
 }
 
 .vtml-timeline-content {
