@@ -2,7 +2,7 @@
 /*
  *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
- *  @modified by: unixman: r.170509
+ *  @modified by: unixman: r.180326
  */
 
 @font-face {
@@ -19,7 +19,7 @@
 	font-variant: normal !important;
 	display: inline-block;
 	font-size: 14px;
-	line-height: 1;
+	line-height: inherit; /* fix: original line height was 1, but use inherit is better for most of the situations */
 	text-decoration: none;
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased;
@@ -31,25 +31,25 @@
 }
 
 .fa-sm {
-	font-size: 0.93em !important;
+	font-size: 12px !important;
 }
 .fa-lg {
-	font-size: 1.125em !important;
+	font-size: 18px !important;
 }
 .fa-xl {
-	font-size: 1.5em !important;
+	font-size: 24px !important;
 }
 .fa-2x {
-	font-size: 2em !important;
+	font-size: 28px !important;
 }
 .fa-3x {
-	font-size: 3em !important;
+	font-size: 42px !important;
 }
 .fa-4x {
-	font-size: 4em !important;
+	font-size: 56px !important;
 }
 .fa-5x {
-	font-size: 5em !important;
+	font-size: 70px !important;
 }
 
 /* -- below content unmodified */
