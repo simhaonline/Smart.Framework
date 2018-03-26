@@ -17,11 +17,11 @@ modules/mod-sm-twitter
 modules/mod-vanilla
 modules/mod-agile
 modules/mod-svn
-modules/mod-kml
-modules/mod-maps-cache
 modules/mod-ui-w3
 modules/mod-cloud
 modules/mod-cms
+modules/mod-kml
+modules/mod-maps-cache
 modules/mod-tests
 modules/vendor
 !.gitignore
