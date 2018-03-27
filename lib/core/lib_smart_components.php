@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180309
+ * @version 	v.180327
  * @package 	Components:Core
  *
  */
@@ -658,7 +658,7 @@ public static function html_selector_yes_no($y_var, $y_val) {
 	$y_var = (string) trim((string)$y_var);
 	$y_val = (string) strtolower(trim((string)$y_val));
 	//--
-	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
+	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages'); // OK.rev2
 	//--
 	$txt_y = (string) $translator_core_messages->text('yes');
 	$txt_n = (string) $translator_core_messages->text('no');
@@ -667,23 +667,26 @@ public static function html_selector_yes_no($y_var, $y_val) {
 	$sel_y = '';
 	$sel_n = '';
 	if((string)$y_val == 'y') {
-		$code = (string) $txt_y;
+		$code = (string) Smart::escape_html($txt_y);
 		$sel_y = ' checked';
 	} else{ // 'n' | ''
-		$code = (string) $txt_n;
+		$code = (string) Smart::escape_html($txt_n);
 		$sel_n = ' checked';
 	} //end if
 	//--
 	if((string)$y_var != '') { // if var is non empty, show radio buttons else show just Yes or No
-		$code = SmartMarkersTemplating::render_template(
-			'[####TXT-YES####]<input type="radio" name="[####THE-VAR####]" value="y"[####SEL-YES####]>  &nbsp;&nbsp; [####TXT-NO####]<input type="radio" name="[####THE-VAR####]" value="n"[####SEL-NO####]>',
+		$code = SmartMarkersTemplating::render_file_template(
+			'lib/core/templates/html-selector-yntf.inc.htm',
 			[
 				'TXT-YES' 	=> (string) $txt_y,
 				'TXT-NO' 	=> (string) $txt_n,
-				'THE-VAR' 	=> (string) Smart::escape_html((string)$y_var),
+				'THE-VAR' 	=> (string) $y_var,
 				'SEL-YES' 	=> (string) $sel_y,
-				'SEL-NO' 	=> (string) $sel_n
-			]
+				'SEL-NO' 	=> (string) $sel_n,
+				'VAL-YES' 	=> (string) 'y',
+				'VAL-NO' 	=> (string) 'n'
+			],
+			'yes' // export to cache
 		);
 	} //end if else
 	//--
@@ -710,7 +713,7 @@ public static function html_selector_true_false($y_var, $y_val) {
 	$y_var = (string) trim((string)$y_var);
 	$y_val = (string) strtolower(trim((string)$y_val));
 	//--
-	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
+	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages'); // OK.rev2
 	//--
 	$txt_y = (string) $translator_core_messages->text('yes');
 	$txt_n = (string) $translator_core_messages->text('no');
@@ -719,23 +722,26 @@ public static function html_selector_true_false($y_var, $y_val) {
 	$sel_y = '';
 	$sel_n = '';
 	if((string)$y_val == '1') {
-		$code = (string) $txt_y;
+		$code = (string) Smart::escape_html($txt_y);
 		$sel_y = ' checked';
 	} else{ // '0' | ''
-		$code = (string) $txt_n;
+		$code = (string) Smart::escape_html($txt_n);
 		$sel_n = ' checked';
 	} //end if
 	//--
 	if((string)$y_var != '') { // if var is non empty, show radio buttons else show just Yes or No
-		$code = SmartMarkersTemplating::render_template(
-			'[####TXT-YES####]<input type="radio" name="[####THE-VAR####]" value="1"[####SEL-YES####]>  &nbsp;&nbsp; [####TXT-NO####]<input type="radio" name="[####THE-VAR####]" value="0"[####SEL-NO####]>',
+		$code = SmartMarkersTemplating::render_file_template(
+			'lib/core/templates/html-selector-yntf.inc.htm',
 			[
 				'TXT-YES' 	=> (string) $txt_y,
 				'TXT-NO' 	=> (string) $txt_n,
-				'THE-VAR' 	=> (string) Smart::escape_html((string)$y_var),
+				'THE-VAR' 	=> (string) $y_var,
 				'SEL-YES' 	=> (string) $sel_y,
-				'SEL-NO' 	=> (string) $sel_n
-			]
+				'SEL-NO' 	=> (string) $sel_n,
+				'VAL-YES' 	=> (string) '1',
+				'VAL-NO' 	=> (string) '0'
+			],
+			'yes' // export to cache
 		);
 	} //end if else
 	//--
@@ -1265,7 +1271,7 @@ private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $
 		} //end if
 	} //end if
 	//--
-	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts');
+	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts'); // OK.rev2
 	//--
 	$txt_start 	= (string) $translator_core_nav_texts->text('start');
 	$txt_prev 	= (string) $translator_core_nav_texts->text('prev');
@@ -1473,7 +1479,7 @@ private static function html_navpager_type_numeric($tpl, $link, $total, $limit, 
 		} //end if
 	} //end if
 	//--
-	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts');
+	$translator_core_nav_texts = SmartTextTranslations::getTranslator('@core', 'nav_texts'); // OK.rev2
 	//--
 	if($total > 0) {
 		//--
@@ -2182,7 +2188,7 @@ public static function js_ajax_submit_html_form($y_form_id, $y_script_url, $y_co
  */
 public static function js_ajax_replyto_html_form($y_status, $y_title, $y_message, $y_redirect_url='', $y_replace_div='', $y_replace_html='', $y_js_evcode='') {
 	//--
-	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages');
+	$translator_core_messages = SmartTextTranslations::getTranslator('@core', 'messages'); // OK.rev2
 	//--
 	if((string)$y_status == 'OK') {
 		$y_status = 'OK';
@@ -2368,7 +2374,7 @@ public static function js_code_confirm_form_submit($y_question, $y_popuptarget='
  */
 public static function js_code_init_away_page($y_question='') {
 	//--
-	$translator_core_js_messages = SmartTextTranslations::getTranslator('@core', 'js_messages');
+	$translator_core_js_messages = SmartTextTranslations::getTranslator('@core', 'js_messages'); // OK.rev2
 	//--
 	if((string)$y_question == '') {
 		$y_question = $translator_core_js_messages->text('page_away');

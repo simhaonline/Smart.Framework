@@ -17,6 +17,7 @@ define('SMART_APP_MODULE_DIRECT_OUTPUT', true); // do direct output
 
 /**
  * Admin Controller (direct output)
+ * @ignore
  */
 class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCardDavFs {
 

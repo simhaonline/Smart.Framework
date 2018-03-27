@@ -182,6 +182,8 @@ final class TestUnitMain {
 				'TEST-ELEMENTS_NORMAL-LIST-M' 				=> (string) $test_normal_list_m,
 				'TEST-ELEMENTS_CALENDAR' 					=> 'Calendar Selector: '.\SmartComponents::html_js_date_field('frm_calendar_id', 'frm[date]', \Smart::escape_html($frm['date']), 'Select Date', "'0d'", "'1y'", '', 'alert(\'You selected the date: \' + date);'),
 				'TEST-ELEMENTS_TIMEPICKER' 					=> 'TimePicker Selector: '.\SmartComponents::html_js_time_field('frm_timepicker_id', 'frm[time]', \Smart::escape_html($frm['time']), 'Select Time', '9', '19', '0', '55', '5', '3', '', 'alert(\'You selected the time: \' + time);'),
+				'TEST-ELEMENTS-YES_NO' 						=> \SmartComponents::html_selector_yes_no('yes_or_no', 'y'),
+				'TEST-ELEMENTS-TRUE_FALSE' 					=> \SmartComponents::html_selector_true_false('true_or_false', '0'),
 				'TEST-ELEMENTS_AUTOCOMPLETE-SINGLE' 		=> 'AutoComplete Single: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;"><script type="text/javascript">'.\SmartComponents::js_code_init_select_autocomplete_single('auto-complete-fld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
 				'TEST-ELEMENTS_AUTOCOMPLETE-MULTI'			=> 'Autocomplete Multi: '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;"><script type="text/javascript">'.\SmartComponents::js_code_init_select_autocomplete_multi('auto-complete-mfld', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
 				'TEST-elements_Captcha' 					=> (string) \SmartCaptchaFormCheck::captcha_form(SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captchaFormName()),

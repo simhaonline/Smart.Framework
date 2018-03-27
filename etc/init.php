@@ -22,6 +22,7 @@ define('SMART_SOFTWARE_NAMESPACE', 			'smartframework.default');						// APP Nam
 define('SMART_ERROR_HANDLER', 				'dev'); 										// Error Handler mode: 'log' | 'dev' :: for production is recommended to use 'log' as it will show a blank page with a 500 Internal Server Error message ; for development or debugging use 'dev' but this will display an error with a HTTP 200 OK
 //--------------------------------------- TIMEZONE
 define('SMART_FRAMEWORK_TIMEZONE', 			'UTC'); 										// The timezone for PHP (Example: Europe/London) ; default is: UTC
+define('SMART_FRAMEWORK_DEFAULT_LANG', 		'en');											// The default language for translations (as language ID) ; must be a valid language ID defined in config.php
 //--------------------------------------- SECURITY
 define('SMART_FRAMEWORK_SECURITY_FILTER_INPUT', '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/');			// Safe Unicode Filter Input Variables (Strings) as: remove all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
 define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// Security Key ; *** YOU HAVE TO CHANGE IT *** ; will be used to generate secure hashes

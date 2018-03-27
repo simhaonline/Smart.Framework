@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.180310
+ * @version 	v.180326
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)										# count documents in a collection
@@ -43,7 +43,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)					# modify single or many document(s) in a collection that are matching the filter criteria
  * @method MIXED		delete($strCollection, $arrFilter)										# delete single or many document(s) from a collection that are matching the filter criteria
  * @method MIXED		command($arrCmd)														# run a command over database like: distinct, groupBy, mapReduce, createCollection, dropCollection
- * @method MIXED		igcommand($arrCmd)														# run a command over database (but in case of error will ignore stop execution and will return the errors instead of result) like: createCollection which may throw errors if collection already exists, dropCollection (similar if does not exists), ...
+ * @method MIXED		igcommand($arrCmd)														# run a command over database (but in case of error will ignore stop execution and will return the errors instead of result) like: createCollection which may throw errors if collection already exists, dropCollection (similar if does not exists)
  *
  */
 final class SmartMongoDb {

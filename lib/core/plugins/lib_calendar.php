@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160827
+ * @version 	v.180327
  * @package 	Components:Calendar
  *
  */
@@ -91,7 +91,7 @@ private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_high
 		'12' => $translator_core_calendar->text('m_12')
 	));
 	//-- set days
-	if((string)$y_mode == 'small') {
+	if((string)$y_mode == 'small') { // short day names
 		$calendar->setDayNames(array(
 			0 => SmartUnicode::sub_str($translator_core_calendar->text('w_1'), 0, 2),
 			1 => SmartUnicode::sub_str($translator_core_calendar->text('w_2'), 0, 2),
@@ -101,7 +101,7 @@ private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_high
 			5 => SmartUnicode::sub_str($translator_core_calendar->text('w_6'), 0, 2),
 			6 => SmartUnicode::sub_str($translator_core_calendar->text('w_7'), 0, 2)
 		));
-	} else {
+	} else { // full day names
 		$calendar->setDayNames(array(
 			0 => $translator_core_calendar->text('w_1'),
 			1 => $translator_core_calendar->text('w_2'),
@@ -153,7 +153,7 @@ private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_high
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.160827
+ * @version 	v.180327
  * @package 	Components:Calendar
  *
  */
@@ -387,7 +387,7 @@ final class SmartHTMLCalendar {
 		if(!$this->is_mobile) {
 			//--
 			for($i=0; $i<7; $i++) {
-				$out .= '<th>'.$wdays[$i].'</th>';
+				$out .= '<th>'.Smart::escape_html($wdays[$i]).'</th>';
 			} //end for
 			//--
 		} //end if
@@ -421,7 +421,7 @@ final class SmartHTMLCalendar {
 			if(!$this->is_mobile) {
 				$dayname = '';
 			} else {
-				$dayname = $wdays[$index_wday]; // display day name on mobile
+				$dayname = (string) $wdays[$index_wday]; // display day name on mobile
 			} //end if else
 			//--
 			if(($i == date('j')) && ($this->now['mon'] == date('n')) && ($this->now['year'] == date('Y'))) {
@@ -438,7 +438,7 @@ final class SmartHTMLCalendar {
 			$out .= '<div id="'.'the_dayHeader_'.date('Y_m_d', $datetime).'" class="SCalendarDayHead">';
 			$out .= '&nbsp;'.$i;
 			if((string)$dayname != '') {
-				$out .= '&nbsp;'.$dayname;
+				$out .= '&nbsp;'.Smart::escape_html($dayname);
 			} //end if
 			if((string)$this->extra_day_txt_arr[$i] != '') {
 				$out .= '&nbsp;'.$this->extra_day_txt_arr[$i];
@@ -487,7 +487,7 @@ final class SmartHTMLCalendar {
 		$month = date('m', $datetime);
 		$year = date('Y', $datetime);
 		//--
-		return (string) $this->month_names[$month].'&nbsp;&nbsp;'.$year;
+		return (string) Smart::escape_html($this->month_names[$month]).'&nbsp;&nbsp;'.Smart::escape_html($year);
 		//--
 	} //END FUNCTION
 

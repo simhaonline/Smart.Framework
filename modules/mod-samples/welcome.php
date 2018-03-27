@@ -137,7 +137,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$translator_core 			= SmartTextTranslations::getTranslator('@core', 'messages');
 		//--
 		$translator_mod_samples 	= SmartTextTranslations::getTranslator('mod-samples', 'samples');
-		$txt_hello_world = $translator_mod_samples->text('hello-world', false, 'en'); // get key with defaults (escape HTML) + fallback on english if not found
+		$txt_hello_world = $translator_mod_samples->text('hello-world'); // get key with defaults (escape HTML) + fallback on english if not found
 		unset($translator_mod_samples); // this is just an internal test, normally the translator should not be unset ...
 		$translator_mod_samples 	= SmartTextTranslations::getTranslator('mod-samples', 'samples');
 		$txt_this_is = $translator_mod_samples->text('this-is');

@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.180319
+ * @version 	v.180327
  * @package 	Application
  *
  */
@@ -590,7 +590,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.180319
+ * @version 	v.180327
  *
  * @access 		private
  * @internal
@@ -642,13 +642,17 @@ final class SmartTextTranslator {
 	} //END FUNCTION
 
 
-	// Texts are automatically HTML Escaped, except if the 2nd param is set to TRUE to get them as RAW ...
-	public function text($y_textkey, $y_raw=false, $y_fallback_language='') {
+	// texts are returned as raw, they must be escaped when used with HTML or JS
+	public function text($y_textkey, $y_fallback_language='@default') {
 		//--
 		if((string)$y_textkey == '') {
 			Smart::log_warning('Empty Key for Text Context Translator - Area: '.$this->area.' ; SubArea: '.$this->subarea);
 			return '{Empty Translation Key}';
 		} //end if
+		//--
+		if((string)$y_fallback_language == '@default') {
+			$y_fallback_language = (string) SMART_FRAMEWORK_DEFAULT_LANG;
+		} //end if else
 		//--
 		$text = (string) SmartTextTranslations::getTranslationByKey($this->area, $this->subarea, (string)$y_textkey, $this->language);
 		if(((string)trim((string)$text) == '') AND ((string)$y_fallback_language != '') AND ((string)$y_fallback_language != (string)$this->language)) {
@@ -657,10 +661,6 @@ final class SmartTextTranslator {
 		if((string)trim((string)$text) == '') {
 			Smart::log_warning('Undefined Key: ['.$y_textkey.'] for Text Context Translator ['.$this->language.'] - Area: '.$this->area.' ; SubArea: '.$this->subarea);
 			$text = '{Undefined Translation Key ['.$this->language.']: '.$y_textkey.'}';
-		} //end if
-		//--
-		if($y_raw !== true) {
-			$text = (string) Smart::escape_html((string)$text);
 		} //end if
 		//--
 		return (string) $text;

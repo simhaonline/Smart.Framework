@@ -18,7 +18,10 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //===================================================================================== CLASS START
 //=====================================================================================
 
-
+/**
+ * Dav Adm Controller CalDAV-Fs
+ * @ignore
+ */
 abstract class ControllerAdmCalDavFs extends \SmartAbstractAppController {
 
 	// v.180309

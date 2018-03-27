@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.5'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.03.26'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.03.27'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -88,6 +88,10 @@ if(!preg_match('/^[_a-z0-9\-\.]+$/', (string)SMART_SOFTWARE_NAMESPACE)) {
 //--
 if(!defined('SMART_FRAMEWORK_TIMEZONE')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_TIMEZONE');
+} //end if
+//--
+if(!defined('SMART_FRAMEWORK_DEFAULT_LANG')) {
+	define('SMART_FRAMEWORK_DEFAULT_LANG', 'en');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_SECURITY_KEY')) {
