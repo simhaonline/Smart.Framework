@@ -20,6 +20,7 @@ modules/mod-svn
 modules/mod-ui-w3
 modules/mod-cloud
 modules/mod-cms
+modules/mod-page-builder
 modules/mod-kml
 modules/mod-maps-cache
 modules/mod-tests
