@@ -2,7 +2,7 @@
  * jQuery Simple Dialog (SmartLightUI)
  * (c) 2015-2017 unix-world.org
  * License: BSD
- * v.170908
+ * v.180329
  */
 
 /* Overlay */
@@ -96,6 +96,10 @@
 }
 #simpledialog-container .buttons div:hover {
 	border: 1px solid #888888;
+}
+#simpledialog-container .buttons div span.uicon, #simpledialog-container .buttons div span.uiconx { /* fix to prevent webkit colored icons */
+	color: transparent !important;
+	text-shadow: 0 0 0 #333333 !important;
 }
 #simpledialog-container a.modal-close,
 #simpledialog-container a.modal-close:link,

@@ -62,6 +62,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 					[
 						'TITLE' => $title,
 						'VIEWS-PATH' => (string) $this->ControllerGetParam('module-view-path'),
+						'NUMBER' => (rand(0,1)) ? '1' : '-1',
 						'MARKER' => Smart::json_encode('<a>&amp;1234567890.コアテスト·スイート.abcdefghijklmniopqrstuvwxyz:'.date('Y-m-d H:i:s').':~`!@#$%^&*()_-+={}[]|,.?</a>'),
 						'TEXTSTR' => '1234567890 . コアテスト·スイート . abcdefghijklmniopqrstuvwxyz',
 						'MARK-AREA' => 'php',

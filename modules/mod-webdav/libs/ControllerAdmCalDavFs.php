@@ -24,7 +24,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 abstract class ControllerAdmCalDavFs extends \SmartAbstractAppController {
 
-	// v.180309
+	// v.180328
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';
@@ -37,7 +37,7 @@ abstract class ControllerAdmCalDavFs extends \SmartAbstractAppController {
 	private $dav_is_root_path = true;
 
 
-	public function DavFsRunServer($dav_fs_root_path, $show_usage_quota=false, $nfo_title='DAV@webICalendar', $nfo_signature='Smart.Framework::CalDAV', $nfo_prefix_crrpath='DAV:', $nfo_lnk_welcome='', $nfo_txt_welcome='CalDAV :: Home', $nfo_svg_logo='modules/mod-webdav/libs/img/ical.svg') {
+	final public function DavFsRunServer($dav_fs_root_path, $show_usage_quota=false, $nfo_title='DAV@webICalendar', $nfo_signature='Smart.Framework::CalDAV', $nfo_prefix_crrpath='DAV:', $nfo_lnk_welcome='', $nfo_txt_welcome='CalDAV :: Home', $nfo_svg_logo='modules/mod-webdav/libs/img/ical.svg') {
 
 		//-- set nocache headers
 		header('Cache-Control: no-cache'); // HTTP 1.1

@@ -56,7 +56,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.180319
+ * @version 	v.180330
  * @package 	Templating:Engines
  *
  */
@@ -803,6 +803,10 @@ private static function have_subtemplate($mtemplate) {
 [####MARKER####]
 [####MARKER|bool####]
 [####MARKER|int####]
+[####MARKER|dec1####]
+[####MARKER|dec2####]
+[####MARKER|dec3####]
+[####MARKER|dec4####]
 [####MARKER|num####]
 [####MARKER|htmid####]
 [####MARKER|jsvar####]
@@ -831,7 +835,7 @@ private static function replace_marker($mtemplate, $key, $val) { // v.180319
 	//-- {{{SYNC-TPL-EXPR-MARKER}}}
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?(\|url|\|js)?(\|js|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
+		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|dec[1-4]{1}|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?(\|url|\|js)?(\|js|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
 		//--
 		if((string)$val != '') {
 			//--
@@ -888,6 +892,15 @@ private static function replace_marker($mtemplate, $key, $val) { // v.180319
 					} //end if else
 				} elseif((string)$matches[1] == '|int') { // Integer
 					$val = (string) (int) $val;
+				} elseif(substr((string)$matches[1], 0, 4) == '|dec') {
+					$xnum = Smart::format_number_int((int)substr((string)$matches[1], 4), '+');
+					if($xnum < 1) {
+						$xnum = 1;
+					} elseif($xnum > 4) {
+						$xnum = 4;
+					} //end if
+					$val = (string) Smart::format_number_dec((string)$val, (int)$xnum, '.', '');
+					unset($xnum);
 				} elseif((string)$matches[1] == '|num') { // Number (Float / Decimal / Integer)
 					$val = (string) (float) $val;
 				} elseif((string)$matches[1] == '|htmid') { // HTML ID
@@ -911,9 +924,9 @@ private static function replace_marker($mtemplate, $key, $val) { // v.180319
 						if($xnum < 5) {
 							$xnum = 5;
 						} //end if
-						$val= (string) Smart::text_cut_by_limit((string)$val, (int)$xnum, false, '...');
+						$val = (string) Smart::text_cut_by_limit((string)$val, (int)$xnum, false, '...');
 					} else { // '|substr'
-						$val= (string) Smart::text_cut_by_limit((string)$val, (int)$xnum, true, '');
+						$val = (string) Smart::text_cut_by_limit((string)$val, (int)$xnum, true, '');
 					} //end if else
 					unset($xnum);
 				} //end if

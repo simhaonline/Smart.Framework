@@ -140,6 +140,7 @@
 var sub_tpl_path = "[####VIEWS-PATH|js####]templating-test-partial.inc.htm";
 var the_marker = '[####MARKER|js####]';
 var the_textstr = '[####TEXTSTR|js####]';
+var the_number = [####NUMBER|num####];
 jQuery.ajax({
 	async: true,
 	cache: false,
@@ -152,6 +153,7 @@ jQuery.ajax({
 		var tpl = SmartJS_CoreUtils.render_markers_template(msg, {
 			'MARKER': the_marker,
 			'TEXTSTR' : the_textstr,
+			'NUMBER': the_number,
 			'MARK-AREA': 'js'
 		});
 		//console.log('JS-TPL Renderer [' + the_marker + ']:\n' + tpl);

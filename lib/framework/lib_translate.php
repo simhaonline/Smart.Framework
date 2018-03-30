@@ -590,7 +590,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.180327
+ * @version 	v.180330
  *
  * @access 		private
  * @internal
