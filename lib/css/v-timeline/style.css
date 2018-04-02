@@ -27,7 +27,7 @@
 
 #vtml-timeline {
 	position: relative;
-	padding: 2em 0;
+	padding: 2rem 0;
 }
 #vtml-timeline::before {
 	content: '';
@@ -41,7 +41,7 @@
 
 .vtml-timeline-block {
 	position: relative;
-	margin: 2em 0;
+	margin: 2rem 0;
 }
 .vtml-timeline-block:after {
 	content: "";
@@ -108,8 +108,8 @@
 	position: relative;
 	margin-left: 60px;
 	background: #F5F6F8;
-	border-radius: 0.15em;
-	padding: 1em;
+	border-radius: 0.15rem;
+	padding: 1rem;
 }
 .vtml-timeline-content:after {
 	content: "";
@@ -122,22 +122,22 @@
 }
 .vtml-timeline-content p, .vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
 	font-size: 14px;
-	/* @alternate */ font-size: 0.875em;
+	/* @alternate */ font-size: 0.875rem;
 	text-align: justify;
 }
 .vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
 	display: inline-block;
 }
 .vtml-timeline-content p {
-	margin: 1em 0;
+	margin: 1rem 0;
 	line-height: 1.6;
 }
 .vtml-timeline-content .vtml-read-more {
 	float: right;
-	padding: 0.5em 0.7em;
+	padding: 0.5rem 0.7rem;
 	background: #76747F;
 	color: #FFFFFF;
-	border-radius: 0.15em;
+	border-radius: 0.15rem;
 	text-decoration: none;
 	font-weight: bold;
 	font-style: italic;
@@ -148,9 +148,9 @@
 .vtml-timeline-content .vtml-date {
 	font-weight: bold;
 	float: left;
-	padding: 0.8em 0;
+	padding: 0.8rem 0;
 	font-size: 16px;
-	/* @alternate */ font-size: 1em;
+	/* @alternate */ font-size: 1rem;
 }
 .vtml-timeline-content::before {
 	content: '';

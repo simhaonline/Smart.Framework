@@ -80,17 +80,17 @@
 #markdown blockquote {
 	background: #F9F9F9;
 	border-left: 10px solid #CCCCCC;
-	margin: 1.5em 10px;
-	padding: 0.5em 10px;
+	margin: 1.5rem 10px;
+	padding: 0.5rem 10px;
 	quotes: "\201C""\201D""\2018""\2019";
 }
 #markdown blockquote:before {
 	color: #CCCCCC;
 	content: open-quote;
-	font-size: 4em;
-	line-height: 0.1em;
-	margin-right: 0.25em;
-	vertical-align: -0.4em;
+	font-size: 4rem;
+	line-height: 0.1rem;
+	margin-right: 0.25rem;
+	vertical-align: -0.4rem;
 }
 #markdown blockquote p {
 	display: inline;

@@ -28,28 +28,28 @@
 }
 
 .vtml-timeline-content {
-	padding: 0.75em;
+	padding: 0.75rem;
 }
 
 .vtml-timeline-content p, .vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
-	font-size: 0.813em;
+	font-size: 0.813rem;
 	text-align: initial;
 }
 
 .vtml-timeline-content p {
-	margin: 0.25em 0;
+	margin: 0.25rem 0;
 	line-height: 1.4;
 }
 
 .vtml-timeline-content .vtml-date {
 	padding: 0;
-	font-size: 0.938em;
+	font-size: 0.938rem;
 }
 
 .vtml-timeline-content h2 {
 	display: inline !important;
 	color: #222222;
-	font-size: 1.125em;
+	font-size: 1.125rem;
 }
 
 /* END */

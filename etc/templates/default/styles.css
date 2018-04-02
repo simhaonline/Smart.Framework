@@ -1,5 +1,11 @@
 
-/* ------------------------------------------------ CSS3, Base Styles START :: r.170426 */
+/* ------------------------------------------------ CSS3, Base Styles START :: r.180402 */
+
+/* IMPORTANT: !! FOR A VERY CLEAR READABILITY OF PAGE FONTS !!
+ * except the main body and main elements sizes (sized in pixels),
+ * if relative font sizes are needed, they are recommended to be expressed using HTML5 'rem' (relative to root size)
+ * instead of the old 'em' (relative to parent size)
+ */
 
 * {
 	font-smooth: always;
@@ -98,11 +104,11 @@ input[type="text"]:disabled {
 }
 /***
 label {
-	font-size: 12px;
+	font-size: 0.9rem;
 	font-weight: normal;
 }
 textarea {
-	font-size:12px;
+	font-size: 0.9rem;
 	background-color: #FEFEFE;
 	color: #000000;
 	border: 1px;
@@ -110,7 +116,7 @@ textarea {
 	border-color: #CCCCCC;
 }
 select {
-	font-size:12px;
+	font-size: 0.9rem;
 	background-color: #FEFEFE;
 	color: #666666;
 	border: 1px;
@@ -118,7 +124,7 @@ select {
 	border-color: #CCCCCC;
 }
 input {
-	font-size:11px;
+	font-size: 0.9rem;
 	background-color: #FFFFFF;
 	color: #000000;
 	border: 1px;
@@ -126,7 +132,7 @@ input {
 	border-color: #CCCCCC;
 }
 input[type=submit], input[type=button] {
-	font-size:11px;
+	font-size: 0.9rem;
 	font-weight: bold;
 	background-color: #FFFFFF;
 	color: #778899;

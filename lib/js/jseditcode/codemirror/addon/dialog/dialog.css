@@ -3,7 +3,7 @@
   left: 0; right: 0;
   background: inherit;
   z-index: 15;
-  padding: .1em .8em;
+  padding: 0.1rem 0.8rem;
   overflow: hidden;
   color: inherit;
 }

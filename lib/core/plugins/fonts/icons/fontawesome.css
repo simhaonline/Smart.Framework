@@ -55,13 +55,13 @@
 /* -- below content unmodified */
 
 .fa-fw {
-	width: 1.28571429em;
+	width: 1.28571429rem;
 	text-align: center;
 }
 
 .fa-ul {
 	padding-left: 0;
-	margin-left: 2.14285714em;
+	margin-left: 2.14285714rem;
 	list-style-type: none;
 }
 .fa-ul > li {
@@ -69,18 +69,18 @@
 }
 .fa-li {
 	position: absolute;
-	left: -2.14285714em;
-	width: 2.14285714em;
-	top: 0.14285714em;
+	left: -2.14285714rem;
+	width: 2.14285714rem;
+	top: 0.14285714rem;
 	text-align: center;
 }
 .fa-li.fa-lg {
-	left: -1.85714286em;
+	left: -1.85714286rem;
 }
 .fa-border {
-	padding: .2em .25em .15em;
-	border: solid 0.08em #eeeeee;
-	border-radius: .1em;
+	padding: 0.2rem 0.25rem 0.15rem;
+	border: solid 0.08rem #eeeeee;
+	border-radius: 0.1rem;
 }
 .fa-pull-left {
 	float: left;
@@ -89,10 +89,10 @@
 	float: right;
 }
 .fa.fa-pull-left {
-	margin-right: .3em;
+	margin-right: 0.3rem;
 }
 .fa.fa-pull-right {
-	margin-left: .3em;
+	margin-left: 0.3rem;
 }
 /* Deprecated as of 4.4.0 */
 .pull-right {
@@ -102,10 +102,10 @@
 	float: left;
 }
 .fa.pull-left {
-	margin-right: .3em;
+	margin-right: 0.3rem;
 }
 .fa.pull-right {
-	margin-left: .3em;
+	margin-left: 0.3rem;
 }
 .fa-spin {
 	-webkit-animation: fa-spin 2s infinite linear;
@@ -175,9 +175,9 @@
 .fa-stack {
 	position: relative;
 	display: inline-block;
-	width: 2em;
-	height: 2em;
-	line-height: 2em;
+	width: 2rem;
+	height: 2rem;
+	line-height: 2rem;
 	vertical-align: middle;
 }
 .fa-stack-1x,
@@ -191,7 +191,7 @@
 	line-height: inherit;
 }
 .fa-stack-2x {
-	font-size: 2em;
+	font-size: 2rem;
 }
 .fa-inverse {
 	color: #ffffff;

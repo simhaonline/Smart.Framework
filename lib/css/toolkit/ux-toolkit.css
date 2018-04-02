@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180331), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.180402), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -422,7 +422,7 @@ a.ux-link:hover {
 
 	.ux-button-responsive {
 		width: 98% !important;
-		margin: 0.7em 0 0;
+		margin: 0.7rem 0 0;
 	}
 
 }
@@ -440,7 +440,7 @@ a.ux-link:hover {
 .ux-table caption {
 	color: #000;
 	font-size: 85%/1;
-	padding: 1em 0;
+	padding: 1rem 0;
 	text-align: center;
 }
 
@@ -451,7 +451,7 @@ a.ux-link:hover {
 	font-size: inherit;
 	margin: 0;
 	overflow: visible; /*to make ths where the title is really long work*/
-	padding: 0.5em 1em; /* cell padding */
+	padding: 0.5rem 1rem; /* cell padding */
 }
 
 /* Consider removing this next declaration block, as it causes problems when
@@ -604,7 +604,7 @@ so we can ignore the csslint warning.
 	font-weight: normal;
 	font-size: 100%;
 	padding: 3px;
-/*	padding: 0.5em 0.6em; */
+/*	padding: 0.5rem 0.6rem; */
 	display: inline-block;
 	border: 1px solid #ccc;
 /*	box-shadow: inset 0 1px 3px #ddd; */
@@ -627,7 +627,7 @@ Need to separate out the :not() selector from the rest of the CSS 2.1 selectors
 since IE8 won't execute CSS that contains a CSS3 selector.
 */
 .ux-form input:not([type]) {
-	padding: 0.5em 0.6em;
+	padding: 0.5rem 0.6rem;
 	display: inline-block;
 	border: 1px solid #ccc;
 	box-shadow: inset 0 1px 3px #ddd;
@@ -641,7 +641,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 /* Chrome (as of v.32/34 on OS X) needs additional room for color to display. */
 /* May be able to remove this tweak as color inputs become more standardized across browsers. */
 .ux-form input[type="color"] {
-	padding: 0.2em 0.5em;
+	padding: 0.2rem 0.5rem;
 }
 
 
@@ -684,7 +684,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 }
 .ux-form .ux-checkbox,
 .ux-form .ux-radio {
-	margin: 0.5em 0;
+	margin: 0.5rem 0;
 	display: block;
 }
 
@@ -744,7 +744,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 }
 .ux-form select {
 	/* Normalizes the height; padding is not sufficient. */
-	height: 2em;
+	height: 2rem;
 	border: 1px solid #ccc;
 	background-color: white;
 }
@@ -752,18 +752,18 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	height: auto;
 }
 .ux-form label {
-	margin: 0.5em 0 0.2em;
+	margin: 0.5rem 0 0.2rem;
 }
 .ux-form fieldset {
 	margin: 0;
-	padding: 0.35em 0 0.75em;
+	padding: 0.35rem 0 0.75rem;
 	border: 0;
 }
 .ux-form legend {
 	display: block;
 	width: 100%;
-	padding: 0.3em 0;
-	margin-bottom: 0.3em;
+	padding: 0.3rem 0;
+	margin-bottom: 0.3rem;
 	color: #333;
 	border-bottom: 1px solid #e5e5e5;
 }
@@ -787,7 +787,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 .ux-form-stacked label,
 .ux-form-stacked textarea {
 	display: block;
-	margin: 0.25em 0;
+	margin: 0.25rem 0;
 }
 
 /*
@@ -796,7 +796,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 */
 .ux-form-stacked input:not([type]) {
 	display: block;
-	margin: 0.25em 0;
+	margin: 0.25rem 0;
 }
 .ux-form-aligned input,
 .ux-form-aligned textarea,
@@ -815,24 +815,24 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 
 /* Aligned Forms */
 .ux-form-aligned .ux-control-group {
-	margin-bottom: 0.5em;
+	margin-bottom: 0.5rem;
 }
 .ux-form-aligned .ux-control-group label {
 	text-align: right;
 	display: inline-block;
 	vertical-align: middle;
-	width: 10em;
-	margin: 0 1em 0 0;
+	width: 10rem;
+	margin: 0 1rem 0 0;
 }
 .ux-form-aligned .ux-controls {
-	margin: 1.5em 0 0 11em;
+	margin: 1.5rem 0 0 11rem;
 }
 
 /* Rounded Inputs */
 .ux-form input.ux-input-rounded,
 .ux-form .ux-input-rounded {
 	border-radius: 9px;
-	padding: 0.5em 1em;
+	padding: 0.5rem 1rem;
 }
 
 /* Grouped Inputs */
@@ -872,7 +872,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	margin: 0;
 }
 .ux-form .ux-group button {
-	margin: 0.35em 0;
+	margin: 0.35rem 0;
 }
 
 .ux-form .ux-input-1-1 {
@@ -904,17 +904,17 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 .ux-form .ux-help-inline,
 .ux-form-message-inline {
 	display: inline-block;
-	padding-left: 0.3em;
+	padding-left: 0.3rem;
 	color: #428BCA;
 	vertical-align: middle;
-	font-size: 0.875em;
+	font-size: 0.875rem;
 }
 
 /* Block help for forms */
 .ux-form-message {
 	display: block;
 	color: #666;
-	font-size: 0.875em;
+	font-size: 0.875rem;
 }
 
 .ux-form ::-webkit-input-placeholder {
@@ -1210,15 +1210,15 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 /* misc default styling */
 
 .ux-menu-separator {
-	background-color: #ccc;
+	background-color: #cccccc;
 	height: 1px;
-	margin: .3em 0;
+	margin: 0.3rem 0;
 }
 
 .ux-menu-horizontal .ux-menu-separator {
 	width: 1px;
-	height: 1.3em;
-	margin: 0 .3em ;
+	height: 1.3rem;
+	margin: 0 0.3rem;
 }
 
 .ux-menu-heading {
@@ -1229,17 +1229,17 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 }
 
 .ux-menu-link {
-	color: #777;
+	color: #777777;
 }
 
 .ux-menu-children {
-	background-color: #fff;
+	background-color: #ffffff;
 }
 
 .ux-menu-link,
 .ux-menu-disabled,
 .ux-menu-heading {
-	padding: .5em 1em;
+	padding: .5rem 1rem;
 }
 
 .ux-menu-disabled {

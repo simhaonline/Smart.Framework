@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman (stable.180331), (c) 2015-2018 unix-world.org
+	extended by unixman (stable.180402), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -13,13 +13,13 @@ License: BSD
 	.ux-button {
 		width: 98% !important;
 		min-width: 98% !important;
-		margin: 0.7em 0 0;
+		margin: 0.7rem 0 0;
 	}
 
 	.ux-button-responsive {
 		width: 98% !important;
 		min-width: 98% !important;
-		margin: 0.7em 0 0;
+		margin: 0.7rem 0 0;
 	}
 
 	/* Reflow Tables */
@@ -50,7 +50,7 @@ License: BSD
 	/* All Form Elements Responsive */
 
 	.ux-form button[type="submit"] {
-		margin: 0.7em 0 0;
+		margin: 0.7rem 0 0;
 	}
 
 	.ux-form input:not([type]),
@@ -72,7 +72,7 @@ License: BSD
 	.ux-form textarea,
 	.ux-form select,
 	.ux-field {
-		margin-bottom: 0.3em;
+		margin-bottom: 0.3rem;
 		display: block;
 		width: 98% !important;
 		min-width: 98% !important;
@@ -103,22 +103,22 @@ License: BSD
 	}
 
 	.ux-form-aligned .ux-control-group label {
-		margin-bottom: 0.3em;
+		margin-bottom: 0.3rem;
 		text-align: left;
 		display: block;
 		width: 100%;
 	}
 
 	.ux-form-aligned .ux-controls {
-		margin: 1.5em 0 0 0;
+		margin: 1.5rem 0 0 0;
 	}
 
 	.ux-form .ux-help-inline,
 	.ux-form-message-inline,
 	.ux-form-message {
 		display: block;
-		font-size: 0.75em;
-		padding: 0.2em 0 0.8em;
+		font-size: 0.75rem;
+		padding: 0.2rem 0 0.8rem;
 	}
 
 	.ux-menu-horizontal {

@@ -17,7 +17,7 @@
 	}
 
 	.vtml-timeline-block {
-		margin: 4em 0;
+		margin: 4rem 0;
 	}
 	.vtml-timeline-block:first-child {
 		margin-top: 0;
@@ -34,7 +34,7 @@
 
 	.vtml-timeline-content {
 		margin-left: 0;
-		padding: 1.6em;
+		padding: 1.6rem;
 		width: 45%;
 	}
 	.vtml-timeline-content::before {
@@ -54,7 +54,7 @@
 		left: 122%;
 		color: #444444;
 		font-size: 20px;
-		/* @alternate */ font-size: 1.25em;
+		/* @alternate */ font-size: 1.25rem;
 	}
 	.vtml-timeline-block:nth-child(even) .vtml-timeline-content {
 		float: right;
