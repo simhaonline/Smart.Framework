@@ -1,6 +1,6 @@
 
-/***** V-TimeLine CSS - Small :: v.3.7.5 r.2018.03.09 / smart.framework.v.3.7 *****/
-/* V-TimeLine r.180326
+/***** V-TimeLine Small CSS :: v.3.7.5 r.2018.03.09 / smart.framework.v.3.7 *****/
+/* V-TimeLine r.180331
 	License: BSD
 	(c) 2015-2018 unix-world.org
 */
@@ -21,7 +21,7 @@
 	position: relative;
 	width: 24px;
 	height: 24px;
-	margin-left: 9px;
+	margin-left: 8px;
 	margin-top: 7px;
 	text-align:center;
 	font-size: 20px;

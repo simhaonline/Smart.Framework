@@ -1,6 +1,6 @@
 Custom web fonts can be added here ...
 
-See the lib/core/plugins/fonts/opensans.css as an example.
+See the lib/core/plugins/fonts/typo/sans/ibm-plex-sans.css as an example.
 Then change into:
     etc/templates/default/css-app.inc.htm 
 	# replace the line: etc/templates/default/css-app.inc.htm
@@ -8,7 +8,7 @@ Then change into:
     etc/templates/default/styles.css
 	replace:
 	* {
-	    font-family: 'Open Sans',arial,sans-serif;
+	    font-family: 'IBM Plex Sans',arial,sans-serif;
 	}
 	# width:
 	* {

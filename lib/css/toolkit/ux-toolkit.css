@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180330), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.180331), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -399,20 +399,20 @@ a.ux-link:hover {
 }
 
 .ux-button-xsmall {
-	padding: 3px 7px 3px 7px !important;
-	font-size: 0.75em !important;
+	padding: 4px 7px 4px 7px !important;
+	font-size: 75% !important;
 }
 .ux-button-small {
 	padding: 5px 10px 5px 10px !important;
-	font-size: 0.875em !important;
+	font-size: 90% !important;
 }
 .ux-button-large {
 	padding: 9px 17px 9px 17px !important;
-	font-size: 1.188em !important;
+	font-size: 120% !important;
 }
 .ux-button-xlarge {
 	padding: 13px 23px 13px 23px !important;
-	font-size: 1.5em !important;
+	font-size: 150% !important;
 }
 
 .ux-button-responsive {
@@ -602,7 +602,7 @@ so we can ignore the csslint warning.
 	background-color: #FFFFFF;
 	color: #222222;
 	font-weight: normal;
-	font-size: 13px;
+	font-size: 100%;
 	padding: 3px;
 /*	padding: 0.5em 0.6em; */
 	display: inline-block;
@@ -618,7 +618,7 @@ so we can ignore the csslint warning.
 .ux-form select option,
 .ux-select option {
 	font-weight: normal !important;
-	font-size: 13px !important;
+	font-size: 100%;
 	padding: 1px !important;
 }
 
@@ -1169,6 +1169,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	padding: 0;
 	margin: 0;
 	height: 100%;
+	list-style: none;
 }
 
 .ux-menu-link,
@@ -1342,7 +1343,7 @@ ul.ux-breadcrumb li a:hover {
 	outline: none;
 	display: block;
 	float: left;
-	font-size: 12px;
+	font-size: 13px;
 	line-height: 36px;
 	color: #FFFFFF !important;
 	/*need more margin on the left of links to accomodate the numbers*/

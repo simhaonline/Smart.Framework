@@ -2,7 +2,6 @@
 /* ------------------------------------------------ CSS3, Base Styles START :: r.170426 */
 
 * {
-	font-family: 'Open Sans',arial,sans-serif;
 	font-smooth: always;
 	/* font-size-adjust: 0.55; */
 }
@@ -19,7 +18,7 @@ body {
 }
 
 body, div, p, ol, ul, table, form, fieldset, pre, code, blockquote, address, dl {
-	font-size: 14px;
+	font-size: 15px;
 	line-height: 1.5;
 }
 

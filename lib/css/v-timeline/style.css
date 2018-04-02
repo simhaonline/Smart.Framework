@@ -1,6 +1,6 @@
 
 /***** V-TimeLine CSS :: v.3.7.5 r.2018.03.09 / smart.framework.v.3.7 *****/
-/* V-TimeLine r.180326
+/* V-TimeLine r.180331
 	License: BSD
 	(c) 2015-2018 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -71,7 +71,7 @@
 	width: 36px;
 	height: 36px;
 	margin-left: 9px;
-	margin-top: 3px;
+	margin-top: 9px;
 	text-align:center;
 	font-size: 30px;
 }

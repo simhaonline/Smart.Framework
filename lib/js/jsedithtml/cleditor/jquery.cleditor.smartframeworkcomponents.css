@@ -3,8 +3,12 @@
  this fails to compile with google closure stylesheets (unrecognized: @-moz ...)
 */
 /* CLEditor / SmartComponents v.2016.02.18 */
+
+@import url("../../../../lib/core/plugins/fonts/typo/mono/ibm-plex-mono.css");
+
 * {
-	font-family: arial,sans-serif;
+	font-family: 'IBM Plex Mono',monospace,courier !important;
+	font-size: 14px !important;
 }
 table {
 	margin-top: 2px;

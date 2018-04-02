@@ -5,7 +5,7 @@
 
 /* Fixes for non-jQueryUI version */
 .ui-timepicker-widget {
-	font-size: 13px !important;
+	font-size: 14px;
 }
 
 .ui-timepicker-clearfix:before,
@@ -150,7 +150,7 @@
 	padding-bottom: 1px !important;
 	height: 22px !important;
 	line-height: 22px !important;
-	font-size: 13px !important;
+	font-size: 14px !important;
 }
 
 .ui-timepicker .ui-timepicker-buttonpane button:hover {

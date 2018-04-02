@@ -768,7 +768,7 @@ public function calculateTextBBox($text, $angle, $size, $font) {
  *
  * @return BOOLEAN 						:: TRUE on success ; FALSE on error / fail
  */
-public function applyText($text, $offsx=0, $offsy=0, $angle=0, $size=10, $font='lib/core/plugins/fonts/opensans-regular.ttf', $color_rgb=[255, 255, 255, 100]) {
+public function applyText($text, $offsx=0, $offsy=0, $angle=0, $size=10, $font='lib/core/plugins/fonts/typo/sans/ibm-plex-sans-regular.ttf', $color_rgb=[255, 255, 255, 100]) {
 
 	//--
 	if($this->status !== true) {

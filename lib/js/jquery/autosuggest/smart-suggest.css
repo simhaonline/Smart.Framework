@@ -3,7 +3,7 @@
 
 #Smart_Suggest_Container {
 	width: 100%;
-	font-size: 13px !important;
+	font-size: 14px;
 	background: #FFFFFF;
 	border: 1px solid #ECECEC;
 	border-radius: 3px;
@@ -20,11 +20,11 @@
 }
 #Smart_Suggest_Container table td {
 	padding: 3px;
-	font-size: 13px !important;
+	font-size: 14px;
 }
 #Smart_Suggest_Container table th {
 	padding: 3px;
-	font-size: 13px !important;
+	font-size: 14px;
 	font-weight: bold !important;
 }
 
