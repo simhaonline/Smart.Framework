@@ -54,12 +54,15 @@ div#Smart-Captcha-Area div#Smart-Captcha-Container div#Smart-Captcha-Input input
 }
 
 @media all and (max-width:767px) {
+
 	div#Smart-Captcha-Area {
-		width: 98% !important;
+		width: calc(98% - 10px) !important;
 	}
+
 	div#Smart-Captcha-Area div#Smart-Captcha-Container {
 		text-align: center !important;
 	}
+
 }
 
 /* ----------------------------- */

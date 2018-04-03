@@ -5,7 +5,7 @@
 
 /* Fixes for non-jQueryUI version */
 .ui-timepicker-widget {
-	font-size: 14px;
+	font-size: 0.9rem;
 }
 
 .ui-timepicker-clearfix:before,
@@ -90,13 +90,9 @@
 	text-align: center;
 }
 
-.ui-timepicker-table td {
-	padding: 0.1rem;
-	width: 2.2rem;
-}
-
-.ui-timepicker-table th.periods {
-	padding: 0.1rem;
+.ui-timepicker-table th, .ui-timepicker-table th.periods, .ui-timepicker-table td {
+	font-size: 0.9rem !important;
+	padding: 0;
 	width: 2.2rem;
 }
 

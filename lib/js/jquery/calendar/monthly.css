@@ -115,7 +115,7 @@
 	margin: -0.4rem 0 0 -0.4rem;
 	-webkit-transform: rotate(45deg);
 		-ms-transform: rotate(45deg);
-	        transform: rotate(45deg);
+			transform: rotate(45deg);
 }
 /* Left Arrow */
 .monthly-prev:after{
@@ -217,10 +217,10 @@
 	height: 2px;
 	-webkit-transform-origin: left top;
 		-ms-transform-origin: left top;
-	        transform-origin: left top;
+			transform-origin: left top;
 	-webkit-transform: rotate(45deg);
 		-ms-transform: rotate(45deg);
-	        transform: rotate(45deg);
+			transform: rotate(45deg);
 	background: rgba(0, 0, 0, 0.1);
 	position: absolute;
 	left: 0;
@@ -291,7 +291,7 @@
 	transition: .25s;
 	-webkit-transform: scale(0);
 		-ms-transform: scale(0);
-	        transform: scale(0);
+			transform: scale(0);
 }
 
 /* Days in Events List */
@@ -304,9 +304,9 @@
 }
 
 .monthly-list-item:after{
-    padding: 0.4rem 1rem;
-    display: block;
-    margin-bottom: 0.5rem;
+	padding: 0.4rem 1rem;
+	display: block;
+	margin-bottom: 0.5rem;
  }
 
 .monthly-event-list .monthly-today .monthly-event-list-date {
@@ -331,7 +331,7 @@
 }
 
 .item-has-event:after{
-    display: none!important;
+	display: none!important;
 }
 
 .monthly-event-list-date {
@@ -340,8 +340,8 @@
 	left: 0;
 	top: 1.2rem;
 	text-align: center;
-    font-weight: bold;
-    line-height: 1.2rem;
+	font-weight: bold;
+	line-height: 1.2rem;
 }
 
 .monthly-list-time-start,
@@ -387,6 +387,7 @@ a layout-specific width, or you will need to use a library like css-element-quer
 establish the rules based on the calendar element width rather than the device width.
 */
 @media (min-width: 25rem) {
+
 	.monthly-day-event {
 		padding-top: 1.3rem;
 	}
@@ -430,3 +431,5 @@ establish the rules based on the calendar element width rather than the device w
 	}
 
 }
+
+/* END */

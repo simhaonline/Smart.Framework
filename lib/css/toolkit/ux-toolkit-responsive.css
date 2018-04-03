@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman (stable.180402), (c) 2015-2018 unix-world.org
+	extended by unixman (stable.180403), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -10,23 +10,18 @@ License: BSD
 
 	/* All buttons Responsive */
 
-	.ux-button {
-		width: 98% !important;
-		min-width: 98% !important;
-		margin: 0.7rem 0 0;
-	}
-
-	.ux-button-responsive {
-		width: 98% !important;
-		min-width: 98% !important;
-		margin: 0.7rem 0 0;
+	.ux-button, .ux-button-responsive {
+		width: calc(98% - 10px) !important;
+		min-width: calc(98% - 10px) !important;
+		margin: 5px 0 5px 0 !important;
+		font-size: 1rem !important;
 	}
 
 	/* Reflow Tables */
 
 	.ux-reflow-table {
-		min-width: 98% !important;
-		width: 98% !important;
+		min-width: calc(98% - 10px) !important;
+		width: calc(98% - 10px) !important;
 	}
 
 	.ux-reflow-table td,
@@ -50,7 +45,7 @@ License: BSD
 	/* All Form Elements Responsive */
 
 	.ux-form button[type="submit"] {
-		margin: 0.7rem 0 0;
+		margin: 5px 0 0;
 	}
 
 	.ux-form input:not([type]),
@@ -74,8 +69,8 @@ License: BSD
 	.ux-field {
 		margin-bottom: 0.3rem;
 		display: block;
-		width: 98% !important;
-		min-width: 98% !important;
+		width: calc(98% - 10px) !important;
+		min-width: calc(98% - 10px) !important;
 	}
 
 	.ux-group input:not([type]),
@@ -98,19 +93,19 @@ License: BSD
 	.ux-form select,
 	.ux-field {
 		margin-bottom: 0;
-		width: 98% !important;
-		min-width: 98% !important;
+		width: calc(98% - 10px) !important;
+		min-width: calc(98% - 10px) !important;
 	}
 
 	.ux-form-aligned .ux-control-group label {
 		margin-bottom: 0.3rem;
 		text-align: left;
 		display: block;
-		width: 100%;
+		width: calc(98% - 10px);
 	}
 
 	.ux-form-aligned .ux-controls {
-		margin: 1.5rem 0 0 0;
+		margin: 15px 0 0 0;
 	}
 
 	.ux-form .ux-help-inline,

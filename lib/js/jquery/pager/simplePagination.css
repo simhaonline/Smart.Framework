@@ -3,10 +3,11 @@
 * Author: Flavius Matis - http://flaviusmatis.github.com/
 * URL: https://github.com/flaviusmatis/simplePagination.js
 *
-* (c) 2016 unix-world.org
-* contains fixes by unixman r.170909:
+* (c) 2016-2018 unix-world.org
+* contains fixes by unixman r.180403:
 * 	- style improvements
 * 	- fixes for google.closures.stylesheet
+* 	- removed compact theme
 */
 
 ul.simple-pagination {
@@ -29,86 +30,27 @@ ul.simple-pagination {
 .simple-pagination li {
 	list-style: none;
 	padding: 0;
-	margin: 0;
 	float: left;
+	margin: 0;
+	margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 span.ellipse.clickable {
 	cursor: pointer;
 }
 
-.ellipse input {
+span.ellipse input {
+	background: #FFFFFF;
 	width: 55px;
-}
-
-/*------------------------------------*\
-	Compact Theme Styles
-\*------------------------------------*/
-
-.compact-theme a, .compact-theme span {
-	float: left;
-	color: #333;
-	font-size:14px;
-	line-height:24px;
-	font-weight: normal;
-	text-align: center;
-	text-decoration: none;
-	border: 1px solid #AAA;
-	border-left: none;
-	min-width: 14px;
-	padding: 0 7px;
-	box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
-	background: #efefef; /* Old browsers */
-	/* @alternate */ background: -moz-linear-gradient(top, #ffffff 0%, #efefef 100%); /* FF3.6+ */
-	/* @alternate */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
-	/* @alternate */ background: -webkit-linear-gradient(top, #ffffff 0%,#efefef 100%); /* Chrome10+,Safari5.1+ */
-	/* @alternate */ background: -o-linear-gradient(top, #ffffff 0%,#efefef 100%); /* Opera11.10+ */
-	/* @alternate */ background: -ms-linear-gradient(top, #ffffff 0%,#efefef 100%); /* IE10+ */
-	/* @alternate */ background: linear-gradient(top, #ffffff 0%,#efefef 100%); /* W3C */
-}
-
-.compact-theme a:hover {
-	text-decoration: none; /* unixman */
-	background: #efefef; /* Old browsers */
-	/* @alternate */ background: -moz-linear-gradient(top, #efefef 0%, #bbbbbb 100%); /* FF3.6+ */
-	/* @alternate */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#efefef), color-stop(100%,#bbbbbb)); /* Chrome,Safari4+ */
-	/* @alternate */ background: -webkit-linear-gradient(top, #efefef 0%,#bbbbbb 100%); /* Chrome10+,Safari5.1+ */
-	/* @alternate */ background: -o-linear-gradient(top, #efefef 0%,#bbbbbb 100%); /* Opera11.10+ */
-	/* @alternate */ background: -ms-linear-gradient(top, #efefef 0%,#bbbbbb 100%); /* IE10+ */
-	/* @alternate */ background: linear-gradient(top, #efefef 0%,#bbbbbb 100%); /* W3C */
-}
-
-.compact-theme li:first-child a, .compact-theme li:first-child span {
-	border-left: 1px solid #AAA;
-	border-radius: 3px 0 0 3px;
-}
-
-.compact-theme li:last-child a, .compact-theme li:last-child span {
-	border-radius: 0 3px 3px 0;
-}
-
-.compact-theme .current {
-	cursor: default;
-	background: #bbbbbb; /* Old browsers */
-	/* @alternate */ background: -moz-linear-gradient(top, #bbbbbb 0%, #efefef 100%); /* FF3.6+ */
-	/* @alternate */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bbbbbb), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
-	/* @alternate */ background: -webkit-linear-gradient(top, #bbbbbb 0%,#efefef 100%); /* Chrome10+,Safari5.1+ */
-	/* @alternate */ background: -o-linear-gradient(top, #bbbbbb 0%,#efefef 100%); /* Opera11.10+ */
-	/* @alternate */ background: -ms-linear-gradient(top, #bbbbbb 0%,#efefef 100%); /* IE10+ */
-	/* @alternate */ background: linear-gradient(top, #bbbbbb 0%,#efefef 100%); /* W3C */
-}
-
-.compact-theme .ellipse {
-	background: #EAEAEA;
-	padding: 0 10px;
-	cursor: default;
+	border: 0 !important;
 }
 
 /*------------------------------------*\
 	Light Theme Styles
 \*------------------------------------*/
 
-.light-theme a, .light-theme span {
+.light-theme a, .light-theme span, .light-theme span.ellipse.clickable {
 	float: left;
 	color: #666;
 	font-size:14px;
@@ -118,6 +60,7 @@ span.ellipse.clickable {
 	text-decoration: none;
 	border: 1px solid #BBB;
 	min-width: 14px;
+	max-width: 55px;
 	padding: 0 7px;
 	margin: 0 5px 0 0;
 	border-radius: 3px;
@@ -157,7 +100,7 @@ span.ellipse.clickable {
 	Dark Theme Styles
 \*------------------------------------*/
 
-.dark-theme a, .dark-theme span {
+.dark-theme a, .dark-theme span, .dark-theme span.ellipse.clickable {
 	float: left;
 	color: #CCC;
 	font-size:14px;
@@ -167,6 +110,7 @@ span.ellipse.clickable {
 	text-decoration: none;
 	border: 1px solid #222;
 	min-width: 14px;
+	max-width: 55px;
 	padding: 0 7px;
 	margin: 0 5px 0 0;
 	border-radius: 3px;

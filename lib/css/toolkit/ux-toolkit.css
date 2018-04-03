@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180402), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.180403), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -248,7 +248,7 @@ License: BSD
 
 a.ux-link, a.ux-link:link, a.ux-link:visited {
 	font-family: inherit !important;
-	font-size: 100% !important;
+	font-size: 1rem !important;
 	font-weight: bold !important;
 	text-decoration: underline #DDDDDD !important;
 	color: #20639E !important;
@@ -270,7 +270,7 @@ a.ux-link:hover {
 	vertical-align: middle !important;
 	text-align: center !important;
 	font-family: inherit !important;
-	font-size: 100% !important;
+	font-size: 1rem !important;
 	font-weight: bold !important;
 	text-decoration: none !important;
 	border-radius: 3px !important;
@@ -400,19 +400,19 @@ a.ux-link:hover {
 
 .ux-button-xsmall {
 	padding: 4px 7px 4px 7px !important;
-	font-size: 75% !important;
+	font-size: 0.75rem !important;
 }
 .ux-button-small {
 	padding: 5px 10px 5px 10px !important;
-	font-size: 90% !important;
+	font-size: 0.9rem !important;
 }
 .ux-button-large {
 	padding: 9px 17px 9px 17px !important;
-	font-size: 120% !important;
+	font-size: 1.2rem !important;
 }
 .ux-button-xlarge {
 	padding: 13px 23px 13px 23px !important;
-	font-size: 150% !important;
+	font-size: 1.5rem !important;
 }
 
 .ux-button-responsive {
@@ -439,7 +439,8 @@ a.ux-link:hover {
 
 .ux-table caption {
 	color: #000;
-	font-size: 85%/1;
+	font-size: 0.85rem;
+	line-height: 1;
 	padding: 1rem 0;
 	text-align: center;
 }
@@ -602,7 +603,7 @@ so we can ignore the csslint warning.
 	background-color: #FFFFFF;
 	color: #222222;
 	font-weight: normal;
-	font-size: 100%;
+	font-size: 1rem;
 	padding: 3px;
 /*	padding: 0.5rem 0.6rem; */
 	display: inline-block;
@@ -618,7 +619,7 @@ so we can ignore the csslint warning.
 .ux-form select option,
 .ux-select option {
 	font-weight: normal !important;
-	font-size: 100%;
+	font-size: 1rem;
 	padding: 1px !important;
 }
 
@@ -895,7 +896,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	padding: 7px 15px 7px 15px !important;
 	line-height: normal !important;
 	font-family: inherit !important;
-	font-size: 100% !important;
+	font-size: 1rem !important;
 	margin-bottom: 5px;
 }
 
@@ -994,26 +995,26 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	width:100%;
 }
 .ux-menubar-bar-block .ux-menubar-dropdown-hover .ux-menubar-dropdown-content, .ux-menubar-bar-block .ux-menubar-dropdown-click .ux-menubar-dropdown-content {
-	min-width:100%;
+	min-width: 100%;
 }
 .ux-menubar-bar-block .ux-menubar-dropdown-hover .ux-menubar-button, .ux-menubar-bar-block .ux-menubar-dropdown-click .ux-menubar-button {
-	width:100%;
-	text-align:left;
-	padding:9px 16px;
+	width: 100%;
+	text-align: left;
+	padding: 9px 16px;
 }
 
 .ux-menubar-bar {
-	width:100%;
-	overflow:hidden;
+	width: 100%;
+	overflow: hidden;
 }
 
 .ux-menubar-bar * {
-	font-size:15px !important;
+	font-size: 1rem !important;
 }
 
 .ux-menubar-center .ux-menubar-bar {
-	display:inline-block;
-	width:auto;
+	display: inline-block;
+	width: auto;
 }
 .ux-menubar-bar .ux-menubar-bar-item {
 	padding:9px 16px;
@@ -1273,7 +1274,7 @@ ul.ux-breadcrumb {
 /* Display list items side by side */
 ul.ux-breadcrumb li {
 	display: inline;
-	font-size: 15px;
+	font-size: 1rem;
 	color: #6C757D;
 	font-weight: bold;
 }
@@ -1343,8 +1344,8 @@ ul.ux-breadcrumb li a:hover {
 	outline: none;
 	display: block;
 	float: left;
-	font-size: 13px;
-	line-height: 36px;
+	font-size: 0.9rem;
+	line-height: 2.7rem;
 	color: #FFFFFF !important;
 	/*need more margin on the left of links to accomodate the numbers*/
 	padding: 0 10px 0 60px;
