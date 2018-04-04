@@ -1,12 +1,19 @@
 
-/* SlickGrid Fixes for Bootstrap and others v.160301 */
+/* SlickGrid Fixes for UxToolkit, Bootstrap and other UI Frameworks v.180404 */
 
 .slickgrid-table {
-	margin-top: 5px;
-	border-top: 0px;
-	border-left: 1px solid silver;
-	border-right: 1px solid silver;
-	border-bottom: 1px solid silver;
+	margin-top: 5px !important;
+	border: 0 !important;
+	border-bottom: 1px solid #F0F0F0 !important;
+	padding-left: 0px !important;
+}
+
+div.slick-cell.c0, div.slick-header-column.c0 {
+	border-left: 1px dotted #DDDDDD !important;
+}
+
+div.slick-header-column {
+	background-color: #F8F8F8;
 }
 
 [class^="slick"],
