@@ -12,7 +12,7 @@ classes should alter those!
 }
 /* end custom */
 
-.slick-header.ui-state-default {
+.slick-header.slick-state-default {
 	width: 100%;
 	overflow: hidden;
 	border-left: 0px;
@@ -36,7 +36,7 @@ classes should alter those!
 	border-bottom-color: #DDDDDD;
 }
 
-.slick-header-column.ui-state-default {
+.slick-header-column.slick-state-default {
 	position: relative;
 	display: inline-block;
 	height: 16px;
@@ -96,9 +96,12 @@ classes should alter those!
 	outline: 0;
 }
 
-.slick-row.ui-widget-content, .slick-row.ui-state-active {
+.slick-row.slick-uiwidget-content, .slick-row.slick-state-active {
 	position: absolute;
 	border: 0px;
+}
+
+.slick-state-hover {
 }
 
 .slick-cell {
