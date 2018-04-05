@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180403), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.180405), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -283,6 +283,7 @@ a.ux-link:hover {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-bottom: 5px;
+	margin-right: 5px;
 	box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
 	-webkit-box-sizing: border-box !important;

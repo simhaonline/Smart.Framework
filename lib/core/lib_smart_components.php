@@ -46,7 +46,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180403
+ * @version 	v.180405.1905
  * @package 	Components:Core
  *
  */
@@ -550,13 +550,9 @@ public static function operation_error($y_html, $y_width='500') {
  */
 private static function notifications_template($y_html, $y_idcss, $y_width) {
 	//--
-	$y_width = (string) self::format_css_dimension($y_width);
+	$y_width = (string) self::fix_css_elem_dim($y_width);
 	//--
-	if(in_array((string)$y_width, ['100%', '99%', '98%'])) {
-		$y_width = '97%'; // correction because of the margin
-	} //end if
-	//--
-	return '<!-- require: notifications.css --><div id="'.Smart::escape_html($y_idcss).'" style="width:'.Smart::escape_html($y_width).'!important;">'.$y_html.'</div>';
+	return '<!-- require: notifications.css --><div id="'.Smart::escape_html($y_idcss).'" style="width:'.Smart::escape_html($y_width).';">'.$y_html.'</div>';
 	//--
 } //END FUNCTION
 //================================================================
@@ -564,44 +560,52 @@ private static function notifications_template($y_html, $y_idcss, $y_width) {
 
 //================================================================
 /**
- * Function: Format CSS Width or Height
- * Format the CSS Width: Passed number (550) or percent (100%) and return the correct CSS3 format as 550px or 100%
+ * Function: Format CSS Dimension for Elements
+ * If no unit is specified then assume px (pixels)
+ * If number is < 0, will assume 1 to avoid hide element
+ * Allowed Units: %, vw, vh, pt, pc, px
+ * Returns the CSS safe formated dimension
  *
  * @access 		private
  * @internal
  *
  */
-private static function format_css_dimension($y_w_or_h) {
+private static function fix_css_elem_dim($css_w_or_h) {
 	//--
-	if(strpos($y_w_or_h, '%') !== false) {
-		//--
-		$css_w_or_h = (int) str_replace([':', ';', '-', '%'], ['', '', '', ''], (string)$y_w_or_h); // Ex: 100% and dissalow styles separators : ;
-		if($y_w_or_h < 1) {
-			$y_w_or_h = 1;
-		} //end if
-		if($y_w_or_h > 100) {
-			$y_w_or_h = 100;
-		} //end if
-		$css_w_or_h = (string) $css_w_or_h.'%';
-		//--
-	} elseif(strlen($y_w_or_h) > 0) {
-		//--
-		$y_w_or_h = (int) $y_w_or_h;
-		//--
-		if($y_w_or_h < 1) {
-			$y_w_or_h = 1;
-		} //end if
-		if($y_w_or_h > 3200) {
-			$y_w_or_h = 3200;
-		} //end if
-		//--
-		$css_w_or_h = (string) $y_w_or_h.'px'; // Ex: 750px
-		//--
-	} else {
-		//--
-		$css_w_or_h = ''; // default / empty
-		//--
-	} //end if else
+	$css_w_or_h = str_replace([' ', "\t", "\n", "\r"], '', (string)$css_w_or_h);
+	$css_w_or_h = (string) trim((string)$css_w_or_h);
+	//--
+	$css_w_or_h = (array) explode(';', (string)$css_w_or_h);
+	$css_w_or_h = (string) trim((string)$css_w_or_h[0]);
+	$matches = array();
+	preg_match('/^([0-9]+)(%|[a-z]{1,2})?$/', (string)$css_w_or_h, $matches);
+	$css_unit = 'px';
+	$css_num = (int) $matches[1];
+	if($css_num <= 0) {
+		$css_num = 1;
+	} //end if
+	$css_w_or_h = '';
+	switch((string)$matches[2]) {
+		case '%':
+		case 'vw':
+		case 'vh':
+			$css_unit = (string) $matches[2];
+			if($css_num > 100) {
+				$css_num = 100;
+			} //end if
+			break;
+		case 'pt':
+		case 'pc':
+		case 'px':
+			$css_unit = (string) $matches[2];
+			break;
+		default:
+			$css_unit = 'px';
+	} //end switch
+	if($css_num > 6400) {
+		$css_num = 6400; // avoid too large values
+	} //end if
+	$css_w_or_h = (string) $css_num.$css_unit;
 	//--
 	return (string) $css_w_or_h;
 	//--

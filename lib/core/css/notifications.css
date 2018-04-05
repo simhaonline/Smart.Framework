@@ -3,16 +3,17 @@
 
 /* ----------------------------- */
 
-/* Notifications */
+/* Notifications r.180405.1905 */
+
 div#operation_question {
-	background-color: #FFEE11;
-	color: #000000;
+	background-color: #FFFFFF !important;
+	color: #111111 !important;
 	background-image: url(../../framework/img/sign-question.svg);
 	background-repeat: no-repeat;
 	background-position: 10px center;
-	line-height: 32px;
+	line-height: 36px;
 	text-align: left;
-	font-size: 17px;
+	font-size: 1.25rem;
 	font-weight: bold;
 	font-style: normal;
 	padding-left: 52px;
@@ -22,26 +23,26 @@ div#operation_question {
 	margin: 0 auto;
 	margin-top: 8px;
 	margin-bottom: 8px;
-	min-width: 250px;
+	max-width: calc(98% - 10px) !important;
+	min-width: 100px;
 	min-height: 40px;
 	height: auto !important;
 	border-radius: 6px;
-	opacity:0.85;
+	opacity:1;
 	box-shadow: 1px 1px 2px 2px #ECECEC;
 }
-div#operation_question * {
-	background-color: #FFEE11;
-	color: #000000;
-}
+
+/* -- */
+
 div#operation_notice {
-	background-color: #778899;
-	color: #FFFFFF;
+	background-color: #D5DADC !important;
+	color: #111111 !important;
 	background-image: url(../../framework/img/sign-notice.svg);
 	background-repeat: no-repeat;
 	background-position: 10px center;
-	line-height: 32px;
+	line-height: 36px;
 	text-align: left;
-	font-size: 17px;
+	font-size: 1.25rem;
 	font-weight: bold;
 	font-style: normal;
 	padding-left: 52px;
@@ -51,26 +52,26 @@ div#operation_notice {
 	margin: 0 auto;
 	margin-top: 8px;
 	margin-bottom: 8px;
-	min-width: 250px;
+	max-width: calc(98% - 10px) !important;
+	min-width: 100px;
 	min-height: 40px;
 	height: auto !important;
 	border-radius: 6px;
-	opacity:0.85;
+	opacity:1;
 	box-shadow: 1px 1px 2px 2px #ECECEC;
 }
-div#operation_notice * {
-	background-color: #778899;
-	color: #FFFFFF;
-}
+
+/* -- */
+
 div#operation_info {
-	background-color: #FEFF99;
-	color: #000000;
+	background-color: #FFFFFF !important;
+	color: #333333 !important;
 	background-image: url(../../framework/img/sign-info.svg);
 	background-repeat: no-repeat;
 	background-position: 10px center;
-	line-height: 32px;
+	line-height: 36px;
 	text-align: left;
-	font-size: 17px;
+	font-size: 1.25rem;
 	font-weight: bold;
 	font-style: normal;
 	padding-left: 52px;
@@ -80,26 +81,26 @@ div#operation_info {
 	margin: 0 auto;
 	margin-top: 8px;
 	margin-bottom: 8px;
-	min-width: 250px;
+	max-width: calc(98% - 10px) !important;
+	min-width: 100px;
 	min-height: 40px;
 	height: auto !important;
 	border-radius: 6px;
-	opacity:0.85;
+	opacity:1;
 	box-shadow: 1px 1px 2px 2px #ECECEC;
 }
-div#operation_info * {
-	background-color: #FEFF99;
-	color: #000000;
-}
+
+/* -- */
+
 div#operation_warn {
-	background-color: #FF9900;
-	color: #000000;
+	background-color: #FF991C !important;
+	color: #000000 !important;
 	background-image: url(../../framework/img/sign-warn.svg);
 	background-repeat: no-repeat;
 	background-position: 10px center;
-	line-height: 32px;
+	line-height: 36px;
 	text-align: left;
-	font-size: 17px;
+	font-size: 1.25rem;
 	font-weight: bold;
 	font-style: normal;
 	padding-left: 52px;
@@ -109,26 +110,26 @@ div#operation_warn {
 	margin: 0 auto;
 	margin-top: 8px;
 	margin-bottom: 8px;
-	min-width: 250px;
+	max-width: calc(98% - 10px) !important;
+	min-width: 100px;
 	min-height: 40px;
 	height: auto !important;
 	border-radius: 6px;
-	opacity:0.85;
+	opacity:1;
 	box-shadow: 1px 1px 2px 2px #ECECEC;
 }
-div#operation_warn * {
-	background-color: #FF9900;
-	color: #000000;
-}
+
+/* -- */
+
 div#operation_error {
-	background-color: #EF0000;
-	color: #FFFFFF;
+	background-color: #F12525 !important;
+	color: #FFFFFF !important;
 	background-image: url(../../framework/img/sign-error.svg);
 	background-repeat: no-repeat;
 	background-position: 10px center;
-	line-height: 32px;
+	line-height: 36px;
 	text-align: left;
-	font-size: 17px;
+	font-size: 1.25rem;
 	font-weight: bold;
 	font-style: normal;
 	padding-left: 52px;
@@ -138,18 +139,41 @@ div#operation_error {
 	margin: 0 auto;
 	margin-top: 8px;
 	margin-bottom: 8px;
-	min-width: 250px;
+	max-width: calc(98% - 10px) !important;
+	min-width: 100px;
 	min-height: 40px;
 	height: auto !important;
 	border-radius: 6px;
-	opacity:0.85;
+	opacity:1;
 	box-shadow: 1px 1px 2px 2px #ECECEC;
 }
-div#operation_error * {
-	background-color: #EF0000;
-	color: #FFFFFF;
-}
+
 /* -- */
+
+@media all and (max-width:1279px) {
+
+	div#operation_question, div#operation_notice, div#operation_info, div#operation_warn, div#operation_error {
+		max-width: calc(95% - 10px) !important;
+	}
+
+}
+
+@media all and (max-width:959px) {
+
+	div#operation_question, div#operation_notice, div#operation_info, div#operation_warn, div#operation_error {
+		max-width: calc(93% - 10px) !important;
+	}
+
+}
+
+@media all and (max-width:767px) {
+
+	div#operation_question, div#operation_notice, div#operation_info, div#operation_warn, div#operation_error {
+		max-width: calc(92% - 10px) !important;
+	}
+
+}
+
 
 /* ----------------------------- */
 

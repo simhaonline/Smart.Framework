@@ -2,19 +2,23 @@
 
 /*
 License: BSD
-	extended by unixman (stable.180403), (c) 2015-2018 unix-world.org
+	extended by unixman (stable.180405), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
 @media all and (max-width:767px) {
 
-	/* All buttons Responsive */
+	/* All buttons Responsive and Forms */
 
-	.ux-button, .ux-button-responsive {
+	.ux-button, .ux-button-responsive, .ux-form {
 		width: calc(98% - 10px) !important;
 		min-width: calc(98% - 10px) !important;
 		margin: 5px 0 5px 0 !important;
 		font-size: 1rem !important;
+	}
+
+	.ux-form {
+		width: 100% !important;
 	}
 
 	/* Reflow Tables */
