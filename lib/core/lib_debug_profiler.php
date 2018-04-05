@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.180309
+ * @version 	v.180405
  *
  */
 final class SmartDebugProfiler {
@@ -567,7 +567,7 @@ private static function print_log_runtime() {
 	//--
 	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>Client / Server :: RUNTIME Log</b></font></div>';
 	//--
-	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>App Runtime - Powered by</b></div>';
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>Server App Runtime: Powered by</b></div>';
 	$log .= '<div class="smartframework_debugbar_inforow">'.SmartComponents::app_powered_info('yes').'</div>';
 	//--
 	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
@@ -576,6 +576,8 @@ private static function print_log_runtime() {
 		$the_area = 'index';
 	} //end if else
 	//--
+	$arr_ident = (array) SmartUtils::get_os_browser_ip();
+	$arr_bw = (array) SmartComponents::get_imgdesc_by_bw_id($arr_ident['bw']);
 	$arr = [
 		'Server Runtime: Smart.Framework' => [
 			'Smart.Framework Middleware Area' => $the_area,
@@ -588,9 +590,9 @@ private static function print_log_runtime() {
 			'PHP Locales: ' => (string) setlocale(LC_ALL, 0),
 			'PHP Encoding: Internal / MBString' => ini_get('default_charset').' / '.@mb_internal_encoding(),
 			'PHP Memory' => (string) ini_get('memory_limit'),
-			'PHP Loaded Modules' => (string) strtolower(implode(', ', (array)@get_loaded_extensions()))
+			'PHP Loaded Modules (Extensions)' => (string) strtolower(implode(', ', (array)@get_loaded_extensions()))
 		],
-		'Server Domain Info' => [
+		'Server Domain: Info' => [
 			'Server Full URL' => SmartUtils::get_server_current_url(),
 			'Server Script' => SmartUtils::get_server_current_script(),
 			'Server IP' => SmartUtils::get_server_current_ip(),
@@ -599,8 +601,7 @@ private static function print_log_runtime() {
 			'Server Path' => SmartUtils::get_server_current_path(),
 			'Server Domain' => SmartUtils::get_server_current_domain_name(),
 			'Server Base Domain' => SmartUtils::get_server_current_basedomain_name()
-		],
-		'Client Runtime' => (string) $_SERVER['HTTP_USER_AGENT'].' # '.SmartUtils::get_ip_client().' # '.SmartUtils::get_ip_proxyclient()
+		]
 	];
 	//--
 	foreach($arr as $debug_key => $debug_val) {
@@ -615,6 +616,9 @@ private static function print_log_runtime() {
 			$log .= '<div class="smartframework_debugbar_inforow">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)$debug_val), true).'</div>';
 		} //end if else
 	} //end while
+	//--
+	$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;"><b>Client Runtime: Info</b></div>';
+	$log .= '<div class="smartframework_debugbar_inforow">'.'<div style="display:inline-block; margin-right:20px; margin-bottom:10px; margin-top:10px; margin-left:5px;"><img src="'.Smart::escape_html(SmartUtils::get_server_current_url().(string)$arr_bw['img']).'" width="64" height="64" alt="'.Smart::escape_html((string)$arr_bw['img']).'" title="'.Smart::escape_html($arr_bw['img']).'"></div> <div style="display:inline-block;"><b>Browser User-Agent Signature:</b> '.Smart::escape_html((string)$_SERVER['HTTP_USER_AGENT']).'<br><b>Browser ID / Browser Class / Client OS:</b> '.Smart::escape_html((string)$arr_ident['bw'].' / '.(string)$arr_ident['bc'].' / '.(string)$arr_ident['os']).'<br><b>Browser Is Mobile:</b> '.Smart::escape_html((string)$arr_ident['mobile']).'<br><b>Client IP / Client Proxy IP:</b> '.Smart::escape_html((string)$arr_ident['ip'].' / '.(trim((string)$arr_ident['px']) ? (string)$arr_ident['px'] : '-')).'</div>'.'</div>';
 	//--
 	return $log;
 	//--
@@ -714,10 +718,65 @@ private static function print_log_headers($response_code, $response_heads_arr, $
 	//--
 	$log = '';
 	//--
-	if($response_code == 200) {
-		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>RESPONSE Headers: [ '.Smart::escape_html($response_code).' / OK ]</b></font></div>';
+	$status_code_msg = '???';
+	switch((int)$response_code) {
+		//--
+		case 200:
+			$status_code_msg = 'OK';
+			break;
+		case 202:
+			$status_code_msg = 'Accepted';
+			break;
+		case 203:
+			$status_code_msg = 'Non-Authoritative Information';
+			break;
+		case 208:
+			$status_code_msg = 'Already Reported';
+			break;
+		//--
+		case 301:
+			$status_code_msg = 'Permanent Redirect';
+			break;
+		case 302:
+			$status_code_msg = 'Temporary Redirect';
+			break;
+		//--
+		case 400:
+			$status_code_msg = 'Bad Request';
+			break;
+		case 401:
+			$status_code_msg = 'Unauthorized';
+			break;
+		case 403:
+			$status_code_msg = 'Forbidden';
+			break;
+		case 404:
+			$status_code_msg = 'Not Found';
+			break;
+		case 429:
+			$status_code_msg = 'Too Many Requests';
+			break;
+		case 500:
+			$status_code_msg = 'Internal Server Error';
+			break;
+		case 502:
+			$status_code_msg = 'Bad Gateway';
+			break;
+		case 503:
+			$status_code_msg = 'Service Unavailable';
+			break;
+		case 504:
+			$status_code_msg = 'Gateway Timeout';
+			break;
+		default:
+			$status_code_msg = '(Other: See the HTTP Status Codes @ rfc7231)';
+		//--
+	} //end switch
+	//--
+	if($response_code >= 400) {
+		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_warn"><font size="4"><b>RESPONSE Headers: [ HTTP Status Code = '.Smart::escape_html($response_code).' / '.Smart::escape_html($status_code_msg).' ]</b></font></div>';
 	} else {
-		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_warn"><font size="4"><b>RESPONSE Headers: [ '.Smart::escape_html($response_code).' ]</b></font></div>';
+		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_head"><font size="4"><b>RESPONSE Headers: [ HTTP Status Code = '.Smart::escape_html($response_code).' / '.Smart::escape_html($status_code_msg).' ]</b></font></div>';
 	} //end if else
 	$max = Smart::array_size($response_heads_arr);
 	if($max > 0) {
