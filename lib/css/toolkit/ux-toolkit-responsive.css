@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman (stable.180405), (c) 2015-2018 unix-world.org
+	extended by unixman (stable.180407), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -14,7 +14,7 @@ License: BSD
 		width: calc(98% - 10px) !important;
 		min-width: calc(98% - 10px) !important;
 		margin: 5px 0 5px 0 !important;
-		font-size: 1rem !important;
+		font-size: 0.9rem !important;
 	}
 
 	.ux-form {
