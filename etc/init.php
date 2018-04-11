@@ -28,18 +28,20 @@ define('SMART_FRAMEWORK_SECURITY_FILTER_INPUT', '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/
 define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// Security Key ; *** YOU HAVE TO CHANGE IT *** ; will be used to generate secure hashes
 //define('SMART_FRAMEWORK_SECURITY_OPENSSLBFCRYPTO', true); 								// *Optional: if defined and set to TRUE will use the OpenSSL cipher openssl/blowfish/CBC (faster) instead of internal one blowfish.cbc (more compatible across platforms)
 //define('SMART_FRAMEWORK_SECURITY_CRYPTO', 'openssl/aes256/CBC'); 							// *Optional: the crypto algo for general purpose encryption to be used ; default is hash/sha256 ; other modes: hash/sha1, hash/sha384, hash/sha512, openssl/{algo}/{mode} where mode can be: CBC, CFB, OFB ; algo can be: blowfish, aes256, camellia256
-//--------------------------------------- COOKIES
-define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie name (if enabled)
-//define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN', '');									// LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; `` or `domain.tld` for all sub-domains of domain.tld cookies ; default is `` (empty) ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies
 //--------------------------------------- URLS
-//define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 	true); 									// If define this will DISABLE the semantic URLs for index.php and admin.php ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
 define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT', 'index.php');							// Semantic URL Rewriter Skip Script (just for index.php) ; This can be set to: `index.php` or `` empty (admin.php have no support for this)
 define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE', 'samples');								// Default Module for Shortening the semantic URLs or the URL rewriter from module.controller.html to just controller.html ; just for index.php (admin.php have no support for this)
 define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', '');										// URL Rewrite Mode: `` | `standard` | `semantic` :: Use (Apache like) rewrite rules (must be enabled in .htaccess) and the SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT must be set to `index.php` ; semantic URLS must be not disabled ; just for index.php (admin.php have no support for this)
+//define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 	true); 									// If define this will DISABLE the semantic URLs for index.php and admin.php ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
+//--------------------------------------- COOKIES
+define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie Name
+//define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME', intval(60 * 60 * 24));				// The UniqueID Cookie LifeTime in seconds ; set to 0 for expire on browser close
+//define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN', '');									// The UniqueID Cookie domain: LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; `` or `domain.tld` for all sub-domains of domain.tld cookies ; default is `` (empty) ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies
 //--------------------------------------- SESSION
-define('SMART_FRAMEWORK_SESSION_NAME', 		'SmartFramework__SESSION'); 					// Session Name ; *** YOU HAVE TO CHANGE IT *** this must be static and must contain only Letters and _
-define('SMART_FRAMEWORK_SESSION_LIFETIME', 	intval(60 * 60 * 24));							// Session Lifetime in seconds (24 h by default) ; set to 0 for session
 define('SMART_FRAMEWORK_SESSION_HANDLER', 	'files');										// Session Handler: 'files' (default / file storage: lightweight but in high concurencies may have locking issues) ; 'redis' (DB / in-memory, very fast)
+define('SMART_FRAMEWORK_SESSION_NAME', 		'SmartFramework__SESSION'); 					// Session Name ; *** YOU HAVE TO CHANGE IT *** this must be static and must contain only Letters and _
+//define('SMART_FRAMEWORK_SESSION_LIFETIME', 	intval(60 * 60 * 24));						// Session Lifetime in seconds (0 by default) ; set to 0 for expire on browser close ; must be not higher than SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME
+//define('SMART_FRAMEWORK_SESSION_DOMAIN', 	'');											// Session Domain: LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; `` or `domain.tld` for all sub-domains of domain.tld cookies ; default is `` (empty) ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies
 //define('SMART_FRAMEWORK_SESSION_ROBOTS', 	true);											// Uncomment this to enable session also for robots (robot identified user agents)
 //--------------------------------------- EXECUTION / RUNTIME LIMITS
 define('SMART_FRAMEWORK_MEMORY_LIMIT', 		'256M');										// Memory Limit Per Script (via PHP.INI) ; sync this with the value in .htaccess if defined ; a good value for production is 256M or 384M ; for development, with Debugging turned ON be sure to set a big value like 512M or 1024M !!

@@ -22,7 +22,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // [REGEX-SAFE-OK]
 
 //##### WARNING: #####
-// Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
+// Changing the code below is not recommended (may lead to severe disrupts in the execution of this software), but of course you can do it on your own risk !!!
 //####################
 
 //--
@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.5'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.04.07'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.04.11'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -100,9 +100,6 @@ if(!defined('SMART_FRAMEWORK_SECURITY_KEY')) {
 //--
 if(!defined('SMART_FRAMEWORK_SESSION_NAME')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SESSION_NAME');
-} //end if
-if(!defined('SMART_FRAMEWORK_SESSION_LIFETIME')) {
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SESSION_LIFETIME');
 } //end if
 if(!defined('SMART_FRAMEWORK_SESSION_HANDLER')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SESSION_HANDLER');
@@ -910,7 +907,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		180309
+ * @version		180411
  * @package 	Application
  *
  */
@@ -1041,11 +1038,11 @@ public static function PathInfo_Enabled() {
 // This will run before loading the Smart.Framework and must not depend on it's classes
 public static function Parse_Semantic_URL() {
 
-	// PARSE SEMANTIC URL VIA GET v.170519
+	// PARSE SEMANTIC URL VIA GET v.180411
 	// it limits the URL to 65535 and vars to 1000
 
 	//-- check overall
-	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE')) {
+	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE') AND (SMART_FRAMEWORK_SEMANTIC_URL_DISABLE === true)) {
 		return;
 	} //end if
 	//--
@@ -1593,11 +1590,21 @@ public static function SetVisitorEntropyIDCookie() {
 				//--
 				$cookie = (string) trim(strtolower(SmartFrameworkSecurity::FilterUnsafeString((string)$_COOKIE[(string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME])));
 				if(((string)$cookie == '') OR (strlen((string)$cookie) != 40) OR (!preg_match('/^[a-f0-9]+$/', (string)$cookie))) {
+					$expire = 0;
+					if(defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME')) {
+						$expire = (int) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME;
+						if($expire < 0) {
+							$expire = 0;
+						} //end if
+						if($expire > 0) {
+							$expire = (int) time() + $expire;
+						} //end if
+					} //end if
 					$entropy = (string) sha1((string)Smart::unique_entropy('uuid-cookie')); // generate a random unique key ; cookie was not yet set or is invalid
 					if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
-						@setcookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, 0, '/', (string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN); // set it using domain
+						@setcookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, (int)$expire, '/', (string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN); // set it using domain
 					} else {
-						@setcookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, 0, '/'); // set it
+						@setcookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, (int)$expire, '/'); // set it without domain
 					} //end if else
 					$cookie = (string) $entropy;
 				} //end if

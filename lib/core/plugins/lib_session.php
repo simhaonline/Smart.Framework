@@ -62,7 +62,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.180125
+ * @version 	v.180411
  * @package 	Application
  *
  */
@@ -149,7 +149,9 @@ public static function set($yvariable, $yvalue) {
 
 //==================================================
 /**
- * Start the Session on request
+ * Start the Session (if not already started).
+ * This function is called automatically when set() or get() is used for a session thus is not mandatory to be called.
+ * It should be called just on special circumstances (Ex: force start session without using set/get).
  *
  */
 public static function start() {
@@ -158,7 +160,7 @@ public static function start() {
 	if(self::$started !== false) {
 		return; // avoid start session if already started ...
 	} //end if
-	self::$started = true; // avoid run start again
+	self::$started = true; // mark session as started at the begining (will be marked as active at the end of this function)
 	//--
 	//=====
 	//--
@@ -176,7 +178,7 @@ public static function start() {
 	//--
 	//=====
 	//-- no log as the cookies can be dissalowed by the browser
-	if((string)SMART_APP_VISITOR_COOKIE == '') {
+	if(!defined('SMART_APP_VISITOR_COOKIE') OR ((string)SMART_APP_VISITOR_COOKIE == '') OR ((string)SMART_APP_VISITOR_COOKIE == '')) {
 		return; // session need cookies
 	} //end if
 	//--
@@ -218,15 +220,6 @@ public static function start() {
 		return;
 	} //end if
 	//--
-	if(!defined('SMART_FRAMEWORK_SESSION_LIFETIME')) {
-		Smart::log_warning('FATAL ERROR: Invalid Session GC Lifetime :: SMART_FRAMEWORK_SESSION_LIFETIME');
-		return;
-	} //end if
-	if(!is_int(SMART_FRAMEWORK_SESSION_LIFETIME)) {
-		Smart::log_warning('Invalid INIT constant value for SMART_FRAMEWORK_SESSION_LIFETIME');
-		return;
-	} //end if
-	//--
 	if(!SmartFileSystem::is_type_dir('tmp/sessions/')) {
 		Smart::log_warning('FATAL ERROR: The Folder \'tmp/sessions/\' does not exists for use with Session !');
 		return;
@@ -250,19 +243,17 @@ public static function start() {
 	//--
 	//=====
 	//--  generate a the client private key based on it's IP and Browser
-	$the_sess_client_uuid = SmartUtils::unique_client_private_key(); // SHA512 key to protect session data agains forgers
+	$the_sess_client_uuid = (string) SmartUtils::unique_client_private_key(); // SHA512 key to protect session data agains forgers
 	//-- a very secure approach based on a chain, derived with a secret salt from the framework security key:
-	// (1) an almost unique client private key lock based on it's IP and Browser
-	// (2) an entropy derived from the client random cookie combined with the (1)
-	// (3) a unique session name suffix derived from (1) and (2)
-	// (4) a unique session id composed from (1) and (2)
-	//-- thus the correlation between the random public client cookie, the session name suffix and the session id makes impossible to forge it as it locks to IP+Browser, using a public entropy cookie all encrypted with a secret key and derived and related, finally composed.
-	$the_sess_client_lock = SmartHashCrypto::sha1(SMART_FRAMEWORK_SECURITY_KEY.'#'.$the_sess_client_uuid);
-	$the_sess_client_entropy = SmartHashCrypto::sha1(SMART_APP_VISITOR_COOKIE.'*'.$the_sess_client_uuid.'%'.SMART_FRAMEWORK_SECURITY_KEY);
-	$the_sess_nsuffix = SmartHashCrypto::sha1($the_sess_client_uuid.':'.SMART_FRAMEWORK_SECURITY_KEY.'^'.$the_sess_client_entropy.'+'.$the_sess_client_lock.'$'.SMART_APP_VISITOR_COOKIE);
-	$the_sess_id = $the_sess_client_entropy.'-'.$the_sess_client_lock; // session ID combines the secret client key based on it's IP / Browser and the Client Entropy Cookie
+	// (1) an almost unique client private key hash based on it's IP and Browser and the Unique Visitor Tracking Cookie
+	// (2) an almost unique client public key hash based on it's IP and Browser (1) and Session Name
+	// (3) a unique session id composed from (1) and (2)
+	//-- thus the correlation between the above makes almost impossible to forge it as it locks to IP+Browser, using a public entropy cookie all encrypted with a secret key and derived and related, finally composed.
+	$the_sess_hash_priv_key = (string) SmartHashCrypto::sha1($the_sess_client_uuid.'^'.SMART_APP_VISITOR_COOKIE.'^'.SMART_FRAMEWORK_SECURITY_KEY);
+	$the_sess_hash_pub_key = (string) SmartHashCrypto::sha1('^'.SMART_FRAMEWORK_SESSION_NAME.'&'.$the_sess_client_uuid.'&'.$the_sess_hash_priv_key.'&'.SMART_FRAMEWORK_SECURITY_KEY.'$');
+	$the_sess_id = (string) $the_sess_hash_pub_key.'-'.SmartHashCrypto::sha1('^'.$the_sess_client_uuid.'&'.$the_sess_hash_pub_key.'&'.$the_sess_hash_priv_key.'$'); // session ID combines the secret client key based on it's IP / Browser and the Client Entropy Cookie
 	//--
-	$sf_sess_area = Smart::safe_filename((string)SMART_FRAMEWORK_SESSION_PREFIX);
+	$sf_sess_area = (string) Smart::safe_filename((string)SMART_FRAMEWORK_SESSION_PREFIX);
 	if(((string)$sf_sess_area == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$sf_sess_area))) {
 		Smart::raise_error(
 			'SESSION // FATAL ERROR: Invalid/Empty Session Area: '.$sf_sess_area
@@ -270,7 +261,7 @@ public static function start() {
 		die('');
 		return;
 	} //end if
-	$sf_sess_dpfx = substr($the_sess_client_entropy, 0, 1).'-'.substr($the_sess_client_lock, 0, 1); // this come from hexa so 3 chars are 16x16x16=4096 dirs
+	$sf_sess_dpfx = (string) substr($the_sess_hash_pub_key, 0, 1).'-'.substr($the_sess_hash_priv_key, 0, 1); // this come from hexa so 3 chars are 16x16x16=4096 dirs
 	//--
 	if((string)$browser_os_ip_identification['bw'] == '@s#') {
 		$sf_sess_ns = '@sr-'.$sf_sess_dpfx;
@@ -316,13 +307,21 @@ public static function start() {
 	@session_save_path($sf_sess_dir);
 	@session_cache_limiter('nocache');
 	//--
-	$the_name_of_session = (string) SMART_FRAMEWORK_SESSION_NAME.'__Key_'.$the_sess_nsuffix; // protect session name data agains forgers
+	$the_name_of_session = (string) SMART_FRAMEWORK_SESSION_NAME.'__Key_'.$the_sess_hash_pub_key; // protect session name data agains forgers
 	//--
 	@session_id((string)$the_sess_id);
 	@session_name((string)$the_name_of_session);
 	//--
-	$tmp_exp_seconds = Smart::format_number_int(SMART_FRAMEWORK_SESSION_LIFETIME, '+');
-	if($tmp_exp_seconds > 0) {
+	$tmp_exp_seconds = 0;
+	if(defined('SMART_FRAMEWORK_SESSION_LIFETIME')) {
+		$tmp_exp_seconds = (int) SMART_FRAMEWORK_SESSION_LIFETIME;
+		if($tmp_exp_seconds < 0) {
+			$tmp_exp_seconds = 0;
+		} //end if
+	} //end if
+	if(defined('SMART_FRAMEWORK_SESSION_DOMAIN') AND ((string)SMART_FRAMEWORK_SESSION_DOMAIN != '')) {
+		@session_set_cookie_params((int)$tmp_exp_seconds, '/', (string)SMART_FRAMEWORK_SESSION_DOMAIN); // session cookie expire, the path and domain
+	} else {
 		@session_set_cookie_params((int)$tmp_exp_seconds, '/'); // session cookie expire and the path
 	} // end if
 	//-- be sure that session_write_close() is executed at the end of script if script if die('') premature and before pgsql shutdown register in the case of DB sessions
@@ -348,44 +347,51 @@ public static function start() {
 	//-- start session
 	@session_start();
 	//--
-	if(((string)$_SESSION['SoftwareFramework_VERSION'] != (string)SMART_FRAMEWORK_VERSION) OR ((string)$_SESSION['website_ID'] != (string)SMART_SOFTWARE_NAMESPACE) OR (strlen($_SESSION['session_ID']) < 32)) {
+	if((Smart::array_size($_SESSION) <= 0) OR ((string)$_SESSION['visitor_UUID'] != (string)SMART_APP_VISITOR_COOKIE) OR ((string)$_SESSION['uniqbrowser_ID'] != (string)$the_sess_client_uuid) OR (strlen($_SESSION['session_ID']) < 32)) {
 		//--
-		$_SESSION['SoftwareFramework_VERSION'] = (string) SMART_FRAMEWORK_VERSION; // software version
-		$_SESSION['SoftwareFramework_SessionMode'] = (string) $sf_sess_mode; // session mode
-		$_SESSION['website_ID'] = (string) SMART_SOFTWARE_NAMESPACE; // the website ID
-		$_SESSION['uniqbrowser_ID'] = (string) $the_sess_client_uuid; // a true unique browser ID (this is a protection against sessionID forgers)
-		$_SESSION['session_AREA'] = (string) $sf_sess_area; // session area
-		$_SESSION['session_NS'] = (string) $sf_sess_ns; // session namespace
-		$_SESSION['session_ID'] = (string) @session_id(); // read current session ID
-		$_SESSION['session_STARTED'] = (string) date('Y-m-d H:i:s O'); // read current session ID
+		if(Smart::array_size($_SESSION) > 0) {
+			//--
+			if((string)$_SESSION['visitor_UUID'] != (string)SMART_APP_VISITOR_COOKIE) {
+				Smart::log_warning('Session Reset: Unique Visitor UUID does not match ...');
+			} //end if
+			//--
+			if((string)$_SESSION['uniqbrowser_ID'] != (string)$the_sess_client_uuid) {
+				Smart::log_warning('Session Reset: Unique Browser ID does not match ...');
+			} //end if
+			//--
+			if(strlen($_SESSION['session_ID']) < 32) {
+				Smart::log_warning('Session Reset: Session ID must be at least 32 characters ...');
+			} //end if
+			//--
+		} //end if
 		//--
-	} //end if
-	//--
-	if(!isset($_SESSION['visit_COUNTER'])) {
-		$_SESSION['visit_COUNTER'] = 1;
-	} else {
-		$_SESSION['visit_COUNTER'] += 1;
-	} //end if else
-	//--
-	$_SESSION['SmartFramework__Browser__Identification__Data'] = (array) $browser_os_ip_identification;
-	//--
-	if((string)$_SESSION['uniqbrowser_ID'] != (string)$the_sess_client_uuid) { // we need at least a md5 session
-		//-- log, then unset old session (these are not well tested ...)
-		Smart::log_notice('Session Security Breakpoint :: Session-BrowserUniqueID = '.$_SESSION['uniqbrowser_ID']."\n".'SessionSecurityUniqueID = '.$the_sess_client_uuid."\n".'Browser Ident = '.$browser_os_ip_identification['bw']."\n".'Cookies = '.print_r($_COOKIE,1)."\n".'SessID = '.$_SESSION['session_ID']."\n".'ClientIP = '.SmartUtils::get_ip_client().' @ '.$_SERVER['REMOTE_ADDR']."\n".'UserAgent = '.$_SERVER['HTTP_USER_AGENT']);
 		$_SESSION = array(); // reset it
-		//-- unset the cookie (from this below is tested)
-		@setcookie($the_name_of_session, 'EXPIRED', 1, '/');
-		//-- stop execution with message
-		Smart::raise_error(
-			'SESSION // SECURITY BREAK POINT: Possible Session Forgery Detected ...',
-			'SESSION // SECURITY BREAK POINT: Possible Session Forgery Detected ! Please refresh the page ... A new session will be assigned ! If you are not trying to forge another user\' session this situation can occur also if you are behind a proxy and some of your navigation parameters has been changed ! If this problem persist try to restart your browser or use other browser. If still persist, contact the website administrator' // msg to display
-		);
-		die(''); // just in case
-		return; // or is better to silent discard it ?
+		//--
+		$_SESSION['SoftwareFramework_VERSION'] 		= (string) SMART_FRAMEWORK_VERSION; 	// software version
+		$_SESSION['SoftwareFramework_SessionMode'] 	= (string) $sf_sess_mode; 				// session mode
+		$_SESSION['website_ID'] 					= (string) SMART_SOFTWARE_NAMESPACE; 	// the website ID
+		$_SESSION['visitor_UUID'] 					= (string) SMART_APP_VISITOR_COOKIE; 	// the visitor UUID
+		$_SESSION['visit_COUNTER'] 					= (int)    0; 							// the session visit counter
+		$_SESSION['session_AREA'] 					= (string) $sf_sess_area; 				// session area
+		$_SESSION['session_NS'] 					= (string) $sf_sess_ns; 				// session namespace
+		$_SESSION['session_ID'] 					= (string) @session_id(); 				// read current session ID
+		$_SESSION['session_STARTED'] 				= (string) date('Y-m-d H:i:s O'); 		// read current session ID
 		//--
 	} //end if
 	//--
-	self::$active = time(); // successfuly started
+	$_SESSION['visit_COUNTER'] += 1; // increment visit counter
+	//--
+	if(!isset($_SESSION['visitor_UUID'])) {
+		$_SESSION['visitor_UUID'] = (string) SMART_APP_VISITOR_COOKIE; // set it only once
+	} //end if
+	//--
+	if(!isset($_SESSION['uniqbrowser_ID'])) {
+		$_SESSION['uniqbrowser_ID'] = (string) $the_sess_client_uuid; // set it only once
+	} //end if
+	//--
+	$_SESSION['SmartFramework__Browser__Identification__Data'] = (array) $browser_os_ip_identification; // rewrite it each time
+	//--
+	self::$active = (int) time(); // successfuly started
 	//--
 } //END FUNCTION
 //==================================================
@@ -415,85 +421,85 @@ public static function start() {
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.180125
+	// v.180411
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 
 
-//-- PUBLIC VARS
-public $sess_area;
-public $sess_ns;
-public $sess_expire;
-//--
+	//-- PUBLIC VARS
+	public $sess_area;
+	public $sess_ns;
+	public $sess_expire;
+	//--
 
 
-//==================================================
-final public function __construct() {
-	//--
-	// constructor (do not use it, this is not safe to use because changes between PHP versions ...)
-	//--
-} //END FUNCTION
-//==================================================
+	//==================================================
+	final public function __construct() {
+		//--
+		// constructor (do not use it, this is not safe to use because changes between PHP versions ...)
+		//--
+	} //END FUNCTION
+	//==================================================
 
 
-//==================================================
-// TO BE EXTENDED
-public function open() {
-	//--
-	return true;
-	//--
-} //END FUNCTION
-//==================================================
+	//==================================================
+	// TO BE EXTENDED
+	public function open() {
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//==================================================
 
 
-//==================================================
-// TO BE EXTENDED
-public function close() {
-	//--
-	return true;
-	//--
-} //END FUNCTION
-//==================================================
+	//==================================================
+	// TO BE EXTENDED
+	public function close() {
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//==================================================
 
 
-//==================================================
-// TO BE EXTENDED
-public function write($id, $data) {
-	//--
-	return true;
-	//--
-} //END FUNCTION
-//==================================================
+	//==================================================
+	// TO BE EXTENDED
+	public function write($id, $data) {
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//==================================================
 
 
-//==================================================
-// TO BE EXTENDED
-public function read($id) {
-	//--
-	return (string) '';
-	//--
-} //END FUNCTION
-//==================================================
+	//==================================================
+	// TO BE EXTENDED
+	public function read($id) {
+		//--
+		return (string) '';
+		//--
+	} //END FUNCTION
+	//==================================================
 
 
-//==================================================
-// TO BE EXTENDED
-public function destroy($id) {
-	//--
-	return true;
-	//--
-} //END FUNCTION
-//==================================================
+	//==================================================
+	// TO BE EXTENDED
+	public function destroy($id) {
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//==================================================
 
 
-//==================================================
-// TO BE EXTENDED
-public function gc($lifetime) {
-	//--
-	return true;
-	//--
-} //END FUNCTION
-//==================================================
+	//==================================================
+	// TO BE EXTENDED
+	public function gc($lifetime) {
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//==================================================
 
 
 } //END CLASS

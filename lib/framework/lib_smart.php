@@ -70,7 +70,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.171007
+ * @version     v.180411
  * @package     Base
  *
  */
@@ -223,14 +223,17 @@ public static function path_info($y_path) {
  *
  * @return 	STRING						:: The semantic URL
  */
-public static function url_make_semantic($y_url) {
+public static function url_make_semantic($y_url) { // v.180411
 	//--
 	$y_url = (string) trim((string)$y_url);
 	if((string)$y_url == '') {
 		return ''; // if URL is empty nothing to do ...
 	} //end if
 	//--
-	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE')) {
+	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE') AND (SMART_FRAMEWORK_SEMANTIC_URL_DISABLE === true)) {
+		return (string) $y_url;
+	} //end if
+	if(!defined('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE')) {
 		return (string) $y_url;
 	} //end if
 	//--
@@ -252,7 +255,7 @@ public static function url_make_semantic($y_url) {
 	} // end if
 	//--
 	$arr = (array) self::url_parse((string)$y_url);
-	//print_r($arr);
+	//print_r($arr); die();
 	//--
 	$arr['scheme'] 	= (string) trim((string)$arr['scheme']); 	// http / https
 	$arr['host'] 	= (string) trim((string)$arr['host']); 		// 127.0.0.1
@@ -294,14 +297,12 @@ public static function url_make_semantic($y_url) {
 	$use_rewrite = false;
 	$use_rfc_params = false;
 	if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // not for admin !
-		if(defined('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE')) {
-			if((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'semantic') {
-				$use_rewrite = true;
-			} elseif((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'standard') {
-				$use_rewrite = true;
-				$use_rfc_params = true;
-			} //end switch
-		} //end if
+		if((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'semantic') {
+			$use_rewrite = true;
+		} elseif((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'standard') {
+			$use_rewrite = true;
+			$use_rfc_params = true;
+		} //end switch
 	} //end if
 	//--
 	$vars = explode('&', $arr['query']);
@@ -1743,34 +1744,45 @@ public static function url_parse($y_url) {
 	$y_url = (string) $y_url;
 	//--
 	$parts = array();
-	preg_match("~(([a-z]+:)?//)?([^:^/]*)(:([0-9]{1,5}))?(/.*)?~i", (string)$y_url, $parts);
+	$parts = parse_url((string)$y_url);
+	if(!is_array($parts)) {
+		$parts = array();
+	} //end if
+	//print_r($parts); die();
 	//--
-	$protocol 	= (string) strtolower((string)$parts[1]);
-	$scheme 	= (string) trim((string)str_replace(':', '', strtolower((string)$parts[2])));
-	$server 	= (string) strtolower((string)$parts[3]);
-	$port 		= (string) $parts[5];
-	$suffix 	= (string) $parts[6];
-	$parts = array();
-	//-- some fixes
+	$scheme = (string) trim((string)$parts['scheme']);
+	//--
+	$protocol = (string) $scheme;
+	if((string)$protocol != '') {
+		$protocol .= ':';
+	} //end if
+	$protocol .= '//';
+	//--
+	$server = (string) trim((string)$parts['host']);
+	//--
+	$port = (string) trim((string)$parts['port']);
 	if((string)$port == '') {
-		if((string)$protocol == 'https://') {
+		if((string)$scheme == 'https') {
 			$port = '443';
 		} else {
 			$port = '80';
 		} //end if else
 	} //end if
 	//--
-	if((string)$suffix == '') {
-		$suffix = '/';
-	} //end if
+	$path = (string) trim((string)$parts['path']);
+	$query = (string) trim((string)$parts['query']);
+	$fragment = (string) trim((string)$parts['fragment']);
 	//--
-	$tmp_arr 	= (array) explode('?', (string)$suffix);
-	$path 		= (string) trim((string)$tmp_arr[0]);
-	$query 		= (string) $tmp_arr[1];
-	$tmp_arr 	= (array) explode('#', (string)$query);
-	$query 		= (string) $tmp_arr[0];
-	$fragment 	= (string) $tmp_arr[1];
-	$tmp_arr = array(); // free mem
+	$suffix = (string) $path;
+	if((string)$query != '') {
+		$suffix .= '?'.$query;
+	} //end if
+	if((string)$fragment != '') {
+		$suffix .= '#'.$fragment;
+	} //end if
+	if((string)$suffix == '') {
+		$suffix = '/'; // FIX: this is required as default http path for HTTP Cli requests !!
+	} //end if
 	//--
 	return array('protocol' => $protocol, 'scheme' => $scheme, 'host' => $server, 'port' => $port, 'path' => $path, 'query' => $query, 'fragment' => $fragment, 'suffix' => $suffix); // script must be compatible with: parse_url() but may have extra entries
 	//--
