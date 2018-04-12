@@ -24,7 +24,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 
-	// v.180328
+	// v.180412
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';
@@ -135,7 +135,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 		//--
 		$this->dav_uri = (string) \SmartUtils::get_server_current_full_script().\SmartUtils::get_server_current_request_path();
 		$this->dav_url = (string) \SmartUtils::get_server_current_url().\SmartUtils::get_server_current_script().\SmartUtils::get_server_current_request_path();
-		$this->dav_method = (string) strtoupper((string)$_SERVER['REQUEST_METHOD']);
+		$this->dav_method = (string) $this->RequestMethodGet();
 		$this->dav_vfs_root = (string) $dav_fs_root_path;
 		$this->dav_vfs_path = (string) \SmartModExtLib\Webdav\DavServer::safePathName(rtrim((string)$this->dav_vfs_root.$this->dav_request_path, '/'));
 		//--

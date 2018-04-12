@@ -47,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.180222
+ * @version 	v.180412
  * @package 	Base
  *
  */
@@ -1687,6 +1687,15 @@ public static function get_visitor_tracking_uid() {
 public static function get_encoding_charset() {
 	//--
 	return (string) SMART_FRAMEWORK_CHARSET;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public static function get_server_current_request_method() {
+	//--
+	return (string) strtoupper((string)trim((string)$_SERVER['REQUEST_METHOD'])); // string
 	//--
 } //END FUNCTION
 //================================================================

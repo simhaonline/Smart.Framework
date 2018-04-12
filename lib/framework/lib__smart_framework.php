@@ -227,7 +227,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.180309
+ * @version 	v.180412
  * @package 	Application
  *
  */
@@ -539,6 +539,20 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	final public function ConfigParamGet($param) {
 		//--
 		return Smart::get_from_config($param); // mixed
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get the HTTP Request Method (REQUEST_METHOD) in a controller
+	 *
+	 * @return 	STRING					:: The value of the REQUEST_METHOD HTTP Variable (from server-side)
+	 */
+	final public function RequestMethodGet() {
+		//--
+		return (string) SmartUtils::get_server_current_request_method(); // string
 		//--
 	} //END FUNCTION
 	//=====
