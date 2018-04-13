@@ -41,7 +41,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.5'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.04.12'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.04.13'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
