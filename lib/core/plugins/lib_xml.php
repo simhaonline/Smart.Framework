@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.180413
+ * @version     v.180416
  * @package     DATA:XML
  *
  */
@@ -74,6 +74,100 @@ public function __construct($mode='simple', $encoding='') {
 		$this->mode = 'simple';
 	} //end if else
 	//--
+} //END FUNCTION
+//===============================
+
+
+//===============================
+public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warns=false) {
+
+	//--
+	$xml_str = (string) trim((string)$xml_str);
+	if((string)$xml_str == '') {
+		if((string)$this->mode == 'domxml') { // mandatory validation of XML
+			Smart::log_warning(__METHOD__.' # WARNING [XML-Format('.$this->mode.') / Encoding: '.$this->encoding.']:'."\n".'The XML is Empty ...'."\n".'#END'."\n");
+		} //end if
+		return '';
+	} //end if
+	//--
+
+	//--
+	$xml_str = (string) str_replace(["\r\n", "\r", "\x0B", "\0", "\f"], ["\n", "\n", ' ', ' ', ' '], (string)$xml_str); // fixes
+	//--
+
+	//--
+	if(!class_exists('DOMDocument')) {
+		if((string)$this->mode == 'domxml') { // mandatory validation of XML
+			Smart::log_warning(__METHOD__.' # WARNING [XML-Format('.$this->mode.') / Encoding: '.$this->encoding.']:'."\n".'The PHP DOMDocument() class is missing ...'."\n".'#END'."\n");
+			return ''; // must validate via DomDocument and cannot !!
+		} else {
+			return (string) $xml_str; // return as is
+		} //end if else
+	} //end if
+	//--
+
+	//--
+	@libxml_use_internal_errors(true);
+	@libxml_clear_errors();
+	//--
+
+	//--
+	$dom = new DOMDocument('1.0', (string)SMART_FRAMEWORK_CHARSET);
+	$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
+	$dom->strictErrorChecking = false; 							// do not throw errors
+	$dom->preserveWhiteSpace = (bool) $preserve_whitespace; 	// do not remove redundant white space
+	$dom->formatOutput = true; 									// do not try to format pretty-print the code
+	$dom->resolveExternals = false; 							// disable load external entities from a doctype declaration
+	$dom->validateOnParse = false; 								// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
+	//--
+	@$dom->loadXML(
+		(string) $xml_str, // no need to fix root element on DomDocument !
+		LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
+	);
+	//--
+
+	//-- log errors if any
+	if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($log_parse_err_warns === true)) { // log errors if set
+		$errors = (array) @libxml_get_errors();
+		if(Smart::array_size($errors) > 0) {
+			$notice_log = '';
+			foreach($errors as $z => $error) {
+				if(is_object($error)) {
+					$notice_log .= 'FORMAT-ERROR: ['.$error->code.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Message: '.$error->message."\n";
+				} //end if
+			} //end foreach
+			if((string)$notice_log != '') {
+				Smart::log_notice(__METHOD__.' # NOTICE [XML-Format('.$this->mode.') / Encoding: '.$this->encoding.']:'."\n".$notice_log."\n".'#END'."\n");
+			} //end if
+			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				Smart::log_notice(__METHOD__.' # DEBUG [XML-Format('.$this->mode.') / Encoding: '.$this->encoding.'] @ XML-String:'."\n".$xml_str."\n".'#END');
+			} //end if
+		} //end if
+	} //end if
+	//--
+
+	//--
+	if(is_object($dom)) {
+		$xml_str = (string) @$dom->saveXML();
+		$dom = null; // free mem
+	} else {
+		$dom = null; // free mem
+		if((string)$this->mode == 'domxml') { // mandatory validation of XML
+			Smart::log_warning(__METHOD__.' # WARNING [XML-Format('.$this->mode.') / PreserveWhiteSpace('.(int)(bool)$preserve_whitespace.') / Encoding: '.$this->encoding.']:'."\n".'The PHP DOMDocument() object Failed to Validate the XML code ...'."\n".'#END'."\n");
+			return ''; // document is not valid
+		} //end if
+	} //end if else
+	//--
+
+	//--
+	@libxml_clear_errors();
+	@libxml_use_internal_errors(false);
+	//--
+
+	//--
+	return (string) $xml_str;
+	//--
+
 } //END FUNCTION
 //===============================
 
@@ -333,6 +427,7 @@ private function DomXML2Array($xmlstr) {
 	if(is_object($dom)) {
 		$root = $dom->documentElement;
 	} //end if
+	$dom = null; // free mem
 	//--
 	$output = array();
 	if(is_object($root)) {

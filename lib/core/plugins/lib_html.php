@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170609
+ * @version 	v.180416
  * @package 	DATA:HTML
  *
  */
@@ -493,8 +493,8 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			//--
 			$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
 			$dom->strictErrorChecking = false; 	// do not throw errors
-			$dom->preserveWhiteSpace = true; 	// do not remove redundant white space
-			$dom->formatOutput = true; 			// try to format pretty-print the code
+			$dom->preserveWhiteSpace = false; 	// set this to false in order to real format HTML ...
+			$dom->formatOutput = true; 			// try to format pretty-print the code (but will work just partial as the preserve white space is true ...)
 			$dom->resolveExternals = false; 	// disable load external entities from a doctype declaration
 			$dom->validateOnParse = false; 		// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
 			//--
@@ -504,7 +504,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			);
 			$this->html = (string) @$dom->saveHTML(); // get back from DOM
 			//print_r($this->html);
-			unset($dom); // clear DOM
+			$dom = null; // free mem
 			$this->html = (string) trim((string)preg_replace('~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', (string)$this->html)); // cleanup ; fixes: normally with the above options will add no doctype or html / body tags, but use it just in case ; alternative to this: explode by body to get content
 			//--
 			if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($this->dom_log_errors === true)) { // log errors if set :: OR ((string)$this->html == '')
