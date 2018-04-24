@@ -70,7 +70,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.180308
+ * @version 	v.180423
  * @package 	Database:PostgreSQL
  *
  */
@@ -682,7 +682,7 @@ public static function count_data($queryval, $params_or_title='', $y_connection=
 	//-- init vars
 	if((string)$error != '') {
 		//--
-		self::error($y_connection, 'COUNT', $error, $queryval, $params_or_title);
+		self::error($y_connection, 'COUNT-DATA', $error, $queryval, $params_or_title);
 		return 0;
 		//--
 	} //end else
@@ -2189,6 +2189,11 @@ private static function major_version($y_version) {
  */
 private static function error($y_connection, $y_area, $y_error_message, $y_query, $y_params_or_title, $y_warning='') {
 //--
+if(defined('SMART_SOFTWARE_SQLDB_FATAL_ERR') AND (SMART_SOFTWARE_SQLDB_FATAL_ERR === false)) {
+	throw new Exception('#POSTGRESQL-DB@'.$y_connection.'# :: Q# // PgSQL Client :: EXCEPTION :: '.$y_area."\n".$y_error_message);
+	return;
+} //end if
+//--
 $def_warn = 'Execution Halted !';
 $y_warning = (string) trim((string)$y_warning);
 if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
@@ -2308,7 +2313,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.180308
+ * @version 	v.180423
  * @package 	Database:PostgreSQL
  *
  */

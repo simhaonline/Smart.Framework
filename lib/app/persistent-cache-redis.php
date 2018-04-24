@@ -33,7 +33,7 @@ define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based')
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170307
+ * @version 	v.180423
  * @package 	Caching
  *
  */
@@ -271,9 +271,9 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 		} else {
 			//--
 			if((defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) AND (SMART_SOFTWARE_MEMDB_FATAL_ERR === true)) {
-				$ignore_conn_errs = false;
+				$is_fatal_err = false;
 			} else {
-				$ignore_conn_errs = true; // default
+				$is_fatal_err = true; // default
 			} //end if
 			//--
 			$redis_cfg = (array) Smart::get_from_config('redis');
@@ -286,7 +286,7 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 				(string) $redis_cfg['timeout'],
 				(string) $redis_cfg['slowtime'],
 				'SmartPersistentCache',
-				(bool) $ignore_conn_errs
+				(bool)   $is_fatal_err
 			);
 			//--
 		} //end if

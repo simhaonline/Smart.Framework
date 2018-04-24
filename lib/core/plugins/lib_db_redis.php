@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.180308
+ * @version 	v.180423
  * @package 	Database:Redis
  *
  * @method	STRING		ping()										# Ping the Redis server ; returns: the test answer which is always PONG
@@ -94,8 +94,8 @@ private $socket;
 /** @var description */
 private $description;
 
-/** @var raise_fatal_err_on_connection_fail */
-private $raise_fatal_err_on_connection_fail;
+/** @var fatal_err */
+private $fatal_err;
 
 /** @var err */
 private $err;
@@ -111,10 +111,10 @@ private $slow_time = 0.0005;
  * @internal
  *
  */
-public function __construct($host, $port, $db, $password='', $timeout=5, $y_debug_exch_slowtime=0.0005, $y_description='DEFAULT', $y_ignore_connection_fail=true) {
+public function __construct($host, $port, $db, $password='', $timeout=5, $y_debug_exch_slowtime=0.0005, $y_description='DEFAULT', $y_fatal_err=false) {
 	//--
 	if(((string)$host == '') OR ((string)$port == '') OR ((string)$db == '') OR ((string)$timeout == '')) {
-		$this->error(true, 'Redis Configuration Init', 'Some Required Parameters are Empty', 'CFG:host:port@db#timeout'); // fatal error
+		$this->error('Redis Configuration Init', 'Some Required Parameters are Empty', 'CFG:host:port@db#timeout'); // fatal error
 		return;
 	} //end if
 	//--
@@ -144,12 +144,12 @@ public function __construct($host, $port, $db, $password='', $timeout=5, $y_debu
 	//--
 	$this->description = (string) $y_description;
 	//--
-	$y_ignore_connection_fail = (bool) $y_ignore_connection_fail;
-	if($y_ignore_connection_fail === true) {
-		$this->raise_fatal_err_on_connection_fail = false;
+	$y_fatal_err = (bool) $y_fatal_err;
+	if($y_fatal_err === true) {
+		$this->fatal_err = false;
 		$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
 	} else {
-		$this->raise_fatal_err_on_connection_fail = true;
+		$this->fatal_err = true;
 		$txt_conn = 'FATAL ERRORS';
 	} //end if else
 	//--
@@ -172,6 +172,28 @@ public function __construct($host, $port, $db, $password='', $timeout=5, $y_debu
 			'data' => 'Redis App Connector Version: '.SMART_FRAMEWORK_VERSION.' // Connection Errors are: '.$txt_conn
 		]);
 		//--
+	} //end if
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * set the RecvBuff
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public function setRecvBuf($buff) {
+	//--
+	$this->recvbuf = (int) $buff;
+	//--
+	if($this->recvbuf < 512) {
+		$this->recvbuf = 512;
+	} elseif($this->recvbuf > 16384) {
+		$this->recvbuf = 16384;
 	} //end if
 	//--
 } //END FUNCTION
@@ -321,12 +343,12 @@ public function __call($method, array $args) {
 		case 'AUTH': // password ; returns OK
 		case 'SELECT': // select the DB by the given index (default is 0 .. 15)
 			//--
-			$this->error(true, 'Redis Dissalowed Command', 'Method is Forbidden', 'Method: '.$method); // fatal error
+			$this->error('Redis Dissalowed Command', 'Method is Forbidden', 'Method: '.$method); // fatal error
 			return null;
 			//--
 		default:
 			//--
-			$this->error(true, 'Redis Unavailable Command', 'Method is Unavailable', 'Method: '.$method); // fatal error
+			$this->error('Redis Unavailable Command', 'Method is Unavailable', 'Method: '.$method); // fatal error
 			return null;
 			//--
 	} //end switch
@@ -346,7 +368,7 @@ public function __call($method, array $args) {
 private function run_command($method, array $args) {
 	//--
 	if(!$this->socket) {
-		$this->error(true, 'Redis Connection / Run', 'Connection Failed', 'Method: '.$method); // fatal error
+		$this->error('Redis Connection / Run', 'Connection Failed', 'Method: '.$method); // fatal error
 		return null;
 	} //end if
 	//--
@@ -362,7 +384,7 @@ private function run_command($method, array $args) {
 	//--
 	if((string)$cmd == '') {
 		//--
-		$this->error(true, 'Redis Run Command', 'Empty commands are not allowed ...', ''); // fatal error
+		$this->error('Redis Run Command', 'Empty commands are not allowed ...', ''); // fatal error
 		return null;
 		//--
 	} //end if
@@ -407,15 +429,8 @@ private function parse_response($method) {
 	$result = null;
 	//--
 	if(!$this->socket) {
-		$this->error(true, 'Redis Connection / Response', 'Connection Failed (1)', 'Method: '.$method); // fatal error
+		$this->error('Redis Connection / Response', 'Connection Failed (1)', 'Method: '.$method); // fatal error
 		return null;
-	} //end if
-	//--
-	if($this->recvbuf < 512) {
-		$this->recvbuf = 512;
-	} //end if
-	if($this->recvbuf > 16384) {
-		$this->recvbuf = 16384;
 	} //end if
 	//--
 	$line = @fgets($this->socket, $this->recvbuf);
@@ -424,8 +439,7 @@ private function parse_response($method) {
 	//--
 	if((string)$type == '-') { // error message
 		//--
-		@trigger_error('#SMART-FRAMEWORK-REDIS#'."\n".'INVALID REDIS RESPONSE on: '.$method.' as: '.$result, E_USER_NOTICE);
-		$this->error(true, 'Redis Response', 'Invalid Response', 'Method: '.$method); // fatal error
+		$this->error('Redis Response', 'Invalid Response', 'Method: '.$method); // fatal error
 		return null;
 		//--
 	} elseif((string)$type == '$') { // bulk reply
@@ -437,7 +451,7 @@ private function parse_response($method) {
 		} else {
 			//--
 			if(!$this->socket) {
-				$this->error(true, 'Redis Connection / Response', 'Connection Failed (2)', 'Method: '.$method); // fatal error
+				$this->error('Redis Connection / Response', 'Connection Failed (2)', 'Method: '.$method); // fatal error
 				return null;
 			} //end if
 			//--
@@ -452,7 +466,7 @@ private function parse_response($method) {
 			do {
 				$chunk = @fread($this->socket, min((int)$bytes_left, $this->recvbuf)); // 4096 was instead of $this->recvbuf
 				if($chunk === false || $chunk === '') {
-					$this->error(true, 'Redis Response', 'Error while reading bulk reply from the server', 'Method: '.$method); // fatal error
+					$this->error('Redis Response', 'Error while reading bulk reply from the server', 'Method: '.$method); // fatal error
 					return null;
 				} //end if
 				$result .= (string) $chunk;
@@ -553,7 +567,7 @@ private function connect() {
 		} //end if else
 		//--
 		if(!is_resource($this->socket)) {
-			$this->error($this->raise_fatal_err_on_connection_fail, 'Redis Connect', 'ERROR: #'.$errno.' :: '.$errstr, 'Connection to Redis server: '.$this->server.'@'.$this->db); // non-fatal error, depends on how Redis class is setup
+			$this->error('Redis Connect', 'ERROR: #'.$errno.' :: '.$errstr, 'Connection to Redis server: '.$this->server.'@'.$this->db); // non-fatal error, depends on how Redis class is setup
 			return null;
 		} //end if
 		//--
@@ -612,52 +626,9 @@ private function error($is_fatal, $y_area, $y_error_message, $y_query='', $y_war
 //--
 $this->err = true; // required, to halt driver
 //--
-$is_fatal = (bool) $is_fatal;
+$is_fatal = (bool) $this->fatal_err;
 //--
-if($is_fatal !== false) { // FATAL ERROR
-	//--
-	$def_warn = 'Execution Halted !';
-	$y_warning = (string) trim((string)$y_warning);
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-		$width = 750;
-		$the_area = (string) $y_area;
-		if((string)$y_warning == '') {
-			$y_warning = (string) $def_warn;
-		} //end if
-		$the_error_message = 'Operation FAILED: '.$def_warn."\n".$y_error_message;
-		$the_params = '- '.$this->description.' -';
-		$the_query_info = (string) $y_query;
-		if((string)$the_query_info == '') {
-			$the_query_info = '-'; // query cannot e empty in this case (templating enforcement)
-		} //end if
-	} else {
-		$width = 550;
-		$the_area = '';
-		$the_error_message = 'Operation FAILED: '.$def_warn;
-		$the_params = '';
-		$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
-	} //end if else
-	//--
-	$out = SmartComponents::app_error_message(
-		'Redis Client',
-		'Redis',
-		'Caching',
-		'Server',
-		'lib/core/img/db/redis-logo.svg',
-		$width, // width
-		$the_area, // area
-		$the_error_message, // err msg
-		$the_params, // title or params
-		$the_query_info // command
-	);
-	//--
-	Smart::raise_error(
-		'#REDIS@'.$this->socket.'# :: Q# // Redis Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query,
-		$out // msg to display
-	);
-	die(''); // just in case
-	//--
-} else { // SILENT WARNING
+if($is_fatal === false) { // NON-FATAL ERROR
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 		//--
@@ -670,7 +641,48 @@ if($is_fatal !== false) { // FATAL ERROR
 	//--
 	Smart::log_warning('#REDIS@'.$this->socket.' :: Q# // Redis :: WARNING :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query);
 	//--
+} //end if
+//--
+$def_warn = 'Execution Halted !';
+$y_warning = (string) trim((string)$y_warning);
+if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	$width = 750;
+	$the_area = (string) $y_area;
+	if((string)$y_warning == '') {
+		$y_warning = (string) $def_warn;
+	} //end if
+	$the_error_message = 'Operation FAILED: '.$def_warn."\n".$y_error_message;
+	$the_params = '- '.$this->description.' -';
+	$the_query_info = (string) $y_query;
+	if((string)$the_query_info == '') {
+		$the_query_info = '-'; // query cannot e empty in this case (templating enforcement)
+	} //end if
+} else {
+	$width = 550;
+	$the_area = '';
+	$the_error_message = 'Operation FAILED: '.$def_warn;
+	$the_params = '';
+	$the_query_info = ''; // do not display query if not in debug mode ... this a security issue if displayed to public ;)
 } //end if else
+//--
+$out = SmartComponents::app_error_message(
+	'Redis Client',
+	'Redis',
+	'Caching',
+	'Server',
+	'lib/core/img/db/redis-logo.svg',
+	$width, // width
+	$the_area, // area
+	$the_error_message, // err msg
+	$the_params, // title or params
+	$the_query_info // command
+);
+//--
+Smart::raise_error(
+	'#REDIS@'.$this->socket.'# :: Q# // Redis Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query,
+	$out // msg to display
+);
+die(''); // just in case
 //--
 } //END FUNCTION
 //======================================================

@@ -58,9 +58,9 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 	public function open() {
 		//--
 		if((defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) AND (SMART_SOFTWARE_MEMDB_FATAL_ERR === true)) {
-			$ignore_conn_errs = false;
+			$is_fatal_err = false;
 		} else {
-			$ignore_conn_errs = true; // default
+			$is_fatal_err = true; // default
 		} //end if
 		//--
 		$redis_cfg = (array) Smart::get_from_config('redis');
@@ -73,7 +73,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 			(string) $redis_cfg['timeout'],
 			(string) $redis_cfg['slowtime'],
 			'SmartCustomSession',
-			(bool) $ignore_conn_errs
+			(bool)   $is_fatal_err
 		);
 		//--
 		return true;

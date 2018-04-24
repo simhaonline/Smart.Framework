@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.180326
+ * @version 	v.180423
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)										# count documents in a collection
@@ -73,7 +73,13 @@ private $collection;
 /** @var slow_time */
 private $slow_time = 0.0035;
 
+/** @var fatal_err */
+private $fatal_err = true;
+
+/** @var connex_key */
 private $connex_key = '';
+
+/** @var connected */
 private $connected = false;
 
 
@@ -85,13 +91,17 @@ private $connected = false;
  * @param 	ARRAY 	$y_configs_arr 		:: The Array of Configuration parameters - the ARRAY STRUCTURE should be identical with the default config.php: $configs['mongodb'].
  *
  */
-public function __construct($y_configs_arr=array()) {
+public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
 
 	//--
 	if(version_compare(phpversion('mongodb'), '1.0.1') < 0) {
 		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.0.1 or later');
 		return;
 	} //end if
+	//--
+
+	//--
+	$this->fatal_err = (bool) $y_fatal_err;
 	//--
 
 	//--
@@ -893,6 +903,11 @@ public function disconnect() {
  */
 private function error($y_conhash, $y_area, $y_info, $y_error_message, $y_query='', $y_warning='') {
 //--
+if($this->fatal_err === false) {
+	throw new Exception('#MONGO-DB@'.$y_conhash.'# :: Q# // MongoDB Client :: EXCEPTION :: '.$y_area."\n".$y_info.': '.$y_error_message);
+	return;
+} //end if
+//--
 $def_warn = 'Execution Halted !';
 $y_warning = (string) trim((string)$y_warning);
 if(Smart::array_size($y_query) > 0) {
@@ -931,7 +946,7 @@ $out = SmartComponents::app_error_message(
 );
 //--
 Smart::raise_error(
-	'#MONGO-DB@'.$y_conhash.' :: Q# // MongoDB :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Statement:'.$y_query,
+	'#MONGO-DB@'.$y_conhash.' :: Q# // MongoDB Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Statement:'.$y_query,
 	$out // msg to display
 );
 die(''); // just in case

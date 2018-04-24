@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.180405
+ * @version 	v.180423
  *
  */
 final class SmartDebugProfiler {
@@ -998,6 +998,7 @@ private static function print_log_database($title, $db_log) {
 				case 'count':
 				case 'read':
 				case 'write':
+				case 'sql':
 				case 'nosql':
 					//--
 					if((string)$tmp_arr['skip-count'] != 'yes') {

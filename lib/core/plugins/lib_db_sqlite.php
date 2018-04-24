@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.180307
+ * @version 	v.180423
  * @package 	Database:SQLite
  *
  */
@@ -448,7 +448,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.180307
+ * @version 	v.180423
  * @package 	Database:SQLite
  *
  */
@@ -794,7 +794,7 @@ public static function count_data($db, $query, $qparams='', $qtitle='') {
 	} //end if
 	//--
 	if(strlen($sqlite_error) > 0) {
-		self::error($db, 'COUNT', $sqlite_error, $query, $qparams);
+		self::error($db, 'COUNT-DATA', $sqlite_error, $query, $qparams);
 		return 0;
 	} //end if
 	//--
@@ -1531,6 +1531,17 @@ private static function get_connection_id($db) {
  */
 private static function error($db, $y_area, $y_error_message, $y_query, $y_params_or_title, $y_warning='') {
 //--
+if(!($db instanceof SQLite3)) {
+	$the_conn = (string) $db;
+} else {
+	$the_conn = (string) self::get_connection_id($db);
+} //end if else
+//--
+if(defined('SMART_SOFTWARE_SQLDB_FATAL_ERR') AND (SMART_SOFTWARE_SQLDB_FATAL_ERR === false)) {
+	throw new Exception('#SQLITE-DB@'.\SmartFileSysUtils::get_file_name_from_path($the_conn).'# :: Q# // SQLite Client :: EXCEPTION :: '.$y_area."\n".$y_error_message);
+	return;
+} //end if
+//--
 $def_warn = 'Execution Halted !';
 $y_warning = (string) trim((string)$y_warning);
 if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
@@ -1571,12 +1582,6 @@ $out = SmartComponents::app_error_message(
 	$the_params, // title or params
 	$the_query_info // sql statement
 );
-//--
-if(!($db instanceof SQLite3)) {
-	$the_conn = (string) $db;
-} else {
-	$the_conn = (string) self::get_connection_id($db);
-} //end if else
 //--
 Smart::raise_error(
 	'#SQLITE-DB@'.$the_conn.' :: Q# // SQLite Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Params / Title:'."\n".print_r($y_params_or_title,1)."\n".'*** Query:'."\n".$y_query,
