@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -21,6 +22,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // gzcompress / gzuncompress (rfc1950) which uses ADLER32 minimal checksums
 //--
 if((!function_exists('gzcompress')) OR (!function_exists('gzuncompress'))) {
+	@http_response_code(500);
 	die('ERROR: The PHP ZLIB Extension (gzcompress/gzuncompress) is required for SmartFramework / Lib ZipArchive');
 } //end if
 //--

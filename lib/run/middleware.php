@@ -5,10 +5,12 @@
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@http_response_code(500);
 	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -37,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		180309
+ * @version		180424
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -430,6 +432,27 @@ final public static function DownloadsHandler($encrypted_download_pack, $control
 	} //end if else
 	//--
 	return (string) $downloaded_file;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+final public static function ServiceStatus($the_midmark) {
+	//--
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		$txt_area = 'Admin';
+	} else {
+		$txt_area = 'Index';
+	} //end if else
+	//--
+	if(defined('SMART_SOFTWARE_DISABLE_STATUS_POWERED') AND SMART_SOFTWARE_DISABLE_STATUS_POWERED === true) {
+		$html_status_powered_info = '';
+	} else {
+		$html_status_powered_info = (string) SmartComponents::app_powered_info('no');
+	} //end if else
+	//--
+	return (string) SmartComponents::http_status_message('200 OK :: '.Smart::escape_html($txt_area).' / Service Available', '<script type="text/javascript">setTimeout(function(){ self.location = self.location; }, 60000);</script><img height="32" src="lib/framework/img/loading-bars.svg"><div><h2 style="display:inline;">'.date('Y-m-d H:i:s O').' // Smart.Framework :: '.Smart::escape_html($the_midmark).'</h2></div><br>'.$html_status_powered_info.'<br>');
 	//--
 } //END FUNCTION
 //======================================================================

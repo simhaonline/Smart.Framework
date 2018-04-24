@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -22,6 +23,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //--
 if(!function_exists('mb_convert_encoding')) {
+	@http_response_code(500);
 	die('ERROR: The PHP MBString Extension is required for SmartFramework / Lib Archive Utils');
 } //end if
 //--
@@ -48,6 +50,7 @@ if(!function_exists('mb_convert_encoding')) {
  * $archString = SmartArchiverLZS::compressToBase64($myString); // archive the string
  * $unarchString = SmartArchiverLZS::decompressFromBase64($archString); // unarchive it back
  * if((string)$unarchString !== (string)$myString) { // Test: check if unarchive is the same as archive
+ *     @http_response_code(500);
  *     die('LZS Archive test Failed !');
  * } //end if
  * </code>

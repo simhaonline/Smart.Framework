@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -22,6 +23,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // gzencode / gzdecode (rfc1952) is the gzip compatible algorithm which uses CRC32 minimal checksums (a bit safer and faster than ADLER32)
 //--
 if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
+	@http_response_code(500);
 	die('ERROR: The PHP ZLIB Extension (gzencode/gzdecode) is required for SmartFramework / Lib Utils');
 } //end if
 //--

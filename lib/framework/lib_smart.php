@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -22,12 +23,15 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //================================================================
 if((!function_exists('json_encode')) OR (!function_exists('json_decode'))) {
+	@http_response_code(500);
 	die('ERROR: The PHP JSON Extension is required for the SmartFramework / Base');
 } //end if
 if(!function_exists('hex2bin')) {
+	@http_response_code(500);
 	die('ERROR: The PHP hex2bin Function is required for SmartFramework / Base');
 } //end if
 if(!function_exists('bin2hex')) {
+	@http_response_code(500);
 	die('ERROR: The PHP bin2hex Function is required for SmartFramework / Base');
 } //end if
 //================================================================

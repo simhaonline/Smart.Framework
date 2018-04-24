@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@http_response_code(500);
 	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -27,26 +28,30 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 //--
 if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime, but mark 5.6  as minimum for latest optimizations ; since 5.4 / 5.5 are deprecated the framework is no more actively tested on PHP versions < 5.6
+	@http_response_code(500);
 	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 or later');
 } //end if
 //--
 if(!function_exists('preg_match')) {
+	@http_response_code(500);
 	die('PHP PCRE Extension is missing. It is needed for Regular Expression ...');
 } //end if
 //--
 
 //--
 if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_RELEASE_VERSION') || defined('SMART_FRAMEWORK_RELEASE_URL') || defined('SMART_FRAMEWORK_RELEASE_MIDDLEWARE')) {
+	@http_response_code(500);
 	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.5'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.04.23'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.04.24'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
+	@http_response_code(500);
 	die('A required RUNTIME constant has not been defined: SMART_FRAMEWORK_ADMIN_AREA');
 } //end if
 if(SMART_FRAMEWORK_ADMIN_AREA === true) {
@@ -77,16 +82,20 @@ if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_M
 //== CHECK: REQUIRED INIT CONSTANTS
 //--
 if(!defined('SMART_SOFTWARE_NAMESPACE')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_SOFTWARE_NAMESPACE');
 } //end if
 if((strlen(SMART_SOFTWARE_NAMESPACE) < 10) OR (strlen(SMART_SOFTWARE_NAMESPACE) > 25)) {
+	@http_response_code(500);
 	die('A required INIT constant must have a length between 10 and 25 characters: SMART_SOFTWARE_NAMESPACE');
 } //end if
 if(!preg_match('/^[_a-z0-9\-\.]+$/', (string)SMART_SOFTWARE_NAMESPACE)) {
+	@http_response_code(500);
 	die('A required INIT constant contains invalid characters: SMART_SOFTWARE_NAMESPACE');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_TIMEZONE')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_TIMEZONE');
 } //end if
 //--
@@ -95,87 +104,113 @@ if(!defined('SMART_FRAMEWORK_DEFAULT_LANG')) {
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_SECURITY_KEY')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SECURITY_KEY');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_SESSION_NAME')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SESSION_NAME');
 } //end if
 if(!defined('SMART_FRAMEWORK_SESSION_HANDLER')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SESSION_HANDLER');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_MEMORY_LIMIT')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_MEMORY_LIMIT');
 } //end if
 if(!defined('SMART_FRAMEWORK_EXECUTION_TIMEOUT')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_EXECUTION_TIMEOUT');
 } //end if
 if(!defined('SMART_FRAMEWORK_NETSOCKET_TIMEOUT')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_NETSOCKET_TIMEOUT');
 } //end if
 if(!defined('SMART_FRAMEWORK_NETSERVER_ID')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_NETSERVER_ID');
 } //end if
 if(!defined('SMART_FRAMEWORK_SSL_MODE')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SSL_MODE');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_FILE_LOCKTIME')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_FILE_LOCKTIME');
 } //end if
 if(!is_int(SMART_FRAMEWORK_FILE_LOCKTIME)) {
+	@http_response_code(500);
 	die('Invalid INIT constant value for SMART_FRAMEWORK_FILE_LOCKTIME');
 } //end if
 if(!defined('SMART_FRAMEWORK_CHMOD_DIRS')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_CHMOD_DIRS');
 } //end if
 if(!is_int(SMART_FRAMEWORK_CHMOD_DIRS)) {
+	@http_response_code(500);
 	die('Invalid INIT constant value for SMART_FRAMEWORK_CHMOD_DIRS');
 } //end if
 if(!defined('SMART_FRAMEWORK_CHMOD_FILES')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_CHMOD_FILES');
 } //end if
 if(!is_int(SMART_FRAMEWORK_CHMOD_FILES)) {
+	@http_response_code(500);
 	die('Invalid INIT constant value for SMART_FRAMEWORK_CHMOD_FILES');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_DOWNLOAD_FOLDERS')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_DOWNLOAD_FOLDERS');
 } //end if
 if(!defined('SMART_FRAMEWORK_UPLOAD_PICTS')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_UPLOAD_PICTS');
 } //end if
 if(!defined('SMART_FRAMEWORK_UPLOAD_MOVIES')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_UPLOAD_MOVIES');
 } //end if
 if(!defined('SMART_FRAMEWORK_UPLOAD_DOCS')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_UPLOAD_DOCS');
 } //end if
 if(!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_HTACCESS_NOEXECUTION')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_HTACCESS_NOEXECUTION');
 } //end if
 if(!defined('SMART_FRAMEWORK_HTACCESS_FORBIDDEN')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_HTACCESS_FORBIDDEN');
 } //end if
 if(!defined('SMART_FRAMEWORK_HTACCESS_NOINDEXING')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_HTACCESS_NOINDEXING');
 } //end if
 if(!defined('SMART_FRAMEWORK_IDENT_ROBOTS')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_IDENT_ROBOTS');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_URL_VALUE_ENABLED')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_VALUE_ENABLED');
 } //end if
 if(!defined('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_MODALPOPUP');
 } //end if
 if(!defined('SMART_FRAMEWORK_URL_PARAM_PRINTABLE')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_PRINTABLE');
 } //end if
 //--
@@ -190,15 +225,19 @@ if(!defined('SMART_SOFTWARE_URL_ALLOW_PATHINFO')) {
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_CHARSET')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_CHARSET');
 } //end if
 if(!defined('SMART_FRAMEWORK_DBSQL_CHARSET')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_DBSQL_CHARSET');
 } //end if
 if(!defined('SMART_FRAMEWORK_LANGUAGES_CACHE_DIR')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_LANGUAGES_CACHE_DIR');
 } //end if
 if(!preg_match('/^[a-z\/]+$/', (string)SMART_FRAMEWORK_LANGUAGES_CACHE_DIR)) {
+	@http_response_code(500);
 	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_LANGUAGES_CACHE_DIR');
 } //end if
 //--
@@ -208,9 +247,11 @@ if(!preg_match('/^[a-z\/]+$/', (string)SMART_FRAMEWORK_LANGUAGES_CACHE_DIR)) {
 // WARNING: This must be done before loading any configs or other files that contain variables that may be rewritten
 //--------------------------------------- LOAD APP.REQUEST (HANDLER)
 if(!defined('SMART_FRAMEWORK_APP_REQUEST')) {
+	@http_response_code(500);
 	die('The App.Boostrap Script has not been defined: SMART_FRAMEWORK_APP_REQUEST');
 } //end if
 if(substr((string)SMART_FRAMEWORK_APP_REQUEST, -15, 15) != 'app-request.php') {
+	@http_response_code(500);
 	die('Invalid App.Boostrap Script: '.SMART_FRAMEWORK_APP_REQUEST);
 } //end if
 require((string)SMART_FRAMEWORK_APP_REQUEST); // (This can be customized)
@@ -242,6 +283,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 } //end if
 //---------------------------------------
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //---------------------------------------
@@ -256,42 +298,53 @@ SmartFrameworkRuntime::Create_Required_Dirs();
 
 //--------------------------------------- LOAD APP.BOOTSTRAP
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) {
+	@http_response_code(500);
 	die('The App.Boostrap Script has not been defined: SMART_FRAMEWORK_APP_BOOTSTRAP');
 } //end if
 if(substr((string)SMART_FRAMEWORK_APP_BOOTSTRAP, -17, 17) != 'app-bootstrap.php') {
+	@http_response_code(500);
 	die('Invalid App.Boostrap Script: '.SMART_FRAMEWORK_APP_BOOTSTRAP);
 } //end if
 require((string)SMART_FRAMEWORK_APP_BOOTSTRAP); // (This can be customized)
 //--------------------------------------- VARIOUS CHECKS FOR APP.BOOTSTRAP
 if(!defined('SMART_SOFTWARE_APP_NAME')) {
+	@http_response_code(500);
 	die('A required BOOTSTRAP Constant has not been defined: SMART_SOFTWARE_APP_NAME');
 } //end if
 //--
 if(!class_exists('SmartPersistentCache')) {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartPersistentCache is missing ...');
 } //end if
 if((string)get_parent_class('SmartPersistentCache') != 'SmartAbstractPersistentCache') {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartPersistentCache must be extended from the Class SmartAbstractPersistentCache ...');
 } //end if
 //--
 if(!class_exists('SmartAdapterTextTranslations')) {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartAdapterTextTranslations is missing ...');
 } //end if
 if(!is_subclass_of('SmartAdapterTextTranslations', 'SmartInterfaceAdapterTextTranslations', true)) {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartAdapterTextTranslations must implement the SmartInterfaceAdapterTextTranslations ...');
 } //end if
 //--
 if(!class_exists('SmartAppInfo')) {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartAppInfo is missing ...');
 } //end if
 if(!is_subclass_of('SmartAppInfo', 'SmartInterfaceAppInfo', true)) {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartAppInfo must implement the SmartInterfaceAppInfo ...');
 } //end if
 //--
 if(!class_exists('SmartAppBootstrap')) {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartAppBootstrap is missing ...');
 } //end if
 if(!is_subclass_of('SmartAppBootstrap', 'SmartInterfaceAppBootstrap', true)) {
+	@http_response_code(500);
 	die('SmartFramework // Runtime: the Class SmartAppBootstrap must implement the SmartInterfaceAppBootstrap ...');
 } //end if
 //---------------------------------------
@@ -1288,9 +1341,8 @@ public static function High_Load_Monitor() {
 			if($tmp_sysload_avg[0] > $tmp_max_load) { // protect against system overload over max
 				if(!headers_sent()) {
 					http_response_code(503);
-				} else {
-					Smart::log_warning('#SMART-FRAMEWORK-HIGH-LOAD-PROTECT#'."\n".'SmartFramework // Web :: System Overload Protection: The System is Too Busy ... Try Again Later. The Load Averages reached the maximum allowed value by current settings ... ['.$tmp_sysload_avg[0].' of '.$tmp_max_load.']');
-				} //end if else
+				} //end if
+				Smart::log_warning('#SMART-FRAMEWORK-HIGH-LOAD-PROTECT#'."\n".'SmartFramework // Web :: System Overload Protection: The System is Too Busy ... Try Again Later. The Load Averages reached the maximum allowed value by current settings ... ['.$tmp_sysload_avg[0].' of '.$tmp_max_load.']');
 				die(SmartComponents::http_message_503_serviceunavailable('The Service is Too busy, try again later ...', SmartComponents::operation_warn('<b>SmartFramework // Web :: System Overload Protection</b><br>The Load Averages reached the maximum allowed value by current settings ...', '100%')));
 				return array();
 			} //end if
@@ -1310,6 +1362,9 @@ public static function High_Load_Monitor() {
 public static function Create_Required_Dirs() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
+		if(!headers_sent()) {
+			http_response_code(500);
+		} //end if
 		die('Smart Runtime // Create Required Dirs :: Requires SmartFramework to be loaded ...');
 		return;
 	} //end if
@@ -1487,6 +1542,9 @@ public static function Create_Required_Dirs() {
 public static function Redirection_Monitor() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
+		if(!headers_sent()) {
+			http_response_code(500);
+		} //end if
 		die('Smart Runtime // Redirection Monitor :: Requires SmartFramework to be loaded ...');
 		return;
 	} //end if
@@ -1502,15 +1560,23 @@ public static function Redirection_Monitor() {
 	$the_current_script = SmartUtils::get_server_current_script();
 	//--
 	if((SMART_SOFTWARE_FRONTEND_ENABLED === false) AND (SMART_SOFTWARE_BACKEND_ENABLED === false)) { // both frontend and backend are disabled
-		die('FATAL ERROR: The FRONTEND but also the BACKEND of this application are DISABLED ! ...');
+		if(!headers_sent()) {
+			http_response_code(500);
+		} //end if
+		die((string)SmartComponents::http_error_message('App Config ERROR', 'The FRONTEND and the BACKEND of this application are both DISABLED in the config/init ! ...'));
 		return;
 	} //end if
 	if((SMART_SOFTWARE_FRONTEND_ENABLED === false) AND ((string)$the_current_script == 'index.php')) {
 		$url_redirect = $the_current_url.'admin.php';
+		if($_SERVER['QUERY_STRING']) {
+			$url_redirect .= (string) '?'.$_SERVER['QUERY_STRING'];
+		} //end if
 	} //end if
 	if((SMART_SOFTWARE_BACKEND_ENABLED === false) AND ((string)$the_current_script == 'admin.php')) {
 		$url_redirect = $the_current_url.'index.php';
-	//	$url_redirect = $the_current_url; // reset index.php part of URL
+		if($_SERVER['QUERY_STRING']) {
+			$url_redirect .= (string) '?'.$_SERVER['QUERY_STRING'];
+		} //end if
 	} //end if
 	//--
 	if(((string)$url_redirect == '') AND (isset($_SERVER['PATH_INFO']))) {
@@ -1573,11 +1639,13 @@ public static function Redirection_Monitor() {
 public static function SetVisitorEntropyIDCookie() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
+		@http_response_code(500);
 		die('Smart Runtime // Set Visitor Entropy ID Cookie :: Requires SmartFramework to be loaded ...');
 		return;
 	} //end if
 	//--
 	if(defined('SMART_APP_VISITOR_COOKIE')) {
+		@http_response_code(500);
 		die('SetVisitorEntropyIDCookie :: SMART_APP_VISITOR_COOKIE must not be re-defined ...');
 		return;
 	} //end if
@@ -1659,6 +1727,7 @@ public static function DebugRequestLog($y_message) {
 //#########################
 //==
 if(defined('SMART_FRAMEWORK_APP_RUNTIME')) {
+	@http_response_code(500);
 	die('SmartFramework / App-Runtime already loaded ...');
 } //end if
 //==

@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@http_response_code(500);
 	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -146,37 +147,47 @@ date_default_timezone_set((string)SMART_FRAMEWORK_TIMEZONE);
 //} //end if
 ini_set('zlib.output_compression', '0'); // disable ZLib PHP Internal Output Compression as it will break sensitive control over headings and timeouts
 if((string)ini_get('zlib.output_compression') != '0') {
+	@http_response_code(500);
 	die('SmartFramework INI // The PHP.INI ZLib Output Compression cannot be disabled !');
 } //end if
 //-- output handlers
 if((string)ini_get('zlib.output_handler') != '') {
+	@http_response_code(500);
 	die('SmartFramework INI // The PHP.INI Zlib Output Handler must be unset !');
 } //end if
 if((string)ini_get('output_handler') != '') {
+	@http_response_code(500);
 	die('SmartFramework INI // The PHP.INI Output Handler must be unset !');
 } //end if
 //-- charset
 if((string)ini_get('zend.multibyte') != '0') {
+	@http_response_code(500);
 	die('SmartFramework INI // PHP.INI Zend-MultiByte must be disabled ! Unicode support is managed via MBString into SmartFramework ...');
 } //end if
 ini_set('default_charset', (string)SMART_FRAMEWORK_CHARSET); // default charset UTF-8
 if(!function_exists('mb_internal_encoding')) { // *** MBString is required ***
+	@http_response_code(500);
 	die('SmartFramework INI // The MBString PHP Module is required for SmartFramework / Unicode support (SMART-INIT) !');
 } //end if
 if(mb_internal_encoding((string)SMART_FRAMEWORK_CHARSET) !== true) { // this setting is required for UTF-8 mode
+	@http_response_code(500);
 	die('SmartFramework INI // Failed to set MB Internal Encoding to: '.SMART_FRAMEWORK_CHARSET);
 } //end if
 if(mb_substitute_character(63) !== true) {
+	@http_response_code(500);
 	die('SmartFramework INI // Failed to set the MB Substitute Character to standard: 63(?) ...');
 } //end if
 //-- check input limits
 if((int)ini_get('max_input_vars') < 1000) { // it should be at least 1000 ; cannot be set to zero as it will dissalow any input vars ; this limits the Request Input Vars (GET / POST / COOKIE) includding their nested levels ; recommended is 2500 ; minimum accepted is 1000 ; after changing this value you have to change the max_input_vars with a value like this or even higher in PHP.INI
+	@http_response_code(500);
 	die('The PHP.INI MaxInputVars is set to a lower value than 1000 ...');
 } //end if
 if((int)ini_get('max_input_nesting_level') < 5) { // it should be at least 5 ; the max_input_nesting_level cannot be set to zero as it will dissalow any arrays
+	@http_response_code(500);
 	die('The PHP.INI MaxInputNestingLevel is set to a lower value than 5 ...');
 } //end if
 if((int)ini_get('max_input_time') < 60) { // it should be at least 60 ; the max_input_time cannot be set to zero as it will have no time for parsing input vars
+	@http_response_code(500);
 	die('The PHP.INI MaxInputTime is set to a lower value than 60 ...');
 } //end if
 //-- misc settings and limits
@@ -191,9 +202,11 @@ ini_set('pcre.backtrack_limit', '1000001');									// PCRE BackTrack Limit
 ini_set('pcre.recursion_limit', '100001');									// PCRE Recursion Limit
 //-- session stuff
 if((string)ini_get('session.auto_start') != '0') {
+	@http_response_code(500);
 	die('SmartFramework INI // The PHP.INI Session AutoSTART must be DISABLED !');
 } //end if
 if((string)ini_get('session.use_trans_sid') != '0') {
+	@http_response_code(500);
 	die('SmartFramework INI // The PHP.INI Session TransSID must be DISABLED !');
 } //end if
 if((string)SMART_FRAMEWORK_SESSION_HANDLER !== 'files') {
@@ -216,6 +229,7 @@ ini_set('session.serialize_handler', 'php');								// use php (default) ; wddx 
 
 //---------------------------------------- security: avoid load this multiple times
 if(defined('SMART_FRAMEWORK_INITS')) {
+	@http_response_code(500);
 	die('SmartFramework / Inits already loaded ...');
 } //end if
 define('SMART_FRAMEWORK_INITS', 'SET'); // avoid reload inits again (if accidentaly you do)

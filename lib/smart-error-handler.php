@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@http_response_code(500);
 	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -29,24 +30,29 @@ if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) { // {{{SYNC-DEFINE-DBGMODE}}}
 } //end if
 //--
 if(defined('SMART_ERROR_LOG_MANAGEMENT')) {
+	@http_response_code(500);
 	die('SmartFramework / Errors Management already loaded ...'); // avoid load more than once
 } //end if
 //--
 define('SMART_ERROR_LOG_MANAGEMENT', 'SET');
 //--
 if(!defined('SMART_ERROR_HANDLER')) {
+	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_ERROR_HANDLER');
 } //end if
 //--
 if(defined('SMART_ERROR_LOGDIR')) {
+	@http_response_code(500);
 	die('SMART_ERROR_LOGDIR cannot be defined outside ERROR HANDLER');
 } //end if
 define('SMART_ERROR_LOGDIR', 'tmp/logs/'); // Error Handler log folder: the phperrors-Y-m-d.log file will be generated into this folder ; it must be .htaccess protected
 //--
 if(defined('SMART_ERROR_AREA')) { // display this error area
+	@http_response_code(500);
 	die('SMART_ERROR_AREA cannot be defined outside ERROR HANDLER');
 } //end if
 if(defined('SMART_ERROR_LOGFILE')) { // for 'log' or 'off' the errors will be registered into this local error log file
+	@http_response_code(500);
 	die('SMART_ERROR_LOGFILE cannot be defined outside ERROR HANDLER');
 } //end if
 if(SMART_FRAMEWORK_ADMIN_AREA === true) {

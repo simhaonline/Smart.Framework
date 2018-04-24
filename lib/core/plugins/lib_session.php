@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -28,6 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //--
 if(!function_exists('session_start')) {
+	@http_response_code(500);
 	die('ERROR: PHP Session Module is required for the SmartFramework');
 } //end if
 //--
@@ -324,7 +326,7 @@ public static function start() {
 	} else {
 		@session_set_cookie_params((int)$tmp_exp_seconds, '/'); // session cookie expire and the path
 	} // end if
-	//-- be sure that session_write_close() is executed at the end of script if script if die('') premature and before pgsql shutdown register in the case of DB sessions
+	//-- be sure that session_write_close() is executed at the end of script if script if die premature and before pgsql shutdown register in the case of DB sessions
 	register_shutdown_function('session_write_close');
 	//-- handle custom session handler
 	if((string)$sf_sess_mode === 'user-custom') {

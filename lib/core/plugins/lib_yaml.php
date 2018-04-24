@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -265,7 +266,7 @@ private function _dumpNode($key, $value, $indent, $previous_key=-1, $first_key=0
 		$string = $spaces.'- '.$value."\n";
 	} else {
 		//--
-		//if($first_key===0) die('YAML // Keys are all screwy.  The first one was zero, now it\'s "'. $key .'"');
+		//if($first_key===0) { @http_response_code(500); die('YAML // Keys are all screwy.  The first one was zero, now it\'s "'. $key .'"'); }
 		//-- It's mapped
 		if(strpos($key, ":") !== false || strpos($key, "#") !== false) {
 			$key = '"'.$key.'"';

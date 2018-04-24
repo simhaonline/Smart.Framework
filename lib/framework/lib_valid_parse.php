@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -440,6 +441,7 @@ public static function regex_stringvalidation_segment($y_mode) {
 				'Segment Validations Internal ERROR' // msg to display
 			);
 			die(''); // just in case
+			return '';
 		//--
 		//== #END
 		//--

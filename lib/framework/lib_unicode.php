@@ -5,6 +5,7 @@
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
@@ -20,34 +21,42 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //================================================================
 // other locales than C may break many things ; Example: 3.5 may become become 3,5 or dates may become uncompatible as format in the overall context ; starting from date() to SQL escapes all will be affected with unpredictable results when working in a mixed locales unicode context other than C
 if((string)setlocale(LC_ALL, 0) != 'C') { // {{{SYNC-LOCALES-CHECK}}}
+	@http_response_code(500);
 	die('ERROR: The PHP locales must be reset to C (default) to support the standard UTF-8 context in SmartFramework / Unicode');
 } //end if
 //================================================================
 // require the PHP MBString Extension (this is the fastest and safest Unicode library to use in PHP)
 if(!function_exists('mb_stripos')) {
+	@http_response_code(500);
 	die('ERROR: The PHP MBString Extension is required for Unicode support into SmartFramework / Unicode');
 } //end if
 if((!function_exists('utf8_decode')) OR (!function_exists('utf8_encode'))) {
+	@http_response_code(500);
 	die('ERROR: The PHP UTF8-Decode/Encode (from XML Extension) is required for SmartFramework / Unicode');
 } //end if
 //================================================================
 // require UTF-8 Character Set
 if(defined('SMART_FRAMEWORK_CHARSET')) {
 	if((string)SMART_FRAMEWORK_CHARSET != 'UTF-8') {
+		@http_response_code(500);
 		die('Smart-Framework Character Set must be set as: UTF-8');
 	} //end if
 	if((string)SMART_FRAMEWORK_CHARSET != strtoupper((string)ini_get('default_charset'))) {
+		@http_response_code(500);
 		die('PHP Internal Character Set must be set as: '.SMART_FRAMEWORK_CHARSET.' but it set to: '.strtoupper((string)ini_get('default_charset')));
 	} //end if
 	if((string)SMART_FRAMEWORK_CHARSET != strtoupper((string)mb_internal_encoding())) {
+		@http_response_code(500);
 		die('MBString Internal Character Set must be set as: '.SMART_FRAMEWORK_CHARSET.' but it set to: '.strtoupper((string)mb_internal_encoding()));
 	} //end if
 } else {
+	@http_response_code(500);
 	die('The SMART_FRAMEWORK_CHARSET must be set ...');
 } //end if
 //================================================================
 // the MBString replacement character must be ? to be compatible with utf8_decode()
 if(mb_substitute_character() !== 63) {
+	@http_response_code(500);
 	die('MBString Internal Substitute Character must be set to 63(?) but is set to: '.mb_substitute_character());
 } //end if
 //================================================================
