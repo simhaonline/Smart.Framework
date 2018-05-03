@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180407), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.180502), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -278,8 +278,6 @@ a.ux-link:hover {
 	background-color: #FCFCFC !important;
 	color: #317AB9 !important;
 	cursor: pointer !important;
-	user-select: none !important;
-	zoom: 1 !important;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-bottom: 5px;
@@ -287,6 +285,11 @@ a.ux-link:hover {
 	box-sizing: border-box !important;
 	-moz-box-sizing: border-box !important;
 	-webkit-box-sizing: border-box !important;
+	appearance: none !important;
+	-moz-appearance: none !important;
+	-webkit-appearance: none !important;
+	user-select: none !important;
+	zoom: 1 !important;
 }
 .ux-button:hover,
 .ux-button:focus {

@@ -144,7 +144,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$this->PageViewSetCfg('template-file', 'template-modal.htm');
 				$main = '<script>'.SmartComponents::js_code_init_away_page('The changes will be lost !').'</script>';
 				$main .= SmartComponents::html_jsload_editarea();
-				$main .= SmartComponents::html_js_editarea('test_code_editor', 'test_code_editor', '', 'html', true, '920px', '450px');
+				$main .= SmartComponents::html_js_editarea('test_code_editor', 'test_code_editor', '', 'markdown', true, '920px', '450px'); // html
 				//--
 				break;
 			case 'testunit.barcodes-qrcode':
