@@ -1,6 +1,6 @@
 # [####TITLE|html####] (H1)
 
-&copy;&nbsp;&nbsp;2015-2017&nbsp;unix-world.org # v.170512
+&copy;&nbsp;&nbsp;2015-2018&nbsp;unix-world.org # v.180504
 
 ## H2 (Unicode Test) ăĂîÎâÂşŞţŢ
 
@@ -199,6 +199,12 @@ Markdown | Less | Pretty
 Quote break.
 
 > This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote.
+
+### Use Hypens, Asterisks and Underscores
+
+\-\-\-
+\_\_\_
+\*\*\*
 
 ### Horizontal Rules
 
