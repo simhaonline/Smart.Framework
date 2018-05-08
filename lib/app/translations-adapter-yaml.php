@@ -71,10 +71,10 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 			} else { // default is: modules/app/translations/
 				$fdb_dir = (string) SMART_FRAMEWORK_LANGUAGES_CACHE_DIR;
 			} //end if else
-			$fdb_template = strtolower($y_area.'/'.$y_subarea.'-'.$the_lang);
+			$fdb_template = (string) strtolower($y_area.'/'.$y_subarea.'-'.$the_lang);
 		} else { // $y_area can be: apps, mod-something, ...
 			$fdb_dir = (string) Smart::safe_pathname('modules/'.$y_area.'/translations/');
-			$fdb_template = strtolower($y_subarea.'-'.$the_lang);
+			$fdb_template = (string) strtolower($y_subarea.'-'.$the_lang);
 		} //end if else
 		//--
 		$fdb_file = (string) $fdb_dir.$fdb_template.'.yaml';
@@ -99,8 +99,9 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 			//--
 		} //end if
 		//--
-		$fcontent = SmartFileSystem::read($fdb_file);
+		$fcontent = (string) SmartFileSystem::read($fdb_file);
 		$arr = (new SmartYamlConverter())->parse((string)$fcontent);
+		$fcontent = '';
 		//--
 		if(!is_array($arr)) {
 			Smart::raise_error(

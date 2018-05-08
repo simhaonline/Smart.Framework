@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.180327
+ * @version 	v.180508
  * @package 	Application
  *
  */
@@ -168,6 +168,41 @@ final class SmartTextTranslations {
 		} //end if
 		//--
 		return (bool) $result;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Validate Language
+	 *
+	 * @param 	STRING 	$y_language 		:: The language ID ; sample (for English) will be: 'en'
+	 *
+	 * @return 	BOOLEAN						:: TRUE if language defined in configs, FALSE if not
+	 *
+	 */
+	public static function validateLanguage($y_language) {
+		//--
+		if((string)trim((string)$y_language) == '') {
+			return false;
+		} //end if
+		//--
+		$all_languages = (array) self::getSafeLanguagesArr();
+		//--
+		$ok = false;
+		//--
+		if(strlen((string)$y_language) == 2) { // if language id have only 2 characters
+			if(preg_match('/^[a-z]+$/', (string)$y_language)) { // language id must contain only a..z characters (iso-8859-1)
+				if(is_array($all_languages)) {
+					if($all_languages[(string)$y_language]) { // if that lang is set in languages array
+						$ok = true;
+					} //end if
+				} //end if
+			} //end if
+		} //end if
+		//--
+		return (bool) $ok;
 		//--
 	} //END FUNCTION
 	//=====
@@ -310,41 +345,6 @@ final class SmartTextTranslations {
 		} //end if
 		//--
 		return (array) $languages;
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//=====
-	/**
-	 * Validate Language
-	 *
-	 * @param 	STRING 	$y_language 		:: The language ID ; sample (for English) will be: 'en'
-	 *
-	 * @return 	BOOLEAN						:: TRUE if language defined in configs, FALSE if not
-	 *
-	 */
-	private static function validateLanguage($y_language) {
-		//--
-		if((string)trim((string)$y_language) == '') {
-			return false;
-		} //end if
-		//--
-		$all_languages = (array) self::getSafeLanguagesArr();
-		//--
-		$ok = false;
-		//--
-		if(strlen((string)$y_language) == 2) { // if language id have only 2 characters
-			if(preg_match('/^[a-z]+$/', (string)$y_language)) { // language id must contain only a..z characters (iso-8859-1)
-				if(is_array($all_languages)) {
-					if($all_languages[(string)$y_language]) { // if that lang is set in languages array
-						$ok = true;
-					} //end if
-				} //end if
-			} //end if
-		} //end if
-		//--
-		return (bool) $ok;
 		//--
 	} //END FUNCTION
 	//=====
