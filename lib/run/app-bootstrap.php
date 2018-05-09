@@ -28,6 +28,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
+// The following constants, if used, should be defined in etc/init.php: SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, SMART_FRAMEWORK_SESSION_HANDLER
 //####################
 
 //== Persistent-Cache Adapter

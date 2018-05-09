@@ -499,7 +499,9 @@ final class SmartTextTranslations {
 				]);
 			} //end if
 		} //end if
-		Smart::log_warning('Cannot get from source Text Translations for Key: '.$the_cache_key);
+		if(((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$y_language) OR ((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes')) {
+			Smart::log_warning('Cannot get from source Text Translations for Key: '.$the_cache_key); // show this if default language or debug
+		} //end if
 		return array(); // this is invalid, means not found in any places
 		//--
 	} //END FUNCTION
@@ -591,7 +593,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.180330
+ * @version 	v.180508
  *
  * @access 		private
  * @internal
@@ -689,7 +691,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.160215
+ * @version 	v.180508
  *
  */
 interface SmartInterfaceAdapterTextTranslations {

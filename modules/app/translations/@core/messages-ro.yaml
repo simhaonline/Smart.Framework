@@ -2,8 +2,9 @@
 TRANSLATIONS:
   @language: RO
   @area: core
-  @version: 2016-02-15
+  @version: 2018-05-09
   messages:
+    lang: 'Limba'
     yes: 'Da'
     no: 'Nu'
     ok: 'OK'

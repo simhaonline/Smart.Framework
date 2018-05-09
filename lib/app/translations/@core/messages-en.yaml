@@ -2,8 +2,9 @@
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2016-02-15
+  @version: 2018-05-09
   messages:
+    lang: 'Language'
     yes: 'Yes'
     no: 'No'
     ok: 'OK'

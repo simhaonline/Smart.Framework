@@ -156,6 +156,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				$this->ControllerGetParam('module-view-path').'welcome.inc.htm',
 				[
 					'DATE-TIME' 		=> (string) date('Y-m-d H:i:s O'),
+					'TXT-LANG' 			=> (string) $translator_core->text('lang'),
 					'TXT-OK' 			=> (string) $translator_core->text('ok'),
 					'TXT-HELLO-WORLD' 	=> (string) $txt_hello_world,
 					'TXT-THIS-IS' 		=> (string) $txt_this_is,

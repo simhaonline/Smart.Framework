@@ -1,6 +1,6 @@
 # [####TITLE|html####] (H1)
 
-&copy;&nbsp;&nbsp;2015-2018&nbsp;unix-world.org # v.180504
+&copy;&nbsp;&nbsp;2015-2018&nbsp;unix-world.org # v.180509
 
 ## H2 (Unicode Test) ăĂîÎâÂşŞţŢ
 
@@ -278,7 +278,7 @@ I get 10 times more traffic from [Google] [1] than from
 </dl>
 ```
 
-**Below should be rendered as plain HTML (HTML tags not allowed in this Markdown)**
+**Below should be rendered as plain HTML (HTML tags disallowed in this Markdown ...)**
 <dl>
   <dt>Definition list</dt>
   <dd>Is something people use sometimes.</dd>

@@ -35,7 +35,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  * @access 		private
  * @internal
  *
- * @version		170921
+ * @version		180509
  *
  */
 final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTranslations {
@@ -44,7 +44,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 
 
 	//==================================================================
-	// This reads and parse from YAML sources
+	// This reads and parse the YAML translation files
 	public static function getTranslationsFromSource($the_lang, $y_area, $y_subarea) {
 		//--
 		$the_lang = (string) Smart::safe_varname((string)$the_lang);
@@ -81,20 +81,28 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 		SmartFileSysUtils::raise_error_if_unsafe_path($fdb_file);
 		//--
 		if(!SmartFileSystem::is_type_dir($fdb_dir)) {
-			Smart::raise_error(
-				'Invalid Language Dir: '.$fdb_dir.' :: for: '.$y_area.'@'.$y_subarea,
-				'Invalid Language Dir for: '.$y_area.'@'.$y_subarea // msg to display
-			);
-			die();
+			//--
+			// INFO: To be able to fallback to the default language, don't make this error FATAL ERROR except if this is the default language selected
+			//--
+			if((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$the_lang) {
+				Smart::raise_error(
+					'Invalid Language Dir: '.$fdb_dir.' :: for: '.$y_area.'@'.$y_subarea,
+					'Invalid Language Dir for: '.$y_area.'@'.$y_subarea // msg to display
+				);
+			} //end if
 			return array();
 		} //end if
 		//--
 		if(!SmartFileSystem::is_type_file($fdb_file)) {
 			//--
-			Smart::raise_error(
-				'Invalid Language File: '.$fdb_file,
-				'Invalid Language File: '.$fdb_template // msg to display
-			);
+			// INFO: To be able to fallback to the default language, don't make this error FATAL ERROR except if this is the default language selected
+			//--
+			if((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$the_lang) {
+				Smart::raise_error(
+					'Invalid Language File: '.$fdb_file,
+					'Invalid Language File: '.$fdb_template // msg to display
+				);
+			} //end if
 			return array();
 			//--
 		} //end if
@@ -130,7 +138,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 
 
 	//==================================================================
-	// This reads and parse from YAML sources
+	// This validates the translations last update version
 	public static function getTranslationsVersion() {
 		//--
 		$version = 'Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_VERSION.' '.SMART_FRAMEWORK_RELEASE_TAGVERSION;
