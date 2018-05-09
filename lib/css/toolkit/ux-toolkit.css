@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180502), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.180509), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -898,7 +898,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 
 .ux-form .ux-input-def {
 	padding: 7px 15px 7px 15px !important;
-	line-height: normal !important;
+	height: 2rem !important;
 	font-family: inherit !important;
 	font-size: 1rem !important;
 	margin-bottom: 5px;
