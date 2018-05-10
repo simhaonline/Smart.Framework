@@ -24,6 +24,8 @@ Line 1
 Line2
 ```space```
 
+[Go To Anchor](#anchor)
+
 Emphasis, aka italics, with *asterisks* or _underscores_.
 
 PHP code (PHP Start-Tag and PHP End-Tag must be removed ...)
@@ -265,6 +267,8 @@ I get 10 times more traffic from [Google] [1] than from
   [2]: http://search.yahoo.com/  "Yahoo Search"
   [3]: http://search.msn.com/    "MSN Search"
 
+
+[](#) {@id=anchor}
 
 ## Sample Data Definition
 
