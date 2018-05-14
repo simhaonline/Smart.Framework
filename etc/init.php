@@ -12,7 +12,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 // ===== NOTICE =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES
-//	* ONLY CONSTANTS CAN BE DEFINED HERE
+//	* ONLY CONSTANTS CAN BE DEFINED HERE ; IF .htaccess PHP settings will be used, be sure to sync them with this file
 // ==================
 
 //define('SMART_FRAMEWORK_DEBUG_MODE', 'yes');												// Uncomment this to enable Debugging and the Web Profiler Toolbar (do not use in production environments but only for internal Debugging / Profiling purposes)

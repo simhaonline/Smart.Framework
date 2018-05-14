@@ -256,7 +256,9 @@ var selectStyle = {
 function featureSelectSetStyle(layers, style) {
 	var i;
 	for (i=0; i<layers.length; i++) {
-		layers[i].setStyle(style);
+		try {
+			layers[i].setStyle(style);
+		} catch(err){}
 	}
 }
 var featureSelect = L.featureSelect({ // this currently does not work with new created features (maybe needs to be upated somehow ...)
