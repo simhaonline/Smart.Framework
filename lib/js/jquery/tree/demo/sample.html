@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="utf-8">
 	<title>SimpleTree Demo</title>
 	<style>
-	.tree .button {
+	.simpletree-toggle, .simpletree-notoggle {
+		display: inline-block;
+		width: 15px;
+	}
+	.simpletree-tree .simpletree-button {
 		cursor: pointer;
+	}
+	ul, ul li {
+		list-style-type: none;
 	}
 	</style>
 
@@ -34,7 +40,7 @@
 		<a href="https://github.com/innoq/simpletree" style="color:#669999!important;">SimpleTree</a>
 		Demo
 	</h1>
-	<p>intentionally basic (e.g. no custom styling)</p>
+	<p>intentionally basic (e.g. no custom styling) ; modified by unixman, for Smart.Framework</p>
 
 	<ul class="hierarchy">
 		<li>hello</li>
@@ -42,7 +48,7 @@
 			world
 			<ul>
 				<li>foo</li>
-				<li>
+				<li data-simpletree="collapsed">
 					bar
 					<ul>
 						<li>lorem</li>
@@ -75,10 +81,13 @@
 	</ul>
 
 	<script>
-		jQuery('ul.hierarchy, ul.selection').simpletree();
+		jQuery('ul.hierarchy').simpletree();
+		jQuery('ul.selection').simpletree({
+			signCollapsed: '+',
+			signExpanded: '-'
+		});
 		jQuery('ul').highlight('hello', 'jqtxthighlight');
 	</script>
 
 </body>
-
 </html>

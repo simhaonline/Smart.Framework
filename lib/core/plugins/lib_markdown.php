@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.180509
+ * @version 	v.180522
  * @package 	Exporters
  *
  */
@@ -147,8 +147,6 @@ final class SmartMarkdownToHTML {
 	public function text($text) {
 		//-- make sure no definitions are set
 		$this->DefinitionData = array(); // init
-		//-- Comment Out PHP tags
-		$text = (string) SmartUtils::comment_php_code((string)$text, ['tag-start' => '// -- PHP: < code ? START# --', 'tag-end' => '// -- PHP: ? code > #END --']);
 		//-- Fix broking curly quotes: ‘ = &lsquo; [0145] ; ’ = &rsquo; [0146] ; “ = &ldquo; [0147] ; ” = &rdquo; [0148]
 		$text = (string) str_replace(['‘', '’', '“', '”'], ['\'', '\'', '"', '"'], $text); // bug fix (special apostrophes will break the UTF-8 markdown ... don't know why !? but need fixing ; perhaps they are interpreted different in UTF-16 context !!!)
 		//-- hack: allow space syntax (needed when a new line is required without content, to avoid use &nbsp; which is complicated ...)
@@ -169,6 +167,8 @@ final class SmartMarkdownToHTML {
 		$markup = (string) $this->prepareHTML($markup);
 		//-- fix charset
 		$markup = (string) SmartUnicode::fix_charset($markup); // fix by unixman (in case that broken UTF-8 characters are detected just try to fix them to avoid break JSON)
+		//-- Comment Out PHP tags
+		$markup = (string) SmartUtils::comment_php_code((string)$markup, ['tag-start' => '&lt;?', 'tag-end' => '?&gt;']);
 		//--
 		return (string) $markup;
 		//--
