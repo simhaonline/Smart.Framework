@@ -168,7 +168,7 @@ final class SmartMarkdownToHTML {
 		//-- fix charset
 		$markup = (string) SmartUnicode::fix_charset($markup); // fix by unixman (in case that broken UTF-8 characters are detected just try to fix them to avoid break JSON)
 		//-- Comment Out PHP tags
-		$markup = (string) SmartUtils::comment_php_code((string)$markup, ['tag-start' => '&lt;?', 'tag-end' => '?&gt;']);
+		$markup = (string) SmartUtils::comment_php_code((string)$markup, ['tag-start' => '&lt;&quest;', 'tag-end' => '&quest;&gt;']); // fix PHP tags if any remaining ...
 		//--
 		return (string) $markup;
 		//--
