@@ -1,4 +1,4 @@
-<h1 style="display:inline-block;">[####TITLE####]</h1>
+<h1 style="display:inline-block;">[####TITLE####]</h1><!-- v.180523.r2 -->
 <div align="left">
 	<a href="?/page/samples.templating-test" class="ux-button ux-button-small"><i class="fa fa-refresh"></i> &nbsp; Reload TPL Render Test</a>
 	&nbsp;&nbsp;
@@ -127,7 +127,7 @@
 	[%%%%ELSE:DAT2._-KEY-_%%%%]
 	<tr style="background:#FFFFCC;">
 		<td style="cursor:help;" title="Iterator = [####DAT2._-ITERATOR-_|html####] ; Index = [####DAT2.-_INDEX_-|html####] ; MaxCount = [####DAT2._-MAXCOUNT-_|html####] ; Total = [####DAT2.-_MAXSIZE_-|html####]">[####DAT2._-KEY-_|html####]</td>
-		<td style="cursor:help;">[%%%%LOOP:DAT2.KEY1%%%%]<span title="Level2-Iterator = [####DAT2.KEY1._-ITERATOR-_|html####] ; Level2-Index = [####DAT2.KEY1.-_INDEX_-|html####] ; Level2-MaxCount = [####DAT2.KEY1._-MAXCOUNT-_|html####] ; Level2-Total = [####DAT2.KEY1.-_MAXSIZE_-|html####]" style="[%%%%IF:DAT2.KEY1.ID:==val1;%%%%]font-weight:bold;[%%%%ELSE:DAT2.KEY1.ID%%%%][%%%%/IF:DAT2.KEY1.ID%%%%]">[####DAT2.KEY1._-KEY-_|html####] =&gt; [####DAT2.KEY1._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2.KEY1%%%%]</td>
+		<td style="cursor:help;">[%%%%LOOP:DAT2._-VAL-_%%%%]<span title="Level2-Iterator = [####DAT2._-VAL-_._-ITERATOR-_|html####] ; Level2-Index = [####DAT2._-VAL-_.-_INDEX_-|html####] ; Level2-MaxCount = [####DAT2._-VAL-_._-MAXCOUNT-_|html####] ; Level2-Total = [####DAT2._-VAL-_.-_MAXSIZE_-|html####]" style="[%%%%IF:DAT2._-VAL-_.ID:==val1;%%%%]font-weight:bold;[%%%%ELSE:DAT2._-VAL-_.ID%%%%][%%%%/IF:DAT2._-VAL-_.ID%%%%]">[####DAT2._-VAL-_._-KEY-_|html####] =&gt; [####DAT2._-VAL-_._-VAL-_|html####]; </span>[%%%%/LOOP:DAT2._-VAL-_%%%%]</td>
 	</tr>
 	[%%%%/IF:DAT2._-KEY-_%%%%]
 [%%%%/LOOP:DAT2%%%%]

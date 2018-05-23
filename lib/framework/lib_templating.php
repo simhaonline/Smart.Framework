@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // It does support: MARKERS, IF/ELSE, LOOP, INCLUDE syntax.
 // Nested identic IF/ELSE or nested identic LOOP syntax must be separed with unique terminators such as: (1), (2), ...
 // For IF/ELSE syntax variable order matters for comparison if used inside LOOP ; when comparing a (special context) variable inside a LOOP with another variable (from out of this context), the LOOP context variable must be placed in the left side, otherwise the comparison will fail as the left variable may be evaluated prior the LOOP variable to be initialized ...
-// For nested LOOP it only supports max 3 nested levels (combining more levels would be inefficient - because of the exponential structure complexity of context data, such as metadata context that must be replicated)
+// For nested LOOP it only supports max 5 nested levels (combining more levels would be inefficient - because of the exponential structure complexity of context data, such as metadata context that must be replicated)
 // 		-_MAXSIZE_- 		The max array index = arraysize ; Available *ONLY* in LOOP
 // 		-_INDEX_- 			The current array index: 1..arraysize ; Available *ONLY* in LOOP
 // 		_-MAXCOUNT-_ 		The max iterator of array: arraysize-1 ; Available also in LOOP / IF
@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.180523
+ * @version 	v.180523.r2
  * @package 	Templating:Engines
  *
  */
@@ -1277,11 +1277,11 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 
 
 //================================================================
-// process the template LOOP syntax ; support nested Loop (3rd-level) ; allow max 3 loop levels ; will process IF syntax inside it also
+// process the template LOOP syntax ; support nested Loop (5th-level) ; allow max 5 loop levels ; will process IF syntax inside it also
 private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 	//--
 	$level++;
-	if($level > 3) {
+	if($level > 5) {
 		Smart::log_warning('Invalid Marker Template LOOP Level: ['.$level.'] / Template: '.$mtemplate);
 		return (string) $mtemplate;
 	} //end if
@@ -1450,6 +1450,16 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 									[ (string) $bind_var_key.'.'.strtoupper((string)$zkey) => (array) $zval ],
 									(int) $level
 								);
+							} //end if
+							if($level > 0) { // uxm-extra: process also _-VAL-_
+								if(((strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.'_-VAL-_'.'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.'_-VAL-_'.'(') !== false)) AND (is_array($zval))) {
+									//echo '***** ['.$bind_var_key.'.'.'_-VAL-_'.'] = '.print_r($zval,1)."\n\n";
+									$mks_line = (string) self::process_loop_syntax(
+										(string) $mks_line,
+										[ (string) $bind_var_key.'.'.'_-VAL-_' => (array) $zval ],
+										(int) $level
+									);
+								} //end if
 							} //end if
 						} //end if
 						//-- process the loop replacements
