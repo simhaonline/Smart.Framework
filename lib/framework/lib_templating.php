@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // It does support: MARKERS, IF/ELSE, LOOP, INCLUDE syntax.
 // Nested identic IF/ELSE or nested identic LOOP syntax must be separed with unique terminators such as: (1), (2), ...
 // For IF/ELSE syntax variable order matters for comparison if used inside LOOP ; when comparing a (special context) variable inside a LOOP with another variable (from out of this context), the LOOP context variable must be placed in the left side, otherwise the comparison will fail as the left variable may be evaluated prior the LOOP variable to be initialized ...
-// For nested LOOP it only supports max 2 levels: only 1 LOOP inside other LOOP, as combining more would be inefficient from the application performance point of view, because of the exponential structure complexity of context data, such as metadata context that must be replicated:
+// For nested LOOP it only supports max 3 nested levels (combining more levels would be inefficient - because of the exponential structure complexity of context data, such as metadata context that must be replicated)
 // 		-_MAXSIZE_- 		The max array index = arraysize ; Available *ONLY* in LOOP
 // 		-_INDEX_- 			The current array index: 1..arraysize ; Available *ONLY* in LOOP
 // 		_-MAXCOUNT-_ 		The max iterator of array: arraysize-1 ; Available also in LOOP / IF
@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.180330
+ * @version 	v.180523
  * @package 	Templating:Engines
  *
  */
@@ -987,7 +987,7 @@ private static function process_syntax($mtemplate, $y_arr_vars) {
 	$mtemplate = (string) self::process_comments_syntax((string)$mtemplate);
 	//-- 1st process IF and remove parts that will not be rendered
 	$mtemplate = (string) self::process_if_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any IF Syntax
-	//-- 2nd process loop syntax
+	//-- 2nd process loop syntax (max 3 nested levels)
 	$mtemplate = (string) self::process_loop_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any LOOP Syntax
 	//-- 3rd, process special characters: \r \n \t SPACE syntax
 	$mtemplate = (string) self::process_rntspace_syntax($mtemplate);
@@ -1277,11 +1277,11 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 
 
 //================================================================
-// process the template LOOP syntax ; support nested Loop (2nd-level) ; allow max 2 loop levels ; will process IF syntax inside it also)
+// process the template LOOP syntax ; support nested Loop (3rd-level) ; allow max 3 loop levels ; will process IF syntax inside it also
 private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 	//--
 	$level++;
-	if($level > 2) {
+	if($level > 3) {
 		Smart::log_warning('Invalid Marker Template LOOP Level: ['.$level.'] / Template: '.$mtemplate);
 		return (string) $mtemplate;
 	} //end if
