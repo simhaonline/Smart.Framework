@@ -40,7 +40,7 @@
 		<a href="https://github.com/innoq/simpletree" style="color:#669999!important;">SimpleTree</a>
 		Demo
 	</h1>
-	<p>intentionally basic (e.g. no custom styling) ; modified by unixman, for Smart.Framework</p>
+	<p>intentionally basic, with highlight on word 'lorem' (e.g. no custom styling) ; modified by unixman, for Smart.Framework</p>
 
 	<ul class="hierarchy">
 		<li>hello</li>
@@ -81,12 +81,17 @@
 	</ul>
 
 	<script>
-		jQuery('ul.hierarchy').simpletree();
+		jQuery('ul.hierarchy').simpletree({
+			useAnimation: true
+		});
 		jQuery('ul.selection').simpletree({
 			signCollapsed: '+',
 			signExpanded: '-'
 		});
-		jQuery('ul').highlight('hello', 'jqtxthighlight');
+		jQuery('p').highlight('lorem', 'jqtxthighlight');
+		jQuery('ul').highlight('lorem', 'jqtxthighlight');
+	//	jQuery('ul li').highlight('lorem', 'jqtxthighlight'); // check redundant
+	//	jQuery('li').highlight('lorem', 'jqtxthighlight'); // check redundant
 	</script>
 
 </body>

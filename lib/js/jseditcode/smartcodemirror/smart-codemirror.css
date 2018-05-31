@@ -1,7 +1,7 @@
 /*
 Smart Code Mirror CSS
-(c) 2016 unix-world.org
-r. 160223
+(c) 2016-2018 unix-world.org
+r. 180531
 */
 
 .CodeMirror-SmartMenu-default {
@@ -18,6 +18,13 @@ r. 160223
 	left: 0;
 	width: auto;
 	z-index: 99999;
+}
+
+/* show tabs */
+.cm-tab {
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=');
+	background-position: right;
+	background-repeat: no-repeat;
 }
 
 /* END */
