@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180405.1905
+ * @version 	v.180605
  * @package 	Components:Core
  *
  */
@@ -856,7 +856,9 @@ public static function html_select_list_single($y_id, $y_selected_value, $y_mode
 		//--
 	} else {
 		//--
-		$css_class = 'class="ux-field"';
+		if((string)$y_mode == 'form') {
+			$css_class = 'class="ux-field"';
+		} //end if
 		//--
 	} //end if else
 	//--
@@ -880,56 +882,56 @@ public static function html_select_list_single($y_id, $y_selected_value, $y_mode
 		$i_key = $i;
 		$i_val = $i+1;
 		$i=$i+1;
-   		//--
-   		if((string)$y_mode == 'form') {
-   			//--
-   			$tmp_sel = '';
-   			//--
-   			if((strlen($y_selected_value) > 0) AND ((string)$y_selected_value == (string)$yarr_data[$i_key])) {
+		//--
+		if((string)$y_mode == 'form') {
+			//--
+			$tmp_sel = '';
+			//--
+			if((strlen($y_selected_value) > 0) AND ((string)$y_selected_value == (string)$yarr_data[$i_key])) {
 				$tmp_sel = ' selected'; // single ID
-   			} //end if
-   			//--
-   			if((string)$y_raw == 'yes') {
+			} //end if
+			//--
+			if((string)$y_raw == 'yes') {
 				$tmp_desc_val = $yarr_data[$i_val];
-   			} else {
-	   			$tmp_desc_val = Smart::escape_html($yarr_data[$i_val]);
-   			} //end if else
-   			//--
-   			if((string)$yarr_data[$i_key] == '#OPTGROUP#') {
+			} else {
+				$tmp_desc_val = Smart::escape_html($yarr_data[$i_val]);
+			} //end if else
+			//--
+			if((string)$yarr_data[$i_key] == '#OPTGROUP#') {
 				$out .= '<optgroup label="'.$tmp_desc_val.'">'."\n"; // the optgroup
 			} else {
 				$out .= '<option value="'.Smart::escape_html($yarr_data[$i_key]).'"'.$tmp_sel.'>'.$tmp_desc_val.'</option>'."\n";
 			} //end if else
 			//--
-   		} else {
-   			//--
-  			if(((string)$yarr_data[$i_val] != '') AND ((string)$y_selected_value == (string)$yarr_data[$i_key])) {
-  				//-- single ID
-	  			if((string)$y_raw == 'yes') {
-  					$out .= $yarr_data[$i_val].'<br>'."\n";
-	  			} else {
-  					$out .= Smart::escape_html($yarr_data[$i_val]).'<br>'."\n";
-	  			} //end if else
-	  			//--
-  				$found += 1;
-  				//--
-  			} //end if
-  			//--
- 		} //end if else
- 		//--
-   	} //end for
-   	//--
+		} else {
+			//--
+			if(((string)$yarr_data[$i_val] != '') AND ((string)$y_selected_value == (string)$yarr_data[$i_key])) {
+				//-- single ID
+				if((string)$y_raw == 'yes') {
+					$out .= $yarr_data[$i_val]."\n";
+				} else {
+					$out .= Smart::escape_html($yarr_data[$i_val])."\n";
+				} //end if else
+				//--
+				$found += 1;
+				//--
+			} //end if
+			//--
+		} //end if else
+		//--
+	} //end for
+	//--
 	if((string)$y_mode == 'form') {
 		//--
-  		$out .= '</select>'."\n";
-  		//--
-  		$out .= $js."\n";
-  		//--
+		$out .= '</select>'."\n";
+		//--
+		$out .= $js."\n";
+		//--
 	} else {
 		//--
 		if($found == 0) {
 			if($y_allowblank != 'yes') {
-				$out .= Smart::escape_html($y_selected_value).'<sup>?</sup>'.'<br>'."\n";
+				$out .= Smart::escape_html($y_selected_value).'<sup>?</sup>'."\n";
 			} //end if
 		} //end if
 		//--
@@ -1004,6 +1006,7 @@ public static function html_select_list_multi($y_id, $y_selected_value, $y_mode,
 	//--
 
 	//--
+	$js = '';
 	$css_class = '';
 	//--
 	if(((string)$element_id != '') && (((string)$y_extrastyle == '#JS-UI#') || ((string)$y_extrastyle == '#JS-UI-FILTER#'))) {
@@ -1060,8 +1063,9 @@ public static function html_select_list_multi($y_id, $y_selected_value, $y_mode,
 		//--
 		$use_blank_value = 'no';
 		//--
-		$js = '';
-		$css_class = 'class="ux-field"';
+		if((string)$y_mode == 'form') {
+			$css_class = 'class="ux-field"';
+		} //end if
 		//--
 	} //end if else
 	//--
@@ -2890,6 +2894,7 @@ public static function app_powered_info($y_show_versions='no', $y_plugins=array(
 
 
 //================================================================
+// This renders the App Main Template (should be used only on custom developments ...)
 public static function render_app_template($template_path, $template_file, $arr_data) { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//--
