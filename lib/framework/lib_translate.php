@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.180508
+ * @version 	v.180605
  * @package 	Application
  *
  */
@@ -62,6 +62,31 @@ final class SmartTextTranslations {
 		$all_languages = (array) self::getSafeLanguagesArr();
 		//--
 		return (array) array_keys((array)$all_languages);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Regional Text :: Get (available) Languages List
+	 *
+	 * @return 	ARRAY						:: The array with available languages List ['en' => 'English', 'ro' => 'Romanian']
+	 */
+	public static function getListOfLanguages() {
+		//--
+		$all_languages = (array) self::getSafeLanguagesArr();
+		//--
+		$list_languages = array();
+		foreach($all_languages as $key => $val) {
+			if(is_array($val)) {
+				$list_languages[(string)$key] = (string) $val['name'];
+			} else {
+				$list_languages[(string)$key] = (string) $val;
+			} //end if
+		} //end for
+		//--
+		return (array) $list_languages;
 		//--
 	} //END FUNCTION
 	//=====
