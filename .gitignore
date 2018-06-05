@@ -25,4 +25,5 @@ modules/mod-kml
 modules/mod-maps-cache
 modules/mod-tests
 modules/vendor
+.DS_Store
 !.gitignore
