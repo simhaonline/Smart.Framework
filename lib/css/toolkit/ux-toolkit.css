@@ -897,7 +897,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 }
 
 .ux-form .ux-input-def {
-	padding: 7px 15px 7px 15px !important;
+	padding: 1px 3px 1px 3px !important;
 	height: 2rem !important;
 	font-family: inherit !important;
 	font-size: 1rem !important;
