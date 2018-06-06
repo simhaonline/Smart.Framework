@@ -61,6 +61,7 @@ final class SmartUtils {
 
 
 //================================================================
+// use this function to set cookies as it takes care to set it according with if cookie domain is set or not per app
 public static function set_cookie($cookie_name, $cookie_data, $expire_time) {
 	//--
 	$expire_time = (int) $expire_time;
