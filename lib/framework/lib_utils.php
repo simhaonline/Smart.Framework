@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.180522
+ * @version 	v.180606
  * @package 	Base
  *
  */
@@ -58,6 +58,26 @@ final class SmartUtils {
 	// ::
 
 	private static $cache = array();
+
+
+//================================================================
+public static function set_cookie($cookie_name, $cookie_data, $expire_time) {
+	//--
+	$expire_time = (int) $expire_time;
+	if($expire_time < 0) {
+		$expire_time = 0;
+	} //end if
+	//--
+	if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
+		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, '/', (string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN); // set it using domain
+	} else {
+		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, '/'); // set it general
+	} //end if else
+	//--
+	return (bool) $cookie_set;
+	//--
+} //END FUNCTION
+//================================================================
 
 
 //================================================================
