@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180605), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.180608), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -403,7 +403,7 @@ a.ux-link:hover {
 }
 
 .ux-button-xsmall {
-	padding: 4px 7px 4px 7px !important;
+	padding: 3px 7px 3px 7px !important;
 	font-size: 0.75rem !important;
 }
 .ux-button-small {
