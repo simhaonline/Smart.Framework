@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.180412
+ * @version 	v.180613
  * @package 	Application
  *
  */
@@ -1334,24 +1334,36 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * The (real) Controller Destructor - This function is optional and can be re-defined in controllers where a destructor is required.
-	 * This will replace the class destructor __destruct() which is NOT SAFE in all cases (see php bug #31570).
+	 * This is the pre Run() function
+	 * This function will be called before Run()
 	 *
+	 */
+	public function Initialize() {
+		// *** optional*** can be redefined in a controller (as a pre-run init, if required) but is not mandatory ...
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * This is the post Run() function
+	 * This function will be called after Run()
+	 *
+	 * This function is the (real) Controller Destructor - This function is optional and can be re-defined in controllers where a destructor is required.
+	 * It will replace the class destructor __destruct() which is NOT SAFE in all cases (see php bug #31570).
 	 * NOTICE:
 	 * Sometimes __destruct() for classes is not 100% safe ; example: the PHP Bug #31570 (not fixed since a very long time).
 	 * Instead of __destruct() use ShutDown() method for controllers in framework modules (which is always executed after Run() and is 100% safe).
-	 *
 	 * WARNING:
 	 * Modifications for Page Settings or Page Variables are not allowed in this function, after Run() has been completed !
 	 * If controller variables are modified after Run() has completed it can produce unexpected results ...
-	 *
 	 * EXAMPLE / SCENARIO:
 	 * This function (by replacing __destruct()) can be used if you have to cleanup a temporary folder (tmp/) after Run().
 	 * Because of the PHP Bug #31570, the __destruct() can't operate on relative paths and will produce wrong and unexpected results !!!
 	 *
 	 */
 	public function ShutDown() {
-		// *** optional*** can be redefined in a controller (as a safe destructor if required) but is not mandatory ...
+		// *** optional*** can be redefined in a controller (as a post-run init, as safe destructor, if required) but is not mandatory ...
 	} //END FUNCTION
 	//=====
 

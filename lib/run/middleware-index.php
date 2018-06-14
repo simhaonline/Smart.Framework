@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.5');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		180424
+ * @version		180613
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -292,6 +292,7 @@ public static function Run() {
 	if(!defined('SMART_APP_MODULE_DIRECT_OUTPUT') OR SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
 		ob_start();
 	} //end if
+	$appModule->Initialize();
 	$appStatusCode = (int) $appModule->Run();
 	$appModule->ShutDown();
 	$appSettings = (array) $appModule->PageViewGetCfgs();

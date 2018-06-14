@@ -26,6 +26,17 @@ define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
  */
 class SmartAppIndexController extends SmartAbstractAppController {
 
+
+	public function Initialize() {
+		//--
+		// this is pre-run
+		//--
+		$this->PageViewSetCfg('template-path', 'default'); 		// set the template path (must be inside etc/templates/)
+		$this->PageViewSetCfg('template-file', 'template.htm');	// set the template file
+		//--
+	} //END FUNCTION
+
+
 	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
@@ -99,11 +110,6 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewSetRawHeader(
 			'Z-Test-Header-3', 'This is a test (3)'
 		);
-		//--
-
-		//--
-		$this->PageViewSetCfg('template-path', 'default'); 		// set the template path (must be inside etc/templates/)
-		$this->PageViewSetCfg('template-file', 'template.htm');	// set the template file
 		//--
 
 		//-- building a semantic URL
@@ -217,6 +223,12 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 	} //END FUNCTION
+
+
+	public function ShutDown() {
+		// nothing to do for post run ...
+	} //END FUNCTION
+
 
 } //END CLASS
 
