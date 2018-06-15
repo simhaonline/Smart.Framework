@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.180605
+ * @version 	v.180615
  * @package 	Components:Core
  *
  */
@@ -2103,6 +2103,29 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 
 //================================================================
 /**
+ * Redirect to URL
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+public static function js_code_wnd_redirect($y_redir_url, $delay=-1) {
+	//--
+	$y_redir_url = (string) $y_redir_url;
+	$delay = (int) $delay;
+	//--
+	if($delay > 0) {
+		return 'SmartJS_BrowserUtils.RedirectDelayedToURL(\''.Smart::escape_js((string)$y_redir_url).'\', '.(int)$delay.');';
+	} else {
+		return 'SmartJS_BrowserUtils.RedirectToURL(\''.Smart::escape_js((string)$y_redir_url).'\');';
+	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
  * Refresh Parent
  *
  * @access 		private
@@ -2112,6 +2135,7 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 public static function js_code_wnd_refresh_parent($y_redir_url='') {
 	//--
 	$y_redir_url = (string) $y_redir_url;
+	//--
 	if((string)$y_redir_url != '') {
 		return 'SmartJS_BrowserUtils.RefreshParent(\''.Smart::escape_js((string)$y_redir_url).'\');';
 	} else {
