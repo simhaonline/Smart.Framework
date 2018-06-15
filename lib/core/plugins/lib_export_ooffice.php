@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart, SmartZipArchive
- * @version 	v.170920
+ * @version 	v.180615
  * @package 	Exporters
  *
  */
@@ -45,12 +45,12 @@ private $font_size = '';
 private $mime_ods = '';
 private $open_document_ns = '';
 private $open_document_styles = '';
-private $class_version = 'v.2016.01.06';
+private $class_version = 'v.2018.06.15';
 //=================================================
 
 
 //=====================================================================
-public function __construct($y_font_size='9pt') {
+public function __construct($y_font_size='9pt', $y_styles=false) {
 
 	//--
 	if(!class_exists('SmartZipArchive')) {
@@ -109,6 +109,14 @@ public function __construct($y_font_size='9pt') {
 			</style:style>
 		</office:automatic-styles>
 	';
+	//--
+	if($y_styles === true) {
+		// use built-in styles
+	} elseif($y_styles === false) {
+		$this->open_document_styles = ''; // use no styles
+	} elseif((string)trim((string)$y_styles) != '') {
+		$this->open_document_styles = (string) trim((string)$y_styles);
+	} //end if
 	//--
 
 } //END FUNCTION
