@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.180416
+ * @version     v.180716
  * @package     DATA:XML
  *
  */
@@ -469,7 +469,7 @@ private function DomNode2Array($node) {
 				for($i=0, $m=$node->childNodes->length; $i<$m; $i++) {
 					$child = $node->childNodes->item($i);
 					$v = $this->DomNode2Array($child);
-					if(isset($child->tagName)) {
+					if(is_array($output) && isset($child->tagName)) {
 						$t = (string) $child->tagName;
 						if(!isset($output[$t])) {
 							$output[$t] = array();
