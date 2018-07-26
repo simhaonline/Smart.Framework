@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.180716
+ * @version     v.180723
  * @package     DATA:XML
  *
  */
@@ -460,7 +460,10 @@ private function DomNode2Array($node) {
 		case XML_CDATA_SECTION_NODE:
 		case XML_TEXT_NODE:
 			//--
-			$output = (string) trim((string)$node->textContent);
+			$output = '';
+			if((string)trim((string)$node->textContent) != '') {
+				$output = (string) $node->textContent; // FIX: to preserve text node exact as it is ...
+			} //end if
 			//--
 			break;
 		case XML_ELEMENT_NODE:
