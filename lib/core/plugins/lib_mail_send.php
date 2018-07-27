@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180209
+ * @version 	v.180727
  * @package 	Mailer:Send
  *
  */
@@ -1093,7 +1093,7 @@ public function reset() {
 
 
 //=====================================================================================
-// Sends the HELO command to the smtp server.
+// Sends the EHLO/HELO command to the smtp server.
 // This makes sure that we and the server are in the same known state.
 // Implements from rfc 821: HELO <SP> <domain> <CRLF>
 // SMTP CODE SUCCESS: 250
@@ -1108,22 +1108,17 @@ public function hello($hostname) {
 		return 0;
 	} //end if
 	//--
-	$reply = $this->send_cmd('EHLO '.$hostname);
+	$reply = $this->send_cmd('EHLO '.$hostname); // first send EHLO (Extended SMTP)
 	$test = $this->answer_code($reply);
 	if((string)$test != '250') {
-		if($this->debug) {
-			$this->log .= '[WARN] Failed to Send EHLO to Mail Server ! (Server answer is: '.$test.' // '.$reply.')'."\n"; // only set warning as this is not a fatal error
+		$reply = $this->send_cmd('HELO '.$hostname); // if EHLO fails, try the classic HELO
+		$test = $this->answer_code($reply);
+		if((string)$test != '250') {
+			if($this->debug) {
+				$this->log .= '[WARN] Failed to Send EHLO/HELO to the Mail Server ! (Server answer is: '.$test.' // '.$reply.')'."\n"; // only set warning as this is not a fatal error
+			} //end if
+			return 0; // if both fail, then stop !
 		} //end if
-		return 0;
-	} //end if
-	//--
-	$reply = $this->send_cmd('HELO '.$hostname);
-	$test = $this->answer_code($reply);
-	if((string)$test != '250') {
-		if($this->debug) {
-			$this->log .= '[WARN] Failed to Send HELO to Mail Server ! (Server answer is: '.$test.' // '.$reply.')'."\n"; // only set warning as this is not a fatal error
-		} //end if
-		return 0;
 	} //end if
 	//--
 	return 1;
