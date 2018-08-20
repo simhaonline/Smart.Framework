@@ -104,7 +104,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$this->PageViewResetRawHeaders();
 		$this->PageViewSetRawHeaders([
-			'Z-Test-Header-1:' 	=> 'This is a test (1)',
+			'Z-Test-Header-1:' 	=> 'This is a test (1) with '.SmartUnicode::uc_first('mb-ucfirst'),
 			'Z-Test-Header-2' 	=> 'This is a test (2)'
 		]);
 		$this->PageViewSetRawHeader(

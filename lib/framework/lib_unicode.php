@@ -440,6 +440,28 @@ public static function str_tolower($ystr) {
 
 //================================================================
 /**
+ * Unicode Safe ucfirst() 		:: Make a Unicode string uppercase on first character ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2
+ *
+ * @param STRING 	$ystr		:: The string
+ *
+ * @return STRING				:: The processed string as uppercase of first character string
+ */
+public static function uc_first($ystr) {
+	//--
+	if((string)$ystr == '') {
+		return '';
+	} //end if
+	//--
+	$first = self::sub_str((string)$ystr, 0, 1);
+	$rest = self::sub_str((string)$ystr, 1, self::str_len((string)$ystr));
+	return (string) self::str_toupper((string)$first).$rest;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
  * Unicode Safe strtoupper() 	:: Make a Unicode string uppercase ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2
  *
  * @param STRING 	$ystr		:: The string
