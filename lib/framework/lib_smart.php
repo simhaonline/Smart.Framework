@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.180411
+ * @version     v.180827
  * @package     Base
  *
  */
@@ -479,6 +479,12 @@ public static function url_add_suffix($y_url, $y_suffix) {
 	//--
 	if((strpos($y_suffix, '?') !== false) OR (substr($y_suffix, 0, 1) == '&')) {
 		self::log_notice('[URL Add Suffix] WARNING: The URL Suffix should not contain ? or start with & :: [URL: '.$y_url.' :: Suffix: '.$y_suffix.']');
+	} //end if
+	//--
+	if((string)$y_suffix == '') {
+		if((string)$y_url != '') {
+			return (string) $y_url;
+		} //end if
 	} //end if
 	//--
 	if(strpos($y_url, '?') === false) {
