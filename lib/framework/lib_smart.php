@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.180827
+ * @version     v.180828
  * @package     Base
  *
  */
@@ -435,6 +435,7 @@ public static function url_add_params($y_url, $y_params) {
 	$url = (string) $y_url;
 	//--
 	if(is_array($y_params)) {
+		$url = self::url_add_suffix($url, '?');
 		foreach($y_params as $key => $val) {
 			if((string)$key != '') {
 				if(preg_match('/^[a-z0-9_]+$/', (string)$key)) {
@@ -477,17 +478,23 @@ public static function url_add_suffix($y_url, $y_suffix) {
 	$y_url = trim((string)$y_url);
 	$y_suffix = trim((string)$y_suffix);
 	//--
+	if(((string)$y_suffix == '') OR ((string)$y_suffix == '?') OR ((string)$y_suffix == '&')) {
+		if((string)$y_url != '') {
+			return (string) $y_url.$y_suffix;
+		} //end if
+	} //end if
+	//--
+	if((substr($y_suffix, 0, 1) == '?') OR (substr($y_suffix, 0, 1) == '&')) {
+		$y_suffix = (string) substr($y_suffix, 1);
+	} //end if
+	//--
 	if((strpos($y_suffix, '?') !== false) OR (substr($y_suffix, 0, 1) == '&')) {
 		self::log_notice('[URL Add Suffix] WARNING: The URL Suffix should not contain ? or start with & :: [URL: '.$y_url.' :: Suffix: '.$y_suffix.']');
 	} //end if
 	//--
-	if((string)$y_suffix == '') {
-		if((string)$y_url != '') {
-			return (string) $y_url;
-		} //end if
-	} //end if
-	//--
-	if(strpos($y_url, '?') === false) {
+	if((substr($y_url, -1, 1) == '?') OR (substr($y_url, -1, 1) == '&')) {
+		$url = $y_url.$y_suffix;
+	} elseif(strpos($y_url, '?') === false) {
 		$url = $y_url.'?'.$y_suffix;
 	} else {
 		$url = $y_url.'&'.$y_suffix;
@@ -510,8 +517,16 @@ public static function url_add_suffix($y_url, $y_suffix) {
  */
 public static function url_add_anchor($y_url, $y_anchor) {
 	//--
-	$y_url = (string) $y_url;
-	$y_anchor = (string) $y_anchor;
+	$y_url = (string) trim((string)$y_url);
+	$y_anchor = (string) trim((string)$y_anchor);
+	//--
+	if(((string)$y_anchor == '') OR ((string)$y_anchor == '#')) {
+		return (string) $y_url.$y_anchor;
+	} //end if
+	//--
+	if(strpos($y_suffix, '#') !== false) {
+		self::log_notice('[URL Add Anchor] WARNING: The URL Anchor should not contain # :: [URL: '.$y_url.' :: Suffix: '.$y_anchor.']');
+	} //end if
 	//--
 	return (string) $y_url.'#'.self::escape_url($y_anchor);
 	//--
@@ -630,7 +645,7 @@ public static function json_encode($data, $prettyprint=false, $unescaped_unicode
 	//--
 	$json = (string) @json_encode($data, $options); // Fix: must return a string ; mixed data ; depth was added in PHP 5.5 only !
 	if((string)$json == '') { // fix if json encode returns FALSE
-		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($data,1));
+		self::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($data,1));
 		$json = 'null';
 	} //end if
 	//--
@@ -1087,12 +1102,12 @@ public static function array_diff_assoc_oneway_recursive($array1, $array2) {
 public static function text_cut_by_limit($ytxt, $ylen, $y_cut_words=true, $y_suffix='...') {
 	//--
 	$ytxt = (string) trim((string)$ytxt);
-	$ylen = Smart::format_number_int($ylen, '+');
+	$ylen = self::format_number_int($ylen, '+');
 	//--
 	if((string)$y_suffix == '') {
 		$cutoff = (int) $ylen;
 	} else {
-		$cutoff = (int) Smart::format_number_int(($ylen - SmartUnicode::str_len($y_suffix)), '+');
+		$cutoff = (int) self::format_number_int(($ylen - SmartUnicode::str_len($y_suffix)), '+');
 	} //end if else
 	if($cutoff <= 0) {
 		$cutoff = 1;
