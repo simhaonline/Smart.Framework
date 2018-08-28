@@ -435,7 +435,6 @@ public static function url_add_params($y_url, $y_params) {
 	$url = (string) $y_url;
 	//--
 	if(is_array($y_params)) {
-		$url = self::url_add_suffix($url, '?');
 		foreach($y_params as $key => $val) {
 			if((string)$key != '') {
 				if(preg_match('/^[a-z0-9_]+$/', (string)$key)) {
@@ -522,6 +521,10 @@ public static function url_add_anchor($y_url, $y_anchor) {
 	//--
 	if(((string)$y_anchor == '') OR ((string)$y_anchor == '#')) {
 		return (string) $y_url.$y_anchor;
+	} //end if
+	//--
+	if(substr($y_anchor, 0, 1) == '#') {
+		$y_anchor = (string) substr($y_anchor, 1);
 	} //end if
 	//--
 	if(strpos($y_suffix, '#') !== false) {
