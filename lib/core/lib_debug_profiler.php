@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.180423
+ * @version 	v.180829
  *
  */
 final class SmartDebugProfiler {
@@ -382,8 +382,8 @@ public static function print_debug_info($y_area, $y_debug_token) {
 		} else {
 			$txt_main = '<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="3"><b># DEBUG Data :: SUB-REQUEST #</b></font></div>';
 		} //end if else
-		$txt_token = '<div class="smartframework_debugbar_status smartframework_debugbar_status_token" style="width: 400px; text-align: center;"><font size="2"><b>Debug Token: '.Smart::escape_html($arr[$i]['debug-token']).'</b></font></div>';
-		$txt_url = '<div class="smartframework_debugbar_status smartframework_debugbar_status_url"><font size="2">URL: '.Smart::escape_html($arr[$i]['request-uri']).'</font></div>';
+		$txt_token = '<div class="smartframework_debugbar_status smartframework_debugbar_status_token" style="width: 50%;"><font size="2"><b>Debug Token: '.Smart::escape_html($arr[$i]['debug-token']).'</b></font></div>';
+		$txt_url = '<div class="smartframework_debugbar_status smartframework_debugbar_status_url"><font size="2"><b>URL: '.Smart::escape_html($arr[$i]['request-uri']).'</b></font></div>';
 		//--
 		$debug_response .= $txt_main.$txt_url.$txt_token.self::print_log_headers($arr[$i]['response-code'], Smart::unseryalize(base64_decode($arr[$i]['response-headers'])), Smart::unseryalize(base64_decode($arr[$i]['request-headers']))).'<hr>';
 		//--
