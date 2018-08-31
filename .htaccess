@@ -50,6 +50,13 @@ php_flag zend.multibyte					Off
 #	RewriteEngine 		On
 	###
 
+	### Security Fixes
+#	RewriteRule ^etc/config\.php$ - [F,L]
+#	RewriteRule ^etc/config-index\.php$ - [F,L]
+#	RewriteRule ^etc/config-admin\.php$ - [F,L]
+#	RewriteRule ^etc/init\.php$ - [F,L]
+	###
+
 	### sample: smart-framework/module.controller.html|.stml|.json [ compatible with Smart::url_make_semantic() + Rewrite ]
 	##RewriteCond 		%{QUERY_STRING} !^\/
 #	RewriteCond 		%{REQUEST_FILENAME} !-f
