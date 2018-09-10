@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2017-03-15
+  @version: 2018-09-10
   captcha:
     error: |
       The Captcha session expired ...
@@ -10,5 +10,6 @@ TRANSLATIONS:
       If the problem persist please contact the website administrator !
     confirm: 'Confirm you are not a robot'
     verify: 'Verification Code'
+    failed: 'Captcha verification Failed'
     click: 'Click to Refresh Image'
 #END

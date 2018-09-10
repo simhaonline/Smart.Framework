@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: RO
   @area: core
-  @version: 2017-03-15
+  @version: 2018-09-10
   captcha:
     error: |
       Sesiunea Captcha a expirat ...
@@ -10,5 +10,6 @@ TRANSLATIONS:
       Dacă problema persistă contactați administratorul website-ului !
     confirm: 'Confirmați că nu sunteți robot'
     verify: 'Cod Verificare'
+    failed: 'Captcha verification Failed'
     click: 'Click pentru a re-încărca Imaginea'
 #END
