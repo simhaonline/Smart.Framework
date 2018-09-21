@@ -10,6 +10,6 @@ TRANSLATIONS:
       Dacă problema persistă contactați administratorul website-ului !
     confirm: 'Confirmați că nu sunteți robot'
     verify: 'Cod Verificare'
-    failed: 'Captcha verification Failed'
+    failed: 'Verificare Captcha nereuşită'
     click: 'Click pentru a re-încărca Imaginea'
 #END
