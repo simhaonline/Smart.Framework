@@ -37,8 +37,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // For IF/ELSE syntax variable order matters for comparison if used inside LOOP ; when comparing a (special context) variable inside a LOOP with another variable (from out of this context), the LOOP context variable must be placed in the left side, otherwise the comparison will fail as the left variable may be evaluated prior the LOOP variable to be initialized ...
 // For nested LOOP it only supports max 5 nested levels (combining more levels would be inefficient - because of the exponential structure complexity of context data, such as metadata context that must be replicated)
 // 		-_MAXSIZE_- 		The max array index = arraysize ; Available *ONLY* in LOOP
-// 		-_INDEX_- 			The current array index: 1..arraysize ; Available *ONLY* in LOOP
 // 		_-MAXCOUNT-_ 		The max iterator of array: arraysize-1 ; Available also in LOOP / IF
+// 		-_INDEX_- 			The current array index: 1..arraysize ; Available *ONLY* in LOOP
 // 		_-ITERATOR-_		The current array iterator: 0..(arraysize-1) ; Available also in LOOP / IF
 // 		_-VAL-_				The current loop value ; Available also in LOOP / IF
 // 		_-KEY-_				The current loop key ; Available *ONLY* for associative arrays ; Available also in LOOP / IF
@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.180523.r2
+ * @version 	v.181005
  * @package 	Templating:Engines
  *
  */
@@ -1244,14 +1244,14 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						} //end if else
 						break;
 					case '%': // modulo (true/false)
-						if((float)$tmp_the_arr % (float)$compare_val[$i]) { // if evaluate to true keep the inner content
+						if(((float)$tmp_the_arr % (float)$compare_val[$i]) == 0) { // if evaluate to true keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '!%': // not modulo (false/true)
-						if(!((float)$tmp_the_arr % (float)$compare_val[$i])) { // if evaluate to false keep the inner content
+						if(((float)$tmp_the_arr % (float)$compare_val[$i]) != 0) { // if evaluate to false keep the inner content
 							$line .= (string) $if_part[$i]; // if part
 						} else {
 							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
