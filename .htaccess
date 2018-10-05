@@ -10,6 +10,8 @@
 ### Maintenance 503 (Mod Rewrite)
 #<IfModule mod_rewrite.c>
 #ErrorDocument 503 "<h1>Under Maintenance</h1>"
+#ErrorDocument 503 /maintenance.html
+#ErrorDocument 503 /index.php?page=some-module.503
 #RewriteEngine On
 #RewriteCond %{REMOTE_ADDR} !=127.0.0.1
 #RewriteCond %{ENV:REDIRECT_STATUS} !=503
