@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.180605
+ * @version 	v.181008
  * @package 	Application
  *
  */
@@ -618,7 +618,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.180508
+ * @version 	v.181008
  *
  * @access 		private
  * @internal
@@ -671,7 +671,7 @@ final class SmartTextTranslator {
 
 
 	// texts are returned as raw, they must be escaped when used with HTML or JS
-	public function text($y_textkey, $y_fallback_language='@default') {
+	public function text($y_textkey, $y_fallback_language='@default', $y_ignore_empty=false) {
 		//--
 		if((string)$y_textkey == '') {
 			Smart::log_warning('Empty Key for Text Context Translator - Area: '.$this->area.' ; SubArea: '.$this->subarea);
@@ -687,8 +687,12 @@ final class SmartTextTranslator {
 			$text = (string) SmartTextTranslations::getTranslationByKey($this->area, $this->subarea, (string)$y_textkey, (string)$y_fallback_language);
 		} //end if
 		if((string)trim((string)$text) == '') {
-			Smart::log_warning('Undefined Key: ['.$y_textkey.'] for Text Context Translator ['.$this->language.'] - Area: '.$this->area.' ; SubArea: '.$this->subarea);
-			$text = '{Undefined Translation Key ['.$this->language.']: '.$y_textkey.'}';
+			if($y_ignore_empty !== true) {
+				Smart::log_warning('Undefined Key: ['.$y_textkey.'] for Text Context Translator ['.$this->language.'] - Area: '.$this->area.' ; SubArea: '.$this->subarea);
+				$text = '{Undefined Translation Key ['.$this->language.']: '.$y_textkey.'}';
+			} else {
+				$text = '';
+			} //end if else
 		} //end if
 		//--
 		return (string) $text;
@@ -716,7 +720,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.180508
+ * @version 	v.181008
  *
  */
 interface SmartInterfaceAdapterTextTranslations {
