@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.180606
+ * @version 	v.181010
  * @package 	Base
  *
  */
@@ -61,7 +61,17 @@ final class SmartUtils {
 
 
 //================================================================
-// use this function to set cookies as it takes care to set it according with if cookie domain is set or not per app
+// use this function to get cookies as it takes care of safe filtering of cookie values
+public static function get_cookie($key) {
+	//--
+	return SmartFrameworkRegistry::getCookieVar((string)$key); // mixed: null / string
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// use this function to set cookies as it takes care to set it according with if cookie domain is set or not per app ; use empty data to unset ; use zero expire time for cookies that will expire with browser session
 public static function set_cookie($cookie_name, $cookie_data, $expire_time) {
 	//--
 	$expire_time = (int) $expire_time;

@@ -1229,7 +1229,7 @@ echo "plain text: $plaintext";
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.180124
+ * @version     v.181010
  *
  */
 final class SmartCryptoCipherHash {
@@ -1470,7 +1470,7 @@ final class SmartCryptoCipherHash {
 		$iv .= Smart::unique_entropy();
 		$iv .= SmartUtils::get_visitor_tracking_uid();
 		$iv .= implode("\r", (array)$_SERVER);
-		$iv .= implode("\r", (array)$_COOKIES);
+		$iv .= implode("\r", (array)$_COOKIE);
 
 		return $this->_hash($iv);
 

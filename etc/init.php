@@ -35,9 +35,9 @@ define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE', 'samples');								// Default
 define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', '');										// URL Rewrite Mode: `` | `standard` | `semantic` :: Use (Apache like) rewrite rules (must be enabled in .htaccess) and the SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT must be set to `index.php` ; semantic URLS must be not disabled ; just for index.php (admin.php have no support for this)
 //define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 	true); 									// If define this will DISABLE the semantic URLs for index.php and admin.php ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
 //--------------------------------------- COOKIES
-define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie Name
+define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie Name (it is recommended to be customized)
 //define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME', intval(60 * 60 * 24));				// The UniqueID Cookie LifeTime in seconds ; set to 0 for expire on browser close
-//define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN', '');									// The UniqueID Cookie domain: LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; `` or `domain.tld` for all sub-domains of domain.tld cookies ; default is `` (empty) ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies
+//define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN', '');									// The UniqueID Cookie domain: LEAVE IT EMPTY UNLESS YOU KNOW WHAT YOU ARE DOING ; `` for the current subdomain as `sdom.domain.tld` or `domain.tld` for all sub-domains of domain.tld cookies ; default is `` (empty) ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies
 //--------------------------------------- SESSION
 define('SMART_FRAMEWORK_SESSION_HANDLER', 	'files');										// Session Handler: 'files' (default / file storage: lightweight but in high concurencies may have locking issues) ; 'redis' (DB / in-memory, very fast)
 define('SMART_FRAMEWORK_SESSION_NAME', 		'SmartFramework__SESSION'); 					// Session Name ; *** YOU HAVE TO CHANGE IT *** this must be static and must contain only Letters and _

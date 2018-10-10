@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP XML ; classes: Smart
- * @version 	v.180906
+ * @version 	v.181010
  * @package 	Components:Captcha
  *
  */
@@ -120,7 +120,7 @@ public static function captcha_form($y_captcha_image_url, $y_form_name) {
 			'CAPTCHA-TXT-VERIFY' 		=> (string) $translator_core_captcha->text('verify'),
 			'CAPTCHA-IMG-SRC' 			=> (string) $captcha_url.Smart::escape_url((string)time().Smart::random_number(10,99)),
 			'CAPTCHA-JS-IMG-CLICK' 		=> (string) 'var captcha_date = new Date(); this.src=\''.Smart::escape_js($captcha_url).'\'+captcha_date.getTime()+\'\'+captcha_date.getMilliseconds(); try { if(jQuery) { jQuery(this).parent().parent().find(\'input\').val(\'\'); } } catch(err){ console.error(\'CAPTCHA: Cannot Reset Input Field on Image Change !\'); }',
-			'CAPTCHA-JS-FIELD-BLUR' 	=> (string) 'try { eval( \'\' + SmartJS_Base64.decode(\''.base64_encode("try { var SmartCaptchaChecksum = SmartJS_BrowserUtils.getCookie('".Smart::escape_js(self::chkcookiename($y_form_name))."'); if(SmartCaptchaChecksum == '') { SmartCaptchaChecksum = 'invalid-captcha'; alert('".Smart::escape_js($translator_core_captcha->text('error'))."'); } var smartCaptchaTimerCookie = new Date(); var smartCaptchaCookie = SmartJS_Archiver_LZS.compressToBase64(SmartJS_CryptoBlowfish.encrypt(SmartJS_Base64.encode(smartCaptchaTimerCookie.getTime() + '!' + this.value.toUpperCase() + '!SmartFramework'), SmartJS_CoreUtils.stringTrim(SmartCaptchaChecksum))); SmartJS_BrowserUtils.setCookie('".Smart::escape_js($js_cookie_name)."', smartCaptchaCookie, false, '/'); } catch(err) { alert('Captcha ERROR: (2) ' + err); } this.value = '*******';").'\')); } catch(error){ alert(\'Captcha ERROR: (2) :: Invalid Captcha Script \'); }'
+			'CAPTCHA-JS-FIELD-BLUR' 	=> (string) 'try { eval( \'\' + SmartJS_Base64.decode(\''.base64_encode("try { var SmartCaptchaChecksum = SmartJS_BrowserUtils.getCookie('".Smart::escape_js(self::chkcookiename($y_form_name))."'); if(SmartCaptchaChecksum == '') { SmartCaptchaChecksum = 'invalid-captcha'; alert('".Smart::escape_js($translator_core_captcha->text('error'))."'); } var smartCaptchaTimerCookie = new Date(); var smartCaptchaCookie = SmartJS_Archiver_LZS.compressToBase64(SmartJS_CryptoBlowfish.encrypt(SmartJS_Base64.encode(smartCaptchaTimerCookie.getTime() + '!' + this.value.toUpperCase() + '!SmartFramework'), SmartJS_CoreUtils.stringTrim(SmartCaptchaChecksum))); SmartJS_BrowserUtils.setCookie('".Smart::escape_js($js_cookie_name)."', smartCaptchaCookie, false, '/', '@'); } catch(err) { alert('Captcha ERROR: (2) ' + err); } this.value = '*******';").'\')); } catch(error){ alert(\'Captcha ERROR: (2) :: Invalid Captcha Script \'); }'
 		],
 		'yes' // export to cache
 	);
@@ -150,13 +150,13 @@ public static function verify($y_form_name, $y_mode, $y_clear=true) {
 		//--
 	} else {
 		//--
-		$cookie_value = (string) $_COOKIE[(string)$cookie_name];
+		$cookie_value = (string) SmartUtils::get_cookie((string)$cookie_name);
 		$run_mode = 'cookie';
 		//--
 	} //end if else
 	//--
 	$var_name = self::jscookiename($y_form_name);
-	$var_value = trim((string)$_COOKIE[(string)$var_name]);
+	$var_value = (string) trim((string)SmartUtils::get_cookie((string)$var_name));
 	//--
 	if((string)$var_value != '') {
 		$arr_value = explode('!', (string)base64_decode(SmartUtils::crypto_blowfish_decrypt(SmartArchiverLZS::decompressFromBase64((string)$var_value), sha1($y_form_name.SMART_FRAMEWORK_SECURITY_KEY)))); // explode by '!'
@@ -332,7 +332,7 @@ public static function cookiename($y_form_name) {
 final class SmartCaptchaImageDraw {
 
 	// ->
-	// v.180327
+	// v.181010
 
 
 //================================================================

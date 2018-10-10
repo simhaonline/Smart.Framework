@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.5');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		180613
+ * @version		181010
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -149,7 +149,7 @@ public static function Run() {
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			self::HeadersNoCache(); // headers: cache control, force no-cache
-			$the_debug_cookie = trim((string)$_COOKIE['SmartFramework__DebugIdxID']);
+			$the_debug_cookie = (string) trim((string)SmartUtils::get_cookie('SmartFramework__DebugIdxID'));
 			echo SmartDebugProfiler::print_debug_info('idx', $the_debug_cookie);
 		} else {
 			http_response_code(404);
@@ -478,7 +478,7 @@ public static function Run() {
 			SmartFrameworkRegistry::setDebugMsg('stats', 'memory', $res_memory); 	// bytes
 			SmartFrameworkRegistry::setDebugMsg('stats', 'time',   $res_time); 		// seconds
 			//-- #END-SYNC
-			$the_debug_cookie = trim((string)$_COOKIE['SmartFramework__DebugIdxID']);
+			$the_debug_cookie = (string) trim((string)SmartUtils::get_cookie('SmartFramework__DebugIdxID'));
 			SmartDebugProfiler::save_debug_info('idx', $the_debug_cookie, false);
 		} else {
 			$the_debug_cookie = '';
