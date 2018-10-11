@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.181010
+ * @version 	v.181010.r2
  * @package 	Base
  *
  */
@@ -72,17 +72,29 @@ public static function get_cookie($key) {
 
 //================================================================
 // use this function to set cookies as it takes care to set it according with if cookie domain is set or not per app ; use empty data to unset ; use zero expire time for cookies that will expire with browser session
-public static function set_cookie($cookie_name, $cookie_data, $expire_time) {
+public static function set_cookie($cookie_name, $cookie_data, $expire_time, $cookie_path='/', $cookie_domain='@') {
+	//--
+	if(headers_sent()) {
+		return false;
+	} //end if
 	//--
 	$expire_time = (int) $expire_time;
 	if($expire_time < 0) {
 		$expire_time = 0;
 	} //end if
 	//--
-	if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
-		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, '/', (string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN); // set it using domain
+	if((string)$cookie_domain == '@') {
+		if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
+			$cookie_domain = (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN;
+		} else {
+			$cookie_domain = '';
+		} //end if
+	} //end if
+	//--
+	if((string)$cookie_domain != '') {
+		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, (string)$cookie_path, (string)$cookie_domain); // set it using domain
 	} else {
-		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, '/'); // set it general
+		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, (string)$cookie_path); // set it general
 	} //end if else
 	//--
 	return (bool) $cookie_set;

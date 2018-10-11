@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.5');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181010
+ * @version		181011
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -135,7 +135,7 @@ public static function Run() {
 		self::HeadersNoCache(); // headers: cache control, force no-cache
 		echo self::ServiceStatus($the_midmark);
 		//--
-		return; // break stop
+		return false; // break stop
 		//--
 	} //end if
 	//--
@@ -149,14 +149,13 @@ public static function Run() {
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			self::HeadersNoCache(); // headers: cache control, force no-cache
-			$the_debug_cookie = (string) trim((string)SmartUtils::get_cookie('SmartFramework__DebugAdmID'));
-			echo SmartDebugProfiler::print_debug_info('adm', $the_debug_cookie);
+			echo self::DebugInfoGet('adm');
 		} else {
 			http_response_code(404);
 			echo SmartComponents::http_message_404_notfound('NO DEBUG Service has been activated on this server ...');
 		} //end if
 		//--
-		return; // break stop
+		return false; // break stop
 		//--
 	} elseif((string)$smartframeworkservice == 'debug-tpl') {
 		//--
@@ -168,7 +167,7 @@ public static function Run() {
 			echo SmartComponents::http_message_404_notfound('NO TPL-DEBUG Service has been activated on this server ...');
 		} //end if
 		//--
-		return; // break stop
+		return false; // break stop
 		//--
 	} //end if else
 	//--
@@ -465,24 +464,6 @@ public static function Run() {
 	//== RAW OUTPUT FOR PAGES
 	//--
 	if((string)$rawpage == 'yes') {
-		//-- {{{SYNC-RESOURCES}}}
-		if(function_exists('memory_get_peak_usage')) {
-			$res_memory = (int) @memory_get_peak_usage(false);
-		} else {
-			$res_memory = -1; // unknown
-		} //end if else
-		$res_time = (float) (microtime(true) - (float)SMART_FRAMEWORK_RUNTIME_READY);
-		//-- #END-SYNC
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			//-- {{{SYNC-DEBUG-META-INFO}}}
-			SmartFrameworkRegistry::setDebugMsg('stats', 'memory', $res_memory); 	// bytes
-			SmartFrameworkRegistry::setDebugMsg('stats', 'time',   $res_time); 		// seconds
-			//-- #END-SYNC
-			$the_debug_cookie = (string) trim((string)SmartUtils::get_cookie('SmartFramework__DebugAdmID'));
-			SmartDebugProfiler::save_debug_info('adm', $the_debug_cookie, false);
-		} else {
-			$the_debug_cookie = '';
-		} //end if
 		//--
 		if(headers_sent()) {
 			Smart::raise_error(
@@ -551,34 +532,24 @@ public static function Run() {
 	} //end if
 	//--
 	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-		//--
-		$the_debug_cookie = 'adm-'.Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str();
-		@setcookie('SmartFramework__DebugAdmID', (string)$the_debug_cookie, 0, '/'); // debug token cookie is set just on main request
-		//--
-	} //end if
-	//--
+		self::DebugInfoCookieSet('adm');
+	} // end if
 	echo SmartComponents::render_app_template((string)$the_template_path, (string)$the_template_file, (array)$appData);
-	//-- {{{SYNC-RESOURCES}}}
-	if(function_exists('memory_get_peak_usage')) {
-		$res_memory = (int) @memory_get_peak_usage(false);
-	} else {
-		$res_memory = -1; // unknown
-	} //end if else
-	$res_time = (float) (microtime(true) - (float)SMART_FRAMEWORK_RUNTIME_READY);
-	//-- #END-SYNC
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-		//-- {{{SYNC-DEBUG-META-INFO}}}
-		SmartFrameworkRegistry::setDebugMsg('stats', 'memory', $res_memory); 	// bytes
-		SmartFrameworkRegistry::setDebugMsg('stats', 'time',   $res_time); 		// seconds
-		//-- #END-SYNC
-		SmartDebugProfiler::save_debug_info('adm', $the_debug_cookie, true);
-		//--
-	} //end if else
 	//--
 	if(!defined('SMART_SOFTWARE_DISABLE_STATUS_POWERED') OR SMART_SOFTWARE_DISABLE_STATUS_POWERED !== true) {
+		//-- {{{SYNC-RESOURCES}}}
+		if(function_exists('memory_get_peak_usage')) {
+			$res_memory = (int) @memory_get_peak_usage(false);
+		} else {
+			$res_memory = -1; // unknown
+		} //end if else
+		$res_time = (float) (microtime(true) - (float)SMART_FRAMEWORK_RUNTIME_READY);
+		//-- #END-SYNC
 		echo "\n".'<!-- Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.SMART_FRAMEWORK_RELEASE_URL.' -->';
 		echo "\n".'<!-- WebPage Server-Side Metrics '.Smart::escape_html($the_midmark).': '.str_pad('Total Execution Time = '.Smart::format_number_dec($res_time, 13, '.', '').' seconds', 55, ' ', STR_PAD_BOTH).' | '.str_pad('Memory Peak Usage = '.SmartUtils::pretty_print_bytes($res_memory, 2), 37, ' ', STR_PAD_BOTH).' -->'."\n";
 	} //end if
+	//--
+	return true;
 	//--
 } //END FUNCTION
 //====================================================================

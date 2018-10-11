@@ -39,13 +39,16 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		180424
+ * @version		181011
  *
  */
 abstract class SmartAbstractAppMiddleware {
 
 	// :: ABSTRACT
 	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
+
+
+	private static $DEBUG_COOKIE_DATA = '';
 
 
 //=====
@@ -453,6 +456,127 @@ final public static function ServiceStatus($the_midmark) {
 	} //end if else
 	//--
 	return (string) SmartComponents::http_status_message('200 OK :: '.Smart::escape_html($txt_area).' / Service Available', '<script type="text/javascript">setTimeout(function(){ self.location = self.location; }, 60000);</script><img height="32" src="lib/framework/img/loading-bars.svg"><div><h2 style="display:inline;">'.date('Y-m-d H:i:s O').' // Smart.Framework :: '.Smart::escape_html($the_midmark).'</h2></div><br>'.$html_status_powered_info.'<br>');
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+final public static function DebugInfoCookieSet($area) {
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		return false;
+	} //end if
+	//--
+	if((string)self::$DEBUG_COOKIE_DATA != '') {
+		return true;
+	} //end if
+	//--
+	$area = (string) $area;
+	//--
+	switch((string)$area) {
+		case 'idx':
+			$cookie_name = 'SmartFramework__DebugIdxID';
+			break;
+		case 'adm':
+			$cookie_name = 'SmartFramework__DebugAdmID';
+			break;
+		default:
+			return false;
+	} //end switch
+	if((string)$cookie_name == '') {
+		return false;
+	} //end if
+	//--
+	self::$DEBUG_COOKIE_DATA = (string) $area.'-'.Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str();
+	//--
+	return (bool) SmartUtils::set_cookie((string)$cookie_name, (string)self::$DEBUG_COOKIE_DATA, 0, '/', '@');
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+final public static function DebugInfoGet($area) {
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		return '';
+	} //end if
+	//--
+	$area = (string) $area;
+	//--
+	switch((string)$area) {
+		case 'idx':
+			$cookie_name = 'SmartFramework__DebugIdxID';
+			break;
+		case 'adm':
+			$cookie_name = 'SmartFramework__DebugAdmID';
+			break;
+		default:
+			return false;
+	} //end switch
+	if((string)$cookie_name == '') {
+		return '';
+	} //end if
+	//--
+	$cookie_data = (string) trim((string)SmartUtils::get_cookie((string)$cookie_name));
+	if((string)$cookie_data == '') {
+		return '';
+	} //end if
+	//--
+	return (string) SmartDebugProfiler::print_debug_info((string)$area, (string)$cookie_data);
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+final public static function DebugInfoSet($area, $is_main) {
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		return false;
+	} //end if
+	//--
+	$area = (string) $area;
+	$is_main = (bool) $is_main;
+	if(((int)http_response_code() > 299) OR ($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+		$is_main = false;
+	} //end if
+	//--
+	switch((string)$area) {
+		case 'idx':
+			$cookie_name = 'SmartFramework__DebugIdxID';
+			break;
+		case 'adm':
+			$cookie_name = 'SmartFramework__DebugAdmID';
+			break;
+		default:
+			return false;
+	} //end switch
+	if((string)$cookie_name == '') {
+		return false;
+	} //end if
+	//--
+	$cookie_data = (string) self::$DEBUG_COOKIE_DATA;
+	if((string)$cookie_data == '') {
+		$cookie_data = (string) SmartUtils::get_cookie((string)$cookie_name);
+		if((string)$cookie_data == '') {
+			return false;
+		} //end if
+	} //end if
+	//-- {{{SYNC-RESOURCES}}}
+	if(function_exists('memory_get_peak_usage')) {
+		$res_memory = (int) @memory_get_peak_usage(false);
+	} else {
+		$res_memory = -1; // unknown
+	} //end if else
+	$res_time = (float) (microtime(true) - (float)SMART_FRAMEWORK_RUNTIME_READY);
+	//-- #END-SYNC
+	SmartFrameworkRegistry::setDebugMsg('stats', 'memory', $res_memory); // bytes
+	SmartFrameworkRegistry::setDebugMsg('stats', 'time', $res_time); // seconds
+	SmartDebugProfiler::save_debug_info((string)$area, (string)$cookie_data, (bool)$is_main);
+	//--
+	return true;
 	//--
 } //END FUNCTION
 //======================================================================

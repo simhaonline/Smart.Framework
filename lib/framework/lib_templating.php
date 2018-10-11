@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.181005
+ * @version 	v.181011
  * @package 	Templating:Engines
  *
  */
@@ -397,65 +397,26 @@ public static function render_mixed_template($mtemplate, $y_arr_vars, $y_sub_tem
  */
 public static function read_template_file($y_file_path) {
 	//--
-	// This function uses static read from filesystem and if (memory) persistent cache is available will cache it and all future reads until key expire will be done from memory instead of overloading the file system
-	//--
-	$y_file_path = (string) $y_file_path;
-	//--
-	if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
-		Smart::log_warning('Invalid Path for Marker-TPL Read TPL File: '.$y_file_path);
-		return '';
+	if(self::$MkTplAnalyzeLdDbg === true) {
+		self::$MkTplAnalyzeLdRegDbg[(string)$y_file_path] += 1;
 	} //end if
 	//--
-	$use_pcache = false;
-	$ptime_cache = 0;
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
-		if(defined('SMART_SOFTWARE_MKTPL_PCACHETIME')) {
-			if(is_int(SMART_SOFTWARE_MKTPL_PCACHETIME)) {
-				if(((int)SMART_SOFTWARE_MKTPL_PCACHETIME >= 0) AND ((int)SMART_SOFTWARE_MKTPL_PCACHETIME <= 31622400)) { // 0 unlimited ; 1 sec .. 366 days
-					$use_pcache = true;
-					$ptime_cache = (int) SMART_SOFTWARE_MKTPL_PCACHETIME;
-				} //end if
-			} //end if
-		} //end if
-	} //end if
-	if(($use_pcache === true) AND SmartPersistentCache::isActive() AND SmartPersistentCache::isMemoryBased()) {
-		$the_cache_key = SmartPersistentCache::safeKey('tpl__'.Smart::base_name((string)$y_file_path).'__'.sha1((string)$y_file_path));
-	} else {
-		$the_cache_key = '';
-	} //end if else
+	$mtemplate = (string) self::read_from_fs_or_pcache_the_template_file($y_file_path);
 	//--
-	$tpl = '';
-	//--
-	if((string)$the_cache_key != '') {
-		if(SmartPersistentCache::keyExists('smart-marker-tpl-cache', (string)$the_cache_key)) {
-			$tpl = (string) SmartPersistentCache::getKey('smart-marker-tpl-cache', (string)$the_cache_key);
-			if((string)$tpl != '') {
-				//Smart::log_info('TPL found in cache: '.$y_file_path);
-				$tpl = (string) SmartPersistentCache::varUncompress((string)$tpl);
-				if((string)$tpl != '') {
-					//Smart::log_info('TPL from cache is OK: '.$y_file_path);
-					return (string) $tpl; // return from persistent cache
-				} //end if
-			} //end if
-		} //end if
+	$cached_key = 'read_template_file:'.$y_file_path; // {{{SYNC-TPL-DEBUG-CACHED-KEY}}}
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		self::$MkTplFCount[(string)$cached_key]++; // register to counter anytime is read from FileSystem
 	} //end if
 	//--
-	$tpl = (string) SmartFileSystem::read((string)$y_file_path);
-	//--
-	if((string)$the_cache_key != '') {
-		if((string)$tpl != '') {
-			//Smart::log_info('TPL fs-read OK: '.$y_file_path);
-			$atpl = (string) SmartPersistentCache::varCompress((string)$tpl);
-			if((string)$atpl != '') {
-				//Smart::log_info('TPL saved in cache: '.$y_file_path);
-				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key.'__path', (string)$y_file_path, (int)$ptime_cache); // set to persistent cache
-				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key, (string)$atpl, (int)$ptime_cache); // set to persistent cache
-			} //end if
-			$atpl = '';
-		} //end if
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		self::$MkTplVars['@TEMPLATE:'.$y_file_path][] = 'Direct Reading a Template from FS';
+		SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
+			'title' => '[TPL-Direct-ReadFileTemplate-From-FS] :: Marker-TPL / Direct-File-Read ; Serving from FS the File Template: '.$y_file_path.' ;',
+			'data' => 'Content SubStr[0-'.(int)self::debug_tpl_length().']: '."\n".self::debug_tpl_cut_by_limit($mtemplate)
+		]);
 	} //end if
 	//--
-	return (string) $tpl; // return from fs read
+	return (string) $mtemplate;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1751,6 +1712,73 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 
 
 //================================================================
+private static function read_from_fs_or_pcache_the_template_file($y_file_path) {
+	//--
+	// This function uses static read from filesystem and if (memory) persistent cache is available will cache it and all future reads until key expire will be done from memory instead of overloading the file system
+	//--
+	$y_file_path = (string) $y_file_path;
+	//--
+	if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
+		Smart::log_warning('Invalid Path for Marker-TPL Read TPL File: '.$y_file_path);
+		return '';
+	} //end if
+	//--
+	$use_pcache = false;
+	$ptime_cache = 0;
+	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		if(defined('SMART_SOFTWARE_MKTPL_PCACHETIME')) {
+			if(is_int(SMART_SOFTWARE_MKTPL_PCACHETIME)) {
+				if(((int)SMART_SOFTWARE_MKTPL_PCACHETIME >= 0) AND ((int)SMART_SOFTWARE_MKTPL_PCACHETIME <= 31622400)) { // 0 unlimited ; 1 sec .. 366 days
+					$use_pcache = true;
+					$ptime_cache = (int) SMART_SOFTWARE_MKTPL_PCACHETIME;
+				} //end if
+			} //end if
+		} //end if
+	} //end if
+	if(($use_pcache === true) AND SmartPersistentCache::isActive() AND SmartPersistentCache::isMemoryBased()) {
+		$the_cache_key = SmartPersistentCache::safeKey('tpl__'.Smart::base_name((string)$y_file_path).'__'.sha1((string)$y_file_path));
+	} else {
+		$the_cache_key = '';
+	} //end if else
+	//--
+	$tpl = '';
+	//--
+	if((string)$the_cache_key != '') {
+		if(SmartPersistentCache::keyExists('smart-marker-tpl-cache', (string)$the_cache_key)) {
+			$tpl = (string) SmartPersistentCache::getKey('smart-marker-tpl-cache', (string)$the_cache_key);
+			if((string)$tpl != '') {
+				//Smart::log_info('TPL found in cache: '.$y_file_path);
+				$tpl = (string) SmartPersistentCache::varUncompress((string)$tpl);
+				if((string)$tpl != '') {
+					//Smart::log_info('TPL from cache is OK: '.$y_file_path);
+					return (string) $tpl; // return from persistent cache
+				} //end if
+			} //end if
+		} //end if
+	} //end if
+	//--
+	$tpl = (string) SmartFileSystem::read((string)$y_file_path);
+	//--
+	if((string)$the_cache_key != '') {
+		if((string)$tpl != '') {
+			//Smart::log_info('TPL fs-read OK: '.$y_file_path);
+			$atpl = (string) SmartPersistentCache::varCompress((string)$tpl);
+			if((string)$atpl != '') {
+				//Smart::log_info('TPL saved in cache: '.$y_file_path);
+				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key.'__path', (string)$y_file_path, (int)$ptime_cache); // set to persistent cache
+				SmartPersistentCache::setKey('smart-marker-tpl-cache', (string)$the_cache_key, (string)$atpl, (int)$ptime_cache); // set to persistent cache
+			} //end if
+			$atpl = '';
+		} //end if
+	} //end if
+	//--
+	return (string) $tpl; // return from fs read
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 private static function read_template_or_subtemplate_file($y_file_path, $y_use_caching) {
 	//--
 	$y_file_path = (string) $y_file_path;
@@ -1759,7 +1787,7 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 		self::$MkTplAnalyzeLdRegDbg[(string)$y_file_path] += 1;
 	} //end if
 	//--
-	$cached_key = 'read_template_or_subtemplate_file:'.$y_file_path;
+	$cached_key = 'read_template_or_subtemplate_file:'.$y_file_path; // {{{SYNC-TPL-DEBUG-CACHED-KEY}}}
 	//--
 	if(array_key_exists((string)$cached_key, (array)self::$MkTplCache)) {
 		//--
@@ -1781,7 +1809,7 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 	//--
 	if((string)$y_use_caching == 'yes') {
 		//--
-		self::$MkTplCache[(string)$cached_key] = (string) self::read_template_file($y_file_path);
+		self::$MkTplCache[(string)$cached_key] = (string) self::read_from_fs_or_pcache_the_template_file($y_file_path);
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FS and REGISTER in VCache';
@@ -1795,10 +1823,10 @@ private static function read_template_or_subtemplate_file($y_file_path, $y_use_c
 		//--
 	} else {
 		//--
-		$mtemplate = (string) self::read_template_file($y_file_path);
+		$mtemplate = (string) self::read_from_fs_or_pcache_the_template_file($y_file_path);
 		//--
 		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FS  ; VCacheFlag: '.$y_use_caching;
+			self::$MkTplVars['@SUB-TEMPLATE:'.$y_file_path][] = 'Reading a Sub-Template from FS ; VCacheFlag: '.$y_use_caching;
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-TEMPLATING', [
 				'title' => '[TPL-ReadFileTemplate-From-FS] :: Marker-TPL / File-Read ; Serving from FS the File Template: '.$y_file_path.' ;',
 				'data' => 'Content SubStr[0-'.(int)self::debug_tpl_length().']: '."\n".self::debug_tpl_cut_by_limit($mtemplate)
@@ -1874,6 +1902,10 @@ public static function registerOptimizationHintsToDebugLog() {
 		foreach(self::$MkTplFCount as $key => $val) {
 			$key = (string) $key;
 			if(strpos($key, 'debug') === false) { // avoid hints for debug templates / sub-templates
+				$is_direct_read = false;
+				if(strpos($key, 'read_template_file:') === 0) {
+					$is_direct_read = true;
+				} //end if
 				$key = (array) explode(':', $key);
 				$key = (string) $key[1];
 				$val = (int) $val;
@@ -1882,7 +1914,7 @@ public static function registerOptimizationHintsToDebugLog() {
 						'optimal' => false,
 						'value' => (int) $val,
 						'key' => (string) $key,
-						'msg' => 'Optimization Hint: Set Caching Parameter for Rendering this Template to avoid multiple reads on FileSystem',
+						'msg' => $is_direct_read ? '(Optimization Hint: Try to nou use direct read many times for Rendering this Template to avoid multiple reads on FileSystem)' : 'Optimization Hint: Set Caching Parameter for Rendering this (Sub)Template to avoid multiple reads on FileSystem',
 						'action' => 'debug-tpl'
 					];
 				} else {
@@ -1890,7 +1922,7 @@ public static function registerOptimizationHintsToDebugLog() {
 						'optimal' => true,
 						'value' => (int) $val,
 						'key' => (string) $key,
-						'msg' => 'OK',
+						'msg' => $is_direct_read ? '(OK)' : 'OK',
 						'action' => 'debug-tpl'
 					];
 				} //end if else

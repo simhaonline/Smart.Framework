@@ -7,7 +7,7 @@
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
 //####################
 
-//== v.180424
+//== v.181011
 //--
 ini_set('display_errors', '1'); 											// temporary enable this to display bootstrap errors if any ; will be managed later by Smart Error Handler
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED); 			// on bootstrap show real-time errors (sync with Smart Error Handler)
@@ -53,7 +53,12 @@ if((string)get_parent_class('SmartAppAdminMiddleware') != 'SmartAbstractAppMiddl
 	die('SmartFramework // App [A] Service: the Class SmartAppAdminMiddleware must be extended from the Class SmartAbstractAppMiddleware ...');
 } //end if
 //--
-SmartAppAdminMiddleware::Run(); // Handle the Admin service
+$run = SmartAppAdminMiddleware::Run(); // Handle the Admin service
+if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if($run !== false) {
+		SmartAppAdminMiddleware::DebugInfoSet('adm', (bool)$run);
+	} //end if
+} //end if
 //--
 if((string)setlocale(LC_ALL, 0) != 'C') { // {{{SYNC-LOCALES-CHECK}}}
 	@trigger_error(

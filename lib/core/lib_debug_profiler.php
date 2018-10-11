@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.180829
+ * @version 	v.181011
  *
  */
 final class SmartDebugProfiler {
@@ -143,7 +143,7 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 			$arr['request-uri'] = (string) $_SERVER['REQUEST_URI'];
 			$arr['resources-time'] = $dbg_stats['time'];
 			$arr['resources-memory'] = $dbg_stats['memory'];
-			$arr['response-code'] = (int)http_response_code();
+			$arr['response-code'] = (int) http_response_code();
 			$arr['response-headers'] = base64_encode(Smart::seryalize((array)headers_list()));
 			if(function_exists('getallheaders')) {
 				$arr['request-headers'] = base64_encode(Smart::seryalize((array)getallheaders()));
@@ -377,13 +377,21 @@ public static function print_debug_info($y_area, $y_debug_token) {
 	//--
 	for($i=0; $i<Smart::array_size($arr); $i++) {
 		//--
+		if(((int)$arr[$i]['response-code'] > 299) AND ((int)$arr[$i]['response-code'] < 300)) { // redirects
+			$status_style = 'smartframework_debugbar_status_token';
+		} elseif((int)$arr[$i]['response-code'] > 399) { // error
+			$status_style = 'smartframework_debugbar_status_warn';
+		} else { // ok
+			$status_style = 'smartframework_debugbar_status_head';
+		} //end if else
+		//--
 		if($arr[$i]['is-request-main'] === true) {
 			$txt_main = '<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="5"><b># DEBUG Data :: MAIN REQUEST #</b></font></div>';
 		} else {
 			$txt_main = '<div class="smartframework_debugbar_status smartframework_debugbar_status_title"><font size="3"><b># DEBUG Data :: SUB-REQUEST #</b></font></div>';
 		} //end if else
 		$txt_token = '<div class="smartframework_debugbar_status smartframework_debugbar_status_token" style="width: 50%;"><font size="2"><b>Debug Token: '.Smart::escape_html($arr[$i]['debug-token']).'</b></font></div>';
-		$txt_url = '<div class="smartframework_debugbar_status smartframework_debugbar_status_url"><font size="2"><b>URL: '.Smart::escape_html($arr[$i]['request-uri']).'</b></font></div>';
+		$txt_url = '<div class="smartframework_debugbar_status smartframework_debugbar_status_url"><font size="2"><b>'.'<span class="'.Smart::escape_html($status_style).'">'.(int)$arr[$i]['response-code'].'</span>'.'&nbsp;URL: '.Smart::escape_html($arr[$i]['request-uri']).'</b></font></div>';
 		//--
 		$debug_response .= $txt_main.$txt_url.$txt_token.self::print_log_headers($arr[$i]['response-code'], Smart::unseryalize(base64_decode($arr[$i]['response-headers'])), Smart::unseryalize(base64_decode($arr[$i]['request-headers']))).'<hr>';
 		//--
