@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.180828
+ * @version     v.181015
  * @package     Base
  *
  */
@@ -1016,6 +1016,7 @@ public static function array_type_test($y_arr) {
 	//--
 } //END FUNCTION
 //================================================================
+
 
 //================================================================
 /**
