@@ -74,12 +74,20 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				//--
 				break;
 			case 'testunit.strings-test':
+			case 'testunit.strings-test-json':
 				//--
 				sleep(1);
 				$str_php = $this->RequestVarGet('str_php', '', 'string');
 				$str_js = $this->RequestVarGet('str_js', '', 'string');
 				$this->PageViewSetCfg('rawpage', true);
 				$main = \SmartModExtLib\Samples\TestUnitStrings::testUnicode($str_php, $str_js);
+				if((string)$op == 'testunit.strings-test-json') {
+					$this->PageViewSetCfg('rawmime', 'text/json');
+					$this->PageViewSetCfg('rawdisp', 'inline');
+					$main = Smart::json_encode([
+						'div_content_html' => (string) $main
+					]);
+				} //end if
 				//--
 				break;
 			case 'testunit.crypto-test':

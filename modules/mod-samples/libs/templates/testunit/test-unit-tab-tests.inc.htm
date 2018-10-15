@@ -14,9 +14,18 @@
 			jQuery(function() {
 				//--
 				$('#btn_ajx_loadr_test_strings').click(function() {
+					var the_type_page_test_str = 'html';
+					var the_param_page_test_str = 'testunit.strings-test';
+					var the_img_page_test_str = 'lib/framework/img/loading-spokes.svg';
+					var the_rand_chooser = Math.floor((Math.random() * 100) + 1);
+					if(the_rand_chooser >= 50) {
+						the_type_page_test_str = 'json';
+						the_param_page_test_str = 'testunit.strings-test-json';
+						the_img_page_test_str = 'lib/framework/img/loading-cylon.svg';
+					} //end if
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Unicode String Test Suite ...</span>');
 					// the URL below MUST CONTAIN a combination between semantic paths and url variables to get a real testing ; from PHP to Semantic ; from JS to URL var
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spokes.svg', '[####TESTUNIT_BASE_URL|js####]testunit.strings-test/time/[####NO-CACHE-TIME|url|js####]/str_php/[####TEST-URL-UNICODE-STR|url|js####]+./' + '&str_js=' + SmartJS_CoreUtils.escape_url(the_url_test_unicode_str) + '+.', 'GET', 'html');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', String(the_img_page_test_str), '[####TESTUNIT_BASE_URL|js####]' + the_param_page_test_str + '/time/[####NO-CACHE-TIME|url|js####]/str_php/[####TEST-URL-UNICODE-STR|url|js####]+./' + '&str_js=' + SmartJS_CoreUtils.escape_url(the_url_test_unicode_str) + '+.', 'GET', String(the_type_page_test_str));
 				});
 				//--
 				jQuery('#btn_ajx_loadr_test_crypto').click(function() {
