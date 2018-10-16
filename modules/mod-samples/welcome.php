@@ -56,14 +56,27 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$the_xlang = (string) $this->ConfigParamGet('regional.language-id'); // repeat this to check if caching works
 		//--
 		if($this->IfDebug()) {
+			$this->SetDebugData('App Domain', $this->ControllerGetParam('app-domain'));
+			$this->SetDebugData('App Namespace', $this->ControllerGetParam('app-namespace'));
 			$this->SetDebugData('Module Area', $module_area);
 			$this->SetDebugData('Module Path', $this->ControllerGetParam('module-path'));
+			$this->SetDebugData('Module Views Path', $this->ControllerGetParam('module-view-path'));
+			$this->SetDebugData('Module Models Path', $this->ControllerGetParam('module-model-path'));
+			$this->SetDebugData('Module Libs Path', $this->ControllerGetParam('module-lib-path'));
+			$this->SetDebugData('Module Templates Path', $this->ControllerGetParam('module-tpl-path'));
+			$this->SetDebugData('Module Plugins Path', $this->ControllerGetParam('module-plugins-path'));
+			$this->SetDebugData('Module Translations Path', $this->ControllerGetParam('module-translations-path'));
 			$this->SetDebugData('Module Name', $this->ControllerGetParam('module-name'));
 			$this->SetDebugData('URL Script', $this->ControllerGetParam('url-script'));
 			$this->SetDebugData('URL Path', $this->ControllerGetParam('url-path'));
 			$this->SetDebugData('URL Address', $this->ControllerGetParam('url-addr'));
 			$this->SetDebugData('URL Page', $this->ControllerGetParam('url-page'));
-			$this->SetDebugData('Config / Language ID', $the_lang);
+			$this->SetDebugData('URL Base Domain', $this->ControllerGetParam('url-basedomain'));
+			$this->SetDebugData('URL Domain', $this->ControllerGetParam('url-domain'));
+			$this->SetDebugData('Current (Set) Language ID', $this->ControllerGetParam('lang'));
+			$this->SetDebugData('Config Language ID', $the_lang);
+			$this->SetDebugData('Current Charset', $this->ControllerGetParam('charset'));
+			$this->SetDebugData('Current TimeZone', $this->ControllerGetParam('timezone'));
 		} //end if
 		//--
 

@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.180613
+ * @version 	v.181016
  * @package 	Application
  *
  */
@@ -248,6 +248,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	private $controller;
 	private $urlproto;
 	private $urldomain;
+	private $urlbasedomain;
 	private $urlport;
 	private $urlscript;
 	private $urlpath;
@@ -256,6 +257,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	private $urlquery;
 	private $urluri;
 	private $uripath;
+	private $lang;
+	private $charset;
+	private $timezone;
 	//--
 	private $pageheaders;
 	private $pagesettings; 					// will allow keys just from $availsettings
@@ -288,7 +292,8 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$this->action 			= (string) $ctrl_arr[1]; 													// someaction
 		$this->controller 		= (string) $y_controller; 													// something.someaction
 		$this->urlproto 		= (string) SmartUtils::get_server_current_protocol(); 						// http:// | https://
-		$this->urldomain 		= (string) SmartUtils::get_server_current_domain_name(); 					// 127.0.0.1|localhost
+		$this->urlbasedomain 	= (string) SmartUtils::get_server_current_basedomain_name();				// 127.0.0.1|localhost|dom.ext
+		$this->urldomain 		= (string) SmartUtils::get_server_current_domain_name(); 					// 127.0.0.1|localhost|sdom.dom.ext
 		$this->urlport 			= (string) SmartUtils::get_server_current_port(); 							// 80 | 443 | ...
 		$this->urlscript 		= (string) $y_url_script; 													// index.php | admin.php
 		$this->urlpath 			= (string) $y_url_path; 													// /frameworks/smart-framework/
@@ -297,6 +302,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$this->urlquery 		= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; 	// the query URL if any ...
 		$this->urluri 			= (string) SmartUtils::get_server_current_request_uri(); 					// the REQUEST_URI
 		$this->uripath 			= (string) SmartUtils::get_server_current_request_path(); 					// the PATH_INFO
+		$this->lang 			= (string) SmartTextTranslations::getLanguage(); 							// current language (ex: en)
+		$this->charset 			= (string) SMART_FRAMEWORK_CHARSET;											// current charset (ex: UTF-8)
+		$this->timezone 		= (string) SMART_FRAMEWORK_TIMEZONE; 										// current timezone (ex: UTC)
 		//--
 		$this->pageheaders 		= array();
 		$this->pagesettings 	= array();
@@ -421,19 +429,25 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @param 	ENUM 		$param 		:: The selected parameter
 	 * The valid param values are:
-	 * 		release-hash 				:: 		ex: 255cdb71953108baacb856591b9bf5ee9e4a39e6 (the release hash based on app framework version, framework release and modules version)
+	 * 		app-namespace 				:: 		ex: smartframework.default (the app namespace as defined in etc/init.php)
+	 * 		app-domain 					:: 		ex: 127.0.0.1|localhost|sdom.dom.ext|dom.ext (the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain'])
+	 * 		release-hash 				:: 		ex: 29bp3w (the release hash based on app framework version, framework release and modules version)
 	 * 		module-area 				:: 		ex: index / admin
 	 * 		module-name 				:: 		ex: mod-samples
 	 * 		module-path 				:: 		ex: modules/mod-samples/
 	 * 		module-view-path 			:: 		ex: modules/mod-samples/views/
 	 * 		module-model-path 			:: 		ex: modules/mod-samples/models/
 	 * 		module-lib-path 			:: 		ex: modules/mod-samples/libs/
+	 * 		module-tpl-path 			:: 		ex: modules/mod-samples/templates/
+	 * 		module-plugins-path 		:: 		ex: modules/mod-samples/plugins/
+	 * 		module-translations-path 	:: 		ex: modules/mod-samples/translations/
 	 * 		module 						:: 		ex: samples (1st part from controller, before .)
 	 * 		action 						:: 		ex: test (2nd part from controller, after .)
 	 * 		controller 					:: 		ex: samples.test
 	 * 		url-proto 					:: 		ex: http | https (the current server protocol)
 	 * 		url-proto-addr 				:: 		ex: http:// | https:// (the current server protocol address)
-	 * 		url-domain 					:: 		ex: 127.0.0.1|localhost (the curent server domain, or IP)
+	 * 		url-basedomain 				:: 		ex: 127.0.0.1|localhost|dom.ext (the curent server base domain, or IP)
+	 * 		url-domain 					:: 		ex: 127.0.0.1|localhost|sdom.dom.ext (the curent server domain, or IP)
 	 * 		url-port 					:: 		ex: 80 | 443 | 8080 ... (the current server port)
 	 * 		url-port-addr 				:: 		ex: '' | ''  | ':8080' ... (the current server port address ; empty for port 80 and 443 ; for the rest of ports will be :portnumber)
 	 * 		url-script 					:: 		ex: index.php / admin.php
@@ -443,6 +457,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * 		url-query 					:: 		ex: ?page=test&ofs=10
 	 * 		url-uri 					:: 		ex: /sites/smart-framework/index|admin.php{/some/path/}?page=test&ofs=10
 	 * 		uri-path 					:: 		ex: {/some/path/}
+	 *		lang 						:: 		ex: en
+	 *		charset 					:: 		ex: UTF-8
+	 * 		timezone 					:: 		ex: UTC
 	 *
 	 * @return 	STRING					:: The value for the selected parameter
 	 */
@@ -453,6 +470,12 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$out = '';
 		//--
 		switch((string)$param) {
+			case 'app-domain':
+				$out = Smart::get_from_config('app.'.$this->modulearea.'-domain');
+				break;
+			case 'app-namespace':
+				$out = SMART_SOFTWARE_NAMESPACE;
+				break;
 			case 'release-hash':
 				$out = $this->releasehash;
 				break;
@@ -474,6 +497,15 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			case 'module-lib-path':
 				$out = $this->modulepath.'libs/';
 				break;
+			case 'module-tpl-path':
+				$out = $this->modulepath.'templates/';
+				break;
+			case 'module-plugins-path':
+				$out = $this->modulepath.'plugins/';
+				break;
+			case 'module-translations-path':
+				$out = $this->modulepath.'translations/';
+				break;
 			case 'module':
 				$out = $this->module;
 				break;
@@ -488,6 +520,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 				break;
 			case 'url-proto-addr':
 				$out = $this->urlproto;
+				break;
+			case 'url-basedomain':
+				$out = $this->urlbasedomain;
 				break;
 			case 'url-domain':
 				$out = $this->urldomain;
@@ -518,6 +553,15 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 				break;
 			case 'uri-path':
 				$out = $this->uripath;
+				break;
+			case 'lang':
+				$out = $this->lang;
+				break;
+			case 'charset':
+				$out = $this->charset;
+				break;
+			case 'timezone':
+				$out = $this->timezone;
 				break;
 			default:
 				Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / ControllerGetParam: Invalid Parameter: '.$param);
