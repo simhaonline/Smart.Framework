@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.181016
+ * @version 	v.181017
  * @package 	Components:Core
  *
  */
@@ -2973,8 +2973,9 @@ public static function render_app_template($template_path, $template_file, $arr_
 	} //end if
 	//--
 
-	//-- external TPL vars
+	//-- special TPL vars
 	$arr_data['release-hash'] 				= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
+	//-- external TPL vars
 	$arr_data['semaphore'] 					= (string) $arr_data['semaphore']; // a general purpose conditional var
 	$arr_data['title'] 						= (string) $arr_data['title'];
 	$arr_data['head-meta'] 					= (string) $arr_data['head-meta'];
@@ -2990,6 +2991,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 	$arr_data['lang'] 						= (string) SmartTextTranslations::getLanguage(); 					// current language (ex: en)
 	$arr_data['charset'] 					= (string) SMART_FRAMEWORK_CHARSET;									// current charset (ex: UTF-8)
 	$arr_data['timezone'] 					= (string) SMART_FRAMEWORK_TIMEZONE; 								// current timezone (ex: UTC)
+	$arr_data['client-ip'] 					= (string) $os_bw['ip']; 											// client browser IP (ex: 127.0.0.1)
 	$arr_data['client-os'] 					= (string) $os_bw['os']; 											// client browser OS (ex: bsd)
 	$arr_data['client-is-mobile'] 			= (string) $os_bw['mobile']; 										// client browser is Mobile (yes/no)
 	$arr_data['client-class'] 				= (string) $os_bw['bc']; 											// client browser Class (ex: gk)
@@ -3001,7 +3003,8 @@ public static function render_app_template($template_path, $template_file, $arr_
 	$arr_data['app-domain'] 				= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain']
 	$arr_data['base-url'] 					= (string) SmartUtils::get_server_current_url(); 					// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
 	$arr_data['base-path'] 					= (string) SmartUtils::get_server_current_path(); 					// / | /sites/frameworks/smart-framework/
-	$arr_data['base-domain'] 				= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP
+	$arr_data['base-domain'] 				= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP (ex: 127.0.0.1)
+	$arr_data['srv-ip-addr'] 				= (string) SmartUtils::get_server_current_ip(); 					// current server IP (ex: 127.0.0.1)
 	$arr_data['srv-domain'] 				= (string) SmartUtils::get_server_current_domain_name(); 			// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
 	$arr_data['srv-proto'] 					= (string) SmartUtils::get_server_current_protocol(); 				// http:// | https://
 	$arr_data['srv-port'] 					= (string) SmartUtils::get_server_current_port(); 					// 80 | 443 | ...

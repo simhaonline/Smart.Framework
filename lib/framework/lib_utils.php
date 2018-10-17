@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.181015
+ * @version 	v.181017
  * @package 	Base
  *
  */
@@ -62,9 +62,9 @@ final class SmartUtils {
 
 //================================================================
 // use this function to get cookies as it takes care of safe filtering of cookie values
-public static function get_cookie($key) {
+public static function get_cookie($cookie_name) {
 	//--
-	return SmartFrameworkRegistry::getCookieVar((string)$key); // mixed: null / string
+	return SmartFrameworkRegistry::getCookieVar((string)$cookie_name); // mixed: null / string
 	//--
 } //END FUNCTION
 //================================================================

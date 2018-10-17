@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181016
+ * @version 	v.181017
  * @package 	Application
  *
  */
@@ -639,13 +639,33 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Get a Cookie Variable (COOKIES) in a controller
 	 *
-	 * @param 	STRING 		$key		:: The name (key) of the COOKIES variable.
+	 * @param 	STRING 		$name		:: The cookie name from COOKIES variable.
 	 *
-	 * @return 	MIXED					:: The value of the choosen Cookie variable
+	 * @return 	MIXED					:: The value of the choosen Cookie variable or null if not set
 	 */
-	final public function CookieVarGet($key) {
+	final public function CookieVarGet($name) {
 		//--
-		return SmartFrameworkRegistry::getCookieVar($key); // mixed: null / string
+		return SmartUtils::get_cookie($name); // mixed: null / string
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Set a Cookie Variable (COOKIES) in a controller
+	 *
+	 * @param 	STRING 		$name		:: The cookie name
+	 * @param 	STRING 		$data		:: The cookie data
+	 * @param 	STRING 		$expire		:: The cookie expire time (zero for session cookies)
+	 * @param 	STRING 		$path		:: The cookie path ; default is /
+	 * @param 	STRING 		$domain		:: The cookie domain ; default is @ (will get as it is set in SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN)
+	 *
+	 * @return 	BOOLEAN					:: TRUE if Set, FALSE if Not
+	 */
+	final public function CookieVarSet($name, $data, $expire, $path='/', $domain='@') {
+		//--
+		return (bool) SmartUtils::set_cookie($name, $data, $expire, $path, $domain);
 		//--
 	} //END FUNCTION
 	//=====
