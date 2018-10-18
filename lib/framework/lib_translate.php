@@ -100,7 +100,7 @@ final class SmartTextTranslations {
 	 */
 	public static function isDefaultLanguage() {
 		//--
-		if((string)self::getLanguage() != (string)self::getDefaultLanguage()) {
+		if((string)self::getLanguage() == (string)self::getDefaultLanguage()) {
 			return true;
 		} else {
 			return false;

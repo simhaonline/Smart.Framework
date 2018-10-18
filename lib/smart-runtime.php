@@ -381,7 +381,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @access 		PUBLIC
  *
  * @depends 	-
- * @version 	v.180309
+ * @version 	v.181018
  * @package 	Application
  *
  */
@@ -560,7 +560,7 @@ public static function urlVarDecodeStr($y_urlencoded_str_var, $y_filter=true) {
  * @internal
  *
  * @depends 	-
- * @version 	v.180309
+ * @version 	v.181018
  * @package 	Application
  *
  */
