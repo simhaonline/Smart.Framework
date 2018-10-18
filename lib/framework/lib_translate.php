@@ -94,6 +94,33 @@ final class SmartTextTranslations {
 
 	//=====
 	/**
+	 * Regional Text :: Get the Default Language for the current session as Set by Init
+	 *
+	 * @return 	STRING						:: The language ID ; sample (for English) will return: 'en'
+	 */
+	public static function getDefaultLanguage() {
+		//--
+		$lang = 'en';
+		//--
+		if(defined('SMART_FRAMEWORK_DEFAULT_LANG')) {
+			if(self::validateLanguage((string)SMART_FRAMEWORK_DEFAULT_LANG)) {
+				$lang = (string) SMART_FRAMEWORK_DEFAULT_LANG;
+			} else {
+				Smart::raise_error(
+					'Invalid Default Language set in SMART_FRAMEWORK_DEFAULT_LANG: '.SMART_FRAMEWORK_DEFAULT_LANG,
+					'Invalid Default Language Set in Configs' // msg to display
+				);
+			} //end if
+		} //end if
+		//--
+		return (string) $lang;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Regional Text :: Get the Current Language for the current session as Set by Config / URL / Cookie / Method-Set
 	 *
 	 * @return 	STRING						:: The language ID ; sample (for English) will return: 'en'
@@ -524,7 +551,7 @@ final class SmartTextTranslations {
 				]);
 			} //end if
 		} //end if
-		if(((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$y_language) OR (SmartFrameworkRuntime::ifDebug())) {
+		if(((string)self::getDefaultLanguage() == (string)$y_language) OR (SmartFrameworkRuntime::ifDebug())) {
 			Smart::log_warning('Cannot get from source Text Translations for Key: '.$the_cache_key); // show this if default language or debug
 		} //end if
 		return array(); // this is invalid, means not found in any places
@@ -679,7 +706,7 @@ final class SmartTextTranslator {
 		} //end if
 		//--
 		if((string)$y_fallback_language == '@default') {
-			$y_fallback_language = (string) SMART_FRAMEWORK_DEFAULT_LANG;
+			$y_fallback_language = (string) SmartTextTranslations::getDefaultLanguage();
 		} //end if else
 		//--
 		$text = (string) SmartTextTranslations::getTranslationByKey($this->area, $this->subarea, (string)$y_textkey, $this->language);

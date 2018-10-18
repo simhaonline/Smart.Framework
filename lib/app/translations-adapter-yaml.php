@@ -82,7 +82,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 			//--
 			// INFO: To be able to fallback to the default language, don't make this error FATAL ERROR except if this is the default language selected
 			//--
-			if((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$the_lang) {
+			if((string)SmartTextTranslations::getDefaultLanguage() == (string)$the_lang) {
 				Smart::raise_error(
 					'Invalid Language Dir: '.$fdb_dir.' :: for: '.$y_area.'@'.$y_subarea,
 					'Invalid Language Dir for: '.$y_area.'@'.$y_subarea // msg to display
@@ -95,7 +95,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 			//--
 			// INFO: To be able to fallback to the default language, don't make this error FATAL ERROR except if this is the default language selected
 			//--
-			if((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$the_lang) {
+			if((string)SmartTextTranslations::getDefaultLanguage() == (string)$the_lang) {
 				Smart::raise_error(
 					'Invalid Language File: '.$fdb_file,
 					'Invalid Language File: '.$fdb_template // msg to display
