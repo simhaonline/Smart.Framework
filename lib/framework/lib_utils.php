@@ -61,6 +61,25 @@ final class SmartUtils {
 
 
 //================================================================
+// use this function to get the cookie domain
+public static function cookie_default_domain() {
+	//--
+	$cookie_domain = '';
+	if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
+		if((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN == '*') {
+			$cookie_domain = (string) self::get_server_current_basedomain_name();
+		} else {
+			$cookie_domain = (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN;
+		} //end if
+	} //end if
+	//--
+	return (string) $cookie_domain;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 // use this function to get cookies as it takes care of safe filtering of cookie values
 public static function get_cookie($cookie_name) {
 	//--
@@ -83,18 +102,14 @@ public static function set_cookie($cookie_name, $cookie_data, $expire_time, $coo
 		$expire_time = 0;
 	} //end if
 	//--
-	if((string)$cookie_domain == '@') {
-		if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
-			$cookie_domain = (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN;
-		} else {
-			$cookie_domain = '';
-		} //end if
+	if((string)$cookie_domain == '@') { // if empty or non @ leave as it is
+		$cookie_domain = (string) self::cookie_default_domain();
 	} //end if
 	//--
 	if((string)$cookie_domain != '') {
-		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, (string)$cookie_path, (string)$cookie_domain); // set it using domain
+		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, (string)$cookie_path, (string)$cookie_domain); // set it using domain (if running on IP will be set on current IP)
 	} else {
-		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, (string)$cookie_path); // set it general
+		$cookie_set = @setcookie((string)$cookie_name, (string)$cookie_data, (int)$expire_time, (string)$cookie_path); // set it without specific domain (will using current IP or subdomain)
 	} //end if else
 	//--
 	return (bool) $cookie_set;

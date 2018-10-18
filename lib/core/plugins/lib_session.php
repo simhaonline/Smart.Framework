@@ -64,7 +64,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.180411
+ * @version 	v.181018
  * @package 	Application
  *
  */
@@ -322,7 +322,12 @@ public static function start() {
 		} //end if
 	} //end if
 	if(defined('SMART_FRAMEWORK_SESSION_DOMAIN') AND ((string)SMART_FRAMEWORK_SESSION_DOMAIN != '')) {
-		@session_set_cookie_params((int)$tmp_exp_seconds, '/', (string)SMART_FRAMEWORK_SESSION_DOMAIN); // session cookie expire, the path and domain
+		if((string)SMART_FRAMEWORK_SESSION_DOMAIN == '*') {
+			$cookie_domain = (string) SmartUtils::get_server_current_basedomain_name();
+		} else {
+			$cookie_domain = (string) SMART_FRAMEWORK_SESSION_DOMAIN;
+		} //end if
+		@session_set_cookie_params((int)$tmp_exp_seconds, '/', (string)$cookie_domain); // session cookie expire, the path and domain
 	} else {
 		@session_set_cookie_params((int)$tmp_exp_seconds, '/'); // session cookie expire and the path
 	} // end if
@@ -423,7 +428,7 @@ public static function start() {
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.180411
+	// v.181018
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

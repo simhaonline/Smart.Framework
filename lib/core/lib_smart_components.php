@@ -2966,13 +2966,6 @@ public static function render_app_template($template_path, $template_file, $arr_
 	$os_bw = (array) SmartUtils::get_os_browser_ip();
 	//--
 
-	//--
-	$cookie_domain = '';
-	if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
-		$cookie_domain = (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN;
-	} //end if
-	//--
-
 	//-- special TPL vars
 	$arr_data['release-hash'] 				= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
 	//-- external TPL vars
@@ -2997,7 +2990,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 	$arr_data['client-class'] 				= (string) $os_bw['bc']; 											// client browser Class (ex: gk)
 	$arr_data['client-browser'] 			= (string) $os_bw['bw']; 											// client browser (ex: fox)
 	$arr_data['client-uid-cookie-name'] 	= (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME;					// client browser UID Cookie Name (as defined in etc/init.php) ; it may be required to pass this cookie name to the Javascript ...)
-	$arr_data['client-uid-cookie-domain'] 	= (string) $cookie_domain; 											// client browser UID Cookie Domain (as defined in etc/init.php) ; it may be required to pass this cookie domain to the Javascript ...)
+	$arr_data['client-uid-cookie-domain'] 	= (string) SmartUtils::cookie_default_domain(); 					// client browser UID Cookie Domain (as defined in etc/init.php) ; it may be required to pass this cookie domain to the Javascript ...)
 	$arr_data['app-namespace'] 				= (string) SMART_SOFTWARE_NAMESPACE;								// NameSpace from configs (as defined in etc/init.php)
 	$arr_data['app-realm'] 					= (string) $the_realm; 												// IDX (for index.php area) ; ADM (for admin.php area)
 	$arr_data['app-domain'] 				= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain']

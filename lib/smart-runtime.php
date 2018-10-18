@@ -1722,11 +1722,7 @@ public static function SetVisitorEntropyIDCookie() {
 						} //end if
 					} //end if
 					$entropy = (string) sha1((string)Smart::unique_entropy('uuid-cookie')); // generate a random unique key ; cookie was not yet set or is invalid
-					if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN')) AND ((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN != '')) {
-						@setcookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, (int)$expire, '/', (string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN); // set it using domain
-					} else {
-						@setcookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, (int)$expire, '/'); // set it without domain
-					} //end if else
+					SmartUtils::set_cookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, (int)$expire, '/', '@');
 					$cookie = (string) $entropy;
 				} //end if
 				//--
