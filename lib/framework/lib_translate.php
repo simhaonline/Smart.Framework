@@ -94,6 +94,24 @@ final class SmartTextTranslations {
 
 	//=====
 	/**
+	 * Regional Text :: Checks if the Current Language is the Default Language for the current session
+	 *
+	 * @return 	BOOLEAN						:: Returns TRUE if the Current Language is the Default Language for the current session otherwise returns FALSE
+	 */
+	public static function isDefaultLanguage() {
+		//--
+		if((string)self::getLanguage() != (string)self::getDefaultLanguage()) {
+			return true;
+		} else {
+			return false;
+		} //end if else
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Regional Text :: Get the Default Language for the current session as Set by Init
 	 *
 	 * @return 	STRING						:: The language ID ; sample (for English) will return: 'en'

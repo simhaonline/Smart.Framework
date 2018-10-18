@@ -960,7 +960,7 @@ final class SmartFrameworkRegistry {
  *
  * @access 		private
  * @internal
- * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
+ * @ignore		THIS CLASS IS FOR ADVANCED USE ONLY !!!
  *
  * @depends 	classes: Smart
  * @version		181018
@@ -1142,20 +1142,22 @@ public static function PathInfo_Enabled() {
 
 //======================================================================
 // This will run before loading the Smart.Framework and must not depend on it's classes
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function Parse_Semantic_URL() {
 
-	// PARSE SEMANTIC URL VIA GET v.180411
+	// PARSE SEMANTIC URL VIA GET v.180818
 	// it limits the URL to 65535 and vars to 1000
+
+	//-- check if can run
+	if(self::$RequestProcessed !== false) {
+		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Cannot Re-Parse the Semantic URLs, Registry is already locked !', E_USER_WARNING);
+		return; // avoid run after it was already processed
+	} //end if
+	//--
 
 	//-- check overall
 	if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE') AND (SMART_FRAMEWORK_SEMANTIC_URL_DISABLE === true)) {
 		return;
-	} //end if
-	//--
-
-	//-- check if can run
-	if(self::$RequestProcessed !== false) {
-		return; // avoid run after it was already processed
 	} //end if
 	//--
 
@@ -1229,6 +1231,7 @@ public static function Parse_Semantic_URL() {
 
 //======================================================================
 // This will run before loading the Smart.Framework and must not depend on it's classes
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $filter_____info) {
 
 	// FILTER INPUT GET/POST VARIABLES v.180218 (with collision fix and private space check)
@@ -1304,19 +1307,20 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 
 //======================================================================
 // This will run before loading the Smart.Framework and must not depend on it's classes
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function Extract_Filtered_Cookie_Vars($filter_____arr) {
 
-	// FILTER INPUT COOKIES VARIABLES v.180218 (with collision fix and private space check)
-
-	//--
-	$filter_____info = 'COOKIES';
-	//--
+	// FILTER INPUT COOKIES VARIABLES v.181018 (with collision fix and private space check)
 
 	//-- check if can run
 	if(self::$RequestProcessed !== false) {
 		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Cannot Register Cookie Vars, Registry is already locked !', E_USER_WARNING);
 		return; // avoid run after it was already processed
 	} //end if
+	//--
+
+	//--
+	$filter_____info = 'COOKIES';
 	//--
 
 	//--
@@ -1412,6 +1416,7 @@ public static function High_Load_Monitor() {
 
 //======================================================================
 // Avoid run this function before Smart.Framework was loaded, it depends on it
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function Create_Required_Dirs() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
@@ -1592,6 +1597,7 @@ public static function Create_Required_Dirs() {
 
 //======================================================================
 // Avoid run this function before Smart.Framework was loaded, it depends on it
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function Redirection_Monitor() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
@@ -1689,6 +1695,7 @@ public static function Redirection_Monitor() {
 
 //======================================================================
 // Avoid run this function before Smart.Framework was loaded, it depends on it
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function SetVisitorEntropyIDCookie() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
