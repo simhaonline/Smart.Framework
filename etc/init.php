@@ -18,22 +18,22 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //define('SMART_FRAMEWORK_DEBUG_MODE', 'yes');												// Uncomment this to enable Debugging and the Web Profiler Toolbar (do not use in production environments but only for internal Debugging / Profiling purposes)
 
 //--------------------------------------- APP NAMESPACE
-define('SMART_SOFTWARE_NAMESPACE', 			'smartframework.default');						// APP Namespace ID :: [a-z.], length 10..25 :: Used as a unique ID for session and DBs
+define('SMART_SOFTWARE_NAMESPACE', 			'smartframework.default');						// APP Namespace ID :: [a-z.], length 10..25 :: This should be used as a unique ID identifier for the application (aka application unique ID)
 //--------------------------------------- ERRORS MANAGEMENT
-define('SMART_ERROR_HANDLER', 				'dev'); 										// Error Handler mode: 'log' | 'dev' :: for production is recommended to use 'log' as it will show a blank page with a 500 Internal Server Error message ; for development or debugging use 'dev' but this will display an error with a HTTP 200 OK
+define('SMART_ERROR_HANDLER', 				'dev'); 										// Error Handler mode: 'log' | 'dev' :: for production is recommended to use 'log' as it will show a blank page with a HTTP 500 Internal Server Error message ; for development or debugging use 'dev' but this will display an error with a HTTP 200 OK instead of HTTP 500
 //--------------------------------------- TIMEZONE
 define('SMART_FRAMEWORK_TIMEZONE', 			'UTC'); 										// The timezone for PHP (Example: Europe/London) ; default is: UTC
-define('SMART_FRAMEWORK_DEFAULT_LANG', 		'en');											// The default language for translations (as language ID) ; must be a valid language ID defined in config.php
+define('SMART_FRAMEWORK_DEFAULT_LANG', 		'en');											// The default language for translations (as language ID) ; must be a valid language ID defined in config.php as regional.language-id
 //--------------------------------------- SECURITY
-define('SMART_FRAMEWORK_SECURITY_FILTER_INPUT', '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/');			// Safe Unicode Filter Input Variables (Strings) as: remove all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
-define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// Security Key ; *** YOU HAVE TO CHANGE IT *** ; will be used to generate secure hashes
+define('SMART_FRAMEWORK_SECURITY_FILTER_INPUT', '/[\x00-\x08\x0B-\x0C\x0E-\x1F]/');			// !!! DO NOT MODIFY THIS UNLESS YOU KNOW WHAT YOU ARE DOING !!! This is a Safe Unicode Filter Input (GET/POST/COOKIE) Variables (Strings) as it will remove all lower dangerous characters: x00 - x1F except: \t = x09 \n = 0A \r = 0D
+define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// *** YOU HAVE TO CHANGE IT *** ; This is the Security Key that will be used to generate secure hashes
 //define('SMART_FRAMEWORK_SECURITY_OPENSSLBFCRYPTO', true); 								// *Optional: if defined and set to TRUE will use the OpenSSL cipher openssl/blowfish/CBC (faster) instead of internal one blowfish.cbc (more compatible across platforms)
 //define('SMART_FRAMEWORK_SECURITY_CRYPTO', 'openssl/aes256/CBC'); 							// *Optional: the crypto algo for general purpose encryption to be used ; default is hash/sha256 ; other modes: hash/sha1, hash/sha384, hash/sha512, openssl/{algo}/{mode} where mode can be: CBC, CFB, OFB ; algo can be: blowfish, aes256, camellia256
 //--------------------------------------- URLS
 define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT', 'index.php');							// Semantic URL Rewriter Skip Script (just for index.php) ; This can be set to: `index.php` or `` empty (admin.php have no support for this)
 define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE', 'samples');								// Default Module for Shortening the semantic URLs or the URL rewriter from module.controller.html to just controller.html ; just for index.php (admin.php have no support for this)
 define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', '');										// URL Rewrite Mode: `` | `standard` | `semantic` :: Use (Apache like) rewrite rules (must be enabled in .htaccess) and the SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT must be set to `index.php` ; semantic URLS must be not disabled ; just for index.php (admin.php have no support for this)
-//define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 	true); 									// If define this will DISABLE the semantic URLs for index.php and admin.php ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
+//define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 	true); 									// *Optional: if defined, this will DISABLE the semantic URLs for index.php and admin.php ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
 //--------------------------------------- COOKIES
 define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie Name (it is recommended to be customized)
 //define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME', intval(60 * 60 * 24));				// The UniqueID Cookie LifeTime in seconds ; set to 0 for expire on browser close
@@ -48,7 +48,7 @@ define('SMART_FRAMEWORK_SESSION_NAME', 		'SmartFramework__SESSION'); 					// Ses
 define('SMART_FRAMEWORK_MEMORY_LIMIT', 		'256M');										// Memory Limit Per Script (via PHP.INI) ; sync this with the value in .htaccess if defined ; a good value for production is 256M or 384M ; for development, with Debugging turned ON be sure to set a big value like 512M or 1024M !!
 define('SMART_FRAMEWORK_EXECUTION_TIMEOUT', 610);											// Script Max Execution Time (Sync with the web server Timeout and PHP.INI)
 define('SMART_FRAMEWORK_NETSOCKET_TIMEOUT', 120); 											// Network Socket (Stream) TimeOut in Seconds
-define('SMART_FRAMEWORK_NETSERVER_ID', 		'1'); 											// Load Balancing: Unique ID, integer+
+define('SMART_FRAMEWORK_NETSERVER_ID', 		'1'); 											// Load Balancing: Unique ID, integer+ (this is used for the main purpose to be able to generate very unique UUIDS in a cluster of apps ; every server in the cluster running the same app must have a different ID)
 //define('SMART_FRAMEWORK_NETSERVER_MAXLOAD', 0);											// Load Balancing and DDOS Protection against High Loads :: if set to 0 will be ignored ; if set to a value > 0 if server load go over this value the server will enter in BUSY state (503 Too busy) ; by example a value of 90 means 90% load over 1 CPU core ; on multi cpus/cores value must be 90 * number of cpus/cores
 //--------------------------------------- SSL CRYPTO OVERALL TUNNINGS
 define('SMART_FRAMEWORK_SSL_MODE', 				'tls');										// SSL/TLS Mode: tls | sslv3

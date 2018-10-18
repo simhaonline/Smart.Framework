@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.5');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181017
+ * @version		181018
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -104,7 +104,7 @@ public static function Run() {
 				break;
 			case 'debug':
 			case 'debug-tpl':
-			//	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+			//	if(!SmartFrameworkRuntime::ifDebug()) {
 			//		$smartframeworkservice = '';
 			//	} //end if
 				break;
@@ -147,7 +147,7 @@ public static function Run() {
 	//--
 	if((string)$smartframeworkservice == 'debug') {
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			self::HeadersNoCache(); // headers: cache control, force no-cache
 			echo self::DebugInfoGet('adm');
 		} else {
@@ -159,7 +159,7 @@ public static function Run() {
 		//--
 	} elseif((string)$smartframeworkservice == 'debug-tpl') {
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			self::HeadersNoCache(); // headers: cache control, force no-cache
 			echo SmartDebugProfiler::display_marker_tpl_debug((string)SmartFrameworkRegistry::getRequestVar('tpl'));
 		} else {
@@ -315,7 +315,7 @@ public static function Run() {
 	//--
 	//== CACHE CONTROL
 	//--
-	if(((int)$appSettings['expires'] > 0) AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) {
+	if(((int)$appSettings['expires'] > 0) AND (!SmartFrameworkRuntime::ifDebug())) {
 		self::HeadersCacheExpire((int)$appSettings['expires'], (int)$appSettings['modified']); // headers: cache expiration control
 	} else {
 		self::HeadersNoCache(); // headers: cache control, force no-cache
@@ -531,7 +531,7 @@ public static function Run() {
 		return;
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		self::DebugInfoCookieSet('adm');
 	} // end if
 	echo SmartComponents::render_app_template((string)$the_template_path, (string)$the_template_file, (array)$appData);

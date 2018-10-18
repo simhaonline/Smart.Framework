@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.180423
+ * @version 	v.181018
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)										# count documents in a collection
@@ -152,7 +152,7 @@ public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
 		$this->timeout = 60;
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 			'type' => 'metainfo',
@@ -299,7 +299,7 @@ public function __call($method, array $args) {
 	$method = (string) $method;
 	$args = (array) $args;
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		$time_start = microtime(true);
 	} //end if
 	//--
@@ -720,7 +720,7 @@ public function __call($method, array $args) {
 
 	//--
 	if($this->connected === true) { // avoid register pre-connect commands like version)
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-queries', 1, '+');
 			//--
@@ -794,7 +794,7 @@ private function connect($type, $username, $password) {
 		$this->mongodbclient = &SmartFrameworkRegistry::$Connections['mongodb'][(string)$this->connex_key];
 		$this->connected = true;
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 				'type' => 'open-close',
 				'data' => 'Re-Using MongoDB Manager Instance :: ServerType ['.$type.']: '.$this->connex_key
@@ -814,7 +814,7 @@ private function connect($type, $username, $password) {
 			return false;
 		} //end try catch
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 				'type' => 'open-close',
 				'data' => 'Creating MongoDB Manager Instance :: ServerType ['.$type.']: '.$this->connex_key
@@ -830,7 +830,7 @@ private function connect($type, $username, $password) {
 			return false;
 		} //end if
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 				'type' => 'metainfo',
@@ -846,7 +846,7 @@ private function connect($type, $username, $password) {
 	//--
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 			'type' => 'set',
@@ -878,7 +878,7 @@ public function disconnect() {
 	//--
 	SmartFrameworkRegistry::$Connections['mongodb'][(string)$this->connex_key] = null; // close connection
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 			'type' => 'open-close',
 			'data' => 'Destroying MongoDB Manager Instance: '.$this->connex_key
@@ -915,7 +915,7 @@ if(Smart::array_size($y_query) > 0) {
 	$y_query = (string) print_r($y_query,1);
 } //end if
 $the_params = '- '.'MongoDB Manager v.'.phpversion('mongodb').' -';
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+if(SmartFrameworkRuntime::ifDebug()) {
 	$width = 750;
 	$the_area = (string) $y_area;
 	if((string)$y_warning == '') {

@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.180423
+ * @version 	v.181018
  * @package 	Database:SQLite
  *
  */
@@ -88,7 +88,7 @@ private $timeoutbusysec;
 public function __construct($sqlite_db_file, $timeout_busy_sec=60) {
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 			'type' => 'metainfo',
@@ -449,7 +449,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.180423
+ * @version 	v.181018
  * @package 	Database:SQLite
  *
  */
@@ -540,7 +540,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		//--
 		$db->busyTimeout((int)$timeout_busy_sec * 1000); // $timeout_busy_sec is in seconds ; we set a busy timeout in miliseconds
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
 			$arr_version = @$db->version(); // mixed
 			//--
@@ -598,7 +598,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		return;
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 			'type' => 'open-close',
 			'data' => 'Open SQLite Database: '.$file_name
@@ -649,7 +649,7 @@ public static function close($db, $infofile='') {
 			//--
 			@$db->close();
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				//--
 				SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
 					'type' => 'open-close',
@@ -732,7 +732,7 @@ public static function count_data($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		$time_start = microtime(true);
 		//--
@@ -776,7 +776,7 @@ public static function count_data($db, $query, $qparams='', $qtitle='') {
 		//--
 	} //end if else
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-queries', 1, '+');
 		//--
@@ -810,7 +810,7 @@ public static function read_data($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		$time_start = microtime(true);
 		//--
@@ -868,7 +868,7 @@ public static function read_data($db, $query, $qparams='', $qtitle='') {
 		//--
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-queries', 1, '+');
 		//--
@@ -902,7 +902,7 @@ public static function read_adata($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		$time_start = microtime(true);
 		//--
@@ -964,7 +964,7 @@ public static function read_adata($db, $query, $qparams='', $qtitle='') {
 		//--
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-queries', 1, '+');
 		//--
@@ -999,7 +999,7 @@ public static function read_asdata($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		$time_start = microtime(true);
 		//--
@@ -1065,7 +1065,7 @@ public static function read_asdata($db, $query, $qparams='', $qtitle='') {
 		//--
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-queries', 1, '+');
 		//--
@@ -1099,7 +1099,7 @@ public static function write_data($db, $query, $qparams='', $qtitle='') {
 	//--
 	self::check_connection($db);
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		$time_start = microtime(true);
 		//--
@@ -1120,7 +1120,7 @@ public static function write_data($db, $query, $qparams='', $qtitle='') {
 		$sqlite_error = 'SQLite3-ERR:: '.@$db->lastErrorMsg();
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-queries', 1, '+');
 		//--
@@ -1545,7 +1545,7 @@ if(defined('SMART_SOFTWARE_SQLDB_FATAL_ERR') AND (SMART_SOFTWARE_SQLDB_FATAL_ERR
 //--
 $def_warn = 'Execution Halted !';
 $y_warning = (string) trim((string)$y_warning);
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+if(SmartFrameworkRuntime::ifDebug()) {
 	$width = 750;
 	$the_area = (string) $y_area;
 	if((string)$y_warning == '') {

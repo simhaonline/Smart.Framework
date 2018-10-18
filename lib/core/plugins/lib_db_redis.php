@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.180423
+ * @version 	v.181018
  * @package 	Database:Redis
  *
  * @method	STRING		ping()										# Ping the Redis server ; returns: the test answer which is always PONG
@@ -156,7 +156,7 @@ public function __construct($host, $port, $db, $password='', $timeout=5, $y_debu
 	//--
 	$this->err = false;
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		if((float)$y_debug_exch_slowtime > 0) {
 			$this->slow_time = (float) $y_debug_exch_slowtime;
@@ -212,7 +212,7 @@ public function setRecvBuf($buff) {
 public function __call($method, array $args) {
 	//--
 	if($this->err !== false) {
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			Smart::log_notice('#REDIS-DB# :: Method Call Aborted. Detected Previous Redis Error before calling the method: '.$method.'()');
 		} //end if
 		return null;
@@ -332,7 +332,7 @@ public function __call($method, array $args) {
 		case 'QUIT': // always return OK ; ask the server to close the connection ; the connection is closed as soon as all pending replies have been written to the client
 			//--
 			if(!is_resource($this->connect())) { // this have it's own error raise mechanism
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					Smart::log_notice('#REDIS-DB# :: Redis connection FAILED just before calling the method: '.$method.'()');
 				} //end if
 				return null;
@@ -390,7 +390,7 @@ private function run_command($method, array $args) {
 		//--
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		$time_start = microtime(true);
 		//--
@@ -400,7 +400,7 @@ private function run_command($method, array $args) {
 	//--
 	$response = $this->parse_response($method);
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'redis|total-queries', 1, '+');
 		//--
@@ -505,7 +505,7 @@ private function connect() {
 			//--
 			$this->socket = SmartFrameworkRegistry::$Connections['redis'][(string)$this->server.'@'.$this->db]; // re-use conection (import)
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				//--
 				SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 					'type' => 'open-close',
@@ -521,7 +521,7 @@ private function connect() {
 			//--
 			$this->socket = @stream_socket_client($this->server, $errno, $errstr, $this->timeout);
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				//--
 				SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 					'type' => 'metainfo',
@@ -553,7 +553,7 @@ private function connect() {
 				//--
 				$this->run_command('SELECT', array($this->db)); // select database
 				//--
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					//--
 					SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 						'type' => 'set',
@@ -594,7 +594,7 @@ private function disconnect() {
 		//--
 		@fclose($this->socket); // closing the local connection (the global might remain opened ...)
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 				'type' => 'open-close',
@@ -631,7 +631,7 @@ $is_fatal = (bool) $this->fatal_err;
 //--
 if($is_fatal === false) { // NON-FATAL ERROR
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 			'type' => 'metainfo',
@@ -646,7 +646,7 @@ if($is_fatal === false) { // NON-FATAL ERROR
 //--
 $def_warn = 'Execution Halted !';
 $y_warning = (string) trim((string)$y_warning);
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+if(SmartFrameworkRuntime::ifDebug()) {
 	$width = 750;
 	$the_area = (string) $y_area;
 	if((string)$y_warning == '') {

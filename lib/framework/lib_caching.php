@@ -47,7 +47,7 @@ if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170927
+ * @version 	v.181018
  * @package 	Caching
  *
  */
@@ -118,7 +118,7 @@ final class SmartCache {
 		self::$CachedData[(string)$y_realm] = (array) self::$CachedData[(string)$y_realm];
 		self::$CachedData[(string)$y_realm][(string)$y_key] = $y_value; // mixed
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-CACHE', [
 				'title' => '[SetKey]: '.$y_realm.' / '.$y_key,
 				'data' => Smart::text_cut_by_limit((string)print_r($y_value,1), 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]')
@@ -143,7 +143,7 @@ final class SmartCache {
 		self::$CachedData[(string)$y_realm] = (array) self::$CachedData[(string)$y_realm];
 		unset(self::$CachedData[(string)$y_realm][(string)$y_key]);
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-CACHE', [
 				'title' => '[INFO] :: UnsetKey: '.$y_realm.' / '.$y_key,
 				'data' => ''
@@ -192,7 +192,7 @@ final class SmartCache {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170927
+ * @version 	v.181018
  * @package 	Caching
  *
  */

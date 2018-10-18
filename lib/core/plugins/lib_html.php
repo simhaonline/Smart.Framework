@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180416
+ * @version 	v.181018
  * @package 	DATA:HTML
  *
  */
@@ -508,7 +508,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			$dom = null; // free mem
 			$this->html = (string) trim((string)preg_replace('~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', (string)$this->html)); // cleanup ; fixes: normally with the above options will add no doctype or html / body tags, but use it just in case ; alternative to this: explode by body to get content
 			//--
-			if(((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') OR ($this->dom_log_errors === true)) { // log errors if set :: OR ((string)$this->html == '')
+			if((SmartFrameworkRuntime::ifDebug()) OR ($this->dom_log_errors === true)) { // log errors if set :: OR ((string)$this->html == '')
 				$errors = (array) @libxml_get_errors();
 				if(Smart::array_size($errors) > 0) {
 					$notice_log = '';
@@ -520,7 +520,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 					if((string)$notice_log != '') {
 						Smart::log_notice('SmartHtmlParser NOTICE [DOMDocument]:'."\n".$notice_log."\n".'#END'."\n");
 					} //end if
-					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if(SmartFrameworkRuntime::ifDebug()) {
 						Smart::log_notice('SmartHtmlParser / Debug HTML-String:'."\n".$this->html."\n".'#END');
 					} //end if
 				} //end if

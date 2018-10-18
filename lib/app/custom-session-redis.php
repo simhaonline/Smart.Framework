@@ -26,9 +26,7 @@ if(!is_array($configs['redis'])) {
 //===================================================================================== CLASS START
 //=====================================================================================
 
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-	define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
-} //end if
+define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
 
 /**
  * Class Smart.Framework App.Custom.Session.Redis
@@ -41,7 +39,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
 final class SmartCustomSession extends SmartAbstractCustomSession {
 
 	// ->
-	// v.180411
+	// v.181018
 	// Redis Custom Session [OPTIONAL]
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

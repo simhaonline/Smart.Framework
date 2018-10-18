@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.181017
+ * @version 	v.181018
  * @package 	Components:Core
  *
  */
@@ -2232,7 +2232,7 @@ public static function js_ajax_replyto_html_form($y_status, $y_title, $y_message
 		$button_text = $translator_core_messages->text('cancel');
 	} //end if else
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		$y_redirect_url = ''; // avoid redirect if DEBUG IS ON to catch the debug messages ...
 	} //end if
 	//--
@@ -3011,7 +3011,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 	$arr_data['srv-script'] 				= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
 	$arr_data['srv-urlquery'] 				= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
 	$arr_data['srv-requri'] 				= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
-	$arr_data['debug-mode'] 				= (string) SMART_FRAMEWORK_DEBUG_MODE; 								// yes | no
+	$arr_data['debug-mode'] 				= (string) (SmartFrameworkRuntime::ifDebug() ? 'yes' : 'no'); 		// yes | no
 	//--
 
 	//-- read TPL
@@ -3025,7 +3025,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 		return;
 	} //end if
 	//-- add debug support in TPL
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifDebug()) {
 		if(class_exists('SmartDebugProfiler')) {
 			if((stripos((string)$tpl, '</head>') !== false) AND (stripos((string)$tpl, '</body>') !== false)) {
 				$tpl = (string) str_ireplace('</head>', "\n".SmartDebugProfiler::js_headers_debug(Smart::escape_url($the_area).'.php?smartframeworkservice=debug')."\n".'</head>', (string)$tpl);

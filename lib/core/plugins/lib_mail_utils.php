@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.170920
+ * @version 	v.181018
  * @package 	Mailer:Utility
  *
  */
@@ -102,7 +102,7 @@ public static function check_email_address($email, $ycheckdomain='no', $helo='',
 			//--
 			$msg .= $chk['message']."\n";
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+			if(!SmartFrameworkRuntime::ifDebug()) {
 				$msg = ''; // hide the message if no debug
 			} //end if
 			//--
@@ -378,7 +378,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 	//--
 	if((string)$server_name == '@mail') {
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', 'Send eMail Method Selected: [MAIL]');
 		} //end if
 		//-- mail method
@@ -386,11 +386,11 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 		//--
 	} elseif(strlen($server_name) > 0) {
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', 'Send eMail Method Selected: [SMTP]');
 		} //end if
 		//-- debug
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			$mail->debuglevel = 1; // default is 1
 		} else {
 			$mail->debuglevel = 0; // no debug
@@ -414,7 +414,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 		//--
 	} else {
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', 'Send eMail Method Selected: [NONE] !!!');
 		} //end if
 		//--
@@ -667,14 +667,14 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 					//-- real send
 					if(((string)$mail->method == 'mail') OR ((string)$mail->method == 'smtp')) {
 						$err = $mail->send('yes');
-						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+						if(SmartFrameworkRuntime::ifDebug()) {
 							SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', '[##### Send eMail Log #'.($i+1).': '.date('Y-m-d H:i:s').' #####]');
 						} //end if
 					} else {
 						$err = 'WARNING: SMTP Server or Mail Method IS NOT SET in CONFIG. Send eMail - Operation ABORTED !';
 					} //end if else
 					//--
-					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if(SmartFrameworkRuntime::ifDebug()) {
 						SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', '========== SEND TO: '.$arr_to[$i].' =========='."\n".'ERRORS: '.$err."\n".'=========='."\n".$mail->log."\n".'========== # ==========');
 					} //end if
 					//--
@@ -698,7 +698,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 			} //end if
 			//--
 			$tmp_send_log .= '-----------------------------------------------------------------------'."\n\n";
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', 'Send eMail Operations Log: '.$tmp_send_log);
 			} //end if
 			//--
@@ -745,7 +745,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.170920
+ * @version 	v.181018
  * @package 	Mailer:Utility
  *
  */

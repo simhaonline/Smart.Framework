@@ -30,6 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
+// Hint: for very advanced internal debugging define in etc/init.php the constant: SMART_FRAMEWORK_INTERNAL_DEBUG = true
 
 /**
  * Class Smart Debug Profiler
@@ -37,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.181011
+ * @version 	v.181018
  *
  */
 final class SmartDebugProfiler {
@@ -49,7 +50,7 @@ final class SmartDebugProfiler {
 public static function js_headers_debug($y_profiler_url) {
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return '';
 	} //end if
 	//--
@@ -72,7 +73,7 @@ public static function js_headers_debug($y_profiler_url) {
 public static function div_main_debug() {
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return '';
 	} //end if
 	//--
@@ -89,7 +90,7 @@ public static function div_main_debug() {
 public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 
 	//-- {{{SYNC-DEBUG-DATA}}}
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return false;
 	} //end if
 	//--
@@ -125,7 +126,7 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 			//-- generate debug info if set to show optimizations
 			SmartMarkersTemplating::registerOptimizationHintsToDebugLog();
 			//-- generate debug info if set to show internals
-			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
+			if(SmartFrameworkRuntime::ifInternalDebug()) {
 				Smart::registerInternalCacheToDebugLog();
 				SmartFrameworkRegistry::registerInternalCacheToDebugLog();
 				SmartAuth::registerInternalCacheToDebugLog();
@@ -201,7 +202,7 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 public static function test_tpl_file_for_debug($y_tpl_file) {
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return false;
 	} //end if
 	//--
@@ -249,7 +250,7 @@ public static function test_tpl_file_for_debug($y_tpl_file) {
 public static function read_tpl_file_for_debug($y_tpl_file) {
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return array();
 	} //end if
 	//--
@@ -284,7 +285,7 @@ public static function read_tpl_file_for_debug($y_tpl_file) {
 public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_templates=[], $y_use_decrypt=true) {
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return '';
 	} //end if
 	//--
@@ -331,7 +332,7 @@ public static function print_debug_info($y_area, $y_debug_token) {
 	global $configs;
 
 	//-- {{{SYNC-DEBUG-DATA}}}
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return '';
 	} //end if
 	//--

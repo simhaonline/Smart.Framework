@@ -41,12 +41,19 @@ if(!function_exists('preg_match')) {
 //--
 if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_RELEASE_VERSION') || defined('SMART_FRAMEWORK_RELEASE_URL') || defined('SMART_FRAMEWORK_RELEASE_MIDDLEWARE')) {
 	@http_response_code(500);
-	die('Reserved Constants names have been used: SMART_FRAMEWORK_RELEASE_* is reserved !');
+	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.5'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.17'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.18'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
+//--
+
+//--
+if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
+	@http_response_code(500);
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_DEBUG_MODE');
+} //end if
 //--
 
 //--
@@ -67,10 +74,6 @@ if(!headers_sent()) {
 } //end if
 //--
 
-//--
-if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) { // {{{SYNC-DEFINE-DBGMODE}}}
-	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, set it here to avoid later modifications
-} //end if
 //--
 if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) { // here must be file_exists() and is_link() as the file sys lib is not yet initialized ... {{{SYNC-SF-PATH-EXISTS}}}
 	define('SMART_FRAMEWORK_INSTALL_MODE', 'yes');
@@ -250,9 +253,9 @@ if(!defined('SMART_FRAMEWORK_APP_REQUEST')) {
 	@http_response_code(500);
 	die('The App.Boostrap Script has not been defined: SMART_FRAMEWORK_APP_REQUEST');
 } //end if
-if(substr((string)SMART_FRAMEWORK_APP_REQUEST, -15, 15) != 'app-request.php') {
+if((strpos((string)SMART_FRAMEWORK_APP_REQUEST, '/') === 0) OR (strpos((string)SMART_FRAMEWORK_APP_REQUEST, '.') === 0) OR (substr((string)SMART_FRAMEWORK_APP_REQUEST, -15, 15) != 'app-request.php')) {
 	@http_response_code(500);
-	die('Invalid App.Boostrap Script: '.SMART_FRAMEWORK_APP_REQUEST);
+	die('Invalid App.Request Script: '.SMART_FRAMEWORK_APP_REQUEST);
 } //end if
 require((string)SMART_FRAMEWORK_APP_REQUEST); // (This can be customized)
 //---------------------------------------
@@ -301,7 +304,7 @@ if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) {
 	@http_response_code(500);
 	die('The App.Boostrap Script has not been defined: SMART_FRAMEWORK_APP_BOOTSTRAP');
 } //end if
-if(substr((string)SMART_FRAMEWORK_APP_BOOTSTRAP, -17, 17) != 'app-bootstrap.php') {
+if((strpos((string)SMART_FRAMEWORK_APP_BOOTSTRAP, '/') === 0) OR (strpos((string)SMART_FRAMEWORK_APP_BOOTSTRAP, '.') === 0) OR (substr((string)SMART_FRAMEWORK_APP_BOOTSTRAP, -17, 17) != 'app-bootstrap.php')) {
 	@http_response_code(500);
 	die('Invalid App.Boostrap Script: '.SMART_FRAMEWORK_APP_BOOTSTRAP);
 } //end if
@@ -862,7 +865,7 @@ final class SmartFrameworkRegistry {
 	 */
 	public static function setDebugMsg($area, $context, $dbgmsg, $opmode='') {
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		if(!SmartFrameworkRuntime::ifDebug()) {
 			return;
 		} //end if
 		//--
@@ -928,8 +931,8 @@ final class SmartFrameworkRegistry {
 	 */
 	public static function registerInternalCacheToDebugLog() {
 		//--
-		if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifInternalDebug()) {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				self::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [
 					'title' => 'SmartFrameworkRegistry // Internal Data',
 					'data' => 'Dump of Request Lock: ['.print_r(self::$RequestLock,1).']'."\n".'Dump of Request Vars Keys: '.print_r(array_keys((array)self::$RequestVars),1)."\n".'Dump of Connections:'."\n".print_r(self::$Connections,1)
@@ -960,7 +963,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
  * @depends 	classes: Smart
- * @version		180411
+ * @version		181018
  * @package 	Application
  *
  */
@@ -979,6 +982,56 @@ final class SmartFrameworkRuntime {
 	private static $RequiredDirsCreated 		= false;	// after creating required dirs this will be set to true to avoid re-run that function again
 	private static $RedirectionMonitorStarted 	= false; 	// after the redirection monitor have been started this will be set to true to avoid re-run it
 	private static $HighLoadMonitorStats 		= null; 	// register the high load monitor caches
+
+
+//======================================================================
+// if Internal Debug (Advanced Debug) is ON will return TRUE, else will return FALSE
+public static function ifInternalDebug() {
+	//--
+	if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
+		return true;
+	} else {
+		return false;
+	} //end if else
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// if Debug is ON will return TRUE, else will return FALSE
+public static function ifDebug() {
+	//--
+	if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
+		return false;
+	} //end if
+	//--
+	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		return true;
+	} else {
+		return false;
+	} //end if
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// if is ADMIN area will return TRUE else will return FALSE
+public static function isAdminArea() {
+	//--
+	if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
+		return false;
+	} //end if
+	//--
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		return true;
+	} else {
+		return false;
+	} //end if else
+	//--
+} //END FUNCTION
+//======================================================================
 
 
 //======================================================================
@@ -1062,7 +1115,7 @@ public static function PathInfo_Enabled() {
 		//--
 		switch((int)SMART_SOFTWARE_URL_ALLOW_PATHINFO) {
 			case 3: // only index enabled
-				if(SMART_FRAMEWORK_ADMIN_AREA !== true) {
+				if(!self::isAdminArea()) {
 					$status = true;
 				} //end if
 				break;
@@ -1070,7 +1123,7 @@ public static function PathInfo_Enabled() {
 				$status = true;
 				break;
 			case 1: // only admin enabled
-				if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+				if(self::isAdminArea()) {
 					$status = true;
 				} //end if
 				break;
@@ -1192,7 +1245,7 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 	//--
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(self::ifDebug()) {
 		self::DebugRequestLog('######################### FILTER REQUEST:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'##### RAW REQUEST VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
 	} //end if
 	//--
@@ -1210,7 +1263,7 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 					//--
 					if(is_array($filter_____val)) { // array
 						//--
-						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+						if(self::ifDebug()) {
 							self::DebugRequestLog('#EXTRACT-FILTER-REQUEST-VAR-ARRAY:'."\n".$filter_____key.'='.print_r($filter_____val,1)."\n");
 						} //end if
 						SmartFrameworkRegistry::setRequestVar(
@@ -1220,7 +1273,7 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 						//--
 					} else { // string
 						//--
-						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+						if(self::ifDebug()) {
 							self::DebugRequestLog('#EXTRACT-FILTER-REQUEST-VAR-STRING:'."\n".$filter_____key.'='.$filter_____val."\n");
 						} //end if
 						SmartFrameworkRegistry::setRequestVar(
@@ -1240,7 +1293,7 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 	//--
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(self::ifDebug()) {
 		self::DebugRequestLog('########## END REQUEST FILTER ##########'."\n\n");
 	} //end if
 	//--
@@ -1267,7 +1320,7 @@ public static function Extract_Filtered_Cookie_Vars($filter_____arr) {
 	//--
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(self::ifDebug()) {
 		self::DebugRequestLog('######################### FILTER COOKIES:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'##### RAW COOKIE VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
 	} //end if
 	//--
@@ -1287,7 +1340,7 @@ public static function Extract_Filtered_Cookie_Vars($filter_____arr) {
 				//--
 				if((string)$filter_____key != '') {
 					//--
-					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if(self::ifDebug()) {
 						self::DebugRequestLog('#EXTRACT-FILTER-COOKIE-VAR:'."\n".$filter_____key.'='.$filter_____val."\n");
 					} //end if
 					SmartFrameworkRegistry::setCookieVar(
@@ -1310,7 +1363,7 @@ public static function Extract_Filtered_Cookie_Vars($filter_____arr) {
 	//--
 
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(self::ifDebug()) {
 		self::DebugRequestLog('########## END COOKIES FILTER ##########'."\n\n");
 	} //end if
 	//--
@@ -1382,7 +1435,7 @@ public static function Create_Required_Dirs() {
 		SmartFileSystem::write($dir.'index.html', '');
 		SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n");
 	} else { // manage debug cleanup
-		if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+		if(!self::ifDebug()) {
 			if(SmartFileSystem::is_type_file('tmp/SMART-FRAMEWORK__DEBUG-ON')) {
 				if(SmartFileSystem::is_type_dir('tmp/logs/idx/')) {
 					SmartFileSystem::dir_delete('tmp/logs/idx/', true);
@@ -1693,11 +1746,11 @@ public static function SetVisitorEntropyIDCookie() {
 //======================================================================
 public static function DebugRequestLog($y_message) {
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!self::ifDebug()) {
 		return;
 	} //end if
 	//--
-	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+	if(self::isAdminArea()) {
 		$the_dir = 'tmp/logs/adm/';
 		$the_log = $the_dir.date('Y-m-d@H').'-debug-requests.log';
 	} else {
@@ -1719,9 +1772,6 @@ public static function DebugRequestLog($y_message) {
 //==================================================================================
 //================================================================================== CLASS END
 //==================================================================================
-
-
-
 
 
 //#########################

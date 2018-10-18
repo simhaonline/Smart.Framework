@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.181008
+ * @version 	v.181018
  * @package 	Application
  *
  */
@@ -103,8 +103,8 @@ final class SmartTextTranslations {
 		global $configs;
 		//--
 		if(strlen((string)self::$cache['#LANGUAGE#']) == 2) {
-			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifInternalDebug()) {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Get Language from Internal Cache',
 						'data' => 'Content: '.self::$cache['#LANGUAGE#']
@@ -121,8 +121,8 @@ final class SmartTextTranslations {
 				$tmp_lang = (string) strtolower((string)$configs['regional']['language-id']);
 				if(self::validateLanguage($tmp_lang)) {
 					$the_lang = (string) $tmp_lang;
-					if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if(SmartFrameworkRuntime::ifInternalDebug()) {
+						if(SmartFrameworkRuntime::ifDebug()) {
 							SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 								'title' => 'Get Language from Configs',
 								'data' => 'Content: '.$the_lang
@@ -177,8 +177,8 @@ final class SmartTextTranslations {
 								} //end if
 								self::$cache['#LANGUAGE#'] = (string) $tmp_lang;
 								$result = true;
-								if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-									if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+								if(SmartFrameworkRuntime::ifInternalDebug()) {
+									if(SmartFrameworkRuntime::ifDebug()) {
 										SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 											'title' => 'Set Language in Configs and Internal Cache',
 											'data' => 'Content: '.$the_lang
@@ -257,8 +257,8 @@ final class SmartTextTranslations {
 		//--
 		if(!is_object(self::$translators[(string)$translator_key])) {
 			self::$translators[(string)$translator_key] = new SmartTextTranslator((string)$the_lang, (string)$y_area, (string)$y_subarea);
-			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifInternalDebug()) {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Creating a New Translator: '.$translator_key,
 						'data' => 'Content:'."\n".print_r(self::$translators[(string)$translator_key],1)
@@ -266,8 +266,8 @@ final class SmartTextTranslations {
 				} //end if
 			} //end if
 		} else {
-			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifInternalDebug()) {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Re-Using an Existing Translator: '.$translator_key,
 						'data' => 'Content:'."\n".print_r(self::$translators[(string)$translator_key],1)
@@ -475,8 +475,8 @@ final class SmartTextTranslations {
 		//-- try to get from internal (in-memory) cache
 		$translations = (array) self::$cache['translations@'.$the_cache_key];
 		if(Smart::array_size($translations) > 0) {
-			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifInternalDebug()) {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Get Text from Internal Cache for Key: '.$the_cache_key,
 						'data' => 'Content:'."\n".print_r($translations,1)
@@ -489,8 +489,8 @@ final class SmartTextTranslations {
 		$version_translations = (string) self::getLatestVersion(); // get translations version
 		$translations = (array) self::getFromPersistentCache((string)$the_cache_key, (string)$version_translations);
 		if(Smart::array_size($translations) > 0) {
-			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifInternalDebug()) {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Get Text from Persistent Cache for Key: '.$the_cache_key,
 						'data' => 'Version:'."\n".$version_translations."\n".'Content:'."\n".print_r($translations,1)
@@ -503,8 +503,8 @@ final class SmartTextTranslations {
 		//-- try to get from source
 		$translations = (array) self::getFromSource($y_language, $y_area, $y_subarea);
 		if(Smart::array_size($translations) > 0) {
-			if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifInternalDebug()) {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Get Text from Sources for Key: '.$the_cache_key,
 						'data' => 'Content:'."\n".print_r($translations,1)
@@ -516,15 +516,15 @@ final class SmartTextTranslations {
 			return (array) $translations;
 		} //end if
 		//--
-		if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifInternalDebug()) {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 					'title' => '!!! FAILED !!! to Get Text from Sources for Key: '.$the_cache_key,
 					'data' => 'Content:'."\n".print_r($translations,1)
 				]);
 			} //end if
 		} //end if
-		if(((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$y_language) OR ((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes')) {
+		if(((string)SMART_FRAMEWORK_DEFAULT_LANG == (string)$y_language) OR (SmartFrameworkRuntime::ifDebug())) {
 			Smart::log_warning('Cannot get from source Text Translations for Key: '.$the_cache_key); // show this if default language or debug
 		} //end if
 		return array(); // this is invalid, means not found in any places
@@ -618,7 +618,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.181008
+ * @version 	v.181018
  *
  * @access 		private
  * @internal
@@ -720,7 +720,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.181008
+ * @version 	v.181018
  *
  */
 interface SmartInterfaceAdapterTextTranslations {

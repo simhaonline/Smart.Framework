@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181017
+ * @version 	v.181018
  * @package 	Application
  *
  */
@@ -340,11 +340,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function IfDebug() {
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-			return true;
-		} else {
-			return false;
-		} //end if
+		return (bool) SmartFrameworkRuntime::ifDebug();
 		//--
 	} //END FUNCTION
 	//=====

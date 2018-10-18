@@ -15,9 +15,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-	define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Blackhole: None');
-} //end if
+define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Blackhole: None');
 
 /**
  * Class: SmartPersistentCache (Blackhole: None) - provides a Blackhole persistent Cache for the case another Persistent Cache is not available.
@@ -30,7 +28,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.160215
+ * @version 	v.181018
  * @package 	Caching
  *
  * @ignore

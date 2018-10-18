@@ -53,7 +53,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.170908
+ * @version 	v.181018
  * @package 	Application
  *
  */
@@ -435,8 +435,8 @@ public static function build_arr_privileges($y_priv_list) {
  */
 public static function registerInternalCacheToDebugLog() {
 	//--
-	if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifInternalDebug()) {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			$tmpAuthData = (array) self::$AuthData;
 			$tmpAuthData['KEY'] = '*****'; // protect the key !
 			SmartFrameworkRegistry::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [

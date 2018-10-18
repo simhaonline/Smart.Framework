@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// # r.180309 # this should be loaded from app web root only
+// # r.181018 # this should be loaded from app web root only
 
 // ===== ATTENTION =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES
@@ -25,8 +25,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //####################
 
 //--
-if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) { // {{{SYNC-DEFINE-DBGMODE}}}
-	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, set it here to avoid PHP 7.2+ warnings
+if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
+	define('SMART_FRAMEWORK_DEBUG_MODE', 'no'); // if not explicit defined, this must be set here to avoid PHP 7.2+ warnings
 } //end if
 //--
 if(defined('SMART_ERROR_LOG_MANAGEMENT')) {

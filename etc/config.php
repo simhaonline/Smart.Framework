@@ -27,7 +27,7 @@ $configs['app']['info-url'] 		= 'smart-framework.demo';				// Info URL: this mus
 
 
 //--------------------------------------- REGIONAL SETTINGS
-$configs['regional']['language-id']					= 'en';					// Language `en` | `ro` (must exists as defined)
+$configs['regional']['language-id']					= 'en';					// The default Language ID: `en` | `ro` (must exists and defined below under $languages)
 $configs['regional']['decimal-separator']			= '.';					// decimal separator `.` | `,`
 $configs['regional']['thousands-separator']			= ',';					// thousand separator `,` | `.` | ` `
 $configs['regional']['calendar-week-start']			= '0';					// 0=start on sunday | 1=start on Monday ; used for both PHP and Javascript

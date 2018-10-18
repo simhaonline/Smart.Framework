@@ -25,9 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-	define('SMART_FRAMEWORK__INFO__TEXT_TRANSLATIONS_ADAPTER', 'YAML: File based');
-} //end if
+define('SMART_FRAMEWORK__INFO__TEXT_TRANSLATIONS_ADAPTER', 'YAML: File based');
 
 /**
  * Class SmartAdapterTextTranslations - YAML files based text translations adapter
@@ -35,7 +33,7 @@ if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
  * @access 		private
  * @internal
  *
- * @version		180509
+ * @version		181018
  *
  */
 final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTranslations {

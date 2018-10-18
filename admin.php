@@ -7,7 +7,7 @@
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
 //####################
 
-//== v.181017
+//== v.181018
 //--
 ini_set('display_errors', '1'); 											// temporary enable this to display bootstrap errors if any ; will be managed later by Smart Error Handler
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED); 			// on bootstrap show real-time errors (sync with Smart Error Handler)
@@ -54,7 +54,7 @@ if((string)get_parent_class('SmartAppAdminMiddleware') != 'SmartAbstractAppMiddl
 } //end if
 //--
 $run = SmartAppAdminMiddleware::Run(); // Handle the Admin service
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+if(SmartFrameworkRuntime::ifDebug()) {
 	if($run !== false) {
 		SmartAppAdminMiddleware::DebugInfoSet('adm', (bool)$run);
 	} //end if

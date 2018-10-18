@@ -40,7 +40,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.170920
+ * @version 	v.181018
  * @package 	Exporters
  *
  */
@@ -308,7 +308,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 					} //end if
 				} //end if
 				//--
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') { // if debug, append information to log
+				if(SmartFrameworkRuntime::ifDebug()) { // if debug, append information to log
 					SmartFileSystem::write($logfile, '####################'."\n".'#################### [FILE # '.$i.' = \''.$tmp_img_src.'\']'."\n\n".'==== [MODE] :: '.$tmp_arr['mode']."\n".'==== [LOG] :: '."\n".$tmp_arr['log']."\n".'==== [HEADERS] ::'."\n".$tmp_arr['headers']."\n".'########'."\n".'==== [GUESS EXTENSION] :: '.$tmp_where_we_guess."\n\n".'###################'."\n\n\n\n", 'a');
 				} //end if
 				//--
@@ -355,7 +355,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 			//--
 		} //end if else
 		//-- cleanup
-		if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') { // if not debug, cleanup the dir
+		if(!SmartFrameworkRuntime::ifDebug()) { // if not debug, cleanup the dir
 			if(SmartFileSystem::is_type_dir($the_dir)) {
 				SmartFileSystem::dir_delete($the_dir);
 			} //end if

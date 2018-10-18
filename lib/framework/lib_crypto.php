@@ -46,7 +46,7 @@ if(!function_exists('hash_algos')) {
  *
  * @access      PUBLIC
  * @depends     PHP hash_algos() / hash()
- * @version     v.180124
+ * @version     v.181018
  * @package     Crypto
  *
  */
@@ -226,8 +226,8 @@ final class SmartHashCrypto {
 	 */
 	public static function registerInternalCacheToDebugLog() {
 		//--
-		if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifInternalDebug()) {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [
 					'title' => 'SmartHashCrypto // Internal Cache',
 					'data' => 'Dump:'."\n".print_r(self::$cache,1)

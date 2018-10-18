@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavServer {
 
 	// ::
-	// v.180309
+	// v.181018
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
@@ -300,7 +300,7 @@ final class DavServer {
 		//--
 		if(\Smart::array_size($errors) > 0) {
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				$notice_log = '';
 				foreach($errors as $z => $error) {
 					if(is_object($error)) {
@@ -310,9 +310,7 @@ final class DavServer {
 				if((string)$notice_log != '') {
 					\Smart::log_notice(__METHOD__.' # NOTICE [SimpleXML]:'."\n".$notice_log."\n".'#END'."\n");
 				} //end if
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-					\Smart::log_notice(__METHOD__.' # Debug XML-String:'."\n".$xml."\n".'#END');
-				} //end if
+				\Smart::log_notice(__METHOD__.' # Debug XML-String:'."\n".$xml."\n".'#END');
 			} //end if
 			//--
 			return array();

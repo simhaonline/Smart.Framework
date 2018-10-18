@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181017
+ * @version		181018
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -464,7 +464,7 @@ final public static function ServiceStatus($the_midmark) {
 //======================================================================
 final public static function DebugInfoCookieSet($area) {
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return false;
 	} //end if
 	//--
@@ -499,7 +499,7 @@ final public static function DebugInfoCookieSet($area) {
 //======================================================================
 final public static function DebugInfoGet($area) {
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return '';
 	} //end if
 	//--
@@ -533,7 +533,7 @@ final public static function DebugInfoGet($area) {
 //======================================================================
 final public static function DebugInfoSet($area, $is_main) {
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes') {
+	if(!SmartFrameworkRuntime::ifDebug()) {
 		return false;
 	} //end if
 	//--

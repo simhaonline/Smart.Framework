@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.181015
+ * @version     v.181018
  * @package     Base
  *
  */
@@ -2015,8 +2015,8 @@ public static function lower_unsafe_characters() {
  */
 public static function registerInternalCacheToDebugLog() {
 	//--
-	if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifInternalDebug()) {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [
 				'title' => 'Smart (Base) // Internal Cache',
 				'data' => 'Dump of Cfgs:'."\n".print_r(self::$Cfgs,1)

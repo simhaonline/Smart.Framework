@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.181017
+ * @version 	v.181018
  * @package 	Base
  *
  */
@@ -1263,7 +1263,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 		} //end if
 		$browser->connect_timeout = (int) $y_timeout;
 		//--
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			$browser->debug = 1;
 		} //end if
 		//--
@@ -1282,7 +1282,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 		$tmp_test_browser_id 	= (array) self::get_os_browser_ip();
 		//--
 		$tmp_extra_log = '';
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			$tmp_extra_log .= "\n".'===== # ====='."\n";
 		} //end if
 		//--
@@ -1292,20 +1292,20 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 		//--
 		if((string)$y_allow_set_credentials == 'yes') {
 			//--
-			if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			if(SmartFrameworkRuntime::ifDebug()) {
 				$tmp_extra_log .= '[EXTRA]: I will try to detect if this is my current Domain and I will check if it is safe to send my sessionID COOKIE and my Auth CREDENTIALS ...'."\n";
 			} //end if
 			//--
 			if(((string)$tmp_current_protocol == (string)$tmp_test_url_arr['protocol']) AND ((string)$tmp_current_server == (string)$tmp_test_url_arr['host']) AND ((string)$tmp_current_port == (string)$tmp_test_url_arr['port'])) {
 				//--
-				if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+				if(SmartFrameworkRuntime::ifDebug()) {
 					$tmp_extra_log .= '[EXTRA]: OK, Seems that the browsed Domain is identical with my current Domain which is: '.$tmp_current_protocol.$tmp_current_server.':'.$tmp_current_port.' and the browsed one is: '.$tmp_test_url_arr['protocol'].$tmp_test_url_arr['host'].':'.$tmp_test_url_arr['port']."\n";
 					$tmp_extra_log .= '[EXTRA]: I will also check if my current script and path are identical with the browsed ones ...'."\n";
 				} //end if
 				//--
 				if(((string)$tmp_current_script == (string)$tmp_test_url_arr['path']) AND (substr($tmp_current_path, 0, strlen($tmp_current_script)) == (string)$tmp_test_url_arr['path'])) {
 					//--
-					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if(SmartFrameworkRuntime::ifDebug()) {
 						$tmp_extra_log .= '[EXTRA]: OK, Seems that the current script is identical with the browsed one :: '.'Current Path is: \''.$tmp_current_script.'\' / Browsed Path is: \''.$tmp_test_url_arr['path'].'\' !'."\n";
 						$tmp_extra_log .= '[EXTRA]: I will check if I have to send my SessionID so I will check the browserID ...'."\n";
 					} //end if
@@ -1317,7 +1317,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 							if(SmartFrameworkSecurity::ValidateVariableName(strtolower((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME))) {
 								//--
 								if((string)SMART_APP_VISITOR_COOKIE != '') { // if set, then forward
-									if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+									if(SmartFrameworkRuntime::ifDebug()) {
 										$tmp_extra_log .= '[EXTRA]: OK, I will send my current Visitor Unique Cookie ID as it is set and not empty ...'."\n";
 									} //end if
 									$cookies[(string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME] = (string) SMART_APP_VISITOR_COOKIE; // this is a requirement
@@ -1329,7 +1329,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 					//-- #end# sync
 					if(((string)SmartAuth::get_login_method() == 'HTTP-BASIC') AND ((string)$auth_name == '') AND ((string)$auth_pass == '') AND (strpos($tmp_current_script, '/admin.php') !== false) AND (strpos($tmp_test_url_arr['path'], '/admin.php') !== false)) {
 						//--
-						if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+						if(SmartFrameworkRuntime::ifDebug()) {
 							$tmp_extra_log .= '[EXTRA]: HTTP-BASIC Auth method detected / Allowed to pass the Credentials - as the browsed URL belongs to this ADMIN Server as I run, the Auth credentials are set but passed as empty - everything seems to be safe I will send my credentials: USERNAME = \''.SmartAuth::get_login_id().'\' ; PASS = *****'."\n";
 						} //end if
 						//--
@@ -1340,7 +1340,7 @@ public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method
 					//--
 				} else {
 					//--
-					if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+					if(SmartFrameworkRuntime::ifDebug()) {
 						$tmp_extra_log .= '[EXTRA]: Seems that the scripts are NOT identical :: '.'Current Script is: \''.$tmp_current_script.'\' / Browsed Script is: \''.$tmp_test_url_arr['path'].'\' !'."\n";
 						$tmp_extra_log .= '[EXTRA]: This is the diff for having a comparation: '.substr($tmp_current_path, 0, strlen($tmp_current_script))."\n";
 					} //end if
@@ -2509,8 +2509,8 @@ private static function _iplist_get_last_address($ip) {
  */
 public static function registerInternalCacheToDebugLog() {
 	//--
-	if(defined('SMART_FRAMEWORK_INTERNAL_DEBUG')) {
-		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+	if(SmartFrameworkRuntime::ifInternalDebug()) {
+		if(SmartFrameworkRuntime::ifDebug()) {
 			SmartFrameworkRegistry::setDebugMsg('extra', '***SMART-CLASSES:INTERNAL-CACHE***', [
 				'title' => 'SmartUtils // Internal Cache',
 				'data' => 'Dump:'."\n".print_r(self::$cache,1)
