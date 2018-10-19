@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Abstract Middleware
 // (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181018
+ * @version		181019
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -56,53 +56,6 @@ public static function Run() {
 	// THIS MUST IMPLEMENT THE MIDDLEWARE SERVICE HANDLER
 } //END FUNCTION
 //=====
-
-
-//======================================================================
-final public static function HeadersNoCache() {
-	//--
-	if(!headers_sent()) {
-		header('Cache-Control: no-cache'); // HTTP 1.1
-		header('Pragma: no-cache'); // HTTP 1.0
-		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 year')).' 09:05:00 GMT'); // HTTP 1.0
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-	} else {
-		Smart::log_warning('WARNING: AppMiddleware :: Could not set No-Cache Headers, Headers Already Sent ...');
-	} //end if else
-	//--
-} //END FUNCTION
-//======================================================================
-
-
-//======================================================================
-final public static function HeadersCacheExpire($expiration, $modified=0) {
-	//--
-	if(!headers_sent()) {
-		//--
-		$expiration = (int) $expiration; // expire time, in seconds, since now
-		if($expiration < 60) {
-			$expiration = 60;
-		} //end if
-		$expires = (int) time() + $expiration;
-		//--
-		$modified = (int) $modified; // last modification timestamp of the contents, in seconds, must be > 0 <= now
-		if(($modified <= 0) OR ($modified > time())) {
-			$modified = (int) time();
-		} //end if
-		//--
-		header('Expires: '.gmdate('D, d M Y H:i:s', (int)$expires).' GMT'); // HTTP 1.0
-		header('Pragma: cache'); // HTTP 1.0
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s', (int)$modified).' GMT');
-		header('Cache-Control: private, max-age='.(int)$expiration); // HTTP 1.1 (private will dissalow proxies to cache the content)
-		//--
-	} else {
-		//--
-		Smart::log_warning('WARNING: AppMiddleware :: Could not set Expire Cache Headers, Headers Already Sent ...');
-		//--
-	} //end if else
-	//--
-} //END FUNCTION
-//======================================================================
 
 
 //======================================================================

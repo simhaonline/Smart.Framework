@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / Redis Custom Session]
 // (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
 final class SmartCustomSession extends SmartAbstractCustomSession {
 
 	// ->
-	// v.181018
+	// v.181019
 	// Redis Custom Session [OPTIONAL]
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

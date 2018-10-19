@@ -1,7 +1,7 @@
 <?php
 // SmartFramework / Middleware / Index
 // (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -21,7 +21,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.5');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.7');
 
 
 //==================================================================================
@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.5');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181018
+ * @version		181019
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -132,7 +132,7 @@ public static function Run() {
 	//--
 	if((string)$smartframeworkservice == 'status') {
 		//--
-		self::HeadersNoCache(); // headers: cache control, force no-cache
+		SmartFrameworkRuntime::outputHttpHeadersNoCache(); // headers: cache control, force no-cache
 		echo self::ServiceStatus($the_midmark);
 		//--
 		return false; // break stop
@@ -148,7 +148,7 @@ public static function Run() {
 	if((string)$smartframeworkservice == 'debug') {
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
-			self::HeadersNoCache(); // headers: cache control, force no-cache
+			SmartFrameworkRuntime::outputHttpHeadersNoCache(); // headers: cache control, force no-cache
 			echo self::DebugInfoGet('idx');
 		} else {
 			http_response_code(404);
@@ -160,7 +160,7 @@ public static function Run() {
 	} elseif((string)$smartframeworkservice == 'debug-tpl') {
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
-			self::HeadersNoCache(); // headers: cache control, force no-cache
+			SmartFrameworkRuntime::outputHttpHeadersNoCache(); // headers: cache control, force no-cache
 			echo SmartDebugProfiler::display_marker_tpl_debug((string)SmartFrameworkRegistry::getRequestVar('tpl'));
 		} else {
 			http_response_code(404);
@@ -316,9 +316,9 @@ public static function Run() {
 	//== CACHE CONTROL
 	//--
 	if(((int)$appSettings['expires'] > 0) AND (!SmartFrameworkRuntime::ifDebug())) {
-		self::HeadersCacheExpire((int)$appSettings['expires'], (int)$appSettings['modified']); // headers: cache expiration control
+		SmartFrameworkRuntime::outputHttpHeadersNoCache((int)$appSettings['expires'], (int)$appSettings['modified']); // headers: cache expiration control
 	} else {
-		self::HeadersNoCache(); // headers: cache control, force no-cache
+		SmartFrameworkRuntime::outputHttpHeadersNoCache(); // headers: cache control, force no-cache
 	} //end if else
 	//--
 	//== STATUS CODE {{{SYNC-SMART-HTTP-STATUS-CODES}}}

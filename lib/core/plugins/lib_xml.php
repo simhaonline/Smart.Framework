@@ -1,7 +1,7 @@
 <?php
 // [LIB - SmartFramework / XML Parser and Composer]
 // (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.181018
+ * @version     v.181019
  * @package     DATA:XML
  *
  */
@@ -601,7 +601,7 @@ private function DomNode2Array($node) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.181018
+ * @version     v.181019
  * @package     DATA:XML
  *
  */

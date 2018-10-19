@@ -1,7 +1,7 @@
 <?php
 // [SmartFramework / App Runtime]
 // (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -44,8 +44,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved !');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.5'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.18'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // version tag
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.19'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -381,7 +381,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @access 		PUBLIC
  *
  * @depends 	-
- * @version 	v.181018
+ * @version 	v.181019
  * @package 	Application
  *
  */
@@ -560,7 +560,7 @@ public static function urlVarDecodeStr($y_urlencoded_str_var, $y_filter=true) {
  * @internal
  *
  * @depends 	-
- * @version 	v.181018
+ * @version 	v.181019
  * @package 	Application
  *
  */
@@ -963,7 +963,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR ADVANCED USE ONLY !!!
  *
  * @depends 	classes: Smart
- * @version		181018
+ * @version		181019
  * @package 	Application
  *
  */
@@ -1047,6 +1047,47 @@ public static function getAppReleaseHash() {
 	} //end if
 	//--
 	return (string) self::$AppReleaseHash;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// for Advanced use Only :: this function outputs !!! the HTTP NoCache / Expire Headers
+public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
+	//--
+	$expiration = (int) $expiration; // expire time, in seconds, since now
+	$modified = (int) $modified;
+	//--
+	if(!headers_sent()) {
+		if(($expiration < 0) AND ($modified < 0)) { // default
+			//--
+			header('Cache-Control: no-cache'); // HTTP 1.1
+			header('Pragma: no-cache'); // HTTP 1.0
+			header('Expires: '.gmdate('D, d M Y', @strtotime('-1 year')).' '.date('H:i:s').' GMT'); // HTTP 1.0
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+			//--
+		} else {
+			//--
+			if($expiration < 60) {
+				$expiration = 60;
+			} //end if
+			$expires = (int) time() + $expiration;
+			//--
+			$modified = (int) $modified; // last modification timestamp of the contents, in seconds, must be > 0 <= now
+			if(($modified <= 0) OR ($modified > time())) {
+				$modified = (int) time();
+			} //end if
+			//--
+			header('Expires: '.gmdate('D, d M Y H:i:s', (int)$expires).' GMT'); // HTTP 1.0
+			header('Pragma: cache'); // HTTP 1.0
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s', (int)$modified).' GMT');
+			header('Cache-Control: private, max-age='.(int)$expiration); // HTTP 1.1 (private will dissalow proxies to cache the content)
+			//--
+		} //end if else
+	} else {
+		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Could not set No-Cache Headers (Expire='.$expiration.' ; Modified='.$modified.'), Headers Already Sent ...', E_USER_WARNING);
+	} //end if else
 	//--
 } //END FUNCTION
 //======================================================================
@@ -1310,7 +1351,7 @@ public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $
 // THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function Extract_Filtered_Cookie_Vars($filter_____arr) {
 
-	// FILTER INPUT COOKIES VARIABLES v.181018 (with collision fix and private space check)
+	// FILTER INPUT COOKIES VARIABLES v.181019 (with collision fix and private space check)
 
 	//-- check if can run
 	if(self::$RequestProcessed !== false) {

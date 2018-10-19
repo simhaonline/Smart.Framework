@@ -1,7 +1,7 @@
 <?php
 // [APP - Authenticate / Index]
 // (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -27,6 +27,18 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // Generally the Index Area is PUBLIC thus will not need an overall authentication.
 // But in the case you need it, see an example here: modules/app/app-auth-admin.inc.php
 //-------------------------------------------
+
+// # Here is a sample code to handle the privileged IP of localhost as client ; the constant APP_INDEX_IPRANGE_PRIVILEGED can be later used for special privileges when running the app on DEV mode
+/*
+if(defined('APP_INDEX_IPRANGE_PRIVILEGED')) {
+	die('The constant `APP_INDEX_IPRANGE_PRIVILEGED` MUST NOT BE Defined outside AppAuthIndex');
+} //end if
+if((string)$_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
+	define('APP_INDEX_IPRANGE_PRIVILEGED', false);
+} else {
+	define('APP_INDEX_IPRANGE_PRIVILEGED', true);
+} //end if else
+*/
 
 // end of php code
 ?>

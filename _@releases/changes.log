@@ -1,6 +1,14 @@
 
 # CHANGELOG / MIGRATION NOTES for Milestone Releases Only - SMART.FRAMEWORK #
 
+October 10, 2018 :: Version 3.7.7
+	* many optimizations for controllers, translators
+	* some bug fixes
+	* improved support for simplify settings for cookie domains to take easy in development
+	* other code optimizations in many areas
+	* improved debug and profiler to support better premature exits in controllers
+	* includes a sample for advanced 404 customization
+
 March 09, 2018 :: Version 3.7.5
 	* many optimizations for DB drivers
 	* new feature: MongoDB library that works with PHP 5.6 / 7.0 / 7.1 / 7.2 and MongoDB servers 2.4 / 2.6 / 3.0 / 3.2 / 3.4 / 3.6

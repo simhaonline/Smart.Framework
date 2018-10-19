@@ -3,7 +3,7 @@
 // Controller: Samples/TestImage
 // Route: ?/page/samples.benchmark (?page=samples.test-image)
 // Author: unix-world.org
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -125,12 +125,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//-- because we do here direct output we need to set all the required headers
-		header('Cache-Control: no-cache'); // HTTP 1.1
-		header('Pragma: no-cache'); // HTTP 1.0
-		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 year')).' 09:05:00 GMT'); // HTTP 1.0
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-		//--
-
+		SmartFrameworkRuntime::outputHttpHeadersNoCache();
 		//--
 		header('Z-Test-Image: This is an image'); // just a sample dummy header entry
 		//--

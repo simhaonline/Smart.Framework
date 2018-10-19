@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [CFG - SETTINGS]
-// v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -36,11 +36,6 @@ $configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date
 //---------------------------------------
 $languages = array('en' => '[EN]');											// default associative array of available languages for this software (do not change without installing new languages support files)
 //$languages = array('en' => '[EN]', 'ro' => [ 'name'=>'[RO]', 'decimal-separator'=>',', 'thousands-separator'=>'.', 'calendar-week-start'=>'1' ]);						// extended associative array of available languages for this software (do not change without installing new languages support files)
-//---------------------------------------
-
-
-//--------------------------------------- OTHER SPECIAL SETTINGS :: DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU ARE DOING, really ...
-//define('SMART_FRAMEWORK_CUSTOM_ERR_PAGES', 'modules/app/error-pages/');	// `` or custom path to error pages: 400.php, 401.php, 403.php, 404.php, 500.php, 503.php
 //---------------------------------------
 
 

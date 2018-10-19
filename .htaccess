@@ -1,22 +1,10 @@
 
-##### Smart.Framework .htaccess sample for Apache 2.2 / 2.4 :: v.3.7.5 r.2018.03.09 / smart.framework.v.3.7
+##### Smart.Framework .htaccess sample for Apache 2.2 / 2.4 :: v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 ### Restrict by IP
 #order deny,allow
 #deny from all
 #allow from 127.0.0.1
-###
-
-### Maintenance 503 (Mod Rewrite)
-#<IfModule mod_rewrite.c>
-#ErrorDocument 503 "<h1>Under Maintenance</h1>"
-#ErrorDocument 503 /maintenance.html
-#ErrorDocument 503 /index.php?page=some-module.503
-#RewriteEngine On
-#RewriteCond %{REMOTE_ADDR} !=127.0.0.1
-#RewriteCond %{ENV:REDIRECT_STATUS} !=503
-#RewriteRule .* - [R=503,L]
-#</IfModule>
 ###
 
 ### PHP recommended ini settings for Smart.Framework (sync the below memory_limit with value in etc/init.php ; the value below in memory_limit must be set if expect larger POSTS than default php.ini max memory which are handled before loading the etc/init.php to set memory ...)
@@ -39,17 +27,26 @@ php_flag zend.enable_gc					On
 php_flag zend.multibyte					Off
 ###
 
-### Cross Origin Access for some resources
+### Cross Origin Access for some resources (uncomment this for use with multiple sub-domains for cross domain requests)
 #<FilesMatch "\.(woff|ttf|svg|gif|png|jpg|jpeg)$">
 #	Header set Access-Control-Allow-Origin "*"
 #</FilesMatch>
 ###
 
-### Rewrite :: For the most basic rewrite version, just uncomment the 4 lines that start with the # as first character.
+### Rewrite :: For the most basic rewrite version, just uncomment the lines below that start with a single #
 #<IfModule mod_rewrite.c>
 
 	###
 #	RewriteEngine 		On
+	###
+
+	### Maintenance 503 (Mod Rewrite)
+	##ErrorDocument 503 "<h1>Under Maintenance</h1>"
+	###ErrorDocument 503 /maintenance.html
+	###ErrorDocument 503 /index.php?page=samples.503
+	##RewriteCond %{REMOTE_ADDR} !=127.0.0.1
+	##RewriteCond %{ENV:REDIRECT_STATUS} !=503
+	##RewriteRule .* - [R=503,L]
 	###
 
 	### Security Fixes
@@ -78,11 +75,17 @@ php_flag zend.multibyte					Off
 	##RewriteRule 		^(.*)\.(html|stml|json)$ 		index.php?page=%1.$1 [QSA,L]
 	###
 
-#</IfModule>
+	### sample: custom 404 error page with fallback
+	##RewriteCond 		%{REQUEST_FILENAME} !-f
+	##RewriteCond 		%{REQUEST_FILENAME} !-d
+	##RewriteRule 		^(.*)\.(.*)$ 					index.php?page=$1 [QSA,L]
+	##ErrorDocument 404 								index.php?page=samples.404
+	###
 
-#<IfModule !mod_rewrite.c>
-#	ErrorDocument 404 "Path not found ... Mod Rewrite is missing ..."
 #</IfModule>
+##<IfModule !mod_rewrite.c>
+##	ErrorDocument 404 "Path not found ... Mod Rewrite is missing ..."
+##</IfModule>
 
 ###
 
