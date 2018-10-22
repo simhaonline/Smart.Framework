@@ -45,7 +45,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.19'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.22'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -963,7 +963,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR ADVANCED USE ONLY !!!
  *
  * @depends 	classes: Smart
- * @version		181019
+ * @version		181022
  * @package 	Application
  *
  */
@@ -973,6 +973,10 @@ final class SmartFrameworkRuntime {
 	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 
 	private static $AppReleaseHash = '';
+	private static $isDebugOn = null;
+	private static $isAdminArea = null;
+
+	private static $NoCacheHeadersSent = false;
 
 	private static $HttpStatusCodesOK  = [200, 202, 203, 208]; 								// list of framework available HTTP OK Status Codes (sync with middlewares)
 	private static $HttpStatusCodesRDR = [301, 302]; 										// list of framework available HTTP Redirect Status Codes (sync with middlewares)
@@ -1002,15 +1006,18 @@ public static function ifInternalDebug() {
 // if Debug is ON will return TRUE, else will return FALSE
 public static function ifDebug() {
 	//--
-	if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
-		return false;
+	if(self::$isDebugOn !== null) {
+		return (bool) self::$isDebugOn;
 	} //end if
 	//--
-	if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
-		return true;
-	} else {
-		return false;
+	self::$isDebugOn = false;
+	if(defined('SMART_FRAMEWORK_DEBUG_MODE')) {
+		if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+			self::$isDebugOn = true;
+		} //end if
 	} //end if
+	//--
+	return (bool) self::$isDebugOn;
 	//--
 } //END FUNCTION
 //======================================================================
@@ -1020,33 +1027,18 @@ public static function ifDebug() {
 // if is ADMIN area will return TRUE else will return FALSE
 public static function isAdminArea() {
 	//--
-	if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
-		return false;
+	if(self::$isAdminArea !== null) {
+		return (bool) self::$isAdminArea;
 	} //end if
 	//--
-	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-		return true;
-	} else {
-		return false;
-	} //end if else
-	//--
-} //END FUNCTION
-//======================================================================
-
-
-//======================================================================
-// get the App Release Hash based on Framework Version.Release.ModulesRelease
-public static function getAppReleaseHash() {
-	//--
-	if((string)self::$AppReleaseHash == '') {
-		$crc32 = (int) crc32((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION.(string)SMART_APP_MODULES_RELEASE);
-		if($crc32 < 0) {
-			$crc32 = (int) (-1 * $crc32); // fix for 32bit platforms
+	self::$isAdminArea = false;
+	if(defined('SMART_FRAMEWORK_ADMIN_AREA')) {
+		if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+			self::$isAdminArea = true;
 		} //end if
-		self::$AppReleaseHash = (string) strtolower((string)base_convert((int)$crc32, 10, 36));
 	} //end if
 	//--
-	return (string) self::$AppReleaseHash;
+	return (bool) self::$isAdminArea;
 	//--
 } //END FUNCTION
 //======================================================================
@@ -1055,6 +1047,11 @@ public static function getAppReleaseHash() {
 //======================================================================
 // for Advanced use Only :: this function outputs !!! the HTTP NoCache / Expire Headers
 public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
+	//--
+	if(self::$NoCacheHeadersSent !== false) {
+		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'The No-Cache Headers (Expire='.$expiration.' ; Modified='.$modified.'), Already Set (don\'t use this function twice per execution) ...', E_USER_WARNING);
+		return;
+	} //end if
 	//--
 	$expiration = (int) $expiration; // expire time, in seconds, since now
 	$modified = (int) $modified;
@@ -1088,6 +1085,8 @@ public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
 	} else {
 		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Could not set No-Cache Headers (Expire='.$expiration.' ; Modified='.$modified.'), Headers Already Sent ...', E_USER_WARNING);
 	} //end if else
+	//--
+	self::$NoCacheHeadersSent = true;
 	//--
 } //END FUNCTION
 //======================================================================
@@ -1418,7 +1417,25 @@ public static function Extract_Filtered_Cookie_Vars($filter_____arr) {
 
 
 //======================================================================
-// This will run before loading the Smart.Framework and must not depend on it's classes
+// get the App Release Hash based on Framework Version.Release.ModulesRelease
+// Avoid run this function before Smart.Framework was loaded, it depends on it
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
+public static function getAppReleaseHash() {
+	//--
+	if((string)self::$AppReleaseHash == '') {
+		$hash = (string) SmartHashCrypto::crc32b((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION.(string)SMART_APP_MODULES_RELEASE);
+		self::$AppReleaseHash = (string) strtolower((string)base_convert((string)$hash, 16, 36));
+	} //end if
+	//--
+	return (string) self::$AppReleaseHash;
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// Avoid run this function before Smart.Framework was loaded, it depends on it
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function High_Load_Monitor() {
 	//--
 	if(is_array(self::$HighLoadMonitorStats)) {

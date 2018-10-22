@@ -46,7 +46,7 @@ if(!function_exists('hash_algos')) {
  *
  * @access      PUBLIC
  * @depends     PHP hash_algos() / hash()
- * @version     v.181019
+ * @version     v.181022
  * @package     Crypto
  *
  */
@@ -87,7 +87,7 @@ final class SmartHashCrypto {
 	/**
 	 * Returns the SHA512 hash of a string
 	 *
-	 * @param STRING $y_pass
+	 * @param STRING $y_str
 	 * @return STRING, 128 chars length
 	 */
 	public static function sha512($y_str) {
@@ -107,7 +107,7 @@ final class SmartHashCrypto {
 	/**
 	 * Returns the SHA384 hash of a string
 	 *
-	 * @param STRING $y_pass
+	 * @param STRING $y_str
 	 * @return STRING, 96 chars length
 	 */
 	public static function sha384($y_str) {
@@ -127,7 +127,7 @@ final class SmartHashCrypto {
 	/**
 	 * Returns the SHA256 hash of a string
 	 *
-	 * @param STRING $y_pass
+	 * @param STRING $y_str
 	 * @return STRING, 64 chars length
 	 */
 	public static function sha256($y_str) {
@@ -147,7 +147,7 @@ final class SmartHashCrypto {
 	/**
 	 * Returns the SHA1 hash of a string
 	 *
-	 * @param STRING $y_pass
+	 * @param STRING $y_str
 	 * @return STRING, 40 chars length
 	 */
 	public static function sha1($y_str) {
@@ -167,7 +167,7 @@ final class SmartHashCrypto {
 	/**
 	 * Returns the MD5 hash of a string
 	 *
-	 * @param STRING $y_pass
+	 * @param STRING $y_str
 	 * @return STRING, 32 chars length
 	 */
 	public static function md5($y_str) {
@@ -178,6 +178,26 @@ final class SmartHashCrypto {
 		} //end if
 		//--
 		return (string) md5((string)$y_str); // execution cost: 0.13
+		//--
+	} //END FUNCTION
+	//==============================================================
+
+
+	//==============================================================
+	/**
+	 * Returns the CRC32B hash of a string (better than CRC32, portable between 32-bit and 64-bit platforms, unsigned)
+	 *
+	 * @param STRING $y_str
+	 * @return STRING, 8 chars length
+	 */
+	public static function crc32b($y_str) {
+		//--
+		if(!self::algo_check('sha512')) {
+			Smart::raise_error('ERROR: SmartFramework Crypto Hash requires CRC32B Hash/Algo', 'CRC32B Hash/Algo is missing');
+			return '';
+		} //end if
+		//--
+		return (string) hash('crc32b', (string)$y_str, false); // execution cost: 0.21
 		//--
 	} //END FUNCTION
 	//==============================================================

@@ -6,6 +6,7 @@ Escaped@JS:&nbsp;<span id="jsescaped-string" style="color:#778899;">[####JS-ESCA
 SHA512:&nbsp;<span id="sha512-hash" style="color:#888888;">[####HASH-SHA512|html####]</span><br>
 SHA1:&nbsp;<span id="sha1-hash" style="color:#999999;">[####HASH-SHA1|html####]</span><br>
 MD5:&nbsp;<span id="md5-hash" style="color:#AAAAAA;">[####HASH-MD5|html####]</span><br>
+CRC32B:&nbsp;<span id="crc32b-hash" style="color:#AAAAAA;">[####HASH-CRC32B|html####]</span><br>
 Base64@Encoded:&nbsp;<span id="base64enc-string" style="color:#666699;">[####BASE64-ENCODED|html####]</span><br>
 Base64@Decoded:&nbsp;<span id="base64dec-string" style="color:#FF5500;">[####BASE64-DECODED|html####]</span><br>
 Bin2Hex@Encoded:&nbsp;<span id="bin2hex-encoded" style="color:#444477;">[####BIN2HEX-ENCODED|html####]</span><br>
@@ -33,6 +34,7 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[####HASHCRYPT-OPTIO
 	var the_sha512 = SmartJS_CryptoHash.sha512(unicodeText);
 	var the_sha1 = SmartJS_CryptoHash.sha1(unicodeText);
 	var the_md5 = SmartJS_CryptoHash.md5(unicodeText);
+	var the_crc32b = SmartJS_CryptoHash.crc32b(unicodeText);
 	//--
 	var b64enc = SmartJS_Base64.encode(unicodeText);
 	var b64dec = SmartJS_Base64.decode(b64enc);
@@ -56,6 +58,7 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[####HASHCRYPT-OPTIO
 	htmlcode += 'SHA512:&nbsp;<span style="color:#888888;">' + SmartJS_CoreUtils.escape_html(the_sha512) + '</span><br>';
 	htmlcode += 'SHA1:&nbsp;<span style="color:#999999;">' + SmartJS_CoreUtils.escape_html(the_sha1) + '</span><br>';
 	htmlcode += 'MD5:&nbsp;<span style="color:#AAAAAA;">' + SmartJS_CoreUtils.escape_html(the_md5) + '</span><br>';
+	htmlcode += 'CRC32B:&nbsp;<span style="color:#AAAAAA;">' + SmartJS_CoreUtils.escape_html(the_crc32b) + '</span><br>';
 	htmlcode += 'Base64@Encoded:&nbsp;<span style="color:#666699;">' + SmartJS_CoreUtils.escape_html(b64enc) + '</span><br>';
 	htmlcode += 'Base64@Decoded:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(b64dec) + '</span><br>';
 	htmlcode += 'Bin2Hex@Encoded:&nbsp;<span style="color:#444477;">' + SmartJS_CoreUtils.escape_html(bin2hex) + '</span><br>';
@@ -107,6 +110,10 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[####HASHCRYPT-OPTIO
 	} //end if
 	if($('#md5-hash').text() !== the_md5) {
 		alert('ERROR: MD5 comparison with PHP Failed ...');
+		the_error++;
+	} //end if
+	if($('#crc32b-hash').text() !== the_crc32b) {
+		alert('ERROR: CRC32B comparison with PHP Failed ...');
 		the_error++;
 	} //end if
 	if($('#base64enc-string').text() != b64enc) {
