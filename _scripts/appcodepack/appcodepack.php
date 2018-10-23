@@ -191,7 +191,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION',  'v.181023.1101'); 											// current version of this script
+define('APPCODEPACK_VERSION',  'v.181023.1527'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -439,6 +439,8 @@ function RunApp() {
 	//--
 	if((string)$_GET['run'] == 'optimize') {
 		//--
+		AppPackUtils::delete('---AppCodePack-Optimizations-Done---.log');
+		//--
 		AppPackUtils::delete('---AppCodePack-Package---.log');
 		AppPackUtils::write(
 			'---AppCodePack-Result---.log',
@@ -468,6 +470,10 @@ function RunApp() {
 				'---AppCodePack-Result---.log',
 				'##### Processing DONE / '.APPCODEPACK_STRATEGY.' - '.APPCODEPACK_MARKER_OPTIMIZATIONS.' : ['.date('Y-m-d H:i:s O').']'."\n\n".'##### LOG: '."\n".trim($appcodeoptimizer->get_log())."\n".'##### END'
 			);
+			AppPackUtils::write(
+				'---AppCodePack-Optimizations-Done---.log',
+				(string) date('Y-m-d H:i:s O')
+			);
 		} //end if
 		unset($appcodeoptimizer);
 		echo '<br><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / optimize:'.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_MODE.' ['.(string)APPCODEPACK_COMPRESS_UTILITY_TYPE.'] - '.APPCODEPACK_MARKER_OPTIMIZATIONS).' &nbsp;&nbsp;::&nbsp;&nbsp; '.'#END: '.date('Y-m-d H:i:s O').'</div>';
@@ -489,8 +495,9 @@ function RunApp() {
 		$the_archdir = AppPackUtils::safe_pathname('#---APPCODE-PACKAGES---#');
 		$the_archname = '';
 		$the_archpath = '';
-		if((!AppPackUtils::is_type_file('---AppCodePack-Package---.log')) AND (AppPackUtils::is_type_dir((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR))) {
-			AppPackUtils::write('---AppCodePack-Package---.log', ''); // must be cleared
+		//aaa
+		if((AppPackUtils::is_type_file('---AppCodePack-Optimizations-Done---.log')) AND (!AppPackUtils::is_type_file('---AppCodePack-Package---.log')) AND (AppPackUtils::is_type_dir((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR))) {
+			AppPackUtils::write('---AppCodePack-Package---.log', ''); // must be initialized
 			$arch = new AppNetPackager();
 			$arch->start((string)$the_archdir, (string)$name_arch, (string)$date_iso_arch, (string)$_GET['comment']);
 			$the_archname = (string) $arch->get_archive_file_name();
@@ -512,7 +519,7 @@ function RunApp() {
 			} //end if
 			unset($arch);
 		} else {
-			$err_arch = 'Either the Packages has been already created or the Optimizations Folder ['.(string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR.'] does not exists. Clear and run the Optimizations first ...';
+			$err_arch = 'Either the Packages has been already created or the Optimizations failed or the Optimizations Folder ['.(string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR.'] does not exists. Clear and run the Optimizations first ...';
 		} //end if else
 		echo '<br>';
 		AppPackUtils::InstantFlush();
@@ -558,6 +565,12 @@ function RunApp() {
 			AppPackUtils::delete('---AppCodePack-Package---.log');
 			if(AppPackUtils::path_exists('---AppCodePack-Package---.log')) {
 				$appcode_err_cleanup = 'ERROR: The Optimizations Package Log File could not be removed ...';
+			} //end if
+		} //end if
+		if(AppPackUtils::is_type_file('---AppCodePack-Optimizations-Done---.log')) {
+			AppPackUtils::delete('---AppCodePack-Optimizations-Done---.log');
+			if(AppPackUtils::path_exists('---AppCodePack-Optimizations-Done---.log')) {
+				$appcode_err_cleanup = 'ERROR: The Optimizations Done Log File could not be removed ...';
 			} //end if
 		} //end if
 		if(AppPackUtils::is_type_file('---AppCodePack-Result---.log')) {
