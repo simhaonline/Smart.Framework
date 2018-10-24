@@ -181,7 +181,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181023.1527'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.181024.1223'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -816,10 +816,12 @@ abstract class AppCodePackAbstractUpgrade {
 	// returns: TRUE/FALSE ; Throws Error if not successful
 	final public static function ExecCmd($cmd) {
 		//--
-		exec((string)$cmd, $arr, $exitcode);
+		$arr = AppPackUtils::exec_cmd((string)$cmd);
+		$exitcode = (int) $arr['exitcode'];
+		$output = (string) $arr['output'];
 		//--
 		if($exitcode !== 0) {
-			throw new Exception(__METHOD__.'() :: FAILED to exec command ['.$cmd.'] # ExitCode: '.$exitcode.' ; Errors: '.print_r($arr,1));
+			throw new Exception(__METHOD__.'() :: FAILED to exec command ['.$cmd.'] # ExitCode: '.$exitcode.' ; Errors: '.$output);
 			return false;
 		} //end if
 		//--
@@ -930,7 +932,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181023.r2 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181024.r3 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1636,14 +1638,6 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	// provide complete isolation of the upgrade script run (to avoid rewrite variables inside other functions)
-	private static function unpack_run_upgrade_script($path_to_upgrade_script) {
-		//--
-		include_once((string)$path_to_upgrade_script); // don't suppress output errors !!
-		//--
-	} //END FUNCTION
-
-
 	private static function unpack_move_file_or_dir_netarchive($path, $newpath) {
 		//--
 		if((string)$path == '') {
@@ -1680,6 +1674,41 @@ Options -Indexes
 	} //END FUNCTION
 
 
+	// provide complete isolation of the upgrade script run (to avoid rewrite variables inside other functions)
+	private static function unpack_run_upgrade_script($path_to_upgrade_script) {
+		//--
+		include_once((string)$path_to_upgrade_script); // don't suppress output errors !!
+		//--
+	} //END FUNCTION
+
+
+	// provide complete isolation of the extra run script (to avoid rewrite variables inside other functions)
+	public static function pack_run_extra_script($task, $path_to_extra_script) {
+		//--
+		define('APPCODEPACK_PROCESS_EXTRA_RUN', (string)$task);
+		//--
+		$task = (string) strtoupper((string)$task);
+		//--
+		$the_run_err = '';
+		$the_run_output = '';
+		ob_start();
+		try {
+			include_once((string)$path_to_extra_script); // don't suppress output errors !!
+		} catch (Exception $e) {
+			$the_run_err = (string) $e->getMessage();
+		} //end try catch
+		$the_run_output = ob_get_contents();
+		ob_end_clean();
+		//--
+		if($the_run_err) {
+			return "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'TASK:'.self::escape_html((string)strtoupper((string)$task)).' / STATUS: ERROR !'.'<br><pre>'.self::escape_html($the_run_err).'</pre></div>'.($the_run_output ? '<pre style="font-size:13px!important;">'.self::escape_html($the_run_output).'</pre>' : '')."\n";
+		} else {
+			return "\n".'<div title="Status / OK" style="background:#98C726; color:#000000; font-weight:bold; padding:5px; border-radius:5px;"><h3>[ &nbsp; '.'TASK:'.self::escape_html((string)strtoupper((string)$task)).' / STATUS: OK'.' &nbsp; &radic; &nbsp; ]</h3></div>'.($the_run_output ? '<pre style="font-size:13px!important;">'.self::escape_html($the_run_output).'</pre>' : '')."\n".'<!-- {APPCODEPACK:[@SUCCESS(Task:'.self::escape_html((string)strtoupper((string)$task)).')@]} -->';
+		} //end if else
+		//--
+	} //END FUNCTION
+
+
 	public static function deaccent_fix_str_to_iso($str) {
 		//--
 		$str = (string) $str;
@@ -1693,6 +1722,26 @@ Options -Indexes
 		$str = (string) utf8_encode((string)utf8_decode((string)$str)); // ISO and unicode normalize as this environment is UTF-8
 		//--
 		return (string) $str;
+		//--
+	} //END FUNCTION
+
+
+	//================================================================
+	/**
+	 * Execute a command
+	 *
+	 * @param STRING 	$cmd			:: The command to run
+	 *
+	 * @return ARRAY 					:: The Array(exitcode, output)
+	 */
+	public static function exec_cmd($cmd) {
+		//--
+		exec((string)$cmd, $arr, $exitcode);
+		//--
+		return array(
+			'exitcode' 	=> (int)    $exitcode,
+			'output' 	=> (string) trim((string)implode("\n", (array)$arr))
+		);
 		//--
 	} //END FUNCTION
 
@@ -2204,95 +2253,95 @@ Options -Indexes
 	 * @return ARRAY					:: [ stdout, stderr, exitcode ]
 	 *
 	 */
-public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc-cmd', $env=null) {
+	public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc-cmd', $env=null) {
 
-	//-- initialize
-	$descriptorspec = [
-		0 => [ 'pipe', 'r' ], // stdin
-		1 => [ 'pipe', 'w' ], // stdout
-		2 => [ 'pipe', 'w' ]  // stderr
-	];
-	//--
-	$output = array();
-	$rderr = false;
-	$pipes = array();
-	//--
+		//-- initialize
+		$descriptorspec = [
+			0 => [ 'pipe', 'r' ], // stdin
+			1 => [ 'pipe', 'w' ], // stdout
+			2 => [ 'pipe', 'w' ]  // stderr
+		];
+		//--
+		$output = array();
+		$rderr = false;
+		$pipes = array();
+		//--
 
-	//--
-	$outarr = [
-		'stdout' 	=> '',
-		'stderr' 	=> '',
-		'exitcode' 	=> -999
-	];
-	//--
+		//--
+		$outarr = [
+			'stdout' 	=> '',
+			'stderr' 	=> '',
+			'exitcode' 	=> -999
+		];
+		//--
 
-	//-- exec
-	if((string)$cwd != '') {
-		if(!self::path_exists((string)$cwd)) {
-			self::dir_create((string)$cwd, true); // recursive
+		//-- exec
+		if((string)$cwd != '') {
+			if(!self::path_exists((string)$cwd)) {
+				self::dir_create((string)$cwd, true); // recursive
+			} //end if
+			if(!self::is_type_dir((string)$cwd)) {
+				//--
+				self::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+				//--
+				$outarr['stdout'] 	= '';
+				$outarr['stderr'] 	= '';
+				$outarr['exitcode'] = -998;
+				//--
+				return (array) $outarr;
+				//--
+			} //end if
+		} else {
+			$cwd = null;
 		} //end if
-		if(!self::is_type_dir((string)$cwd)) {
-			//--
-			self::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+		$resource = proc_open((string)$cmd, (array)$descriptorspec, $pipes, $cwd, $env);
+		//--
+		if(!is_resource($resource)) {
 			//--
 			$outarr['stdout'] 	= '';
-			$outarr['stderr'] 	= '';
-			$outarr['exitcode'] = -998;
+			$outarr['stderr'] 	= 'Could not open Process / Not Resource';
+			$outarr['exitcode'] = -997;
 			//--
 			return (array) $outarr;
 			//--
 		} //end if
-	} else {
-		$cwd = null;
-	} //end if
-	$resource = proc_open((string)$cmd, (array)$descriptorspec, $pipes, $cwd, $env);
-	//--
-	if(!is_resource($resource)) {
 		//--
-		$outarr['stdout'] 	= '';
-		$outarr['stderr'] 	= 'Could not open Process / Not Resource';
-		$outarr['exitcode'] = -997;
+
+		//-- write to stdin
+		if(is_array($inargs)) {
+			if(count($inargs) > 0) {
+				foreach($inargs as $key => $val) {
+					fwrite($pipes[0], (string)$val);
+				} //end foreach
+			} //end if
+		} //end if
+		//--
+
+		//-- read stdout
+		$output = (string) stream_get_contents($pipes[1]); // don't convert charset as it may break binary files
+		//--
+
+		//-- read stderr (here may be errors or warnings)
+		$errors = (string) stream_get_contents($pipes[2]); // don't convert charset as it may break binary files
+		//--
+
+		//--
+		fclose($pipes[0]);
+		fclose($pipes[1]);
+		fclose($pipes[2]);
+		//--
+		$exitcode = proc_close($resource);
+		//--
+
+		//--
+		$outarr['stdout'] 	= (string) $output;
+		$outarr['stderr'] 	= (string) $errors;
+		$outarr['exitcode'] = $exitcode; // don't make it INT !!!
 		//--
 		return (array) $outarr;
 		//--
-	} //end if
-	//--
 
-	//-- write to stdin
-	if(is_array($inargs)) {
-		if(count($inargs) > 0) {
-			foreach($inargs as $key => $val) {
-				fwrite($pipes[0], (string)$val);
-			} //end foreach
-		} //end if
-	} //end if
-	//--
-
-	//-- read stdout
-	$output = (string) stream_get_contents($pipes[1]); // don't convert charset as it may break binary files
-	//--
-
-	//-- read stderr (here may be errors or warnings)
-	$errors = (string) stream_get_contents($pipes[2]); // don't convert charset as it may break binary files
-	//--
-
-	//--
-	fclose($pipes[0]);
-	fclose($pipes[1]);
-	fclose($pipes[2]);
-	//--
-	$exitcode = proc_close($resource);
-	//--
-
-	//--
-	$outarr['stdout'] 	= (string) $output;
-	$outarr['stderr'] 	= (string) $errors;
-	$outarr['exitcode'] = $exitcode; // don't make it INT !!!
-	//--
-	return (array) $outarr;
-	//--
-
-} //END FUNCTION
+	} //END FUNCTION
 	//================================================================
 
 

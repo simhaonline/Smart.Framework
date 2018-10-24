@@ -4,13 +4,13 @@
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('APPCODEPACK_APP_ID')) { // this must be defined in the first line of the application
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+	throw new Exception('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 //#####
-// Sample AppCodePack Upgrade Script, r.181023
-// CUSTOMIZE IT AS NEEDED
+// Sample AppCodePack Upgrade Script, v.181024.1223
+// CUSTOMIZE IT AS NEEDED and rename it to: appcode-upgrade.php
 //#####
 
 //--

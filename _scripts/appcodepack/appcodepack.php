@@ -191,7 +191,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION',  'v.181023.1527'); 											// current version of this script
+define('APPCODEPACK_VERSION',  'v.181024.1223'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -595,30 +595,47 @@ function RunApp() {
 	} else {
 		//--
 		echo '<hr>';
-		if((string)APPCODEPACK_APP_ID != '-----UNDEF-----') {
-			echo '<div style="margin-bottom:10px; padding:7px; line-height:1.125em; font-weight:bold; color: #FFFFFF; background:#009ACE; border:1px solid #0089BD; border-radius:6px; box-shadow: 2px 2px 3px #D2D2D2;"><table>';
-			echo '<tr valign="top"><td>Managed AppID: </td><td> &nbsp; &nbsp; </td><td>'.AppPackUtils::escape_html(APPCODEPACK_APP_ID).'</td></tr>';
-			if((string)APPCODEPACK_APP_HASH_ID != '') {
-				echo '<tr valign="top"><td>Secret AppID-Hash: </td><td> &nbsp; &nbsp; </td><td>'.AppPackUtils::escape_html(APPCODEPACK_APP_HASH_ID).'</td></tr>';
-			} //end if
-			echo '</table></div>';
+		//--
+		if(($_GET['run']) AND (AppPackUtils::is_type_file('appcodepack-extra-run.php')) AND (AppPackUtils::is_type_file('appcodepack-extra-run.inc.htm'))) {
+			echo '<div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'Extra TASK / '.AppPackUtils::escape_html((string)$_GET['run']).' &nbsp;&nbsp;::&nbsp;&nbsp; '.'#START: '.date('Y-m-d H:i:s O').' # App-ID: '.AppPackUtils::escape_html((string)APPCODEPACK_APP_ID).'</div><hr>';
+			echo (string) $code_loading_start;
+			AppPackUtils::InstantFlush();
+			sleep(1);
+			echo (string) AppPackUtils::pack_run_extra_script((string)$_GET['run'], 'appcodepack-extra-run.php');
+			echo (string) $code_loading_stop;
 		} //end if
-		echo '<div style="padding:4px; background:#D3E397; font-weight:bold;">'.'<h2>Select a TASK to RUN from the list below</h2></div><hr>';
-		AppPackUtils::InstantFlush();
-		echo '<div style="font-size:1.25em!important;">'."\n";
-		echo '<select id="task-run-sel" style="font-size:1em!important;">'."\n";
-		echo '<option value="">--- No Task Selected ---</option>'."\n";
-		if(!AppPackUtils::path_exists((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR)) {
-			echo '<option value="optimize" title="'.AppPackUtils::escape_html((string)APPCODEPACK_STRATEGY).'">['.AppPackUtils::escape_html((string)APPCODEPACK_COMPRESS_UTILITY_TYPE).'] OPTIMIZE Source Code '.APPCODEPACK_MARKER_OPTIMIZATIONS.' @ Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_SOURCE_DIR).']</option>'."\n";
-		} else {
-			if(((string)APPCODEPACK_APP_ID != '-----UNDEF-----') AND (!AppPackUtils::path_exists('---AppCodePack-Package---.log')) AND (strpos((string)AppPackUtils::read('---AppCodePack-Result---.log'), '##### Processing DONE / '.APPCODEPACK_STRATEGY.' - '.APPCODEPACK_MARKER_OPTIMIZATIONS.' :') === 0)) {
-				echo '<option value="pack">PACKAGE :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
+		//--
+		if(!defined('APPCODEPACK_PROCESS_EXTRA_RUN')) {
+			//--
+			if((string)APPCODEPACK_APP_ID != '-----UNDEF-----') {
+				echo '<div style="margin-bottom:10px; padding:7px; line-height:1.125em; font-weight:bold; color: #FFFFFF; background:#009ACE; border:1px solid #0089BD; border-radius:6px; box-shadow: 2px 2px 3px #D2D2D2;"><table>';
+				echo '<tr valign="top"><td>Managed AppID: </td><td> &nbsp; &nbsp; </td><td>'.AppPackUtils::escape_html(APPCODEPACK_APP_ID).'</td></tr>';
+				if((string)APPCODEPACK_APP_HASH_ID != '') {
+					echo '<tr valign="top"><td>Secret AppID-Hash: </td><td> &nbsp; &nbsp; </td><td>'.AppPackUtils::escape_html(APPCODEPACK_APP_HASH_ID).'</td></tr>';
+				} //end if
+				echo '</table></div>';
 			} //end if
-			echo '<option value="cleanup">CLEANUP :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
+			echo '<div style="padding:4px; background:#D3E397; font-weight:bold;">'.'<h2>Select a TASK to RUN from the list below</h2></div><hr>';
+			AppPackUtils::InstantFlush();
+			echo '<div style="font-size:1.25em!important;">'."\n";
+			echo '<select id="task-run-sel" style="font-size:1em!important;">'."\n";
+			echo '<option value="">--- No Task Selected ---</option>'."\n";
+			if(!AppPackUtils::path_exists((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR)) {
+				echo '<option value="optimize" title="'.AppPackUtils::escape_html((string)APPCODEPACK_STRATEGY).'">['.AppPackUtils::escape_html((string)APPCODEPACK_COMPRESS_UTILITY_TYPE).'] OPTIMIZE Source Code '.APPCODEPACK_MARKER_OPTIMIZATIONS.' @ Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_SOURCE_DIR).']</option>'."\n";
+			} else {
+				if(((string)APPCODEPACK_APP_ID != '-----UNDEF-----') AND (!AppPackUtils::path_exists('---AppCodePack-Package---.log')) AND (strpos((string)AppPackUtils::read('---AppCodePack-Result---.log'), '##### Processing DONE / '.APPCODEPACK_STRATEGY.' - '.APPCODEPACK_MARKER_OPTIMIZATIONS.' :') === 0)) {
+					echo '<option value="pack">PACKAGE :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
+				} //end if
+				echo '<option value="cleanup">CLEANUP :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
+			} //end if
+			if((AppPackUtils::is_type_file('appcodepack-extra-run.php')) AND (AppPackUtils::is_type_file('appcodepack-extra-run.inc.htm'))) {
+				echo AppPackUtils::read('appcodepack-extra-run.inc.htm');
+			} //end if
+			echo '</select> &nbsp; ';
+			echo '<button style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" onClick="var selTask = \'\'; try { selTask = document.getElementById(\'task-run-sel\').value; } catch(err){} if(selTask){ if(selTask == \'pack\') { var comment = prompt(\'Enter a Package Release Info\', \'\'); self.location = \'?run=\' + selTask + \'&comment=\' + encodeURIComponent(comment ? String(comment) : \'\'); } else { self.location = \'?run=\' + selTask; } } else { alert(\'No Task Selected ...\'); }" title="Click this button to run the selected task from the near list">Run the Selected TASK</button>'."\n";
+			echo '</div>';
+			//--
 		} //end if
-		echo '</select> &nbsp; ';
-		echo '<button style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" onClick="var selTask = \'\'; try { selTask = document.getElementById(\'task-run-sel\').value; } catch(err){} if(selTask){ if(selTask == \'pack\') { var comment = prompt(\'Enter a Package Release Info\', \'\'); self.location = \'?run=\' + selTask + \'&comment=\' + encodeURIComponent(comment ? String(comment) : \'\'); } else { self.location = \'?run=\' + selTask; } } else { alert(\'No Task Selected ...\'); }" title="Click this button to run the selected task from the near list">Run the Selected TASK</button>'."\n";
-		echo '</div>';
 		//--
 	} //end if else
 	//--
@@ -2115,7 +2132,7 @@ private function conform_column($y_text) {
  *
  * @package JShrink
  * @author Robert Hafner <tedivm@tedivm.com>
- * @license http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 final class JShrinkMinifier {
@@ -2686,7 +2703,7 @@ final class JShrinkMinifier {
 final class AppPackUtils {
 
 	// ::
-	// v.181023.r2 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181024.r3 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3392,14 +3409,6 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	// provide complete isolation of the upgrade script run (to avoid rewrite variables inside other functions)
-	private static function unpack_run_upgrade_script($path_to_upgrade_script) {
-		//--
-		include_once((string)$path_to_upgrade_script); // don't suppress output errors !!
-		//--
-	} //END FUNCTION
-
-
 	private static function unpack_move_file_or_dir_netarchive($path, $newpath) {
 		//--
 		if((string)$path == '') {
@@ -3436,6 +3445,41 @@ Options -Indexes
 	} //END FUNCTION
 
 
+	// provide complete isolation of the upgrade script run (to avoid rewrite variables inside other functions)
+	private static function unpack_run_upgrade_script($path_to_upgrade_script) {
+		//--
+		include_once((string)$path_to_upgrade_script); // don't suppress output errors !!
+		//--
+	} //END FUNCTION
+
+
+	// provide complete isolation of the extra run script (to avoid rewrite variables inside other functions)
+	public static function pack_run_extra_script($task, $path_to_extra_script) {
+		//--
+		define('APPCODEPACK_PROCESS_EXTRA_RUN', (string)$task);
+		//--
+		$task = (string) strtoupper((string)$task);
+		//--
+		$the_run_err = '';
+		$the_run_output = '';
+		ob_start();
+		try {
+			include_once((string)$path_to_extra_script); // don't suppress output errors !!
+		} catch (Exception $e) {
+			$the_run_err = (string) $e->getMessage();
+		} //end try catch
+		$the_run_output = ob_get_contents();
+		ob_end_clean();
+		//--
+		if($the_run_err) {
+			return "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'TASK:'.self::escape_html((string)strtoupper((string)$task)).' / STATUS: ERROR !'.'<br><pre>'.self::escape_html($the_run_err).'</pre></div>'.($the_run_output ? '<pre style="font-size:13px!important;">'.self::escape_html($the_run_output).'</pre>' : '')."\n";
+		} else {
+			return "\n".'<div title="Status / OK" style="background:#98C726; color:#000000; font-weight:bold; padding:5px; border-radius:5px;"><h3>[ &nbsp; '.'TASK:'.self::escape_html((string)strtoupper((string)$task)).' / STATUS: OK'.' &nbsp; &radic; &nbsp; ]</h3></div>'.($the_run_output ? '<pre style="font-size:13px!important;">'.self::escape_html($the_run_output).'</pre>' : '')."\n".'<!-- {APPCODEPACK:[@SUCCESS(Task:'.self::escape_html((string)strtoupper((string)$task)).')@]} -->';
+		} //end if else
+		//--
+	} //END FUNCTION
+
+
 	public static function deaccent_fix_str_to_iso($str) {
 		//--
 		$str = (string) $str;
@@ -3449,6 +3493,26 @@ Options -Indexes
 		$str = (string) utf8_encode((string)utf8_decode((string)$str)); // ISO and unicode normalize as this environment is UTF-8
 		//--
 		return (string) $str;
+		//--
+	} //END FUNCTION
+
+
+	//================================================================
+	/**
+	 * Execute a command
+	 *
+	 * @param STRING 	$cmd			:: The command to run
+	 *
+	 * @return ARRAY 					:: The Array(exitcode, output)
+	 */
+	public static function exec_cmd($cmd) {
+		//--
+		exec((string)$cmd, $arr, $exitcode);
+		//--
+		return array(
+			'exitcode' 	=> (int)    $exitcode,
+			'output' 	=> (string) trim((string)implode("\n", (array)$arr))
+		);
 		//--
 	} //END FUNCTION
 
@@ -3960,95 +4024,95 @@ Options -Indexes
 	 * @return ARRAY					:: [ stdout, stderr, exitcode ]
 	 *
 	 */
-public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc-cmd', $env=null) {
+	public static function run_proc_cmd($cmd, $inargs=null, $cwd='tmp/cache/run-proc-cmd', $env=null) {
 
-	//-- initialize
-	$descriptorspec = [
-		0 => [ 'pipe', 'r' ], // stdin
-		1 => [ 'pipe', 'w' ], // stdout
-		2 => [ 'pipe', 'w' ]  // stderr
-	];
-	//--
-	$output = array();
-	$rderr = false;
-	$pipes = array();
-	//--
+		//-- initialize
+		$descriptorspec = [
+			0 => [ 'pipe', 'r' ], // stdin
+			1 => [ 'pipe', 'w' ], // stdout
+			2 => [ 'pipe', 'w' ]  // stderr
+		];
+		//--
+		$output = array();
+		$rderr = false;
+		$pipes = array();
+		//--
 
-	//--
-	$outarr = [
-		'stdout' 	=> '',
-		'stderr' 	=> '',
-		'exitcode' 	=> -999
-	];
-	//--
+		//--
+		$outarr = [
+			'stdout' 	=> '',
+			'stderr' 	=> '',
+			'exitcode' 	=> -999
+		];
+		//--
 
-	//-- exec
-	if((string)$cwd != '') {
-		if(!self::path_exists((string)$cwd)) {
-			self::dir_create((string)$cwd, true); // recursive
+		//-- exec
+		if((string)$cwd != '') {
+			if(!self::path_exists((string)$cwd)) {
+				self::dir_create((string)$cwd, true); // recursive
+			} //end if
+			if(!self::is_type_dir((string)$cwd)) {
+				//--
+				self::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+				//--
+				$outarr['stdout'] 	= '';
+				$outarr['stderr'] 	= '';
+				$outarr['exitcode'] = -998;
+				//--
+				return (array) $outarr;
+				//--
+			} //end if
+		} else {
+			$cwd = null;
 		} //end if
-		if(!self::is_type_dir((string)$cwd)) {
-			//--
-			self::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+		$resource = proc_open((string)$cmd, (array)$descriptorspec, $pipes, $cwd, $env);
+		//--
+		if(!is_resource($resource)) {
 			//--
 			$outarr['stdout'] 	= '';
-			$outarr['stderr'] 	= '';
-			$outarr['exitcode'] = -998;
+			$outarr['stderr'] 	= 'Could not open Process / Not Resource';
+			$outarr['exitcode'] = -997;
 			//--
 			return (array) $outarr;
 			//--
 		} //end if
-	} else {
-		$cwd = null;
-	} //end if
-	$resource = proc_open((string)$cmd, (array)$descriptorspec, $pipes, $cwd, $env);
-	//--
-	if(!is_resource($resource)) {
 		//--
-		$outarr['stdout'] 	= '';
-		$outarr['stderr'] 	= 'Could not open Process / Not Resource';
-		$outarr['exitcode'] = -997;
+
+		//-- write to stdin
+		if(is_array($inargs)) {
+			if(count($inargs) > 0) {
+				foreach($inargs as $key => $val) {
+					fwrite($pipes[0], (string)$val);
+				} //end foreach
+			} //end if
+		} //end if
+		//--
+
+		//-- read stdout
+		$output = (string) stream_get_contents($pipes[1]); // don't convert charset as it may break binary files
+		//--
+
+		//-- read stderr (here may be errors or warnings)
+		$errors = (string) stream_get_contents($pipes[2]); // don't convert charset as it may break binary files
+		//--
+
+		//--
+		fclose($pipes[0]);
+		fclose($pipes[1]);
+		fclose($pipes[2]);
+		//--
+		$exitcode = proc_close($resource);
+		//--
+
+		//--
+		$outarr['stdout'] 	= (string) $output;
+		$outarr['stderr'] 	= (string) $errors;
+		$outarr['exitcode'] = $exitcode; // don't make it INT !!!
 		//--
 		return (array) $outarr;
 		//--
-	} //end if
-	//--
 
-	//-- write to stdin
-	if(is_array($inargs)) {
-		if(count($inargs) > 0) {
-			foreach($inargs as $key => $val) {
-				fwrite($pipes[0], (string)$val);
-			} //end foreach
-		} //end if
-	} //end if
-	//--
-
-	//-- read stdout
-	$output = (string) stream_get_contents($pipes[1]); // don't convert charset as it may break binary files
-	//--
-
-	//-- read stderr (here may be errors or warnings)
-	$errors = (string) stream_get_contents($pipes[2]); // don't convert charset as it may break binary files
-	//--
-
-	//--
-	fclose($pipes[0]);
-	fclose($pipes[1]);
-	fclose($pipes[2]);
-	//--
-	$exitcode = proc_close($resource);
-	//--
-
-	//--
-	$outarr['stdout'] 	= (string) $output;
-	$outarr['stderr'] 	= (string) $errors;
-	$outarr['exitcode'] = $exitcode; // don't make it INT !!!
-	//--
-	return (array) $outarr;
-	//--
-
-} //END FUNCTION
+	} //END FUNCTION
 	//================================================================
 
 
