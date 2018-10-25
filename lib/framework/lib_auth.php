@@ -53,7 +53,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181019
+ * @version 	v.181025
  * @package 	Application
  *
  */
@@ -359,7 +359,7 @@ public static function get_login_quota() {
 
 //================================================================
 /**
- * Get the current user metadaya stored in the (in-memory) Auth Login Data
+ * Get the current user metadata stored in the (in-memory) Auth Login Data
  *
  * @return 	ARRAY		:: returns an array with all current user metadata
  */

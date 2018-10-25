@@ -50,17 +50,24 @@ php_flag zend.multibyte					Off
 	###
 
 	### Security Fixes
+#	RewriteRule ^\.htaccess$ - [F,L]
+#	RewriteRule ^_scripts/ - [F,L]
+#	RewriteRule ^_sql/ - [F,L]
+#	RewriteRule ^etc/cacert\.pem$ - [F,L]
 #	RewriteRule ^etc/config\.php$ - [F,L]
 #	RewriteRule ^etc/config-index\.php$ - [F,L]
 #	RewriteRule ^etc/config-admin\.php$ - [F,L]
 #	RewriteRule ^etc/init\.php$ - [F,L]
+#	RewriteRule ^tmp/ - [F,L]
+#	RewriteRule ^wpub/\.htaccess$ - [F,L]
+#	RewriteRule ^wpub/\#wpub$ - [F,L]
 	###
 
-	### sample: smart-framework/module.controller.html|.stml|.json [ compatible with Smart::url_make_semantic() + Rewrite ]
+	### sample: smart-framework/module.controller(.seo-text).ext [ compatible with Smart::url_make_semantic() + Rewrite ]
 	##RewriteCond 		%{QUERY_STRING} !^\/
 #	RewriteCond 		%{REQUEST_FILENAME} !-f
 #	RewriteCond 		%{REQUEST_FILENAME} !-d
-#	RewriteRule 		^(.*)\.(html|stml|json)$ 		index.php?page=$1 [QSA,L]
+#	RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 		index.php?page=$1 [QSA,L]
 	###
 
 	### sample: alternate URLs to use in combination with sub-domains (This is only for very very advanced use of URL Rewrites ... !!!)
@@ -69,10 +76,10 @@ php_flag zend.multibyte					Off
 	##RewriteRule 		^(.*)?/?$ 						index.php?page=$1.%1 [QSA,L]
 	##### module.smart-framework/controller
 	##RewriteRule 		^(.*)?/?$ 						index.php?page=%1.$1 [QSA,L]
-	##### controller.smart-framework/module(.html|.stml|.json)
-	##RewriteRule 		^(.*)\.(html|stml|json)$ 		index.php?page=$1.%1 [QSA,L]
-	##### module.smart-framework/controller(.html|.stml|.json)
-	##RewriteRule 		^(.*)\.(html|stml|json)$ 		index.php?page=%1.$1 [QSA,L]
+	##### controller.smart-framework/module(.seo-text)(.ext)
+	##RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 		index.php?page=$1.%1 [QSA,L]
+	##### module.smart-framework/controller(.ext)
+	##RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 		index.php?page=%1.$1 [QSA,L]
 	###
 
 	### sample: custom 404 error page with fallback
