@@ -1,5 +1,5 @@
 <?php
-// AppCodePack - a PHP, JS and CSS Optimizer / NetArchive Packer
+// AppCodePack - Release Manager: a PHP, JS and CSS Optimizer + NetArchive Packer
 // (c) 2006-2018 unix-world.org - all rights reserved
 
 //===== CODE OPTIMIZATIONS INFO:
@@ -12,7 +12,7 @@
 // For the rest of files and dirs includded in src/ folder it will:
 // 		Copy all dirs, including empty ones
 // 		Copy all files, including empty ones
-// 		But will Skip Dirs contaning the file: sf-dev-only.nopack
+// 		Skip all dirs contaning the file: sf-dev-only.nopack
 //=====
 
 //##############################################################################
@@ -34,32 +34,43 @@ define('SMART_FRAMEWORK_CHARSET', 			'UTF-8'); 				// App Charset: UTF-8
 define('SMART_FRAMEWORK_CHMOD_DIRS', 		0770);					// Folder Permissions: 0770 | 0700
 define('SMART_FRAMEWORK_CHMOD_FILES', 		0660);					// File Permissions: 0660 | 0600
 //--
-if(version_compare(phpversion(), '5.4.20') < 0) { 					// check PHP version
-	die('PHP Runtime not supported: '.phpversion().' !'.'<br>PHP 5.4.20 or later is required to run this software !');
+if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime, but mark 5.6  as minimum for latest optimizations ; since 5.4 / 5.5 are deprecated the framework is no more actively tested on PHP versions < 5.6
+	@http_response_code(500);
+	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 or later');
 } //end if
 //--
 date_default_timezone_set('UTC');
 //--
 ini_set('zlib.output_compression', '0');							// disable ZLib Output Compression
 if((string)ini_get('zlib.output_compression') != '0') {
+	@http_response_code(500);
 	die('FATAL ERROR: The PHP.INI ZLib Output Compression cannot be disabled !');
 } //end if
 if((string)ini_get('zlib.output_handler') != '') {
+	@http_response_code(500);
 	die('FATAL ERROR: The PHP.INI Zlib Output Handler must be unset !');
 } //end if
 if((string)ini_get('output_handler') != '') {
+	@http_response_code(500);
 	die('FATAL ERROR: The PHP.INI Output Handler must be unset !');
 } //end if
 //--
+if((string)ini_get('zend.multibyte') != '0') {
+	@http_response_code(500);
+	die('FATAL ERROR: The PHP.INI Zend-MultiByte must be disabled ! Unicode support is managed via MBString ...');
+} //end if
 ini_set('default_charset', (string)SMART_FRAMEWORK_CHARSET); 		// default charset UTF-8
 if(!function_exists('mb_internal_encoding')) { 						// *** MBString is required ***
-	die('The MBString PHP Module is required for Unicode support !');
+	@http_response_code(500);
+	die('FATAL ERROR: The MBString PHP Module is required for Unicode support !');
 } //end if
 if(mb_internal_encoding((string)SMART_FRAMEWORK_CHARSET) !== true) { // this setting is required for UTF-8 mode
-	die('Failed to set MB Internal Encoding to: '.SMART_FRAMEWORK_CHARSET);
+	@http_response_code(500);
+	die('FATAL ERROR: Failed to set MB Internal Encoding to: '.SMART_FRAMEWORK_CHARSET);
 } //end if
 if(mb_substitute_character(63) !== true) {
-	die('Failed to set the MB Substitute Character to standard: 63(?) ...');
+	@http_response_code(500);
+	die('FATAL ERROR: Failed to set the MB Substitute Character to standard: 63(?) ...');
 } //end if
 //--
 ini_set('default_socket_timeout', '60');							// socket timeout (1 min.)
@@ -191,7 +202,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION',  'v.181025.0933'); 											// current version of this script
+define('APPCODEPACK_VERSION',  'v.181025.1737'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -256,7 +267,7 @@ function RunApp() {
 							break;
 						default:
 							AppPackUtils::raise_error('A required INI Key contains an invalid value from appcodepack.ini : APPCODEPACK_COMPRESS_UTILITY_TYPE: '.$appcode_ini_file_pval);
-							die('');
+							return;
 					} //end switch
 				} //end if
 				if(!defined((string)$appcode_ini_file_pkey)) {
@@ -265,15 +276,15 @@ function RunApp() {
 						$appcode_ini_file_options[(string)$appcode_ini_file_pkey] = true;
 					} else {
 						AppPackUtils::raise_error('Failed to define an INI Key from appcodepack.ini : '.(string)$appcode_ini_file_pkey);
-						die('');
+						return;
 					} //end if
 				} else {
 					AppPackUtils::raise_error('INI Key already defined from appcodepack.ini : '.(string)$appcode_ini_file_pkey);
-					die('');
+					return;
 				} //end if else
 			} else {
 				AppPackUtils::raise_error('Invalid INI Key detected in appcodepack.ini : '.(string)$appcode_ini_file_pkey);
-				die('');
+				return;
 			} //end if else
 		} //end foreach
 		//--
@@ -282,7 +293,7 @@ function RunApp() {
 				foreach(['APPCODEPACK_COMPRESS_UTILITY_TYPE', 'APPCODEPACK_APP_ID', 'APPCODEPACK_APP_SECRET', 'APPCODEPACK_LINT_PHP_UTILITY_BIN', 'APPCODEPACK_LINT_NODEJS_UTILITY_BIN'] as $appcode_ini_file_pkey => $appcode_ini_file_pval) { // {{{SYNC-PACK-INTERNAL-DEFS}}}
 					if($appcode_ini_file_options[(string)$appcode_ini_file_pval] !== true) {
 						AppPackUtils::raise_error('A required INI Key was not defined from appcodepack.ini : '.(string)$appcode_ini_file_pval);
-						die('');
+						return;
 					} //end if
 				} //end foreach
 				break;
@@ -293,25 +304,25 @@ function RunApp() {
 				foreach($appcode_ini_file_options as $appcode_ini_file_pkey => $appcode_ini_file_pval) {
 					if($appcode_ini_file_pval !== true) {
 						AppPackUtils::raise_error('A required INI Key was not defined from appcodepack.ini : '.(string)$appcode_ini_file_pkey);
-						die('');
+						return;
 					} //end if
 				} //end foreach
 				if((string)APPCODEPACK_COMPRESS_UTILITY_BIN == '') {
 					AppPackUtils::raise_error('A required INI Key is empty from appcodepack.ini : APPCODEPACK_COMPRESS_UTILITY_BIN');
-					die('');
+					return;
 				} //end if
 				if((string)APPCODEPACK_COMPRESS_UTILITY_MODULE_JS == '') {
 					AppPackUtils::raise_error('A required INI Key is empty from appcodepack.ini : APPCODEPACK_COMPRESS_UTILITY_MODULE_JS');
-					die('');
+					return;
 				} //end if
 				if((string)APPCODEPACK_COMPRESS_UTILITY_MODULE_CSS == '') {
 					AppPackUtils::raise_error('A required INI Key is empty from appcodepack.ini : APPCODEPACK_COMPRESS_UTILITY_MODULE_CSS');
-					die('');
+					return;
 				} //end if
 				break;
 			default:
 				AppPackUtils::raise_error('A required INI Key was parsed to an invalid value from appcodepack.ini : APPCODEPACK_COMPRESS_UTILITY_TYPE: '.APPCODEPACK_COMPRESS_UTILITY_TYPE);
-				die('');
+				return;
 		} //end switch
 		//--
 		//echo 'Utility-Type: '.APPCODEPACK_COMPRESS_UTILITY_TYPE.'<hr>'; echo 'Minify-Strategy: '.APPCODEPACK_STRATEGY.'<hr>'; echo '<pre>'; print_r($appcode_ini_file_parse); print_r($appcode_ini_file_options); echo '</pre>'; die();
@@ -336,44 +347,44 @@ function RunApp() {
 	//--
 	if(!defined('APPCODEPACK_APP_ID')) {
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_ID must be defined and was not !');
-		die('');
+		return;
 	} //end if
 	if((string)trim((string)APPCODEPACK_APP_ID) == '') { // {{{SYNC-VALID-APPCODEPACK-APPID}}}
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_ID is Empty !');
-		die('');
+		return;
 	} //end if
 	if(strlen((string)APPCODEPACK_APP_ID) < 5) { // {{{SYNC-VALID-APPCODEPACK-APPID}}}
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_ID is Too Short (<5) characters: '.APPCODEPACK_APP_ID);
-		die('');
+		return;
 	} //end if
 	if(strlen((string)APPCODEPACK_APP_ID) > 63) { // {{{SYNC-VALID-APPCODEPACK-APPID}}}
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_ID is Too Long (>63) characters: '.APPCODEPACK_APP_ID);
-		die('');
+		return;
 	} //end if
 	if(!preg_match('/^[_a-zA-Z0-9\-\.@]+$/', (string)APPCODEPACK_APP_ID)) { // {{{SYNC-VALID-APPCODEPACK-APPID}}} allow safe path characters except: # / which are reserved
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_ID Contains Invalid Characters: '.APPCODEPACK_APP_ID);
-		die('');
+		return;
 	} //end if
 	//--
 	if(!defined('APPCODEPACK_APP_SECRET')) {
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_SECRET must be defined and was not !');
-		die('');
+		return;
 	} //end if
 	// no check if APPCODEPACK_APP_SECRET is empty (only unpack enforces this check) ; but anyway, if non-empty do check on lengths
 	if((string)trim((string)APPCODEPACK_APP_SECRET) != '') { // {{{SYNC-VALID-APPCODEPACK-APPSECRET}}}
 		if(strlen((string)APPCODEPACK_APP_SECRET) < 5) { // {{{SYNC-VALID-APPCODEPACK-APPSECRET}}}
 			AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_SECRET is Too Short (<40) characters: '.APPCODEPACK_APP_SECRET);
-			die('');
+			return;
 		} //end if
 		if(strlen((string)APPCODEPACK_APP_SECRET) > 128) { // {{{SYNC-VALID-APPCODEPACK-APPSECRET}}}
 			AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_SECRET is Too Long (>128) characters: '.APPCODEPACK_APP_SECRET);
-			die('');
+			return;
 		} //end if
 	} //end if
 	//--
 	if(defined('APPCODEPACK_APP_HASH_ID')) {
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_APP_HASH_ID was defined and must not !');
-		die('');
+		return;
 	} //end if
 	if((string)trim((string)APPCODEPACK_APP_SECRET) != '') { // {{{SYNC-VALID-APPCODEPACK-APPSECRET}}}
 		define('APPCODEPACK_APP_HASH_ID', sha1((string)APPCODEPACK_APP_ID.'*AppCode(Un)Pack*'.(string)APPCODEPACK_APP_SECRET)); // {{{SYNC-VALID-APPCODEPACK-APPHASH}}}
@@ -383,12 +394,12 @@ function RunApp() {
 	//--
 	if(!defined('APPCODEPACK_STRATEGY')) {
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_STRATEGY must be defined and was not !');
-		die('');
+		return;
 	} //end if
 	//--
 	if(!defined('APPCODEPACK_COMPRESS_UTILITY_TYPE')) {
 		AppPackUtils::raise_error('App Internal Error : APPCODEPACK_COMPRESS_UTILITY_TYPE must be defined and was not !');
-		die('');
+		return;
 	} //end if
 	//--
 	//=====
@@ -449,7 +460,7 @@ function RunApp() {
 		//--
 		echo (string) $code_loading_start;
 		//--
-		echo '<hr><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / optimize:'.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_MODE).' <span style="cursor:help;" title="'.AppPackUtils::escape_html((string)APPCODEPACK_STRATEGY).' :: '.AppPackUtils::escape_html((string)APPCODEPACK_MARKER_OPTIMIZATIONS).'">['.AppPackUtils::escape_html((string)APPCODEPACK_COMPRESS_UTILITY_TYPE).'] - '.AppPackUtils::escape_html((string)APPCODEPACK_MARKER_OPTIMIZATIONS).'</span>'.' &nbsp;&nbsp;::&nbsp;&nbsp; '.'#START: '.date('Y-m-d H:i:s O').' # App-ID: '.AppPackUtils::escape_html((string)APPCODEPACK_APP_ID).'</div><hr>';
+		echo '<hr><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / optimize: '.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_MODE).' <span style="cursor:help;" title="'.AppPackUtils::escape_html((string)APPCODEPACK_STRATEGY).' :: '.AppPackUtils::escape_html((string)APPCODEPACK_MARKER_OPTIMIZATIONS).'">['.AppPackUtils::escape_html((string)APPCODEPACK_COMPRESS_UTILITY_TYPE).'] - '.AppPackUtils::escape_html((string)APPCODEPACK_MARKER_OPTIMIZATIONS).'</span>'.' &nbsp;&nbsp;::&nbsp;&nbsp; '.'#START: '.date('Y-m-d H:i:s O').' # App-ID: '.AppPackUtils::escape_html((string)APPCODEPACK_APP_ID).'</div><hr>';
 		AppPackUtils::InstantFlush();
 		$appcodeoptimizer = new AppCodeOptimizer();
 		$appcodeoptimizer->optimize_code((string)APPCODEPACK_PROCESS_SOURCE_DIR);
@@ -476,7 +487,7 @@ function RunApp() {
 			);
 		} //end if
 		unset($appcodeoptimizer);
-		echo '<br><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / optimize:'.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_MODE.' ['.(string)APPCODEPACK_COMPRESS_UTILITY_TYPE.'] - '.APPCODEPACK_MARKER_OPTIMIZATIONS).' &nbsp;&nbsp;::&nbsp;&nbsp; '.'#END: '.date('Y-m-d H:i:s O').'</div>';
+		echo '<br><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / optimize :'.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_MODE.' ['.(string)APPCODEPACK_COMPRESS_UTILITY_TYPE.'] - '.APPCODEPACK_MARKER_OPTIMIZATIONS).' &nbsp;&nbsp;::&nbsp;&nbsp; '.'#END: '.date('Y-m-d H:i:s O').'</div>';
 		//--
 		echo (string) $code_loading_stop;
 		//--
@@ -618,15 +629,15 @@ function RunApp() {
 			echo '<div style="padding:4px; background:#D3E397; font-weight:bold;">'.'<h2>Select a TASK to RUN from the list below</h2></div><hr>';
 			AppPackUtils::InstantFlush();
 			echo '<div style="font-size:1.25em!important;">'."\n";
-			echo '<select id="task-run-sel" style="font-size:1em!important;">'."\n";
-			echo '<option value="">--- No Task Selected ---</option>'."\n";
+			echo '<select id="task-run-sel" style="font-size:1em!important; max-width:750px;">'."\n";
+			echo '<option value="">--- NO TASK Selected ---</option>'."\n";
 			if(!AppPackUtils::path_exists((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR)) {
-				echo '<option value="optimize" title="'.AppPackUtils::escape_html((string)APPCODEPACK_STRATEGY).'">['.AppPackUtils::escape_html((string)APPCODEPACK_COMPRESS_UTILITY_TYPE).'] OPTIMIZE Source Code '.APPCODEPACK_MARKER_OPTIMIZATIONS.' @ Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_SOURCE_DIR).']</option>'."\n";
+				echo '<option value="optimize" title="'.AppPackUtils::escape_html((string)APPCODEPACK_STRATEGY).'">RELEASE: ['.AppPackUtils::escape_html((string)APPCODEPACK_COMPRESS_UTILITY_TYPE).'] OPTIMIZE Source Code '.APPCODEPACK_MARKER_OPTIMIZATIONS.' @ Folders: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_SOURCE_DIR).' -&gt; '.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']'.'</option>'."\n";
 			} else {
 				if(((string)APPCODEPACK_APP_ID != '-----UNDEF-----') AND (!AppPackUtils::path_exists('---AppCodePack-Package---.log')) AND (strpos((string)AppPackUtils::read('---AppCodePack-Result---.log'), '##### Processing DONE / '.APPCODEPACK_STRATEGY.' - '.APPCODEPACK_MARKER_OPTIMIZATIONS.' :') === 0)) {
-					echo '<option value="pack">PACKAGE :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
+					echo '<option value="pack">RELEASE: PACKAGE :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
 				} //end if
-				echo '<option value="cleanup">CLEANUP :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
+				echo '<option value="cleanup">RELEASE: CLEANUP :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
 			} //end if
 			if((AppPackUtils::is_type_file('appcodepack-extra-run.php')) AND (AppPackUtils::is_type_file('appcodepack-extra-run.inc.htm'))) {
 				echo AppPackUtils::read('appcodepack-extra-run.inc.htm');
@@ -1687,7 +1698,7 @@ public function __construct() {
 	//--
 	if(!function_exists('gzencode')) {
 		AppPackUtils::raise_error('ERROR: The PHP ZLIB Extension (gzencode) is required for AppNetPackager');
-		die('');
+		return;
 	} //end if
 	//--
 	$this->init_clear();
@@ -2703,7 +2714,7 @@ final class JShrinkMinifier {
 final class AppPackUtils {
 
 	// ::
-	// v.181024.r3 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181025 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2848,7 +2859,7 @@ Options -Indexes
 		//--
 		if(!function_exists('gzdecode')) {
 			self::raise_error('ERROR: The PHP ZLIB Extension (gzdecode) is required for AppNetPackager');
-			die('');
+			return;
 		} //end if
 		//-- CHECK RESTORE ROOT
 		if(!defined('APPCODEPACK_APP_ID')) {

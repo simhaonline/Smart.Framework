@@ -1,5 +1,5 @@
 <?php
-// AppCodeUnPack - a NetArchive UnPacker
+// AppCodeUnPack - Deploy Manager: NetArchive UnPacker
 // (c) 2006-2018 unix-world.org - all rights reserved
 
 //##############################################################################
@@ -8,6 +8,7 @@
 
 //--
 if(!function_exists('apache_setenv')) {
+	@http_response_code(500);
 	die('FATAL ERROR: This script requires PHP and Apache Server !'); // Apache is required for .htaccess protection
 } //end if
 //--
@@ -27,32 +28,43 @@ define('SMART_FRAMEWORK_CHARSET', 			'UTF-8'); 				// App Charset: UTF-8
 define('SMART_FRAMEWORK_CHMOD_DIRS', 		0770);					// Folder Permissions: 0770 | 0700
 define('SMART_FRAMEWORK_CHMOD_FILES', 		0660);					// File Permissions: 0660 | 0600
 //--
-if(version_compare(phpversion(), '5.4.20') < 0) { 					// check PHP version
-	die('PHP Runtime not supported: '.phpversion().' !'.'<br>PHP 5.4.20 or later is required to run this software !');
+if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime, but mark 5.6  as minimum for latest optimizations ; since 5.4 / 5.5 are deprecated the framework is no more actively tested on PHP versions < 5.6
+	@http_response_code(500);
+	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 or later');
 } //end if
 //--
 date_default_timezone_set('UTC');
 //--
 ini_set('zlib.output_compression', '0');							// disable ZLib Output Compression
 if((string)ini_get('zlib.output_compression') != '0') {
+	@http_response_code(500);
 	die('FATAL ERROR: The PHP.INI ZLib Output Compression cannot be disabled !');
 } //end if
 if((string)ini_get('zlib.output_handler') != '') {
+	@http_response_code(500);
 	die('FATAL ERROR: The PHP.INI Zlib Output Handler must be unset !');
 } //end if
 if((string)ini_get('output_handler') != '') {
+	@http_response_code(500);
 	die('FATAL ERROR: The PHP.INI Output Handler must be unset !');
 } //end if
 //--
+if((string)ini_get('zend.multibyte') != '0') {
+	@http_response_code(500);
+	die('FATAL ERROR: The PHP.INI Zend-MultiByte must be disabled ! Unicode support is managed via MBString ...');
+} //end if
 ini_set('default_charset', (string)SMART_FRAMEWORK_CHARSET); 		// default charset UTF-8
 if(!function_exists('mb_internal_encoding')) { 						// *** MBString is required ***
-	die('The MBString PHP Module is required for Unicode support !');
+	@http_response_code(500);
+	die('FATAL ERROR: The MBString PHP Module is required for Unicode support !');
 } //end if
 if(mb_internal_encoding((string)SMART_FRAMEWORK_CHARSET) !== true) { // this setting is required for UTF-8 mode
-	die('Failed to set MB Internal Encoding to: '.SMART_FRAMEWORK_CHARSET);
+	@http_response_code(500);
+	die('FATAL ERROR: Failed to set MB Internal Encoding to: '.SMART_FRAMEWORK_CHARSET);
 } //end if
 if(mb_substitute_character(63) !== true) {
-	die('Failed to set the MB Substitute Character to standard: 63(?) ...');
+	@http_response_code(500);
+	die('FATAL ERROR: Failed to set the MB Substitute Character to standard: 63(?) ...');
 } //end if
 //--
 ini_set('default_socket_timeout', '60');							// socket timeout (1 min.)
@@ -181,7 +193,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181025.0933'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.181025.1737'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -204,7 +216,7 @@ function RunApp() {
 $err_create_basefolder = AppPackUtils::unpack_create_basefolder();
 if((string)$err_create_basefolder != '') {
 	AppPackUtils::raise_error('ERROR: '.$err_create_basefolder);
-	die('');
+	return;
 } //end if
 //##### Check BaseFolder
 $the_app_basefolder = (string) AppPackUtils::unpack_get_basefolder_name();
@@ -212,19 +224,19 @@ AppPackUtils::raise_error_if_unsafe_path((string)$the_app_basefolder);
 if(!AppPackUtils::is_type_dir((string)$the_app_basefolder)) {
 	if(AppPackUtils::path_exists((string)$the_app_basefolder)) {
 		AppPackUtils::raise_error('ERROR: NetArchive Unpack Base Folder path exists but does not appear to be a Directory ...');
-		die('');
+		return;
 	} //end if
 	AppPackUtils::raise_error('ERROR: NetArchive Unpack Base Folder not found ...');
-	die('');
+	return;
 } //end if
 //##### Check htaccess
 if(!AppPackUtils::is_type_file((string)$the_app_basefolder.'.htaccess')) {
 	AppPackUtils::raise_error('ERROR: NetArchive Unpack Base Folder htaccess not found ...');
-	die('');
+	return;
 } //end if
 if(!AppPackUtils::have_access_read((string)$the_app_basefolder.'.htaccess')) {
 	AppPackUtils::raise_error('ERROR: NetArchive Unpack Base Folder htaccess not readable ...');
-	die('');
+	return;
 } //end if
 //##### Access Fail Log
 $the_app_auth_logfile = (string) $the_app_basefolder.'---AppCodeUnPack-FAIL-Auth---'.date('Ymd-H').'.log';
@@ -254,29 +266,29 @@ if((AppPackUtils::is_type_file((string)$appcode_ini_file_path)) AND (AppPackUtil
 					$appcode_ini_file_options[(string)$appcode_ini_file_pkey] = true;
 				} else {
 					AppPackUtils::raise_error('Failed to define an INI Key: '.(string)$appcode_ini_file_pkey);
-					die('');
+					return;
 				} //end if
 			} else {
 				AppPackUtils::raise_error('INI Key already defined: '.(string)$appcode_ini_file_pkey);
-				die('');
+				return;
 			} //end if else
 		} else {
 			AppPackUtils::raise_error('Invalid INI Key detected: '.(string)$appcode_ini_file_pkey);
-			die('');
+			return;
 		} //end if else
 	} //end foreach
 	//--
 	foreach($appcode_ini_file_options as $appcode_ini_file_pkey => $appcode_ini_file_pval) {
 		if($appcode_ini_file_pval !== true) {
 			AppPackUtils::raise_error('A required INI Key was not defined: '.(string)$appcode_ini_file_pkey);
-			die('');
+			return;
 		} //end if
 	} //end foreach
 	//--
 } else {
 	//--
 	AppPackUtils::raise_error('ERROR: App INI not found !');
-	die('');
+	return;
 	//--
 } //end if else
 //#####
@@ -284,7 +296,7 @@ if((AppPackUtils::is_type_file((string)$appcode_ini_file_path)) AND (AppPackUtil
 //##### Check IP Restrict Settings
 if(!defined('ADMIN_AREA_RESTRICT_IP_LIST')) {
 	AppPackUtils::raise_error('ERROR: IP Restrict List not set !');
-	die('');
+	return;
 } //end if
 //##### Test IP Restrict
 if((string)trim((string)ADMIN_AREA_RESTRICT_IP_LIST) != '') {
@@ -295,7 +307,7 @@ if((string)trim((string)ADMIN_AREA_RESTRICT_IP_LIST) != '') {
 			'403 Invalid Access from IP: '.(string)$_SERVER['REMOTE_ADDR'].' @ Client-Signature: '.(string)$_SERVER['HTTP_USER_AGENT']."\n",
 			'a' // append
 		);
-		die('<h1>IP Restrict !</h1><h2>Login Failed ...</h2>Client IP is not in the allowed list: '.(string)$_SERVER['REMOTE_ADDR']);
+		die('<h1>IP Restriction !</h1><h2>Login Failed ...</h2>Client IP is not in the allowed list: '.(string)$_SERVER['REMOTE_ADDR']);
 	} //end if
 } //end if
 //#####
@@ -303,13 +315,13 @@ if((string)trim((string)ADMIN_AREA_RESTRICT_IP_LIST) != '') {
 //##### Check Auth Settings
 if(!defined('ADMIN_AREA_USER') OR !defined('ADMIN_AREA_PASSWORD')) {
 	AppPackUtils::raise_error('ERROR: Authentication user / password not set !');
-	die('');
+	return;
 } elseif(strlen((string)trim((string)ADMIN_AREA_USER)) < 5) {
 	AppPackUtils::raise_error('ERROR: Authentication user is set but must be at least 5 characters !');
-	die('');
+	return;
 } elseif(strlen((string)trim((string)base64_decode((string)ADMIN_AREA_PASSWORD))) < 7) {
 	AppPackUtils::raise_error('ERROR: Authentication password is set but must be at least 7 characters !');
-	die('');
+	return;
 } //end if else
 //##### Ask Auth
 if(((string)trim((string)$_SERVER['PHP_AUTH_USER']) == '') OR ((string)$_SERVER['PHP_AUTH_USER'] != (string)ADMIN_AREA_USER) OR ((string)$_SERVER['PHP_AUTH_PW'] != (string)base64_decode((string)ADMIN_AREA_PASSWORD))) {
@@ -329,23 +341,23 @@ if(((string)trim((string)$_SERVER['PHP_AUTH_USER']) == '') OR ((string)$_SERVER[
 //##### Check Secret {{{SYNC-VALID-APPCODEPACK-APPSECRET}}}
 if(!defined('ADMIN_AREA_SECRET')) {
 	AppPackUtils::raise_error('App Secret was not set !');
-	die('');
+	return;
 } elseif(strlen((string)trim((string)ADMIN_AREA_SECRET)) < 40) {
 	AppPackUtils::raise_error('App Secret is set but must be at least 40 characters !');
-	die('');
+	return;
 } elseif(strlen((string)trim((string)ADMIN_AREA_SECRET)) > 128) {
 	AppPackUtils::raise_error('App Secret is set but must be max 128 characters !');
-	die('');
+	return;
 } //end if else
 //#####
 
 //##### Check AppIDs
 if(!defined('ADMIN_AREA_APP_IDS')) {
 	AppPackUtils::raise_error('App IDs was not set !');
-	die('');
+	return;
 } elseif((strlen((string)trim((string)ADMIN_AREA_APP_IDS)) < 3) OR (strpos((string)ADMIN_AREA_APP_IDS, '<') === false) OR (strpos((string)ADMIN_AREA_APP_IDS, '>') === false)) {
 	AppPackUtils::raise_error('Invalid App IDs List. Must be like: <app-id>(,<another-app-id>) !');
-	die('');
+	return;
 } //end if else
 //#####
 
@@ -377,7 +389,7 @@ for($i=0; $i<AppPackUtils::array_size($app_ids_arr); $i++) {
 $app_ids_arr = array(); // free mem
 if(AppPackUtils::array_size($app_ok_ids_arr) <= 0) {
 	AppPackUtils::raise_error('Empty App IDs Validated List ... ');
-	die('');
+	return;
 } //end if
 //--
 
@@ -454,7 +466,7 @@ switch((string)$_REQUEST['run']) {
 									header('Content-Disposition: inline; filename="'.AppPackUtils::safe_filename((string)pathinfo((string)$the_err_log, PATHINFO_FILENAME), '-').'"');
 									header('Content-Length: '.(int)AppPackUtils::get_file_size((string)$the_err_log));
 									readfile((string)$the_err_log);
-									die(''); // stop here
+									return; // stop here
 									break;
 								default: // VIEW
 									$data['html-main-area'] .= '<h2>DISPLAYING the App Error Log</h2>';
@@ -479,11 +491,11 @@ switch((string)$_REQUEST['run']) {
 			//--
 			if((string)trim((string)$_REQUEST['appid']) == '') {
 				AppPackUtils::raise_error('Empty AppID provided for logs !');
-				die('');
+				return;
 			} //end if
 			if(!in_array((string)trim((string)$_REQUEST['appid']), (array)$app_ok_ids_arr)) {
 				AppPackUtils::raise_error('Invalid AppID provided for logs: '.(string)$_REQUEST['appid']);
-				die('');
+				return;
 			} //end if
 			//--
 			$data['html-main-area'] .= '<h2>DISPLAYING the App Error Logs on this App Server</h2>';
@@ -492,7 +504,7 @@ switch((string)$_REQUEST['run']) {
 			$the_real_err_logs_dir = (string) AppPackUtils::safe_filename((string)trim((string)$_REQUEST['appid']));
 			if((string)$the_real_err_logs_dir == '') {
 				AppPackUtils::raise_error('Invalid AppID Directory Name: '.$the_real_err_logs_dir);
-				die('');
+				return;
 			} //end if
 			$the_real_err_logs_dir = (string) AppPackUtils::add_dir_last_slash((string)$the_real_err_logs_dir);
 			AppPackUtils::raise_error_if_unsafe_path((string)$the_real_err_logs_dir);
@@ -646,22 +658,22 @@ switch((string)$_REQUEST['run']) {
 				//-- check AppID, must not be defined already
 				if(defined('APPCODEPACK_APP_ID')) {
 					AppPackUtils::raise_error('APPCODEPACK_APP_ID was already defined and should not ... ');
-					die('');
+					return;
 				} //end if
 				//-- check and define AppID
 				if((string)trim((string)$_REQUEST['appid']) == '') {
 					AppPackUtils::raise_error('Empty AppID provided for unpack !');
-					die('');
+					return;
 				} //end if
 				if(!in_array((string)trim((string)$_REQUEST['appid']), (array)$app_ok_ids_arr)) {
 					AppPackUtils::raise_error('Invalid AppID provided for unpack: '.(string)$_REQUEST['appid']);
-					die('');
+					return;
 				} //end if
 				define('APPCODEPACK_APP_ID', (string)trim((string)$_REQUEST['appid']));
 				//-- re-check AppID
 				if(!in_array((string)APPCODEPACK_APP_ID, (array)$app_ok_ids_arr)) {
 					AppPackUtils::raise_error('APPCODEPACK_APP_ID defined but Invalid: '.APPCODEPACK_APP_ID);
-					die('');
+					return;
 				} //end if
 				//-- show AppID
 				$data['html-main-area'] .= '<h4 style="color:#FF9900">Selected APP-ID: '.AppPackUtils::escape_html((string)APPCODEPACK_APP_ID).'</h4>';
@@ -932,7 +944,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181024.r3 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181025 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1077,7 +1089,7 @@ Options -Indexes
 		//--
 		if(!function_exists('gzdecode')) {
 			self::raise_error('ERROR: The PHP ZLIB Extension (gzdecode) is required for AppNetPackager');
-			die('');
+			return;
 		} //end if
 		//-- CHECK RESTORE ROOT
 		if(!defined('APPCODEPACK_APP_ID')) {
