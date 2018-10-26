@@ -17,7 +17,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //======================================================
-// Smart-Framework - App Bootstrap
+// Smart-Framework - App Bootstrap :: r.181026
 // DEPENDS: SmartFramework, SmartFrameworkRuntime
 //======================================================
 // This file can be customized per App ...
@@ -28,12 +28,19 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
-// The following constants, if used, should be defined in etc/init.php: SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, SMART_FRAMEWORK_SESSION_HANDLER
+// This code part is handling the bootstrap libs, that can be changed by setting the following constants in etc/init.php: SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, SMART_FRAMEWORK_SESSION_HANDLER
 //####################
 
 //== Persistent-Cache Adapter
-if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM) >= 5) AND (SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM))) {
+if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM) >= 5)) {
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM);
+	if(!SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM)) {
+		Smart::raise_error(
+			'ERROR: The Custom Persistent Cache is set but the file cannot be found: '.SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM,
+			'ERROR: Invalid Settings for the Custom Persistent Cache. See the Error Log for more details ...'
+		);
+		die('');
+	} //end if
 	require((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM); // custom persistent cache
 } elseif(is_array($configs['redis'])) {
 	require('lib/app/persistent-cache-redis.php'); // load the redis based persistent cache
@@ -41,8 +48,15 @@ if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_
 	require('lib/app/persistent-cache-x-blackhole.php'); // load the blackhole (x-none) persistent cache which will implement nothing but definitions and is required for compatibility
 } //end if else
 //== Text Translations Adapter (depends on Persistent-Cache)
-if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND (substr((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM) >= 5) AND (SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM))) {
+if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND (substr((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM) >= 5)) {
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
+	if(!SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM)) {
+		Smart::raise_error(
+			'ERROR: The Custom Translations Adapter is set but the file cannot be found: '.SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM,
+			'ERROR: Invalid Settings for the Custom Translations Adapter. See the Error Log for more details ...'
+		);
+		die('');
+	} //end if
 	require((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
 } else {
 	require('lib/app/translations-adapter-yaml.php'); // text translations (YAML based adapter)
@@ -58,8 +72,15 @@ if((string)SMART_FRAMEWORK_SESSION_HANDLER === 'redis') {
 		);
 		die('');
 	} //end if else
-} elseif(((string)SMART_FRAMEWORK_SESSION_HANDLER === 'custom') AND (defined('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER') AND (substr((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER) >= 5) AND (SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER)))) {
+} elseif(((string)SMART_FRAMEWORK_SESSION_HANDLER === 'custom') AND defined('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER') AND (substr((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER) >= 5)) {
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
+	if(!SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER)) {
+		Smart::raise_error(
+			'ERROR: The Custom Session Handler is set is set but the file cannot be found: '.SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER,
+			'ERROR: Invalid Settings for App Session Handler. See the Error Log for more details ...'
+		);
+		die('');
+	} //end if
 	require((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
 } else { // files
 	// do nothing (this is built-in)

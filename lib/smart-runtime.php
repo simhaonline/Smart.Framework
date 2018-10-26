@@ -23,7 +23,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // [REGEX-SAFE-OK]
 
 //##### WARNING: #####
-// Changing the code below is not recommended (may lead to severe disrupts in the execution of this software), but of course you can do it on your own risk !!!
+// DO NOT CHANGE the code below (it may lead to severe disrupts in the execution of this software), but of course you can do it on your own risk !!!
 //####################
 
 //--
@@ -75,7 +75,7 @@ if(!headers_sent()) {
 //--
 
 //--
-if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) { // here must be file_exists() and is_link() as the file sys lib is not yet initialized ... {{{SYNC-SF-PATH-EXISTS}}}
+if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) { // here must be used the functions file_exists() and is_link() as the filesys lib is not yet initialized ... {{{SYNC-SF-PATH-EXISTS}}}
 	define('SMART_FRAMEWORK_INSTALL_MODE', 'yes');
 } else {
 	define('SMART_FRAMEWORK_INSTALL_MODE', 'no');
@@ -262,7 +262,7 @@ require((string)SMART_FRAMEWORK_APP_REQUEST); // (This can be customized)
 //==
 
 //=========================
-//========================= ALL CODE BELOW: must be created, loaded or registered after GET/POST variables registration to avoid security leaks !!! Do not modify this order ...
+//========================= ALL CODE BELOW: must be created, loaded or registered after the registration of the REQUEST variables (GET/POST/COOKIES) to avoid security leaks !!! Do not modify this order !!!
 //=========================
 
 //--------------------------------------- CONFIG INITS
