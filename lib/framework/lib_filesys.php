@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180305
+ * @version 	v.181026
  * @package 	Filesystem
  *
  */
@@ -205,7 +205,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 			'SmartFramework // FileSystemUtils // Check Valid Path // EMPTY PATH IS DISALLOWED',
 			'FileSysUtils: EMPTY PATH IS DISALLOWED !' // msg to display
 		);
-		die(''); // just in case
+		return;
 		//--
 	} //end if
 	//-- test valid path
@@ -215,7 +215,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 			'SmartFramework // FileSystemUtils // Check Valid Path // ACCESS DENIED to invalid path: '.$y_path,
 			'FileSysUtils: INVALID CHARACTERS IN PATH ARE DISALLOWED !' // msg to display
 		);
-		die(''); // just in case
+		return;
 		//--
 	} //end if
 	//-- test backward path
@@ -225,7 +225,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 			'SmartFramework // FileSystemUtils // Check Backward Path // ACCESS DENIED to invalid path: '.$y_path,
 			'FileSysUtils: BACKWARD PATH ACCESS IS DISALLOWED !' // msg to display
 		);
-		die(''); // just in case
+		return;
 		//--
 	} //end if
 	//-- test absolute path and protected path
@@ -236,7 +236,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 				'SmartFramework // FileSystemUtils // Check Absolute Path // ACCESS DENIED to invalid path: '.$y_path,
 				'FileSysUtils: ABSOLUTE PATH ACCESS IS DISALLOWED !' // msg to display
 			);
-			die(''); // just in case
+			return;
 			//--
 		} //end if
 	} //end if
@@ -248,7 +248,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 				'SmartFramework // FileSystemUtils // Check Protected Path // ACCESS DENIED to invalid path: '.$y_path,
 				'FileSysUtils: PROTECTED PATH ACCESS IS DISALLOWED !' // msg to display
 			);
-			die(''); // just in case
+			return;
 			//--
 		} //end if
 	} //end if
@@ -259,7 +259,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 			'SmartFramework // FileSystemUtils // Check Max Path Length (1024) // ACCESS DENIED to invalid path: '.$y_path,
 			'FileSysUtils: PATH LENGTH IS EXCEEDING THE MAX ALLOWED LENGTH !' // msg to display
 		);
-		die(''); // just in case
+		return;
 		//--
 	} //end if
 	//--
@@ -1285,7 +1285,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.180305
+ * @version 	v.181026
  * @package 	Filesystem
  *
  */

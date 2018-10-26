@@ -68,10 +68,10 @@ define('SMART_FRAMEWORK_CHMOD_FILES', 		0660);											// File Permissions: 06
 define('SMART_FRAMEWORK_DOWNLOAD_FOLDERS', 			'<wpub>');								// Allow downloads ONLY from these folders: <folder1>,<folder2> (relative to the app root)
 define('SMART_FRAMEWORK_DOWNLOAD_EXPIRE',			1);										// Download expiration time in hours (between 1 and 24 hours)
 //define('SMART_FRAMEWORK_DOWNLOAD_SKIP_LOG',			true);								// If defined will disable logging for Downloads
-define('SMART_FRAMEWORK_UPLOAD_PICTS', 				'<png>,<gif>,<jpeg>,<jpg>');			// Uploads images type ALLOWED extensions list
+define('SMART_FRAMEWORK_UPLOAD_PICTS', 				'<png>,<gif>,<jpeg>,<jpg>,<svg>');		// Uploads images type ALLOWED extensions list
 define('SMART_FRAMEWORK_UPLOAD_MOVIES', 			'<webm>,<ogv>,<mp4>,<mov>');			// Uploads video type ALLOWED extensions list
-define('SMART_FRAMEWORK_UPLOAD_DOCS', 				'<txt>,<rtf>,<pdf>,<odt>,<ods>,<odp>,<csv>,<doc>,<xls>,<ppt>'); // Uploads document type ALLOWED extensions list
-define('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS',	SMART_FRAMEWORK_UPLOAD_PICTS.','.SMART_FRAMEWORK_UPLOAD_MOVIES.','.SMART_FRAMEWORK_UPLOAD_DOCS.',<md>,<json>,<yaml>,<eml>,<ics>,<vcf>,<7z>,<zip>,<rar>,<tar>,<tgz>,<tbz>,<gz>,<bz2>,<xz>,<ps>,<eps>,<tif>,<tiff>,<wmf>,<bmp>,<swf>'); // *OPTIONAL* list of allowed extensions (if this is not defined will allow any extension except ones listed at SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS)
+define('SMART_FRAMEWORK_UPLOAD_DOCS', 				'<txt>,<md>,<pdf>,<odt>,<ods>,<odp>,<csv>,<doc>,<rtf>,<xls>,<ppt>'); // Uploads document type ALLOWED extensions list
+define('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS',	SMART_FRAMEWORK_UPLOAD_PICTS.','.SMART_FRAMEWORK_UPLOAD_MOVIES.','.SMART_FRAMEWORK_UPLOAD_DOCS.',<json>,<yaml>,<xml>,<eml>,<ics>,<vcf>,<7z>,<zip>,<rar>,<tar>,<tgz>,<tbz>,<gz>,<bz2>,<xz>,<ps>,<eps>,<tif>,<tiff>,<wmf>,<bmp>,<swf>'); // *OPTIONAL* list of allowed extensions (if this is not defined will allow any extension except ones listed at SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS)
 define('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS', 	'<htm>,<html>,<js>,<sass>,<scss>,<css>,<shtml>,<phtml>,<php>,<sql>,<inc>,<tpl>,<twig>,<pl>,<py>,<pyc>,<pyo>,<rb>,<go>,<asp>,<jsp>,<sh>,<bash>,<cgi>,<fcgi>,<fastcgi>,<scgi>,<wsgi>,<exe>,<dll>,<dylib>,<bin>,<so>'); // Uploads scripts or executables DENIED extensions list
 //---------------------------------------- SPECIAL .htaccess FILES CONTENT :: These are set for Apache web server. If you are using another web server you may adjust them.
 //-- .htaccess DENY EXECUTION OF SCRIPTS

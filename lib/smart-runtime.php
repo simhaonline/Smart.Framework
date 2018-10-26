@@ -45,7 +45,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.25'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.10.26'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 
@@ -1517,7 +1517,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (Temporary Folder is Not Writable)' // this must be also as message !!!
 		);
-		die();
 		return;
 	} //end if
 	if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
@@ -1525,7 +1524,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #TMP: '.$dir.'.htaccess',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	//-- tmp cache dir
@@ -1539,7 +1537,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	//-- tmp logs dir
@@ -1553,7 +1550,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (Error Log Folder is Not Writable)' // this must be also as message !!!
 		);
-		die();
 		return;
 	} //end if
 	//-- tmp logs/admin dir
@@ -1567,7 +1563,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	//-- tmp logs/idx dir
@@ -1581,7 +1576,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	//-- tmp sessions dir
@@ -1595,7 +1589,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	//-- wpub dir
@@ -1615,7 +1608,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: #WEB-PUBLIC Folder: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	if(!SmartFileSystem::is_type_file($ctrlfile)) {
@@ -1623,7 +1615,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'Cannot Connect to FileSystem #WEB-PUBLIC: '.$ctrlfile,
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	if(!SmartFileSystem::is_type_file($htfile)) {
@@ -1631,7 +1622,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #WEB-PUBLIC: '.$htfile,
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	//-- wpub/webapps-content
@@ -1645,7 +1635,6 @@ public static function Create_Required_Dirs() {
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
 			'App Init ERROR :: (See Error Log for More Details)'
 		);
-		die();
 		return;
 	} //end if
 	//--

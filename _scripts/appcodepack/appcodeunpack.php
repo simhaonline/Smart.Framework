@@ -193,7 +193,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181025.1737'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.181026.1535'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -944,7 +944,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181025 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181026 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2357,7 +2357,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.180305
+	//##### SmartFileSysUtils v.181026
 
 
 	//================================================================
@@ -2468,7 +2468,7 @@ Options -Indexes
 				'FileSystemUtils // Check Valid Path // EMPTY PATH IS DISALLOWED',
 				'FileSysUtils: EMPTY PATH IS DISALLOWED !' // msg to display
 			);
-			die(''); // just in case
+			return;
 			//--
 		} //end if
 		//-- test valid path
@@ -2478,7 +2478,7 @@ Options -Indexes
 				'FileSystemUtils // Check Valid Path // ACCESS DENIED to invalid path: '.$y_path,
 				'FileSysUtils: INVALID CHARACTERS IN PATH ARE DISALLOWED !' // msg to display
 			);
-			die(''); // just in case
+			return;
 			//--
 		} //end if
 		//-- test backward path
@@ -2488,7 +2488,7 @@ Options -Indexes
 				'FileSystemUtils // Check Backward Path // ACCESS DENIED to invalid path: '.$y_path,
 				'FileSysUtils: BACKWARD PATH ACCESS IS DISALLOWED !' // msg to display
 			);
-			die(''); // just in case
+			return;
 			//--
 		} //end if
 		//-- test absolute path and protected path
@@ -2499,7 +2499,7 @@ Options -Indexes
 					'FileSystemUtils // Check Absolute Path // ACCESS DENIED to invalid path: '.$y_path,
 					'FileSysUtils: ABSOLUTE PATH ACCESS IS DISALLOWED !' // msg to display
 				);
-				die(''); // just in case
+				return;
 				//--
 			} //end if
 		} //end if
@@ -2511,7 +2511,7 @@ Options -Indexes
 					'FileSystemUtils // Check Protected Path // ACCESS DENIED to invalid path: '.$y_path,
 					'FileSysUtils: PROTECTED PATH ACCESS IS DISALLOWED !' // msg to display
 				);
-				die(''); // just in case
+				return;
 				//--
 			} //end if
 		} //end if
@@ -2522,7 +2522,7 @@ Options -Indexes
 				'FileSystemUtils // Check Max Path Length (1024) // ACCESS DENIED to invalid path: '.$y_path,
 				'FileSysUtils: PATH LENGTH IS EXCEEDING THE MAX ALLOWED LENGTH !' // msg to display
 			);
-			die(''); // just in case
+			return;
 			//--
 		} //end if
 		//--
@@ -2666,7 +2666,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.180305
+	//##### SmartFileSystem v.181026
 
 
 	//================================================================
