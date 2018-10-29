@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181019
+ * @version 	v.181029
  * @package 	Application
  *
  */
@@ -239,6 +239,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	// It must NOT contain STATIC functions / Properties to avoid late state binding (self:: vs static::)
 
 	//--
+	private $appenv;
 	private $releasehash;
 	private $modulearea;
 	private $modulepath;
@@ -284,6 +285,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$ctrl_arr = (array) explode('.', (string)$y_controller);
 		//--
+		$this->appenv 			= (string) (SMART_ERROR_HANDLER === 'log') ? 'prod' : 'dev'; 				// app environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
 		$this->releasehash 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); 						// the release hash based on app framework version, framework release and modules version
 		$this->modulearea 		= (string) $y_area; 														// index | admin
 		$this->modulepath 		= (string) $y_module_path; 													// modules/mod-something/
@@ -425,6 +427,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @param 	ENUM 		$param 		:: The selected parameter
 	 * The valid param values are:
+	 * 		app-env 					:: 		ex: dev | prod (based on SMART_ERROR_HANDLER)
 	 * 		app-namespace 				:: 		ex: smartframework.default (the app namespace as defined in etc/init.php)
 	 * 		app-domain 					:: 		ex: 127.0.0.1|localhost|sdom.dom.ext|dom.ext (the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain'])
 	 * 		release-hash 				:: 		ex: 29bp3w (the release hash based on app framework version, framework release and modules version)
@@ -466,6 +469,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$out = '';
 		//--
 		switch((string)$param) {
+			case 'app-env':
+				$out = $this->appenv;
+				break;
 			case 'app-domain':
 				$out = Smart::get_from_config('app.'.$this->modulearea.'-domain');
 				break;
