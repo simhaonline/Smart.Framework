@@ -193,7 +193,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181026.1535'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.181031.1005'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -617,7 +617,9 @@ switch((string)$_REQUEST['run']) {
 				} //end for
 				//--
 				if(AppPackUtils::array_size($arr_lst_dpls) > 0) {
-					$data['html-main-area'] .= '<h4 style="color:#778899">LIST of App Deployments for ALL managed AppIDs (listed in reverse order, newer first) found in folder: '.AppPackUtils::escape_html((string)$the_dpls_dir).'</h4>';
+					$data['html-main-area'] .= '<h4 style="color:#778899;">LIST of App Deployments for ALL managed AppIDs (listed in reverse order, newer first) found in folder: '.AppPackUtils::escape_html((string)$the_dpls_dir).'</h4>';
+					$data['html-main-area'] .= '<script>function doFilter(filter) { var expr = ""; if(filter) { expr = String(document.getElementById("filter-fld").value); } var el = document.getElementById("filter-container").querySelectorAll(".filter-element"); for(var i=0; i<el.length; i++) { var elTxt = String(el[i].innerText); el[i].style.display = "block"; if(expr) { if(elTxt.indexOf(expr) === -1) { el[i].style.display = "none"; } } } }</script><input type="text" id="filter-fld" title="Filter by" placeholder="Filter by" style="width:200px;"> &nbsp; <button id="filter-btn" onClick="doFilter(true); return false;">Display by Filter</button>&nbsp;<button id="filter-reset-btn" onClick="doFilter(false); return false;">Display All</button><br><br>';
+					$data['html-main-area'] .= '<div id="filter-container">';
 					foreach($arr_lst_dpls as $key => $val) {
 						$tmp_arr_parse_dpl = (array) explode('#', (string)$key);
 						$tmp_arr_parse_dpl = (int) ceil((string)$tmp_arr_parse_dpl[(int)AppPackUtils::array_size($tmp_arr_parse_dpl)-1]);
@@ -627,9 +629,10 @@ switch((string)$_REQUEST['run']) {
 							$tmp_arr_dtime_dpl = '(? unknown, could not parse date/time)';
 						} //end if else
 						$tmp_arr_parse_dpl = array(); // reset
-						$data['html-main-area'] .= '<div title="'.AppPackUtils::escape_html((string)$val).'" style="background:#ECECEC; color:#333333; border-radius:5px; padding:8px; margin-bottom:5px; font-weight:bold; cursor:help;">'.AppPackUtils::escape_html((string)$key).' &nbsp; &nbsp; @  &nbsp; &nbsp; '.AppPackUtils::escape_html((string)$tmp_arr_dtime_dpl).'</div>';
+						$data['html-main-area'] .= '<div title="'.AppPackUtils::escape_html((string)$val).'" class="filter-element" style="background:#ECECEC; color:#333333; border-radius:5px; padding:8px; margin-bottom:5px; font-weight:bold; cursor:help;">'.AppPackUtils::escape_html((string)$key).' &nbsp; &nbsp; @  &nbsp; &nbsp; '.AppPackUtils::escape_html((string)$tmp_arr_dtime_dpl).'</div>';
 						$tmp_arr_dtime_dpl = ''; // reset
 					} //end foreach
+					$data['html-main-area'] .= '</div>';
 				} else {
 					$data['html-main-area'] .= '<div style="margin-bottom:20px; padding:7px; line-height:1.125em; font-weight:bold; color: #FFFFFF; background:#778899; border:1px solid #8899AA; border-radius:6px; box-shadow: 2px 2px 3px #D2D2D2;">';
 					$data['html-main-area'] .= '<h3>'.'There are no Deployments in: '.AppPackUtils::escape_html($the_dpls_dir).'</h3>';
@@ -722,13 +725,13 @@ switch((string)$_REQUEST['run']) {
 			//--
 			$data['html-main-area'] .= '<h2>DEPLOY a new AppCodePack Archive on this App Server</h2>';
 			$data['html-main-area'] .= '<div style="margin-bottom:20px; padding:7px; line-height:1.125em; font-weight:bold; color: #FFFFFF; background:#009ACE; border:1px solid #0089BD; border-radius:6px; box-shadow: 2px 2px 3px #D2D2D2;">';
-			$data['html-main-area'] .= '*** INFO: DEPLOYING A PACKAGE ON THE SERVER CANNOT BE UNDONE ***<br>** TO UPGRADE/ROLLBACK THE APP CODE ON THIS SERVER REQUIRES TO UPLOAD ANOTHER PACKAGE ... **<br><br>';
+			$data['html-main-area'] .= '*** INFO: DEPLOYING A PACKAGE ON THE SERVER CANNOT BE UNDONE ***<br>** TO UPGRADE/ROLLBACK ANY APP ON THIS SERVER REQUIRES TO UPLOAD AN APPCODEPACK NETARCHIVE PACKAGE ... **<br><br>';
 			$data['html-main-area'] .= '* PACKAGE DEPLOYMENT INSTRUCTIONS: *<ol>';
-			$data['html-main-area'] .= '<li>SELECT an AppID from below and UPLOAD a valid AppCodePack NetArchive Package (.z-netarch) that match the selected AppID.</li>';
-			$data['html-main-area'] .= '<li>After the upload, if the package will be validated, it will be deployed on the Apache/PHP server within the coresponding AppID folder (directory).</li>';
-			$data['html-main-area'] .= '<li>Deploying the package on server will replace all the files and folders within the coresponding AppID base folder, except: [ tmp, wpub, #{protected} and @symlinks ].</li>';
-			$data['html-main-area'] .= '<li>If the package contains the `maintenance.html` file the HTTP 503 Maintenance Mode will be enabled automatically if supported by the application.</li>';
-			$data['html-main-area'] .= '<li>If the package contains the `appcode-upgrade.php` file (app deploy task/upgrade script) it will be executed prior to disable the maintenance.</li>';
+			$data['html-main-area'] .= '<li>SELECT an AppID from below and UPLOAD a valid AppCodePack NetArchive Package (.z-netarch) that match the selected AppID using a valid AppID-Hash.</li>';
+			$data['html-main-area'] .= '<li>After the upload, if the Package will be validated, it will be deployed on the Apache/PHP server within the coresponding AppID folder (directory).</li>';
+			$data['html-main-area'] .= '<li>Deploying the Package on the server will replace all the files and folders within the coresponding AppID base folder, except: [ tmp, wpub, #{protected} and @symlinks ].</li>';
+			$data['html-main-area'] .= '<li>If the Package contains the `maintenance.html` file the HTTP 503 Maintenance Mode will be enabled automatically if explicit enabled (.htaccess settings).</li>';
+			$data['html-main-area'] .= '<li>If the Package contains the `appcode-upgrade.php` file (App deploy task/upgrade script) it will be executed prior to disable the Maintenance Mode.</li>';
 			$data['html-main-area'] .= '</ol>';
 			$data['html-main-area'] .= '</div>';
 			$data['html-main-area'] .= '<form name="unpack-form" id="unpack-form" method="post" enctype="multipart/form-data" action="?run='.AppPackUtils::escape_html(rawurlencode((string)$_REQUEST['run'])).'">';
@@ -944,7 +947,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181026 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181031 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
