@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
  * @version 	v.180309
- * @package 	Network:HTTP
+ * @package 	Network
  *
  */
 final class SmartHttpClient {
@@ -912,7 +912,7 @@ print_r(
  * @access      PUBLIC
  * @depends     classes: Smart
  * @version     v.180309
- * @package 	Network:HTTP
+ * @package 	Network
  *
  */
 final class SmartHttpUtils {

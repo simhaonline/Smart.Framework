@@ -48,7 +48,7 @@ if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
  * @access 		PUBLIC
  * @depends 	-
  * @version 	v.181019
- * @package 	Caching
+ * @package 	Application
  *
  */
 final class SmartCache {
@@ -190,10 +190,12 @@ final class SmartCache {
  *
  * It must contain ONLY public functions to avoid late state binding (self:: vs static::)
  *
- * @access 		PUBLIC
+ * @access 		private
+ * @internal
+ *
  * @depends 	-
  * @version 	v.181019
- * @package 	Caching
+ * @package 	Application
  *
  */
 abstract class SmartAbstractPersistentCache {

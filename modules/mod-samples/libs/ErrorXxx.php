@@ -1,5 +1,5 @@
 <?php
-// [LIB - SmartFramework / Samples / ErrorXxx - a helper for custom 4xx and 5xx status pages]
+// [LIB - SmartFramework / Samples / ErrorXxx - a sample helper for custom 4xx and 5xx status pages]
 // (c) 2006-2018 unix-world.org - all rights reserved
 // v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
@@ -15,6 +15,15 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
+/**
+ * Sample Helper to implement custom Error Handlers for HTTP Status Errors (4xx, 5xx)
+ *
+ * @access 		private
+ * @internal
+ *
+ * @version 	v.181105
+ *
+ */
 abstract class ErrorXxx extends \SmartAbstractAppController {
 
 	protected $errcode = 000;

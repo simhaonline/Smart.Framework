@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
  * @version     v.181019
- * @package     DATA:XML
+ * @package     Parsers
  *
  */
 final class SmartXmlParser {
@@ -602,7 +602,7 @@ private function DomNode2Array($node) {
  * @access      PUBLIC
  * @depends     classes: Smart
  * @version     v.181019
- * @package     DATA:XML
+ * @package     Exporters
  *
  */
 final class SmartXmlComposer {

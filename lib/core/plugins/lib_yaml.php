@@ -45,7 +45,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.171124
- * @package 	DATA:YAML
+ * @package 	Parsers
  *
  */
 final class SmartYamlConverter {

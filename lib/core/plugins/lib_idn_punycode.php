@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: SmartUnicode
  * @version 	v.160930
- * @package 	Network:IDN-Punycode
+ * @package 	Converters
  *
  */
 final class SmartPunycode {

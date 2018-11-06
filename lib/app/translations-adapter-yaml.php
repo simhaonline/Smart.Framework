@@ -28,12 +28,16 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 define('SMART_FRAMEWORK__INFO__TEXT_TRANSLATIONS_ADAPTER', 'YAML: File based');
 
 /**
- * Class SmartAdapterTextTranslations - YAML files based text translations adapter
+ * Class App.Custom.TextTranslationsAdapter.Yaml - YAML files based text translations adapter (default).
  *
- * @access 		private
- * @internal
+ * To use your own custom adapter for the text translations in Smart.Framework you have to build it by implementing the SmartInterfaceAdapterTextTranslations interface and define it in etc/init.php at the begining such as: define('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM', 'modules/app/translations-custom-adapter.php');
  *
- * @version		181019
+ * @usage  		static object: Class::method() - This class provides only STATIC methods
+ *
+ * @access 		PUBLIC
+ * @depends 	-
+ * @version 	v.181105
+ * @package 	Application
  *
  */
 final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTranslations {

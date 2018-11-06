@@ -13,6 +13,12 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 define('SMART_APP_MODULE_AREA', 'INDEX'); // INDEX, ADMIN, SHARED
 
+/**
+ * Index Controller
+ *
+ * @ignore
+ *
+ */
 class SmartAppIndexController extends \SmartModExtLib\Samples\ErrorXxx {
 
 	protected $errcode = 404;

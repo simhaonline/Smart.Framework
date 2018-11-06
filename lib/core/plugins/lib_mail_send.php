@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.180727
- * @package 	Mailer:Send
+ * @package 	Mailer
  *
  */
 final class SmartMailerSend {
@@ -608,7 +608,7 @@ private function build_multipart() {
  *
  * @depends 	classes: Smart
  * @version 	v.170913
- * @package 	Mailer:Send
+ * @package 	Mailer
  *
  */
 final class SmartMailerSmtpClient {

@@ -72,7 +72,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
  * @version 	v.180301.r3
- * @package 	Media:ImageProcessing
+ * @package 	Converters
  *
  */
 final class SmartImageGdProcess {

@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.180327
- * @package 	Components:Calendar
+ * @package 	Components:Core
  *
  */
 final class SmartCalendarComponent {
@@ -155,7 +155,7 @@ private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_high
  *
  * @depends 	classes: Smart
  * @version 	v.180327
- * @package 	Components:Calendar
+ * @package 	Components:Core
  *
  */
 final class SmartHTMLCalendar {

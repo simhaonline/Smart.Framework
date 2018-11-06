@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	SmartFramework
  * @version 	v.180522
- * @package 	Exporters
+ * @package 	Converters
  *
  */
 final class SmartMarkdownToHTML {

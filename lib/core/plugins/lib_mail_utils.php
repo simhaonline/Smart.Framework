@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
  * @version 	v.181019
- * @package 	Mailer:Utility
+ * @package 	Mailer
  *
  */
 final class SmartMailerUtils {
@@ -746,7 +746,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
  * @version 	v.181019
- * @package 	Mailer:Utility
+ * @package 	Mailer
  *
  */
 final class SmartMailerMimeParser {

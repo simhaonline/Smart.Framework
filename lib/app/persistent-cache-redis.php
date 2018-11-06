@@ -19,8 +19,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based');
 
 /**
- * Class: SmartPersistentCache (Redis based Persistent Cache adapter) - provides a persistent Cache (in-Redis-Memory), that can be shared and/or reused between multiple PHP executions.
+ * Class: App.Custom.PersistentCacheAdapter.Redis adapter based on Redis - provides a persistent Cache (in-Redis-Memory), that can be shared and/or reused between multiple PHP executions.
  * If Redis is not available it will be replaced by the Blackhole Persistent Cache adapter that will provide the compatibility adapter for the case there is no real Persistent Cache available.
+ *
+ * To use your own custom adapter for the persistent cache in Smart.Framework you have to build it by extending the SmartAbstractPersistentCache abstract class and define it in etc/init.php at the begining such as: define('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM',  'modules/app/persistent-cache-custom-adapter.php');
  *
  * Requires Redis to be set-up in config properly.
  * This cache type is persistent will keep the cached values in Redis between multiple PHP executions.
@@ -34,8 +36,8 @@ define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based')
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.180423
- * @package 	Caching
+ * @version 	v.181105
+ * @package 	Application
  *
  */
 final class SmartPersistentCache extends SmartAbstractPersistentCache {
