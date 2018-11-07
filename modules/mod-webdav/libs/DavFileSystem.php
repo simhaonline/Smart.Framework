@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.180309
+	// v.181107
 
 	public static function methodOptions() { // 200
 		//--
@@ -383,7 +383,7 @@ final class DavFileSystem {
 		} //end if
 		//--
 		$the_ext = (string) strtolower(trim((string)\SmartFileSysUtils::get_file_extension_from_path((string)$dav_vfs_path)));
-		if(!defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+		if(!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) {
 			http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
@@ -757,7 +757,7 @@ final class DavFileSystem {
 				$ok = \SmartFileSystem::copy($dav_vfs_path, $path_dest, false, true);
 			} elseif((string)$dav_method == 'MOVE') {
 				$tmp_fext = (string) strtolower((string)\SmartFileSysUtils::get_file_extension_from_path($path_dest)); // get the extension
-				if(!defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) { // {{{SYNC-CHK-ALLOWED-DENIED-EXT}}}
+				if(!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) { // {{{SYNC-CHK-ALLOWED-DENIED-EXT}}}
 					http_response_code(500); // internal server error
 					return 500;
 				} //end if

@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCalDav {
 
 	// ::
-	// v.180309
+	// v.181107
 
 	private static $caldav_ns = 'xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/"';
 	private static $caldav_urn = 'urn:ietf:params:xml:ns:caldav';
@@ -197,7 +197,7 @@ final class DavFsCalDav {
 		} //end if
 		//--
 		$the_ext = (string) strtolower(trim((string)\SmartFileSysUtils::get_file_extension_from_path((string)$dav_vfs_path)));
-		if(!defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+		if(!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) {
 			http_response_code(415); // unsupported media type
 			return 415;
 		} //end if

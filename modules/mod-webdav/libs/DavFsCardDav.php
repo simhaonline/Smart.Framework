@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCardDav {
 
 	// ::
-	// v.180309
+	// v.181107
 
 	private static $carddav_ns = 'xmlns:card="urn:ietf:params:xml:ns:carddav"';
 	private static $carddav_urn = 'urn:ietf:params:xml:ns:carddav';
@@ -197,7 +197,7 @@ final class DavFsCardDav {
 		} //end if
 		//--
 		$the_ext = (string) strtolower(trim((string)\SmartFileSysUtils::get_file_extension_from_path((string)$dav_vfs_path)));
-		if(!defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+		if(!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) {
 			http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
