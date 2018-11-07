@@ -25,7 +25,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 abstract class ControllerAdmCalDavFs extends \SmartAbstractAppController {
 
-	// v.180412
+	// v.181107
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';

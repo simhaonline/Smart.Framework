@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_DIRECT_OUTPUT', true); // do direct output
  */
 class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCardDavFs {
 
-	// v.180309
+	// v.181107
 
 	public function Run() {
 
