@@ -17,7 +17,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //======================================================
-// Smart-Framework - Smart Components
+// Smart.Framework - Smart Components
 // DEPENDS:
 //	* Smart::
 //	* SmartUtils::
@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.181029
+ * @version 	v.181107.r3
  * @package 	Components:Core
  *
  */
@@ -56,78 +56,6 @@ final class SmartComponents {
 
 	// ::
 	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
-
-//================================================================
-/**
- * Function: Parse Language Based Settings
- * This is intended to pre-parse the Settings to select the proper language ...
- *
- * @access 		private
- * @internal
- *
- */
-public static function get_by_language_parsed_settings($arr_base_settings, $arr_local_settings) {
-	//--
-	$the_lang = SmartTextTranslations::getLanguage();
-	//--
-	if(is_array($arr_base_settings)) {
-		//--
-		if(is_array($arr_local_settings)) {
-			//--
-			foreach($arr_local_settings as $key => $val) {
-				//--
-				if(strlen($key) > 0) {
-					//--
-					if(array_key_exists($key, $arr_base_settings)) { // only if previous defined
-						//--
-						if((is_array($val)) AND ((string)$the_lang != '')) {
-							//--
-							if((string)$val['@language@'] == 'select') {
-								//--
-								$arr_base_settings[$key] = $val[(string)$the_lang];
-								//--
-								if((string)$arr_base_settings[$key] == '') { // if the current language have no value set
-									//--
-									foreach($val as $test_key => $test_val) { // try to get the first one
-										//--
-										if(((string)$test_key != '@language@') AND ((string)$test_val != '')) { // skip language select key ...
-											//--
-											$arr_base_settings[$key] = $test_val;
-											//--
-											break; // stop after first was found
-											//--
-										} //end if
-										//--
-									} //end foreach
-									//--
-								} //end if
-								//--
-							} else {
-								//--
-								$arr_base_settings[$key] = $val;
-								//--
-							} //end if else
-							//--
-						} else {
-							//--
-							$arr_base_settings[$key] = $val;
-							//--
-						} //end if else
-						//--
-					} //end if
-					//--
-				} //end if
-				//--
-			} //end foreach
-			//--
-		} //end if
-		//--
-	} //end if
-	//--
-	return $arr_base_settings; // mixed
-	//--
-} //END FUNCTION
-//================================================================
 
 
 //================================================================
@@ -205,8 +133,8 @@ public static function get_date_format_for_php($y_format) {
 public static function app_error_message($y_title, $y_name, $y_mode, $y_type, $y_logo, $y_width, $y_area, $y_errmsg, $y_area_one, $y_area_two) {
 	//--
 	$y_width = (int) $y_width;
-	if($y_width < 550) {
-		$y_width = 550;
+	if($y_width < 250) {
+		$y_width = 250;
 	} elseif($y_width > 750) {
 		$y_width = 750;
 	} //end if
@@ -772,7 +700,7 @@ public static function html_selector_true_false($y_var, $y_val) {
  * @param YES/NO			$y_allowblank			If Yes, a blank value is allowed in list
  * @param CSS/#JS-UI#		$y_extrastyle			Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'
  *
- * @return HTMLCode
+ * @return STRING 									[HTML Code]
  */
 public static function html_select_list_single($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_dimensions='150/0', $y_custom_js='', $y_raw='no', $y_allowblank='yes', $y_extrastyle='') {
 
@@ -961,7 +889,7 @@ public static function html_select_list_single($y_id, $y_selected_value, $y_mode
  * @param CODE				$y_custom_js			custom js code (Ex: submit on change)
  * @param SPECIAL			$y_extrastyle			Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'
  *
- * @return HTMLCode
+ * @return STRING 									[HTML Code]
  */
 public static function html_select_list_multi($y_id, $y_selected_value, $y_mode, $yarr_data, $y_varname='', $y_draw='list', $y_sync_values='no', $y_dimensions='300/0', $y_custom_js='', $y_extrastyle='#JS-UI-FILTER#') {
 
@@ -1189,9 +1117,9 @@ public static function html_select_list_multi($y_id, $y_selected_value, $y_mode,
  * Creates a navigation pager
  * The style of the pager can be set overall in: $configs['nav']['pager'], and can be: arrows or numeric
  *
- * @hints			$link = 'some-script.php?ofs={{{offset}}}';
+ * @hints				$link = 'some-script.php?ofs={{{offset}}}';
  *
- * @return HTML Code
+ * @return STRING 		[HTML Code]
  *
  */
 public static function html_navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=[]) {
@@ -2217,7 +2145,7 @@ public static function js_ajax_submit_html_form($y_form_id, $y_script_url, $y_co
  * @param 	$y_replace_html 	**OPTIONAL** the HTML Code to replace in DIV on Success
  * @param 	$y_js_evcode 		**OPTIONAL** the JS EvCode to be executed on either Success or Error (before redirect or Div Replace)
  *
- * @return MIXED				[JSON data]
+ * @return STRING				[JSON data string]
  *
  */
 public static function js_ajax_replyto_html_form($y_status, $y_title, $y_message, $y_redirect_url='', $y_replace_div='', $y_replace_html='', $y_js_evcode='') {
@@ -2342,7 +2270,7 @@ public static function js_code_notification_remove($y_id='') {
  * @internal
  *
  */
-public static function js_code_ui_confirm_dialog($y_question_html, $y_ok_jscript_function='', $y_width='550', $y_height='250', $y_title='?') {
+public static function js_code_ui_confirm_dialog($y_question_html, $y_ok_jscript_function='', $y_width='', $y_height='', $y_title='?') {
 	//--
 	return 'SmartJS_BrowserUtils.confirm_Dialog(\''.Smart::escape_js($y_question_html).'\', \''.Smart::escape_js($y_ok_jscript_function).'\', \''.Smart::escape_js($y_title).'\', '.(int)$y_width.', '.(int)$y_height.');';
 	//--
@@ -2918,6 +2846,58 @@ public static function app_powered_info($y_show_versions='no', $y_plugins=array(
 
 
 //================================================================
+// This conform the var names to lowercase and set the meta vars into a template array context (by default this is used by ::render_app_template() but can be used outside if needed ...
+public static function set_app_template_conform_metavars($arr_data) {
+	//--
+	if(!is_array($arr_data)) {
+		return array();
+	} //end if
+	//--
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		$the_area = 'admin';
+		$the_realm = 'ADM';
+	} else {
+		$the_area = 'index';
+		$the_realm = 'IDX';
+	} //end if else
+	$os_bw = (array) SmartUtils::get_os_browser_ip();
+	//--
+	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower (only 1st level, not nested), to comply with SmartAbstractAppController handling mode
+	//--
+	$arr_data['release-hash'] 				= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
+	$arr_data['lang'] 						= (string) SmartTextTranslations::getLanguage(); 					// current language (ex: en)
+	$arr_data['charset'] 					= (string) SMART_FRAMEWORK_CHARSET;									// current charset (ex: UTF-8)
+	$arr_data['timezone'] 					= (string) SMART_FRAMEWORK_TIMEZONE; 								// current timezone (ex: UTC)
+	$arr_data['client-ip'] 					= (string) $os_bw['ip']; 											// client browser IP (ex: 127.0.0.1)
+	$arr_data['client-os'] 					= (string) $os_bw['os']; 											// client browser OS (ex: bsd)
+	$arr_data['client-is-mobile'] 			= (string) $os_bw['mobile']; 										// client browser is Mobile (yes/no)
+	$arr_data['client-class'] 				= (string) $os_bw['bc']; 											// client browser Class (ex: gk)
+	$arr_data['client-browser'] 			= (string) $os_bw['bw']; 											// client browser (ex: fox)
+	$arr_data['client-uid-cookie-name'] 	= (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME;					// client browser UID Cookie Name (as defined in etc/init.php) ; it may be required to pass this cookie name to the Javascript ...)
+	$arr_data['client-uid-cookie-domain'] 	= (string) SmartUtils::cookie_default_domain(); 					// client browser UID Cookie Domain (as defined in etc/init.php) ; it may be required to pass this cookie domain to the Javascript ...)
+	$arr_data['app-env'] 					= (string) (SMART_ERROR_HANDLER === 'log') ? 'prod' : 'dev'; 		// App Environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
+	$arr_data['app-namespace'] 				= (string) SMART_SOFTWARE_NAMESPACE;								// NameSpace from configs (as defined in etc/init.php)
+	$arr_data['app-realm'] 					= (string) $the_realm; 												// IDX (for index.php area) ; ADM (for admin.php area)
+	$arr_data['app-domain'] 				= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain']
+	$arr_data['base-url'] 					= (string) SmartUtils::get_server_current_url(); 					// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
+	$arr_data['base-path'] 					= (string) SmartUtils::get_server_current_path(); 					// / | /sites/frameworks/smart-framework/
+	$arr_data['base-domain'] 				= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP (ex: 127.0.0.1)
+	$arr_data['srv-ip-addr'] 				= (string) SmartUtils::get_server_current_ip(); 					// current server IP (ex: 127.0.0.1)
+	$arr_data['srv-domain'] 				= (string) SmartUtils::get_server_current_domain_name(); 			// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
+	$arr_data['srv-proto'] 					= (string) SmartUtils::get_server_current_protocol(); 				// http:// | https://
+	$arr_data['srv-port'] 					= (string) SmartUtils::get_server_current_port(); 					// 80 | 443 | ...
+	$arr_data['srv-script'] 				= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
+	$arr_data['srv-urlquery'] 				= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
+	$arr_data['srv-requri'] 				= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
+	$arr_data['debug-mode'] 				= (string) (SmartFrameworkRuntime::ifDebug() ? 'yes' : 'no'); 		// yes | no
+	//--
+	return (array) $arr_data;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 // This renders the App Main Template (should be used only on custom developments ...)
 public static function render_app_template($template_path, $template_file, $arr_data) { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
@@ -2951,23 +2931,12 @@ public static function render_app_template($template_path, $template_file, $arr_
 		return;
 	} //end if
 	//--
-	$arr_data = (array) array_change_key_case((array)$arr_data, CASE_LOWER); // make all keys lower (only 1st level, not nested), to comply with SmartAbstractAppController handling mode
-	//--
 
-	//--
-	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-		$the_area = 'admin';
-		$the_realm = 'ADM';
-	} else {
-		$the_area = 'index';
-		$the_realm = 'IDX';
-	} //end if else
-	//--
-	$os_bw = (array) SmartUtils::get_os_browser_ip();
-	//--
-
+	//-- add meta vars and conform all keys to lowercase
+	$arr_data = (array) self::set_app_template_conform_metavars($arr_data);
 	//-- special TPL vars
-	$arr_data['release-hash'] 				= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
+	$arr_data['template-path'] 				= (string) $template_path; // current template path (ex: etc/templates/default/)
+	$arr_data['template-file'] 				= (string) $template_file; // current template file (ex: template.htm | template-modal.htm | ...)
 	//-- external TPL vars
 	$arr_data['semaphore'] 					= (string) $arr_data['semaphore']; // a general purpose conditional var
 	$arr_data['title'] 						= (string) $arr_data['title'];
@@ -2978,34 +2947,6 @@ public static function render_app_template($template_path, $template_file, $arr_
 	$arr_data['main'] 						= (string) $arr_data['main'];
 	$arr_data['aside'] 						= (string) $arr_data['aside'];
 	$arr_data['footer'] 					= (string) $arr_data['footer'];
-	//-- internal TPL vars
-	$arr_data['template-path'] 				= (string) $template_path; 											// current template path (ex: etc/templates/default/)
-	$arr_data['template-file'] 				= (string) $template_file; 											// current template file (ex: template.htm | template-modal.htm | ...)
-	$arr_data['lang'] 						= (string) SmartTextTranslations::getLanguage(); 					// current language (ex: en)
-	$arr_data['charset'] 					= (string) SMART_FRAMEWORK_CHARSET;									// current charset (ex: UTF-8)
-	$arr_data['timezone'] 					= (string) SMART_FRAMEWORK_TIMEZONE; 								// current timezone (ex: UTC)
-	$arr_data['client-ip'] 					= (string) $os_bw['ip']; 											// client browser IP (ex: 127.0.0.1)
-	$arr_data['client-os'] 					= (string) $os_bw['os']; 											// client browser OS (ex: bsd)
-	$arr_data['client-is-mobile'] 			= (string) $os_bw['mobile']; 										// client browser is Mobile (yes/no)
-	$arr_data['client-class'] 				= (string) $os_bw['bc']; 											// client browser Class (ex: gk)
-	$arr_data['client-browser'] 			= (string) $os_bw['bw']; 											// client browser (ex: fox)
-	$arr_data['client-uid-cookie-name'] 	= (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME;					// client browser UID Cookie Name (as defined in etc/init.php) ; it may be required to pass this cookie name to the Javascript ...)
-	$arr_data['client-uid-cookie-domain'] 	= (string) SmartUtils::cookie_default_domain(); 					// client browser UID Cookie Domain (as defined in etc/init.php) ; it may be required to pass this cookie domain to the Javascript ...)
-	$arr_data['app-env'] 					= (string) (SMART_ERROR_HANDLER === 'log') ? 'prod' : 'dev'; 		// App Environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
-	$arr_data['app-namespace'] 				= (string) SMART_SOFTWARE_NAMESPACE;								// NameSpace from configs (as defined in etc/init.php)
-	$arr_data['app-realm'] 					= (string) $the_realm; 												// IDX (for index.php area) ; ADM (for admin.php area)
-	$arr_data['app-domain'] 				= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain']
-	$arr_data['base-url'] 					= (string) SmartUtils::get_server_current_url(); 					// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
-	$arr_data['base-path'] 					= (string) SmartUtils::get_server_current_path(); 					// / | /sites/frameworks/smart-framework/
-	$arr_data['base-domain'] 				= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP (ex: 127.0.0.1)
-	$arr_data['srv-ip-addr'] 				= (string) SmartUtils::get_server_current_ip(); 					// current server IP (ex: 127.0.0.1)
-	$arr_data['srv-domain'] 				= (string) SmartUtils::get_server_current_domain_name(); 			// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
-	$arr_data['srv-proto'] 					= (string) SmartUtils::get_server_current_protocol(); 				// http:// | https://
-	$arr_data['srv-port'] 					= (string) SmartUtils::get_server_current_port(); 					// 80 | 443 | ...
-	$arr_data['srv-script'] 				= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
-	$arr_data['srv-urlquery'] 				= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
-	$arr_data['srv-requri'] 				= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
-	$arr_data['debug-mode'] 				= (string) (SmartFrameworkRuntime::ifDebug() ? 'yes' : 'no'); 		// yes | no
 	//--
 
 	//-- read TPL
@@ -3022,7 +2963,7 @@ public static function render_app_template($template_path, $template_file, $arr_
 	if(SmartFrameworkRuntime::ifDebug()) {
 		if(class_exists('SmartDebugProfiler')) {
 			if((stripos((string)$tpl, '</head>') !== false) AND (stripos((string)$tpl, '</body>') !== false)) {
-				$tpl = (string) str_ireplace('</head>', "\n".SmartDebugProfiler::js_headers_debug(Smart::escape_url($the_area).'.php?smartframeworkservice=debug')."\n".'</head>', (string)$tpl);
+				$tpl = (string) str_ireplace('</head>', "\n".SmartDebugProfiler::js_headers_debug(Smart::escape_url((SMART_FRAMEWORK_ADMIN_AREA === true ? 'admin' : 'index')).'.php?smartframeworkservice=debug')."\n".'</head>', (string)$tpl);
 				$tpl = (string) str_ireplace('</body>', "\n".SmartDebugProfiler::div_main_debug()."\n".'</body>', (string)$tpl);
 			} //end if
 		} //end if

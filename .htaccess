@@ -61,6 +61,7 @@ php_flag zend.multibyte					Off
 #	RewriteRule ^tmp/ - [F,L]
 #	RewriteRule ^wpub/\.htaccess$ - [F,L]
 #	RewriteRule ^wpub/\#wpub$ - [F,L]
+#	RewriteRule ^\#db/ - [F,L]
 	###
 
 	### sample: smart-framework/module.controller(.seo-text).ext [ compatible with Smart::url_make_semantic() + Rewrite ]

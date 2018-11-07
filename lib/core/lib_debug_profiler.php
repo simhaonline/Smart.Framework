@@ -17,7 +17,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //======================================================
-// Smart-Framework - Debug
+// Smart.Framework - Debug Profiler
 // DEPENDS:
 //	* Smart::
 //	* SmartComponents::
@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.181019
+ * @version 	v.181107
  *
  */
 final class SmartDebugProfiler {

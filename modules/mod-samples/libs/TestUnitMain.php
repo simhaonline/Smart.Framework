@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.180217
+ * @version 	v.181107
  *
  */
 final class TestUnitMain {
@@ -168,8 +168,8 @@ final class TestUnitMain {
 				'TEST-JS_SCRIPTS_Init-Tabs' 				=> '<script type="text/javascript">'.\SmartComponents::js_code_uitabs_init('tabs_draw', \Smart::format_number_int($tab,'+')).'</script>', // '<script type="text/javascript">'.\SmartComponents::js_code_uitabs_activate('tabs_draw', false).'</script>',
 				'Test-Buttons_AJAX-POST' 					=> (string) $btnop,
 				'TEST-VAR'  								=> '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: Test and Demo Suite @ '.$info_adm.'</div>',
-				'TEST-ELEMENTS_DIALOG' 						=> '<a class="ux-button ux-button-primary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_confirm_dialog('<h1>Do you like this framework ?</h1><br>Option: <select id="test-dlg-select-el-sf"><option value="Yes">Yes</option><option value="No">No</option></select>', 'alert(\'Well ... then you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
-				'TEST-ELEMENTS_ALERT' 						=> '<a class="ux-button ux-button-secondary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_alert_dialog('<h2>You can press now OK !</h2><br>Option: <select id="test-dlg-select-el-sf"><option value="One">One</option><option value="Two">Two</option></select>', 'alert(\'Good ... you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
+				'TEST-ELEMENTS_DIALOG' 						=> '<a class="ux-button ux-button-primary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_confirm_dialog('<h1>Do you like this framework ?</h1><div>Option: <select id="test-dlg-select-el-sf"><option value="Yes">Yes</option><option value="No">No</option></select></div>', 'alert(\'Well ... then you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
+				'TEST-ELEMENTS_ALERT' 						=> '<a class="ux-button ux-button-secondary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_alert_dialog('<h2>You can press now OK !</h2><div>Option: <select id="test-dlg-select-el-sf"><option value="One">One</option><option value="Two">Two</option></select></div>', 'alert(\'Good ... you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
 				'TEST-ELEMENTS_SEND-CONFIRM-MODAL' 			=> (string) $basic_form_start.$basic_form_send_modal.$basic_form_end,
 				'TEST-ELEMENTS_SEND-CONFIRM-POPUP' 			=> (string) $basic_form_start.$basic_form_send_popup.$basic_form_end,
 				'TEST-ELEMENTS-WND-INTERRACTIONS-MODAL' 	=> (string) \SmartModExtLib\Samples\TestUnitBrowserWinInterractions::bttnModalTestInit(),
