@@ -34,13 +34,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * Class: SmartMailerSend - provides a Mail Send Client that supports both: MAIL or SMTP with SSL/TLS support.
  * It automatically includes the SmartMailerSmtpClient class when sending via SMTP method.
  *
- * This class is for very advanced use.
+ * This class is for very advanced use. If defined SMART_SOFTWARE_MAILSEND_ANTISPAM_UNSAFE will not try to make the message AntiSPAM compliant (Ex: not adding alternate TEXT body to HTML email messages)
  * To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUtils::send_extended_email() functions.
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180727
+ * @version 	v.181108.r2
  * @package 	Mailer
  *
  */
@@ -156,9 +156,9 @@ public function send($do_send, $raw_message='') {
 			$this->mime_message .=  "X-Priority: ".'3'."\r\n"; //normal
 	} //end switch
 	//--
-	$this->mime_message .= "X-Mailer: ".'SmartFramework Mailer ('.SMART_FRAMEWORK_VERSION.')'."\r\n";
-	$this->mime_message .= "MIME-Version: 1.0 ".'(SmartFramework Mime-Message v.2016.02.01)'."\r\n";
-	$this->mime_message .= "Message-Id: ".'<ID-'.Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain).'>'."\r\n";
+	$this->mime_message .= 'X-Mailer: '.'SmartFramework Mailer ('.SMART_FRAMEWORK_VERSION.')'."\r\n";
+	$this->mime_message .= 'MIME-Version: 1.0 '.'(SmartFramework Mime-Message v.2016.02.01)'."\r\n";
+	$this->mime_message .= 'Message-Id: '.'<ID-'.Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain).'>'."\r\n";
 	//--
 	if(strlen($this->headers) > 0) {
 		$this->mime_message .= $this->headers; // must be end by \r\n
@@ -169,10 +169,12 @@ public function send($do_send, $raw_message='') {
 		if(strlen($this->body) > 0) {
 			//--
 			if($this->is_html == false) {
-				$this->add_attachment($this->body,  '',  'text/plain', 'inline');
+				$this->add_attachment($this->body, '', 'text/plain', 'inline');
 			} else {
-				$this->add_attachment('This is a MIME Message in HTML Format.',  'alternative-part.txt',  'text/plain', 'inline'); // antiSPAM needs an alternate body
-				$this->add_attachment($this->body,  '',  'text/html', 'inline');
+				if(!defined('SMART_SOFTWARE_MAILSEND_ANTISPAM_UNSAFE')) {
+					$this->add_attachment('This is a MIME Message in HTML Format.',  'alternative-part.txt',  'text/plain', 'inline'); // antiSPAM needs an alternate body
+				} //end if
+				$this->add_attachment($this->body, '', 'text/html', 'inline');
 			} //end else
 			//--
 		} //end if
