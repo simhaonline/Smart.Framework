@@ -119,7 +119,7 @@ define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',			2);																// Set to: 0 = 
 //define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status
 //define('SMART_SOFTWARE_MKTPL_PCACHETIME',			86400);															// If set to a positive integer (>=0) will cache the marker template files to (memory) persistent cache to avoid repetitive reads to the FileSystem (on some systems this can boost the speed ...)
 //define('SMART_SOFTWARE_MKTPL_DEBUG_LEN', 			65535);															// If set will use this TPL Debug Length (255..524280) ; If not set will use default: 512
-//define('SMART_SOFTWARE_MAILSEND_ANTISPAM_UNSAFE', true);															// If defined will not use safe (compliant) antispam rules when composing email mime messages to be sent (Ex: not adding alternate TEXT body to HTML email messages)
+define('SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE', true);																// If defined and TRUE will use extra safe antispam rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
 //---------------------------------------- CHARSET AND REGIONAL SETTINGS [ NEVER CHANGE THESE MUST BE UNICODE UTF-8 ; CHANGING IT YOU CAN BREAK THE UNICODE SUPPORT ]
 define('SMART_FRAMEWORK_CHARSET', 					'UTF-8');														// This must be `UTF-8` 	:: Default Character Set for PHP
 define('SMART_FRAMEWORK_DBSQL_CHARSET', 			'UTF8');														// This must be `UTF8` 		:: Default Character Set for DB SQL Servers
