@@ -31,22 +31,24 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //======================================================
 
 //-- defines the modules version (required for AppReleaseHash)
-define('SMART_APP_MODULES_RELEASE', 'm.181113'); // this can be used for tracking changes to custom app modules
+define('SMART_APP_MODULES_RELEASE', 'm.181115'); // this can be used for tracking changes to custom app modules
 //--
 
 //-- checks the minimum version of the Smart.Framework to run on
-define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.7.r.2018.11.13'); // this must be used to validate the required minimum framework version
+define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.7.r.2018.11.15'); // this must be used to validate the required minimum framework version
 if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
 	@http_response_code(500);
 	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_MIN_FRAMEWORK_VER.' or later !');
 } //end if
 //--
 
-// # Here can be loaded the Smart.Framework extra libs package from: https://github.com/unix-world/Smart.Framework.Modules
+// # Here can be loaded the Smart.Framework extra or vendor libs package from: https://github.com/unix-world/Smart.Framework.Modules
 //require_once('modules/smart-extra-libs/autoload.php'); // autoload for Smart.Framework.Modules / (Smart) Extra Libs
+//require_once('modules/vendor/autoload.php'); // autoload for Smart.Framework.Modules / Vendor Libs
 
 // # Here can be loaded extra vendor libs with or without autoloaders
-// require_once(__DIR__.'/../../../vendor/autoload.php'); // PSR standard namespace/class loader(s)
+//require_once(__DIR__.'/../../vendor/autoload.php'); // PSR standard namespace/class loader(s), from vendor/ directory, in app root ; if using so, add the following security rule in .htaccess: RewriteRule ^vendor/ - [F,L]
+//require_once(__DIR__.'/../../../vendor/autoload.php'); // PSR standard namespace/class loader(s), from vendor/ directory, outside of app root
 
 // # Here is a sample code to handle languages by subdomains (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
 /*

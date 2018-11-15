@@ -202,7 +202,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION',  'v.181031.1005'); 											// current version of this script
+define('APPCODEPACK_VERSION',  'v.181115.1519'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2714,7 +2714,7 @@ final class JShrinkMinifier {
 final class AppPackUtils {
 
 	// ::
-	// v.181031 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181115 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -4127,7 +4127,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.181026
+	//##### SmartFileSysUtils v.181115
 
 
 	//================================================================
@@ -4340,6 +4340,7 @@ Options -Indexes
 			((string)trim($y_path) == '/') OR 			// root dir: security
 			(strpos($y_path, ' ') !== false) OR 		// no space allowed
 			(strpos($y_path, '\\') !== false) OR 		// no backslash allowed
+			(strpos($y_path, '://') !== false) OR 		// no protocol access allowed
 			(strpos($y_path, ':') !== false) OR 		// no dos/win disk access allowed
 			(strpos($y_path, '|') !== false) OR 		// no macos disk access allowed
 			((string)trim($y_path) == './') OR 			// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something

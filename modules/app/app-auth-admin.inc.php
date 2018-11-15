@@ -31,7 +31,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // This sample can be extended to read the authentication from a database or to use session in combination with SmartAuth:: object.
 // This is the best way to integrate with framework's authentication system by using SmartAuth:: object.
 //-------------------------------------------
-// v.170905 / Sample Auth based on Basic HTTP Authentication (for Admin Area, overall)
+// v.181115 / below there is a sample Authentication (HTTP Basic) for Admin Area, overall with a fixed username and password
+// if you need a more advanced Authentication solution with many accounts, see the Smart.Framework.Modules/mod-auth-admins/doc/README.md
 //-------------------------------------------
 if(headers_sent()) {
 	//--
@@ -39,7 +40,6 @@ if(headers_sent()) {
 	die(SmartComponents::http_message_403_forbidden('Authentication Failed, Headers Already Sent ...'));
 	//--
 } //end if
-//-------------------------------------------
 if(!defined('ADMIN_AREA_USER') OR !defined('ADMIN_AREA_PASSWORD')) {
 	//--
 	http_response_code(403);
@@ -56,7 +56,6 @@ if(!defined('ADMIN_AREA_USER') OR !defined('ADMIN_AREA_PASSWORD')) {
 	die(SmartComponents::http_message_500_internalerror('Authentication ADMIN_AREA_PASSWORD was set but is Empty ...'));
 	//--
 } //end if
-//-------------------------------------------
 if(((string)$_SERVER['PHP_AUTH_USER'] == (string)ADMIN_AREA_USER) AND ((string)$_SERVER['PHP_AUTH_PW'] == (string)ADMIN_AREA_PASSWORD)) {
 	//-- OK, loggen in
 	SmartAuth::set_login_data(

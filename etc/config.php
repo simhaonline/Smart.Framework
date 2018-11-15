@@ -11,7 +11,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //######################################### Mod.Samples (Tests ONLY Settings)
-// !!! Remove these Test ONLY Settings when using in real production environments !!! They are required just for Mod.Samples ...
+// !!! Remove these Test ONLY Settings when using in real production environments !!! They are required just for Samples ...
 define('SMART_FRAMEWORK_TEST_MODE', true);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS', false);
 define('SMART_FRAMEWORK_TESTUNIT_ALLOW_DAVFS_TESTS', false);
@@ -22,20 +22,20 @@ define('SMART_FRAMEWORK_TESTUNIT_ALLOW_MONGO_TESTS', false);
 
 
 //--------------------------------------- Info URL
-$configs['app']['info-url'] 		= 'smart-framework.demo';				// Info URL: this must be someting like `www . mydomain . net`
+$configs['app']['info-url'] = 'smart-framework.demo';						// Info URL: this must be someting like `www . mydomain . net`
 //---------------------------------------
 
 
 //--------------------------------------- REGIONAL SETTINGS
-$configs['regional']['language-id']					= 'en';					// The default Language ID: `en` | `ro` (must exists and defined below under $languages)
+$configs['regional']['language-id']					= 'en';					// The default Language ID: `en` | `ro` | ... (must exists and defined below under $languages)
 $configs['regional']['decimal-separator']			= '.';					// decimal separator `.` | `,`
 $configs['regional']['thousands-separator']			= ',';					// thousand separator `,` | `.` | ` `
 $configs['regional']['calendar-week-start']			= '0';					// 0=start on sunday | 1=start on Monday ; used for both PHP and Javascript
 $configs['regional']['calendar-date-format-client'] = 'dd.mm.yy';			// Client Date Format - Javascript (allow only these characters: yy mm dd . - [space])
 $configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date Format - PHP (allow only these characters: Y m d . - [space])
-//---------------------------------------
-$languages = array('en' => '[EN]');											// default associative array of available languages for this software (do not change without installing new languages support files)
-//$languages = array('en' => '[EN]', 'ro' => [ 'name'=>'[RO]', 'decimal-separator'=>',', 'thousands-separator'=>'.', 'calendar-week-start'=>'1' ]);						// extended associative array of available languages for this software (do not change without installing new languages support files)
+//--------------------------------------- LANGUAGE SETTINGS
+$languages = [ 'en' => '[EN]' ];											// default associative array of available languages for this software
+//$languages = [ 'en' => '[EN]', 'ro' => [ 'name' => '[RO]', 'decimal-separator' => ',', 'thousands-separator' => '.', 'calendar-week-start' => '1' ] ]; // extended associative array of available languages for this software
 //---------------------------------------
 
 

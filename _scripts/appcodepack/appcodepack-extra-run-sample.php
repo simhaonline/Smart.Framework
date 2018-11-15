@@ -9,7 +9,7 @@ if(!defined('APPCODEPACK_PROCESS_EXTRA_RUN')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //#####
-// Sample AppCodePack Extra Script, v.181031.1005
+// Sample AppCodePack Extra Script, v.181115.1519
 // CUSTOMIZE IT AS NEEDED and rename it to: appcodepack-extra-run.php ; It also need a corresponding: appcodepack-extra-run.inc.htm
 //#####
 

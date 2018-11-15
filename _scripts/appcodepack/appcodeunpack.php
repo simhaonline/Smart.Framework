@@ -193,7 +193,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181031.1005'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.181115.1519'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -947,7 +947,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181031 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181115 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2360,7 +2360,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.181026
+	//##### SmartFileSysUtils v.181115
 
 
 	//================================================================
@@ -2573,6 +2573,7 @@ Options -Indexes
 			((string)trim($y_path) == '/') OR 			// root dir: security
 			(strpos($y_path, ' ') !== false) OR 		// no space allowed
 			(strpos($y_path, '\\') !== false) OR 		// no backslash allowed
+			(strpos($y_path, '://') !== false) OR 		// no protocol access allowed
 			(strpos($y_path, ':') !== false) OR 		// no dos/win disk access allowed
 			(strpos($y_path, '|') !== false) OR 		// no macos disk access allowed
 			((string)trim($y_path) == './') OR 			// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something

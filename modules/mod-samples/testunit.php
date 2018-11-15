@@ -265,7 +265,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'test.markdown':
 				//--
-				$main = SmartComponents::js_code_highlightsyntax('div'); // highlight pack
+				$main = SmartComponents::js_code_highlightsyntax('body'); // highlight js
 				$main .= '<h1>Markdown Syntax Render Test</h1><hr>';
 				$main .= SmartMarkersTemplating::render_template(
 					(string) (new SmartMarkdownToHTML())->text((string)SmartFileSystem::read($this->ControllerGetParam('module-view-path').'markdown-test.md')),

@@ -1,10 +1,10 @@
 <!-- Partial Template: Core.SyntaxHighlight -->
 <link rel="stylesheet" href="lib/core/plugins/fonts/typo/mono/ibm-plex-mono.css">
 <style>
-	code.hljs, code.hljs * {
-		font-family: 'IBM Plex Mono',mono;
-		font-smooth: always;
-	}
+code.hljs, code.hljs * {
+	font-family: 'IBM Plex Mono', mono;
+	font-smooth: always;
+}
 </style>
 <link rel="stylesheet" href="lib/core/css/tpl-highlight.css">
 <!-- HL Core -->
@@ -14,25 +14,33 @@
 [%%%%LOOP:SYNTAX-PLUGINS%%%%]
 <script type="text/javascript" src="lib/js/jshighlight/syntax/[####SYNTAX-PLUGINS._-VAL-_|html####].js"></script>[%%%%IF:SYNTAX-PLUGINS._-ITERATOR-_:<####SYNTAX-PLUGINS._-MAXCOUNT-_####;%%%%][%%%%|N%%%%][%%%%/IF:SYNTAX-PLUGINS._-ITERATOR-_%%%%]
 [%%%%/LOOP:SYNTAX-PLUGINS%%%%]
-<!-- Instantiate Async HL PostProc -->
+<!-- HL Async Render -->
+<script type="text/javascript">
+if(typeof SmartJS_Custom_Syntax_Highlight != 'function') {
+	var SmartJS_Custom_Syntax_Highlight = function(elem) {
+		setTimeout(function(){
+			jQuery(elem + ' pre code').each(function(i, block) {
+				try {
+					var theObj = jQuery(this);
+					var theClass = theObj.attr('class');
+					if((typeof theClass != 'undefined') && (theClass != 'undefined') && (theClass != '')) {
+						theObj.attr('title', 'Code: ' + theClass);
+						hljs.highlightBlock(block);
+					} //end if
+					theObj = null;
+					theClass = null;
+				} catch(err) {
+					console.error('Highlight JS Failed to instantiate on selector #' + i);
+				}
+			});
+		}, 50);
+	}
+}
+</script>
+[%%%%IF:AREAS-SELECTOR:!=;%%%%]<!-- HL PostProcessing -->
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	setTimeout(function(){
-		jQuery('[####AREAS-SELECTOR|js####] pre code').each(function(i, block) {
-			try {
-				var theObj = jQuery(this);
-				var theClass = theObj.attr('class');
-				if((typeof theClass != 'undefined') && (theClass != 'undefined') && (theClass != '')) {
-					theObj.attr('title', 'Code: ' + theClass);
-					hljs.highlightBlock(block);
-				} //end if
-				theObj = null;
-				theClass = null;
-			} catch(err) {
-				console.error('Highlight JS Failed to instantiate on selector #' + i);
-			}
-		});
-	}, 50);
+	SmartJS_Custom_Syntax_Highlight('[####AREAS-SELECTOR|js####]');
 });
-</script>
+</script>[%%%%/IF:AREAS-SELECTOR%%%%]
 <!-- #END :: Partial Template: Core.SyntaxHighlight -->

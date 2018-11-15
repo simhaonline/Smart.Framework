@@ -18,9 +18,9 @@ $configs['app']['admin-template-path'] 				= 'default';				// default admin temp
 $configs['app']['admin-template-file'] 				= 'template.htm';			// default admin template file
 //---------------------------------------
 
-//-- auth credentials for the admin area (admin.php)
-define('ADMIN_AREA_USER', 		'admin');
-define('ADMIN_AREA_PASSWORD', 	'pass');
+//-- auth credentials for the admin area (admin.php): Sample Authentication only !!!
+define('ADMIN_AREA_USER', 'admin');
+define('ADMIN_AREA_PASSWORD', 'pass');
 //--
 
 // end of php code

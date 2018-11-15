@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181026
+ * @version 	v.181115
  * @package 	Filesystem
  *
  */
@@ -127,7 +127,6 @@ public static function check_if_safe_file_or_dir_name($y_fname) {
 	if(strlen((string)$y_fname) > 255) {
 		return 0;
 	} //end if
-	//--
 	//--
 	// IMPORTANT: it should not test if filenames or dirnames start with a # (protected) as they are not paths !!!
 	//--
@@ -307,6 +306,7 @@ private static function test_valid_path($y_path) {
 		((string)trim($y_path) == '/') OR 			// root dir: security
 		(strpos($y_path, ' ') !== false) OR 		// no space allowed
 		(strpos($y_path, '\\') !== false) OR 		// no backslash allowed
+		(strpos($y_path, '://') !== false) OR 		// no protocol access allowed
 		(strpos($y_path, ':') !== false) OR 		// no dos/win disk access allowed
 		(strpos($y_path, '|') !== false) OR 		// no macos disk access allowed
 		((string)trim($y_path) == './') OR 			// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something
@@ -743,7 +743,6 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'html':
 			$type = 'text/html';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'css':
 		case 'less':
@@ -751,33 +750,30 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'sass':
 			$type = 'text/css';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- php
 		case 'php':
 			$type = 'application/x-php';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- javascript
 		case 'js':
 			$type = 'application/javascript';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'json':
 			$type = 'application/json';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- xml
 		case 'xhtml':
 		case 'xml':
 		case 'xsl':
 		case 'dtd':
+		case 'sgml': // Standard Generalized Markup Language
+		case 't3fluid': // typo3 fluid templating
 			$type = 'application/xml';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- plain text and development
 		case 'tex': // TeX
@@ -854,110 +850,123 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case '.htaccess': // .htaccess
 		case '.htpasswd': // .htpasswd
 		case 'pem': // PEM Certificate File
+		case 'crl': // Certificate Revocation List
+		case 'crt': // Certificate File
+		case 'key': // Certificate Key File
 		case 'dns': // DNS Config
-		case 'csp': // content security policy
-		case 'httph': // http header
+		case 'csp': // Content Security Policy
+		case 'httph': // HTTP Header
+		case 'tpl': // tpl templating
+		case 'mtpl': // marker tpl templating
+		case 'twig': // twig templating
 			$type = 'text/plain';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- web images
 		case 'svg':
 			$type = 'image/svg+xml';
 			$disp = 'inline';
-			//---
 			break;
 		case 'png':
 			$type = 'image/png';
 			$disp = 'inline';
-			//---
 			break;
 		case 'gif':
 			$type = 'image/gif';
 			$disp = 'inline';
-			//---
 			break;
 		case 'jpg':
 		case 'jpe':
 		case 'jpeg':
 			$type = 'image/jpeg';
 			$disp = 'inline';
-			//---
 			break;
 		//-------------- other images
 		case 'tif':
 		case 'tiff':
 			$type = 'image/tiff';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'wmf':
 			$type = 'application/x-msmetafile';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'bmp':
 			$type = 'image/bmp';
 			$disp = 'attachment';
-			//---
+			break;
+		//-------------- fonts
+		case 'otf':
+			$type = 'application/x-font-otf';
+			$disp = 'attachment';
+			break;
+		case 'ttf':
+			$type = 'application/x-font-ttf';
+			$disp = 'attachment';
+			break;
+		case 'woff':
+			$type = 'application/x-font-woff';
+			$disp = 'attachment';
+			break;
+		case 'woff2':
+			$type = 'application/x-font-woff2';
+			$disp = 'attachment';
 			break;
 		//-------------- portable documents
 		case 'pdf':
 			$type = 'application/pdf';
 			$disp = 'inline'; // 'attachment';
-			//---
 			break;
 		case 'xfdf':
 			$type = 'application/vnd.adobe.xfdf';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'epub':
+			$type = 'application/epub+zip';
+			$disp = 'attachment';
 			break;
 		//-------------- email / calendar / addressbook
 		case 'eml':
 			$type = 'message/rfc822';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'ics':
 			$type = 'text/calendar';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'vcf':
 			$type = 'text/x-vcard';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'vcs':
+			$type = 'text/x-vcalendar';
+			$disp = 'attachment';
 			break;
 		case 'ldif':
 			$type = 'text/ldif';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- specials
 		case 'asc':
 		case 'sig':
 			$type = 'application/pgp-signature';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'curl':
 			$type = 'application/vnd.curl';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- graphics
 		case 'psd': // photoshop file
 		case 'xcf': // gimp file
 			$type = 'image/x-xcf';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'ai': // illustrator file
 		case 'eps':
 		case 'ps':
 			$type = 'application/postscript';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- web video
 		case 'ogg': // theora audio
@@ -981,30 +990,26 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'mp4':
 			$type = 'video/mpeg';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'mpga':
 		case 'mp2':
 		case 'mp3':
+		case 'mp4a':
 			$type = 'audio/mpeg';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'qt':
 		case 'mov':
 			$type = 'video/quicktime';
 			$disp = 'attachment';
-			//---
 			break;
-		case 'rm':
-			$type = 'application/vnd.rn-realmedia';
+		case 'flv':
+			$type = 'video/x-flv';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'avi':
 			$type = 'video/x-msvideo';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'wm':
 		case 'wmv':
@@ -1012,115 +1017,118 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'wvx':
 			$type = 'video/x-ms-'.$extension;
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- flash
 		case 'swf':
 			$type = 'application/x-shockwave-flash';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- data
 		case 'csv': // csv comma
 		case 'tab': // csv tab
 			$type = 'text/csv';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- rich text
 		case 'rtf':
-		case 'abw': // Abi Word
 			$type = 'application/rtf';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'abw': // Abi Word
+			$type = 'application/x-abiword';
+			$disp = 'attachment';
 			break;
 		//-------------- openoffice / libreoffice
 		case 'odc':
 			$type = 'application/vnd.oasis.opendocument.chart';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'otc':
 			$type = 'application/vnd.oasis.opendocument.chart-template';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'odf':
+		case 'sxm':
 			$type = 'application/vnd.oasis.opendocument.formula';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'otf':
 			$type = 'application/vnd.oasis.opendocument.formula-template';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'odg':
+		case 'fodg':
+		case 'sxd':
 			$type = 'application/vnd.oasis.opendocument.graphics';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'otg':
 			$type = 'application/vnd.oasis.opendocument.graphics-template';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'odi':
 			$type = 'application/vnd.oasis.opendocument.image';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'oti':
 			$type = 'application/vnd.oasis.opendocument.image-template';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'odp':
+		case 'fodp':
+		case 'sxi':
 			$type = 'application/vnd.oasis.opendocument.presentation';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'otp':
+		case 'sti':
 			$type = 'application/vnd.oasis.opendocument.presentation-template';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'ods':
+		case 'fods':
+		case 'sxc':
 			$type = 'application/vnd.oasis.opendocument.spreadsheet';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'ots':
+		case 'stc':
 			$type = 'application/vnd.oasis.opendocument.spreadsheet-template';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'odt':
+		case 'fodt':
+		case 'sxw':
 			$type = 'application/vnd.oasis.opendocument.text';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'ott':
+		case 'stw':
+			$type = 'application/vnd.oasis.opendocument.text-template';
+			$disp = 'attachment';
 			break;
 		case 'otm':
 			$type = 'application/vnd.oasis.opendocument.text-master';
 			$disp = 'attachment';
-			//---
-			break;
-		case 'ott':
-			$type = 'application/vnd.oasis.opendocument.text-template';
-			$disp = 'attachment';
-			//---
 			break;
 		case 'oth':
 			$type = 'application/vnd.oasis.opendocument.text-web';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'odb':
+			$type = 'application/vnd.oasis.opendocument.database';
+			$disp = 'attachment';
 			break;
 		//-------------- ms office
 		case 'doc':
 		case 'dot':
 			$type = 'application/msword';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'docx':
+		case 'dotx':
+			$type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+			$disp = 'attachment';
 			break;
 		case 'xla':
 		case 'xlc':
@@ -1130,83 +1138,69 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'xlw':
 			$type = 'application/vnd.ms-excel';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'xlsx':
+		case 'xltx':
+			$type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+			$disp = 'attachment';
 			break;
 		case 'pot':
 		case 'pps':
 		case 'ppt':
 			$type = 'application/vnd.ms-powerpoint';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'potx':
+		case 'ppsx':
+		case 'pptx':
+			$type = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+			$disp = 'attachment';
 			break;
 		case 'mdb':
 			$type = 'application/x-msaccess';
 			$disp = 'attachment';
-			//---
-			break;
-		//-------------- ms monney
-		case 'mny':
-			$type = 'application/x-msmoney';
-			$disp = 'attachment';
-			//---
-			break;
-		//-------------- ms works
-		case 'wk1':
-		case 'wcm':
-		case 'wdb':
-		case 'wks':
-		case 'wps':
-			$type = 'application/vnd.ms-works';
-			$disp = 'attachment';
-			//---
 			break;
 		//-------------- archives
 		case '7z':
-		case 'zip':
-			$type = 'application/zip';
+			$type = 'application/x-7z-compressed';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'xz':
 			$type = 'application/x-xz';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'tar':
 			$type = 'application/x-tar';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'tgz':
 		case 'tbz':
 			$type = 'application/x-compressed';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'gz':
 			$type = 'application/x-gzip';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'bz2':
 			$type = 'application/x-bzip2';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'z':
 			$type = 'application/x-compress';
 			$disp = 'attachment';
-			//---
+			break;
+		case 'zip':
+			$type = 'application/zip';
+			$disp = 'attachment';
 			break;
 		case 'rar':
 			$type = 'application/x-rar-compressed';
 			$disp = 'attachment';
-			//---
 			break;
 		case 'sit':
 			$type = 'application/x-stuffit';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- executables
 		case 'exe':
@@ -1215,7 +1209,6 @@ public static function mime_eval($yfile, $ydisposition='') {
 		case 'com':
 			$type = 'application/x-msdownload';
 			$disp = 'attachment';
-			//---
 			break;
 		//-------------- others, default
 		default:
