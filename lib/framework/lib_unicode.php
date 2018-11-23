@@ -159,7 +159,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.181107
+ * @version     v.181122
  * @package     Base
  *
  */
@@ -464,6 +464,7 @@ public static function uc_first($ystr) {
 //================================================================
 /**
  * Unicode Safe ucwords() 		:: Make a Unicode string uppercase on each word ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2
+ * Notice: this is only partial compatible with PHP ucwords() as it makes first letter of each word Upper while force lowercase on the rest of the word letters as it complies with MB_CASE_TITLE
  *
  * @param STRING 	$ystr		:: The string
  *

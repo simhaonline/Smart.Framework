@@ -50,6 +50,7 @@ $configs['sendmail']['auth-password']		= '';							// `` | smtp auth password (S
 $configs['sendmail']['from-address']		= 'user@yourdomain.tld';		// the email address From:
 $configs['sendmail']['from-name'] 			= 'Your Name';					// the from name to be set in From:
 $configs['sendmail']['log-messages']		= 'no';							// `no` | `yes` :: // Log Send Messages
+//$configs['sendmail']['use-qp-encoding'] 	= true; 						// if TRUE will use QuotedPrintable encoding instead of Base64 for email message text/html bodies
 */
 //---------------------------------------
 

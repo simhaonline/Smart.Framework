@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181025
+ * @version		181122
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -47,6 +47,7 @@ abstract class SmartAbstractAppMiddleware {
 	// :: ABSTRACT
 	// {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 
+	private static $LANGUAGE_DETECTED = null;
 
 	private static $DEBUG_COOKIE_DATA = '';
 	private static $DEBUG_COOKIE_IDX = 'SmartFramework__DebugIdxID';
@@ -209,6 +210,65 @@ abstract class SmartAbstractAppMiddleware {
 			Smart::log_warning('WARNING: AppMiddleware :: Headers Already Sent before 504 ...');
 		} //end if else
 		die(SmartComponents::http_message_504_gatewaytimeout((string)$y_msg, (string)$y_htmlmsg));
+		//--
+	} //END FUNCTION
+	//======================================================================
+
+
+	//======================================================================
+	final public static function DetectInputLanguage() {
+		//--
+		if(self::$LANGUAGE_DETECTED !== null) {
+			return (bool) self::$LANGUAGE_DETECTED;
+		} //end if
+		//--
+		$lang = ''; // init
+		//--
+		if(!defined('SMART_FRAMEWORK_URL_PARAM_LANGUAGE')) {
+			self::$LANGUAGE_DETECTED = false;
+			return (bool) self::$LANGUAGE_DETECTED;
+		} //end if
+		if((string)trim((string)SMART_FRAMEWORK_URL_PARAM_LANGUAGE) == '') {
+			self::$LANGUAGE_DETECTED = false;
+			return (bool) self::$LANGUAGE_DETECTED;
+		} //end if
+		if(!SmartFrameworkSecurity::ValidateVariableName((string)SMART_FRAMEWORK_URL_PARAM_LANGUAGE)) {
+			self::$LANGUAGE_DETECTED = false;
+			return (bool) self::$LANGUAGE_DETECTED;
+		} //end if
+		//-- prefer from URL
+		$lang = (string) trim((string)SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getRequestVar((string)SMART_FRAMEWORK_URL_PARAM_LANGUAGE, '', (array)SmartTextTranslations::getAvailableLanguages())));
+		//-- if not from URL, try cookie
+		if((string)$lang == '') {
+			if(!defined('SMART_APP_LANG_COOKIE')) {
+				self::$LANGUAGE_DETECTED = false;
+				return (bool) self::$LANGUAGE_DETECTED;
+			} //end if
+			if((string)trim((string)SMART_APP_LANG_COOKIE) == '') {
+				self::$LANGUAGE_DETECTED = false;
+				return (bool) self::$LANGUAGE_DETECTED;
+			} //end if
+			$lang = (string) trim((string)SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getCookieVar((string)SMART_APP_LANG_COOKIE)));
+			if((string)$lang != '') {
+				if(!in_array((string)$lang, (array)SmartTextTranslations::getAvailableLanguages())) {
+					$lang = ''; // allow from subset as get request var
+				} //end if
+			} //end if
+		} //end if
+		//--
+		if((string)$lang != '') {
+			if(SmartTextTranslations::validateLanguage($lang) !== true) {
+				$lang = ''; // dissalow invalid languages
+			} //end if
+		} //end if
+		//--
+		if((string)$lang != '') {
+			self::$LANGUAGE_DETECTED = (bool) SmartTextTranslations::setLanguage((string)$lang);
+		} else {
+			self::$LANGUAGE_DETECTED = false;
+		} //end if
+		//--
+		return (bool) self::$LANGUAGE_DETECTED;
 		//--
 	} //END FUNCTION
 	//======================================================================

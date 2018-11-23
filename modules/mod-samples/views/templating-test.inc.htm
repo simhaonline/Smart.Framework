@@ -1,4 +1,4 @@
-<h1 style="display:inline-block;">[####TITLE####]</h1><!-- v.180523.r2 -->
+<h1 style="display:inline-block;">[####TITLE####]</h1><!-- v.181122 -->
 <div align="left">
 	<a href="?/page/samples.templating-test" class="ux-button ux-button-small"><i class="fa fa-refresh"></i> &nbsp; Reload TPL Render Test</a>
 	&nbsp;&nbsp;
@@ -8,7 +8,7 @@
 [%%%%COMMENT%%%%]
 	File: templating-test.inc.htm
 [%%%%/COMMENT%%%%][%%%%COMMENT%%%%]Another Comment[%%%%/COMMENT%%%%]<!-- comments removed -->
-<!-- Test for Markers-Templating v.170927 -->
+<!-- Test for Markers-Templating v.181122 -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
 <!-- Test INTEGER ([####TEST-NUM|html####]) : [####TEST-NUM|int####] -->
 <!-- Test NUMERIC ([####TEST-NUM|html####]) : [####TEST-NUM|num####] -->
@@ -17,9 +17,14 @@
 <!-- Test JSON ([####TEST-STR|html####]) : [####TEST-STR|json####] -->
 <!-- Test URL ([####TEST-URL|html####][####TEST-STR|html####]) : [####TEST-URL|html####][####TEST-STR|url|html####] -->
 <!-- Test JS ([####TEST-STR|html####]) : '[####TEST-STR|js####]' -->
+<!-- Test LOWER ([####TEST-UNISTR|html####]) : '[####TEST-UNISTR|lower|html####]' -->
+<!-- Test UPPER ([####TEST-UNISTR|html####]) : '[####TEST-UNISTR|upper|html####]' -->
+<!-- Test UCFIRST ([####TEST-UNISTR|html####]) : '[####TEST-UNISTR|ucfirst|html####]' -->
+<!-- Test UCWORDS ([####TEST-UNISTR|html####]) : '[####TEST-UNISTR|ucwords|html####]' -->
+<!-- Test TRIM ([####TEST-STRTOTRIM|html####]) : '[####TEST-STRTOTRIM|trim|html####]' -->
+<!-- Test SUBSTR10 ([####TEST-UNISTR|html####]) : [####TEST-UNISTR|substr10|html####] -->
+<!-- Test SUBTXT13 w. space after 10 ([####TEST-UNISTR|html####]) : [####TEST-UNISTR|subtxt13|html####] -->
 <!-- Test NL2BR ([####TEST-TXT|html####]) : [####TEST-TXT|html|nl2br####] -->
-<!-- Test SUBSTR10 ([####TEST-UNISTR####]) : [####TEST-UNISTR|substr10####] -->
-<!-- Test SUBTXT13 w. space after 10 ([####TEST-UNISTR####]) : [####TEST-UNISTR|subtxt13####] -->
 [%%%%|SPACE%%%%]@SPACE[%%%%|T%%%%]@TAB[%%%%|R%%%%]@NEW-LINE(CR+LF)[%%%%|N%%%%]#
 <hr>
 <div>
@@ -141,6 +146,8 @@ var sub_tpl_path = "[####VIEWS-PATH|js####]templating-test-partial.inc.htm";
 var the_marker = '[####MARKER|js####]';
 var the_textstr = '[####TEXTSTR|js####]';
 var the_number = [####NUMBER|num####];
+var the_unistr = '[####TEST-UNISTR|js####]';
+var the_strtotrim = '[####TEST-STRTOTRIM|js####]';
 jQuery.ajax({
 	async: true,
 	cache: false,
@@ -154,7 +161,9 @@ jQuery.ajax({
 			'MARKER': the_marker,
 			'TEXTSTR' : the_textstr,
 			'NUMBER': the_number,
-			'MARK-AREA': 'js'
+			'MARK-AREA': 'js',
+			'TEST-UNISTR': the_unistr,
+			'TEST-STRTOTRIM': the_strtotrim
 		});
 		//console.log('JS-TPL Renderer [' + the_marker + ']:\n' + tpl);
 		jQuery('#tpl-test').append(tpl); // apend it to body

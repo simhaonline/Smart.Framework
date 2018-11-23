@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.181019
+ * @version 	v.181123
  * @package 	Templating:Engines
  *
  */
@@ -896,6 +896,11 @@ private static function have_subtemplate($mtemplate) {
 	[####MARKER|json|url|html####]
 	[####MARKER|json|js|html####] 		** not necessary unless special purpose **
 	[####MARKER|json|url|js|html####] 	** not necessary unless special purpose **
+[####MARKER|lower|html####]
+[####MARKER|upper|html####]
+[####MARKER|ucfirst|html####]
+[####MARKER|ucwords|html####]
+[####MARKER|trim|html####]
 [####MARKER|substr1|html####]
 [####MARKER|subtxt65535|html####]
 [####MARKER|url####]
@@ -909,11 +914,11 @@ private static function have_subtemplate($mtemplate) {
 [####MARKER|html|nl2br|url|js####]
 [####MARKER|html|nl2br|js|url####]
 */
-private static function replace_marker($mtemplate, $key, $val) { // v.180319
+private static function replace_marker($mtemplate, $key, $val) { // v.181123
 	//-- {{{SYNC-TPL-EXPR-MARKER}}}
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|dec[1-4]{1}|\|num|\|htmid|\|jsvar|\|json|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?(\|url|\|js)?(\|js|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
+		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|dec[1-4]{1}|\|num|\|htmid|\|jsvar|\|json|\|lower|\|upper|\|ucfirst|\|ucwords|\|trim|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?(\|url|\|js)?(\|js|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
 		//--
 		if((string)$val != '') {
 			//--
@@ -991,6 +996,16 @@ private static function replace_marker($mtemplate, $key, $val) { // v.180319
 					if((string)$val == '') {
 						$val = 'null'; // ensure a minimal json as empty string if no expr !
 					} //end if
+				} elseif((string)$matches[1] == '|lower') { // apply lowercase
+					$val = (string) SmartUnicode::str_tolower((string)$val);
+				} elseif((string)$matches[1] == '|upper') { // apply uppercase
+					$val = (string) SmartUnicode::str_toupper((string)$val);
+				} elseif((string)$matches[1] == '|ucfirst') { // apply uppercase first character
+					$val = (string) SmartUnicode::uc_first((string)$val);
+				} elseif((string)$matches[1] == '|ucwords') { // apply uppercase on each word
+					$val = (string) SmartUnicode::uc_words((string)$val);
+				} elseif((string)$matches[1] == '|trim') { // apply trim
+					$val = (string) trim((string)$val);
 				} elseif((substr((string)$matches[1], 0, 7) == '|substr') OR (substr((string)$matches[1], 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
 					$xnum = Smart::format_number_int((int)substr((string)$matches[1], 7), '+');
 					if($xnum < 1) {
@@ -1397,7 +1412,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 		//--
 		for($i=0; $i<Smart::array_size($orig_part); $i++) {
 			//--
-			$bind_var_key = strtoupper((string) $var_part[$i]);
+			$bind_var_key = strtoupper((string)$var_part[$i]);
 			//--
 			if(((string)$bind_var_key != '') AND (is_array($y_arr_vars[(string)$bind_var_key]))) { // if the LOOP is binded to an existing Array Variable and a non-empty KEY
 				//--

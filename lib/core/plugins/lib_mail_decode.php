@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170609
+ * @version 	v.181123
  * @package 	Mailer
  *
  */
@@ -220,7 +220,7 @@ public function get_header($message) {
 		$from = trim($headers['from']);
 	} //end if else
 	//--
-	if(strlen($from) <= 0) { // if from is not specified we use return path
+	if((string)$from == '') { // if from is not specified we use return path
 		if(is_array($headers['return-path'])) {
 			$from = trim($headers['return-path'][0]);
 		} else {
@@ -344,7 +344,7 @@ public function get_header($message) {
 	//--
 	$export_subject = trim($subj);
 	//--
-	if(strlen($export_subject) <= 0) {
+	if((string)$export_subject == '') {
 		$export_subject = '[?]';
 	} //end if
 	//--
@@ -363,7 +363,7 @@ public function get_header($message) {
 	//--
 	$export_date = trim($date);
 	//--
-	if(strlen($export_date) <= 0) {
+	if((string)$export_date == '') {
 		$export_date = '(?)';
 	} //end if
 	//--
@@ -540,28 +540,28 @@ private function printarray($array, $part_id) {
 			//--
 		} else {
 			//--
-			if ($key === 'ctype_primary') {
+			if($key === 'ctype_primary') {
 				$vxf_mail_part_type = SmartUnicode::str_tolower((string)$value);
-			} elseif ($key === 'ctype_secondary') {
+			} elseif($key === 'ctype_secondary') {
 				$vxf_mail_part_stype = SmartUnicode::str_tolower((string)$value);
-			} elseif (($key === 'name') OR ($key === 'filename')){
+			} elseif(($key === 'name') OR ($key === 'filename')){
 				$this->last_fname = (string) str_replace(' ', '_', (string)$value); // fix invalid spaces in file names
 			} elseif($key === 'disposition') {
-				if(SmartUnicode::str_tolower($value) === 'attachment') {
+				if(SmartUnicode::str_tolower((string)$value) === 'attachment') {
 					$vxf_mail_part_type = 'attachment';
 				} //end if
 			} elseif($key === 'body') {
 				//-- calculate part id
 				if ((string)$vxf_mail_part_type == 'text') {
 					//--
-					$tmp_part_id = 'txt_'.md5(trim($value)); // text parts are not very long
+					$tmp_part_id = 'txt_'.md5((string)trim((string)$value)); // text parts are not very long
 					//--
 				} else {
 					//--
-					$tmp_part_len = strlen($value); // this is the file size in bytes
+					$tmp_part_len = (int) strlen((string)$value); // this is the file size in bytes
 					//--
 					if((string)$this->last_cid == '') {
-						$tmp_part_id = 'att_'.sha1((string)$this->last_fname.$tmp_part_len.SmartUnicode::sub_str($value, 0, 8192).SmartUnicode::sub_str($value, -8192, 8192)); // try to be unique
+						$tmp_part_id = 'att_'.sha1((string)$this->last_fname.$tmp_part_len.SmartUnicode::sub_str((string)$value, 0, 8192).SmartUnicode::sub_str((string)$value, -8192, 8192)); // try to be unique
 						$tmp_att_mod = 'normal';
 					} else {
 						$tmp_part_id = 'cid_'.$this->last_cid; // we have an ID from cid ...
@@ -570,7 +570,7 @@ private function printarray($array, $part_id) {
 					//--
 				} //end if else
 				//--
-				$tmp_part_id = strtolower($tmp_part_id);
+				$tmp_part_id = (string) strtolower((string)$tmp_part_id);
 				//--
 				if(((string)$tmp_part_id != '') AND (((string)$part_id == '') OR ((trim(strtolower($part_id)) == (string)$tmp_part_id) OR (trim(strtolower(str_replace(' ', '', $part_id))) == (string)$tmp_part_id)))) {
 					// DEFAULT
@@ -578,15 +578,15 @@ private function printarray($array, $part_id) {
 						//--
 						// TEXT / HTML PART
 						//--
-						$value = SmartUnicode::convert_charset($value, $this->last_charset, $this->local_charset); // {{{SYNC-CHARSET-CONVERT}}}
+						$value = (string) SmartUnicode::convert_charset((string)$value, $this->last_charset, $this->local_charset); // {{{SYNC-CHARSET-CONVERT}}}
 						//--
-						if(trim($value) != '') { // avoid empty text parts
-							$this->arr_parts[$tmp_part_id] = array(
-								'type'=>'text',
-								'mode'=>$vxf_mail_part_type.'/'.$vxf_mail_part_stype,
-								'charset'=>$this->last_charset,
-								'description'=>'Text Part: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype,
-								'content'=>trim($value)
+						if((string)trim((string)$value) != '') { // avoid empty text parts
+							$this->arr_parts[(string)$tmp_part_id] = array(
+								'type'			=> (string) 'text',
+								'mode'			=> (string) $vxf_mail_part_type.'/'.$vxf_mail_part_stype,
+								'charset'		=> (string) $this->last_charset,
+								'description'	=> (string) 'Text Part: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype,
+								'content'		=> (string) trim((string)$value)
 							);
 						} //end if
 						//--
@@ -594,18 +594,18 @@ private function printarray($array, $part_id) {
 						//--
 						// ATTACHMENT / CID PART
 						//--
-						$this->arr_atts[$tmp_part_id] = array(
-							'type'=>'attachment',
-							'mode'=>$tmp_att_mod,
-							'filename'=>$this->last_fname,
-							'filesize'=>$tmp_part_len
+						$this->arr_atts[(string)$tmp_part_id] = array(
+							'type'		=> (string) 'attachment',
+							'mode'		=> (string) $tmp_att_mod,
+							'filename'	=> (string) $this->last_fname,
+							'filesize'	=> (int)    $tmp_part_len
 						);
 						if((string)$part_id == '') { // avoid include bodies for attachments except when they are express required
-							$this->arr_atts[$tmp_part_id]['description'] = 'Attachment: not includded (by default...)';
-							$this->arr_atts[$tmp_part_id]['content'] = '';
+							$this->arr_atts[(string)$tmp_part_id]['description'] = 'Attachment: not includded (by default...)';
+							$this->arr_atts[(string)$tmp_part_id]['content'] = '';
 						} else {
-							$this->arr_atts[$tmp_part_id]['description'] = 'Attachment: includded';
-							$this->arr_atts[$tmp_part_id]['content'] = $value;
+							$this->arr_atts[(string)$tmp_part_id]['description'] = 'Attachment: includded';
+							$this->arr_atts[(string)$tmp_part_id]['content'] = $value;
 						} //end if else
 						//--
 					} //end else
@@ -677,7 +677,7 @@ private function printarray($array, $part_id) {
 final class SmartMailerMimeExtract {
 
 	// ->
-	// v.180209
+	// v.181123
 
 //================================================================
 	//--
@@ -803,11 +803,11 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 	//while(list($key, $value) = @each($headers)) {
 	foreach($headers as $key => $value) { // Fix: the above is deprecated as of PHP 7.2
 		//--
-		$headers[$key]['name'] = strtolower($headers[$key]['name']);
+		$headers[(string)$key]['name'] = (string) strtolower($headers[(string)$key]['name']);
 		//--
-		switch((string)$headers[$key]['name']) {
+		switch((string)$headers[(string)$key]['name']) {
 			case 'content-type':
-				$content_type = $this->_parseHeaderValue($headers[$key]['value']);
+				$content_type = $this->_parseHeaderValue($headers[(string)$key]['value']);
 				$regs = array();
 				if(preg_match('/([0-9a-z+.-]+)\/([0-9a-z+.-]+)/i', (string)$content_type['value'], $regs)) {
 					$return->ctype_primary   = $regs[1];
@@ -828,7 +828,7 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 				} //end if
 				break;
 			case 'content-disposition';
-				$content_disposition = $this->_parseHeaderValue($headers[$key]['value']);
+				$content_disposition = $this->_parseHeaderValue($headers[(string)$key]['value']);
 				$return->disposition = $content_disposition['value'];
 				//if(isset($content_disposition['other'])) {
 				if(is_array($content_disposition['other'])) {
@@ -839,7 +839,7 @@ private function _decode($headers, $body, $default_ctype = 'text/plain') {
 				} //end if
 				break;
 			case 'content-transfer-encoding':
-				$content_transfer_encoding = $this->_parseHeaderValue($headers[$key]['value']);
+				$content_transfer_encoding = $this->_parseHeaderValue($headers[(string)$key]['value']);
 				break;
 		} //end switch
 		//--
@@ -1006,26 +1006,31 @@ private function _parseHeaders($input) {
 // @access private
 private function _parseHeaderValue($input) {
 	//--
+	$return = [];
+	//--
 	if(($pos = SmartUnicode::str_pos($input, ';')) !== false) {
 		//--
-		$return['value'] = trim(SmartUnicode::sub_str($input, 0, $pos));
+		$return['value'] = (string) trim(SmartUnicode::sub_str($input, 0, $pos));
 		$input = trim(SmartUnicode::sub_str($input, $pos+1));
 		//--
-		if(strlen($input) > 0) {
+		if((string)$input != '') {
 			//-- This splits on a semi-colon, if there's no preceeding backslash. Can't handle if it's in double quotes however. (Of course anyone sending that needs a good slap).
 			$parameters = preg_split('/\s*(?<!\\\\);\s*/i', (string)$input);
 			//--
 			for($i=0; $i<Smart::array_size($parameters); $i++) {
 				//--
-				$param_name  = trim(SmartUnicode::sub_str($parameters[$i], 0, $pos = SmartUnicode::str_pos($parameters[$i], '='))); // added TRIM to fix invalid ' = ' case
-				$param_value = trim(SmartUnicode::sub_str($parameters[$i], $pos + 1)); // added TRIM to fix invalid ' = ' case
+				$param_name  = (string) trim(SmartUnicode::sub_str($parameters[$i], 0, $pos = SmartUnicode::str_pos($parameters[$i], '='))); // added TRIM to fix invalid ' = ' case
+				$param_value = (string) trim(SmartUnicode::sub_str($parameters[$i], $pos + 1)); // added TRIM to fix invalid ' = ' case
 				//--
 				if((string)$param_value[0] == '"') {
 					$param_value = SmartUnicode::sub_str($param_value, 1, -1);
 				} //end if
 				//--
-				$return['other'][$param_name] = $param_value;
-				$return['other'][SmartUnicode::str_tolower($param_name)] = $param_value;
+				if(!is_array($return['other'])) {
+					$return['other'] = [];
+				} //end if
+				$return['other'][(string)$param_name] = $param_value;
+				$return['other'][(string)SmartUnicode::str_tolower($param_name)] = $param_value;
 				//--
 			} //end for
 			//--
@@ -1033,12 +1038,12 @@ private function _parseHeaderValue($input) {
 		//--
 	} else {
 		//--
-		$return['value'] = trim($input);
+		$return['value'] = (string) trim((string)$input);
 		//--
 	} //end if else
 
 	//--
-	return $return;
+	return (array) $return;
 	//--
 
 } //END FUNCTION
@@ -1092,13 +1097,13 @@ private function _decodeHeader($input) {
 		//--
 		switch(strtoupper($encoding)) {
 			case 'B':
-				$text = base64_decode($text);
-				$text = SmartUnicode::convert_charset($text, $charset, $this->charset); // {{{SYNC-CHARSET-CONVERT}}}
+				$text = (string) base64_decode($text);
+				$text = (string) SmartUnicode::convert_charset($text, $charset, $this->charset); // {{{SYNC-CHARSET-CONVERT}}}
 				break;
 			case 'Q':
-				$text = str_replace('_', ' ', $text); // // {{{SYNC-QUOTED-PRINTABLE-FIX}}} fix for google mail subjects ; normally on QP the _ must be encoded as =5F ; because google mail use the _ instead of space in all emails subject, it is considered a major enforcement to enforce this replacement
-				$text = quoted_printable_decode($text);
-				$text = SmartUnicode::convert_charset($text, $charset, $this->charset); // {{{SYNC-CHARSET-CONVERT}}}
+				$text = (string) str_replace('_', ' ', $text); // // {{{SYNC-QUOTED-PRINTABLE-FIX}}} Fix: for google mail subjects ; normally on QP the _ must be encoded as =5F ; because google mail use the _ instead of space in all emails subject, it is considered a major enforcement to support this replacement
+				$text = (string) quoted_printable_decode($text);
+				$text = (string) SmartUnicode::convert_charset($text, $charset, $this->charset); // {{{SYNC-CHARSET-CONVERT}}}
 				break;
 			default:
 				// as is

@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181109
+ * @version 	v.181123
  * @package 	Mailer
  *
  */
@@ -53,6 +53,7 @@ final class SmartMailerSend {
 //-- encoding
 private $parts;					// init array
 private $atts;					// init array
+private $composed;				// init flag
 //-- error and log
 public $error;					// error collect
 public $log;					// debug log
@@ -107,86 +108,92 @@ public function __construct() {
 public function send($do_send, $raw_message='') {
 
 	//--
-	if(strlen($this->smtp_helo) <= 0) { // fix
+	if((string)$this->smtp_helo == '') { // fix
 		$this->smtp_helo = '127.0.0.1';
 	} //end if
 	//--
 	$tmp_explode_arr = (array) explode('@', (string)$this->from);
-	$tmp_name = trim($tmp_explode_arr[0]); // used for from name in the case it is empty
-	$tmp_domain = trim($tmp_explode_arr[1]); // used for message ID
+	$tmp_name = (string) trim($tmp_explode_arr[0]); // used for from name in the case it is empty
+	$tmp_domain = (string) trim($tmp_explode_arr[1]); // used for message ID
 	//--
-	if(strlen($this->namefrom) > 0) {
+	if((string)$this->namefrom != '') {
 		$tmp_name = SmartUnicode::deaccent_str($this->namefrom);
 	} else {
-		$tmp_name = ucwords(str_replace(array('.', '-', '_'), array(' ', ' ', ' '), (string)$tmp_name));
+		$tmp_name = (string) ucwords((string)str_replace(array('.', '-', '_'), array(' ', ' ', ' '), (string)$tmp_name));
 	} //end if
 	//--
 	$this->mime_message = ''; // init
 	//--
-	$this->mime_message .= 'Return-Path: '.'<'.$this->from_return.'>'."\r\n";
-	$this->mime_message .= 'From: '.$tmp_name.' <'.$this->from.'>'."\r\n"; // [ucwords] is safe here as the name is ISO-8859-1 (1st part of email address)
+	$this->mime_message .= 'Return-Path: '.'<'.self::secure_header((string)$this->from_return).'>'."\r\n";
+	$this->mime_message .= 'From: '.self::secure_header((string)$tmp_name.' <'.$this->from.'>')."\r\n"; // [ucwords] is safe here as the name is ISO-8859-1 (1st part of email address)
 	$this->mime_message .= 'Date: '.date('D, d M Y H:i:s O')."\r\n";
-	$this->mime_message .= 'To: '.$this->to."\r\n";
+	$this->mime_message .= 'To: '.self::secure_header((string)$this->to)."\r\n";
 	//--
 	if(is_array($this->cc)) {
 		for($z=0; $z<Smart::array_size($this->cc); $z++) {
-			if(strlen($this->cc[$z]) > 0) {
-				$this->mime_message .= "Cc: ".$this->cc[$z]."\r\n";
+			if((string)$this->cc[$z] != '') {
+				$this->mime_message .= 'Cc: '.self::secure_header((string)$this->cc[$z])."\r\n";
 			} //end if
 		} //end for
-	} elseif(strlen($this->cc) > 0) {
-		$this->mime_message .= "Cc: ".$this->cc."\r\n";
+	} elseif((string)$this->cc != '') {
+		$this->mime_message .= 'Cc: '.self::secure_header((string)$this->cc)."\r\n";
 	} //end if
 	if((string)$do_send != 'yes') {
-		if(strlen($this->bcc) > 0) {
-			$this->mime_message .= "BCc: ".$this->bcc."\r\n";
+		if((string)$this->bcc != '') {
+			$this->mime_message .= 'BCc: '.self::secure_header((string)$this->bcc)."\r\n";
 		} //end if
 	} //end if
 	//--
-	$this->mime_message .= "Subject: ".$this->prepare_subject($this->subject)."\r\n";
+	$this->mime_message .= 'Subject: '.$this->prepare_subject((string)$this->subject)."\r\n"; // this applies secure header
 	//--
 	switch((string)$this->priority) {
 		case '1':
-			$this->mime_message .=  "X-Priority: ".'1'."\r\n"; //high
+			$this->mime_message .= 'X-Priority: 1'."\r\n"; // high
 			break;
 		case '5':
-			$this->mime_message .=  "X-Priority: ".'5'."\r\n"; //low
+			$this->mime_message .= 'X-Priority: 5'."\r\n"; // low
 			break;
 		case '3':
 		default:
-			$this->mime_message .=  "X-Priority: ".'3'."\r\n"; //normal
+			$this->mime_message .= 'X-Priority: 3'."\r\n"; // normal
 	} //end switch
 	//--
-	$this->mime_message .= 'X-Mailer: '.'SmartFramework Mailer ('.SMART_FRAMEWORK_VERSION.')'."\r\n";
-	$this->mime_message .= 'MIME-Version: 1.0 '.'(SmartFramework Mime-Message v.2016.02.01)'."\r\n";
-	$this->mime_message .= 'Message-Id: '.'<ID-'.Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain).'>'."\r\n";
+	$this->mime_message .= 'X-Mailer: '.'Smart.Framework Mailer ('.self::secure_header((string)SMART_FRAMEWORK_VERSION).')'."\r\n";
+	$this->mime_message .= 'MIME-Version: 1.0 '.'(Smart.Framework Mime-Message v.2018.11.23)'."\r\n";
+	$this->mime_message .= 'Message-Id: '.'<ID-'.self::secure_header((string)Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain)).'>'."\r\n";
 	//--
-	if(strlen($this->headers) > 0) {
-		$this->mime_message .= $this->headers; // must be end by \r\n
+	if((string)trim((string)$this->headers) != '') {
+		$this->mime_message .= (string) trim((string)$this->headers)."\r\n"; // all lines must end with: \r\n !!! IF THIS IS MALFORMED THERE IS A RISK TO BREAK THE MIME MESSAGE !!
 	} //end if
 	//--
-	if(strlen($raw_message) <= 0) {
+	if((string)$raw_message == '') {
 		//--
-		if(strlen($this->body) > 0) {
+		if((string)$this->body != '') {
 			//--
-			if($this->is_html == false) {
-				$this->add_attachment($this->body, '', 'text/plain', 'inline');
-			} else {
-				if(defined('SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE')) {
-					if(SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE === true) {
-						$this->add_attachment('This is a MIME Message in HTML Format.',  'alternative-part.txt',  'text/plain', 'inline'); // antiSPAM needs an alternate body
+			if($this->composed !== true) { // prevent reattach body on re-send
+				//--
+				if($this->is_html == false) {
+					$this->add_attachment($this->body, '', 'text/plain', 'inline');
+				} else {
+					if(defined('SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE')) {
+						if(SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE === true) {
+							$this->add_attachment('This is a MIME Message in HTML Format.', 'alternative-part.txt', 'text/plain', 'inline'); // antiSPAM needs an alternate body
+						} //end if
 					} //end if
-				} //end if
-				$this->add_attachment($this->body, '', 'text/html', 'inline');
-			} //end else
+					$this->add_attachment($this->body, '', 'text/html', 'inline');
+				} //end else
+				//--
+				$this->composed = true;
+				//--
+			} //end if
 			//--
 		} //end if
 		//--
-		$this->mime_message .= $this->build_multipart()."\r\n";
+		$this->mime_message .= (string) $this->build_multipart()."\r\n";
 		//--
 	} else {
 		//-- RAW (get as is)
-		$this->mime_message .= $raw_message."\r\n";
+		$this->mime_message .= (string) $raw_message."\r\n";
 		//--
 	} //end if else
 	//--
@@ -196,20 +203,20 @@ public function send($do_send, $raw_message='') {
 	//--
 	if((string)$do_send == 'yes') {
 		//--
-	    if((string)$this->method == 'mail') {
+		if((string)$this->method == 'mail') {
 			//-- MAIL METHOD
 			if($this->debuglevel > 0) {
 				$this->log = 'SendMail :: DEBUG :: MAIL';
 			} //end if
 			//--
-			if(SmartUnicode::mailsend($this->to, $this->prepare_subject($this->subject),  '', $this->mime_message) != true) {
+			if(SmartUnicode::mailsend($this->to, $this->prepare_subject($this->subject), '', $this->mime_message) != true) {
 				$err = 'Mail Method Failed !';
 				if($this->debuglevel > 0) {
 					$this->log .= ' :: '.$err;
 				} //end if
 			} //end if else
 			//--
-	    } elseif((string)$this->method == 'smtp') {
+		} elseif((string)$this->method == 'smtp') {
 			//-- SMTP METHOD
 			if($this->debuglevel > 0) {
 				$this->log = 'SendMail :: DEBUG :: SMTP';
@@ -248,7 +255,7 @@ public function send($do_send, $raw_message='') {
 						$rcpt_cc = 1;
 						if(is_array($this->cc)) {
 							for($z=0; $z<Smart::array_size($this->cc); $z++) {
-								if(strlen($this->cc[$z]) > 0) {
+								if((string)$this->cc[$z] != '') {
 									if($rcpt_cc == 1) {
 										$rcpt_cc = $smtp->recipient($this->cc[$z]);
 									} else {
@@ -256,12 +263,12 @@ public function send($do_send, $raw_message='') {
 									} //end if
 								} //end if
 							} //end for
-						} elseif(strlen($this->cc) > 0) {
+						} elseif((string)$this->cc != '') {
 							$rcpt_cc = $smtp->recipient((string)$this->cc);
 						} //end if
 						//--
 						$rcpt_bcc = 1;
-						if(strlen($this->bcc) > 0) {
+						if((string)$this->bcc != '') {
 							$rcpt_bcc = $smtp->recipient((string)$this->bcc);
 						} //end if
 						//--
@@ -299,7 +306,7 @@ public function send($do_send, $raw_message='') {
 				//--
 			} //end if
 			//--
-			if(strlen($err) > 0) {
+			if((string)$err != '') {
 				$err = 'ERROR :: '.$err;
 			} //end if
 			//--
@@ -309,13 +316,13 @@ public function send($do_send, $raw_message='') {
 				$this->log .= 'SMTP Log :: '.$smtp->log;
 			} //end if
 			//--
-	    } //end else
-	    //--
+		} //end else
+		//--
 	} //end if (send real)
 	//--
 
 	//--
-	return $err;
+	return (string) $err;
 	//--
 
 } //END FUNCTION
@@ -323,9 +330,11 @@ public function send($do_send, $raw_message='') {
 
 
 //=====================================================================================
-public function add_attachment($message, $name='', $ctype='', $disp='attachment', $cid='', $realattachment='no') {
+public function add_attachment($message, $name='', $ctype='', $disp='attachment', $cid='', $embed='no') {
 	//--
-	switch(strtolower($ctype)) {
+	$cid = (string) self::secure_header((string)$cid); // content ID
+	//--
+	switch((string)strtolower((string)$ctype)) {
 		//-- text parts
 		case 'text/plain':
 		case 'text/html':
@@ -334,11 +343,20 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 				$disp = 'inline'; // default
 			} //end if
 			//--
-			$encode = 'base64'; // quoted-printable
+			if($this->usealways_b64 === false) {
+				$encode = 'quoted-printable'; // notice: this is a risk when mixing character sets that some email servers / antiSPAM filters would reject the messages
+			} else {
+				$encode = 'base64'; // notice: this is the preferred encoding so is better handling all as base64
+			} //end if else
 			//--
 			if((string)$disp == 'inline') {
-				$charset = SmartUnicode::str_toupper(trim($this->charset));
+				$charset = (string) self::secure_header((string)SmartUnicode::str_toupper((string)trim((string)$this->charset)));
 			} //end if
+			//--
+			$name = (string) self::secure_header((string)$name);
+			$filename = '';
+			//--
+			$message = (string) SmartUnicode::fix_charset((string)$message);
 			//--
 			break;
 		//-- email messages
@@ -356,52 +374,49 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 			$disp = 'inline';
 			//--
 			$name = 'forwarded_message_'.date('YmdHis').'_'.Smart::random_number(10000,99999).'.eml';
-			$filename = $name ;
+			$filename = (string) self::secure_header((string)$name);
+			//--
+			$message = (string) SmartUnicode::fix_charset((string)$message);
 			//--
 			break;
 		//-- the rest ...
 		default:
 			//--
+			$ctype = (string) self::secure_header((string)trim((string)$ctype));
 			if((string)$ctype == '') {
 				$ctype = 'application/octet-stream';
 			} //end if
-			//--
-			$encode = 'base64';
-			//--
-			if(((string)$ctype == 'image') OR ((string)$ctype == 'image/jpeg') OR ((string)$ctype == 'image/jpg') OR ((string)$ctype == 'image/png') OR ((string)$ctype == 'image/gif')) {
+			if(((string)$ctype == 'image') OR ((string)$ctype == 'image/svg+xml') OR ((string)$ctype == 'image/jpeg') OR ((string)$ctype == 'image/jpg') OR ((string)$ctype == 'image/png') OR ((string)$ctype == 'image/gif')) {
 				if((string)$disp != 'inline') {
 					$disp = 'attachment'; // default
 				} //end if
 			} else {
-				$disp = 'attachment';
+				$disp = 'attachment'; // force attachment
 			} //end if else
 			//--
-			$filename = $name ;
+			$encode = 'base64'; // force base64 in this case, can be binary data
+			//--
+			$filename = (string) self::secure_header((string)$name);
+			//--
+			// DO NOT DO UNICODE FIX ON BINARY DATA
 			//--
 	} //end switch
 	//--
-	if((string)$realattachment == 'yes') { // real attachments
-		$this->atts[] = array(
-			'ctype' 	=> $ctype,
-			'message' 	=> $message,
-			'charset' 	=> $charset,
-			'encode' 	=> $encode,
-			'disp' 		=> $disp,
-			'name' 		=> $name,
-			'filename'	=> $filename,
-			'cid'		=> $cid
-		);
+	$arr_part = array(
+		'ctype' 	=> (string) $ctype,
+		'message' 	=> (string) $message,
+		'charset' 	=> (string) $charset,
+		'encode' 	=> (string) $encode,
+		'disp' 		=> (string) $disp,
+		'name' 		=> (string) $name,
+		'filename'	=> (string) $filename,
+		'cid'		=> (string) $cid
+	);
+	//--
+	if((string)$embed == 'yes') { // if embed is 'yes' will pack this part as real attachment
+		$this->atts[] = (array) $arr_part;
 	} else {
-		$this->parts[] = array(
-			'ctype' 	=> $ctype,
-			'message' 	=> $message,
-			'charset' 	=> $charset,
-			'encode' 	=> $encode,
-			'disp' 		=> $disp,
-			'name' 		=> $name,
-			'filename'	=> $filename,
-			'cid'		=> $cid
-		);
+		$this->parts[] = (array) $arr_part;
 	} //end if else
 	//--
 } //END FUNCTION
@@ -413,6 +428,7 @@ private function cleanup() {
 	//--
 	$this->parts = array();
 	$this->atts = array();
+	$this->composed = false;
 	$this->mime_message = '';
 	//--
 	$this->usealways_b64 = true;
@@ -452,15 +468,32 @@ private function cleanup() {
 
 
 //=====================================================================================
+private function secure_header($str) {
+	//--
+	return (string) Smart::normalize_spaces((string)SmartUnicode::fix_charset((string)$str));
+	//--
+} //END FUNCTION
+//=====================================================================================
+
+
+//=====================================================================================
 private function prepare_subject($subject) {
 	//--
-	$charset = strtoupper(trim($this->charset));
+	$subject = (string) self::secure_header((string)$subject);
+	//--
+	$charset = (string) self::secure_header((string)strtoupper((string)trim((string)$this->charset)));
 	//--
 	if((string)$charset != 'ISO-8859-1') {
-		$subject = '=?'.$charset.'?B?'.base64_encode($subject).'?=';
+		if($this->usealways_b64 === false) { // quote printable encoded subject
+			$subject = (string) str_replace(["\r\n", "\r"], "\n", (string)quoted_printable_encode((string)$subject)); // encode QP
+			$subject = (string) str_replace(' ', '_', (string)$subject); // {{{SYNC-QUOTED-PRINTABLE-FIX}}} Reverse Fix: as google mail subjects ; normally on QP the _ must be encoded as =5F ; because google mail use the _ instead of space in all emails subject, it is considered a major enforcement to support this replacement
+			$subject = (string) '=?'.$charset.'?Q?'.$subject.'?=';
+		} else { // prefer base64 encoded subjects
+			$subject = (string) '=?'.$charset.'?B?'.base64_encode((string)$subject).'?=';
+		} //end if else
 	} //end if
 	//--
-	return $subject;
+	return (string) $subject;
 	//--
 } //END FUNCTION
 //=====================================================================================
@@ -468,7 +501,7 @@ private function prepare_subject($subject) {
 
 //=====================================================================================
 // v.150119, added sha512 checksum
-// v.180209, added quoted printable fix
+// v.181123, added quoted printable as enabled, an alternative to base64
 private function build_message($part) {
 	//--
 	$part = (array) $part;
@@ -477,13 +510,14 @@ private function build_message($part) {
 	//--
 	if((string)$part['encode'] == '7bit') {
 		// leave as is
-//	} elseif((string)$part['encode'] == 'quoted-printable') {
-//		$part['message'] = str_replace(' ', '-', quoted_printable_encode((string)$part['message'])); // {{{SYNC-QUOTED-PRINTABLE-FIX}}}
-//	} elseif((string)$part['encode'] == 'uuencode') {
+	} elseif((string)$part['encode'] == 'quoted-printable') { // quoted printable encode specific for email body
+		$part['message'] = (string) str_replace(["\r\n", "\r"], "\n", (string)quoted_printable_encode((string)$part['message'])); // see PHP Mailer ; no need for chunk split
+//		$part['message'] = (string) str_replace(' ', '-', (string)$part['message']); // {{{SYNC-QUOTED-PRINTABLE-FIX}}} ; this appear to be a fix just for email subject that must be not applied to email bodies
+//	} elseif((string)$part['encode'] == 'uuencode') { // currently this is unmaintained an may not work with modern antispam filters !!
 //		$part['message'] = chunk_split(convert_uuencode((string)$part['message']), 76, "\r\n");
 	} else { // base64 encode
 		$part['encode'] = 'base64'; // rewrite this for all other cases
-		$part['message'] = chunk_split(base64_encode((string)$part['message']), 76, "\r\n"); // encode b64
+		$part['message'] = (string) chunk_split((string)base64_encode((string)$part['message']), 76, "\r\n"); // encode b64
 	} //end if
 	//--
 	return 	'Content-Type: '.$part['ctype'].($part['charset'] ? '; charset='.$part['charset'] : '').($part['name'] ? '; name="'.$part['name'].'"' : '')."\r\n".
@@ -501,13 +535,14 @@ private function build_message($part) {
 // v.2016-02-01 (multipart/mixed + multipart/related)
 private function build_multipart() {
 	//--
-	$timeduid = Smart::uuid_10_seq(); // 10 chars, timed based, can repeat only once in 1000 years for the same millisecond
-	$timedrid = strrev($timeduid);
-	$entropy = Smart::unique_entropy('mail/send'); // this generate a very random value
+	$timeduid = (string) Smart::uuid_10_seq(); // 10 chars, timed based, can repeat only once in 1000 years for the same millisecond
+	$timedrid = (string) strrev((string)$timeduid);
+	$entropy = (string) Smart::unique_entropy('mail/send'); // this generate a very random value
 	$boundary 			= '_===-Mime.Part____.'.$timeduid.'_'.md5('@MimePart---#Boundary@'.$entropy).'_P_.-=_'; // 69 chars of 70 max
 	$relatedboundary 	= '_-==-Mime.Related_.'.$timedrid.'_'.md5('@MimeRelated#Boundary@'.$entropy).'_R_.=-_'; // 69 chars of 70 max
 	//--
 	$multipart = '';
+	//--
 	$multipart .= 'Content-Type: multipart/mixed; boundary="'.$boundary.'"'."\r\n"."\r\n";
 	$multipart .= 'This is a multi-part message in MIME format.'."\r\n"."\r\n";
 	$multipart .= '--'.$boundary."\r\n";
@@ -516,7 +551,7 @@ private function build_multipart() {
 	$multipart .= "\r\n";
 	for($i=Smart::array_size($this->parts)-1; $i>=0; $i--) {
 		$multipart .= '--'.$relatedboundary."\r\n";
-		$multipart .= $this->build_message($this->parts[$i]);
+		$multipart .= (string) $this->build_message($this->parts[$i]);
 	} //end for
 	$multipart .= "\r\n";
 	$multipart .= '--'.$relatedboundary.'--'."\r\n";
@@ -524,13 +559,13 @@ private function build_multipart() {
 	$multipart .= "\r\n";
 	for($i=Smart::array_size($this->atts)-1; $i>=0; $i--) {
 		$multipart .= '--'.$boundary."\r\n";
-		$multipart .= $this->build_message($this->atts[$i]);
+		$multipart .= (string) $this->build_message($this->atts[$i]);
 	} //end for
 	//--
 	$multipart .= "\r\n";
 	$multipart .= '--'.$boundary.'--'."\r\n";
 	//--
-	return $multipart;
+	return (string) $multipart;
 	//--
 } //END FUNCTION
 //=====================================================================================
@@ -612,7 +647,7 @@ private function build_multipart() {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170913
+ * @version 	v.181123
  * @package 	Mailer
  *
  */
@@ -690,7 +725,7 @@ public function connect($helo, $server, $port=25, $sslversion='') {
 	$protocol = '';
 	$start_tls = false;
 	//--
-	if(strlen($sslversion) > 0) {
+	if((string)$sslversion != '') {
 		//--
 		if(!function_exists('openssl_open')) {
 			$this->error = '[ERR] PHP OpenSSL Extension is required to perform SSL requests !';
@@ -766,7 +801,7 @@ public function connect($helo, $server, $port=25, $sslversion='') {
 
 	//--
 	$reply = $this->retry_data();
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		//--
 		@fclose($this->socket);
 		$this->socket = false;
@@ -871,12 +906,12 @@ private function starttls($stream_context) {
 		$this->log .= '[INF] Starting TLS on Mail Server // STARTTLS'."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('STARTTLS');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -915,12 +950,12 @@ public function login($username, $pass) {
 		$this->log .= '[INF] Login to Mail Server (USER = '.$username.')'."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('AUTH LOGIN');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -931,7 +966,7 @@ public function login($username, $pass) {
 	} //end if
 	//--
 	$reply = $this->send_cmd(base64_encode($username)); // send encoded username
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -942,7 +977,7 @@ public function login($username, $pass) {
 	} //end if
 	//--
 	$reply = $this->send_cmd(base64_encode($pass)); // send encoded password
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1008,12 +1043,12 @@ public function noop() {
 		$this->log .= '[INF] Ping the Mail Server // NOOP'."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('NOOP');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1042,12 +1077,12 @@ public function help() {
 		$this->log .= '[INF] Ask Help from Mail Server'."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('HELP');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1076,12 +1111,12 @@ public function reset() {
 		$this->log .= '[INF] Reset the Connection to Mail Server'."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('RSET');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1109,7 +1144,7 @@ public function hello($hostname) {
 		$this->log .= '[INF] Sending EHLO / HELO to Mail Server !'."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1146,12 +1181,12 @@ public function verify($name) {
 		$this->log .= '[INF] Verify is sent on Mail Server for: '.$name."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('VRFY '.$name);
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1183,12 +1218,12 @@ public function expand($name) {
 		$this->log .= '[INF] Expand is sent on Mail Server for: '.$name."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return '';
 	} //end if
 	//--
 	$reply = $this->send_cmd('EXPN '.$name);
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return '';
 	} //end if
 	//--
@@ -1220,12 +1255,12 @@ public function mail($from) {
 		$this->log .= '[INF] Mail command is sent on Mail Server for: '.$from."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('MAIL FROM:<'.$from.'>');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1255,12 +1290,12 @@ public function recipient($to) {
 		$this->log .= '[INF] Recipient command is sent on Mail Server for: '.$to."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('RCPT TO:<'.$to.'>');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1284,10 +1319,10 @@ public function recipient($to) {
 // and the message body being seperated by and additional <CRLF>.
 // Implements rfc 821: DATA <CRLF>
 // SMTP CODE INTERMEDIATE: 354
-//     [data]
-//     <CRLF>.<CRLF>
-//     SMTP CODE SUCCESS: 250
-//     SMTP CODE FAILURE: 552,554,451,452
+//   [data]
+//   <CRLF>.<CRLF>
+//   SMTP CODE SUCCESS: 250
+//   SMTP CODE FAILURE: 552,554,451,452
 // SMTP CODE FAILURE: 451,554
 // SMTP CODE ERROR  : 500,501,503,421
 public function data_send($msg_data) {
@@ -1296,12 +1331,12 @@ public function data_send($msg_data) {
 		$this->log .= '[INF] Data-Send command is sent on Mail Server'."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
 	$reply = $this->send_cmd('DATA');
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1327,7 +1362,7 @@ public function data_send($msg_data) {
 	$field = SmartUnicode::sub_str($lines[0], 0, SmartUnicode::str_pos($lines[0], ':'));
 	$in_headers = false;
 	//--
-	if((strlen($field) > 0) AND (!SmartUnicode::str_contains($field, ' '))) {
+	if(((string)$field != '') AND (!SmartUnicode::str_contains($field, ' '))) {
 		$in_headers = true;
 	} //end if
 	//--
@@ -1362,7 +1397,7 @@ public function data_send($msg_data) {
 		//while(list($key,$line_out) = @each($lines_out)) { // FIX to be compatible with the upcoming PHP 7
 		foreach($lines_out as $key => $line_out) { // Fix: the above is deprecated as of PHP 7.2
 			//--
-			if(strlen($line_out) > 0) {
+			if((string)$line_out != '') {
 				if(SmartUnicode::sub_str($line_out, 0, 1) == '.') {
 					$line_out = '.'.$line_out;
 				} //end if
@@ -1383,7 +1418,7 @@ public function data_send($msg_data) {
 		$this->log .= '[INF] Data-Send Mail Server Reply is :: '.$test.' // '.$reply."\n";
 	} //end if
 	//--
-	if(strlen($this->error) > 0) {
+	if((string)$this->error != '') {
 		return 0;
 	} //end if
 	//--
@@ -1464,7 +1499,7 @@ private function send_cmd($cmd) {
 		return '';
 	} //end if
 	//--
-	if(strlen($cmd) <= 0) {
+	if((string)$cmd == '') {
 		$this->error = '[ERR] SMTP Send Command: Empty command to send !';
 		return '';
 	} //end if

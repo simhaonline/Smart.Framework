@@ -51,17 +51,17 @@ php_flag zend.multibyte					Off
 
 	### Security Fixes
 #	RewriteRule ^\.htaccess$ - [F,L]
+#	RewriteRule ^\#db/ - [F,L]
 #	RewriteRule ^_scripts/ - [F,L]
 #	RewriteRule ^_sql/ - [F,L]
 #	RewriteRule ^etc/cacert\.pem$ - [F,L]
-#	RewriteRule ^etc/config\.php$ - [F,L]
-#	RewriteRule ^etc/config-index\.php$ - [F,L]
-#	RewriteRule ^etc/config-admin\.php$ - [F,L]
-#	RewriteRule ^etc/init\.php$ - [F,L]
-#	RewriteRule ^tmp/ - [F,L]
+#	RewriteRule ^etc/(.*)\.php$ - [F,L]
+#	RewriteRule ^lib/(.*)\.php$ - [F,L]
+#	RewriteRule ^modules/(.*)\.php$ - [F,L]
+#	RewriteRule ^wpub/(.*)\.php$ - [F,L]
 #	RewriteRule ^wpub/\.htaccess$ - [F,L]
 #	RewriteRule ^wpub/\#wpub$ - [F,L]
-#	RewriteRule ^\#db/ - [F,L]
+#	RewriteRule ^tmp/ - [F,L]
 	###
 
 	### sample: smart-framework/module.controller(.seo-text).ext [ compatible with Smart::url_make_semantic() + Rewrite ]

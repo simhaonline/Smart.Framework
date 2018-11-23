@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181025
+ * @version		181121
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -114,19 +114,8 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 		} //end if
 		//--
 		//==
-		//-- switch language by url var (lang) or by cookie
-		$lang = (string) trim((string)SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getRequestVar('lang', '', (array)SmartTextTranslations::getAvailableLanguages())));
-		if((string)$lang == '') {
-			$lang = (string) trim((string)SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getCookieVar('SmartApp_ADM_LANGUAGE_SET')));
-			if((string)$lang == '') {
-				if(!in_array((string)$lang, (array)SmartTextTranslations::getAvailableLanguages())) {
-					$lang = '';
-				} //end if
-			} //end if
-		} //end if
-		if(strlen(trim((string)$lang)) > 0) {
-			SmartTextTranslations::setLanguage(trim((string)$lang));
-		} //end if
+		//-- switch language by url var (lang) or by cookie: with order @ GPC
+		self::DetectInputLanguage();
 		//--
 		//== RAW OUTPUT FOR STATUS
 		//--
