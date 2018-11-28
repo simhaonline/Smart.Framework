@@ -1,7 +1,7 @@
 # Smart.Framework, a modern, high performance PHP / Javascript Framework for Web featuring MVC + Middlewares
 ## License: BSD
 (c) 2009 - 2018 unix-world.org
-<b>For support and questions: <i>support @ unix-world.org</i></b>
+<b>For support or questions: <i>support @ unix-world.org</i></b>
 <br>
 
 ### Smart.Framework design philosophy:

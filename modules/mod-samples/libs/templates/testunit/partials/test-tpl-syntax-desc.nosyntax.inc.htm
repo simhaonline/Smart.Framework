@@ -83,7 +83,7 @@
 	</div>
 	<script>
 	jQuery(document).ready(function() {
-		SmartJS_BrowserUIUtils.DataTable('mtpl-syntax-tbl', {
+		SmartJS_BrowserUIUtils.Smart_DataTable_Init('mtpl-syntax-tbl', {
 			filter: false,
 			sort: true,
 			paginate: false,
@@ -109,6 +109,7 @@
 				}
 			]
 		});
+	//	SmartJS_BrowserUIUtils.Smart_DataTable_FilterColumns('mtpl-syntax-tbl', 0, '^(1|2|3|4|5)\.$');
 	});
 	</script>
 </div>
