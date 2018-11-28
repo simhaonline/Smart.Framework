@@ -1,5 +1,5 @@
 
-/* ------------------------------------------------ CSS3, Base Styles START :: r.181019 */
+/* ------------------------------------------------ CSS3, Base Styles START :: r.181128 */
 
 /* IMPORTANT: !! FOR A VERY CLEAR READABILITY OF PAGE FONTS !!
  * except the main body and main elements sizes (sized in pixels),
@@ -140,6 +140,14 @@ input[type=submit], input[type=button] {
 	border-style: outset;
 	border-color: #333333;
 	cursor: pointer;
+}
+input:invalid+span:after {
+	content: '✖';
+	padding-left: 5px;
+}
+input:valid+span:after {
+	content: '✓';
+	padding-left: 5px;
 }
 ***/
 

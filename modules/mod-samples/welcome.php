@@ -172,7 +172,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$this->PageViewSetVar(
 			'main',
 			SmartMarkersTemplating::render_file_template(
-				$this->ControllerGetParam('module-view-path').'welcome.inc.htm',
+				$this->ControllerGetParam('module-view-path').'welcome.mtpl.htm',
 				[
 					'DATE-TIME' 		=> (string) date('Y-m-d H:i:s O'),
 					'TXT-LANG' 			=> (string) $translator_core->text('lang'),

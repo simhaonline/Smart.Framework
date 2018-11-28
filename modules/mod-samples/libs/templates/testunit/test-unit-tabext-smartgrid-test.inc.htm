@@ -38,59 +38,26 @@
 	var TheGrid = new Smart_Grid(IdOfGrid, 'infoTotalRows', TESTUNIT_BASE_URL+'&op=testunit.json-sqlite3-smartgrid', TESTUNIT_AREA_PFX+'_smart_test_slickgrid_list', 'iso', 'ASC', '', 'filtering');
 	//--
 </script>
-<style type="text/css">
-#myGridFormFluidTbl div.ux-fluid-table {
-	width: 1024px;
-}
-#myGridFormFluidTbl div.ux-fluid-table div.ux-fluid-tbl-row {
-	width: 100%;
-}
-#myGridFormFluidTbl div.ux-fluid-table div.ux-fluid-tbl-row div.ux-fluid-tbl-cell {
-	border: 0px;
-	padding: 3px;
-}
-@media all and (max-width: 1023px) {
-	#myGridFormFluidTbl div.ux-fluid-table {
-		margin-top: 25px !important;
-		width: 100% !important;
-	}
-	#myGridFormFluidTbl div.ux-fluid-table div.ux-fluid-tbl-row {
-		display: block !important;
-	}
-	#myGridFormFluidTbl div.ux-fluid-table div.ux-fluid-tbl-row div.ux-fluid-tbl-cell {
-		display: inline-block !important;
-		width: 100% !important;
-		text-align: left !important;
-	}
-	#myGridFormFluidTbl div.ux-fluid-table div.ux-fluid-tbl-row div.ux-fluid-tbl-cell * {
-		text-align: left !important;
-		margin-left: 0px !important;
-		margin-right: 0px !important;
-	}
-}
-</style>
 <form id="filtering" name="filtering" class="ux-form">
-<div id="myGridFormFluidTbl">
-		<div class="ux-fluid-table">
-			<div class="ux-fluid-tbl-row">
-				<div class="ux-fluid-tbl-cell">
-					<span style="display:inline-block;"><input type="text" id="filter-src" name="src" placeholder="ISO | Name | ISO3 | Numeric Code" value="" class="ux-input-def" style="width:250px;"></span>
-				</div>
-				<div class="ux-fluid-tbl-cell">
-					<button type="button" class="ux-button ux-button-primary" onClick="TheGrid.loadGridData(0);">Filter &nbsp; <i class="fa fa-filter"></i></button>
-				</div>
-				<div class="ux-fluid-tbl-cell">
-					<button type="button" class="ux-button ux-button-secondary" onClick="TheGrid.resetGrid(); TheGrid.loadGridData(0);">Reset &nbsp; <i class="fa fa-times"></i></button>
-				</div>
-				<div class="ux-fluid-tbl-cell">
-					<div style="width:32px;">&nbsp;</div>
-				</div>
-				<div class="ux-fluid-tbl-cell">
-					<span style="color:#778899; font-size:24px; font-weight:bold;">Sample Data List / Countries :: <span id="infoTotalRows"># / # @</span></span>
-				</div>
-			</div>
-		</div>
-</div>
+	<table class="ux-reflow-table">
+		<tr>
+			<td>
+				<input type="text" id="filter-src" name="src" placeholder="ISO | Name | ISO3 | Numeric Code" value="" class="ux-input-def" style="width:99%;">
+			</td>
+			<td>
+				<button type="button" class="ux-button ux-button-primary" onClick="TheGrid.loadGridData(0);">Filter &nbsp; <i class="fa fa-filter"></i></button>
+			</td>
+			<td>
+				<button type="button" class="ux-button ux-button-secondary" onClick="TheGrid.resetGrid(); TheGrid.loadGridData(0);">Reset &nbsp; <i class="fa fa-times"></i></button>
+			</td>
+			<td>
+				<div style="width:32px;">&nbsp;</div>
+			</td>
+			<td>
+				<span style="color:#778899; font-size:24px; font-weight:bold;">Sample Data List / Countries :: <span id="infoTotalRows"># / # @</span></span>
+			</td>
+		</tr>
+	</table>
 </form>
 <div id="SmartTestNavPager"></div>
 <form class="ux-form"><div id="SmartTestSlickGrid" class="slickgrid-table" style="font-size:10px;width:100%;height:10px;"></div></form>

@@ -41,12 +41,21 @@ if(!function_exists('preg_match')) {
 //--
 if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_RELEASE_VERSION') || defined('SMART_FRAMEWORK_RELEASE_URL') || defined('SMART_FRAMEWORK_RELEASE_MIDDLEWARE')) {
 	@http_response_code(500);
-	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved !');
+	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved');
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.11.23'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.11.28'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
+//--
+if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
+	@http_response_code(500);
+	die('A required RUNTIME constant has not been defined: SMART_FRAMEWORK_ADMIN_AREA');
+} //end if
+//--
+if(!headers_sent()) {
+	header('X-Powered-By: '.'Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.((SMART_FRAMEWORK_ADMIN_AREA === true) ? '[A]' : '[I]'));
+} //end if
 //--
 
 //--
@@ -55,30 +64,65 @@ if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_DEBUG_MODE');
 } //end if
 //--
-if(defined('SMART_APP_LANG_COOKIE')) {
+if(!defined('SMART_FRAMEWORK_URL_VALUE_ENABLED')) {
 	@http_response_code(500);
-	die('A Reserved Constant have been already defined: SMART_APP_LANG_COOKIE !');
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_VALUE_ENABLED');
+} //end if
+if(!preg_match('/^[a-z0-9]+$/', (string)SMART_FRAMEWORK_URL_VALUE_ENABLED)) {
+	@http_response_code(500);
+	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_VALUE_ENABLED');
 } //end if
 //--
-if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
+if(!defined('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP')) {
 	@http_response_code(500);
-	die('A required RUNTIME constant has not been defined: SMART_FRAMEWORK_ADMIN_AREA');
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_MODALPOPUP');
 } //end if
+if(!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_MODALPOPUP)) {
+	@http_response_code(500);
+	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_PARAM_MODALPOPUP');
+} //end if
+//--
+if(!defined('SMART_FRAMEWORK_URL_PARAM_PRINTABLE')) {
+	@http_response_code(500);
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_PRINTABLE');
+} //end if
+if(!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_PRINTABLE)) {
+	@http_response_code(500);
+	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_PARAM_PRINTABLE');
+} //end if
+//--
+if(!defined('SMART_FRAMEWORK_URL_PARAM_LANGUAGE')) {
+	@http_response_code(500);
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_LANGUAGE');
+} //end if
+if(!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_LANGUAGE)) {
+	@http_response_code(500);
+	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_PARAM_LANGUAGE');
+} //end if
+//--
+if(defined('SMART_APP_LANG_COOKIE')) {
+	@http_response_code(500);
+	die('A Reserved Constant have been already defined: SMART_APP_LANG_COOKIE');
+} //end if
+if(defined('SMART_FRAMEWORK_INFO_LOG')) {
+	@http_response_code(500);
+	die('A Reserved Constant have been already defined: SMART_FRAMEWORK_INFO_LOG');
+} //end if
+//--
 if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-	define('SMART_APP_LANG_COOKIE', 'SmartApp_ADM_LANGUAGE_SET');
+	define('SMART_APP_LANG_COOKIE', 'SmartApp_ADM__SetLanguage__'.SMART_FRAMEWORK_URL_PARAM_LANGUAGE);
 	define('SMART_FRAMEWORK_INFO_LOG', 'tmp/logs/adm/'.'info-'.date('Y-m-d@H').'.log');
 } else {
-	define('SMART_APP_LANG_COOKIE', 'SmartApp_IDX_LANGUAGE_SET');
+	define('SMART_APP_LANG_COOKIE', 'SmartApp_IDX__SetLanguage__'.SMART_FRAMEWORK_URL_PARAM_LANGUAGE);
 	define('SMART_FRAMEWORK_INFO_LOG', 'tmp/logs/idx/'.'info-'.date('Y-m-d@H').'.log');
 } //end if else
 //--
 
 //--
-if(!headers_sent()) {
-	header('X-Powered-By: '.'Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.((SMART_FRAMEWORK_ADMIN_AREA === true) ? '[A]' : '[I]'));
+if(defined('SMART_FRAMEWORK_INSTALL_MODE')) {
+	@http_response_code(500);
+	die('A Reserved Constant have been already defined: SMART_FRAMEWORK_INSTALL_MODE');
 } //end if
-//--
-
 //--
 if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) { // here must be used the functions file_exists() and is_link() as the filesys lib is not yet initialized ... {{{SYNC-SF-PATH-EXISTS}}}
 	define('SMART_FRAMEWORK_INSTALL_MODE', 'yes');
@@ -207,23 +251,6 @@ if(!defined('SMART_FRAMEWORK_HTACCESS_NOINDEXING')) {
 if(!defined('SMART_FRAMEWORK_IDENT_ROBOTS')) {
 	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_IDENT_ROBOTS');
-} //end if
-//--
-if(!defined('SMART_FRAMEWORK_URL_PARAM_LANGUAGE')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_LANGUAGE');
-} //end if
-if(!defined('SMART_FRAMEWORK_URL_PARAM_PRINTABLE')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_PRINTABLE');
-} //end if
-if(!defined('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_MODALPOPUP');
-} //end if
-if(!defined('SMART_FRAMEWORK_URL_VALUE_ENABLED')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_VALUE_ENABLED');
 } //end if
 //--
 if(!defined('SMART_SOFTWARE_FRONTEND_ENABLED')) {

@@ -107,10 +107,10 @@ Options -Indexes
 //---------------------------------------- ROBOTS IDENTIFY :: DON'T CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING :: Sample (spaces between <> counts): '<bot signature 1>,<bot signature 2 >,< another-bot >'
 define('SMART_FRAMEWORK_IDENT_ROBOTS', '<robot>,<apache>,<httperf>,<benchmark>,<scanner>,<googlebot>,<google adsbot>,<google toolbar>,<google web preview>,<google feed fetcher>,<yahoo! slurp>,<webcrawler>,<domaincrawler>,<catchbot>,<webalta crawler>,<superbot>,<msnbot>,<ms url control>,<winhttp>,<roku dvp>,<linkwalker>,<aihitbot>,<ia_archiver>,<sanszbot>,<linguee bot>,<swish-e>,<tarantula>,<fast-webcrawler>,<jeeves>,<teoma>,<baiduspider>,<bing bot>,<yandex>,<exabot>,<everyfeed spider>,<gregarius>,<facebook scraper>,<email wolf>,<gaisbot>,<gulperbot>,<grub-client>,<peach >,<htmlparser>,<w3c css validator>,<w3c (x)html validator>,<w3c p3p validator>,<download demon>,<offline explorer>,<webcopier>,<web downloader>,<webzip>,<htmldoc>,<wget >,<curl/>,<php >,<libwww-perl>,<python-urllib>,<java >'); // robots identification by user agent portions of signature
 //--------------------------------------- SPECIAL URL PARAMS
-define('SMART_FRAMEWORK_URL_PARAM_LANGUAGE', 		'language');													// Language URL Param (if empty, will not accept lanugage inputs by URL or Cookie)
-define('SMART_FRAMEWORK_URL_PARAM_PRINTABLE', 		'print');														// Printable URL Param
-define('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP', 		'winmod');														// Modal/PopUp URL Param
-define('SMART_FRAMEWORK_URL_VALUE_ENABLED', 		'yes');															// Enabled URL Value (for Modal/PopUp and Printable)
+define('SMART_FRAMEWORK_URL_PARAM_LANGUAGE', 		'lang');														// Language URL Param (if empty, will not accept any language inputs by URL or Cookie) ; Default = 'lang'
+define('SMART_FRAMEWORK_URL_PARAM_PRINTABLE', 		'print');														// Printable URL Param ; Default = 'print'
+define('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP', 		'winmod');														// Modal/PopUp URL Param ; Default = 'winmod'
+define('SMART_FRAMEWORK_URL_VALUE_ENABLED', 		'yes');															// Enabled URL Value (used for Modal/PopUp and Printable) ; Default = 'yes'
 //---------------------------------------- SPECIAL FEATURES
 define('SMART_SOFTWARE_FRONTEND_ENABLED',			true);															// To Disable Frontend (index.php) set this to false
 define('SMART_SOFTWARE_BACKEND_ENABLED',			true);															// To Disable Backend (admin.php) set this to false

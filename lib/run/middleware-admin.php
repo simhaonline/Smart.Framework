@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181121
+ * @version		181127
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {

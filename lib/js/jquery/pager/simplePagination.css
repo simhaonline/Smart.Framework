@@ -4,7 +4,7 @@
 * URL: https://github.com/flaviusmatis/simplePagination.js
 *
 * (c) 2016-2018 unix-world.org
-* contains fixes by unixman r.180403:
+* contains fixes by unixman r.181128:
 * 	- style improvements
 * 	- fixes for google.closures.stylesheet
 * 	- removed compact theme
@@ -40,10 +40,16 @@ span.ellipse.clickable {
 	cursor: pointer;
 }
 
+span.ellipse {
+	height:24px;
+}
+
 span.ellipse input {
 	background: #FFFFFF;
 	width: 55px;
 	border: 0 !important;
+	height: 24px;
+	vertical-align: middle;
 }
 
 /*------------------------------------*\
@@ -145,3 +151,5 @@ span.ellipse input {
 	font-weight: bold;
 	cursor: default;
 }
+
+/* END */

@@ -4,6 +4,8 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 	<title>DataTables example - Plugin: Fixed Header</title>
+	<link rel="stylesheet" type="text/css" href="../../../../css/toolkit/ux-toolkit.css">
+	<link rel="stylesheet" type="text/css" href="../../../../css/toolkit/ux-toolkit-responsive.css">
 	<script type="text/javascript" src="../../jquery.js"></script>
 	<link rel="stylesheet" type="text/css" href="../datatables-responsive.css">
 	<script type="text/javascript" src="../datatables-responsive.js"></script>
@@ -11,8 +13,8 @@
 	<script type="text/javascript" src="../plugins/fixed-header/dataTables.fixedHeader.js"></script>
 </head>
 <body>
-<h1>DataTables example - Plugin: Fixed Header</h1>
-<table id="example" class="display" style="width:100%">
+<h1>DataTables example - Plugin: Fixed Header (minus styling)</h1>
+<table id="example" style="width:100%">
 	<thead>
 		<tr>
 			<th>Name</th>
@@ -503,6 +505,13 @@ jQuery(document).ready(function() {
 		fixedHeader: {
 			header: true,
 			footer: true
+		},
+	//	uxmHidePagingIfNoMultiPages: true,
+		uxmCssClassLengthField: 'ux-field',
+		uxmCssClassFilterField: 'ux-field',
+		classes: {
+			sPageButton: 'ux-button',
+			sPageButtonActive: 'ux-button-info'
 		}
 	});
 });

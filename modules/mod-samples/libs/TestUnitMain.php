@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181107
+ * @version 	v.181128
  *
  */
 final class TestUnitMain {
@@ -150,8 +150,12 @@ final class TestUnitMain {
 		$arr_bw = (array) \SmartComponents::get_imgdesc_by_bw_id(\SmartUtils::get_os_browser_ip('bw'));
 		$tpl_path = 'modules/mod-samples/libs/templates/testunit';
 		//--
+		$tpl_alt_twig = (bool) \SmartAppInfo::TestIfModuleExists('mod-tpl-twig');
+		$tpl_alt_typo3fluid = (bool) \SmartAppInfo::TestIfModuleExists('mod-tpl-typo3-fluid');
+		$tpl_alt_avail = (bool) ($tpl_alt_twig || $tpl_alt_typo3fluid);
+		//--
 		return \SmartMarkersTemplating::render_file_template( // rendering a complex template with hardcoded sub templates
-			'modules/mod-samples/libs/templates/testunit/test-unit.inc.htm',
+			'modules/mod-samples/libs/templates/testunit/test-unit.mtpl.htm',
 			[
 				'@SUB-TEMPLATES@' => [
 					'test-unit-tab-tests.inc.htm' 			=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// dir with trailing slash
@@ -223,9 +227,11 @@ final class TestUnitMain {
 							'c3' => 'A'
 						]
 				],
-				'TPL-SYNTAX-DESCR' 							=> (string) \SmartMarkersTemplating::prepare_nosyntax_html_template(\SmartFileSystem::read('modules/mod-samples/libs/templates/testunit/partials/test-tpl-syntax-desc.nosyntax.inc.htm'), true),
-				'TEST-UI-COMPONENTS' 						=> (string) $demo_mod_ui_components,
-				'TWIG-AVAILABLE' 							=> (string) (\SmartAppInfo::TestIfModuleExists('mod-tpl-twig') ? 'yes' : 'no')
+				'HTML-SYNTAX-DESCR' 		=> (string) \SmartMarkersTemplating::prepare_nosyntax_html_template(\SmartFileSystem::read('modules/mod-samples/libs/templates/testunit/partials/test-tpl-syntax-desc.nosyntax.inc.htm'), true),
+				'TEST-UI-COMPONENTS' 		=> (string) $demo_mod_ui_components,
+				'TPL-ALT-AVAIL' 			=> (string) ($tpl_alt_avail ? 'yes' : 'no'),
+				'TPL-TWIG-AVAIL' 			=> (string) ($tpl_alt_twig ? 'yes' : 'no'),
+				'TPL-TYPO3FLUID-AVAIL' 		=> (string) ($tpl_alt_typo3fluid ? 'yes' : 'no')
 			]
 		);
 		//--

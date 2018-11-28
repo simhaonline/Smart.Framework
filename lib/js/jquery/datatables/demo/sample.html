@@ -13,6 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="../../../../css/toolkit/ux-toolkit.css">
 	<link rel="stylesheet" type="text/css" href="../../../../css/toolkit/ux-toolkit-responsive.css">
 	<script type="text/javascript" src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../../framework/smart-framework.js"></script>
 	<link rel="stylesheet" type="text/css" href="../datatables-responsive.css">
 	<script type="text/javascript" src="../datatables-responsive.js"></script>
 </head>
@@ -114,6 +115,7 @@
 			<td>$103,500</td>
 		</tr>
 	</tbody>
+	<!--
 	<tfoot>
 		<tr>
 			<th>Name</th>
@@ -123,12 +125,18 @@
 			<th>Salary</th>
 		</tr>
 	</tfoot>
+	-->
 </table>
 <script>
 jQuery(document).ready(function() {
 	jQuery('table.display').DataTable({
 		bSort: true,
+		bFilter: true,
 		bSortMulti: true,
+		order: [
+			[ 0, 'asc' ],
+			[ 1, 'desc' ]
+		],
 		bPaginate: true,
 		iDisplayLength: 5,
 		aLengthMenu: [ 5, 10, 25, 50, 100 ],
@@ -136,9 +144,33 @@ jQuery(document).ready(function() {
 		uxmCssClassLengthField: 'ux-field',
 		uxmCssClassFilterField: 'ux-field',
 		classes: {
-			sPageButton: 'ux-button',
-			sPageButtonActive: 'ux-button ux-button-primary'
-		}
+			sPageButton: 'ux-button ux-button-small',
+			sPageButtonActive: 'ux-button-primary'
+		},
+		columnDefs: [
+			{
+				targets: 0,
+				width: '200px',
+				render: function(data, type, row) {
+					if(type === 'type' || type === 'sort' || type === 'filter') {
+						return data;
+					} else {
+						return '<b>' + SmartJS_CoreUtils.escape_html(data) + '</b>';
+					}
+				}
+			},
+			{
+				targets: 1,
+				width: '250px',
+				render: function(data, type, row) {
+					if(type === 'type' || type === 'sort' || type === 'filter') {
+						return data;
+					} else {
+						return '<b><i>' + SmartJS_CoreUtils.escape_html(data) + '</i></b>';
+					}
+				}
+			}
+		]
 	});
 });
 </script>
