@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181128
+ * @version 	v.181129
  *
  */
 final class TestUnitMain {
@@ -128,6 +128,9 @@ final class TestUnitMain {
 		} //end if
 		if(\SmartAppInfo::TestIfModuleExists('mod-ui-bootstrap')) {
 			$demo_mod_ext_toolkits .= \SmartFileSystem::read('modules/mod-ui-bootstrap/testunit/templates/tab-ui-components.inc.htm');
+		} //end if
+		if(\SmartAppInfo::TestIfModuleExists('mod-ui-jqueryui')) {
+			$demo_mod_ext_toolkits .= \SmartFileSystem::read('modules/mod-ui-jqueryui/testunit/templates/tab-ui-components.inc.htm');
 		} //end if
 		if(\SmartAppInfo::TestIfModuleExists('mod-wflow-components')) {
 			$demo_mod_ext_components .= \SmartFileSystem::read('modules/mod-wflow-components/testunit/templates/tab-ui-components.inc.htm');
