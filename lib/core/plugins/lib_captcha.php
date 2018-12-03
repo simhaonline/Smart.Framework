@@ -332,7 +332,7 @@ public static function cookiename($y_form_name) {
 final class SmartCaptchaImageDraw {
 
 	// ->
-	// v.181010
+	// v.181130
 
 
 //================================================================
@@ -366,7 +366,11 @@ public $charttfsize = 24; 		// ttf font size (just for ttf fonts)
 public function __construct() {
 	//--
 	if(!function_exists('gd_info')) {
-		echo('"[ERROR] :: Captcha Verification LIB :: PHP-GD extension with JPEG Lib is  required to run Captcha Library');
+		Smart::raise_error(
+			'[ERROR] :: '.__CLASS__.' :: PHP-GD extension is required.',
+			'A required component is missing ... See error log for more details'
+		);
+		die('Missing PHP-GD Extension');
 	} //end if
 	//--
 } //END FUNCTION
@@ -659,8 +663,14 @@ private function generate_captcha_dotted() {
 	//-- create image
 	if(function_exists('imagecreatetruecolor')) {
 		$im = @imagecreatetruecolor($this->width, $this->height);
-	} else {
+	} elseif(function_exists('imagecreate')) {
 		$im = @imagecreate($this->width, $this->height);
+	} else {
+		Smart::raise_error(
+			'[ERROR] :: '.__CLASS__.' :: PHP-GD extension is required to support ImageCreate.',
+			'A required component is missing ... See error log for more details'
+		);
+		die('Missing PHP-GD Extension is required to support ImageCreate');
 	} //end if else
 	//-
 	@imagefill($im, 0, 0, 0xDDDDDD);

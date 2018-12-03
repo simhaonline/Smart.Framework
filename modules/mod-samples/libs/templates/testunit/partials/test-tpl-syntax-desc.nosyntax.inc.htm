@@ -15,7 +15,7 @@
 					* with optional escapings or transformers
 				</td>
 				<td>
-					<span class="sf__test__span__tpl__features">[####MARKER####] with optional escapings or transformers that may be combined in logic chains: [####MARKER|bool####], [####MARKER|int####], [####MARKER|num####], [####MARKER|json####], [####MARKER|substr255####], [####MARKER|url####], [####MARKER|js####], [####MARKER|html####], [####MARKER|nl2br####], [####MARKER|url|js####], [####MARKER|js|html####], [####MARKER|url|html####], ..., [####MARKER|url|js|html####], ...)</span>
+					<span class="sf__test__span__tpl__features">[####MARKER####] with optional escapings or transformers that may be combined in logic chains: [####MARKER|bool####], [####MARKER|int####], [####MARKER|dec{1..4}####], [####MARKER|num####], [####MARKER|htmid####], [####MARKER|jsvar####], [####MARKER|json####], [####MARKER|lower####], [####MARKER|upper####], [####MARKER|ucfirst####], [####MARKER|ucwords####], [####MARKER|trim####], [####MARKER|substr{1..65535}####], [####MARKER|subtxt{5..65535}####], [####MARKER|url####], [####MARKER|js####], [####MARKER|html####], [####MARKER|nl2br####], [####MARKER|url|js####], [####MARKER|html|nl2br####], [####MARKER|trim|js|html####], [####MARKER|dec2|url####], [####MARKER|js|html####], ..., [####MARKER|url|js|html####], ...)</span>
 				</td>
 			</tr>
 			<tr valign="top" title="Feature is currently supported in both PHP and Javascript">
@@ -39,7 +39,7 @@
 					* conditionals are available with optional ELSE syntax
 				</td>
 				<td>
-					<span class="sf__test__span__tpl__features">[%%%%IF:VARIABLE:==|!=|&lt;|&gt;|&lt;=|&gt;=|%|!%|@=|@!|@+|@-|^~|^*|~~|~*|$~|$*|$expr$;%%%%]<br> conditional IF part, display when condition is matched <br>[%%%%ELSE:VARIABLE%%%%]<br> conditional ELSE part, display otherwise <br>[%%%%/IF:VARIABLE%%%%]</span>
+					<span class="sf__test__span__tpl__features">[%%%%IF:VARIABLE:==|!=|&lt;|&gt;|&lt;=|&gt;=|%|!%|@=|@!|@+|@-|^~|^*|~~|~*|$~|$*|{string|number|####MARKER####};%%%%]<br> conditional IF part, display when condition is matched <br>[%%%%ELSE:VARIABLE%%%%]<br> conditional ELSE part, display otherwise <br>[%%%%/IF:VARIABLE%%%%]</span>
 				</td>
 			</tr>
 			<tr valign="top" title="Feature is currently supported only in PHP">
@@ -54,7 +54,7 @@
 					<br><span><i>Rendering of Loop syntax is depending upon the array type ; it can be combined with IF / ELSE and the other syntax elements ...</i></span><br>
 					* if ARRAY-VAR is a NON-ASSOCIATIVE ARRAY [0=&gt;[row]..n=&gt;[row]] can display for each row the columns 'column-A', 'column-N' which are as ARRAY-VAR[i][column-a] and ARRAY-VAR[i][column-n] where 'i' is the row number for non-associative array and 'row' is an associative array of key/val pairs which must contain at least the keys (columns) 'column-a' and 'column-n' such as: [####ARRAY-VAR.COLUMN-A|int####], [####ARRAY-VAR.COLUMN-B|html####]
 					<br>
-					* if ARRAY-VAR is an ASSOCIATIVE ARRAY [key1=>val1,...,keyN=>valueN] can display for each key/value pair: [####ARRAY-VAR._-KEY-_|html####] = [####ARRAY-VAR._-VAL-_|html####]
+					* if ARRAY-VAR is an ASSOCIATIVE ARRAY [key1=>val1,...,keyN=>valueN] can display for each key/value pair: [####ARRAY-VAR._-KEY-_|html####] = [####ARRAY-VAR._-VAL-_|trim|html####]
 					<br>
 					[%%%%/LOOP:ARRAY%%%%]</span>
 				</td>

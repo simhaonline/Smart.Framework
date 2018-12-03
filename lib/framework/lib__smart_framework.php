@@ -177,7 +177,7 @@ interface SmartInterfaceAppInfo {
  *
  *         // HINT - Escaping HTML:
  *         // is better to use: Smart::escape_html($var);
- *         // than htmlspecialchars($var, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8');
+ *         // than htmlspecialchars($var, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8', true);
  *         // if using htmlspecialchars($var); with no extra parameters is not safe for unicode environments
  *
  *         // HINT - Escaping JS (Safe exchanging variables between PHP and Javascript in HTML templates):
@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181029
+ * @version 	v.181203
  * @package 	Application
  *
  */

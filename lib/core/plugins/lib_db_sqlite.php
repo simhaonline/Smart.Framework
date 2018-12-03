@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.181019
+ * @version 	v.181203
  * @package 	Database:SQLite
  *
  */
@@ -180,11 +180,11 @@ public function escape_str($string) {
  * Registers a PHP function for use as an SQL scalar function with SQLite.
  *
  * @param STRING $func 							:: A PHP or custom Function Name
- * @param INTEGER $args 						:: The number of required args ; If this parameter is -1, then the SQL function may take any number of arguments
+ * @param INTEGER $argnum 						:: The number of required args ; If this parameter is -1, then the SQL function may take any number of arguments
  */
-public static function register_sql_function($func, $args) {
+public static function register_sql_function($func, $argnum) {
 	$this->check_opened();
-	SmartSQliteUtilDb::register_sql_function($this->db, $func, $args);
+	SmartSQliteUtilDb::register_sql_function($this->db, $func, $argnum);
 } //END FUNCTION
 //--
 
@@ -449,7 +449,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.181019
+ * @version 	v.181203
  * @package 	Database:SQLite
  *
  */
@@ -606,11 +606,28 @@ public static function open($file_name, $timeout_busy_sec=60) {
 	} //end if
 	//-- register basic user functions
 	$ext_functions = [
-		'md5' => 1, 'sha1' => 1, 'time' => 0, 'strtotime' => 1,
-		'strip_tags' => -1 // can have 1 or 2 args
+		'utf8_encode' 				=> 1,
+		'utf8_decode' 				=> 1,
+		'urlencode' 				=> 1,
+		'urldecode' 				=> 1,
+		'rawurlencode' 				=> 1,
+		'rawurldecode' 				=> 1,
+		'base64_encode' 			=> 1,
+		'base64_decode' 			=> 1,
+		'hex2bin' 					=> 1,
+		'bin2hex' 					=> 1,
+		'md5' 						=> 1,
+		'sha1' 						=> 1,
+		'time' 						=> 0, // no arguments
+		'strtotime' 				=> 1,
+		'str_word_count' 			=> -1, // can have 1 .. 3 args
+		'strip_tags' 				=> -1, // can have 1 or 2 args
+		'htmlspecialchars' 			=> -1, // can have 1 .. 4 args
+		'htmlspecialchars_decode' 	=> -1, // can have 1 or 2 args
+		'strlen' 					=> 1
 	];
-	foreach($ext_functions as $func => $args) {
-		self::register_sql_function($db, $func, $args);
+	foreach($ext_functions as $func => $argnum) {
+		self::register_sql_function($db, (string)$func, (int)$argnum);
 	} //end foreach
 	//-- create the first time table to record the sqlite version
 	if(!self::check_if_table_exists($db, '_smartframework_metadata')) {
@@ -689,11 +706,11 @@ public static function check_connection($db) {
 
 
 //======================================================
-public static function register_sql_function($db, $func, $args) {
+public static function register_sql_function($db, $func, $argnum) {
 	//--
 	self::check_connection($db);
 	//--
-	$db->createFunction((string)$func, (string)$func, (int)$args);
+	return (bool) $db->createFunction((string)$func, (string)$func, (int)$argnum);
 	//--
 } //END FUNCTION
 //======================================================

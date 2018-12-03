@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.181019
+ * @version     v.181203
  * @package     Base
  *
  */
@@ -564,13 +564,14 @@ public static function escape_url($y_string) {
  * @return 	STRING							:: The escaped string using htmlspecialchars() standards with Unicode-Safe control
  */
 public static function escape_html($y_string) {
-	//-- v.150112
+	//-- v.181203
 	// Default is: ENT_HTML401 | ENT_COMPAT
 	// keep the ENT_HTML401 instead of ENT_HTML5 to avoid troubles with misc. HTML Parsers (robots, htmldoc, ...)
 	// keep the ENT_COMPAT (replace only < > ") and not replace '
 	// add ENT_SUBSTITUTE to avoid discard the entire invalid string (with UTF-8 charset) but substitute dissalowed characters with ?
+	// enforce 4th param as TRUE as default (double encode)
 	//--
-	return (string) htmlspecialchars((string)$y_string,  ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, SMART_FRAMEWORK_CHARSET); // use charset from INIT (to prevent XSS attacks)
+	return (string) htmlspecialchars((string)$y_string, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, (string)SMART_FRAMEWORK_CHARSET, true); // use charset from INIT (to prevent XSS attacks) ; the 4th parameter double_encode is set to TRUE as default
 	//--
 } //END FUNCTION
 //================================================================

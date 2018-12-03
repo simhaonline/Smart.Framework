@@ -43,4 +43,20 @@
 <div style="text-align:right; color:#999999;">
 	Smart.Framework TestUnit: Demo and Samples, License: BSD
 </div>
+<script>
+jQuery(document).ready(function(){
+	SmartJS_BrowserUIUtils.ToolTip('a, button').data('tooltip-ok', '1');
+	$(document).on('mouseenter', 'a[data-tooltip-ok!=1], button[data-tooltip-ok!=1]', function(el) {
+		$('a, button').each(function(index) {
+			if($(this).data('tooltip-ok')) {
+				return;
+			}
+			var obj = SmartJS_BrowserUIUtils.ToolTip($(this));
+			obj.trigger('mouseleave');
+			$(this).data('tooltip-ok', '1');
+			obj.trigger('mouseenter').trigger('mousemove');
+		});
+	});
+});
+</script>
 <!-- #END :: Partial Template: TestUnit.Main -->

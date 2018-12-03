@@ -193,7 +193,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181115.1519'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.181203.1543'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -947,7 +947,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181115 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181203 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1761,7 +1761,7 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	//##### Smart v.181019
+	//##### Smart v.181203
 
 
 	//================================================================
@@ -2082,13 +2082,14 @@ Options -Indexes
 	 * @return 	STRING							:: The escaped string using htmlspecialchars() standards with Unicode-Safe control
 	 */
 	public static function escape_html($y_string) {
-		//-- v.150112
+		//-- v.181203
 		// Default is: ENT_HTML401 | ENT_COMPAT
 		// keep the ENT_HTML401 instead of ENT_HTML5 to avoid troubles with misc. HTML Parsers (robots, htmldoc, ...)
 		// keep the ENT_COMPAT (replace only < > ") and not replace '
 		// add ENT_SUBSTITUTE to avoid discard the entire invalid string (with UTF-8 charset) but substitute dissalowed characters with ?
+		// enforce 4th param as TRUE as default (double encode)
 		//--
-		return (string) htmlspecialchars((string)$y_string,  ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, SMART_FRAMEWORK_CHARSET); // use charset from INIT (to prevent XSS attacks)
+		return (string) htmlspecialchars((string)$y_string, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, (string)SMART_FRAMEWORK_CHARSET, true); // use charset from INIT (to prevent XSS attacks) ; the 4th parameter double_encode is set to TRUE as default
 		//--
 	} //END FUNCTION
 	//================================================================

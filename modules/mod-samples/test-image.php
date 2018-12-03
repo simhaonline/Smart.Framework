@@ -46,11 +46,16 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
+		if((!function_exists('imagecreate')) AND (!function_exists('imagecreatetruecolor'))) {
+			$this->PageViewSetErrorStatus(500, 'ERROR: PHP GD Extension is missing ...');
+			return;
+		} //end if
+		//--
+
+		//--
 		$this->PageViewSetRawHeader(
 			'Z-Test-Image', 'This is an image' // just a sample dummy header entry
 		);
-		//--
-
 		//--
 		$this->PageViewSetCfg('rawmime', 'image/png'); // set mime type: Image / PNG
 		$this->PageViewSetCfg('rawdisp', 'inline; filename="sample-image-'.time().'.png"'); // display inline and set the file name for the image
@@ -59,7 +64,11 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//-- 1st level output buffering to avoid inject warnings / errors into PNG ... if any !!
 		ob_start();
 		//--
-		$im = imagecreatetruecolor(320, 90);
+		if(function_exists('imagecreatetruecolor')) {
+			$im = imagecreatetruecolor(320, 90);
+		} else {
+			$im = imagecreate(320, 90);
+		} //end if else
 		if(!$im) {
 			Smart::log_warning('Cannot create the image in: '.__METHOD__);
 			$this->PageViewSetErrorStatus(500, 'ERROR: Cannot create the sample image ...'); // set an error message for 500 http status
@@ -127,12 +136,26 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//-- because we do here direct output we need to set all the required headers
 		SmartFrameworkRuntime::outputHttpHeadersNoCache();
 		//--
-		header('Z-Test-Image: This is an image'); // just a sample dummy header entry
+
+		//--
+		if((!function_exists('imagecreate')) AND (!function_exists('imagecreatetruecolor'))) {
+			if(!headers_sent()) {
+				http_response_code(500);
+			} //end if
+			die(SmartComponents::http_message_500_internalerror('ERROR: PHP GD Extension is missing ...'));
+			return;
+		} //end if
 		//--
 
 		//--
+		header('Z-Test-Image: This is an image'); // just a sample dummy header entry
+		//--
 		ob_start(); // avoid echo warnings or errors !
-		$im = imagecreatetruecolor(320, 90);
+		if(function_exists('imagecreatetruecolor')) {
+			$im = imagecreatetruecolor(320, 90);
+		} else {
+			$im = imagecreate(320, 90);
+		} //end if else
 		ob_end_clean();
 		if(!$im) {
 			if(!headers_sent()) {
