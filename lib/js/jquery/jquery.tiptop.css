@@ -11,9 +11,9 @@
 	position: absolute;
 	z-index: 9999;
 	max-width: 300px;
-	padding: 20px;
-	font: 14px/1.6em "Helvetica Neue", Helvetica, Arial, sans-serif;
-	color: #fff;
-	background: #222;
+	padding: 15px;
+	font: 1rem;
+	color: #FFFFFF;
+	background: #222222;
 	border-radius: 3px;
 }

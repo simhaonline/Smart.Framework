@@ -1,3 +1,132 @@
+## Master
+
+New languages:
+
+New styles:
+
+Improvements:
+
+## Version 9.13.1
+
+Improvements:
+- *C#* function declarations no longer include trailing whitespace, by [JeremyTCD][]
+- Added new and missing keywords to *AngelScript*, by [Melissa Geels][]
+- *TypeScript* decorator factories highlighting fix, by [Antoine Boisier-Michaud][]
+- Added support for multiline strings to *Swift*, by [Alejandro Isaza][]
+- Fixed issue that was causing some minifiers to fail.
+- Fixed `autoDetection` to accept language aliases.
+
+[JeremyTCD]: https://github.com/JeremyTCD
+[Melissa Geels]: https://github.com/codecat
+[Antoine Boisier-Michaud]: https://github.com/Aboisier
+[Alejandro Isaza]: https://github.com/alejandro-isaza
+
+## Version 9.13.0
+
+New languages:
+
+- *ArcGIS Arcade* by [John Foster][]
+- *AngelScript* by [Melissa Geels][]
+- *GML* by [meseta][]
+- *isbl* built-in language DIRECTUM and Conterra by [Dmitriy Tarasov][].
+- *PostgreSQL* SQL dialect and PL/pgSQL language by [Egor Rogov][].
+- *ReasonML* by [Gidi Meir Morris][]
+- *SAS* by [Mauricio Caceres Bravo][]
+- *Plaintext* by [Egor Rogov][]
+- *.properties* by [bostko][] and [Egor Rogov][]
+
+New styles:
+
+- *a11y-dark theme* by [Eric Bailey][]
+- *a11y-light theme* by [Eric Bailey][]
+- *An Old Hope* by [Gustavo Costa][]
+- *Atom One Dark Reasonable* by [Gidi Meir Morris][]
+- *isbl editor dark* by [Dmitriy Tarasov][]
+- *isbl editor light* by [Dmitriy Tarasov][]
+- *Lightfair* by [Tristian Kelly][]
+- [*Nord*][nord-highlightjs] by [Arctic Ice Studio][]
+- *[🦄 Shades of Purple](https://github.com/ahmadawais/Shades-of-Purple-HighlightJS)* by [Ahmad Awais][]
+
+Improvements:
+
+- New attribute `endSameAsBegin` for nested constructs with variable names
+  by [Egor Rogov][].
+- *Python* highlighting of escaped quotes fixed by [Harmon][]
+- *PHP*: Added alias for php7, by [Vijaya Chandran Mani][]
+- *C++* string handling, by [David Benjamin][]
+- *Swift* Add `@objcMembers` to `@attributes`, by [Berk Çebi][]
+- Infrastructural changes by [Marcos Cáceres][]
+- Fixed metachars highighting for *NSIS* by [Jan T. Sott][]
+- *Yaml* highlight local tags as types by [Léo Lam][]
+- Improved highlighting for *Elixir* by [Piotr Kaminski][]
+- New attribute `disableAutodetect` for preventing autodetection by [Egor Rogov][]
+- *Matlab*: transpose operators and double quote strings, by [JohnC32][] and [Egor Rogov][]
+- Various documentation typos and improvemets by [Jimmy Wärting][], [Lutz Büch][], [bcleland][]
+- *Cmake* updated with new keywords and commands by [Deniz Bahadir][]
+
+[Ahmad Awais]: https://github.com/ahmadawais
+[Arctic Ice Studio]: https://github.com/arcticicestudio
+[Dmitriy Tarasov]: https://github.com/MedvedTMN
+[Egor Rogov]: https://github.com/egor-rogov
+[Eric Bailey]: https://github.com/ericwbailey
+[Gidi Meir Morris]: https://github.com/gmmorris
+[Gustavo Costa]: https://github.com/gusbemacbe
+[Harmon]: https://github.com/Harmon758
+[Melissa Geels]: https://github.com/codecat
+[meseta]: https://github.com/meseta
+[nord-highlightjs]: https://github.com/arcticicestudio/nord-highlightjs
+[Tristian Kelly]: https://github.com/TristianK3604
+[Vijaya Chandran Mani]: https://github.com/vijaycs85
+[John Foster]: https://github.com/jf990
+[David Benjamin]: https://github.com/davidben
+[Berk Çebi]: https://github.com/berkcebi
+[Mauricio Caceres Bravo]: https://github.com/mcaceresb
+[bostko]: https://github.com/bostko
+[Deniz Bahadir]: https://github.com/Bagira80
+[bcleland]: https://github.com/bcleland
+[JohnC32]: https://github.com/JohnC32
+[Lutz Büch]: https://github.com/lutz-100worte
+[Piotr Kaminski]: https://github.com/pkaminski
+[Léo Lam]: https://github.com/leoetlino
+[Jan T. Sott]: https://github.com/idleberg
+[Jimmy Wärting]: https://github.com/jimmywarting
+[Marcos Cáceres]: https://github.com/marcoscaceres
+
+## Version 9.12.0
+
+New language:
+
+- *MikroTik* RouterOS Scripting language by [Ivan Dementev][].
+
+New style:
+
+- *VisualStudio 2015 Dark* by [Nicolas LLOBERA][]
+
+Improvements:
+
+- *Crystal* updated with new keywords and syntaxes by [Tsuyusato Kitsune][].
+- *Julia* updated to the modern definitions by [Alex Arslan][].
+- *julia-repl* added by [Morten Piibeleht][].
+- [Stanislav Belov][] wrote a new definition for *1C*, replacing the one that
+  has not been updated for more than 8 years. The new version supports syntax
+  for versions 7.7 and 8.
+- [Nicolas LLOBERA][] improved C# definition fixing edge cases with function
+  titles detection and added highlighting of `[Attributes]`.
+- [nnnik][] provided a few correctness fixes for *Autohotkey*.
+- [Martin Clausen][] made annotation collections in *Clojure* to look
+  consistently with other kinds.
+- [Alejandro Alonso][] updated *Swift* keywords.
+
+[Tsuyusato Kitsune]: https://github.com/MakeNowJust
+[Alex Arslan]: https://github.com/ararslan
+[Morten Piibeleht]: https://github.com/mortenpi
+[Stanislav Belov]: https://github.com/4ppl
+[Ivan Dementev]: https://github.com/DiVAN1x
+[Nicolas LLOBERA]: https://github.com/Nicolas01
+[nnnik]: https://github.com/nnnik
+[Martin Clausen]: https://github.com/maacl
+[Alejandro Alonso]: https://github.com/Azoy
+
 ## Version 9.11.0
 
 New languages:

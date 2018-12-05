@@ -45,18 +45,7 @@
 </div>
 <script>
 jQuery(document).ready(function(){
-	SmartJS_BrowserUIUtils.ToolTip('a, button').data('tooltip-ok', '1');
-	$(document).on('mouseenter', 'a[data-tooltip-ok!=1], button[data-tooltip-ok!=1]', function(el) {
-		$('a, button').each(function(index) {
-			if($(this).data('tooltip-ok')) {
-				return;
-			}
-			var obj = SmartJS_BrowserUIUtils.ToolTip($(this));
-			obj.trigger('mouseleave');
-			$(this).data('tooltip-ok', '1');
-			obj.trigger('mouseenter').trigger('mousemove');
-		});
-	});
+	SmartJS_BrowserUIUtils.ToolTip('a, button');
 });
 </script>
 <!-- #END :: Partial Template: TestUnit.Main -->

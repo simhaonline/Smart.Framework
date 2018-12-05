@@ -1,6 +1,6 @@
 # [####TITLE|html####] (H1)
 
-&copy;&nbsp;&nbsp;2015-2018&nbsp;unix-world.org # v.180509
+&copy;&nbsp;&nbsp;2015-2018&nbsp;unix-world.org # v.181205
 
 ## H2 (Unicode Test) ăĂîÎâÂşŞţŢ
 
@@ -140,8 +140,14 @@ print s
 <img src="some-image.svg">
 ```
 
+```plaintext
+This is a
+plain text
+with no highlight and some <tag>Tag</tag> ...
 ```
-No language indicated, so no syntax highlighting.
+
+```
+No language indicated, so no syntax highlighting (fallback to PlainText).
 But let's throw in a <b>tag</b>.
 ```
 

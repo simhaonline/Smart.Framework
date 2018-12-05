@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.181107.r3
+ * @version 	v.181205
  * @package 	Components:Core
  *
  */
@@ -1815,11 +1815,15 @@ public static function filetype_highlightsyntax($path) {
 			$fpack = 'web';
 			$ftype = 'markdown';
 			break;
+		case 'pgsql':
+			$fpack = 'web';
+			$ftype = 'pgsql';
+			break;
 		case 'php':
 		case 'php3':
 		case 'php4':
 		case 'php5':
-		case 'php6':
+		case 'php6': // n/a
 		case 'php7':
 		case 'hh': // hip hop, a kind of static PHP
 			$fpack = 'web';
@@ -1913,6 +1917,10 @@ public static function filetype_highlightsyntax($path) {
 			$fpack = 'lang';
 			$ftype = 'python';
 			break;
+		case 'rb':
+			$fpack = 'lang';
+			$ftype = 'ruby';
+			break;
 		case 'rs':
 			$fpack = 'lang';
 			$ftype = 'rust';
@@ -1991,12 +1999,12 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 	} //end switch
 	//--
 	$arr_packs = [ // {{{SYNC-HIGHLIGHT-FTYPE-PACK}}}
-		'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, xml, yaml',
+		'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, pgsql, xml, yaml',
 		'tpl'  => 'markertpl',
 		'lnx'  => 'awk, bash, perl, shell',
 		'srv'  => 'accesslog, apache, dns, nginx, pf',
 		'net'  => 'csp, http',
-		'lang' => 'cmake, coffeescript, cpp, go, haxe, lua, makefile, python, rust, tcl, vala'
+		'lang' => 'cmake, coffeescript, cpp, go, haxe, lua, makefile, python, ruby, rust, tcl, vala'
 	];
 	//--
 	$arr_stx_plugs = [];

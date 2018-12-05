@@ -8,9 +8,10 @@ code.hljs, code.hljs * {
 </style>
 <link rel="stylesheet" href="lib/core/css/tpl-highlight.css">
 <!-- HL Core -->
-<script type="text/javascript" src="lib/js/jshighlight/highlight.js"></script>
 <link rel="stylesheet" href="lib/js/jshighlight/css/[####CSS-THEME|html####].css">
+<script type="text/javascript" src="lib/js/jshighlight/highlight.js"></script>
 <!-- HL Plugins -->
+<script type="text/javascript" src="lib/js/jshighlight/syntax/plaintext.js"></script>
 [%%%%LOOP:SYNTAX-PLUGINS%%%%]
 <script type="text/javascript" src="lib/js/jshighlight/syntax/[####SYNTAX-PLUGINS._-VAL-_|html####].js"></script>[%%%%IF:SYNTAX-PLUGINS._-ITERATOR-_:<####SYNTAX-PLUGINS._-MAXCOUNT-_####;%%%%][%%%%|N%%%%][%%%%/IF:SYNTAX-PLUGINS._-ITERATOR-_%%%%]
 [%%%%/LOOP:SYNTAX-PLUGINS%%%%]
@@ -20,18 +21,18 @@ if(typeof SmartJS_Custom_Syntax_Highlight != 'function') {
 	var SmartJS_Custom_Syntax_Highlight = function(elem) {
 		setTimeout(function(){
 			jQuery(elem + ' pre code').each(function(i, block) {
-				try {
-					var theObj = jQuery(this);
-					var theClass = theObj.attr('class');
-					if((typeof theClass != 'undefined') && (theClass != 'undefined') && (theClass != '')) {
-						theObj.attr('title', 'Code: ' + theClass);
+				var theObj = jQuery(this);
+				var theClass = theObj.attr('class');
+				if((typeof theClass != 'undefined') && (theClass != 'undefined') && (theClass != '')) {
+					theObj.attr('title', 'Code: ' + String(theClass));
+					try {
 						hljs.highlightBlock(block);
-					} //end if
-					theObj = null;
-					theClass = null;
-				} catch(err) {
-					console.error('Highlight JS Failed to instantiate on selector #' + i);
-				}
+					} catch(err) {
+						console.error('HighlightJs Failed to instantiate on selector #' + i + ' @ for class: ' + String(theClass));
+					}
+				} //end if
+				theObj = null;
+				theClass = null;
 			});
 		}, 50);
 	}

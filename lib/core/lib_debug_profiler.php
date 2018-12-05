@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.181107
+ * @version 	v.181205
  *
  */
 final class SmartDebugProfiler {
@@ -246,7 +246,7 @@ public static function test_tpl_file_for_debug($y_tpl_file) {
 
 
 //==================================================================
-// reads and returns the content of a generic TPL file template for debug (can be used to extend debuging over other TPL files other than Marker-TPL) {{{SYNC-DEBUG-TPL-FILES}}}
+// reads and returns the content of a generic TPL file template for debug (can be used to extend debuging over other TPL files other than Markers-TPL) {{{SYNC-DEBUG-TPL-FILES}}}
 public static function read_tpl_file_for_debug($y_tpl_file) {
 
 	//--
@@ -281,7 +281,7 @@ public static function read_tpl_file_for_debug($y_tpl_file) {
 
 
 //==================================================================
-// reads and display a Marker-TPL file template for debug {{{SYNC-DEBUG-TPL-FILES}}}
+// reads and display a Markers-TPL file template for debug {{{SYNC-DEBUG-TPL-FILES}}}
 public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_templates=[], $y_use_decrypt=true) {
 
 	//--
@@ -302,9 +302,9 @@ public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_template
 	if(self::test_tpl_file_for_debug($y_tpl_file) === true) {
 		$content = (string) SmartComponents::js_code_highlightsyntax('div#tpl-display-for-highlight',['web','tpl']).SmartMarkersTemplating::analyze_debug_file_template((string)$y_tpl_file, $y_arr_sub_templates);
 	} elseif((string)trim((string)$y_tpl_file) == '') {
-		$content = '<h1>WARNING: Empty Marker-TPL Template to Debug</h1>';
+		$content = '<h1>WARNING: Empty Markers-TPL Template to Debug</h1>';
 	} else {
-		$content = '<h1>WARNING: Invalid Marker-TPL Template to Debug: '.Smart::escape_html($y_tpl_file).'</h1>';
+		$content = '<h1>WARNING: Invalid Markers-TPL Template to Debug: '.Smart::escape_html($y_tpl_file).'</h1>';
 	} //end if else
 	//--
 
@@ -313,7 +313,7 @@ public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_template
 		'lib/core/templates/debug-profiler-util.htm',
 		[
 			'CHARSET' 	=> Smart::escape_html(SmartUtils::get_encoding_charset()),
-			'TITLE' 	=> '#### Marker-TPL #### Template Debug Profiling',
+			'TITLE' 	=> '#### Markers-TPL #### Template Debug Profiling',
 			'MAIN' 		=> (string) $content
 		],
 		'no'
@@ -1158,7 +1158,7 @@ private static function print_log_optimizations($title, $optimizations_log) {
 						$have_link = false;
 						if((string)$tmp_item['action'] == 'debug-tpl') {
 							$have_link = true;
-							$log .= '<a title="Click to View the Marker-TPL Template Debug Profiling" href="'.Smart::escape_html(SmartUtils::get_server_current_script()).'?smartframeworkservice=debug-tpl&tpl='.Smart::escape_url(self::url_tpl_encrypt(trim((string)$tmp_item['key']))).'" target="_blank" style="text-decoration-style:dotted; text-decoration-color:'.$color.';">';
+							$log .= '<a title="Click to View the Markers-TPL Template Debug Profiling" href="'.Smart::escape_html(SmartUtils::get_server_current_script()).'?smartframeworkservice=debug-tpl&tpl='.Smart::escape_url(self::url_tpl_encrypt(trim((string)$tmp_item['key']))).'" target="_blank" style="text-decoration-style:dotted; text-decoration-color:'.$color.';">';
 						} elseif((string)trim((string)$tmp_item['action']) != '') {
 							$have_link = true;
 							$log .= '<a title="Click to View the Extended Debug Profiling" href="'.Smart::escape_html((string)trim((string)$tmp_item['action']).Smart::escape_url(self::url_tpl_encrypt(trim((string)$tmp_item['key'])))).'" target="_blank" style="text-decoration-style:dashed; text-decoration-color:'.$color.';">';

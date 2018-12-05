@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	SmartFramework
- * @version 	v.180522
+ * @version 	v.181205
  * @package 	Converters
  *
  */
@@ -490,6 +490,14 @@ final class SmartMarkdownToHTML {
 				//$class = 'language-'.$matches[2];
 				//$class = 'language-'.$matches[1]; // fix from 1.5.4
 				$class = (string) $matches[1]; // fix from 1.5.4 :: modified by unixman to be compliant with highlight.js
+				//--
+				$Element['attributes'] = array(
+					'class' => $class,
+				);
+				//--
+			} else {
+				//--
+				$class = 'plaintext'; // fix by unixman to be compliant with highlight.js (plaintext)
 				//--
 				$Element['attributes'] = array(
 					'class' => $class,

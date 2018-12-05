@@ -17,6 +17,7 @@
   <script type="text/javascript" src="../syntax/lang/cpp.js"></script>
   <script type="text/javascript" src="../syntax/lang/vala.js"></script>
   <script type="text/javascript" src="../syntax/lang/haxe.js"></script>
+  <script type="text/javascript" src="../syntax/lang/ruby.js"></script>
 
   <script type="text/javascript" src="../../jquery/jquery.js"></script>
   <script>
@@ -454,6 +455,26 @@ class Main extends BaseClass implements SomeFunctionality {
         if( i &lt; hi ) quicksort( i, hi );
     }
 }
+</code></pre>
+</div>
+
+<!-- Ruby -->
+
+<div>
+<h2>Ruby</h2>
+<pre><code class="ruby"># The Greeter class
+class Greeter
+  def initialize(name)
+    @name = name.capitalize
+  end
+
+  def salute
+    puts &quot;Hello #{@name}!&quot;
+  end
+end
+
+g = Greeter.new(&quot;world&quot;)
+g.salute
 </code></pre>
 </div>
 

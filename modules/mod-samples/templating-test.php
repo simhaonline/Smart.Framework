@@ -47,12 +47,12 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		if((string)$op == 'viewsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Marker-TPL Template Source:<br><i>'.Smart::escape_html($tpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markertpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$tpl))).'</code></pre><hr><br>');
+			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Marker-TPL Template Source:<br><i>'.Smart::escape_html($tpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markerstpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$tpl))).'</code></pre><hr><br>');
 			return;
 			//--
 		} elseif((string)$op == 'viewpartialsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Marker-TPL Sub-Template Source:<br><i>'.Smart::escape_html($ptpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markertpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$ptpl))).'</code></pre><hr><br>');
+			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Marker-TPL Sub-Template Source:<br><i>'.Smart::escape_html($ptpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markerstpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$ptpl))).'</code></pre><hr><br>');
 			return;
 			//--
 		} //end if

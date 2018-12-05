@@ -14,6 +14,7 @@
   <script type="text/javascript" src="../syntax/web/ini.js"></script>
   <script type="text/javascript" src="../syntax/web/php.js"></script>
   <script type="text/javascript" src="../syntax/web/sql.js"></script>
+  <script type="text/javascript" src="../syntax/web/pgsql.js"></script>
   <script type="text/javascript" src="../syntax/web/markdown.js"></script>
   <script type="text/javascript" src="../syntax/web/xml.js"></script><!-- xml / html -->
   <script type="text/javascript" src="../syntax/web/css.js"></script>
@@ -283,6 +284,51 @@ REFERENCES &quot;forum&quot; (&quot;id&quot;);
 -- Initials
 insert into &quot;topic&quot; (&quot;forum_id&quot;, &quot;subject&quot;)
 values (2, &#39;D&#39;&#39;artagnian&#39;);
+</code></pre>
+</div>
+
+<!-- PgSQL -->
+
+<div>
+<h2>PostgreSQL specific SQL with PL/PgSQL</h2>
+<pre><code class="pgsql">-- Sample PostgreSQL Functions
+
+BEGIN;
+SELECT sum(&quot;salary&quot;) OVER w, avg(&quot;salary&quot;) OVER w
+  FROM &quot;empsalary&quot;
+  WINDOW w AS (PARTITION BY &quot;depname&quot; ORDER BY &quot;salary&quot; DESC);
+END;
+
+CREATE FUNCTION days_of_week() RETURNS SETOF text AS $$
+BEGIN
+  FOR i IN 7 .. 13 LOOP
+    RETURN NEXT to_char(to_date(i::text,&#39;J&#39;),&#39;TMDy&#39;);
+  END LOOP;
+END;
+$$ STABLE LANGUAGE plpgsql;
+
+CREATE TABLE test_url (url varchar NOT NULL, url_tsvector tsvector NOT NULL);
+CREATE OR REPLACE FUNCTION generate_url_tsvector(varchar)
+RETURNS tsvector
+LANGUAGE sql
+AS $_$
+  SELECT to_tsvector(regexp_replace($1, '[^\w]+', ' ', 'gi'));
+$_$;
+
+CREATE OR REPLACE FUNCTION before_insert_test_url()
+RETURNS TRIGGER
+LANGUAGE plpgsql AS $_$
+BEGIN
+  NEW.url_tsvector := generate_url_tsvector(NEW.url);
+  RETURN NEW;
+END
+$_$;
+
+-- Sample PostgreSQL statements
+
+SELECT &quot;id&quot;, &quot;data&quot;#&gt;&gt;'{level1,level2,0}' || '.' FROM &quot;public&quot;.&quot;test_table&quot; ORDER BY &quot;data&quot;-&gt;&gt;'id' ASC
+
+insert into &quot;escape_test&quot; (text) values (E'This is the first part \\n And this is the second');
 </code></pre>
 </div>
 
