@@ -1,3 +1,7 @@
+/* Scroller 1.5.0
+ * (c) 2009-2018 SpryMedia Ltd - MIT License
+ */
+
 div.DTS {
 	display: block !important;
 }
@@ -18,3 +22,5 @@ div.DTS div.dataTables_paginate,
 div.DTS div.dataTables_length {
 	display: none;
 }
+
+/* END */

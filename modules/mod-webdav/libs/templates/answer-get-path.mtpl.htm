@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<!-- UserInfo: [DAV-FsMount] # [####INFO-ROOT|html####] # -->
+<!-- Smart.Framework::DAV @ UserInfo: [DAV-FsMount] # [####INFO-ROOT|html####] # -->
 <html>
 <head>
-	<meta charset="utf-8">
+	<meta charset="[####CHARSET|html####]">
+	<meta http-equiv="Content-Type" content="text/html; charset=[####CHARSET|html####]">
 	<title>[####INFO-TITLE|html####]</title>
+	<link rel="stylesheet" type="text/css" href="[####BASE-URL|html####]lib/core/plugins/fonts/typo/sans/ibm-plex-sans.css">
 	<style type="text/css">
 	* {
-		font-family: arial,sans-serif;
+		font-family: 'IBM Plex Sans',arial,sans-serif;
 		font-smooth: always;
 	}
 	body {
@@ -16,6 +18,9 @@
 	body, div, p, ol, ul, table, form, fieldset, pre, code, blockquote, address, dl {
 		font-size: 14px;
 		line-height: 1.5;
+	}
+	li {
+		list-style-position: inside;
 	}
 	h1 {
 		font-size: 32px;
@@ -83,22 +88,24 @@
 	}
 	</style>
 	<script>
-	document.cookie = "netvision_cloud_browser_client_mode=html";
+	try {
+		document.cookie = "smartframework_webdav_browser_client_mode=html";
+	} catch(err){}
 	</script>
 </head>
 <body>
 <div id="top">
 	<h1 style="display:inline-block;">
 [%%%%IF:LINK-WELCOME:!=;%%%%]
-		<a href="[####LINK-WELCOME|html####]" title="[####TEXT-WELCOME|html####]" style="margin-right:8px;">
+	<a href="[####LINK-WELCOME|html####]" title="[####TEXT-WELCOME|html####]" style="margin-right:8px;">
 [%%%%/IF:LINK-WELCOME%%%%]
-			<img height="48" src="[####BASE-URL|html####][####IMG-SVG-LOGO|html####]" align="left">
+		<img height="48" src="[####BASE-URL|html####][####IMG-SVG-LOGO|html####]" align="left">
 [%%%%IF:LINK-WELCOME:!=;%%%%]
-		</a>
+	</a>
 [%%%%ELSE:LINK-WELCOME%%%%]
 &nbsp;
 [%%%%/IF:LINK-WELCOME%%%%]
-		[####INFO-HEADING|html####] &nbsp; </h1><h4 style="display:inline-block;"><span style="color:#FF3300;">{[####INFO-AUTHNAME|html####]}:</span>&nbsp;<span style="color:#778899;">&lt;[####CRR-PATH|html####]&gt;</span></h4>
+	[####INFO-HEADING|html####] &nbsp; </h1><h4 style="display:inline-block;"><span style="color:#FF3300;">{[####INFO-AUTHNAME|html####]}:</span>&nbsp;<span style="color:#778899;">&lt;[####CRR-PATH|html####]&gt;</span></h4>
 </div>
 <br>
 <div id="lst">
@@ -152,7 +159,6 @@
 <div align="right"><address><font color="#778899"><small>[####INFO-SIGNATURE|html####]</small></font></address></div>
 <br>
 <br>
-<!-- Forms -->
 [%%%%IF:SHOW-POST-FORM:==yes;%%%%]
 <div style="position:fixed; top:5px; right:10px; border: 1px solid #CCCCCC; background: #ECECEC; opacity: 0.95; border-radius: 5px; padding: 4px;"> <!-- onmouseover="this.style.opacity=0.95;" onmouseout="this.style.opacity=0.55;" -->
 	<table border="0" cellpadding="0">
@@ -187,6 +193,6 @@
 	</table>
 </div>
 [%%%%/IF:SHOW-POST-FORM%%%%]
-<!-- Smart.Framework::WebDAV@Version:[[####INFO-VERSION|html####]] -->
+<!-- Smart.Framework::DAV @ Version: [[####INFO-VERSION|html####]] -->
 </body>
 </html>

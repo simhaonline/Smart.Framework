@@ -19,7 +19,7 @@ $configs['app']['index-template-file'] 				= 'template.htm';			// default index 
 //---------------------------------------
 
 //--------------------------------------- OTHER SPECIAL SETTINGS :: DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU ARE DOING, really ...
-//define('SMART_FRAMEWORK_CUSTOM_ERR_PAGES', 'modules/app/error-pages/'); // `` or custom path to error pages: 400.php, 401.php, 403.php, 404.php, 500.php, 503.php (if this is enabled, remove the modules/app/error-pages/xxx.php that you don't want to customize ...)
+//define('SMART_FRAMEWORK_CUSTOM_ERR_PAGES', 'modules/app/error-pages/'); // `` or custom path to error pages: 400.php, 401.php, 403.php, 404.php, 429.php, 500.php, 502.php, 503.php, 504.php ; if this is enabled, remove the modules/app/error-pages/xxx.php that you don't want to customize or use another path where you copy and customize only the error pages you need ...
 //---------------------------------------
 
 // end of php code

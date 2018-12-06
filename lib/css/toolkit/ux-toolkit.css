@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.180613), (c) 2015-2018 unix-world.org
+	extended by unixman, (stable.181205), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -422,15 +422,6 @@ a.ux-link:hover {
 .ux-button-responsive {
 }
 
-@media all and (max-width:639px) {
-
-	.ux-button-responsive {
-		width: 98% !important;
-		margin: 0.7rem 0 0;
-	}
-
-}
-
 /*** Tables ***/
 
 .ux-table {
@@ -543,30 +534,23 @@ striping:
 
 /* Fluid TABLE REFLOW (by Unixman) */
 
-@media all and (max-width:639px) {
+.ux-reflow-table {
+}
 
-	.ux-reflow-table {
-		width: 98%;
-	}
+.ux-reflow-table td,
+.ux-reflow-table th,
+.ux-reflow-table tbody th,
+.ux-reflow-table tbody td,
+.ux-reflow-table thead th,
+.ux-reflow-table thead td,
+.ux-reflow-table tfoot th,
+.ux-reflow-table tfoot td {
+}
 
-	.ux-reflow-table td,
-	.ux-reflow-table th,
-	.ux-reflow-table tbody th,
-	.ux-reflow-table tbody td,
-	.ux-reflow-table thead td,
-	.ux-reflow-table thead th {
-		display: block !important;
-		margin: 0 !important;
-		border: 0 !important;
-	}
-
-	.ux-reflow-table tr,
-	.ux-reflow-table tbody tr,
-	.ux-reflow-table thead tr {
-		display: block !important;
-		border-bottom: 1px dotted #AAAAAA !important;
-	}
-
+.ux-reflow-table tr,
+.ux-reflow-table tbody tr,
+.ux-reflow-table thead tr,
+.ux-reflow-table tfoot tr {
 }
 
 
@@ -1351,7 +1335,7 @@ ul.ux-breadcrumb li a:hover {
 	display: block;
 	float: left;
 	font-size: 0.9rem;
-	line-height: 2.7rem;
+	line-height: 2.3rem !important;
 	color: #FFFFFF !important;
 	/*need more margin on the left of links to accomodate the numbers*/
 	padding: 0 10px 0 60px;

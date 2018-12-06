@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman (stable.180613), (c) 2015-2018 unix-world.org
+	extended by unixman (stable.181205), (c) 2015-2018 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -32,16 +32,20 @@ License: BSD
 	.ux-reflow-table th,
 	.ux-reflow-table tbody th,
 	.ux-reflow-table tbody td,
+	.ux-reflow-table thead th,
 	.ux-reflow-table thead td,
-	.ux-reflow-table thead th {
+	.ux-reflow-table tfoot th,
+	.ux-reflow-table tfoot td {
 		display: block !important;
 		margin: 0 !important;
 		border: 0 !important;
+		min-width: calc(98% - 25px) !important;
 	}
 
 	.ux-reflow-table tr,
 	.ux-reflow-table tbody tr,
-	.ux-reflow-table thead tr {
+	.ux-reflow-table thead tr,
+	.ux-reflow-table tfoot tr {
 		display: block !important;
 		border-bottom: 1px dotted #AAAAAA !important;
 	}
@@ -92,10 +96,10 @@ License: BSD
 	.ux-group input[type="search"],
 	.ux-group input[type="tel"],
 	.ux-group input[type="color"],
-	.ux-form label,
-	.ux-form textarea,
-	.ux-form select,
-	.ux-field {
+	.ux-group label,
+	.ux-group textarea,
+	.ux-group select,
+	.ux-group .ux-field {
 		margin-bottom: 0;
 		width: calc(98% - 10px) !important;
 		min-width: calc(98% - 10px) !important;

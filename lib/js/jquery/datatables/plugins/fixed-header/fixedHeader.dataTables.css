@@ -1,3 +1,7 @@
+/* FixedHeader 3.1.4
+ * (c) 2009-2018 SpryMedia Ltd - MIT License
+ */
+
 table.fixedHeader-floating {
 	position: fixed !important;
 	background-color: white;
@@ -17,3 +21,5 @@ table.fixedHeader-locked {
 		display: none;
 	}
 }
+
+/* END */

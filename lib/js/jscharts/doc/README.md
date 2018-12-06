@@ -27,7 +27,7 @@
 # Stable Release with Fixes and Enhancements:
 * Copyright 2014 Unix-World.org (support@unix-world.org)
 * http://sourceforge.net/projects/warp-cms/files/open-framework/
-* http://netvision.unix-world.org/open-framework/
+* http://demo.unix-world.org/smart-framework/
 * http://www.unix-world.org
 * Released under the BSD license
 

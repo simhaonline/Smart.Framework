@@ -21,7 +21,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181105
+ * @version 	v.181206
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {
@@ -32,13 +32,43 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 
 	final public function Run() {
 
-		//--
+		//-- detect page extension
 		$uri = (string) \SmartUtils::get_server_current_request_uri();
 		$uri = (string) ltrim($uri, '/');
 		$uri = (array)  explode('?', (string)$uri);
 		$uri = (string) $uri[0];
-		$ext = (string) \SmartFileSysUtils::get_file_extension_from_path($uri);
-		$lext = (string) strtolower((string)$ext);
+		if((string)substr((string)$uri, -1, 1) != '/') {
+			$ext = (string) \SmartFileSysUtils::get_file_extension_from_path($uri);
+			$lext = (string) strtolower((string)$ext);
+		} else {
+			$ext = (string) $this->RequestVarGet('page', '', 'string');
+			$lext = '';
+			if(strpos((string)$ext, '.') !== false) { // if at least module.controller
+				$ext = (array) explode('.', (string)$ext);
+				if(\Smart::array_size($ext) == 3) { // module.controller.ext
+					$ext = (string) $ext[2];
+				} elseif(\Smart::array_size($ext) == 4) { // module.controller.seo.ext
+					$ext = (string) $ext[3];
+				} else {
+					$ext = ''; // n/a
+				} //end if else
+				$lext = (string) strtolower((string)$ext);
+			} //end if
+		} //end if else
+		//-- remap some extensions
+		if((string)$lext == 'markdown') {
+			$lext = 'md';
+		} elseif((string)$lext == 'less') {
+			$lext = 'css';
+		} elseif((string)$lext == 'scss') {
+			$lext = 'css';
+		} elseif((string)$lext == 'sass') {
+			$lext = 'css';
+		} elseif((string)$lext == 'jpeg') {
+			$lext = 'jpg';
+		} elseif((string)$lext == 'jpe') {
+			$lext = 'jpg';
+		} //end if
 		//-- special handler for several well known non-HTML extension types
 		switch((string)$lext) {
 			case 'jpg':
@@ -51,28 +81,26 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 				$this->PageViewSetVar('main', (string)\SmartFileSystem::read('modules/mod-samples/libs/views/img/error-xxx.'.$lext));
 				return;
 				break;
+			case 'svg':
+				$this->PageViewResetVars();
+				$this->PageViewSetCfg('rawpage', true);
+				$this->PageViewSetCfg('rawmime', 'image/svg+xml');
+				$this->PageViewSetCfg('rawdisp', 'inline; filename="'.(int)$this->errcode.'.'.$lext.'"');
+				$this->PageViewSetVar('main', (string)\SmartFileSystem::read('modules/mod-samples/libs/views/img/error-xxx.'.$lext));
+				return;
+				break;
 			case 'json':
 				$this->PageViewResetVars();
 				$this->PageViewSetCfg('rawpage', true);
 				$this->PageViewSetCfg('rawmime', 'text/json');
 				$this->PageViewSetCfg('rawdisp', 'inline');
-				$this->PageViewSetVar('main', \Smart::json_encode([ 'Error'.(int)$this->errcode => 'Json '.$this->errtext ]));
-				return;
-				break;
-			case 'js':
-				$this->PageViewResetVars();
-				$this->PageViewSetCfg('rawpage', true);
-				$this->PageViewSetCfg('rawmime', 'application/javascript');
-				$this->PageViewSetCfg('rawdisp', 'inline');
-				$this->PageViewSetVar('main', '/* # Error'.(int)$this->errcode.': JS '.$this->errtext.' # */');
-				return;
-				break;
-			case 'css':
-				$this->PageViewResetVars();
-				$this->PageViewSetCfg('rawpage', true);
-				$this->PageViewSetCfg('rawmime', 'text/css');
-				$this->PageViewSetCfg('rawdisp', 'inline');
-				$this->PageViewSetVar('main', '/* # Error'.(int)$this->errcode.': CSS '.$this->errtext.' # */');
+				$this->PageViewSetVar('main',
+					\SmartComponents::js_ajax_replyto_html_form(
+						'ERROR',
+						(string) ((int)$this->errcode.' '.$this->errtext),
+						'Error: Json / Page '.$this->errtext
+					)
+				);
 				return;
 				break;
 			case 'xml':
@@ -81,6 +109,43 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 				$this->PageViewSetCfg('rawmime', 'application/xml');
 				$this->PageViewSetCfg('rawdisp', 'inline');
 				$this->PageViewSetVar('main', '<error'.(int)$this->errcode.'>XML '.\Smart::escape_html($this->errtext).'</error'.(int)$this->errcode.'>');
+				return;
+				break;
+			case 'txt':
+			case 'log':
+			case 'sql':
+			case 'md':
+			case 'eml':
+			case 'ics':
+			case 'vcf':
+			case 'vcs':
+			case 'ldif':
+			case 'pem':
+			case 'asc':
+			case 'sig':
+			case 'csv':
+			case 'tab':
+				$this->PageViewResetVars();
+				$this->PageViewSetCfg('rawpage', true);
+				$this->PageViewSetCfg('rawmime', 'text/plain');
+				$this->PageViewSetCfg('rawdisp', 'inline');
+				$this->PageViewSetVar('main', '-- # ERROR '.(int)$this->errcode.': '.strtoupper((string)$lext).' '.$this->errtext.' # --');
+				return;
+				break;
+			case 'js':
+				$this->PageViewResetVars();
+				$this->PageViewSetCfg('rawpage', true);
+				$this->PageViewSetCfg('rawmime', 'application/javascript');
+				$this->PageViewSetCfg('rawdisp', 'inline');
+				$this->PageViewSetVar('main', '/* # ERROR '.(int)$this->errcode.': JS '.$this->errtext.' # */');
+				return;
+				break;
+			case 'css':
+				$this->PageViewResetVars();
+				$this->PageViewSetCfg('rawpage', true);
+				$this->PageViewSetCfg('rawmime', 'text/css');
+				$this->PageViewSetCfg('rawdisp', 'inline');
+				$this->PageViewSetVar('main', '/* # ERROR '.(int)$this->errcode.': CSS '.$this->errtext.' # */');
 				return;
 				break;
 			default:
@@ -94,6 +159,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 			'main' 				=> (string) \SmartMarkersTemplating::render_file_template(
 				'modules/mod-samples/libs/views/error-xxx.mtpl.htm',
 				[
+					'CRR-URL' 		=> (string) \SmartUtils::get_server_current_url(),
 					'STATUS-CODE' 	=> (int) $this->errcode,
 					'STATUS-MSG' 	=> (string) $this->errtext
 				]
@@ -124,6 +190,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 		$vars['FOOTER'] = (string) \SmartMarkersTemplating::render_file_template(
 			'modules/mod-samples/libs/views/error-xxx-footer.mtpl.htm',
 			[
+				'CRR-URL' 		=> (string) \SmartUtils::get_server_current_url(),
 				'ERR-MESSAGE' 	=> (string) $y_message
 			]
 		);

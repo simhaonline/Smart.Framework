@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCalDav {
 
 	// ::
-	// v.181107
+	// v.181206
 
 	private static $caldav_ns = 'xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/"';
 	private static $caldav_urn = 'urn:ietf:params:xml:ns:caldav';
@@ -394,8 +394,9 @@ final class DavFsCalDav {
 			} //end if else
 			$info_restr_charset = 'restricted charset as [ _ a-z A-Z 0-9 - . @ ]';
 			$html = (string) \SmartMarkersTemplating::render_file_template(
-				\SmartModExtLib\Webdav\DavServer::getTplPath().'answer-get-path.mtpl.html',
+				\SmartModExtLib\Webdav\DavServer::getTplPath().'answer-get-path.mtpl.htm',
 				[
+					'CHARSET' 			=> (string) SMART_FRAMEWORK_CHARSET,
 					'IMG-SVG-LOGO' 		=> (string) $nfo_svg_logo,
 					'TEXT-WELCOME' 		=> (string) $nfo_txt_welcome,
 					'LINK-WELCOME' 		=> (string) $nfo_lnk_welcome,

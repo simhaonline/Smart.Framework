@@ -16,10 +16,15 @@
 	<script type="text/javascript" src="../../../framework/smart-framework.js"></script>
 	<link rel="stylesheet" type="text/css" href="../datatables-responsive.css">
 	<script type="text/javascript" src="../datatables-responsive.js"></script>
+	<!-- optional plugins -->
+	<link rel="stylesheet" type="text/css" href="../plugins/key-table/keyTable.dataTables.css">
+	<script type="text/javascript" src="../plugins/key-table/dataTables.keyTable.js"></script>
+	<link rel="stylesheet" type="text/css" href="../plugins/select/select.dataTables.css">
+	<script type="text/javascript" src="../plugins/select/dataTables.select.js"></script>
 </head>
 <body>
-<h1>DataTables example - Basic initialisation</h1>
-<table id="data-tbl1" class="display" style="width:100%">
+<h1>DataTables example - Basic initialisation (with optional plugins: keys and select)</h1>
+<table id="data-tbl1" class="display ux-reflow-table" style="width:100%">
 	<thead>
 		<tr>
 			<th>Name</th>
@@ -130,6 +135,7 @@
 <script>
 jQuery(document).ready(function() {
 	jQuery('table.display').DataTable({
+	//	responsive: true,
 		bSort: true,
 		bFilter: true,
 		bSortMulti: true,
@@ -170,7 +176,10 @@ jQuery(document).ready(function() {
 					}
 				}
 			}
-		]
+		],
+		//-- plugin options
+		keys: true,
+		select: true
 	});
 });
 </script>

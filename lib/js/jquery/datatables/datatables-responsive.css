@@ -10,7 +10,7 @@
  *   DataTables 1.10.18, Responsive 2.2.2
  */
 
-/* Responsive-DataTables v.1.10.18.uxm181203 (modified by unixman)
+/* Responsive-DataTables v.1.10.18.uxm181206 (modified by unixman)
  * (c) 2009-2018 SpryMedia Ltd - MIT License
  * (c) 2018 unix-world.org
  */
@@ -61,31 +61,64 @@ table.dataTable tfoot td {
 table.dataTable tfoot th {
 	border-bottom: 1px solid #ECECEC;
 }
+/* start: fix by unixman */
+table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting,
+table.dataTable thead > tr > td.sorting_asc,
+table.dataTable thead > tr > td.sorting_desc,
+table.dataTable thead > tr > td.sorting {
+	padding-right: 30px;
+}
+table.dataTable thead > tr > th:active,
+table.dataTable thead > tr > td:active {
+	outline: none;
+}
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc,
 table.dataTable thead .sorting_desc,
 table.dataTable thead .sorting_asc_disabled,
 table.dataTable thead .sorting_desc_disabled {
 	cursor: pointer;
-	*cursor: hand;
-	background-repeat: no-repeat;
-	background-position: center right;
+	position: relative;
 }
-table.dataTable thead .sorting {
-	background-image: url("img/sort_both.png");
+table.dataTable thead .sorting:before, table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before,
+table.dataTable thead .sorting_desc_disabled:after {
+	position: absolute;
+	bottom: 0.9em;
+	display: block;
+	opacity: 0.3;
 }
-table.dataTable thead .sorting_asc {
-	background-image: url("img/sort_asc.png");
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc_disabled:before {
+	right: 1em;
+	content: "\2191";
 }
-table.dataTable thead .sorting_desc {
-	background-image: url("img/sort_desc.png");
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:after {
+	right: 0.5em;
+	content: "\2193";
 }
-table.dataTable thead .sorting_asc_disabled {
-	background-image: url("img/sort_asc_disabled.png");
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_desc:after {
+	opacity: 1;
 }
-table.dataTable thead .sorting_desc_disabled {
-	background-image: url("img/sort_desc_disabled.png");
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc_disabled:after {
+	opacity: 0;
 }
+/* #end: fix by unixman */
 table.dataTable tbody tr {
 	background-color: #ffffff;
 }
@@ -507,22 +540,23 @@ table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > th:first-child:b
 	width: 14px;
 	display: block;
 	position: absolute;
-	color: white;
-	border: 2px solid white;
+	color: #FFFFFF;
+	border: 2px solid #ECECEC;
 	border-radius: 14px;
-	box-shadow: 0 0 3px #444;
+/*	box-shadow: 0 0 3px #444444; */
 	box-sizing: content-box;
 	text-align: center;
 	text-indent: 0 !important;
-	font-family: 'Courier New', Courier, monospace;
 	line-height: 14px;
+	font-size: 14px;
+	font-weight: bold;
 	content: '+';
-	background-color: #31b131;
+	background-color: #555555;
 }
 table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td:first-child:before,
 table.dataTable.dtr-inline.collapsed > tbody > tr.parent > th:first-child:before {
 	content: '-';
-	background-color: #d33333;
+	background-color: #777777;
 }
 table.dataTable.dtr-inline.collapsed.compact > tbody > tr > td:first-child,
 table.dataTable.dtr-inline.collapsed.compact > tbody > tr > th:first-child {
@@ -553,22 +587,23 @@ table.dataTable.dtr-column > tbody > tr > th.control:before {
 	margin-left: -10px;
 	display: block;
 	position: absolute;
-	color: white;
-	border: 2px solid white;
+	color: #FFFFFF;
+	border: 2px solid #ECECEC;
 	border-radius: 14px;
-	box-shadow: 0 0 3px #444;
+/*	box-shadow: 0 0 3px #444444; */
 	box-sizing: content-box;
 	text-align: center;
 	text-indent: 0 !important;
-	font-family: 'Courier New', Courier, monospace;
 	line-height: 14px;
+	font-size: 14px;
+	font-weight: bold;
 	content: '+';
-	background-color: #31b131;
+	background-color: #555555;
 }
 table.dataTable.dtr-column > tbody > tr.parent td.control:before,
 table.dataTable.dtr-column > tbody > tr.parent th.control:before {
 	content: '-';
-	background-color: #d33333;
+	background-color: #777777;
 }
 table.dataTable > tbody > tr.child {
 	padding: 0.5em 1em;
