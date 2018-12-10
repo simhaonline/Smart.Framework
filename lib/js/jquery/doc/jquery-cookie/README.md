@@ -88,7 +88,7 @@ By default the cookie value is encoded/decoded when writing/reading, using `enco
 $.cookie.raw = true;
 ```
 
-### json (n/a yet ...)
+### json
 
 Turn on automatic storage of JSON objects passed as the cookie value. Assumes `JSON.stringify` and `JSON.parse`:
 

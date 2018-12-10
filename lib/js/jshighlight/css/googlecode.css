@@ -1,7 +1,10 @@
 /*
+// css/googlecode.css
+// HighlightJs: v.9.13.1
+*/
 
+/*
 Google Code style (c) Aahan Krish <geekpanth3r@gmail.com>
-
 */
 
 .hljs {
@@ -87,3 +90,5 @@ Google Code style (c) Aahan Krish <geekpanth3r@gmail.com>
 .hljs-emphasis {
 	font-style: italic;
 }
+
+/* END */

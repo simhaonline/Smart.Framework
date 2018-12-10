@@ -1,7 +1,10 @@
 /*
+// css/default.css
+// HighlightJs: v.9.13.1
+*/
 
+/*
 Original highlight.js style (c) Ivan Sagalaev <maniac@softwaremaniacs.org>
-
 */
 
 .hljs {
@@ -97,3 +100,5 @@ Original highlight.js style (c) Ivan Sagalaev <maniac@softwaremaniacs.org>
 .hljs-strong {
 	font-weight: bold;
 }
+
+/* END */

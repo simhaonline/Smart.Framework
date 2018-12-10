@@ -602,7 +602,7 @@ private function DomNode2Array($node) {
  * @access      PUBLIC
  * @depends     classes: Smart
  * @version     v.181019
- * @package     Exporters
+ * @package     Parsers
  *
  */
 final class SmartXmlComposer {

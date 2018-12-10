@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.181205
+ * @version 	v.181207
  * @package 	Components:Core
  *
  */
@@ -1905,10 +1905,6 @@ public static function filetype_highlightsyntax($path) {
 			$fpack = 'lang';
 			$ftype = 'go';
 			break;
-		case 'hx':
-			$fpack = 'lang';
-			$ftype = 'haxe';
-			break;
 		case 'lua':
 			$fpack = 'lang';
 			$ftype = 'lua';
@@ -2004,7 +2000,7 @@ public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], 
 		'lnx'  => 'awk, bash, perl, shell',
 		'srv'  => 'accesslog, apache, dns, nginx, pf',
 		'net'  => 'csp, http',
-		'lang' => 'cmake, coffeescript, cpp, go, haxe, lua, makefile, python, ruby, rust, tcl, vala'
+		'lang' => 'cmake, coffeescript, cpp, go, lua, makefile, python, ruby, rust, tcl, vala'
 	];
 	//--
 	$arr_stx_plugs = [];
@@ -2522,6 +2518,9 @@ public static function html_js_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 	$the_lang = SmartTextTranslations::getLanguage();
 	//--
 	switch((string)$y_mode) {
+		case 'json-ld':
+			$the_mode = 'application/ld+json';
+			break;
 		case 'json':
 			$the_mode = 'application/json';
 			break;
@@ -2530,6 +2529,15 @@ public static function html_js_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 			break;
 		case 'css':
 			$the_mode = 'text/css';
+			break;
+		case 'scss':
+			$the_mode = 'text/x-scss';
+			break;
+		case 'less':
+			$the_mode = 'text/x-less';
+			break;
+		case 'sass':
+			$the_mode = 'text/x-sass';
 			break;
 		case 'html':
 			$the_mode = 'text/html';
@@ -2543,32 +2551,60 @@ public static function html_js_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 		case 'yaml':
 			$the_mode = 'text/x-yaml';
 			break;
-		case 'php':
-			$the_mode = 'application/x-php';
-			break;
 		case 'sql':
 			$the_mode = 'text/x-sql';
 			break;
+		case 'php':
+			$the_mode = 'application/x-php';
+			break;
+		case 'ini': // php ini
+		case 'toml': // rust ini
+			$the_mode = 'text/x-toml';
+			break;
+		case 'rust':
+			$the_mode = 'text/x-rustsrc';
+			break;
+		case 'go':
+			$the_mode = 'text/x-go';
+			break;
+		case 'c':
+			$the_mode = 'text/x-csrc';
+			break;
+		case 'cpp':
+			$the_mode = 'text/x-c++src';
+			break;
+		case 'lua':
+			$the_mode = 'text/x-lua';
+			break;
+		case 'ruby':
+			$the_mode = 'text/x-ruby';
+			break;
+		case 'perl':
+			$the_mode = 'text/x-perl';
+			break;
+		case 'python':
+			$the_mode = 'text/x-python';
+			break;
+		case 'shell':
+			$the_mode = 'text/x-sh';
+			break;
 		case 'spreadsheet':
 			$the_mode = 'text/x-spreadsheet';
-			break;
-		case 'gpg':
-		case 'pgp':
-			$the_mode = 'application/pgp';
 			break;
 		case 'text':
 		default:
 			$the_mode = 'text/plain';
 	} //end switch
+	//--
 	if(!$y_editable) {
 		$is_readonly = true;
 		$attrib_readonly = ' readonly';
-		$cursor_blinking = '0';
+		$cursor_blinking = 0;
 		$theme = 'uxm';
 	} else {
 		$is_readonly = false;
 		$attrib_readonly = '';
-		$cursor_blinking = '530';
+		$cursor_blinking = 530;
 		$theme = 'uxw';
 	} //end switch
 	//--
@@ -2580,7 +2616,7 @@ public static function html_js_editarea($yid, $yvarname, $yvalue='', $y_mode='te
 			'HEIGHT' 			=> (string) $y_height,
 			'SHOW-LINE-NUM' 	=> (bool)   $y_line_numbers,
 			'READ-ONLY' 		=> (bool)   $is_readonly,
-			'BLINK-CURSOR' 		=> (int)    Smart::format_number_int($cursor_blinking,'+'),
+			'BLINK-CURSOR' 		=> (int)    Smart::format_number_int($cursor_blinking, '+'),
 			'CODE-TYPE' 		=> (string) $the_mode,
 			'THEME' 			=> (string) $theme,
 			'TXT-AREA-VAR-NAME' => (string) $yvarname,

@@ -1,7 +1,10 @@
 /*
+// css/grayscale.css
+// HighlightJs: v.9.13.1
+*/
 
+/*
 grayscale style (c) MY Sun <simonmysun@gmail.com>
-
 */
 
 .hljs {
@@ -99,3 +102,5 @@ grayscale style (c) MY Sun <simonmysun@gmail.com>
 .hljs-strong {
 	font-weight: bold;
 }
+
+/* END */

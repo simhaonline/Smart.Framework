@@ -32,6 +32,50 @@ if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at 
 	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 / 7.3 or later');
 } //end if
 //--
+if((string)ini_get('zlib.output_compression') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI ZLib Output Compression must be disabled !');
+} //end if
+if((string)ini_get('zlib.output_handler') != '') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Zlib Output Handler must be unset !');
+} //end if
+if((string)ini_get('output_handler') != '') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Output Handler must be unset !');
+} //end if
+//--
+if((string)ini_get('zend.multibyte') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // PHP.INI Zend-MultiByte must be disabled ! Unicode support is managed via MBString into SmartFramework ...');
+} //end if
+//--
+if((int)ini_get('max_input_vars') < 1000) { // it should be at least 1000 ; cannot be set to zero as it will dissalow any input vars ; this limits the Request Input Vars (GET / POST / COOKIE) includding their nested levels ; recommended is 2500 ; minimum accepted is 1000 ; after changing this value you have to change the max_input_vars with a value like this or even higher in PHP.INI
+	@http_response_code(500);
+	die('The PHP.INI MaxInputVars must be set to a higher value than 1000 ...');
+} //end if
+if((int)ini_get('max_input_nesting_level') < 5) { // it should be at least 5 ; the max_input_nesting_level cannot be set to zero as it will dissalow any arrays
+	@http_response_code(500);
+	die('The PHP.INI MaxInputNestingLevel must be set to a higher value than 5 ...');
+} //end if
+if((int)ini_get('max_input_time') < 60) { // it should be at least 60 ; the max_input_time cannot be set to zero as it will have no time for parsing input vars
+	@http_response_code(500);
+	die('The PHP.INI MaxInputTime must be set to a higher value than 60 ...');
+} //end if
+//--
+if((string)ini_get('session.auto_start') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Session AutoSTART must be DISABLED !');
+} //end if
+if((string)ini_get('session.use_trans_sid') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Session TransSID must be DISABLED !');
+} //end if
+//--
+if((int)ini_get('pcre.jit') > 0) { // this fail badly with majority of regex expressions
+	@http_response_code(500);
+	die('SmartFramework INI // The PcreJIT must be disabled for mixed Unicode support with regular expressions !');
+} //end if
 if(!function_exists('preg_match')) {
 	@http_response_code(500);
 	die('PHP PCRE Extension is missing. It is needed for Regular Expression ...');
@@ -45,7 +89,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.06'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.09'); // release tag (date)
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {

@@ -332,7 +332,7 @@ public static function cookiename($y_form_name) {
 final class SmartCaptchaImageDraw {
 
 	// ->
-	// v.181130
+	// v.181230
 
 
 //================================================================
@@ -667,7 +667,7 @@ private function generate_captcha_dotted() {
 		$im = @imagecreate($this->width, $this->height);
 	} else {
 		Smart::raise_error(
-			'[ERROR] :: '.__CLASS__.' :: PHP-GD extension is required to support ImageCreate.',
+			'[ERROR] :: '.__METHOD__.' :: PHP-GD extension is required to support ImageCreate.',
 			'A required component is missing ... See error log for more details'
 		);
 		die('Missing PHP-GD Extension is required to support ImageCreate');
@@ -746,8 +746,14 @@ private function generate_captcha_hashed() {
 	//--
 	if(function_exists('imagecreatetruecolor')) {
 		$im = @imagecreatetruecolor($this->width, $this->height);
-	} else {
+	} elseif(function_exists('imagecreate')) {
 		$im = @imagecreate($this->width, $this->height);
+	} else {
+		Smart::raise_error(
+			'[ERROR] :: '.__METHOD__.' :: PHP-GD extension is required to support ImageCreate.',
+			'A required component is missing ... See error log for more details'
+		);
+		die('Missing PHP-GD Extension is required to support ImageCreate');
 	} //end if else
 	//--
 

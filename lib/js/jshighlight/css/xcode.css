@@ -1,7 +1,10 @@
 /*
+// css/xcode.css
+// HighlightJs: v.9.13.1
+*/
 
+/*
 XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
-
 */
 
 .hljs {
@@ -102,3 +105,5 @@ XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
 .hljs-emphasis {
 	font-style: italic;
 }
+
+/* END */

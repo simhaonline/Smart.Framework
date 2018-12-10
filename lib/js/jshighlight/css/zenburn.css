@@ -1,8 +1,11 @@
 /*
+// css/zenburn.css
+// HighlightJs: v.9.13.1
+*/
 
+/*
 Zenburn style from voldmar.ru (c) Vladimir Epifanov <voldmar@voldmar.ru>
 based on dark.css by Ivan Sagalaev
-
 */
 
 .hljs {
@@ -78,3 +81,5 @@ based on dark.css by Ivan Sagalaev
 .hljs-strong {
 	font-weight: bold;
 }
+
+/* END */

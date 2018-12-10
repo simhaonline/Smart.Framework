@@ -1,3 +1,8 @@
+/*
+// css/github-gist.css
+// HighlightJs: v.9.13.1
+*/
+
 /**
  * GitHub Gist Theme
  * Author : Louis Barranqueiro - https://github.com/LouisBarranqueiro
@@ -69,3 +74,5 @@
 .hljs-link {
 	text-decoration: underline;
 }
+
+/* END */

@@ -1,8 +1,13 @@
 /*
-  UXW Write theme, inspired from MDN-LIKE Theme - Mozilla
-  Ported to CodeMirror by Peter Kroon <plakroon@gmail.com>, Report bugs/issues here: https://github.com/codemirror/CodeMirror/issues, GitHub: @peterkroon
-  The mdn-like theme is inspired on the displayed code examples at: https://developer.mozilla.org/en-US/docs/Web/CSS/animation
-  Inspired by mdn-like theme, modified by unixman
+// theme/uxw.css
+// codemirror: v.5.42.0
+*/
+
+/*
+	UXW Write theme, inspired from MDN-LIKE Theme - Mozilla
+	Ported to CodeMirror by Peter Kroon <plakroon@gmail.com>, Report bugs/issues here: https://github.com/codemirror/CodeMirror/issues, GitHub: @peterkroon
+	The mdn-like theme is inspired on the displayed code examples at: https://developer.mozilla.org/en-US/docs/Web/CSS/animation
+	Inspired by mdn-like theme, modified by unixman, (c) 2016-2018 unix-world.org
 */
 
 .cm-s-uxw.CodeMirror { color: #333333; background-color: #FFFFFF; }
@@ -33,11 +38,11 @@
 .cm-s-uxw .cm-operator { color: #FF3300; }
 .cm-s-uxw .cm-comment { color:#777777; font-weight:normal; }
 .cm-s-uxw .cm-string { color:#BD6B18; }
-.cm-s-uxw .cm-string-2 { color:#FF6400; } /*?*/
-.cm-s-uxw .cm-meta { color: #000000; } /*?*/
-.cm-s-uxw .cm-builtin { color: #9B7536; } /*?*/
+.cm-s-uxw .cm-string-2 { color:#FF6400; }
+.cm-s-uxw .cm-meta { color: #000000; }
+.cm-s-uxw .cm-builtin { color: #9B7536; }
 .cm-s-uxw .cm-tag { color: #997643; }
-.cm-s-uxw .cm-attribute { color: #ED9A2E; } /*?*/
+.cm-s-uxw .cm-attribute { color: #ED9A2E; }
 .cm-s-uxw .cm-header { color: #0077AA; }
 .cm-s-uxw .cm-hr { color: #AEAEAE; }
 .cm-s-uxw .cm-link { color:#AD9361; font-style:italic; text-decoration:none; }
