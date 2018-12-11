@@ -32,10 +32,6 @@ if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at 
 	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 / 7.3 or later');
 } //end if
 //--
-if((string)ini_get('zlib.output_compression') != '0') {
-	@http_response_code(500);
-	die('SmartFramework INI // The PHP.INI ZLib Output Compression must be disabled !');
-} //end if
 if((string)ini_get('zlib.output_handler') != '') {
 	@http_response_code(500);
 	die('SmartFramework INI // The PHP.INI Zlib Output Handler must be unset !');
@@ -1129,7 +1125,7 @@ public static function isAdminArea() {
 public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
 	//--
 	if(self::$NoCacheHeadersSent !== false) {
-		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'The No-Cache Headers (Expire='.$expiration.' ; Modified='.$modified.'), Already Set (don\'t use this function twice per execution) ...', E_USER_WARNING);
+	//	@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'The No-Cache Headers (Expire='.$expiration.' ; Modified='.$modified.'), Already Set (don\'t use this function twice per execution) ...', E_USER_WARNING);
 		return;
 	} //end if
 	//--
