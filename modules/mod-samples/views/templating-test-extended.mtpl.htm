@@ -28,6 +28,7 @@ Template: templating-test-extended.mtpl.htm
 <!-- Test SUBSTR10 ([####TEST-UNISTR|html####]) : [####TEST-UNISTR|substr10|html####] -->
 <!-- Test SUBTXT13 w. space after 10 ([####TEST-UNISTR|html####]) : [####TEST-UNISTR|subtxt13|html####] -->
 <!-- Test NL2BR ([####TEST-TXT|html####]) : [####TEST-TXT|html|nl2br####] -->
+<!-- Test CSS ([####TEST-UNISTR|html####]) : '[####TEST-UNISTR|css|html####]' -->
 [%%%%|SPACE%%%%]@SPACE[%%%%|T%%%%]@TAB[%%%%|R%%%%]@NEW-LINE(CR+LF)[%%%%|N%%%%]#
 <hr>
 <div>
@@ -151,6 +152,7 @@ var the_textstr = '[####TEXTSTR|js####]';
 var the_number = [####NUMBER|num####];
 var the_unistr = '[####TEST-UNISTR|js####]';
 var the_strtotrim = '[####TEST-STRTOTRIM|js####]';
+var the_emptystr = '[####TEST-EMPTY|js####]';
 jQuery.ajax({
 	async: true,
 	cache: false,
@@ -166,7 +168,8 @@ jQuery.ajax({
 			'NUMBER': the_number,
 			'MARK-AREA': 'js',
 			'TEST-UNISTR': the_unistr,
-			'TEST-STRTOTRIM': the_strtotrim
+			'TEST-STRTOTRIM': the_strtotrim,
+			'TEST-EMPTY': the_emptystr
 		});
 		//console.log('JS-TPL Renderer [' + the_marker + ']:\n' + tpl);
 		jQuery('#tpl-test').append(tpl); // apend it to body

@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.181019.r2
+ * @version 	v.181212
  * @package 	Base
  *
  */
@@ -471,19 +471,40 @@ public static function comment_php_code($y_code, $y_repl=['tag-start' => '<!--? 
 
 
 //================================================================
-public static function print_array_to_html($y_aray) {
+public static function pretty_print_var($y_var, $indent=0) {
+	//--
 	$out = '';
-	if(is_array($y_aray)) {
-		$out .= '<table border="0"><tr><td>';
-		foreach($y_aray as $key => $val) {
-			$out .= '&middot;&nbsp;'.Smart::escape_html($val).'<br>';
+	//--
+	if(is_array($y_var)) {
+		//--
+		$spaces = '';
+		for($i=0; $i<(int)$indent; $i++) {
+			$spaces .= "\t";
+		} //end for
+		$indent += 1;
+		//--
+		$out .= '['."\n";
+		//--
+		foreach($y_var as $key => $val) {
+			$out .= $spaces;
+			if(is_array($val)) {
+				$out .= "\t".$key.' => '.self::pretty_print_var($val, $indent);
+			} else {
+				$out .= "\t".$key.' => '.$val;
+			} //end if else
+			$out .= "\n";
 		} //end foreach
-		$out .= '</td></tr></table>';
+		//--
+		$out .= $spaces.']';
+		//--
 	} else {
-		Smart::log_warning('ERROR: SmartUtils print_array_to_html expect the 1st param to be array !');
-		return '';
-	} //end if else
-	return $out;
+		//--
+		$out = (string) $y_var;
+		//--
+	} //end if
+	//--
+	return (string) $out;
+	//--
 } //END FUNCTION
 //================================================================
 
@@ -523,6 +544,7 @@ public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=
 	} //end if
 	//--
 	$y_bytes = $y_bytes / 1000;
+	//--
 	return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
 	//--
 } //END FUNCTION
@@ -554,6 +576,7 @@ public static function pretty_print_numbers($y_number, $y_decimals=1) {
 	} //end if
 	//--
 	$y_number = $y_number / 1000;
+	//--
 	return (string) Smart::format_number_dec($y_number, $y_decimals, '.', '').'m';
 	//--
 } //END FUNCTION

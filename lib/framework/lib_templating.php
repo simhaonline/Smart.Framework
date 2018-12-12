@@ -16,6 +16,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // DEPENDS:
 //	* Smart::
 //	* SmartUnicode::
+// 	* SmartUtils::
 //	* SmartParser::
 //	* SmartFileSystem::
 //	* SmartFileSysUtils::
@@ -57,7 +58,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.181205
+ * @version 	v.181212
  * @package 	Templating:Engines
  *
  */
@@ -121,11 +122,11 @@ public static function analyze_debug_file_template($y_file_path, $y_arr_sub_temp
 	$mtemplate = (string) SmartFileSystem::read((string)$y_file_path);
 	$original_mtemplate = (string) $mtemplate;
 	//-- add TPL START/END to see where it starts load
-	preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$mtemplate, $matches); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
+	$matches = array();
+	preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$mtemplate, $matches, PREG_SET_ORDER, 0); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
 	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
-	list($orig_part, $var_part) = (array) $matches;
-	for($i=0; $i<Smart::array_size($orig_part); $i++) {
-		$mtemplate = (string) str_replace((string)$orig_part[$i], '[****SUB-TEMPLATE:'.(string)$var_part[$i].'(*****INCLUDE:START{*****)****]'.(string)$orig_part[$i].'[****SUB-TEMPLATE:'.(string)$var_part[$i].'(*****}INCLUDE:END*****)****]', (string)$mtemplate);
+	for($i=0; $i<Smart::array_size($matches); $i++) {
+		$mtemplate = (string) str_replace((string)$matches[$i][0], '[****SUB-TEMPLATE:'.(string)$matches[$i][1].'(*****INCLUDE:START{*****)****]'.(string)$matches[$i][0].'[****SUB-TEMPLATE:'.(string)$matches[$i][1].'(*****}INCLUDE:END*****)****]', (string)$mtemplate);
 	} //end for
 	$matches = array();
 	//--
@@ -508,6 +509,39 @@ public static function prepare_nosyntax_html_template($mtemplate, $titlecomments
 
 
 //================================================================
+// extract and process extracted parts for analyze and return as array as match => the number of matches
+private static function analize_parts_extract($regex, $mtemplate, $uppercasekeys) {
+	//--
+	$matches = array();
+	preg_match_all((string)$regex, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
+	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
+	//--
+	$arr_parts = array();
+	//--
+	for($i=0; $i<Smart::array_size($matches); $i++) {
+		//--
+		$matches[$i] = (array) $matches[$i];
+		//--
+		$matches[$i][1] = (string) trim((string)$matches[$i][1]);
+		if((string)$matches[$i][1] != '') {
+			if($uppercasekeys === true) {
+				$arr_parts[(string)strtoupper((string)$matches[$i][1])] += 1;
+			} else {
+				$arr_parts[(string)$matches[$i][1]] += 1; // no strtoupper in this case !! (must preserve case)
+			} //end if else
+		} //end if
+		//--
+		$matches[$i] = null; // free mem
+		//--
+	} //end for
+	//--
+	return (array) $arr_parts;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
 /**
  * Extract Markers for Analyze a Marker Template (String Template)
  * This is intended for INTERNAL USE ONLY
@@ -519,20 +553,7 @@ public static function prepare_nosyntax_html_template($mtemplate, $titlecomments
  */
 private static function analize_extract_markers($mtemplate) {
 	//--
-	$arr_marks = array();
-	//--
-	$matches = array();
-	preg_match_all('/####([A-Z0-9_\-\.]+)/', (string)$mtemplate, $matches); // {{{SYNC-TPL-EXPR-MARKER}}} :: start part only :: - [ - ] (can be in IF)
-	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
-	list($orig_part, $var_part) = (array) $matches;
-	for($i=0; $i<Smart::array_size($var_part); $i++) {
-		$var_part[$i] = (string) trim((string)$var_part[$i]);
-		if((string)$var_part[$i] != '') {
-			$arr_marks[(string)strtoupper((string)$var_part[$i])] += 1;
-		} //end if
-	} //end for
-	//--
-	return (array) $arr_marks;
+	return (array) self::analize_parts_extract('/####([A-Z0-9_\-\.]+)/', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-MARKER}}} :: start part only :: - [ - ] (can be in IF statement) ; uppercase
 	//--
 } //END FUNCTION
 //================================================================
@@ -550,20 +571,7 @@ private static function analize_extract_markers($mtemplate) {
  */
 private static function analize_extract_ifs($mtemplate) {
 	//--
-	$arr_ifs = array();
-	//--
-	$matches = array();
-	preg_match_all('{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:}sU', (string)$mtemplate, $matches); // {{{SYNC-TPL-EXPR-IF}}} :: start part only
-	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
-	list($orig_part, $var_part) = (array) $matches;
-	for($i=0; $i<Smart::array_size($var_part); $i++) {
-		$var_part[$i] = (string) trim((string)$var_part[$i]);
-		if((string)$var_part[$i] != '') {
-			$arr_ifs[(string)strtoupper((string)$var_part[$i])] += 1;
-		} //end if
-	} //end for
-	//--
-	return (array) $arr_ifs;
+	return (array) self::analize_parts_extract('{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-IF}}} :: start part only ; uppercase
 	//--
 } //END FUNCTION
 //================================================================
@@ -581,20 +589,7 @@ private static function analize_extract_ifs($mtemplate) {
  */
 private static function analize_extract_loops($mtemplate) {
 	//--
-	$arr_loops = array();
-	//--
-	$matches = array();
-	preg_match_all('{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\]}sU', (string)$mtemplate, $matches); // {{{SYNC-TPL-EXPR-LOOP}}}
-	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
-	list($orig_part, $var_part) = (array) $matches;
-	for($i=0; $i<Smart::array_size($var_part); $i++) {
-		$var_part[$i] = (string) trim((string)$var_part[$i]);
-		if((string)$var_part[$i] != '') {
-			$arr_loops[(string)strtoupper((string)$var_part[$i])] += 1;
-		} //end if
-	} //end for
-	//--
-	return (array) $arr_loops;
+	return (array) self::analize_parts_extract('{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\]}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-LOOP}}} ; uppercase
 	//--
 } //END FUNCTION
 //================================================================
@@ -612,20 +607,7 @@ private static function analize_extract_loops($mtemplate) {
  */
 private static function analize_extract_specials($mtemplate) {
 	//--
-	$arr_specials = array();
-	//--
-	$matches = array();
-	preg_match_all('{\[%%%%\|?([a-zA-Z0-9_\-\.]+)%%%%\]}sU', (string)$mtemplate, $matches); // {{{SYNC-TPL-EXPR-SPECIALS}}}
-	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
-	list($orig_part, $var_part) = (array) $matches;
-	for($i=0; $i<Smart::array_size($var_part); $i++) {
-		$var_part[$i] = (string) trim((string)$var_part[$i]);
-		if((string)$var_part[$i] != '') {
-			$arr_specials[(string)strtoupper((string)$var_part[$i])] += 1;
-		} //end if
-	} //end for
-	//--
-	return (array) $arr_specials;
+	return (array) self::analize_parts_extract('{\[%%%%\|?([a-zA-Z0-9_\-\.]+)%%%%\]}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-SPECIALS}}} ; uppercase
 	//--
 } //END FUNCTION
 //================================================================
@@ -643,20 +625,7 @@ private static function analize_extract_specials($mtemplate) {
  */
 private static function analize_extract_subtpls($mtemplate) {
 	//--
-	$arr_subtpls = array();
-	//--
-	$matches = array();
-	preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$mtemplate, $matches); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
-	//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
-	list($orig_part, $var_part) = (array) $matches;
-	for($i=0; $i<Smart::array_size($var_part); $i++) {
-		$var_part[$i] = (string) trim((string)$var_part[$i]);
-		if((string)$var_part[$i] != '') {
-			$arr_subtpls[(string)$var_part[$i]] += 1; // no strtoupper in this case !! (must preserve case)
-		} //end if
-	} //end for
-	//--
-	return (array) $arr_subtpls;
+	return (array) self::analize_parts_extract('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$mtemplate, false); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + % ; preserve case
 	//--
 } //END FUNCTION
 //================================================================
@@ -877,7 +846,8 @@ private static function have_subtemplate($mtemplate) {
 //================================================================
 // do replacements (and escapings) for one marker ; a marker can contain: A-Z 0-9 _ - (and the dot . which is reserved as array level separator)
 /* {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}}
-<!-- INFO: The VALID Escaping Sequences for a Marker are all below ; If other escaping sequences are used or the escaping order is invalid, the Marker will not be detected and replaced ... -->
+<!-- INFO: The VALID Escaping and Transformers for a Marker are all below ; If other escaping sequences are used the Marker will not be detected and replaced ... -->
+<!-- Valid Escapings and Transformers: |bool |int |dec[1-4]{1} |num |htmid |jsvar |substr[0-9]{1,5} |subtxt[0-9]{1,5} |lower |upper |ucfirst |ucwords |trim |url |json |js |html |css |nl2br -->
 [####MARKER####]
 [####MARKER|bool####]
 [####MARKER|int####]
@@ -913,107 +883,160 @@ private static function have_subtemplate($mtemplate) {
 [####MARKER|html|nl2br####]
 [####MARKER|html|nl2br|url|js####]
 [####MARKER|html|nl2br|js|url####]
+[####MARKER|css####]
 */
-private static function replace_marker($mtemplate, $key, $val) { // v.181123
+private static function replace_marker($mtemplate, $key, $val) { // v.181211
 	//-- {{{SYNC-TPL-EXPR-MARKER}}}
 	if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
 		//--
-		$regex = '/\[####'.preg_quote((string)$key, '/').'(\|bool|\|int|\|dec[1-4]{1}|\|num|\|htmid|\|jsvar|\|json|\|lower|\|upper|\|ucfirst|\|ucwords|\|trim|\|substr[0-9]{1,5}|\|subtxt[0-9]{1,5})?(\|url)?(\|js|\|html)?(\|html|\|js)?(\|nl2br|\|url)?(\|url|\|js)?(\|js|\|url)?'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
+		$regex = '/\[####'.preg_quote((string)$key, '/').'((\|[a-z0-9]+)*)'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
 		//--
-		if((string)$val != '') {
+		if((string)$val != '') { // protect against replace reccurence if val is non-empty
 			//--
-			$arr_fix_one = array();
-			$arr_fix_two = array();
-			$arr_fix_three = array();
+			$arr_fix_safe = array();
+			$arr_fix_dbg = array();
 			//--
 			if(self::have_marker((string)$val)) {
-				$arr_fix_one[] = '[####';
-				$arr_fix_two[] = '(####+';
-				$arr_fix_one[] = '####]';
-				$arr_fix_two[] = '+####)';
-				$arr_fix_three[] = 'Markers';
+				$arr_fix_safe['[####'] = '(####+';
+				$arr_fix_safe['####]'] = '+####)';
+				$arr_fix_dbg[] = 'Markers';
 			} //end if
 			if(self::have_syntax((string)$val)) {
-				$arr_fix_one[] = '[%%%%';
-				$arr_fix_two[] = '(%%%%+';
-				$arr_fix_one[] = '%%%%]';
-				$arr_fix_two[] = '+%%%%)';
-				$arr_fix_three[] = 'Marker Syntax';
+				$arr_fix_safe['[%%%%'] = '(%%%%+';
+				$arr_fix_safe['%%%%]'] = '+%%%%)';
+				$arr_fix_dbg[] = 'Marker Syntax';
 			} //end if
 			if(self::have_subtemplate((string)$val)) {
-				$arr_fix_one[] = '[@@@@';
-				$arr_fix_two[] = '(@@@@+';
-				$arr_fix_one[] = '@@@@]';
-				$arr_fix_two[] = '+@@@@)';
-				$arr_fix_three[] = 'Marker Sub-Templates';
+				$arr_fix_safe['[@@@@'] = '(@@@@+';
+				$arr_fix_safe['@@@@]'] = '+@@@@)';
+				$arr_fix_dbg[] = 'Marker Sub-Templates';
 			} //end if
 			//--
-			if((Smart::array_size($arr_fix_one) > 0) AND (Smart::array_size($arr_fix_two) > 0) AND (Smart::array_size($arr_fix_one) == Smart::array_size($arr_fix_two))) {
+			if(Smart::array_size($arr_fix_safe) > 0) {
 				if(SmartFrameworkRuntime::ifDebug()) {
 					// this notice is too complex to fix in all situations, thus make it show just on Debug !
 					// because many times the values come from variable sources: user input, database, ... this notice make non-sense anymore !!
-					Smart::log_notice('Invalid or Undefined Markers-TPL: '.implode(', ', (array)$arr_fix_three).' - detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+					Smart::log_notice('Invalid or Undefined Markers-TPL: '.implode(', ', (array)$arr_fix_dbg).' - detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
 				} //end if
 				$val = (string) str_replace(
-					(array) $arr_fix_one, // dissalowed markers / syntax / sub-tpls
-					(array) $arr_fix_two, // fixed content, marked with +
+					(array) array_keys($arr_fix_safe), // dissalowed markers / syntax / sub-tpls
+					(array) array_values($arr_fix_safe), // fixed content, marked with +
 					(string) $val
 				); // protect against cascade / recursion / undefined variables - for content injections of: variables / syntax / sub-templates
 			} //end if
 			//--
 		} //end if
 		//--
-		$mtemplate = (string) preg_replace_callback(
-			(string) $regex,
-			function($matches) use ($val) {
-				//-- #1 Format
-				if((string)$matches[1] == '|bool') { // Boolean
+		$matches = array();
+		preg_match_all((string)$regex, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
+		//--
+		$arr_repls = [];
+		//--
+		for($i=0; $i<Smart::array_size($matches); $i++) {
+			//--
+			$crr_match = (array) $matches[$i];
+			$matches[$i] = null; // free mem
+			//--
+			if(!array_key_exists((string)$crr_match[0], (array)$arr_repls)) {
+				//--
+				$crr_match[1] = (string) trim((string)$crr_match[1]);
+				//--
+				if((string)$crr_match[1] == '') { // if no escaping
+					//--
+					$arr_repls[(string)$crr_match[0]] = (string) $val; // use raw value
+					//--
+				} else { // if escapings, apply
+					//--
+					$crr_match[1] = (string) trim((string)$crr_match[1], '|');
+					//--
+					if((string)$crr_match[1] == '') {
+						//--
+						// in this case will skip the replacement
+						//--
+						Smart::log_warning('Invalid or Undefined Markers-TPL Escaping - detected in Replacement Key: '.$crr_match[0].' -> [Val: '.$val.']');
+						//--
+					} else {
+						//--
+						$arr_repls[(string)$crr_match[0]] = (string) self::escape_marker_value((array)$crr_match, (string)$val);
+						//--
+					} //end if else
+					//--
+				} //end if
+				//--
+			} //end if
+			//--
+		} //end for
+		//--
+		if(Smart::array_size($arr_repls) > 0) {
+			$mtemplate = (string) str_replace(array_keys($arr_repls), array_values($arr_repls), (string)$mtemplate);
+		} //end if
+		//--
+	} //end if
+	//--
+	return (string) $mtemplate;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// escape a marker value conforming with the escapings sequence: |esc1|esc2|...|escn
+private static function escape_marker_value($crr_match, $val) {
+	//--
+	$crr_match = (array) $crr_match;
+	$val = (string) $val;
+	//--
+	if((string)$crr_match[1] != '') { // if escapings
+		//--
+		$escapes = (array) explode('|', (string)$crr_match[1]);
+		$maxescapes = (int) Smart::array_size($escapes);
+		if($maxescapes > 99) {
+			Smart::raise_error(
+				'Too much recursion for Markers-TPL Escapings - detected in Replacement Key: '.$crr_match[0].' -> [Val: '.$val.']',
+				'Markers-TPL Fatal Error: Too much recursion' // msg to display
+			);
+			return '';
+		} //end if
+		//--
+		if($maxescapes > 0) {
+			//--
+			for($i=0; $i<$maxescapes; $i++) {
+				//--
+				$escexpr = '|'.$escapes[$i];
+				//--
+				if((string)$escexpr == '|bool') { // Boolean
 					if($val) {
 						$val = 'true';
 					} else {
 						$val = 'false';
 					} //end if else
-				} elseif((string)$matches[1] == '|int') { // Integer
+				} elseif((string)$escexpr == '|int') { // Integer
 					$val = (string) (int) $val;
-				} elseif(substr((string)$matches[1], 0, 4) == '|dec') {
-					$xnum = Smart::format_number_int((int)substr((string)$matches[1], 4), '+');
+				} elseif(substr((string)$escexpr, 0, 4) == '|dec') {
+					$xnum = Smart::format_number_int((int)substr((string)$escexpr, 4), '+');
 					if($xnum < 1) {
 						$xnum = 1;
 					} elseif($xnum > 4) {
 						$xnum = 4;
 					} //end if
 					$val = (string) Smart::format_number_dec((string)$val, (int)$xnum, '.', '');
-					unset($xnum);
-				} elseif((string)$matches[1] == '|num') { // Number (Float / Decimal / Integer)
+					$xnum = null; // free mem
+				} elseif((string)$escexpr == '|num') { // Number (Float / Decimal / Integer)
 					$val = (string) (float) $val;
-				} elseif((string)$matches[1] == '|htmid') { // HTML ID
+				//--
+				} elseif((string)$escexpr == '|htmid') { // HTML ID
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$val));
-				} elseif((string)$matches[1] == '|jsvar') { // JS Variable
+				} elseif((string)$escexpr == '|jsvar') { // JS Variable
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
-				} elseif((string)$matches[1] == '|json') { // Json Data ; expects pure JSON !!!
-					$val = (string) Smart::json_encode(Smart::json_decode($val, true), false, true, true); // it MUST be JSON with HTML-Safe Options.
-					$val = trim((string)$val);
-					if((string)$val == '') {
-						$val = 'null'; // ensure a minimal json as empty string if no expr !
-					} //end if
-				} elseif((string)$matches[1] == '|lower') { // apply lowercase
-					$val = (string) SmartUnicode::str_tolower((string)$val);
-				} elseif((string)$matches[1] == '|upper') { // apply uppercase
-					$val = (string) SmartUnicode::str_toupper((string)$val);
-				} elseif((string)$matches[1] == '|ucfirst') { // apply uppercase first character
-					$val = (string) SmartUnicode::uc_first((string)$val);
-				} elseif((string)$matches[1] == '|ucwords') { // apply uppercase on each word
-					$val = (string) SmartUnicode::uc_words((string)$val);
-				} elseif((string)$matches[1] == '|trim') { // apply trim
-					$val = (string) trim((string)$val);
-				} elseif((substr((string)$matches[1], 0, 7) == '|substr') OR (substr((string)$matches[1], 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
-					$xnum = Smart::format_number_int((int)substr((string)$matches[1], 7), '+');
+				//--
+				} elseif((substr((string)$escexpr, 0, 7) == '|substr') OR (substr((string)$escexpr, 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
+					$xnum = Smart::format_number_int((int)substr((string)$escexpr, 7), '+');
 					if($xnum < 1) {
 						$xnum = 1;
 					} elseif($xnum > 65535) {
 						$xnum = 65535;
 					} //end if
-					if(substr((string)$matches[1], 0, 7) == '|subtxt') {
+					if(substr((string)$escexpr, 0, 7) == '|subtxt') {
 						if($xnum < 5) {
 							$xnum = 5;
 						} //end if
@@ -1021,52 +1044,58 @@ private static function replace_marker($mtemplate, $key, $val) { // v.181123
 					} else { // '|substr'
 						$val = (string) Smart::text_cut_by_limit((string)$val, (int)$xnum, true, '');
 					} //end if else
-					unset($xnum);
-				} //end if
-				//-- #2 Escape URL
-				if((string)$matches[2] == '|url') {
-					$val = (string) Smart::escape_url((string)$val);
-				} //end if
-				//-- #3 Escape JS / HTML
-				if((string)$matches[3] == '|js') {
-					$val = (string) Smart::escape_js((string)$val);
-				} elseif((string)$matches[3] == '|html') {
-					$val = (string) Smart::escape_html((string)$val);
-				} //end if
-				//-- #4 Escape HTML / JS
-				if((string)$matches[4] == '|html') {
-					$val = (string) Smart::escape_html((string)$val);
-				} elseif((string)$matches[4] == '|js') {
-					$val = (string) Smart::escape_js((string)$val);
-				} //end if
-				//-- #5 Format NL2BR / Escape URL
-				if((string)$matches[5] == '|nl2br') {
-					$val = (string) Smart::nl_2_br((string)$val);
-				} elseif((string)$matches[5] == '|url') {
-					$val = (string) Smart::escape_url((string)$val);
-				} //end if
-				//-- #6 Escape URL / JS
-				if((string)$matches[6] == '|url') {
-					$val = (string) Smart::escape_url((string)$val);
-				} elseif((string)$matches[6] == '|js') {
-					$val = (string) Smart::escape_js((string)$val);
-				} //end if
-				//-- #7 Escape JS / URL
-				if((string)$matches[7] == '|js') {
-					$val = (string) Smart::escape_js((string)$val);
-				} elseif((string)$matches[7] == '|url') {
-					$val = (string) Smart::escape_url((string)$val);
-				} //end if
+					$xnum = null; // free mem
 				//--
-				return (string) $val;
+				} elseif((string)$escexpr == '|lower') { // apply lowercase
+					$val = (string) SmartUnicode::str_tolower((string)$val);
+				} elseif((string)$escexpr == '|upper') { // apply uppercase
+					$val = (string) SmartUnicode::str_toupper((string)$val);
+				} elseif((string)$escexpr == '|ucfirst') { // apply uppercase first character
+					$val = (string) SmartUnicode::uc_first((string)$val);
+				} elseif((string)$escexpr == '|ucwords') { // apply uppercase on each word
+					$val = (string) SmartUnicode::uc_words((string)$val);
+				} elseif((string)$escexpr == '|trim') { // apply trim
 				//--
-			}, //end anonymous function
-			(string) $mtemplate
-		);
+					$val = (string) trim((string)$val);
+				} elseif((string)$escexpr == '|url') {
+					$val = (string) Smart::escape_url((string)$val); // escape URL
+				//--
+				} elseif((string)$escexpr == '|json') { // Json Data ; expects pure JSON !!!
+					$val = (string) Smart::json_encode(Smart::json_decode($val, true), false, true, true); // it MUST be JSON with HTML-Safe Options.
+					$val = trim((string)$val);
+					if((string)$val == '') {
+						$val = 'null'; // ensure a minimal json as empty string if no expr !
+					} //end if
+				} elseif((string)$escexpr == '|js') {
+					$val = (string) Smart::escape_js((string)$val); // Escape JS
+				//--
+				} elseif((string)$escexpr == '|html') {
+					$val = (string) Smart::escape_html((string)$val); // Escape HTML
+				} elseif((string)$escexpr == '|css') {
+					$val = (string) Smart::escape_css((string)$val); // Escape CSS
+				} elseif((string)$escexpr == '|nl2br') {
+					$val = (string) Smart::nl_2_br((string)$val); // Escape URL
+				//-- start: n/a for js
+				} elseif((string)$escexpr == '|prettyvar') {
+					$val = (string) SmartUtils::pretty_print_var((string)$val); // Pretty print variables (num, string, bool or array)
+				} elseif((string)$escexpr == '|prettybytes') {
+					$val = (string) SmartUtils::pretty_print_bytes((string)$val, 1, ''); // Pretty print bytes, with 2 decimals, no space separator
+				} elseif((string)$escexpr == '|prettynum') {
+					$val = (string) SmartUtils::pretty_print_numbers((string)$val, 2); // Pretty print numbers
+				} elseif((string)$escexpr == '|prettyrnum') {
+					$val = (string) SmartUtils::number_to_roman((string)$val, 2); // Pretty print numbers as roman
+				//-- #end n/a for js
+				} else {
+					Smart::log_warning('Invalid or Undefined Markers-TPL Escaping: '.$escexpr.' - detected in Replacement Key: '.$crr_match[0].' -> [Val: '.$val.']');
+				} //end if else
+				//--
+			} //end for
+			//--
+		} //end if
 		//--
 	} //end if
 	//--
-	return (string) $mtemplate;
+	return (string) $val;
 	//--
 } //END FUNCTION
 //================================================================
@@ -1182,14 +1211,29 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 		//-- {{{SYNC-TPL-EXPR-IF}}}
 		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|\!%|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU';
 		$matches = array();
-		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
+		preg_match_all((string)$pattern, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
 		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
 		//--
-		list($orig_part, $var_part, $sign_not, $compare_val, $opt_uniqid, $opt_uniqix, $if_part, $else_all, $else_part) = (array) $matches;
-		//--
-		for($i=0; $i<Smart::array_size($orig_part); $i++) {
+		for($i=0; $i<Smart::array_size($matches); $i++) {
 			//--
-			$bind_var_key = (string) $var_part[$i];
+			$matches[$i] = (array) $matches[$i];
+			//--
+			$part_orig 		= (string) $matches[$i][0];
+			$part_var 		= (string) $matches[$i][1];
+			$part_sign 		= (string) $matches[$i][2];
+			$part_value 	= (string) $matches[$i][3];
+		//	$part_uniqid 	= (string) $matches[$i][4];
+		//	$part_uniqix 	= (string) $matches[$i][5];
+			$part_if 		= (string) $matches[$i][6];
+		//	$part_tag_else 	= (string) $matches[$i][7];
+			$part_else 		= (string) $matches[$i][8];
+			//--
+			$matches[$i] = null; // free mem
+			//--
+			$bind_var_key 	= (string) $part_var;
+			$bind_value 	= (string) $part_value;
+			$bind_if 		= (string) $part_if;
+			$bind_else 		= (string) $part_else;
 			//--
 			$detect_var = 0;
 			if(((string)$y_context != '') AND (array_key_exists((string)$bind_var_key, (array)$y_arr_context))) { // check first in the smallest array (optimization)
@@ -1202,32 +1246,32 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				//--
 				if(SmartFrameworkRuntime::ifDebug()) {
 					if((string)$y_context != '') {
-						self::$MkTplVars['%IF:'.$var_part[$i]][] = 'Processing IF Syntax in Context: '.$y_context;
+						self::$MkTplVars['%IF:'.$part_var][] = 'Processing IF Syntax in Context: '.$y_context;
 					} else {
-						self::$MkTplVars['%IF:'.$var_part[$i]][] = 'Processing IF Syntax';
+						self::$MkTplVars['%IF:'.$part_var][] = 'Processing IF Syntax';
 					} //end if else
 				} //end if
 				//--
 				$line = '';
 				//-- Fix: trim parts
-				$if_part[$i] 	= (string) trim((string)$if_part[$i],   "\t\n\r\0\x0B");
-				$else_part[$i] 	= (string) trim((string)$else_part[$i], "\t\n\r\0\x0B");
+				$bind_if 	= (string) trim((string)$bind_if,   "\t\n\r\0\x0B");
+				$bind_else 	= (string) trim((string)$bind_else, "\t\n\r\0\x0B");
 				//-- recursive process if in pieces of if or else
-				if(strpos((string)$if_part[$i], '[%%%%IF:') !== false) {
-					$if_part[$i] = (string) self::process_if_syntax((string)$if_part[$i], (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
+				if(strpos((string)$bind_if, '[%%%%IF:') !== false) {
+					$bind_if = (string) self::process_if_syntax((string)$bind_if, (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
 				} //end if
-				if(strpos((string)$else_part[$i], '[%%%%IF:') !== false) {
-					$else_part[$i] = (string) self::process_if_syntax((string)$else_part[$i], (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
+				if(strpos((string)$bind_else, '[%%%%IF:') !== false) {
+					$bind_else = (string) self::process_if_syntax((string)$bind_else, (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
 				} //end if
 				//--
-				if((substr((string)$compare_val[$i], 0, 4) == '####') AND (substr((string)$compare_val[$i], -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
-					$compare_val[$i] = (string) strtoupper(str_replace('#', '', (string)$compare_val[$i]));
-					if(array_key_exists((string)$compare_val[$i], (array)$y_arr_context)) {
-						$compare_val[$i] = $y_arr_context[(string)$compare_val[$i]]; // exist in context arr
-					} elseif(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$compare_val[$i], '.')) {
-						$compare_val[$i] = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$compare_val[$i], '.'); // exist in original arr
+				if((substr((string)$bind_value, 0, 4) == '####') AND (substr((string)$bind_value, -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
+					$bind_value = (string) strtoupper(str_replace('#', '', (string)$bind_value));
+					if(array_key_exists((string)$bind_value, (array)$y_arr_context)) {
+						$bind_value = $y_arr_context[(string)$bind_value]; // exist in context arr
+					} elseif(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$bind_value, '.')) {
+						$bind_value = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$bind_value, '.'); // exist in original arr
 					} else {
-						$compare_val[$i] = ''; // if not found, consider empty string
+						$bind_value = ''; // if not found, consider empty string
 					} //end if else
 				} //end if
 				//-- do last if / else processing
@@ -1236,143 +1280,143 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 				} else { // exist in original arr
 					$tmp_the_arr = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$bind_var_key, '.'); // mixed
 				} //end if else
-				switch((string)$sign_not[$i]) {
+				switch((string)$part_sign) {
 					case '@+': // array count >
-						if(Smart::array_size($tmp_the_arr) > (int)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(Smart::array_size($tmp_the_arr) > (int)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '@-': // array count <
-						if(Smart::array_size($tmp_the_arr) < (int)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(Smart::array_size($tmp_the_arr) < (int)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '@=': // in array
-						$tmp_compare_arr = (array) explode('|', (string)$compare_val[$i]);
+						$tmp_compare_arr = (array) explode('|', (string)$bind_value);
 						if(in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						$tmp_compare_arr = array();
 						break;
 					case '@!': // not in array
-						$tmp_compare_arr = (array) explode('|', (string)$compare_val[$i]);
+						$tmp_compare_arr = (array) explode('|', (string)$bind_value);
 						if(!in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						$tmp_compare_arr = array();
 						break;
 					case '^~': // if variable starts with part, case sensitive
-						if(SmartUnicode::str_pos((string)$tmp_the_arr, (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(SmartUnicode::str_pos((string)$tmp_the_arr, (string)$bind_value) === 0) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '^*': // if variable starts with part, case insensitive
-						if(SmartUnicode::str_ipos((string)$tmp_the_arr, (string)$compare_val[$i]) === 0) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(SmartUnicode::str_ipos((string)$tmp_the_arr, (string)$bind_value) === 0) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '~~': // if variable contains part, case sensitive
-						if(SmartUnicode::str_contains((string)$tmp_the_arr, (string)$compare_val[$i])) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(SmartUnicode::str_contains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '~*': // if variable contains part, case insensitive
-						if(SmartUnicode::str_icontains((string)$tmp_the_arr, (string)$compare_val[$i])) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(SmartUnicode::str_icontains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '$~': // if variable ends with part, case sensitive
-						if(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len((string)$compare_val[$i])), SmartUnicode::str_len((string)$compare_val[$i])) == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len((string)$bind_value)), SmartUnicode::str_len((string)$bind_value)) == (string)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '$*': // if variable ends with part, case insensitive ### !!! Expensive in Execution !!! ###
-						if((SmartUnicode::str_tolower(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_tolower((string)$compare_val[$i])))) == (string)SmartUnicode::str_tolower((string)$compare_val[$i])) OR (SmartUnicode::str_toupper(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i]))), SmartUnicode::str_len(SmartUnicode::str_toupper((string)$compare_val[$i])))) == (string)SmartUnicode::str_toupper((string)$compare_val[$i]))) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if((SmartUnicode::str_tolower(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_tolower((string)$bind_value))), SmartUnicode::str_len(SmartUnicode::str_tolower((string)$bind_value)))) == (string)SmartUnicode::str_tolower((string)$bind_value)) OR (SmartUnicode::str_toupper(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_toupper((string)$bind_value))), SmartUnicode::str_len(SmartUnicode::str_toupper((string)$bind_value)))) == (string)SmartUnicode::str_toupper((string)$bind_value))) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '==':
-						if((string)$tmp_the_arr == (string)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if((string)$tmp_the_arr == (string)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '!=':
-						if((string)$tmp_the_arr != (string)$compare_val[$i]) { // if evaluate to false keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if((string)$tmp_the_arr != (string)$bind_value) { // if evaluate to false keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '<=':
-						if((float)$tmp_the_arr <= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if((float)$tmp_the_arr <= (float)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '<':
-						if((float)$tmp_the_arr < (float)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if((float)$tmp_the_arr < (float)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '>=':
-						if((float)$tmp_the_arr >= (float)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if((float)$tmp_the_arr >= (float)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '>':
-						if((float)$tmp_the_arr > (float)$compare_val[$i]) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if((float)$tmp_the_arr > (float)$bind_value) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '%': // modulo (true/false)
-						if(((float)$tmp_the_arr % (float)$compare_val[$i]) == 0) { // if evaluate to true keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(((float)$tmp_the_arr % (float)$bind_value) == 0) { // if evaluate to true keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '!%': // not modulo (false/true)
-						if(((float)$tmp_the_arr % (float)$compare_val[$i]) != 0) { // if evaluate to false keep the inner content
-							$line .= (string) $if_part[$i]; // if part
+						if(((float)$tmp_the_arr % (float)$bind_value) != 0) { // if evaluate to false keep the inner content
+							$line .= (string) $bind_if; // if part
 						} else {
-							$line .= (string) $else_part[$i]; // else part ; if else not present will don't add = remove it !
+							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					default:
 						// invalid syntax
-						Smart::log_warning('Invalid Marker Template IF Syntax: ['.$sign_not[$i].'] / Template: '.$mtemplate);
+						Smart::log_warning('Invalid Marker Template IF Syntax: ['.$part_sign.'] / Template: '.$mtemplate);
 				} //end switch
 				//--
-				$mtemplate = (string) str_replace((string)$orig_part[$i], (string)$line, (string)$mtemplate);
+				$mtemplate = (string) str_replace((string)$part_orig, (string)$line, (string)$mtemplate);
 				//--
 			} //end if else
 			//--
@@ -1405,14 +1449,22 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 		//--
 		$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\](.*)?\[%%%%\/LOOP\:\1\2%%\]}sU'; // {{{SYNC-TPL-EXPR-LOOP}}}
 		$matches = array();
-		preg_match_all((string)$pattern, (string)$mtemplate, $matches);
+		preg_match_all((string)$pattern, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
 		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
 		//--
-		list($orig_part, $var_part, $opt_uniqid, $opt_uniqix, $loop_part) = (array) $matches;
-		//--
-		for($i=0; $i<Smart::array_size($orig_part); $i++) {
+		for($i=0; $i<Smart::array_size($matches); $i++) {
 			//--
-			$bind_var_key = strtoupper((string)$var_part[$i]);
+			$matches[$i] = (array) $matches[$i];
+			//--
+			$part_orig 		= (string) $matches[$i][0];
+			$part_var 		= (string) $matches[$i][1];
+		//	$part_uniqid 	= (string) $matches[$i][2];
+		//	$part_uniqix 	= (string) $matches[$i][3];
+			$part_loop 		= (string) $matches[$i][4];
+			//--
+			$matches[$i] = null; // free mem
+			//--
+			$bind_var_key 	= (string) strtoupper((string)$part_var);
 			//--
 			if(((string)$bind_var_key != '') AND (is_array($y_arr_vars[(string)$bind_var_key]))) { // if the LOOP is binded to an existing Array Variable and a non-empty KEY
 				//--
@@ -1420,8 +1472,8 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 					self::$MkTplVars['%LOOP:'.$bind_var_key][] = 'Processing LOOP Syntax: '.Smart::array_size($y_arr_vars[(string)$bind_var_key]);
 				} //end if
 				//--
-				//$loop_orig = (string) rtrim((string)$loop_part[$i]);
-				$loop_orig = (string) trim((string)$loop_part[$i], "\t\n\r\0\x0B"); // Fix: trim parts
+				//$loop_orig = (string) rtrim((string)$part_loop);
+				$loop_orig = (string) trim((string)$part_loop, "\t\n\r\0\x0B"); // Fix: trim parts
 				//--
 				$line = '';
 				//--
@@ -1625,7 +1677,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 					//--
 				} //end if else
 				//--
-				$mtemplate = (string) str_replace((string)$orig_part[$i], (string)$line, (string)$mtemplate);
+				$mtemplate = (string) str_replace((string)$part_orig, (string)$line, (string)$mtemplate);
 				//--
 			} //end if else
 			//--
@@ -1651,26 +1703,35 @@ private static function detect_subtemplates($mtemplate) {
 			$bench = microtime(true);
 		} //end if
 		//--
-		$arr_matched_sub_templates = array();
 		if(self::$MkTplAnalyzeLdDbg === true) {
-			$rgx = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}';
+			$regex = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}';
 		} else {
-			$rgx = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?]*)@@@@\]}';
+			$regex = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?]*)@@@@\]}';
 		} //end if else
-		preg_match_all($rgx, (string)$mtemplate, $arr_matched_sub_templates); // {{{SYNC-TPL-EXPR-SUBTPL}}} :: here the % is missing as must not be detected as it is reserved only for special purpose if SUB-TPLS are pre-defined
-		//print_r($arr_matched_sub_templates);
 		//--
-		if(Smart::array_size($arr_matched_sub_templates) > 0) {
-			for($i=0; $i<Smart::array_size($arr_matched_sub_templates[1]); $i++) {
-				if((string)$arr_matched_sub_templates[1][$i] != '') {
-					if(self::have_subtemplate((string)$arr_matched_sub_templates[1][$i]) !== true) {
-						$arr_detected_sub_templates[(string)$arr_matched_sub_templates[1][$i]] = '@'; // add detected sub-template only if it does not contain the sub-templates syntax to avoid unpredictable behaviours
+		$matches = array();
+		preg_match_all((string)$regex, (string)$mtemplate, $matches, PREG_SET_ORDER, 0); // {{{SYNC-TPL-EXPR-SUBTPL}}} :: here the % is missing as must not be detected as it is reserved only for special purpose if SUB-TPLS are pre-defined
+		//print_r($matches);
+		//--
+		if(Smart::array_size($matches) > 0) {
+			//--
+			for($i=0; $i<Smart::array_size($matches); $i++) {
+				//--
+				$matches[$i] = (array) $matches[$i];
+				//--
+				$part_path = (string) $matches[$i][1];
+				//--
+				$matches[$i] = null; // free mem
+				//--
+				if((string)trim((string)$part_path) != '') {
+					if(self::have_subtemplate((string)$part_path) !== true) {
+						$arr_detected_sub_templates[(string)$part_path] = '@'; // add detected sub-template only if it does not contain the sub-templates syntax to avoid unpredictable behaviours
 					} //end if
 				} //end if
+				//--
 			} //end for
+			//--
 		} //end if
-		//--
-		$arr_matched_sub_templates = array();
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
 			$bench = Smart::format_number_dec((float)(microtime(true) - (float)$bench), 9, '.', '');

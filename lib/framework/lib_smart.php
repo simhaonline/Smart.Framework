@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.181203
+ * @version     v.181211
  * @package     Base
  *
  */
@@ -572,6 +572,22 @@ public static function escape_html($y_string) {
 	// enforce 4th param as TRUE as default (double encode)
 	//--
 	return (string) htmlspecialchars((string)$y_string, ENT_HTML401 | ENT_COMPAT | ENT_SUBSTITUTE, (string)SMART_FRAMEWORK_CHARSET, true); // use charset from INIT (to prevent XSS attacks) ; the 4th parameter double_encode is set to TRUE as default
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Safe escape strings to be injected in CSS code
+ *
+ * @param 	STRING 		$y_string			:: The string to be escaped
+ *
+ * @return 	STRING							:: The escaped string using the WD-CSS21-20060411 standard
+ */
+public static function escape_css($y_string) {
+	//-- http://www.w3.org/TR/2006/WD-CSS21-20060411/syndata.html#q6
+	return (string) addcslashes((string)$y_string, "\x00..\x1F!\"#$%&'()*+,./:;<=>?@[\\]^`{|}~"); // inspired from Latte Templating
 	//--
 } //END FUNCTION
 //================================================================

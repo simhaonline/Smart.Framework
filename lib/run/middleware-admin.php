@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181127
+ * @version		181212
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -304,11 +304,13 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 		//--
 		//== CACHE CONTROL
 		//--
-		if(((int)$appSettings['expires'] > 0) AND (!SmartFrameworkRuntime::ifDebug())) {
-			SmartFrameworkRuntime::outputHttpHeadersNoCache((int)$appSettings['expires'], (int)$appSettings['modified']); // headers: cache expiration control
-		} else {
-			SmartFrameworkRuntime::outputHttpHeadersNoCache(); // headers: cache control, force no-cache
-		} //end if else
+		if((int)$appStatusCode < 400) {
+			if(((int)$appSettings['expires'] > 0) AND (!SmartFrameworkRuntime::ifDebug())) {
+				SmartFrameworkRuntime::outputHttpHeadersNoCache((int)$appSettings['expires'], (int)$appSettings['modified']); // headers: cache expiration control
+			} else {
+				SmartFrameworkRuntime::outputHttpHeadersNoCache(); // headers: cache control, force no-cache
+			} //end if else
+		} //end if
 		//--
 		//== STATUS CODE {{{SYNC-SMART-HTTP-STATUS-CODES}}}
 		//--

@@ -21,7 +21,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181206
+ * @version 	v.181212
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {
@@ -177,11 +177,14 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 		$this->ShutDown();
 		$cfgs = $this->getRenderCfgs();
 		$vars = $this->getRenderVars();
-		if((!headers_sent()) && ($this->isRawPage())) {
+		//--
+		if(!headers_sent()) {
 			\SmartFrameworkRuntime::outputHttpHeadersNoCache();
-			header('Content-Type: '.$cfgs['rawmime']);
-			header('Content-Disposition: '.$cfgs['rawdisp']);
-			return (string) $vars['main'];
+			if($this->isRawPage()) {
+				header('Content-Type: '.$cfgs['rawmime']);
+				header('Content-Disposition: '.$cfgs['rawdisp']);
+				return (string) $vars['main'];
+			} //end if
 		} //end if
 		//--
 		$template_path = (string) \SmartFileSysUtils::add_dir_last_slash(SMART_APP_TEMPLATES_DIR.\Smart::get_from_config('app.index-template-path'));

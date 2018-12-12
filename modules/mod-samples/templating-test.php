@@ -61,30 +61,33 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$title = 'Marker-TPL Templating Render Demo - Syntax';
 		//--
-		$test_switch_arr = ['a', 'b', 'c', 'd'];
+		$data = [
+			//-- ##### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE #####
+			'version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
+			'hello' => '<h1>Demo: Marker-TPL Templating built-into Smart.Framework</h1>',
+			'navigation' => [
+				array('href' => '#link1', 'caption' => 'Sample Link <1>'),
+				array('href' => '#link2', 'caption' => 'Sample Link <2>'),
+				array('href' => '#link3', 'caption' => 'Sample Link <3>')
+			],
+			'tbl' => [
+				['a1' => '1.1', 'a2' => '1.2', 'a3' => '1.3'],
+				['a1' => '2.1', 'a2' => '2.2', 'a3' => '2.3'],
+				['a1' => '3.1', 'a2' => '3.2', 'a3' => '3.3']
+			],
+			'a' 		=> 'Test-1',
+			'b' 		=> 'Test-2',
+			//--
+		];
+		//--
+		$res_time = (float) microtime(true);
 		$this->PageViewSetVars([
 			'title' => $title,
 			'main' => SmartMarkersTemplating::render_file_template(
-					(string) $tpl, // the TPL view
-					[
-						//-- ##### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE #####
-						'version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
-						'hello' => '<h1>Demo: Marker-TPL Templating built-into Smart.Framework</h1>',
-						'navigation' => [
-							array('href' => '#link1', 'caption' => 'Sample Link <1>'),
-							array('href' => '#link2', 'caption' => 'Sample Link <2>'),
-							array('href' => '#link3', 'caption' => 'Sample Link <3>')
-						],
-						'tbl' => [
-							['a1' => '1.1', 'a2' => '1.2', 'a3' => '1.3'],
-							['a1' => '2.1', 'a2' => '2.2', 'a3' => '2.3'],
-							['a1' => '3.1', 'a2' => '3.2', 'a3' => '3.3']
-						],
-						'a' 		=> 'Test-1',
-						'b' 		=> 'Test-2',
-						//--
-					]
-				)
+				(string) $tpl, // the TPL view
+				(array)  $data
+			),
+			'aside' => '<div style="background:#333333; color:#ffffff; position:fixed; right:5px; top:10px; padding:3px;">RenderTime:&nbsp;'.Smart::format_number_dec((float)(microtime(true) - (float)$res_time), 7).'&nbsp;s</div>'
 		]);
 		//--
 

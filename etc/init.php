@@ -1,6 +1,6 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [SmartFramework / INIT] r.181209
+// [SmartFramework / INIT] r.181211
 // v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
@@ -120,7 +120,7 @@ define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',			2);																// Set to: 0 = 
 //define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status
 //define('SMART_SOFTWARE_MKTPL_PCACHETIME',			86400);															// If set to a positive integer (>=0) will cache the marker template files to (memory) persistent cache to avoid repetitive reads to the FileSystem (on some systems this can boost the speed ...)
 //define('SMART_SOFTWARE_MKTPL_DEBUG_LEN', 			65535);															// If set will use this TPL Debug Length (255..524280) ; If not set will use default: 512
-define('SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE', true);																// If defined and TRUE will use extra safe antispam rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
+define('SMART_SOFTWARE_MAILSEND_SAFE_RULES', 		true);															// If defined and TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
 //---------------------------------------- CHARSET AND REGIONAL SETTINGS [ NEVER CHANGE THESE MUST BE UNICODE UTF-8 ; CHANGING IT YOU CAN BREAK THE UNICODE SUPPORT ]
 define('SMART_FRAMEWORK_CHARSET', 					'UTF-8');														// This must be `UTF-8` 	:: Default Character Set for PHP
 define('SMART_FRAMEWORK_DBSQL_CHARSET', 			'UTF8');														// This must be `UTF8` 		:: Default Character Set for DB SQL Servers
@@ -148,7 +148,24 @@ date_default_timezone_set((string)SMART_FRAMEWORK_TIMEZONE);
 //	@apache_setenv('no-gzip', 1); // turn off GZip Compression in Apache
 //} //end if
 ini_set('zlib.output_compression', '0'); // disable ZLib PHP Internal Output Compression as it will break sensitive control over headings and timeouts
+if((string)ini_get('zlib.output_compression') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI ZLib Output Compression must be disabled !');
+} //end if
+//-- output handlers
+if((string)ini_get('zlib.output_handler') != '') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Zlib Output Handler must be unset !');
+} //end if
+if((string)ini_get('output_handler') != '') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Output Handler must be unset !');
+} //end if
 //-- charset
+if((string)ini_get('zend.multibyte') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // PHP.INI Zend-MultiByte must be disabled ! Unicode support is managed via MBString into SmartFramework ...');
+} //end if
 ini_set('default_charset', (string)SMART_FRAMEWORK_CHARSET); // default charset UTF-8
 if(!function_exists('mb_internal_encoding')) { // *** MBString is required ***
 	@http_response_code(500);
@@ -162,6 +179,19 @@ if(mb_substitute_character(63) !== true) {
 	@http_response_code(500);
 	die('SmartFramework INI // Failed to set the MBString Substitute Character to standard: 63(?) ...');
 } //end if
+//-- check input limits
+if((int)ini_get('max_input_vars') < 1000) { // it should be at least 1000 ; cannot be set to zero as it will dissalow any input vars ; this limits the Request Input Vars (GET / POST / COOKIE) includding their nested levels ; recommended is 2500 ; minimum accepted is 1000 ; after changing this value you have to change the max_input_vars with a value like this or even higher in PHP.INI
+	@http_response_code(500);
+	die('The PHP.INI MaxInputVars must be set to a higher value than 1000 ...');
+} //end if
+if((int)ini_get('max_input_nesting_level') < 5) { // it should be at least 5 ; the max_input_nesting_level cannot be set to zero as it will dissalow any arrays
+	@http_response_code(500);
+	die('The PHP.INI MaxInputNestingLevel must be set to a higher value than 5 ...');
+} //end if
+if((int)ini_get('max_input_time') < 60) { // it should be at least 60 ; the max_input_time cannot be set to zero as it will have no time for parsing input vars
+	@http_response_code(500);
+	die('The PHP.INI MaxInputTime must be set to a higher value than 60 ...');
+} //end if
 //-- misc settings and limits
 ini_set('memory_limit', (string)SMART_FRAMEWORK_MEMORY_LIMIT);				// set the memory limit
 ini_set('default_socket_timeout', (int)SMART_FRAMEWORK_NETSOCKET_TIMEOUT);	// socket timeout (2 min.)
@@ -172,8 +202,21 @@ ini_set('y2k_compliance', '0');												// it is recommended to use this as d
 ini_set('precision', '14');													// decimal number precision
 ini_set('pcre.backtrack_limit', '1000001');									// PCRE BackTrack Limit
 ini_set('pcre.recursion_limit', '100001');									// PCRE Recursion Limit
-ini_set('pcre.jit', '0');													// PCRE JIT
+//-- pcre JIT
+//ini_set('pcre.jit', '0');													// PCRE JIT
+//if((int)ini_get('pcre.jit') > 0) { // this may fail badly with very complex regex expressions, so if needed can be disabled
+//	@http_response_code(500);
+//	die('SmartFramework INI // The PcreJIT must be disabled for mixed Unicode support with regular expressions !');
+//} //end if
 //-- session stuff
+if((string)ini_get('session.auto_start') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Session AutoSTART must be DISABLED !');
+} //end if
+if((string)ini_get('session.use_trans_sid') != '0') {
+	@http_response_code(500);
+	die('SmartFramework INI // The PHP.INI Session TransSID must be DISABLED !');
+} //end if
 if((string)SMART_FRAMEWORK_SESSION_HANDLER !== 'files') {
 	ini_set('session.save_handler', 'user');								// store session in 'user' (mode) ; DB storage for example
 } else {

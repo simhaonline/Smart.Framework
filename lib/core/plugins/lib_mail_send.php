@@ -35,13 +35,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * It automatically includes the SmartMailerSmtpClient class when sending via SMTP method.
  *
  * This class is for very advanced use.
- * If defined the SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE and set to TRUE will use extra safe antispam rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
+ * If defined the SMART_SOFTWARE_MAILSEND_SAFE_RULES and set to TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
  * To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUtils::send_extended_email() functions.
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181123
+ * @version 	v.181211
  * @package 	Mailer
  *
  */
@@ -175,8 +175,8 @@ public function send($do_send, $raw_message='') {
 				if($this->is_html == false) {
 					$this->add_attachment($this->body, '', 'text/plain', 'inline');
 				} else {
-					if(defined('SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE')) {
-						if(SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE === true) {
+					if(defined('SMART_SOFTWARE_MAILSEND_SAFE_RULES')) {
+						if(SMART_SOFTWARE_MAILSEND_SAFE_RULES === true) {
 							$this->add_attachment('This is a MIME Message in HTML Format.', 'alternative-part.txt', 'text/plain', 'inline'); // antiSPAM needs an alternate body
 						} //end if
 					} //end if

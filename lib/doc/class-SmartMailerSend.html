@@ -113,14 +113,14 @@
 
 
 	<div class="description">
-	
+
 <p>Class: SmartMailerSend - provides a Mail Send Client that supports both: MAIL
 or SMTP with SSL/TLS support. It automatically includes the
 SmartMailerSmtpClient class when sending via SMTP method.</p>
 
 <p>This class is for very advanced use. If defined the
-SMART_SOFTWARE_MAILSEND_ANTISPAM_SAFE and set to TRUE will use extra safe
-antispam rules when composing email mime messages to be sent (Ex: adding
+SMART_SOFTWARE_MAILSEND_SAFE_RULES and set to TRUE will use extra safe
+rules when composing email mime messages to be sent (Ex: adding
 alternate TEXT body to HTML email messages) To easy send email messages use:
 SmartMailerUtils::send_email() / SmartMailerUtils::send_extended_email()
 functions.</p>
@@ -137,8 +137,8 @@ functions.</p>
 
 	<div class="info">
 		<b>Final</b><br>
-		
-		
+
+
 		<b>Package:</b> <a href="package-Mailer.html">Mailer</a><br>
 
 				<b>Version:</b>
@@ -158,9 +158,9 @@ methods<br>
 	<tr data-order="__construct" id="___construct">
 
 		<td class="attributes"><code>
-			 public 
-			
-			
+			 public
+
+
 			</code>
 		</td>
 
@@ -169,11 +169,11 @@ methods<br>
 		<code>__construct( )</code>
 
 		<div class="description short">
-			
+
 		</div>
 
 		<div class="description detailed hidden">
-			
+
 
 
 
@@ -187,9 +187,9 @@ methods<br>
 	<tr data-order="send" id="_send">
 
 		<td class="attributes"><code>
-			 public 
-			
-			
+			 public
+
+
 			</code>
 		</td>
 
@@ -198,11 +198,11 @@ methods<br>
 		<code>send( <span>mixed <var>$do_send</var></span>, <span>mixed <var>$raw_message</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
-			
+
 		</div>
 
 		<div class="description detailed hidden">
-			
+
 
 
 
@@ -216,9 +216,9 @@ methods<br>
 	<tr data-order="add_attachment" id="_add_attachment">
 
 		<td class="attributes"><code>
-			 public 
-			
-			
+			 public
+
+
 			</code>
 		</td>
 
@@ -227,11 +227,11 @@ methods<br>
 		<code>add_attachment( <span>mixed <var>$message</var></span>, <span>mixed <var>$name</var> = <span class="php-quote">''</span></span>, <span>mixed <var>$ctype</var> = <span class="php-quote">''</span></span>, <span>mixed <var>$disp</var> = <span class="php-quote">'attachment'</span></span>, <span>mixed <var>$cid</var> = <span class="php-quote">''</span></span>, <span>mixed <var>$embed</var> = <span class="php-quote">'no'</span></span> )</code>
 
 		<div class="description short">
-			
+
 		</div>
 
 		<div class="description detailed hidden">
-			
+
 
 
 
@@ -259,18 +259,18 @@ methods<br>
 	<caption>Properties summary</caption>
 	<tr data-order="error" id="$error">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$error</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -278,18 +278,18 @@ methods<br>
 	</tr>
 	<tr data-order="log" id="$log">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$log</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -297,18 +297,18 @@ methods<br>
 	</tr>
 	<tr data-order="mime_message" id="$mime_message">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$mime_message</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -316,18 +316,18 @@ methods<br>
 	</tr>
 	<tr data-order="debuglevel" id="$debuglevel">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$debuglevel</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -335,18 +335,18 @@ methods<br>
 	</tr>
 	<tr data-order="usealways_b64" id="$usealways_b64">
 		<td class="attributes"><code>
-			public  
+			public
 			boolean
 		</code></td>
 
 		<td class="name">
 <var>$usealways_b64</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -354,18 +354,18 @@ methods<br>
 	</tr>
 	<tr data-order="method" id="$method">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$method</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -373,18 +373,18 @@ methods<br>
 	</tr>
 	<tr data-order="from_return" id="$from_return">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$from_return</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -392,18 +392,18 @@ methods<br>
 	</tr>
 	<tr data-order="namefrom" id="$namefrom">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$namefrom</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -411,18 +411,18 @@ methods<br>
 	</tr>
 	<tr data-order="from" id="$from">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$from</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -430,18 +430,18 @@ methods<br>
 	</tr>
 	<tr data-order="to" id="$to">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$to</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -449,18 +449,18 @@ methods<br>
 	</tr>
 	<tr data-order="cc" id="$cc">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$cc</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -468,18 +468,18 @@ methods<br>
 	</tr>
 	<tr data-order="bcc" id="$bcc">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$bcc</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -487,18 +487,18 @@ methods<br>
 	</tr>
 	<tr data-order="priority" id="$priority">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$priority</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -506,18 +506,18 @@ methods<br>
 	</tr>
 	<tr data-order="subject" id="$subject">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$subject</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -525,18 +525,18 @@ methods<br>
 	</tr>
 	<tr data-order="body" id="$body">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$body</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -544,18 +544,18 @@ methods<br>
 	</tr>
 	<tr data-order="headers" id="$headers">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$headers</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -563,18 +563,18 @@ methods<br>
 	</tr>
 	<tr data-order="is_html" id="$is_html">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$is_html</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -582,18 +582,18 @@ methods<br>
 	</tr>
 	<tr data-order="is_related" id="$is_related">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$is_related</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -601,18 +601,18 @@ methods<br>
 	</tr>
 	<tr data-order="charset" id="$charset">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$charset</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -620,18 +620,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_helo" id="$smtp_helo">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_helo</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -639,18 +639,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_server" id="$smtp_server">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_server</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -658,18 +658,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_port" id="$smtp_port">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_port</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -677,18 +677,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_ssl" id="$smtp_ssl">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_ssl</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -696,18 +696,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_cafile" id="$smtp_cafile">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_cafile</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -715,18 +715,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_timeout" id="$smtp_timeout">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_timeout</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -734,18 +734,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_login" id="$smtp_login">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_login</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -753,18 +753,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_user" id="$smtp_user">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_user</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
@@ -772,18 +772,18 @@ methods<br>
 	</tr>
 	<tr data-order="smtp_password" id="$smtp_password">
 		<td class="attributes"><code>
-			public  
+			public
 			mixed
 		</code></td>
 
 		<td class="name">
 <var>$smtp_password</var>
 			<div class="description short">
-				
+
 			</div>
 
 			<div class="description detailed hidden">
-				
+
 
 			</div>
 		</td>
