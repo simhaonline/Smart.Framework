@@ -16,7 +16,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // DEPENDS:
 //	* Smart::
 //	* SmartUnicode::
-// 	* SmartUtils::
 //	* SmartParser::
 //	* SmartFileSystem::
 //	* SmartFileSysUtils::
@@ -58,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.181212
+ * @version 	v.181212.r3
  * @package 	Templating:Engines
  *
  */
@@ -1075,16 +1074,6 @@ private static function escape_marker_value($crr_match, $val) {
 					$val = (string) Smart::escape_css((string)$val); // Escape CSS
 				} elseif((string)$escexpr == '|nl2br') {
 					$val = (string) Smart::nl_2_br((string)$val); // Escape URL
-				//-- start: n/a for js
-				} elseif((string)$escexpr == '|prettyvar') {
-					$val = (string) SmartUtils::pretty_print_var((string)$val); // Pretty print variables (num, string, bool or array)
-				} elseif((string)$escexpr == '|prettybytes') {
-					$val = (string) SmartUtils::pretty_print_bytes((string)$val, 1, ''); // Pretty print bytes, with 2 decimals, no space separator
-				} elseif((string)$escexpr == '|prettynum') {
-					$val = (string) SmartUtils::pretty_print_numbers((string)$val, 2); // Pretty print numbers
-				} elseif((string)$escexpr == '|prettyrnum') {
-					$val = (string) SmartUtils::number_to_roman((string)$val, 2); // Pretty print numbers as roman
-				//-- #end n/a for js
 				} else {
 					Smart::log_warning('Invalid or Undefined Markers-TPL Escaping: '.$escexpr.' - detected in Replacement Key: '.$crr_match[0].' -> [Val: '.$val.']');
 				} //end if else
