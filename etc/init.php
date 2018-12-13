@@ -1,6 +1,6 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [SmartFramework / INIT] r.181211
+// [SmartFramework / INIT] r.181213
 // v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
@@ -206,7 +206,7 @@ ini_set('pcre.recursion_limit', '100001');									// PCRE Recursion Limit
 //ini_set('pcre.jit', '0');													// PCRE JIT
 //if((int)ini_get('pcre.jit') > 0) { // this may fail badly with very complex regex expressions, so if needed can be disabled
 //	@http_response_code(500);
-//	die('SmartFramework INI // The PcreJIT must be disabled for mixed Unicode support with regular expressions !');
+//	die('SmartFramework INI // The PcreJIT should be disabled when used with very complex regular expressions that can overflow the PCRE-JIT very limited memory !');
 //} //end if
 //-- session stuff
 if((string)ini_get('session.auto_start') != '0') {

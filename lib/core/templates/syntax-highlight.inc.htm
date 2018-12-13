@@ -24,7 +24,7 @@ if(typeof SmartJS_Custom_Syntax_Highlight != 'function') {
 				var theObj = jQuery(this);
 				var theClass = theObj.attr('class');
 				if((typeof theClass != 'undefined') && (theClass != 'undefined') && (theClass != '')) {
-					theObj.attr('title', 'Code: ' + String(theClass));
+					theObj.attr('title', 'Syntax: ' + String(theClass));
 					try {
 						hljs.highlightBlock(block);
 					} catch(err) {

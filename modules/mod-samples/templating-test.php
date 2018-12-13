@@ -47,48 +47,60 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		if((string)$op == 'viewsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Marker-TPL Template Source:<br><i>'.Smart::escape_html($tpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markerstpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$tpl))).'</code></pre><hr><br>');
+			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Markers-TPL Template Source:<br><i>'.Smart::escape_html($tpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markerstpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$tpl))).'</code></pre><hr><br>');
 			return;
 			//--
 		} elseif((string)$op == 'viewpartialsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Marker-TPL Sub-Template Source:<br><i>'.Smart::escape_html($ptpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markerstpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$ptpl))).'</code></pre><hr><br>');
+			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Markers-TPL Sub-Template Source:<br><i>'.Smart::escape_html($ptpl).'</i></h1><hr><pre style="background:#FAFAFA;"><code class="markerstpl" style="width:96vw; height:75vh; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$ptpl))).'</code></pre><hr><br>');
 			return;
 			//--
 		} //end if
 		//--
 
 		//--
-		$title = 'Marker-TPL Templating Render Demo - Syntax';
+		$title = 'Markers-TPL Templating Render Demo - Syntax';
 		//--
 		$data = [
-			//-- ##### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE #####
-			'version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
-			'hello' => '<h1>Demo: Marker-TPL Templating built-into Smart.Framework</h1>',
-			'navigation' => [
+			//-- ##### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE ; variable names will allow also - (. is reserved for separator as arr[key] is ARR.KEY) #####
+			'Version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
+			'heLLo__World' => '<h1>Demo: Markers-TPL Templating built-into Smart.Framework</h1>',
+			'NaViGaTiOn' => [
 				array('href' => '#link1', 'caption' => 'Sample Link <1>'),
 				array('href' => '#link2', 'caption' => 'Sample Link <2>'),
 				array('href' => '#link3', 'caption' => 'Sample Link <3>')
 			],
-			'tbl' => [
+			'tbL' => [
 				['a1' => '1.1', 'a2' => '1.2', 'a3' => '1.3'],
 				['a1' => '2.1', 'a2' => '2.2', 'a3' => '2.3'],
 				['a1' => '3.1', 'a2' => '3.2', 'a3' => '3.3']
 			],
-			'a' 		=> 'Test-1',
+			'A' 		=> 'Test-1',
 			'b' 		=> 'Test-2',
 			//--
 		];
 		//--
 		$res_time = (float) microtime(true);
-		$this->PageViewSetVars([
-			'title' => $title,
-			'main' => SmartMarkersTemplating::render_file_template(
-				(string) $tpl, // the TPL view
-				(array)  $data
-			),
-			'aside' => '<div style="background:#333333; color:#ffffff; position:fixed; right:5px; top:10px; padding:3px;">RenderTime:&nbsp;'.Smart::format_number_dec((float)(microtime(true) - (float)$res_time), 7).'&nbsp;s</div>'
-		]);
+		//--
+		if(class_exists('SmartTemplating') AND (rand(0,1))) { // must enable require_once('modules/smart-extra-libs/autoload.php'); in modules/app/app-custom-bootstrap.inc.php
+			$this->PageViewSetVars([
+				'title' => $title.' (autodetect file extension)',
+				'main' => SmartMarkersTemplating::render_file_template(
+					(string) $tpl, // the TPL view (syntax: Markers-TPL ; ; must contain '.mtpl.' in the file name)
+					(array)  $data // the Variables array
+				)
+			]);
+		} else {
+			$this->PageViewSetVars([
+				'title' => $title,
+				'main' => SmartMarkersTemplating::render_file_template(
+					(string) $tpl, // the TPL view (syntax: Markers-TPL)
+					(array)  $data // the Variables array
+				)
+			]);
+		} //end if else
+		//--
+		$this->PageViewSetVar('aside', '<div style="background:#333333; color:#ffffff; position:fixed; right:5px; top:10px; padding:3px;">RenderTime:&nbsp;'.Smart::format_number_dec((float)(microtime(true) - (float)$res_time), 7).'&nbsp;s</div>');
 		//--
 
 	} //END FUNCTION

@@ -13,6 +13,7 @@ modules/mod-page-builder
 modules/mod-sm-facebook
 modules/mod-sm-twitter
 modules/mod-svn
+modules/mod-tpl-nette-latte
 modules/mod-tpl-twig
 modules/mod-tpl-typo3-fluid
 modules/mod-ui-bootstrap

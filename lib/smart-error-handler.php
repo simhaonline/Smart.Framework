@@ -66,6 +66,8 @@ if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 	define('SMART_ERROR_LOGFILE', 'phperrors-idx-'.date('Y-m-d@H').'.log');
 } //end if else
 //--
+$smart_____framework_____last__error = ''; // initialize
+//--
 
 //==
 if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) { // log :: hide errors and just log them
