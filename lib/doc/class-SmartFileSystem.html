@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartFileSystem | Smart.Framework Documentation :: 2018-12-10 08:52</title>
+	<title>Class SmartFileSystem | Smart.Framework Documentation :: 2018-12-14 17:19</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
 	<script src="elementlist.js?238257482"></script>
@@ -146,7 +146,7 @@ SmartFileSystem::some_method_of_this_class(...);
 		<b>Package:</b> <a href="package-Filesystem.html">Filesystem</a><br>
 
 				<b>Version:</b>
-				v.181026<br>
+				v.181214<br>
 				<b>Depends:</b>
 				classes: Smart<br>
 				<b>Hints:</b>
@@ -976,17 +976,18 @@ extending with status codes)<br>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rename">#</a>
-		<code>rename( <span>STRING <var>$file_name</var></span>, <span>STRING <var>$newlocation</var></span> )</code>
+		<code>rename( <span>STRING <var>$file_name</var></span>, <span>STRING <var>$newlocation</var></span>, <span>mixed <var>$overwrite_destination</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
 <p>Safe RENAME OR MOVE A FILE TO A DIFFERENT LOCATION. WORKS ONLY WITH RELATIVE
 PATHS (Ex: path/to/a/file.ext). It will rename or move the file from source
 location to a destination location (includding across partitions). The
-destination file will NOT be rewritten if exists, so be sure to check and remove
-the destination if you intend to overwrite it. After rename or move the
-destination will be chmod standardized, as set in
-SMART_FRAMEWORK_CHMOD_FILES.</p>
+destination file will NOT be rewritten if exists and the $overwrite_destination
+is set to FALSE, so in this case be sure to check and remove the destination if
+you intend to overwrite it. If the $overwrite_destination is set to TRUE the
+$newlocation will be overwritten. After rename or move the destination will be
+chmod standardized, as set in SMART_FRAMEWORK_CHMOD_FILES.</p>
 
 		</div>
 
@@ -995,10 +996,11 @@ SMART_FRAMEWORK_CHMOD_FILES.</p>
 <p>Safe RENAME OR MOVE A FILE TO A DIFFERENT LOCATION. WORKS ONLY WITH RELATIVE
 PATHS (Ex: path/to/a/file.ext). It will rename or move the file from source
 location to a destination location (includding across partitions). The
-destination file will NOT be rewritten if exists, so be sure to check and remove
-the destination if you intend to overwrite it. After rename or move the
-destination will be chmod standardized, as set in
-SMART_FRAMEWORK_CHMOD_FILES.</p>
+destination file will NOT be rewritten if exists and the $overwrite_destination
+is set to FALSE, so in this case be sure to check and remove the destination if
+you intend to overwrite it. If the $overwrite_destination is set to TRUE the
+$newlocation will be overwritten. After rename or move the destination will be
+chmod standardized, as set in SMART_FRAMEWORK_CHMOD_FILES.</p>
 
 
 
@@ -1009,6 +1011,8 @@ SMART_FRAMEWORK_CHMOD_FILES.</p>
 					<dt><var>$newlocation</var></dt>
 					<dd>:: The relative path of the destination file (new file name to rename or a new
 path where to move)</dd>
+					<dt><var>$overwrite_destination</var></dt>
+					<dd></dd>
 				</dl></div>
 
 				<h4>Returns</h4>
@@ -1461,7 +1465,7 @@ size &gt; 0, will contain the differences between the compared directories
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2018-12-10 08:52</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2018-12-14 17:19</a>
 	</div>
 </div>
 </div>

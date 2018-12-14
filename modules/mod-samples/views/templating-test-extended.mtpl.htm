@@ -162,7 +162,7 @@ jQuery.ajax({
 	//--
 	success: function(msg) {
 		//-- load tpl
-		var tpl = SmartJS_CoreUtils.render_markers_template(msg, {
+		var tpl = SmartJS_CoreUtils.renderMarkersTpl(msg, {
 			'MARKER': the_marker,
 			'TEXTSTR' : the_textstr,
 			'NUMBER': the_number,

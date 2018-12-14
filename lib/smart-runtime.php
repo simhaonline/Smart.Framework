@@ -46,8 +46,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // version tag
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.13'); // release tag (date)
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // tag version
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.14'); // tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {

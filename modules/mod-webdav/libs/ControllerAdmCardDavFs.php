@@ -25,7 +25,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 abstract class ControllerAdmCardDavFs extends \SmartAbstractAppController {
 
-	// v.181206
+	// v.181214
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';
@@ -38,7 +38,7 @@ abstract class ControllerAdmCardDavFs extends \SmartAbstractAppController {
 	private $dav_is_root_path = true;
 
 
-	final public function DavFsRunServer($dav_fs_root_path, $show_usage_quota=false, $nfo_title='DAV@webAbook', $nfo_signature='Smart.Framework::CardDAV', $nfo_prefix_crrpath='DAV:', $nfo_lnk_welcome='', $nfo_txt_welcome='CardDAV :: Home', $nfo_svg_logo='modules/mod-webdav/libs/img/abook.svg') {
+	final public function DavFsRunServer($dav_fs_root_path, $show_usage_quota=false, $nfo_title='DAV@webAddressBook', $nfo_signature='Smart.Framework::CardDAV', $nfo_prefix_crrpath='DAV:', $nfo_lnk_welcome='', $nfo_txt_welcome='CardDAV :: Home', $nfo_svg_logo='modules/mod-webdav/libs/img/abook.svg') {
 
 		//-- set nocache headers
 		header('Cache-Control: no-cache'); // HTTP 1.1
@@ -133,6 +133,12 @@ abstract class ControllerAdmCardDavFs extends \SmartAbstractAppController {
 		$this->dav_method = (string) $this->RequestMethodGet();
 		$this->dav_vfs_root = (string) $dav_fs_root_path;
 		$this->dav_vfs_path = (string) \SmartModExtLib\Webdav\DavServer::safePathName(rtrim((string)$this->dav_vfs_root.$this->dav_request_path, '/'));
+		//--
+		if((!\SmartModExtLib\Webdav\DavServer::safeCheckPathAgainstHtFiles($this->dav_vfs_path)) OR (!\SmartModExtLib\Webdav\DavServer::safeCheckPathAgainstHtFiles($this->dav_vfs_root))) {
+			http_response_code(403); // .ht* files are denied
+			echo (string) \SmartComponents::http_message_403_forbidden('The access to the requested URL is Forbidden.');
+			return;
+		} //end if
 		//--
 
 		//--

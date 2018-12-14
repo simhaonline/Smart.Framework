@@ -31,11 +31,11 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //======================================================
 
 //-- defines the modules version (required for AppReleaseHash)
-define('SMART_APP_MODULES_RELEASE', 'm.2018-12-13'); // this can be used for tracking changes to custom app modules
+define('SMART_APP_MODULES_RELEASE', 'm.2018-12-14'); // this can be used for tracking changes to custom app modules
 //--
 
 //-- checks the minimum version of the Smart.Framework to run on
-define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.7.r.2018.12.13'); // this must be used to validate the required minimum framework version
+define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.7.r.2018.12.14'); // this must be used to validate the required minimum framework version
 if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
 	@http_response_code(500);
 	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_MIN_FRAMEWORK_VER.' or later !');
@@ -50,7 +50,7 @@ if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAM
 //require_once(__DIR__.'/../../vendor/autoload.php'); // PSR standard namespace/class loader(s), from vendor/ directory, in app root ; if using so, add the following security rule in .htaccess: RewriteRule ^vendor/ - [F,L]
 //require_once(__DIR__.'/../../../vendor/autoload.php'); // PSR standard namespace/class loader(s), from vendor/ directory, outside of app root
 
-// # Here is a sample code to handle languages by subdomains (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
+// # Below is a sample code to handle languages by subdomains (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
 /*
 //--
 // Note that the default language (en) will be mapped by default to www ; all the rest of available languages like ro, de, ... will be mapped to each subdomain as above

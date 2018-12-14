@@ -4,6 +4,7 @@
 			Method: [####DAV-METHOD|html####]
 			Path: [####DAV-REQ-PATH|html####]
 			Item: DAV / item type collection
+			V: r.181214
 		</s:info>
 		<d:href>[####ITEM.DAV-REQUEST-PATH|html####]</d:href>
 		<d:propstat>

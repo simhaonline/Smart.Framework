@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.181212.r3
+ * @version 	v.181214
  * @package 	Templating:Engines
  *
  */
@@ -155,7 +155,7 @@ public static function analyze_debug_file_template($y_file_path, $y_arr_sub_temp
 //================================================================
 /**
  * Escape a Marker Template (String Template ; no sub-templates are allowed as this function is intended to pass a template to be rendered via javascript ...)
- * NOTICE: This kind of escaped templates can be rendered by client-side javascript from a javascript variable in a HTML page using SmartJS_CoreUtils.render_markers_template() function (not all features of the server-side Marker Templating are supported, see the SmartJS_CoreUtils documentation ...)
+ * NOTICE: This kind of escaped templates can be rendered by client-side javascript from a javascript variable in a HTML page using SmartJS_CoreUtils.renderMarkersTpl() function (not all features of the server-side Marker Templating are supported, see the SmartJS_CoreUtils documentation ...)
  *
  * @param 	STRING 		$mtemplate 						:: The Markers-TPL string (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
  * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if Markers-TPL is empty ; 'no' will add a warning (default)

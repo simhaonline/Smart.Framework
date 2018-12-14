@@ -1278,7 +1278,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.181026
+ * @version 	v.181214
  * @package 	Filesystem
  *
  */
@@ -2000,7 +2000,9 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
 /**
  * Safe RENAME OR MOVE A FILE TO A DIFFERENT LOCATION. WORKS ONLY WITH RELATIVE PATHS (Ex: path/to/a/file.ext).
  * It will rename or move the file from source location to a destination location (includding across partitions).
- * The destination file will NOT be rewritten if exists, so be sure to check and remove the destination if you intend to overwrite it.
+ * The destination file will NOT be rewritten if exists and the $overwrite_destination is set to FALSE, so in this case
+ * be sure to check and remove the destination if you intend to overwrite it.
+ * If the $overwrite_destination is set to TRUE the $newlocation will be overwritten.
  * After rename or move the destination will be chmod standardized, as set in SMART_FRAMEWORK_CHMOD_FILES.
  *
  * @param 	STRING 		$file_name 				:: The relative path of file to be renamed or moved (can be a symlink to a file)
@@ -2008,7 +2010,7 @@ public static function copy($file_name, $newlocation, $overwrite_destination=fal
  *
  * @return 	INTEGER								:: 1 if SUCCESS ; 0 on FAIL (this is integer instead of boolean for future extending with status codes)
  */
-public static function rename($file_name, $newlocation) {
+public static function rename($file_name, $newlocation, $overwrite_destination=false) {
 	//--
 	$file_name = (string) $file_name;
 	$newlocation = (string) $newlocation;
@@ -2030,9 +2032,11 @@ public static function rename($file_name, $newlocation) {
 		Smart::log_warning(__METHOD__.'() // Rename/Move // Source is not a FILE: S='.$file_name.' ; D='.$newlocation);
 		return 0;
 	} //end if
-	if(self::path_exists($newlocation)) {
-		Smart::log_warning(__METHOD__.'() // Rename/Move // The destination already exists: S='.$file_name.' ; D='.$newlocation);
-		return 0;
+	if($overwrite_destination !== true) {
+		if(self::path_exists($newlocation)) {
+			Smart::log_warning(__METHOD__.'() // Rename/Move // The destination already exists: S='.$file_name.' ; D='.$newlocation);
+			return 0;
+		} //end if
 	} //end if
 	//--
 	SmartFileSysUtils::raise_error_if_unsafe_path($file_name);
@@ -2049,15 +2053,15 @@ public static function rename($file_name, $newlocation) {
 			//--
 			if(!self::is_type_dir($newlocation)) {
 				//--
-				self::delete($newlocation);
+				self::delete($newlocation); // just to be sure
 				//--
-				if(self::path_exists($newlocation)) {
+				if(($overwrite_destination !== true) AND (self::path_exists($newlocation))) {
 					//--
 					Smart::log_warning(__METHOD__.'() // RenameFile // Destination file points to an existing file or link: '.$newlocation);
 					//--
 				} else {
 					//--
-					$f_cx = @rename($file_name, $newlocation);
+					$f_cx = @rename($file_name, $newlocation); // If renaming a file and newname exists, it will be overwritten. If renaming a directory and newname exists, this function will emit a warning.
 					//--
 					if((self::is_type_file($newlocation)) OR ((self::is_type_link($newlocation)) AND (self::is_type_file(self::link_get_origin($newlocation))))) {
 						if(self::is_type_file($newlocation)) {

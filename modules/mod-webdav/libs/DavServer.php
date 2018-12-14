@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavServer {
 
 	// ::
-	// v.181206
+	// v.181214
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
@@ -41,6 +41,17 @@ final class DavServer {
 	public static function getTplPath() {
 		//--
 		return (string) self::$tpl_path;
+		//--
+	} //END FUNCTION
+
+
+	public static function safeCheckPathAgainstHtFiles($path) {
+		//--
+		if(stripos(\SmartFileSysUtils::get_file_name_from_path($path), '.ht') === 0) { // dissalow ^\.ht files as in apache config to prevent access to .htaccess / .htpassword
+			return false;
+		} //end if
+		//--
+		return true;
 		//--
 	} //END FUNCTION
 
@@ -324,7 +335,7 @@ final class DavServer {
 			return array();
 		} //end if
 		//--
-		$ns = $sxe->getNamespaces(true);
+		$ns = @$sxe->getNamespaces(true);
 		if(is_array($ns)) {
 			foreach($ns as $sp => $v) {
 				if(((string)$xns == '') OR ((string)strtolower((string)$xns) == (string)strtolower((string)$sp))) {
