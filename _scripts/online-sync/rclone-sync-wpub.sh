@@ -10,6 +10,7 @@
 ### Configs
 THE_CONFIG=webdavSample
 THE_DIR_SRC=./wpub/
+THE_SYNC_MODE=sync # sync | copy
 THE_EXTRA_OPTS="-L -v"
 THE_CONTROL_FILE="#wpub"
 THE_WEBDAV_URL="https://your-webdav-server.ext:8443/webdav/wpub/"
@@ -18,7 +19,7 @@ THE_WEBDAV_URL="https://your-webdav-server.ext:8443/webdav/wpub/"
 ##### Runtime: using the rClone sync # https://github.com/ncw/rclone
 echo "=== Sync WPUB Local with Online (rclone) ... ==="
 echo "WebDAV Sync: rClone"
-echo "rClone Options: ${THE_EXTRA_OPTS}"
+echo "rClone Options: ${THE_SYNC_MODE} @ ${THE_EXTRA_OPTS}"
 echo "rClone Config Remote: webdav # [${THE_CONFIG}]"
 echo "Source Dir: ${THE_DIR_SRC}"
 echo "Destination Remote (Dir on Server) URL: ${THE_WEBDAV_URL}"
@@ -26,7 +27,7 @@ if [ -d "${THE_DIR_SRC}" ]; then
 	if [ -f "./${THE_DIR_SRC}/${THE_CONTROL_FILE}" ]; then
 		if [ -f "./rclone.conf" ]; then
 			echo "===== Checking for Control File: ${THE_DIR_SRC}${THE_CONTROL_FILE} ... OK, exists."
-			rclone --config ./rclone.conf ${THE_EXTRA_OPTS} --log-file=./rclone.log --exclude ".ht*" --exclude "#wpub"  sync ${THE_DIR_SRC} ${THE_CONFIG}:
+			rclone --config ./rclone.conf ${THE_EXTRA_OPTS} --log-file=./rclone.log --exclude ".ht*" --exclude "#wpub"  ${THE_SYNC_MODE} ${THE_DIR_SRC} ${THE_CONFIG}:
 			THE_EXIT_CODE=$?
 			cat ./rclone.log
 			echo "" > ./rclone.log

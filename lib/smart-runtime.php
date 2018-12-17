@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.14'); // tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.17'); // tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -430,39 +430,38 @@ final class SmartFrameworkSecurity {
 
 
 //======================================================================
-// Validate variable names (allow to register ONLY lowercase variables to avoid interfere with PHP reserved variables !! security fix !!)
-public static function ValidateVariableName($y_varname) {
+// Validate variable names (by default allow to register ONLY lowercase variables to avoid interfere with PHP reserved variables !! security fix !! ; allow camel case or upper is optional)
+public static function ValidateVariableName($y_varname, $y_allow_upper_camelcase=false) {
 
-	// VALIDATE INPUT VARIABLE NAMES v.160204
+	// VALIDATE INPUT VARIABLE NAMES v.181217
 
 	//--
 	$y_varname = (string) $y_varname; // force string
 	//--
 	$regex_only_number = '/^[0-9_]+$/'; // not allowed as first character, especially the _ because $_ have a very special purpose in PHP
-	$regex_var_name = '/^[a-z0-9_]+$/'; // allowed characters in a variable name (only small letters, numbers and _ ; in PHP upper letters for variables are reserved)
+	if($y_allow_upper_camelcase === true) {
+		$regex_var_name = '/^[a-zA-Z0-9_]+$/'; // allowed characters in a variable name (only small letters, upper letters, numbers and _ ; in PHP upper letters for variables are reserved)
+	} else {
+		$regex_var_name = '/^[a-z0-9_]+$/'; // allowed characters in a variable name (only small letters, numbers and _ ; in PHP upper letters for variables are reserved)
+	} //end if else
 	//--
 
 	//-- init
 	$out = 0;
-	//--
-
-	//-- validate characters
+	//-- validate characters (variable must not be empty, must not start with an underscore or a number
 	if(((string)$y_varname != '') AND ((string)$y_varname != '_') AND (preg_match((string)$regex_var_name, (string)$y_varname)) AND (!preg_match((string)$regex_only_number, (string)substr((string)$y_varname, 0, 1)))) {
 		$out = 1;
 	} //end if else
-	//--
-
 	//-- corrections (variable name must be between 1 char and 255 chars)
 	if(strlen($y_varname) < 1) {
 		$out = 0;
-	} //end if
-	if(strlen($y_varname) > 255) {
+	} elseif(strlen($y_varname) > 255) {
 		$out = 0;
 	} //end if
 	//--
 
 	//--
-	return $out;
+	return (int) $out;
 	//--
 
 } //END FUNCTION
