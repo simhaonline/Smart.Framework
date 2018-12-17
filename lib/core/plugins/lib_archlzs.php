@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.181217
+ * @version 	v.181217.r2
  * @package 	Archivers
  *
  */
@@ -194,17 +194,11 @@ public static function decompressFromBase64($input) {
 	//--
 //	while($i < SmartUnicode::str_len($input)) { // bug fix by unixman
 	while($i < strlen($input)) {
-		//--
-		$char = (string) $input{$i++};
-		$enc1 = strpos(self::$keyStr, (string)$char);
-		$char = (string) $input{$i++};
-		$enc2 = strpos(self::$keyStr, (string)$char);
-		$char = (string) $input{$i++};
-		$enc3 = strpos(self::$keyStr, (string)$char);
-		$char = (string) $input{$i++};
-		$enc4 = strpos(self::$keyStr, (string)$char);
-		//--
-		$char = '';
+		//-- hint: needs err flexibility, don't make needle string, may be NULL ; also the $enc1..4 will not force as string
+		$enc1 = strpos(self::$keyStr, $input{$i++});
+		$enc2 = strpos(self::$keyStr, $input{$i++});
+		$enc3 = strpos(self::$keyStr, $input{$i++});
+		$enc4 = strpos(self::$keyStr, $input{$i++});
 		//--
 		$chr1 = ($enc1 << 2) | ($enc2 >> 4);
 		$chr2 = (($enc2 & 15) << 4) | ($enc3 >> 2);
@@ -717,7 +711,7 @@ private static function RawInflate($compressed) {
 final class SmartArchiverObjContextLZS {
 	//--
 	// ->
-	// v.181217
+	// v.181217.r2
 	//--
 	public $c = '';
 	public $w = '';
@@ -758,7 +752,7 @@ final class SmartArchiverObjContextLZS {
 final class SmartArchiverObjDataLZS {
 	//--
 	// ->
-	// v.181217
+	// v.181217.r2
 	//--
 	public $str;
 	public $val;
