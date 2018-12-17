@@ -21,13 +21,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 // [REGEX-SAFE-OK]
 
-//--
-if(!function_exists('mb_convert_encoding')) {
-	@http_response_code(500);
-	die('ERROR: The PHP MBString Extension is required for SmartFramework / Lib Archive Utils');
-} //end if
-//--
-
 
 //=====================================================================================
 //===================================================================================== CLASS START
@@ -38,7 +31,7 @@ if(!function_exists('mb_convert_encoding')) {
 // this is intended for on-the-fly archive/unarchive not for storing (where ZLib is a better option)
 // it compatible with SmartFramework/JS/SmartJS_Archiver_LZS
 // License: BSD
-// (c) iradu@unix-world.org : optimizations, fixes, unicode safe
+// (c) unix-world.org : optimizations, fixes, unicode safe
 // Original work by Tobias Neeb <tobias.neeb@gmail.com>
 
 /**
@@ -58,7 +51,7 @@ if(!function_exists('mb_convert_encoding')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.180119.r2
+ * @version 	v.181217
  * @package 	Archivers
  *
  */
@@ -89,7 +82,7 @@ public static function compressToBase64($input) {
 		return '';
 	} //end if
 	//--
-	$input = self::compressRawLZS($input);
+	$input = (string) self::compressRawLZS($input);
 	//--
 	$output = '';
 	//--
@@ -106,7 +99,7 @@ public static function compressToBase64($input) {
 	$i = 0;
 	//--
 	while($i < ($strlen * 2)) {
-		//--var_dump('-------'.$i.'<'.($strlen*2).'-------');
+		//-- var_dump('-------'.$i.'<'.($strlen*2).'-------');
 		if(($i % 2) === 0) {
 			//--
 			$chr1 = self::charCodeAt($input, (int)($i/2)) >> 8;
@@ -195,16 +188,23 @@ public static function decompressFromBase64($input) {
 	$enc3 = NULL;
 	$enc4 = NULL;
 	//--
-	$input = preg_replace('/[^A-Za-z0-9\+\/\=]/', '', (string)$input);
+	$input = (string) preg_replace('/[^A-Za-z0-9\+\/\=]/', '', (string)$input);
 	//--
 	$i=0;
 	//--
-	while($i < SmartUnicode::str_len($input)) {
+//	while($i < SmartUnicode::str_len($input)) { // bug fix by unixman
+	while($i < strlen($input)) {
 		//--
-		$enc1 = strpos(self::$keyStr, (string)$input{$i++});
-		$enc2 = strpos(self::$keyStr, (string)$input{$i++});
-		$enc3 = strpos(self::$keyStr, (string)$input{$i++});
-		$enc4 = strpos(self::$keyStr, (string)$input{$i++});
+		$char = (string) $input{$i++};
+		$enc1 = strpos(self::$keyStr, (string)$char);
+		$char = (string) $input{$i++};
+		$enc2 = strpos(self::$keyStr, (string)$char);
+		$char = (string) $input{$i++};
+		$enc3 = strpos(self::$keyStr, (string)$char);
+		$char = (string) $input{$i++};
+		$enc4 = strpos(self::$keyStr, (string)$char);
+		//--
+		$char = '';
 		//--
 		$chr1 = ($enc1 << 2) | ($enc2 >> 4);
 		$chr2 = (($enc2 & 15) << 4) | ($enc3 >> 2);
@@ -246,7 +246,7 @@ public static function decompressFromBase64($input) {
 		//--
 	} //end while
 	//--
-	return self::decompressRawLZS($output);
+	return (string) self::decompressRawLZS($output);
 	//--
 } //END FUNCTION
 //================================================================
@@ -266,9 +266,9 @@ public static function compressRawLZS($uncompressed) {
 		return '';
 	} //end if
 	//--
-	$arch = strtoupper(bin2hex((string)$uncompressed));
+	$arch = (string) strtoupper((string)bin2hex((string)$uncompressed));
 	//--
-	return self::RawDeflate($arch.'#CHECKSUM-SHA1#'.SmartHashCrypto::sha1($arch)); // add sha1 checksum
+	return (string) self::RawDeflate($arch.'#CHECKSUM-SHA1#'.SmartHashCrypto::sha1($arch)); // add sha1 checksum
 	//--
 } //END FUNCTION
 //================================================================
@@ -288,18 +288,18 @@ public static function decompressRawLZS($compressed) {
 		return '';
 	} //end if
 	//--
-	$unarch = trim(self::RawInflate((string)$compressed));
+	$unarch = (string) trim((string)self::RawInflate((string)$compressed));
 	//-- checksum verification
-	$arr = explode('#CHECKSUM-SHA1#', $unarch);
-	$unarch = trim($arr[0]);
-	$checksum = trim($arr[1]);
+	$arr = (array) explode('#CHECKSUM-SHA1#', $unarch);
+	$unarch = (string) trim((string)$arr[0]);
+	$checksum = (string) trim((string)$arr[1]);
 	//--
 	if((string)SmartHashCrypto::sha1($unarch) != (string)$checksum) {
-		Smart::log_warning('SmartArchiverLZS/decompressRawLZS: Checksum Failed');
+		Smart::log_notice(__METHOD__.'() :: Checksum Failed');
 		return ''; // string is corrupted, avoid to return
 	} //end if
 	//--
-	return @hex2bin(strtolower($unarch));
+	return (string) @hex2bin(strtolower($unarch));
 	//--
 } //END FUNCTION
 //================================================================
@@ -313,7 +313,7 @@ private static function fromCharCode() {
 	//--
 	$args = func_get_args();
 	//-- var_dump($args[0].': '.array_reduce(func_get_args(),function($a,$b){$a.=self::utf8_chr($b);return $a;}));
-	return array_reduce(func_get_args(), function($a, $b){ $a .= self::utf8_chr($b); return $a; });
+	return array_reduce(func_get_args(), function($a, $b){ $a .= self::utf8_chr($b); return $a; }); // mixed: array or null
 	//--
 } //END FUNCTION
 //================================================================
@@ -322,7 +322,7 @@ private static function fromCharCode() {
 //================================================================
 private static function utf8_chr($u) {
 	//--
-	return mb_convert_encoding('&#'.intval($u).';', SMART_FRAMEWORK_CHARSET, 'HTML-ENTITIES');
+	return (string) SmartUnicode::convert_charset('&#'.intval($u).';', 'HTML-ENTITIES', (string)SMART_FRAMEWORK_CHARSET);
 	//--
 } //END FUNCTION
 //================================================================
@@ -331,7 +331,7 @@ private static function utf8_chr($u) {
 //================================================================
 private static function charCodeAt($str, $num) {
 	//--
-	return self::utf8_ord(self::utf8_charAt($str, $num));
+	return self::utf8_ord(self::utf8_charAt($str, $num)); // mixed
 	//--
 } //END FUNCTION
 //================================================================
@@ -364,7 +364,7 @@ private static function utf8_ord($ch) {
 		return ($h & 0x0F) << 18 | (ord($ch{1}) & 0x3F) << 12 | (ord($ch{2}) & 0x3F) << 6 | (ord($ch{3}) & 0x3F);
 	} //end if
 	//--
-	return false;
+	return false; // mixed
 	//--
 } //END FUNCTION
 //================================================================
@@ -373,7 +373,7 @@ private static function utf8_ord($ch) {
 //================================================================
 private static function utf8_charAt($str, $num) {
 	//--
-	return SmartUnicode::sub_str($str, $num, 1);
+	return (string) SmartUnicode::sub_str($str, $num, 1);
 	//--
 } //END FUNCTION
 //================================================================
@@ -460,7 +460,7 @@ private static function produceW(SmartArchiverObjContextLZS $context) {
 	//--
 	self::decrementEnlargeIn($context);
 	//--
-	return $context;
+	return $context; // object
 	//--
 } //END FUNCTION
 //================================================================
@@ -495,7 +495,7 @@ private static function RawDeflate($uncompressed) {
 	} //end for
 	//--
 	if($context->w !== '') {
-	   self::produceW($context);
+		self::produceW($context);
 	} //end if
 	//--
 	self::writeBits($context->numBits, 2, $context->data);
@@ -538,7 +538,7 @@ private static function readBit(SmartArchiverObjDataLZS $data) {
 		//--
 	} //end if
 	//-- data.val = (data.val << 1); // this was not enabled in original
-	return $res > 0 ? 1 : 0;
+	return $res > 0 ? 1 : 0; // 0/1
 	//--
 } //END FUNCTION
 //================================================================
@@ -561,7 +561,7 @@ private static function readBits($numBits, SmartArchiverObjDataLZS $data) {
 		//--
 	} //end while
 	//--
-	return $res;
+	return $res; // mixed
 	//--
 } //END FUNCTION
 //================================================================
@@ -596,14 +596,14 @@ private static function RawInflate($compressed) {
 	$data->index = 1;
 	//--
 	switch(self::readBits(2, $data)) {
-	   case 0:
-		   $c = self::fromCharCode(self::readBits(8, $data));
-		   break;
-	   case 1:
-		   $c = self::fromCharCode(self::readBits(16, $data));
-		   break;
-	   case 2:
-		   return '';
+		case 0:
+			$c = self::fromCharCode(self::readBits(8, $data));
+			break;
+		case 1:
+			$c = self::fromCharCode(self::readBits(16, $data));
+			break;
+		case 2:
+			return '';
 	} //end switch
 	//--
 	$dictionary[3] = $c;
@@ -717,7 +717,7 @@ private static function RawInflate($compressed) {
 final class SmartArchiverObjContextLZS {
 	//--
 	// ->
-	// v.180119.r2
+	// v.181217
 	//--
 	public $c = '';
 	public $w = '';
@@ -758,7 +758,7 @@ final class SmartArchiverObjContextLZS {
 final class SmartArchiverObjDataLZS {
 	//--
 	// ->
-	// v.180119.r2
+	// v.181217
 	//--
 	public $str;
 	public $val;
