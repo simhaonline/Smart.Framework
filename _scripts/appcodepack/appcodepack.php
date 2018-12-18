@@ -631,6 +631,7 @@ function RunApp() {
 			echo '<div style="font-size:1.25em!important;">'."\n";
 			echo '<select id="task-run-sel" style="font-size:1em!important; max-width:750px;">'."\n";
 			echo '<option value="">--- NO TASK Selected ---</option>'."\n";
+			echo '<optgroup label="AppCode.Pack TASKS: RELEASE">'."\n";
 			if(!AppPackUtils::path_exists((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR)) {
 				echo '<option value="optimize" title="'.AppPackUtils::escape_html((string)APPCODEPACK_STRATEGY).'">RELEASE: ['.AppPackUtils::escape_html((string)APPCODEPACK_COMPRESS_UTILITY_TYPE).'] OPTIMIZE Source Code '.APPCODEPACK_MARKER_OPTIMIZATIONS.' @ Folders: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_SOURCE_DIR).' -&gt; '.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']'.'</option>'."\n";
 			} else {
@@ -639,6 +640,7 @@ function RunApp() {
 				} //end if
 				echo '<option value="cleanup">RELEASE: CLEANUP :: Optimizations Folder: ['.AppPackUtils::escape_html((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR).']</option>'."\n";
 			} //end if
+			echo '</optgroup>'."\n";
 			if((AppPackUtils::is_type_file('appcodepack-extra-run.php')) AND (AppPackUtils::is_type_file('appcodepack-extra-run.inc.htm'))) {
 				echo AppPackUtils::read('appcodepack-extra-run.inc.htm');
 			} //end if
@@ -4017,7 +4019,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.181019.r2
+	//##### SmartUtils v.181218
 
 
 	//================================================================

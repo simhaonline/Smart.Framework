@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.181019
+ * @version 	v.181218
  * @package 	Application
  *
  */
@@ -564,13 +564,15 @@ final class SmartTextTranslations {
 		if(SmartFrameworkRuntime::ifInternalDebug()) {
 			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
-					'title' => '!!! FAILED !!! to Get Text from Sources for Key: '.$the_cache_key,
+					'title' => '*** NOT FOUND: the Text from Sources for Key: '.$the_cache_key,
 					'data' => 'Content:'."\n".print_r($translations,1)
 				]);
 			} //end if
 		} //end if
-		if(((string)self::getDefaultLanguage() == (string)$y_language) OR (SmartFrameworkRuntime::ifDebug())) {
-			Smart::log_warning('Cannot get from source Text Translations for Key: '.$the_cache_key); // show this if default language or debug
+		if((string)self::getDefaultLanguage() == (string)$y_language) {
+			Smart::log_warning('Cannot get from source Text Translations for Key: '.$the_cache_key); // show this if default language
+		} elseif(SmartFrameworkRuntime::ifDebug()) {
+			Smart::log_notice('The Text Translations Key is not available ; will fallback to default language ['.self::getDefaultLanguage().'] for: '.$the_cache_key); // show this if debug
 		} //end if
 		return array(); // this is invalid, means not found in any places
 		//--
@@ -663,7 +665,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.181019
+ * @version 	v.181218
  *
  * @access 		private
  * @internal
@@ -765,7 +767,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.181019
+ * @version 	v.181218
  *
  */
 interface SmartInterfaceAdapterTextTranslations {

@@ -760,9 +760,13 @@ switch((string)$_REQUEST['run']) {
 		$data['html-main-area'] .= '<div style="font-size:1.25em!important;">'."\n";
 		$data['html-main-area'] .= '<select id="task-run-sel" style="font-size:1em!important;">'."\n";
 		$data['html-main-area'] .= '<option value="">--- No Task Selected ---</option>'."\n";
-		$data['html-main-area'] .= '<option value="deploy">DEPLOY a new AppCodePack Archive on this App Server</option>'."\n";
-		$data['html-main-area'] .= '<option value="lstdpls">DISPLAY the AppCodePack Deployments from this App Server</option>'."\n";
-		$data['html-main-area'] .= '<option value="errlogs">DISPLAY the App Error Logs on this App Server</option>'."\n";
+		$data['html-main-area'] .= '<optgroup label="AppCode.UnPack TASKS: DEPLOYMENT">'."\n";
+		$data['html-main-area'] .= '<option value="deploy">DEPLOY a NEW AppCodePack ARCHIVE on this App Server</option>'."\n";
+		$data['html-main-area'] .= '<option value="lstdpls">DISPLAY the LIST of DEPLOYMENTS from this App Server</option>'."\n";
+		$data['html-main-area'] .= '</optgroup>'."\n";
+		$data['html-main-area'] .= '<optgroup label="AppCode.UnPack TASKS: DISPLAY-LOGS">'."\n";
+		$data['html-main-area'] .= '<option value="errlogs">DISPLAY the App ERROR LOGS on this App Server</option>'."\n";
+		$data['html-main-area'] .= '</optgroup>'."\n";
 		$data['html-main-area'] .= '</select> &nbsp; ';
 		$data['html-main-area'] .= '<button style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" onClick="var selTask = \'\'; try { selTask = document.getElementById(\'task-run-sel\').value; } catch(err){} if(selTask){ self.location = \'?run=\' + selTask; } else { alert(\'No Task Selected ...\'); }" title="Click this button to run the selected task from the near list">Run the Selected TASK</button>'."\n";
 		$data['html-main-area'] .= '</div>'."\n";
@@ -2250,7 +2254,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.181019.r2
+	//##### SmartUtils v.181218
 
 
 	//================================================================

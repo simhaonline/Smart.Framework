@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.181212
+ * @version 	v.181218
  * @package 	Base
  *
  */
@@ -486,20 +486,54 @@ public static function pretty_print_var($y_var, $indent=0) {
 		$out .= '['."\n";
 		//--
 		foreach($y_var as $key => $val) {
+			//--
 			$out .= $spaces;
+			//--
 			if(is_array($val)) {
+				//--
 				$out .= "\t".$key.' => '.self::pretty_print_var($val, $indent);
+				//--
 			} else {
+				//--
+				if(is_object($val)) { // {{{SYNC-UTILS-PRETTY-PRINT-VAR}}}
+					$val = '!OBJECT!';
+				} elseif($val === null) {
+					$val = 'NULL';
+				} elseif($val === false) {
+					$val = 'FALSE';
+				} elseif($val === true) {
+					$val = 'TRUE';
+				} elseif(!is_numeric($val)) {
+					$val = '`'.$val.'`';
+				} //end if else
+				//--
 				$out .= "\t".$key.' => '.$val;
+				//--
 			} //end if else
+			//--
 			$out .= "\n";
+			//--
 		} //end foreach
 		//--
 		$out .= $spaces.']';
 		//--
 	} else {
 		//--
-		$out = (string) $y_var;
+		$val = $y_var; // mixed
+		//--
+		if(is_object($val)) { // {{{SYNC-UTILS-PRETTY-PRINT-VAR}}}
+			$val = '!OBJECT!';
+		} elseif($val === null) {
+			$val = 'NULL';
+		} elseif($val === false) {
+			$val = 'FALSE';
+		} elseif($val === true) {
+			$val = 'TRUE';
+		} elseif(!is_numeric($val)) {
+			$val = '`'.$val.'`';
+		} //end if else
+		//--
+		$out = (string) $val;
 		//--
 	} //end if
 	//--

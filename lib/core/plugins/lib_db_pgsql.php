@@ -71,7 +71,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.181019
+ * @version 	v.181218
  * @package 	Database:PostgreSQL
  *
  */
@@ -1657,7 +1657,7 @@ public static function prepare_statement($arrdata, $mode, $y_connection='DEFAULT
  */
 public static function prepare_param_query($query, $replacements_arr, $y_connection='DEFAULT') { // {{{SYNC-SQL-PARAM-QUERY}}}
 
-	// version: 160915
+	// version: 181218
 
 	//==
 	$y_connection = self::check_connection($y_connection, 'PREPARE-PARAM-QUERY');
@@ -1712,16 +1712,15 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 	} elseif(strpos((string)$query, '$') !== false) {
 		//--
 		$expr_arr = array();
-		preg_match_all('{'.'([^\$]*)?(\$[0-9]+)?'.'}s', (string)$query, $expr_arr);
+		preg_match_all('{'.'([^\$]*)?(\$[0-9]+)?'.'}s', (string)$query, $expr_arr, PREG_SET_ORDER, 0);
 		//print_r($expr_arr); die();
-		list($orig_arr, $plain_arr, $params_arr) = (array) $expr_arr;
-		$expr_count = Smart::array_size($params_arr);
+		$expr_count = Smart::array_size($expr_arr);
 		//--
 		for($i=0; $i<$expr_count; $i++) {
 			//--
-			$out_query .= (string) $plain_arr[$i];
+			$out_query .= (string) $expr_arr[$i][1];
 			//--
-			$crr_key = (int) substr((string)trim((string)$params_arr[$i]), 1);
+			$crr_key = (int) substr((string)trim((string)$expr_arr[$i][2]), 1);
 			$crr_key -= 1; // fix: $1 is for $arr[0]
 			//--
 			if((int)$crr_key >= 0) {
@@ -1743,6 +1742,8 @@ public static function prepare_param_query($query, $replacements_arr, $y_connect
 		$out_query = (string) $query;
 		//--
 	} //end if else
+	//--
+	//echo $out_query; die();
 	//--
 
 	//--
@@ -2316,7 +2317,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.181019
+ * @version 	v.181218
  * @package 	Database:PostgreSQL
  *
  */

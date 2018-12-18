@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.180311.r2
+ * @version 	v.181218
  *
  */
 final class TestUnitMongoDB {
@@ -95,7 +95,7 @@ final class TestUnitMongoDB {
 		if((string)$err == '') {
 			$tst = 'Create Test Collection';
 			$tests[] = (string) $tst;
-			$result = $mongo->igcommand([
+			$result = $mongo->command([
 				'create' => (string) 'myTestCollection'
 			]);
 			if(!$mongo->command_is_ok($result)) {
@@ -131,11 +131,12 @@ final class TestUnitMongoDB {
 		//--
 
 		//--
+		$uuid = $mongo->assign_uuid();
 		if((string)$err == '') {
 			$tst = 'Insert Single Document';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['_id'] = $mongo->assign_uuid();
+			$doc['_id']  = $uuid;
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 0;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
@@ -144,6 +145,45 @@ final class TestUnitMongoDB {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
 			} //end if
 		} //end if
+		if((string)$err == '') {
+			$tst = 'Upsert Single Document, existing, with the same UUID as previous';
+			$tests[] = (string) $tst;
+			$doc = array();
+			$doc['_id']  = $uuid;
+			$doc['name'] = 'Test:'.$comments;
+			$doc['cost'] = 0;
+			$doc['upsert'] = 'update';
+			$result = $mongo->upsert(
+				'myTestCollection',
+				[ '_id' => $uuid ], 	// filter (update only this)
+				'$set', 				// increment operation
+				(array) $doc			// update array
+			);
+			$doc = array();
+			if($result[1] != 1) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+			} //end if
+		} //end if
+		$uuid = $mongo->assign_uuid();
+		if((string)$err == '') {
+			$tst = 'Upsert Single Document, not existing, with a new UUID';
+			$tests[] = (string) $tst;
+			$doc = array();
+			$doc['_id']  = $uuid;
+			$doc['name'] = 'Test:'.$comments;
+			$doc['cost'] = 0;
+			$doc['upsert'] = 'insert';
+			$result = $mongo->upsert(
+				'myTestCollection',
+				[ '_id' => $uuid ], 	// filter (update only this)
+				'$set', 				// increment operation
+				(array) $doc			// update array
+			);
+			$doc = array();
+			if($result[1] != 1) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+			} //end if
+		} //end if
 		//--
 
 		//--
@@ -169,7 +209,7 @@ final class TestUnitMongoDB {
 			$doc = array();
 			$doc['_id'] = $mongo->assign_uuid();
 			$doc['name'] = 'Test:'.$comments;
-			$doc['cost'] = 2;
+			$doc['cost'] = 3;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
 			$doc = array();
 			if($result[1] != 1) {
@@ -190,7 +230,7 @@ final class TestUnitMongoDB {
 					'wrongupdate' => true
 				]
 			);
-			if($result[1] != 0) {
+			if($result[1] !== 0) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 0 but is: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -202,7 +242,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->update(
 				'myTestCollection',
-				[ 'name' => 'Test:'.$comments, 'cost' => 0 ], 	// filter (update only this)
+				[ 'name' => 'Test:'.$comments, 'cost' => 0, 'upsert' => [ '$ne' => 'insert' ] ], // filter (update only this)
 				'$inc', 										// increment operation
 				[ 												// update array
 					'cost' => (float) 1
@@ -220,7 +260,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->update(
 				'myTestCollection',
-				[ 'name' => [ '$ne' => 'Test:'.$comments ] ], 	// filter (update all except these)
+				[ 'name' => [ '$ne' => 'Test:'.$comments ], 'notexisting' => [ '$exists' => false ] ], 	// filter (update all except these)
 				'$set', 										// upd. operation
 				[ 												// update array
 					'updated' => true
@@ -254,8 +294,8 @@ final class TestUnitMongoDB {
 				'myTestCollection',
 				[ 'name' => 'Test:'.$comments ] // filter
 			);
-			if($result[1] != 2) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 2 but is: '.print_r($result,1);
+			if($result[1] != 3) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 3 but is: '.print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -268,7 +308,7 @@ final class TestUnitMongoDB {
 				'myTestCollection',
 				[ 'name' => 'Test:'.$comments ] // filter
 			);
-			if($result[1] != 0) {
+			if($result[1] !== 0) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 0 but is: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -326,7 +366,7 @@ final class TestUnitMongoDB {
 				'myTestCollection',
 				[ 'name' => [ '$eq' => 'Test:!' ] ] // filter (update all except these)
 			);
-			if($result != 0) {
+			if($result !== 0) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 0 but is: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -344,8 +384,8 @@ final class TestUnitMongoDB {
 					'limit' => 2 // trying to fake the limit
 				]
 			);
-			if((int)$result['cost'] != 7) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document is different: '.print_r($result,1);
+			if((\Smart::array_size($result) <= 0) OR ((int)$result['cost'] != 7)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -362,8 +402,8 @@ final class TestUnitMongoDB {
 					'limit' => 1
 				]
 			);
-			if((\Smart::array_size($result) != 1) OR (!is_array($result[0])) OR ($result[0]['cost'] != 7)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document is different: '.print_r($result,1);
+			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 7)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -381,40 +421,18 @@ final class TestUnitMongoDB {
 					'sort' => [ 'cost' => -1 ], // sort by cost descending
 				]
 			);
-			if((\Smart::array_size($result) != 2) OR (!is_array($result[0])) OR ($result[0]['cost'] != 7) OR (!is_array($result[1])) OR ($result[1]['cost'] != 7)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document is different: '.print_r($result,1);
+			if((\Smart::array_size($result) != 2) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 7) OR (\Smart::array_size($result[1]) <= 0) OR ($result[1]['cost'] != 7)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
 		} //end if
 		//--
 
 		//--
-		$mongo = null;
-		$mongo = new \SmartMongoDb((array)$cfg_mongo);
-		//--
-
-		//--
 		if((string)$err == '') {
-			$tst = 'Search Aggregate Group By with Filter and Sort';
+			$tst = 'ReUse MongoDB Connection';
 			$tests[] = (string) $tst;
-			$result = $mongo->command([
-				'aggregate' => (string) 'myTestCollection',
-				'pipeline' => [
-					[
-						'$match' => [ 'cost' => ['$gte' => 6] ]
-					],
-					[
-						'$group' => [ '_id' => '$cost', 'total' => ['$sum' => '$cost'] ]
-					],
-					[
-						'$sort' => [ '_id' => -1 ]
-					],
-					[	'$limit' => 5 ]
-				],
-				'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
-			]);
-			if((\Smart::array_size($result) != 5) OR (!is_array($result[0])) OR (!is_array($result[1])) OR (!is_array($result[2])) OR (!is_array($result[3])) OR (!is_array($result[4]))) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document is different: '.print_r($result,1);
-			} //end if
+			$mongo = null;
+			$mongo = new \SmartMongoDb((array)$cfg_mongo);
 		} //end if
 		//--
 
@@ -427,8 +445,53 @@ final class TestUnitMongoDB {
 				'key' => (string) 'cost',
 				'query' => (array) ['cost' => ['$gte' => 6]]
 			]);
-			if((!$mongo->command_is_ok($result)) OR (!is_array($result[0])) OR (\Smart::array_size($result[0]['values']) != 5)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document is different: '.print_r($result,1);
+			if((!$mongo->command_is_ok($result)) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['values']) != 5)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+			} //end if
+		} //end if
+		//--
+
+		//--
+		if((string)$err == '') {
+			$tst = 'Search Aggregate Group By with Filter, Sort and Limit';
+			$tests[] = (string) $tst;
+			$result = $mongo->command([
+				'aggregate' => (string) 'myTestCollection',
+				'pipeline' => [
+					[
+						'$match' => [ 'cost' => [ '$gte' => 6 ] ]
+					],
+					[
+						'$group' => [ '_id' => '$cost', 'total' => ['$sum' => '$cost'] ]
+					],
+					[
+						'$sort' => [ '_id' => -1 ]
+					],
+					[	'$limit' => 5 ]
+				],
+				'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
+			]);
+			if((\Smart::array_size($result) != 5) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[1]) <= 0) OR (\Smart::array_size($result[2]) <= 0) OR (\Smart::array_size($result[3]) <= 0) OR (\Smart::array_size($result[4]) <= 0)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+			} //end if
+		} //end if
+		//--
+
+		//--
+		if((string)$err == '') {
+			$tst = 'MapReduce with Limit and Sort';
+			$tests[] = (string) $tst;
+			$result = $mongo->command([
+				'mapReduce' => 'myTestCollection',
+				'map' => 'function() { emit(this.$cost, 1); }',
+				'reduce' => 'function(k, vals) { var sum = 0; for (var i in vals) { sum += vals[i]; } return sum; }',
+				'out' => [ 'inline' => 1 ],
+				'query' => [ 'cost' => [ '$gte' => 7 ] ],
+				'sort' => [ 'cost' => -1 ],
+				'limit' => 100
+			]);
+			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['results']) <= 0) OR (\Smart::array_size($result[0]['results'][0]) <= 0) OR ($result[0]['results'][0]['value'] != 5)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
 		} //end if
 		//--

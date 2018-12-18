@@ -17,7 +17,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // DEPENDS-EXT: PHP MongoDB / PECL (v.1.0.1 or later)
 //======================================================
 // Tested and Stable on MongoDB Server versions:
-// 3.2 / 3.3 / 3.4 / 3.5 / 3.6
+// 3.2 / 3.3 / 3.4 / 3.5 / 3.6 / 3.7 / 3.8 / 3.9 / 4.0 / 4.1
 //======================================================
 
 
@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.181019
+ * @version 	v.181218
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)										# count documents in a collection
@@ -41,6 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)			# find single document in a collection with optional filter criteria / limit
  * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)								# add multiple documents to a collection
  * @method MIXED		insert($strCollection, $arrDoc)											# add single document to a collection
+ * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)					# insert single or modify single or multi documents in a collection that are matching the filter criteria
  * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)					# modify single or many document(s) in a collection that are matching the filter criteria
  * @method MIXED		delete($strCollection, $arrFilter)										# delete single or many document(s) from a collection that are matching the filter criteria
  * @method MIXED		command($arrCmd)														# run a command over database like: distinct, groupBy, mapReduce, createCollection, dropCollection
@@ -324,7 +325,7 @@ public function __call($method, array $args) {
 			//--
 			$dcmd = 'count';
 			//--
-			$this->collection = trim((string)$args[0]); // strCollection
+			$this->collection = (string) trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
 				$this->error((string)$this->connex_key, 'MongoDB Count', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
 				return 0;
@@ -378,7 +379,7 @@ public function __call($method, array $args) {
 			//--
 			$dcmd = 'read';
 			//--
-			$this->collection = trim((string)$args[0]); // strCollection
+			$this->collection = (string) trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
 				$this->error((string)$this->connex_key, 'MongoDB Read', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
 				return array();
@@ -462,11 +463,12 @@ public function __call($method, array $args) {
 		//--
 		case 'bulkinsert': 	// ARGS [ strCollection, arrMultiDocs ] ; can do multiple inserts
 		case 'insert': 		// ARGS [ strCollection, arrDoc ] ; can do just single insert
-		case 'update': 		// ARGS [ strCollection, arrFilter, strUpdOp, arrUpd ] ; can do just single update
+		case 'upsert': 		// ARGS [ strCollection, arrDoc ] ; can do just single insert or single/multi update
+		case 'update': 		// ARGS [ strCollection, arrFilter, strUpdOp, arrUpd ] ; can do single or multi update
 			//--
 			$dcmd = 'write';
 			//--
-			$this->collection = trim((string)$args[0]); // strCollection
+			$this->collection = (string) trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
 				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
 				return array();
@@ -513,16 +515,23 @@ public function __call($method, array $args) {
 					return array();
 					break;
 				} //end if
-			} elseif((string)$method == 'update') {
+			} elseif(((string)$method == 'update') OR ((string)$method == 'upsert')) {
 				if(!is_array($args[1])) {
 					$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Invalid Filter provided ...', $args);
 					return array();
 				} //end if
 				$qry = (string) 'update:'.$args[2];
-				$opts = [ // update options
-					'multi' 	=> true, // update all the matching documents
-					'upsert' 	=> false // if filter does not match an existing document, do not insert a single document
-				];
+				if((string)$method == 'upsert') {
+					$opts = [ // update options
+						'multi' 	=> true, // update all the matching documents
+						'upsert' 	=> true // if filter does not match an existing document, do insert a single document
+					];
+				} else { // update
+					$opts = [ // update options
+						'multi' 	=> true, // update all the matching documents
+						'upsert' 	=> false // if filter does not match an existing document, do not insert a single document
+					];
+				} //end if else
 				if(Smart::array_size($args[3]) > 0) {
 					$write->update(
 						(array) $args[1], 									// filter
@@ -559,14 +568,20 @@ public function __call($method, array $args) {
 				if((string)$msg == '') {
 					$msg = 'oknosqlwriteoperation';
 				} //end if
-				$obj[0] = (string) $msg;
-				$obj[1] = 0;
+				$obj[0] = (string) $msg; // ok / error message
+				$obj[1] = 0; // affected
 				if(((string)$method == 'insert') OR ((string)$method == 'bulkinsert')) {
 					$obj[1] = (int) $result->getInsertedCount();
-				} elseif((string)$method == 'update') {
-					$obj[1] = (int) $result->getModifiedCount();
+				} elseif(((string)$method == 'upsert') OR ((string)$method == 'update')) {
+					$obj[1] = (int) ((int)$result->getUpsertedCount() + (int)$result->getModifiedCount());
 				} //end if else
-				$obj[2] = (string) $qry;
+				$obj[2] = (string) $qry; // query
+				$obj[3] = []; // return extra messages
+				if((string)$method == 'upsert') {
+					$obj[3] = [
+						'upserted-ids' => (array) $result->getUpsertedIds()
+					];
+				} //end if
 				$msg = '';
 				$drows = (int) $obj[1];
 			} else {
@@ -587,7 +602,7 @@ public function __call($method, array $args) {
 			//--
 			$dcmd = 'write';
 			//--
-			$this->collection = trim((string)$args[0]); // strCollection
+			$this->collection = (string) trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
 				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
 				return array();
@@ -631,6 +646,7 @@ public function __call($method, array $args) {
 				$obj[0] = (string) $msg;
 				$obj[1] = (int) $result->getDeletedCount();
 				$obj[2] = (string) $qry;
+				$obj[3] = []; // return extra messages
 				$msg = '';
 				$drows = (int) $obj[1];
 			} else {
@@ -720,6 +736,7 @@ public function __call($method, array $args) {
 
 	//--
 	if($this->connected === true) { // avoid register pre-connect commands like version)
+		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-queries', 1, '+');
@@ -728,16 +745,28 @@ public function __call($method, array $args) {
 			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-time', $time_end, '+');
 			//--
+			$dbg_arr_cmd = [];
+			if($this->collection) {
+				$dbg_arr_cmd['Collection'] = (string) $this->collection;
+			} //end if
+			$dbg_arr_cmd['Query'] = (array) $qry;
+			if($opts) {
+				$dbg_arr_cmd['Options'] = (array) $opts;
+			} //end if
+			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
-				'type' => (string) $dcmd,
-				'data' => strtoupper($method),
-				'command' => array('Collection' => (string)$this->collection, 'Query' => (array)$qry, 'Options' => (array)$opts),
-				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
-				'rows' => (int) $drows,
-				'connection' => (string)$this->connex_key,
+				'type' 			=> (string) $dcmd,
+				'data' 			=> (string) strtoupper($method),
+				'command' 		=> (array)  $dbg_arr_cmd,
+				'time' 			=> (string) Smart::format_number_dec($time_end, 9, '.', ''),
+				'rows' 			=> (int)    $drows,
+				'connection' 	=> (string) $this->connex_key
 			]);
 			//--
+			$dbg_arr_cmd = null; // free mem
+			//--
 		} //end if
+		//--
 	} //end if
 	//--
 
