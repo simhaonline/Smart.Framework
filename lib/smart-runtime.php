@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.18'); // tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.19'); // tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -94,10 +94,9 @@ if(!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_PRINTABLE)) {
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_URL_PARAM_LANGUAGE')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_LANGUAGE');
+	define('SMART_FRAMEWORK_URL_PARAM_LANGUAGE', '');
 } //end if
-if(!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_LANGUAGE)) {
+if(SMART_FRAMEWORK_URL_PARAM_LANGUAGE AND (!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_LANGUAGE))) {
 	@http_response_code(500);
 	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_PARAM_LANGUAGE');
 } //end if
@@ -106,16 +105,24 @@ if(defined('SMART_APP_LANG_COOKIE')) {
 	@http_response_code(500);
 	die('A Reserved Constant have been already defined: SMART_APP_LANG_COOKIE');
 } //end if
+if(SMART_FRAMEWORK_URL_PARAM_LANGUAGE) {
+	if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+		define('SMART_APP_LANG_COOKIE', 'SmartApp_ADM__SetLanguage__'.SMART_FRAMEWORK_URL_PARAM_LANGUAGE);
+	} else {
+		define('SMART_APP_LANG_COOKIE', 'SmartApp_IDX__SetLanguage__'.SMART_FRAMEWORK_URL_PARAM_LANGUAGE);
+	} //end if else
+} //end if
+if(!defined('SMART_APP_LANG_COOKIE')) {
+	define('SMART_APP_LANG_COOKIE', '');
+} //end if
+//--
 if(defined('SMART_FRAMEWORK_INFO_LOG')) {
 	@http_response_code(500);
 	die('A Reserved Constant have been already defined: SMART_FRAMEWORK_INFO_LOG');
 } //end if
-//--
 if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-	define('SMART_APP_LANG_COOKIE', 'SmartApp_ADM__SetLanguage__'.SMART_FRAMEWORK_URL_PARAM_LANGUAGE);
 	define('SMART_FRAMEWORK_INFO_LOG', 'tmp/logs/adm/'.'info-'.date('Y-m-d@H').'.log');
 } else {
-	define('SMART_APP_LANG_COOKIE', 'SmartApp_IDX__SetLanguage__'.SMART_FRAMEWORK_URL_PARAM_LANGUAGE);
 	define('SMART_FRAMEWORK_INFO_LOG', 'tmp/logs/idx/'.'info-'.date('Y-m-d@H').'.log');
 } //end if else
 //--

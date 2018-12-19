@@ -71,7 +71,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.181218
+ * @version 	v.181219
  * @package 	Database:PostgreSQL
  *
  */
@@ -1657,7 +1657,7 @@ public static function prepare_statement($arrdata, $mode, $y_connection='DEFAULT
  */
 public static function prepare_param_query($query, $replacements_arr, $y_connection='DEFAULT') { // {{{SYNC-SQL-PARAM-QUERY}}}
 
-	// version: 181218
+	// version: 181219
 
 	//==
 	$y_connection = self::check_connection($y_connection, 'PREPARE-PARAM-QUERY');
@@ -2317,7 +2317,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.181218
+ * @version 	v.181219
  * @package 	Database:PostgreSQL
  *
  */

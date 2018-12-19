@@ -1127,7 +1127,7 @@ private function unquote($value) {
 		return trim($value, '"');
 	} //end if
 	//--
-	return $value;
+	return $value; // mixed
 	//--
 } //END FUNCTION
 //================================================================

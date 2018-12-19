@@ -193,7 +193,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181217.1155'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.181219.1127'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -517,6 +517,7 @@ switch((string)$_REQUEST['run']) {
 				//--
 			} else { // OK
 				//--
+				clearstatcache(true, (string)$the_real_err_logs_dir);
 				$scan_items = scandir((string)$the_real_err_logs_dir);
 				//--
 				if(!is_array($scan_items)) {
@@ -527,7 +528,7 @@ switch((string)$_REQUEST['run']) {
 					//--
 					$arr_err_logs = [];
 					for($i=0; $i<AppPackUtils::array_size($scan_items); $i++) {
-						if(((string)$scan_items != '.') AND ((string)$scan_items != '..')) {
+						if(((string)trim((string)$scan_items[$i]) != '') AND ((string)$scan_items[$i] != '.') AND ((string)$scan_items[$i] != '..')) { // fix ok
 							if(AppPackUtils::check_if_safe_file_or_dir_name((string)$scan_items[$i])) {
 								$chk_path = (string) $the_real_err_logs_dir.$scan_items[$i];
 								if(AppPackUtils::check_if_safe_path((string)$chk_path)) {
@@ -544,7 +545,7 @@ switch((string)$_REQUEST['run']) {
 					if(AppPackUtils::array_size($arr_err_logs) > 0) {
 						$data['html-main-area'] .= '<h5 style="color:#778899">LIST of Error Log Files: '.AppPackUtils::escape_html((string)$the_real_err_logs_dir).'</h5>';
 						foreach($arr_err_logs as $key => $val) {
-							$data['html-main-area'] .= '<div title="'.AppPackUtils::escape_html((string)$val).'" style="background:#ECECEC; color:#333333; border-radius:5px; padding:8px; margin-bottom:5px; font-weight:bold; cursor:help;"><a style="display:inline-block; text-decoration: none !important; padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" title="Display the Error Log File: '.AppPackUtils::escape_html((string)$key).'" href="'.AppPackUtils::escape_html('?run=verrlog&f='.rawurlencode((string)bin2hex((string)$val)).'&c='.rawurlencode(sha1((string)$val.ADMIN_AREA_SECRET))).'">View</a>&nbsp;&nbsp;&nbsp;'.AppPackUtils::escape_html((string)$key).'</div>';
+							$data['html-main-area'] .= '<div title="'.AppPackUtils::escape_html((string)$val).'" style="background:#ECECEC; color:#333333; border-radius:5px; padding:8px; margin-bottom:5px; font-weight:bold; cursor:help;"><a style="display:inline-block; text-decoration: none !important; padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" title="Display the Error Log File: '.AppPackUtils::escape_html((string)$key).'" href="'.AppPackUtils::escape_html('?run=verrlog&f='.rawurlencode((string)bin2hex((string)$val)).'&c='.rawurlencode(sha1((string)$val.ADMIN_AREA_SECRET))).'">View</a>&nbsp;&nbsp;&nbsp;'.AppPackUtils::escape_html((string)$key).'&nbsp;&nbsp;&nbsp;<span style="color:#555555;">['.AppPackUtils::pretty_print_bytes(AppPackUtils::get_file_size($the_real_err_logs_dir.$key), 2, '&nbsp;').']</span></div>';
 						} //end foreach
 					} else {
 						$data['html-main-area'] .= '<div style="margin-bottom:20px; padding:7px; line-height:1.125em; font-weight:bold; color: #FFFFFF; background:#778899; border:1px solid #8899AA; border-radius:6px; box-shadow: 2px 2px 3px #D2D2D2;">';
@@ -591,6 +592,7 @@ switch((string)$_REQUEST['run']) {
 			//--
 		} else { // OK
 			//--
+			clearstatcache(true, (string)$the_dpls_dir);
 			$scan_items = scandir((string)$the_dpls_dir);
 			//--
 			if(!is_array($scan_items)) {
@@ -602,7 +604,7 @@ switch((string)$_REQUEST['run']) {
 				rsort($scan_items);
 				$arr_lst_dpls = [];
 				for($i=0; $i<AppPackUtils::array_size($scan_items); $i++) {
-					if(((string)$scan_items != '.') AND ((string)$scan_items != '..')) {
+					if(((string)trim((string)$scan_items[$i]) != '') AND ((string)$scan_items[$i] != '.') AND ((string)$scan_items[$i] != '..')) { // fix ok
 						if(AppPackUtils::check_if_safe_file_or_dir_name((string)$scan_items[$i])) {
 							$chk_path = (string) $the_dpls_dir.$scan_items[$i];
 							if(AppPackUtils::check_if_safe_path((string)$chk_path)) {
@@ -951,7 +953,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181217 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181219 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1494,12 +1496,12 @@ Options -Indexes
 				$arr_dir_sorted_files = []; // init
 				for($i=0; $i<self::array_size($arr_dir_files); $i++) {
 					if((string)$arr_dir_files[$i] == 'maintenance.html') { // maintenance.html must be first !
-						$arr_dir_sorted_files[] = (string)$arr_dir_files[$i];
+						$arr_dir_sorted_files[] = (string) $arr_dir_files[$i];
 					} //end if
 				} //end for
 				for($i=0; $i<self::array_size($arr_dir_files); $i++) {
-					if(((string)$arr_dir_files[$i] != 'maintenance.html') AND ((string)$arr_dir_files[$i] != '.') AND ((string)$arr_dir_files[$i] != '..')) {
-						$arr_dir_sorted_files[] = (string)$arr_dir_files[$i]; // add the rest of files except . and ..
+					if(((string)$arr_dir_files[$i] != 'maintenance.html') AND ((string)trim((string)$arr_dir_files[$i]) != '') AND ((string)$arr_dir_files[$i] != '.') AND ((string)$arr_dir_files[$i] != '..')) { // fix ok
+						$arr_dir_sorted_files[] = (string) $arr_dir_files[$i]; // add the rest of files except . and ..
 					} //end if
 				} //end for
 				$arr_dir_files = (array) $arr_dir_sorted_files;
@@ -1558,7 +1560,7 @@ Options -Indexes
 			if(self::array_size($arr_dir_files) > 0) {
 				for($i=0; $i<self::array_size($arr_dir_files); $i++) {
 					$file = (string) $arr_dir_files[$i];
-					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) {
+					if(((string)trim((string)$file) != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix ok
 						$not_restored_files[] = (string) $file;
 					} //end if
 				} //end for
@@ -2254,7 +2256,49 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.181218
+	//##### SmartUtils v.181219
+
+
+	//================================================================
+	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ') {
+		//--
+		$y_decimals = (int) $y_decimals;
+		if($y_decimals < 0) {
+			$y_decimals = 0;
+		} //end if
+		if($y_decimals > 4) {
+			$y_decimals = 4;
+		} //end if
+		//--
+		if(!is_int($y_bytes)) {
+			return (string) $y_bytes;
+		} //end if
+		//--
+		if($y_bytes < 1000) {
+			return (string) self::format_number_int($y_bytes).$y_separator.'bytes';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		if($y_bytes < 1000) {
+			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'KB';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		if($y_bytes < 1000) {
+			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'MB';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		if($y_bytes < 1000) {
+			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'GB';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		//--
+		return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
 	//================================================================

@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.181218
+ * @version 	v.181219
  * @package 	Application
  *
  */
@@ -665,7 +665,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.181218
+ * @version 	v.181219
  *
  * @access 		private
  * @internal
@@ -767,7 +767,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.181218
+ * @version 	v.181219
  *
  */
 interface SmartInterfaceAdapterTextTranslations {

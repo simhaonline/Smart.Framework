@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.181218
+ * @version 	v.181219
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)										# count documents in a collection

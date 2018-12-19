@@ -35,7 +35,7 @@ $configs['regional']['calendar-date-format-client'] = 'dd.mm.yy';			// Client Da
 $configs['regional']['calendar-date-format-server']	= 'd.m.Y';				// Server Date Format - PHP (allow only these characters: Y m d . - [space])
 //--------------------------------------- LANGUAGE SETTINGS
 $languages = [ 'en' => '[EN]' ];											// default associative array of available languages for this software
-//$languages = [ 'en' => '[EN]', 'ro' => [ 'name' => '[RO]', 'decimal-separator' => ',', 'thousands-separator' => '.', 'calendar-week-start' => '1' ] ]; // extended associative array of available languages for this software
+//$languages = [ 'en' => '[EN]', 'ro' => [ 'name' => '[RO]', 'decimal-separator' => ',', 'thousands-separator' => '.', 'calendar-week-start' => '1' ] ]; // extended associative array of available languages for this software ; to enable languages be sure to set the SMART_FRAMEWORK_URL_PARAM_LANGUAGE in init.php
 //---------------------------------------
 
 

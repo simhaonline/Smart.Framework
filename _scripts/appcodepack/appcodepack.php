@@ -202,7 +202,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.181217.1155'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.181219.1127'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -506,7 +506,7 @@ function RunApp() {
 		$the_archdir = AppPackUtils::safe_pathname('#---APPCODE-PACKAGES---#');
 		$the_archname = '';
 		$the_archpath = '';
-		//aaa
+		//--
 		if((AppPackUtils::is_type_file('---AppCodePack-Optimizations-Done---.log')) AND (!AppPackUtils::is_type_file('---AppCodePack-Package---.log')) AND (AppPackUtils::is_type_dir((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR))) {
 			AppPackUtils::write('---AppCodePack-Package---.log', ''); // must be initialized
 			$arch = new AppNetPackager();
@@ -530,7 +530,7 @@ function RunApp() {
 			} //end if
 			unset($arch);
 		} else {
-			$err_arch = 'Either the Packages has been already created or the Optimizations failed or the Optimizations Folder ['.(string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR.'] does not exists. Clear and run the Optimizations first ...';
+			$err_arch = 'Either the Package has already been created or the Optimizations Folder ['.(string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR.'] does not exists. Clear and run the Optimizations first ...';
 		} //end if else
 		echo '<br>';
 		AppPackUtils::InstantFlush();
@@ -539,16 +539,22 @@ function RunApp() {
 			echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.@nl2br(AppPackUtils::escape_html($err_arch), false).'</div><br>'."\n";
 		} else {
 			AppPackUtils::write('---AppCodePack-Package---.log', (string)$the_archname);
-			echo "\n".'<div title="Status / OK" style="background:#98C726; color:#000000; font-weight:bold; padding:5px; border-radius:5px;"><h3>[ &nbsp; STATUS: OK &nbsp; &radic; ]</h3>';
+			echo "\n".'<div title="Status / OK" style="background:#98C726; color:#000000; font-weight:bold; padding:10px; border-radius:5px; line-height:25px;"><h3>[ &nbsp; STATUS: OK &nbsp; &radic; ]</h3>';
 			if((string)APPCODEPACK_APP_ID != '-----UNDEF-----') {
 				echo 'AppID: '.AppPackUtils::escape_html(APPCODEPACK_APP_ID).'<br>'."\n";
 				if((string)APPCODEPACK_APP_HASH_ID != '') {
 					echo 'AppID-Hash: '.AppPackUtils::escape_html(APPCODEPACK_APP_HASH_ID).'<br>'."\n";
 				} //end if
-				echo 'Package: <a download="'.AppPackUtils::escape_html($the_archname).'" href="'.AppPackUtils::escape_html(rawurlencode($the_archdir).'/'.rawurlencode($the_archname)).'">'.AppPackUtils::escape_html($the_archname).'</a>'.'<br><br>'."\n";
+				$the_archsize = 0;
+				if(AppPackUtils::is_type_file($the_archpath)) {
+					$the_archsize = AppPackUtils::get_file_size($the_archpath);
+				} //end if
+				echo 'Package: <a download="'.AppPackUtils::escape_html($the_archname).'" href="'.AppPackUtils::escape_html(rawurlencode($the_archdir).'/'.rawurlencode($the_archname)).'">'.AppPackUtils::escape_html($the_archname).'</a>'.'&nbsp;&nbsp;&nbsp;['.AppPackUtils::pretty_print_bytes($the_archsize, 2, '&nbsp;').']'.'<br>'."\n";
+				echo 'Comment: '.AppPackUtils::escape_html((string)$_GET['comment']).'<br>'."\n";
+				echo '<br>'."\n";
 			} //end if
 			echo '</div>'."\n";
-			echo "\n".'<div title="Status / Log" style="background:#EFEFEF; color:#000000; padding:5px; border-radius:5px;"><b>[ Log ]</b><hr>'.AppPackUtils::escape_html($the_archpath).' ['.number_format((int)filesize($the_archpath), 0, '.', ',').' bytes]'.'</div>'."\n";
+			echo "\n".'<div title="Status / Log" style="background:#EFEFEF; color:#000000; padding:5px; border-radius:5px;"><b>[ Log ]</b><hr>Release Package File ['.number_format((int)$the_archsize, 0, '.', ',').' bytes]'.': '.AppPackUtils::escape_html($the_archpath).'</div>'."\n";
 			echo '<!-- {APPCODEPACK:[@SUCCESS(Task:Pack)@]} -->';
 		} //end if
 		echo '<br><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / pack &nbsp;&nbsp;::&nbsp;&nbsp; '.'#END: '.date('Y-m-d H:i:s O').'</div>';
@@ -563,6 +569,17 @@ function RunApp() {
 		AppPackUtils::InstantFlush();
 		//--
 		$appcode_err_cleanup = '';
+		//--
+		$the_archdir = AppPackUtils::safe_pathname('#---APPCODE-PACKAGES---#');
+		if(AppPackUtils::is_type_dir((string)$the_archdir)) {
+			$appcode_cleanup = AppPackUtils::dir_delete((string)$the_archdir, true);
+			if((string)$appcode_cleanup != '1') {
+				$appcode_err_cleanup = 'ERROR: Failed to remove the Packages Folder: '.(string)$the_archdir;
+			} elseif(AppPackUtils::is_type_dir((string)$the_archdir)) {
+				$appcode_err_cleanup = 'ERROR: The Packages Folder was not deleted: '.(string)$the_archdir;
+			} //end if
+		} //end if
+		//--
 		if(AppPackUtils::is_type_dir((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR)) {
 			$appcode_cleanup = AppPackUtils::dir_delete((string)APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR, true);
 			if((string)$appcode_cleanup != '1') {
@@ -647,6 +664,31 @@ function RunApp() {
 			echo '</select> &nbsp; ';
 			echo '<button style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" onClick="var selTask = \'\'; try { selTask = document.getElementById(\'task-run-sel\').value; } catch(err){} if(selTask){ if(selTask == \'pack\') { var comment = prompt(\'Enter a Package Release Info\', \'\'); self.location = \'?run=\' + selTask + \'&comment=\' + encodeURIComponent(comment ? String(comment) : \'\'); } else { self.location = \'?run=\' + selTask; } } else { alert(\'No Task Selected ...\'); }" title="Click this button to run the selected task from the near list">Run the Selected TASK</button>'."\n";
 			echo '</div>';
+			//--
+			if(AppPackUtils::path_exists('---AppCodePack-Package---.log')) {
+				$the_archdir = AppPackUtils::safe_pathname('#---APPCODE-PACKAGES---#');
+				if(AppPackUtils::is_type_dir($the_archdir)) {
+					clearstatcache(true, (string)$the_archdir);
+					$arr_dir_packs = scandir((string)$the_archdir); // don't make it array, can be false
+					if(($arr_dir_packs !== false) AND (AppPackUtils::array_size($arr_dir_packs) > 0)) {
+						echo '<br><hr><div style="background:#ECECEC; color:#333333; border-radius:5px; padding:8px; margin-bottom:5px; font-weight:bold; cursor:help;"><h2>List of available Release Packages:</h2>';
+						$pkcnt = 0;
+						for($i=0; $i<AppPackUtils::array_size($arr_dir_packs); $i++) {
+							if(((string)trim((string)$arr_dir_packs[$i]) != '') AND ((string)$arr_dir_packs[$i] != '.') AND ((string)$arr_dir_packs[$i] != '..')) { // fix ok
+								if(AppPackUtils::check_if_safe_file_or_dir_name((string)$arr_dir_packs[$i])) {
+									if(AppPackUtils::check_if_safe_path((string)$the_archdir.'/'.$arr_dir_packs[$i])) {
+										if(AppPackUtils::is_type_file($the_archdir.'/'.$arr_dir_packs[$i])) {
+											$pkcnt++;
+											echo 'Package #'.(int)$pkcnt.': <a download="'.AppPackUtils::escape_html($arr_dir_packs[$i]).'" href="'.AppPackUtils::escape_html(rawurlencode($the_archdir).'/'.rawurlencode((string)$arr_dir_packs[$i])).'">'.AppPackUtils::escape_html($arr_dir_packs[$i]).'</a>'.'&nbsp;&nbsp;&nbsp;['.AppPackUtils::pretty_print_bytes(AppPackUtils::get_file_size($the_archdir.'/'.$arr_dir_packs[$i]), 2, '&nbsp;').'] @ '.AppPackUtils::escape_html(date('Y-m-d H:i:s O', (int)AppPackUtils::get_file_mtime($the_archdir.'/'.$arr_dir_packs[$i]))).'<br>'."\n";
+										} //end if
+									} //end if
+								} //end if
+							} //end if
+						} //end for
+						echo '<br></div><br>'."\n";
+					} //end if
+				} //end if
+			} //end if
 			//--
 		} //end if
 		//--
@@ -2716,7 +2758,7 @@ final class JShrinkMinifier {
 final class AppPackUtils {
 
 	// ::
-	// v.181217 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.181219 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3259,12 +3301,12 @@ Options -Indexes
 				$arr_dir_sorted_files = []; // init
 				for($i=0; $i<self::array_size($arr_dir_files); $i++) {
 					if((string)$arr_dir_files[$i] == 'maintenance.html') { // maintenance.html must be first !
-						$arr_dir_sorted_files[] = (string)$arr_dir_files[$i];
+						$arr_dir_sorted_files[] = (string) $arr_dir_files[$i];
 					} //end if
 				} //end for
 				for($i=0; $i<self::array_size($arr_dir_files); $i++) {
-					if(((string)$arr_dir_files[$i] != 'maintenance.html') AND ((string)$arr_dir_files[$i] != '.') AND ((string)$arr_dir_files[$i] != '..')) {
-						$arr_dir_sorted_files[] = (string)$arr_dir_files[$i]; // add the rest of files except . and ..
+					if(((string)$arr_dir_files[$i] != 'maintenance.html') AND ((string)trim((string)$arr_dir_files[$i]) != '') AND ((string)$arr_dir_files[$i] != '.') AND ((string)$arr_dir_files[$i] != '..')) { // fix ok
+						$arr_dir_sorted_files[] = (string) $arr_dir_files[$i]; // add the rest of files except . and ..
 					} //end if
 				} //end for
 				$arr_dir_files = (array) $arr_dir_sorted_files;
@@ -3323,7 +3365,7 @@ Options -Indexes
 			if(self::array_size($arr_dir_files) > 0) {
 				for($i=0; $i<self::array_size($arr_dir_files); $i++) {
 					$file = (string) $arr_dir_files[$i];
-					if(((string)$file != '') AND ((string)$file != '.') AND ((string)$file != '..')) {
+					if(((string)trim((string)$file) != '') AND ((string)$file != '.') AND ((string)$file != '..')) { // fix ok
 						$not_restored_files[] = (string) $file;
 					} //end if
 				} //end for
@@ -4019,7 +4061,49 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.181218
+	//##### SmartUtils v.181219
+
+
+	//================================================================
+	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ') {
+		//--
+		$y_decimals = (int) $y_decimals;
+		if($y_decimals < 0) {
+			$y_decimals = 0;
+		} //end if
+		if($y_decimals > 4) {
+			$y_decimals = 4;
+		} //end if
+		//--
+		if(!is_int($y_bytes)) {
+			return (string) $y_bytes;
+		} //end if
+		//--
+		if($y_bytes < 1000) {
+			return (string) self::format_number_int($y_bytes).$y_separator.'bytes';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		if($y_bytes < 1000) {
+			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'KB';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		if($y_bytes < 1000) {
+			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'MB';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		if($y_bytes < 1000) {
+			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'GB';
+		} //end if
+		//--
+		$y_bytes = $y_bytes / 1000;
+		//--
+		return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
 	//================================================================
