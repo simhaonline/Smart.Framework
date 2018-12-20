@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181219
+ * @version 	v.181220
  *
  */
 final class TestUnitMongoDB {
@@ -85,9 +85,11 @@ final class TestUnitMongoDB {
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Drop Test Collection if Exists (if not exists just ignore the error)';
-			$result = $mongo->igcommand([
-				'drop' => (string) 'myTestCollection'
-			]);
+			$result = $mongo->igcommand(
+				[
+					'drop' => (string) 'myTestCollection'
+				]
+			);
 		} //end if
 		//--
 
@@ -95,10 +97,12 @@ final class TestUnitMongoDB {
 		if((string)$err == '') {
 			$tst = 'Create Test Collection';
 			$tests[] = (string) $tst;
-			$result = $mongo->command([
-				'create' => (string) 'myTestCollection'
-			]);
-			if(!$mongo->command_is_ok($result)) {
+			$result = $mongo->command(
+				[
+					'create' => (string) 'myTestCollection'
+				]
+			);
+			if(!$mongo->is_command_ok($result)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -379,7 +383,11 @@ final class TestUnitMongoDB {
 			$result = $mongo->findone(
 				'myTestCollection',
 				[ 'cost' => 7 ], // filter (update all except these)
-				[ '_id', 'name', 'cost' ],
+				[ // projection
+					'_id' => 1,
+					'name' => 1,
+					'cost' => 1
+				],
 				[
 					'limit' => 2 // trying to fake the limit
 				]
@@ -392,12 +400,34 @@ final class TestUnitMongoDB {
 
 		//--
 		if((string)$err == '') {
-			$tst = 'Find Single Document by Filter and Limit';
+			$tst = 'Find Single Document by Filter and Limit / Offset';
 			$tests[] = (string) $tst;
 			$result = $mongo->find(
 				'myTestCollection',
 				[ 'cost' => 7 ], // filter (update all except these)
-				[],
+				[ // projection
+					'_id',
+					'cost'
+				],
+				[
+					'limit' => 1, // limit
+					'skip' => 0 // offset
+				]
+			);
+			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 7)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+			} //end if
+		} //end if
+		//--
+
+		//--
+		if((string)$err == '') {
+			$tst = 'Find Single Document by Filter and Limit with No Projection';
+			$tests[] = (string) $tst;
+			$result = $mongo->find(
+				'myTestCollection',
+				[ 'cost' => 7 ], // filter (update all except these)
+				[], // no projection
 				[
 					'limit' => 1
 				]
@@ -410,18 +440,22 @@ final class TestUnitMongoDB {
 
 		//--
 		if((string)$err == '') {
-			$tst = 'Find Many Documents by Filter';
+			$tst = 'Find Many Documents by Filter with Sort';
 			$tests[] = (string) $tst;
 			$result = $mongo->find(
 				'myTestCollection',
-				[ 'cost' => 7 ], // filter (update all except these)
-				[ '_id', 'name', 'cost' ],
+				[ 'cost' => [ '$gt' => 5 ] ], // filter (update all except these)
+				[ // projection
+					'_id' => 1,
+					'name' => 1,
+					'cost' => [ '$slice' => -1 ]
+				],
 				[
 					'limit' => 2, // trying to fake the limit
 					'sort' => [ 'cost' => -1 ], // sort by cost descending
 				]
 			);
-			if((\Smart::array_size($result) != 2) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 7) OR (\Smart::array_size($result[1]) <= 0) OR ($result[1]['cost'] != 7)) {
+			if((\Smart::array_size($result) != 2) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 10) OR (\Smart::array_size($result[1]) <= 0) OR ($result[1]['cost'] != 9)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -438,14 +472,34 @@ final class TestUnitMongoDB {
 
 		//--
 		if((string)$err == '') {
-			$tst = 'Search Distinct with Filter';
+			$tst = 'Aggregate Find / GroupBy with Filter, Sort and Limit';
 			$tests[] = (string) $tst;
-			$result = $mongo->command([
-				'distinct' => (string) 'myTestCollection',
-				'key' => (string) 'cost',
-				'query' => (array) ['cost' => ['$gte' => 6]]
-			]);
-			if((!$mongo->command_is_ok($result)) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['values']) != 5)) {
+			$result = $mongo->command(
+				[
+					'aggregate' => (string) 'myTestCollection',
+					'pipeline' => [ // return a pipeline
+						[
+							'$match' => [ // query
+								'_id' => [ '$exists' => true ],
+								'cost' => [ '$gte' => 0, '$lte' => 10 ]
+							]
+						],
+						[
+							'$group' => [ // group
+								'_id' => '$cost',
+								'total' => ['$sum' => '$cost']
+							]
+						],
+						[
+							'$sort' => [ 'total' => -1 ] // sorting
+						],
+						[	'$limit' => 4 ], 	// limit results: in the case of aggregate this is limit(3) + skip(1) = 4
+						[	'$skip' => 1 ] 		// offset (1)
+					],
+					'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
+				]
+			);
+			if((\Smart::array_size($result) != 3) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[1]) <= 0) OR (\Smart::array_size($result[2]) <= 0)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -453,25 +507,44 @@ final class TestUnitMongoDB {
 
 		//--
 		if((string)$err == '') {
-			$tst = 'Search Aggregate Group By with Filter, Sort and Limit';
+			$tst = 'Aggregate Count / GroupBy with Filter';
 			$tests[] = (string) $tst;
-			$result = $mongo->command([
-				'aggregate' => (string) 'myTestCollection',
-				'pipeline' => [
-					[
-						'$match' => [ 'cost' => [ '$gte' => 6 ] ]
+			$result = $mongo->command(
+				[
+					'aggregate' => (string) 'myTestCollection',
+					'pipeline' => [ // return a pipeline
+						[
+							'$match' => [ '_id' => [ '$exists' => true ], 'cost' => 7 ] // query
+						],
+						[
+							'$group' => [
+								'_id'   => '$cost',
+								'count' => [ '$sum' => 1 ]
+							]
+						],
+						[	'$limit' => 100 ] // max results
 					],
-					[
-						'$group' => [ '_id' => '$cost', 'total' => ['$sum' => '$cost'] ]
-					],
-					[
-						'$sort' => [ '_id' => -1 ]
-					],
-					[	'$limit' => 5 ]
-				],
-				'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
-			]);
-			if((\Smart::array_size($result) != 5) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[1]) <= 0) OR (\Smart::array_size($result[2]) <= 0) OR (\Smart::array_size($result[3]) <= 0) OR (\Smart::array_size($result[4]) <= 0)) {
+					'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
+				]
+			);
+			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['count'] != 2)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+			} //end if
+		} //end if
+		//--
+
+		//--
+		if((string)$err == '') {
+			$tst = 'Search Distinct with Filter'; // this may not use limit / offset thus use Find / GroupBy (Aggregate) instead
+			$tests[] = (string) $tst;
+			$result = $mongo->command(
+				[
+					'distinct' => (string) 'myTestCollection',
+					'key' => (string) 'cost',
+					'query' => (array) ['cost' => ['$gte' => 6]]
+				]
+			);
+			if((!$mongo->is_command_ok($result)) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['values']) != 5)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -481,15 +554,18 @@ final class TestUnitMongoDB {
 		if((string)$err == '') {
 			$tst = 'MapReduce with Limit and Sort';
 			$tests[] = (string) $tst;
-			$result = $mongo->command([
-				'mapReduce' => 'myTestCollection',
-				'map' => 'function() { emit(this.$cost, 1); }',
-				'reduce' => 'function(k, vals) { var sum = 0; for (var i in vals) { sum += vals[i]; } return sum; }',
-				'out' => [ 'inline' => 1 ],
-				'query' => [ 'cost' => [ '$gte' => 7 ] ],
-				'sort' => [ 'cost' => -1 ],
-				'limit' => 100
-			]);
+			$result = $mongo->command(
+				[
+					'mapReduce' => 'myTestCollection',
+					'map' => 'function() { emit(this.$cost, 1); }',
+					'reduce' => 'function(k, vals) { var sum = 0; for (var i in vals) { sum += vals[i]; } return sum; }',
+					'out' => [ 'inline' => 1 ], // required to return results instead to populate a destination collection with the mapReduce results
+				//	'final' => '', // optional js function post reduce
+					'query' => [ 'cost' => [ '$gte' => 7 ] ],
+					'sort' => [ 'cost' => -1 ],
+					'limit' => 10
+				]
+			);
 			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['results']) <= 0) OR (\Smart::array_size($result[0]['results'][0]) <= 0) OR ($result[0]['results'][0]['value'] != 5)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
 			} //end if
@@ -500,10 +576,12 @@ final class TestUnitMongoDB {
 		if((string)$err == '') {
 			$tst = 'Drop Test Collection';
 			$tests[] = (string) $tst;
-			$result = $mongo->command([
-				'drop' => (string) 'myTestCollection'
-			]);
-			if(!$mongo->command_is_ok($result)) {
+			$result = $mongo->command(
+				[
+					'drop' => (string) 'myTestCollection'
+				]
+			);
+			if(!$mongo->is_command_ok($result)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
 			} //end if
 		} //end if

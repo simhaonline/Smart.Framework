@@ -10,6 +10,7 @@ Template: templating-test-extended.mtpl.htm
 	&nbsp;&nbsp;
 	<a href="?page=samples.templating-test-extended&op=viewpartialsource" target="tpl_m_view_source" data-smart="open.modal" class="ux-button ux-button-small ux-button-secondary"><i class="fa fa-code"></i> &nbsp; View Sub-TPL Source</a>
 </div>
+<h2 id="qunit-test-result">...</h2>
 <div id="tpl-test">
 <!-- Test for Markers-Templating v.181122 -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
@@ -197,9 +198,9 @@ jQuery.ajax({
 		} //end if
 		//--
 		if(!errors) {
-			jQuery('#tpl-test').prepend('<h2 style="color:#33CC33;">JS/PHP Render comparison for reference Markers-TPL: OK</h2>');
+			jQuery('#qunit-test-result').attr('style', 'color: #33CC33 !important;').text('JS/PHP Render comparison for reference Markers-TPL: OK');
 		} else {
-			jQuery('#tpl-test').prepend('<h2 style="color:#FF3300;">JS/PHP Render comparison for reference Markers-TPL: FAILED</h2>');
+			jQuery('#qunit-test-result').attr('style', 'color: #FF3300 !important;').text('JS/PHP Render comparison for reference Markers-TPL: FAILED');
 		} //end if
 		//--
 	},

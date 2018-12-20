@@ -16,9 +16,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* Smart::
 // DEPENDS-EXT: PHP MongoDB / PECL (v.1.0.1 or later)
 //======================================================
-// Tested and Stable on MongoDB Server versions:
-// 3.2 / 3.3 / 3.4 / 3.5 / 3.6 / 3.7 / 3.8 / 3.9 / 4.0 / 4.1
-//======================================================
 
 
 //=====================================================================================
@@ -27,28 +24,70 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 /**
- * Class Smart MongoDB Client (for PHP-MongoDB v.1.0.1 or later)
+ * Class Smart MongoDB Client (for PHP MongoDB extension v.1.0.1 or later)
+ * Tested and Stable on MongoDB Server versions: 3.2 / 3.3 / 3.4 / 3.5 / 3.6 / 3.7 / 3.8 / 3.9 / 4.0 / 4.1
  *
- * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
+ * <code>
+ *
+ * // sample mongo config
+ * $cfg_mongo = array();
+ * $cfg_mongo['type'] 		= 'mongo-standalone'; 					// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
+ * $cfg_mongo['server-host']	= '127.0.0.1';						// mongodb host
+ * $cfg_mongo['server-port']	= '27017';						// mongodb port
+ * $cfg_mongo['dbname']		= 'smart_framework';					// mongodb database
+ * $cfg_mongo['username'] 		= '';							// mongodb username
+ * $cfg_mongo['password'] 		= '';							// mongodb Base64-Encoded password
+ * $cfg_mongo['timeout']		= 5;							// mongodb connect timeout in seconds
+ * $cfg_mongo['slowtime']		= 0.0035;						// 0.0025 .. 0.0090 slow query time (for debugging)
+ *
+ * $mongo = new \SmartMongoDb($cfg_mongo);
+ *
+ * // sample insert
+ * $doc = [];
+ * $doc['_id']  = $mongo->assign_uuid();
+ * $doc['name'] = 'My Name';
+ * $doc['description'] = 'Some description goes here ...';
+ * $insert = $mongo->insert('myTestCollection', $doc);
+ * var_dump($insert);
+ *
+ * // sample find
+ * $query = $mongo->find(
+ * 	'myTestCollection',
+ * 	[ 'name' => 'My Name' ], // filter (update all except these)
+ * 	[ // projection
+ * 		'name',
+ * 		'description'
+ * 	],
+ * 	[
+ * 		'limit' => 1, // limit
+ * 		'skip' => 0 // offset
+ * 	]
+ * );
+ * var_dump($query);
+ *
+ * </code>
+ *
+ * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
+ * @hint 		Important: MongoDB database specifies that max BSON document size is 16 megabytes, thus this limit cannot be exceeded from PHP side when creating new mongodb documents: https://docs.mongodb.com/manual/reference/limits/
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.181219
+ * @version 	v.181220
  * @package 	Database:MongoDB
  *
- * @method MIXED		count($strCollection, $arrQuery)										# count documents in a collection
- * @method MIXED		find($strCollection, $arrQuery, $arrProjFields, $arrOptions)			# find single or multiple ddocument(s) in a collection with optional filter criteria / limit
- * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)			# find single document in a collection with optional filter criteria / limit
- * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)								# add multiple documents to a collection
- * @method MIXED		insert($strCollection, $arrDoc)											# add single document to a collection
- * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)					# insert single or modify single or multi documents in a collection that are matching the filter criteria
- * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)					# modify single or many document(s) in a collection that are matching the filter criteria
- * @method MIXED		delete($strCollection, $arrFilter)										# delete single or many document(s) from a collection that are matching the filter criteria
- * @method MIXED		command($arrCmd)														# run a command over database like: distinct, groupBy, mapReduce, createCollection, dropCollection
- * @method MIXED		igcommand($arrCmd)														# run a command over database (but in case of error will ignore stop execution and will return the errors instead of result) like: createCollection which may throw errors if collection already exists, dropCollection (similar if does not exists)
+ * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
+ * @method MIXED		find($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single or multiple documents in a collection with optional filter criteria / limit
+ * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single document in a collection with optional filter criteria / limit
+ * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)									# add multiple documents to a collection
+ * @method MIXED		insert($strCollection, $arrDoc)												# add single document to a collection
+ * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# insert single or modify single or multi documents in a collection that are matching the filter criteria
+ * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# modify single or many documents in a collection that are matching the filter criteria
+ * @method MIXED		delete($strCollection, $arrFilter)											# delete single or many documents from a collection that are matching the filter criteria
+ * @method MIXED		command($arrCmd)															# run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...
+ * @method MIXED		igcommand($arrCmd)															# run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists
  *
  */
-final class SmartMongoDb {
+final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to avoid break the comments !!!
 
 	// ->
 
@@ -220,7 +259,11 @@ public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
 
 
 //======================================================
-// a replacement for the default MongoDB object ID, will generate a 32 characters very unique UUID (base36)
+/**
+ * A replacement for the default MongoDB object ID, will generate a 32 characters very unique UUID
+ *
+ * @return 	STRING						:: UUID (base36)
+ */
 public function assign_uuid() {
 
 	//--
@@ -232,10 +275,15 @@ public function assign_uuid() {
 
 
 //======================================================
+/**
+ * Get the MongoDB server version
+ *
+ * @return 	STRING						:: MongoDB version
+ */
 public function get_server_version() {
 
 	//--
-	if((string)trim((string)$this->srvver) == '') {
+	if((string)$this->srvver == '') {
 		//--
 		$arr_build_info = $this->command(['buildinfo' => true]);
 		//--
@@ -249,7 +297,7 @@ public function get_server_version() {
 		//--
 	} //end if
 	//--
-	if((string)trim((string)$this->srvver) == '') {
+	if((string)$this->srvver == '') {
 		$this->srvver = '0.0'; // avoid requery
 	} //end if
 	//--
@@ -263,8 +311,15 @@ public function get_server_version() {
 
 
 //======================================================
-// test a command output for 0/OK=1
-public function command_is_ok($result) {
+/**
+ * Test if a command output is OK compliant (will check if result[0][ok] == 1)
+ * Notice: not all MongoDB commands will return this standard answer, but for most will work
+ *
+ * @param MIXED result							:: result output from a mongodb command
+ *
+ * @return BOOLEAN								:: TRUE / FALSE
+ */
+public function is_command_ok($result) {
 
 	//--
 	$is_ok = false;
@@ -318,6 +373,8 @@ public function __call($method, array $args) {
 	$opts = array();
 	$drows = 0;
 	$dcmd = 'nosql';
+	$dmethod = (string) $method;
+	$skipdbg = false;
 	//--
 	switch((string)$method) {
 		//-- collection methods
@@ -390,19 +447,29 @@ public function __call($method, array $args) {
 			if(is_array($args[3])) {
 				$opts = (array) $args[3]; // arrOptions
 			} //end if
-			//-- fix: find one must have limit 1
+			//-- fix: find one must have limit 1, offset 0
 			if((string)$method == 'findone') {
-				$opts['limit'] = 1;
+				$opts['limit'] = 1; // limit
+				$opts['skip'] = 0; // offset
 			} //end if
 			//-- fix: select just particular fields
 			$opts['projection'] = array(); // arrProjFields
 			if(Smart::array_size($args[2]) > 0) {
-				foreach((array)$args[2] as $key => $val) {
-					$val = (string) trim((string)$val);
-					if((string)$val != '') {
-						$opts['projection'][(string)$val] = 1;
-					} //end if
-				} //end foreach
+				if(\Smart::array_type_test($args[2]) === 2) { // associative
+					foreach((array)$args[2] as $key => $val) {
+						$key = (string) trim((string)$key);
+						if((string)$key != '') {
+							$opts['projection'][(string)$key] = $val; // mixed: number or array
+						} //end if
+					} //end foreach
+				} elseif(\Smart::array_type_test($args[2]) === 1) { // non-associative
+					for($i=0; $i<\Smart::array_size($args[2]); $i++) {
+						$key = (string) trim((string)$args[2][$i]);
+						if((string)$key != '') {
+							$opts['projection'][(string)$key] = 1; // must be 1 here
+						} //end if
+					} //end for
+				} //end if else
 			} //end if
 			//print_r($opts); die();
 			//--
@@ -665,12 +732,25 @@ public function __call($method, array $args) {
 		//--
 		case 'command': 	// ARGS [ arrCmd ]
 		case 'igcommand': 	// ARGS [ arrCmd ]
-			//--
+			//-- dbg types: 'count', 'read', 'write', 'transaction', 'set', 'metainfo'
 			$qry = (array) $args[0]; // arrQuery
+			foreach($qry as $kk => $vv) {
+				if((string)strtolower((string)$kk) == 'buildinfo') {
+					$dcmd = (string) 'metainfo';
+				} elseif((string)strtolower((string)$kk) == 'count') {
+					$dcmd = (string) 'count';
+				} elseif(in_array((string)strtolower((string)$kk), ['find', 'aggregate', 'distinct', 'mapreduce', 'geosearch'])) {
+					$dcmd = (string) 'read';
+				} elseif(in_array((string)strtolower((string)$kk), ['delete', 'insert', 'update'])) {
+					$dcmd = (string) 'write';
+				} //end if
+				$dmethod = (string) str_replace(':', '-', (string)$kk).'::'.$method; // subname
+				break;
+			} //end if
 			//--
 			$command = new \MongoDB\Driver\Command((array)$qry);
 			if(!is_object($command)) {
-				$this->error((string)$this->connex_key, 'MongoDB Command', 'MongoDB->'.$method.'()', 'ERROR: Command Object is null ...', $args);
+				$this->error((string)$this->connex_key, 'MongoDB Command', 'MongoDB->'.$dmethod.'()', 'ERROR: Command Object is null ...', $args);
 				return array();
 			} //end if
 			//--
@@ -681,14 +761,14 @@ public function __call($method, array $args) {
 				if((string)$method == 'igcommand') {
 					$igerr = (string) $err->getMessage(); // must be type string
 				} else {
-					$this->error((string)$this->connex_key, 'MongoDB Command Execute', 'MongoDB->'.$method.'()', 'ERROR: '.$err->getMessage(), $args);
+					$this->error((string)$this->connex_key, 'MongoDB Command Execute', 'MongoDB->'.$dmethod.'()', 'ERROR: '.$err->getMessage(), $args);
 					return array();
 				} //end if else
 			} //end try
 			$obj = array();
 			if(((string)$method == 'command') OR ($igerr === false)) {
 				if(!is_object($cursor)) {
-					$this->error((string)$this->connex_key, 'MongoDB Command Cursor', 'MongoDB->'.$method.'()', 'ERROR: Cursor Object is null ...', $args);
+					$this->error((string)$this->connex_key, 'MongoDB Command Cursor', 'MongoDB->'.$dmethod.'()', 'ERROR: Cursor Object is null ...', $args);
 					return array();
 				} //end if
 				$cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
@@ -715,7 +795,7 @@ public function __call($method, array $args) {
 						'type' 		=> 'catcheable PHP Exception / MongoDB Manager: executeCommand',
 						'class' 	=> (string) __CLASS__,
 						'function' 	=> (string) __FUNCTION__,
-						'method' 	=> (string) $method
+						'method' 	=> (string) $dmethod
 					]
 				);
 			} //end if else
@@ -725,6 +805,7 @@ public function __call($method, array $args) {
 			//print_r($obj); die();
 			//--
 			break;
+
 		//--
 		default:
 			//--
@@ -735,38 +816,38 @@ public function __call($method, array $args) {
 	//--
 
 	//--
-	if($this->connected === true) { // avoid register pre-connect commands like version)
-		//--
-		if(SmartFrameworkRuntime::ifDebug()) {
-			//--
-			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-queries', 1, '+');
-			//--
-			$time_end = (float) (microtime(true) - (float)$time_start);
-			//--
-			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-time', $time_end, '+');
-			//--
-			$dbg_arr_cmd = [];
-			if($this->collection) {
-				$dbg_arr_cmd['Collection'] = (string) $this->collection;
+	if(SmartFrameworkRuntime::ifDebug()) {
+		if($skipdbg !== true) {
+			if($this->connected === true) { // avoid register pre-connect commands like version)
+				//--
+				SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-queries', 1, '+');
+				//--
+				$time_end = (float) (microtime(true) - (float)$time_start);
+				//--
+				SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|total-time', $time_end, '+');
+				//--
+				$dbg_arr_cmd = [];
+				if($this->collection) {
+					$dbg_arr_cmd['Collection'] = (string) $this->collection;
+				} //end if
+				$dbg_arr_cmd['Query'] = (array) $qry;
+				if($opts) {
+					$dbg_arr_cmd['Options'] = (array) $opts;
+				} //end if
+				//--
+				SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
+					'type' 			=> (string) $dcmd,
+					'data' 			=> (string) strtoupper((string)$dmethod),
+					'command' 		=> (array)  $dbg_arr_cmd,
+					'time' 			=> (string) Smart::format_number_dec($time_end, 9, '.', ''),
+					'rows' 			=> (int)    $drows,
+					'connection' 	=> (string) $this->connex_key
+				]);
+				//--
+				$dbg_arr_cmd = null; // free mem
+				//--
 			} //end if
-			$dbg_arr_cmd['Query'] = (array) $qry;
-			if($opts) {
-				$dbg_arr_cmd['Options'] = (array) $opts;
-			} //end if
-			//--
-			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
-				'type' 			=> (string) $dcmd,
-				'data' 			=> (string) strtoupper($method),
-				'command' 		=> (array)  $dbg_arr_cmd,
-				'time' 			=> (string) Smart::format_number_dec($time_end, 9, '.', ''),
-				'rows' 			=> (int)    $drows,
-				'connection' 	=> (string) $this->connex_key
-			]);
-			//--
-			$dbg_arr_cmd = null; // free mem
-			//--
 		} //end if
-		//--
 	} //end if
 	//--
 

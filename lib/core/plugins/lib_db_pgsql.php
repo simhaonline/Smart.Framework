@@ -25,13 +25,6 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
 //	* SmartUtils::
 // DEPENDS-EXT: PHP PgSQL Extension
 //======================================================
-// Tested and Stable on PgSQL versions:
-// 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x / 9.6.x
-// Tested and Stable with PgPool-II versions:
-// 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x / 3.5.x
-// Tested and Stable with PgBouncer:
-// all versions
-//======================================================
 
 // [REGEX-SAFE-OK]
 
@@ -42,6 +35,10 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
 
 /**
  * Class: SmartPgsqlDb - provides a Static PostgreSQL DB Server Client that can be used just with the DEFAULT connection from configs.
+ *
+ * Tested and Stable on PostgreSQL versions: 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x / 9.6.x / 10.x / 11.x
+ * Tested and Stable with PgPool-II versions: 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x / 3.5.x / 3.6.x / 3.7.x / 4.0.x
+ * Tested and Stable with PgBouncer: all versions
  *
  * This class provides an easy and convenient way to work with the PostgreSQL DEFAULT connection, as all methods are static.
  * It can be used just with the DEFAULT connection which must be set in etc/config.php: $configs['pgsql'].
@@ -2292,6 +2289,10 @@ return (string) $sql;
 
 /**
  * Class: SmartPgsqlExtDb - provides a Dynamic (Extended) PostgreSQL DB Server Client that can be used with custom made connections.
+ *
+ * Tested and Stable on PostgreSQL versions: 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x / 9.6.x / 10.x / 11.x
+ * Tested and Stable with PgPool-II versions: 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x / 3.5.x / 3.6.x / 3.7.x / 4.0.x
+ * Tested and Stable with PgBouncer: all versions
  *
  * This class is made to be used with custom made PostgreSQL connections (other servers than default).
  *

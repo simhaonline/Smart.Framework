@@ -18,9 +18,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartParser::
 // DEPENDS-EXT: PHP Sockets
 //======================================================
-// Tested and Stable on Redis versions:
-// 2.6.x / 2.8.x / 3.0.x / 3.2.x
-//======================================================
 
 
 //=====================================================================================
@@ -33,6 +30,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 /**
  * Class: SmartRedisDb - provides a Client for Redis (Data Structure / Caching) Server.
  * By default this class will just log the errors.
+ *
+ * Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x
  *
  * <code>
  *
@@ -52,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.181019
+ * @version 	v.181220
  * @package 	Database:Redis
  *
  * @method	STRING		ping()										# Ping the Redis server ; returns: the test answer which is always PONG
@@ -67,7 +66,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @method	MIXED		keys(STRING $pattern)						# Get all keys matching a pattern ; return array of all keys matching a pattern or null if no key
  *
  */
-final class SmartRedisDb {
+final class SmartRedisDb { // !!! Use no paranthesis after magic methods doc to avoid break the comments !!!
 
 // ->
 

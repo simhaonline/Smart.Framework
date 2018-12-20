@@ -19,8 +19,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartUtils::
 //	* SmartFileSystem::
 // DEPENDS-EXT: PHP SQLite3 Extension
-// Tested and Stable on SQLite versions:
-// 3.x
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -32,6 +30,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 /**
  * Class: SmartSQliteDb - provides a Dynamic SQLite Database Client.
+ *
+ * Tested and Stable on SQLite versions: 3.x
  *
  * <code>
  *
@@ -441,6 +441,8 @@ private function check_opened() {
 
 /**
  * Class: SmartSQliteDb - provides a Static SQLite Database Client.
+ *
+ * Tested and Stable on SQLite versions: 3.x
  *
  * THIS CLASS IS FOR PRIVATE USE. USE INSTEAD THE: SmartSQliteDb
  * @access 		private
