@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Plugins / Markdown Parser]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / Markdown to HTML Parser]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -30,8 +30,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
- * @depends 	SmartFramework
- * @version 	v.181205
+ * @depends 	Smart, SmartUnicode, SmartUtils
+ * @version 	v.20190105
  * @package 	Converters
  *
  */
@@ -39,7 +39,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.170512@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
+	private $mkdw_version = 'v.1.5.4-r.20190105@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -200,7 +200,7 @@ final class SmartMarkdownToHTML {
 			$info_entities = 'E:1';
 		} //end if else
 		//-- it always add tags ...
-		return $markup = "\n".'<!--  HTML/Markdown # ( '.Smart::escape_html($info_linebreaks.' '.$info_markup.' '.$info_urls.' '.$info_entities.' T:'.date('ymdHi')).' )  -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!--  # HTML/Markdown # '.Smart::escape_html((string)$this->mkdw_version).' #  -->'."\n"; // if parsed and contain HTML Tags, add div and comments
+		return $markup = "\n".'<!--  HTML/Markdown # ( '.Smart::escape_html($info_linebreaks.' '.$info_markup.' '.$info_urls.' '.$info_entities.' T:'.date('YmdHi')).' )  -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!--  # HTML/Markdown # '.Smart::escape_html((string)$this->mkdw_version).' #  -->'."\n"; // if parsed and contain HTML Tags, add div and comments
 		//--
 	} //END FUNCTION
 
@@ -211,7 +211,8 @@ final class SmartMarkdownToHTML {
 		//--
 		foreach($lines as $z => $line) {
 			//--
-			if(chop($line) === '') {
+		//	if(chop($line) === '') {
+			if(rtrim($line) === '') {
 				//--
 				if(isset($CurrentBlock)) {
 					$CurrentBlock['interrupted'] = true;
@@ -773,7 +774,8 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//--
-		if(chop($Line['text'], $Line['text'][0]) === '') {
+	//	if(chop($Line['text'], $Line['text'][0]) === '') {
+		if(rtrim($Line['text'], $Line['text'][0]) === '') {
 			//--
 			$Block['element']['name'] = $Line['text'][0] === '=' ? 'h1' : 'h2';
 			//--
@@ -913,8 +915,15 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//--
-		if((strpos($Block['element']['text'], '|') !== false) AND (chop($Line['text'], ' -:|') === '')) {
-			//--
+	//	if((strpos($Block['element']['text'], '|') !== false) AND (chop($Line['text'], ' -:|') === '')) {
+		if((strpos($Block['element']['text'], '|') !== false) AND (rtrim($Line['text'], ' -:|') === '')) {
+			//-- unixman
+			if($Block['element']['text'][0] === '|') {
+				$is_full_width = true;
+			} else {
+				$is_full_width = false;
+			} //end if
+			//-- #unixman
 			$alignments = array();
 			//--
 			$divider = $Line['text'];
@@ -994,24 +1003,25 @@ final class SmartMarkdownToHTML {
 				'element' => array(
 					'name' => 'table',
 					'handler' => 'elements',
+					'attributes' => ($is_full_width ? ['class' => 'full-width-table'] : [])
 				),
 			);
 			//--
 			$Block['element']['text'][]= array(
 				'name' => 'thead',
-				'handler' => 'elements',
+				'handler' => 'elements'
 			);
 			//--
 			$Block['element']['text'][]= array(
 				'name' => 'tbody',
 				'handler' => 'elements',
-				'text' => array(),
+				'text' => array()
 			);
 			//--
 			$Block['element']['text'][0]['text'][]= array(
 				'name' => 'tr',
 				'handler' => 'elements',
-				'text' => $HeaderElements,
+				'text' => $HeaderElements
 			);
 			//--
 			return $Block;
@@ -1635,15 +1645,18 @@ final class SmartMarkdownToHTML {
 		//--
 		$markup = '<'.$Element['name'];
 		//--
-		if(isset($Element['attributes'])) {
+	//	if(isset($Element['attributes'])) {
+		if(is_array($Element['attributes'])) {
 			//--
 			foreach($Element['attributes'] as $name => $value) {
 				//--
-				if($value === null) {
+			//	if($value === null) {
+				$value = (string) trim((string)$value);
+				if(!$value) {
 					continue;
 				} //end if
 				//--
-				$markup .= ' '.$name.'="'.$value.'"';
+				$markup .= ' '.Smart::escape_html($name).'="'.Smart::escape_html($value).'"';
 				//--
 			} //end foreach
 			//--

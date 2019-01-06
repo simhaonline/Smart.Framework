@@ -1,6 +1,14 @@
 
 # CHANGELOG / MIGRATION NOTES for Milestone Releases Only - SMART.FRAMEWORK #
 
+January 03, 2019 :: Version 3.7.8
+	* new feature: QUnit Test Module
+	* new feature: Admins Auth Module with Simple or Multi-Account Authentication for admin.php area
+	* removed some deprecated functions
+	* moved lib MySQL / MariaDB from Smart.Framework.Modules to Smart.Framework
+	* bug fixes and optimizations
+	* fix compatibility with PHP 7.3 for all code
+
 October 10, 2018 :: Version 3.7.7
 	* many optimizations for controllers, translators
 	* some bug fixes
@@ -8,6 +16,7 @@ October 10, 2018 :: Version 3.7.7
 	* other code optimizations in many areas
 	* improved debug and profiler to support better premature exits in controllers
 	* includes a sample for advanced 404 customization
+	* added lib mysqli to base from modules
 
 March 09, 2018 :: Version 3.7.5
 	* many optimizations for DB drivers

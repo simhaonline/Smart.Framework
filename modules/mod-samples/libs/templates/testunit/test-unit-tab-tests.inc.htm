@@ -3,17 +3,26 @@
 			<span style="color: #778899; font-size: 37px; font-weight: bold;">Core Test Suite &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; コアテスト·スイート</span>
 			<br>
 			<br>
-			<button class="ux-button" id="btn_ajx_loadr_test_strings" title="Unicode Strings Tests"><i class="fa fa-sort-alpha-asc" style="color:#555555;"></i> &nbsp; Test: Unicode Strings</button>
-			<button class="ux-button" id="btn_ajx_loadr_test_crypto" title="Cryptography Tests"><i class="fa fa-key" style="color:#555555;"></i> &nbsp; Test: Cryptography</button>
-			<button class="ux-button" id="btn_ajx_loadr_test_fs"><i class="fa fa-folder-open" style="color:#555555;"></i> &nbsp; Test: FileSystem Operations</button>
-			<button class="ux-button" id="btn_ajx_loadr_test_pcache"><i class="fa fa-cube" style="color:#555555;"></i> &nbsp; Test: Persistent Cache</button>
-			<button class="ux-button" id="btn_ajx_loadr_test_pgsql"><i class="fa fa-database" style="color:#555555;"></i> &nbsp; Test: PostgreSQL Server</button>
-			<button class="ux-button" id="btn_ajx_loadr_test_mongo"><i class="fa fa-leaf" style="color:#555555;"></i> &nbsp; Test: MongoDB Server</button>
+			<button class="ux-button ux-button-secondary" id="btn_loader_test_qunit"><i class="fa fa-hourglass-half" style="color:#dddddd;"></i> &nbsp; All Tests: QUnit</button>
+			<button class="ux-button" id="btn_loader_test_strings" title="Unicode Strings Tests"><i class="fa fa-sort-alpha-asc" style="color:#555555;"></i> &nbsp; Test: Unicode Strings</button>
+			<button class="ux-button" id="btn_loader_test_crypto" title="Cryptography Tests"><i class="fa fa-key" style="color:#555555;"></i> &nbsp; Test: Cryptography</button>
+			<button class="ux-button" id="btn_loader_test_mtpl"><i class="fa fa-fire" style="color:#555555;"></i> &nbsp; Test: Markers-TPL</button>
+			<br>
+			<button class="ux-button" id="btn_loader_test_fs"><i class="fa fa-folder-open" style="color:#555555;"></i> &nbsp; Test: FileSystem Operations</button>
+			<button class="ux-button" id="btn_loader_test_pcache"><i class="fa fa-cube" style="color:#555555;"></i> &nbsp; Test: Persistent Cache</button>
+			<button class="ux-button" id="btn_loader_test_mongo"><i class="fa fa-leaf" style="color:#555555;"></i> &nbsp; Test: MongoDB Server</button>
+			<button class="ux-button" id="btn_loader_test_pgsql"><i class="fa fa-database" style="color:#555555;"></i> &nbsp; Test: PostgreSQL Server</button>
+			<button class="ux-button" id="btn_loader_test_mysql"><i class="fa fa-list-alt" style="color:#555555;"></i> &nbsp; Test: MariaDB/MySQL Server</button>
 			<script type="text/javascript">
 			var the_url_test_unicode_str = '[####TEST-URL-UNICODE-STR|js####]';
 			jQuery(function() {
 				//--
-				$('#btn_ajx_loadr_test_strings').click(function() {
+				$('#btn_loader_test_qunit').click(function() {
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;"></span>');
+					SmartJS_BrowserUtils.PopUpLink('?page=samples.qunit-run-tests', 'qunit-ext-test', null, null, -1, 1);
+				});
+				//--
+				$('#btn_loader_test_strings').click(function() {
 					var the_type_page_test_str = 'html';
 					var the_param_page_test_str = 'testunit.strings-test';
 					var the_img_page_test_str = 'lib/framework/img/loading-spokes.svg';
@@ -28,7 +37,7 @@
 					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', String(the_img_page_test_str), '[####TESTUNIT_BASE_URL|js####]' + the_param_page_test_str + '/time/[####NO-CACHE-TIME|url|js####]/str_php/[####TEST-URL-UNICODE-STR|url|js####]+./' + '&str_js=' + SmartJS_CoreUtils.escape_url(the_url_test_unicode_str) + '+.', 'GET', String(the_type_page_test_str));
 				});
 				//--
-				jQuery('#btn_ajx_loadr_test_crypto').click(function() {
+				jQuery('#btn_loader_test_crypto').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Crypto Test Suite ...</span><br><img src="lib/framework/img/loading-bars.svg">');
 					SmartJS_BrowserUtils.Ajax_XHR_Request_From_URL('[####TESTUNIT_BASE_URL|js####]testunit.crypto-test&time=[####NO-CACHE-TIME####]', 'GET').done(function(msg) { // {{{JQUERY-AJAX}}}
 						$('#test_div_by_ajax').html(msg); // this will also evaluate the js scripts
@@ -37,31 +46,41 @@
 					});
 				});
 				//--
-				$('#btn_ajx_loadr_test_fs').click(function() {
+				$('#btn_loader_test_mtpl').click(function() {
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;"></span>');
+					SmartJS_BrowserUtils.PopUpLink('?page=samples.templating-test-extended&time=[####NO-CACHE-TIME|url|js####]', 'markerstpl-ext-test', null, null, -1, 1);
+				});
+				//--
+				$('#btn_loader_test_fs').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the FileSystem Test Suite ...</span>');
 					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-cubes.svg', '[####TESTUNIT_BASE_URL|js####]testunit.filesys-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
-				$('#btn_ajx_loadr_test_pcache').click(function() {
+				$('#btn_loader_test_pcache').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Persistent Cache Test Suite ...</span>');
 					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spin.svg', '[####TESTUNIT_BASE_URL|js####]testunit.pcache-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
-				jQuery('#btn_ajx_loadr_test_pgsql').click(function() {
+				jQuery('#btn_loader_test_mongo').click(function() {
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the MongoDB Server Test Suite ...</span>');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spinning-bubbles.svg', '[####TESTUNIT_BASE_URL|js####]testunit.mongodb-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+				});
+				//--
+				jQuery('#btn_loader_test_pgsql').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the PostgreSQL Server Test Suite ...</span>');
 					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-bubbles.svg', '[####TESTUNIT_BASE_URL|js####]testunit.pgsql-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
-				jQuery('#btn_ajx_loadr_test_mongo').click(function() {
-					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the MongoDB Server Test Suite ...</span>');
-					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spinning-bubbles.svg', '[####TESTUNIT_BASE_URL|js####]testunit.mongodb-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
+				jQuery('#btn_loader_test_mysql').click(function() {
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the MariaDB/MySQL Server Test Suite ...</span>');
+					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-bubbles.svg', '[####TESTUNIT_BASE_URL|js####]testunit.mysql-server-test&time=[####NO-CACHE-TIME|url|js####]', 'GET', 'html');
 				});
 				//--
 			});
 			</script>
 			<hr>
 			<div id="test_div_by_ajax">
-				<h1><span style="color:#111111; background:#FFCC00; padding:5px;">... TESTING AREA (tests will be loaded here) :: [####CURRENT-DATE-TIME####] ...</span></h1>
+				<h1><span style="color:#111111; background:#FFCC00; padding:5px;">TESTING AREA (tests will be loaded here) :: [####CURRENT-DATE-TIME####] ...</span></h1>
 				<a data-slimbox="slimbox" href="lib/core/img/app/server.svg" title="Image One"><img height="90" src="lib/core/img/app/server.svg" alt="Click to Test Image Gallery" title="Click to Test Image Gallery"></a>
 				<a data-slimbox="slimbox" href="?page=samples.test-image" title="Image Two"><img src="?page=samples.test-image" alt="Click to Test Image Gallery" title="Click to Test Image Gallery"></a>
 				<br>

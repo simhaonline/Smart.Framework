@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Redis Custom Session]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Redis Custom Session]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -15,7 +15,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //--
 if(!is_array($configs['redis'])) {
 	Smart::raise_error(
-		'ERROR: Redis Custom Session requires the Redis server Configuration to be set in SmartFramework ...',
+		'ERROR: Redis Custom Session requires the Redis server Configuration to be set in Smart.Framework ...',
 		'ERROR: Invalid Settings for App Session Handler. See the Error Log for more details ...'
 	);
 	die('');

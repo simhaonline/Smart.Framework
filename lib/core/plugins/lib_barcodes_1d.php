@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Plugins / Smart BarCodes 1D]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / Smart BarCodes 1D]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -13,7 +13,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //======================================================
 // BarCodes 1D: Code128, Code93, Code39, RMS
-// DEPENDS: SmartFramework
+// DEPENDS: Smart.Framework
 //======================================================
 
 //--
@@ -56,7 +56,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
- * @depends 	SmartFramework
+ * @depends 	Smart.Framework
  * @version 	v.170413
  * @package 	Components:Misc
  *

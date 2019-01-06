@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / HTTP(S) Client]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / HTTP(S) Client]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -89,7 +89,7 @@ final class SmartHttpClient {
 	public function __construct($http_protocol='1.0') {
 
 		//-- signature (fake) as NetSurf Browser - which is a real browser but have no default support for Javascript
-		$this->useragent = 'NetSurf/3.7 ('.'SmartFramework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.'; '.php_uname('s').' '.php_uname('r').' '.php_uname('m').'; '.'PHP/'.PHP_VERSION.')';
+		$this->useragent = 'NetSurf/3.7 ('.'Smart.Framework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.'; '.php_uname('s').' '.php_uname('r').' '.php_uname('m').'; '.'PHP/'.PHP_VERSION.')';
 		//--
 
 		//-- connection timeout

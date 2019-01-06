@@ -1,13 +1,13 @@
 <?php
-// SmartFramework / Runtime / Admin
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// Smart.Framework / Runtime / Admin
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
 //####################
 
-//== v.181019
+//== v.20190103
 //--
 ini_set('display_errors', '1'); 											// temporary enable this to display bootstrap errors if any ; will be managed later by Smart Error Handler
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED); 			// on bootstrap show real-time errors (sync with Smart Error Handler)
@@ -45,12 +45,12 @@ require('lib/run/middleware-admin.php'); 									// Admin Service Handler
 //--
 if((string)SMART_FRAMEWORK_RELEASE_MIDDLEWARE != '[A]@'.SMART_FRAMEWORK_RELEASE_TAGVERSION) {
 	@http_response_code(500);
-	die('SmartFramework // App [A] Service: Middleware service validation Failed ... Invalid Version !');
+	die('Smart.Framework // App [A] Service: Middleware service validation Failed ... Invalid Version !');
 } //end if
 //--
 if((string)get_parent_class('SmartAppAdminMiddleware') != 'SmartAbstractAppMiddleware') {
 	@http_response_code(500);
-	die('SmartFramework // App [A] Service: the Class SmartAppAdminMiddleware must be extended from the Class SmartAbstractAppMiddleware ...');
+	die('Smart.Framework // App [A] Service: the Class SmartAppAdminMiddleware must be extended from the Class SmartAbstractAppMiddleware ...');
 } //end if
 //--
 $run = SmartAppAdminMiddleware::Run(); // Handle the Admin service

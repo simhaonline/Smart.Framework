@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: EN
   @area: mod-samples
-  @version: 2017-05-03
+  @version: 2019-01-03
   samples:
     hello-world: 'Hello World'
     this-is: 'this is'

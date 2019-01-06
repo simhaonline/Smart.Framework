@@ -1,7 +1,7 @@
 <?php
-// SmartFramework / Abstract Middleware
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// Smart.Framework / Abstract Middleware
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181212
+ * @version		20190103
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -298,10 +298,7 @@ abstract class SmartAbstractAppMiddleware {
 		//--
 		$downloaded_file = ''; // init
 		//--
-		$decoded_download_packet = (string) trim((string)SmartUtils::crypto_decrypt(
-			(string) $encrypted_download_pack,
-			'SmartFramework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY
-		));
+		$decoded_download_packet = (string) SmartUtils::decode_download_link((string)$encrypted_download_pack);
 		//--
 		if((string)$decoded_download_packet != '') { // if data is corrupted, decrypt checksum does not match, will return an empty string
 			//--

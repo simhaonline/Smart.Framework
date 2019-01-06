@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Samples / Test PostgreSQL Server]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Samples / Test PostgreSQL Server]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 // Class: \SmartModExtLib\Samples\TestUnitPgSQL
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181219
+ * @version 	v.181221
  *
  */
 final class TestUnitPgSQL {
@@ -39,7 +39,7 @@ final class TestUnitPgSQL {
 	public static function testPgServer() {
 
 		//--
-		if(SMART_FRAMEWORK_TESTUNIT_ALLOW_PGSQL_TESTS !== true) {
+		if((!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS')) OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS !== true)) {
 			//--
 			return (string) \SmartComponents::operation_notice('Test Unit for PostgreSQL Server is DISABLED ...');
 			//--
@@ -134,11 +134,20 @@ final class TestUnitPgSQL {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Write Ignore [ Update ]';
-			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" SET "comments" = $2 WHERE ("variable" = $1)';
-			$data = \SmartPgsqlDb::write_igdata($quer_str, [ $variable, $comments ]);
+			$tests[] = 'Write [ Update w. Prepare Statement ]';
+			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" '.\SmartPgsqlDb::prepare_statement(['variable'=>$variable, 'value'=>$value, 'comments'=>$comments], 'update');
+			$data = \SmartPgsqlDb::write_data($quer_str);
 			if($data[1] !== 1) {
-				$err = 'Write Ignore / Update Test Failed, should return 1 but returned: '.$data[1];
+				$err = 'Write / Update Test Failed, should return 1 but returned: '.$data[1];
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Write [ Update ]';
+			$quer_str = 'UPDATE "public"."_test_unit_db_server_tests" SET "comments" = $2 WHERE ("variable" = $1)';
+			$data = \SmartPgsqlDb::write_data($quer_str, [ $variable, $comments ]);
+			if($data[1] !== 1) {
+				$err = 'Write / Update Test Failed, should return 1 but returned: '.$data[1];
 			} //end if
 		} //end if
 		//--
@@ -266,7 +275,7 @@ final class TestUnitPgSQL {
 			$param_query = \SmartPgsqlDb::prepare_param_query((string)$param_query, array($variable));
 			$data = \SmartPgsqlDb::read_data($param_query, 'Test Param Query');
 			if(trim($data[0]) !== (string)$comments) {
-				$err = 'Read / Non-Associative Test #4 Failed, should return `'.$comments.'` but returned `'.$data[0].'`';
+				$err = 'Read / Non-Associative Test #3 Failed, should return `'.$comments.'` but returned `'.$data[0].'`';
 			} //end if
 		} //end if
 		//--
@@ -367,11 +376,11 @@ final class TestUnitPgSQL {
 		$img_check = 'lib/core/img/db/postgresql-logo.svg';
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
-			$text_main = '<span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span>';
+			$text_main = '<span style="color:#83B953;">Test OK: PHP PostgreSQL.</span>';
 			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework PostgreSQL Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';
-			$text_main = '<span style="color:#FF5500;">An ERROR occured ... &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; エラーが発生しました ...</span>';
+			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP PostgreSQL Test FAILED !</span>';
 			$text_info = '<h2><span style="color:#FF5500;">A test FAILED</span> when testing PostgreSQL Server Operations.<span style="color:#FF5500;"><hr>FAILED Test Details</span>:</h2><br><h5 class="inline">'.\Smart::escape_html($tests[\Smart::array_size($tests)-1]).'</h5><br><span style="font-size:14px;"><pre>'.\Smart::escape_html($err).'</pre></span>';
 		} //end if else
 		//--

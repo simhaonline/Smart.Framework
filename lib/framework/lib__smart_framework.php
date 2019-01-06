@@ -1,7 +1,7 @@
 <?php
-// [Smart-Framework]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181203
+ * @version 	v.181226
  * @package 	Application
  *
  */
@@ -238,6 +238,8 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	// It must NOT contain STATIC functions / Properties to avoid late state binding (self:: vs static::)
 
+	//--
+	private $directoutput;
 	//--
 	private $appenv;
 	private $releasehash;
@@ -282,6 +284,12 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * This is marked as FINAL and cannot be customized.
 	 */
 	final public function __construct($y_area, $y_module_path, $y_url_script, $y_url_path, $y_url_addr, $y_url_page, $y_controller) {
+		//--
+		if(defined('SMART_APP_MODULE_DIRECT_OUTPUT') AND (SMART_APP_MODULE_DIRECT_OUTPUT === true)) {
+			$this->directoutput = true;
+		} else {
+			$this->directoutput = false;
+		} //end if else
 		//--
 		$ctrl_arr = (array) explode('.', (string)$y_controller);
 		//--
@@ -383,46 +391,6 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Test if Modal/PopUp is set via (URL) Request
-	 *
-	 * If is set, will return TRUE, else will return FALSE
-	 *
-	 * @return 	BOOLEAN					:: TRUE / FALSE
-	 */
-	final public function IfRequestModalPopup() {
-		//--
-		if($this->RequestVarGet((string)SMART_FRAMEWORK_URL_PARAM_MODALPOPUP, '', 'string') == (string)SMART_FRAMEWORK_URL_VALUE_ENABLED) {
-			return true;
-		} else {
-			return false;
-		} //end if else
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//=====
-	/**
-	 * Test if Printable is set via (URL) Request
-	 *
-	 * If is set, will return TRUE, else will return FALSE
-	 *
-	 * @return 	BOOLEAN					:: TRUE / FALSE
-	 */
-	final public function IfRequestPrintable() {
-		//--
-		if($this->RequestVarGet((string)SMART_FRAMEWORK_URL_PARAM_PRINTABLE, '', 'string') == (string)SMART_FRAMEWORK_URL_VALUE_ENABLED) {
-			return true;
-		} else {
-			return false;
-		} //end if else
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//=====
-	/**
 	 * Get the value for a Controller parameter
 	 *
 	 * @param 	ENUM 		$param 		:: The selected parameter
@@ -477,6 +445,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 				break;
 			case 'app-namespace':
 				$out = SMART_SOFTWARE_NAMESPACE;
+				break;
+			case 'app-realm':
+				$out = ($this->modulearea === 'admin') ? 'ADM' : 'IDX';
 				break;
 			case 'release-hash':
 				$out = $this->releasehash;
@@ -703,6 +674,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewSetData($data) {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		if(!is_array($data)) {
 			return false; // $data must be array
 		} //end if
@@ -765,6 +741,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewSetRawHeaders($entries) {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		if(!is_array($entries)) {
 			return false; // $entries must be array
 		} //end if
@@ -794,6 +775,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetRawHeader($param, $value) {
+		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
 		//--
 		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
 			return false;
@@ -831,6 +817,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewResetRawHeaders() {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		$this->pageheaders = array();
 		//--
 		return true;
@@ -862,6 +853,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetCfgs($params) {
+		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
 		//--
 		if(!is_array($params)) {
 			return false; // $params must be array
@@ -895,7 +891,13 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewSetCfg($param, $value) {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # '.__METHOD__.'(): Invalid Parameter Type: '.$param);
 			return false;
 		} //end if
 		//--
@@ -911,7 +913,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		if(in_array((string)$param, (array)$this->availsettings)) {
 			$this->pagesettings[(string)$param] = (string)$value;
 		} else {
-			Smart::log_notice('Page Controller: '.$this->controller.' # SmartAbstractAppController / PageViewSetCfg: Invalid Parameter: '.$param);
+			Smart::log_notice('Page Controller: '.$this->controller.' # '.__METHOD__.'(): Invalid Parameter: '.$param);
 			return false;
 		} //end if else
 		//--
@@ -928,6 +930,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewResetCfgs() {
+		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
 		//--
 		$this->pagesettings = array();
 		//--
@@ -967,13 +974,18 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewSetOkStatus($code) {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		$code = (int) $code;
 		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesOK())) { // in the case that the http status code is n/a, use 200 instead
-			Smart::log_notice('Invalid OK Status Code ('.$code.') used in Controller: '.$this->controller);
+			Smart::log_notice('Page Controller: '.$this->controller.' # '.__METHOD__.'(): Invalid OK Status Code ('.$code.')');
 			$code = 200;
 		} //end if
 		//--
-		$this->PageViewSetCfg(
+		return (bool) $this->PageViewSetCfg(
 			'status-code', (int)$code
 		);
 		//--
@@ -994,6 +1006,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewSetErrorStatus($code, $msg='', $logtype='') {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		$code = (int) $code;
 		if(is_array($msg)) {
 			$message = (string) $msg[0];
@@ -1007,14 +1024,14 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesERR())) { // in the case that the error status code is n/a, use 500 instead
 			$out = false;
 			$code = 500;
-			Smart::log_notice('Invalid HTTP Error Status Code ('.$code.') used in Controller: '.$this->controller);
-		} //end if
-		//--
-		$this->PageViewSetCfgs([
-			'status-code' 	=> (int) $code,
-			'error' 		=> (string) $message,
-			'errhtml' 		=> (string) $htmlmsg
-		]);
+			Smart::log_notice('Page Controller: '.$this->controller.' # '.__METHOD__.'(): Invalid HTTP Error Status Code ('.$code.')');
+		} else {
+			$out = (bool) $this->PageViewSetCfgs([
+				'status-code' 	=> (int) $code,
+				'error' 		=> (string) $message,
+				'errhtml' 		=> (string) $htmlmsg
+			]);
+		} //end if else
 		//--
 		switch((string)strtoupper((string)$logtype)) {
 			case 'NOTICE':
@@ -1045,6 +1062,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewSetRedirectUrl($url, $code) {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		$url = (string) $url;
 		if((string)$url == '') {
 			return false;
@@ -1052,11 +1074,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$code = (int) $code;
 		if(!in_array((int)$code, (array)SmartFrameworkRuntime::getHttpStatusCodesRDR())) { // in the case that the redirect status code is n/a, use 302 instead
-			Smart::log_notice('Invalid HTTP Redirect Status Code ('.$code.') used in Controller: '.$this->controller);
+			Smart::log_notice('Page Controller: '.$this->controller.' # '.__METHOD__.'(): Invalid Redirect Status Code ('.$code.')');
 			$code = 302;
 		} //end if
 		//--
-		$this->PageViewSetCfgs([
+		return (bool) $this->PageViewSetCfgs([
 			'status-code' 	=> (int) $code,
 			'redirect-url' 	=> (string) $url
 		]);
@@ -1088,6 +1110,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewSetVars($params) {
+		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
 		//--
 		if(!is_array($params)) {
 			return false; // $params must be array
@@ -1121,6 +1148,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewSetVar($param, $value) {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
 			return false;
 		} //end if
@@ -1145,6 +1177,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewPrependVar($param, $value) {
+		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
 		//--
 		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
 			return false;
@@ -1175,6 +1212,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewAppendVar($param, $value) {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '') OR (is_array($value)) OR (is_object($value))) {
 			return false;
 		} //end if
@@ -1200,6 +1242,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageViewResetVars() {
 		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
 		$this->pageview = array();
 		//--
 		return true;
@@ -1217,6 +1264,11 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
 	final public function PageViewResetVar($param) {
+		//--
+		if($this->directoutput === true) {
+			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
 		//--
 		if((is_array($param)) OR (is_object($param))) {
 			return false;
@@ -1358,7 +1410,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Force Instant Flush Output (ONLY for controllers that do a direct output ... SMART_APP_MODULE_DIRECT_OUTPUT must be set to TRUE).
+	 * Force Instant Flush Output (ONLY for controllers that do a direct output ... SMART_APP_MODULE_DIRECT_OUTPUT must be defined and set to TRUE).
 	 * This will do instant flush and also ob_flush if necessary and detected (for example when the output_buffering is enabled in PHP.INI).
 	 * NOTICE: be careful using this function to avoid break intermediary output bufferings !!
 	 *
@@ -1369,20 +1421,23 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function InstantFlush() {
 		//--
-		if(SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
-			Smart::log_warning('Page Controller: '.$this->controller.' # Using the InstantFlush() in controllers that are not using direct output is not allowed as will break the middleware output chain ...');
-			return;
-		} //end if
-		//--
-		$output_buffering_status = @ob_get_status();
-		//-- type: 0 = PHP_OUTPUT_HANDLER_INTERNAL ; 1 = PHP_OUTPUT_HANDLER_USER
-		if(is_array($output_buffering_status)) {
-			if(((string)$output_buffering_status['type'] == '0') AND ($output_buffering_status['chunk_size'] > 0)) { // avoid to break user level output buffering(s), so enable this just for level zero (internal, if set in php.ini)
-				@ob_flush();
+		if($this->directoutput === true) { // OK
+			//--
+			$output_buffering_status = @ob_get_status();
+			//-- type: 0 = PHP_OUTPUT_HANDLER_INTERNAL ; 1 = PHP_OUTPUT_HANDLER_USER
+			if(is_array($output_buffering_status)) {
+				if(((string)$output_buffering_status['type'] == '0') AND ($output_buffering_status['chunk_size'] > 0)) { // avoid to break user level output buffering(s), so enable this just for level zero (internal, if set in php.ini)
+					@ob_flush();
+				} //end if
 			} //end if
+			//--
+			@flush();
+			//--
+		} else { // WARNING: N/A
+			//--
+			Smart::log_warning('Page Controller: '.$this->controller.' # Using the InstantFlush() in controllers that are not using direct output is not allowed as will break the middleware output chain ...');
+			//--
 		} //end if
-		//--
-		@flush();
 		//--
 	} //END FUNCTION
 	//=====

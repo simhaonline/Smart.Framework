@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Samples / Test Unit Main]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Samples / Test Unit Main]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 // Class: \SmartModExtLib\Samples\TestUnitMain
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181210
+ * @version 	v.181226
  *
  */
 final class TestUnitMain {
@@ -63,7 +63,7 @@ final class TestUnitMain {
 		//--
 
 		//-- normal form with modal / popup
-		$basic_form_start 	= '<form class="ux-form ux-inline-block" id="form_for_test" action="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.main&tab=1'.'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='.SMART_FRAMEWORK_URL_VALUE_ENABLED.'" method="post" target="_blank"><input type="hidden" name="testformdata[test]" value="Testing ..."><input type="hidden" name="testformdata[another-test]" value="Testing more ...">';
+		$basic_form_start 	= '<form class="ux-form ux-inline-block" id="form_for_test" action="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.main&tab=1&winmod=yes" method="post" target="_blank"><input type="hidden" name="testformdata[test]" value="Testing ..."><input type="hidden" name="testformdata[another-test]" value="Testing more ...">';
 		$basic_form_end 	= '</form>';
 		//--
 		$basic_form_send_modal = '<input class="ux-button ux-button-info" style="min-width:320px;" type="submit" value="Submit Form with Confirmation / Modal" OnClick="'.\SmartComponents::js_code_confirm_form_submit('<div align="left"><h3><b>Are you sure you want to submit this form [MODAL] ?</b></h3></div>', 'my_form').'">';

@@ -1,6 +1,4 @@
 
-// [@[#[!SF.DEV-ONLY!]#]@]
-
 /*
  * QUnit 2.8.0
  * https://qunitjs.com/

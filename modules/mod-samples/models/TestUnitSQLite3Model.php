@@ -1,7 +1,7 @@
 <?php
-// [MODEL - SmartFramework / Samples / SQLite3 Model]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [MODEL - Smart.Framework / Samples / SQLite3 Model]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 // Class: \SmartModDataModel\Samples\TestUnitSQLite3Model
 // Type: Module Data Model
@@ -37,7 +37,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170519
+ * @version 	v.20190105
  *
  */
 final class TestUnitSQLite3Model {
@@ -58,6 +58,10 @@ final class TestUnitSQLite3Model {
 		//-- init (create) the sample tables if they do not exist
 		$this->init_table_main_samples();
 		$this->init_table_samples_countries();
+		//--
+
+		//--
+		$this->custom_functions_tests();
 		//--
 
 	} //END FUNCTION
@@ -203,30 +207,170 @@ final class TestUnitSQLite3Model {
 		$this->connection->create_table('table_main_sample', "id character varying(10) NOT NULL, name character varying(100) NOT NULL, description text NOT NULL");
 		//--
 
+	} //END FUNCTION
+	//============================================================
+
+
+	//============================================================
+	private function custom_functions_tests() {
+
+		//--
+		if((string)$this->connection->json_encode([]) != '[]') {
+			throw new \Exception('Invalid SQLite3 Test: JSON-ENCODE []');
+		} //end if
+		//--
+
+		//--
+		$this->connection->register_sql_function('md5', 1, 'mymd5');
+		$test = (array) $this->connection->read_asdata('SELECT custom_fx_mymd5(\''.$this->connection->escape_str('123', 'likes').'\') AS test'); // escape likes is for test only
+		if((string)$test['test'] != (string)md5('123')) {
+			throw new \Exception('Invalid SQLite3 Test: Custom-MD5()');
+		} //end if
+		//--
+
 		//-- Test Custom Default Registered Functions
-		$test = (array) $this->connection->read_asdata('SELECT md5(?) AS test', ['abc']);
-		if((string)$test['test'] != (string)md5('abc')) {
-			\Smart::log_warning('Invalid SQLite3 Test: MD5()');
+		$test = (array) $this->connection->read_asdata('SELECT smart_crc32b(?) AS test', ['abc']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::crc32b('abc')) {
+			throw new \Exception('Invalid SQLite3 Test: CRC32B()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_md5(?) AS test', ['abc']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::md5('abc')) {
+			throw new \Exception('Invalid SQLite3 Test: MD5()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_sha1(?) AS test', ['abc']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::sha1('abc')) {
+			throw new \Exception('Invalid SQLite3 Test: SHA1()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_sha512(?) AS test', ['abc']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::sha512('abc')) {
+			throw new \Exception('Invalid SQLite3 Test: SHA512()');
 		} //end if
 		//--
-		$test = (array) $this->connection->read_asdata('SELECT sha1(?) AS test', ['abc']);
-		if((string)$test['test'] != (string)sha1('abc')) {
-			\Smart::log_warning('Invalid SQLite3 Test: SHA1()');
+		$test = (array) $this->connection->read_asdata('SELECT smart_base64_encode(?) AS test', ['șȘțȚăĂîÎâÂ']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::base64_encode('șȘțȚăĂîÎâÂ')) {
+			throw new \Exception('Invalid SQLite3 Test: BASE64_ENCODE()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_base64_decode(?) AS test', ['yJnImMibyJrEg8SCw67DjsOiw4I=']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::base64_decode('yJnImMibyJrEg8SCw67DjsOiw4I=')) {
+			throw new \Exception('Invalid SQLite3 Test: BASE64_DECODE()');
 		} //end if
 		//--
-		$test = (array) $this->connection->read_asdata('SELECT time() AS test');
-		if((string)$test['test'] == '') {
-			\Smart::log_warning('Invalid SQLite3 Test: TIME()');
+		$test = (array) $this->connection->read_asdata('SELECT smart_bin2hex(?) AS test', ['șȘțȚăĂîÎâÂ']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::bin2hex('șȘțȚăĂîÎâÂ')) {
+			throw new \Exception('Invalid SQLite3 Test: BIN2HEX()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_hex2bin(?) AS test', ['c899c898c89bc89ac483c482c3aec38ec3a2c382']);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::hex2bin('c899c898c89bc89ac483c482c3aec38ec3a2c382')) {
+			throw new \Exception('Invalid SQLite3 Test: HEX2BIN()');
 		} //end if
 		//--
-		$test = (array) $this->connection->read_asdata('SELECT strtotime(?) AS test', [(string)date('Y-m-d')]);
-		if((string)$test['test'] != (string)strtotime((string)date('Y-m-d'))) {
-			\Smart::log_warning('Invalid SQLite3 Test: STRTOTIME()');
+		$test = (array) $this->connection->read_asdata('SELECT smart_strlen(?) AS test', ['șȘțȚăĂîÎâÂ']);
+		if(((int)$test['test'] != (int)\SmartSQliteFunctions::strlen('șȘțȚăĂîÎâÂ')) OR ((int)$test['test'] != 20)) {
+			throw new \Exception('Invalid SQLite3 Test: STRLEN()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_charlen(?) AS test', ['șȘțȚăĂîÎâÂ']);
+		if(((int)$test['test'] != (int)\SmartSQliteFunctions::charlen('șȘțȚăĂîÎâÂ')) OR ((int)$test['test'] != 10)) {
+			throw new \Exception('Invalid SQLite3 Test: CHARLEN()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_str_wordcount(?) AS test', ['șȘțȚăĂîÎâÂ this is ']);
+		if(((int)$test['test'] != (int)\SmartSQliteFunctions::str_wordcount('șȘțȚăĂîÎâÂ this is ')) OR ((int)$test['test'] != 3)) {
+			throw new \Exception('Invalid SQLite3 Test: STR_WORDCOUNT()');
 		} //end if
 		//--
-		$test = (array) $this->connection->read_asdata('SELECT strip_tags(?, ?) AS test', ['<a><b>abc</b></a>', '<a>']);
-		if((string)$test['test'] != (string)strip_tags('<a><b>abc</b></a>', '<a>')) {
-			\Smart::log_warning('Invalid SQLite3 Test: STRIP_TAGS()');
+		$test = (array) $this->connection->read_asdata('SELECT smart_time() AS test');
+		if((int)$test['test'] <= 0) {
+			throw new \Exception('Invalid SQLite3 Test: TIME()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_date(\'Y-m-d\') AS test');
+		if((string)$test['test'] != (string)date('Y-m-d')) {
+			throw new \Exception('Invalid SQLite3 Test: DATE()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_date_diff(?, ?) AS test', ['2019-01-07 08:00:00', '2019-01-05 07:30:59']);
+		if((int)$test['test'] != 2) {
+			throw new \Exception('Invalid SQLite3 Test: DATE_DIFF()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_period_diff(?, ?) AS test', ['2019-03-07 08:59:59', '2017-04-07 07:30:59']);
+		if((int)$test['test'] != 23) {
+			throw new \Exception('Invalid SQLite3 Test: PERIOD_DIFF()'.$test['test']);
+		} //end if
+		//--
+		$test = (array) $this->connection->read_asdata('SELECT smart_strtotime(?) AS test', [(string)date('Y-m-d')]);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::strtotime((string)date('Y-m-d'))) {
+			throw new \Exception('Invalid SQLite3 Test: STRTOTIME()');
+		} //end if
+		//--
+		$test = (array) $this->connection->read_asdata('SELECT smart_strip_tags(?) AS test', ['<a><b>abc</b></a>']);
+		if((string)$test['test'] != 'abc') {
+			throw new \Exception('Invalid SQLite3 Test: STRIP_TAGS()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_strip_tags(?, ?) AS test', ['<a><b>abc</b></a>', '<a>']);
+		if((string)$test['test'] != '<a>abc</a>') {
+			throw new \Exception('Invalid SQLite3 Test: STRIP_TAGS(<a>)');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_striptags(?) AS test', ['<a><b>a&apos;b&quot;c&nbsp;&lt;d&gt;</b></a>']);
+		if((string)$test['test'] != 'a\'b"c <d>') {
+			throw new \Exception('Invalid SQLite3 Test: STRIPTAGS()');
+		} //end if
+
+		$test = (array) $this->connection->read_asdata('SELECT smart_deaccent_str(?) AS test', ['Querty, șȘțȚăĂîÎâÂ ...']);
+		if((string)$test['test'] != 'Querty, sStTaAiIaA ...') {
+			throw new \Exception('Invalid SQLite3 Test: DEACCENT_STR()');
+		} //end if
+
+		//--
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_arr_contains(?, ?) AS test', [$this->connection->json_encode(['a', 'b', 'c']), 'b']);
+		if((string)$test['test'] != 1) {
+			throw new \Exception('Invalid SQLite3 Test: JSON_ARR_CONTAINS()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_arr_contains(?, ?) AS test', [$this->connection->json_encode(['a', 'b', 'c']), 'd']);
+		if((string)$test['test'] == 1) {
+			throw new \Exception('Invalid SQLite3 Test: !JSON_ARR_CONTAINS()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_obj_contains(?, ?, ?) AS test', [$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3]), 'b', 2]);
+		if((string)$test['test'] != 1) {
+			throw new \Exception('Invalid SQLite3 Test: JSON_OBJ_CONTAINS()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_obj_contains(?, ?, ?) AS test', [$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3]), 'b', 3]);
+		if((string)$test['test'] == 1) {
+			throw new \Exception('Invalid SQLite3 Test: !JSON_OBJ_CONTAINS()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_obj_contains(?, ?, ?) AS test', [$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3]), 'd', 1]);
+		if((string)$test['test'] == 1) {
+			throw new \Exception('Invalid SQLite3 Test: !JSON_OBJ_CONTAINS()!');
+		} //end if
+		//--
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_arr_delete(?, ?) AS test', [$this->connection->json_encode(['a', 'b', 'c']), 'b']);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a', 'c'])) {
+			throw new \Exception('Invalid SQLite3 Test: JSON_ARR_DELETE()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_arr_delete(?, ?) AS test', [$this->connection->json_encode(['a', 'b', 'c']), 'd']);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a', 'b', 'c'])) {
+			throw new \Exception('Invalid SQLite3 Test: !JSON_ARR_DELETE()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_obj_delete(?, ?, ?) AS test', [$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3]), 'b', 2]);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a' => 1, 'c' => 3])) {
+			throw new \Exception('Invalid SQLite3 Test: JSON_OBJ_DELETE()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_obj_delete(?, ?, ?) AS test', [$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3]), 'b', 3]);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3])) {
+			throw new \Exception('Invalid SQLite3 Test: !JSON_OBJ_DELETE()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_obj_delete(?, ?, ?) AS test', [$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3]), 'd', 1]);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3])) {
+			throw new \Exception('Invalid SQLite3 Test: !JSON_OBJ_DELETE()!');
+		} //end if
+		//--
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_arr_append(?, ?) AS test', [$this->connection->json_encode(['a', 'b', 'c']), $this->connection->json_encode('d')]);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a', 'b', 'c', 'd'])) {
+			throw new \Exception('Invalid SQLite3 Test: JSON_ARR_APPEND()');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_arr_append(?, ?) AS test', [$this->connection->json_encode(['a', 'b', 'c']), $this->connection->json_encode(['d'])]);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a', 'b', 'c', 'd'])) {
+			throw new \Exception('Invalid SQLite3 Test: JSON_ARR_APPEND()[]');
+		} //end if
+		$test = (array) $this->connection->read_asdata('SELECT smart_json_obj_append(?, ?) AS test', [$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3]), $this->connection->json_encode(['d' => '4'])]);
+		if((string)$test['test'] != (string)$this->connection->json_encode(['a' => 1, 'b' => 2, 'c' => 3, 'd' => '4'])) {
+			throw new \Exception('Invalid SQLite3 Test: JSON_OBJ_APPEND()');
 		} //end if
 		//--
 

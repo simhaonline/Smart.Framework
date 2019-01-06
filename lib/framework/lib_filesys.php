@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / FileSystem Management]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / FileSystem]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181115
+ * @version 	v.181225
  * @package 	Filesystem
  *
  */
@@ -201,7 +201,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 	if((string)trim((string)$y_path) == '') {
 		//--
 		Smart::raise_error(
-			'SmartFramework // FileSystemUtils // Check Valid Path // EMPTY PATH IS DISALLOWED',
+			'Smart.Framework // FileSystemUtils // Check Valid Path // EMPTY PATH IS DISALLOWED',
 			'FileSysUtils: EMPTY PATH IS DISALLOWED !' // msg to display
 		);
 		return;
@@ -211,7 +211,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 	if(self::test_valid_path($y_path) !== 1) {
 		//--
 		Smart::raise_error(
-			'SmartFramework // FileSystemUtils // Check Valid Path // ACCESS DENIED to invalid path: '.$y_path,
+			'Smart.Framework // FileSystemUtils // Check Valid Path // ACCESS DENIED to invalid path: '.$y_path,
 			'FileSysUtils: INVALID CHARACTERS IN PATH ARE DISALLOWED !' // msg to display
 		);
 		return;
@@ -221,7 +221,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 	if(self::test_backward_path($y_path) !== 1) {
 		//--
 		Smart::raise_error(
-			'SmartFramework // FileSystemUtils // Check Backward Path // ACCESS DENIED to invalid path: '.$y_path,
+			'Smart.Framework // FileSystemUtils // Check Backward Path // ACCESS DENIED to invalid path: '.$y_path,
 			'FileSysUtils: BACKWARD PATH ACCESS IS DISALLOWED !' // msg to display
 		);
 		return;
@@ -232,7 +232,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 		if(self::test_absolute_path($y_path) !== 1) {
 			//--
 			Smart::raise_error(
-				'SmartFramework // FileSystemUtils // Check Absolute Path // ACCESS DENIED to invalid path: '.$y_path,
+				'Smart.Framework // FileSystemUtils // Check Absolute Path // ACCESS DENIED to invalid path: '.$y_path,
 				'FileSysUtils: ABSOLUTE PATH ACCESS IS DISALLOWED !' // msg to display
 			);
 			return;
@@ -244,7 +244,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 		if(self::test_special_path($y_path) !== 1) { // check protected path only if deny absolute path access, otherwise n/a
 			//--
 			Smart::raise_error(
-				'SmartFramework // FileSystemUtils // Check Protected Path // ACCESS DENIED to invalid path: '.$y_path,
+				'Smart.Framework // FileSystemUtils // Check Protected Path // ACCESS DENIED to invalid path: '.$y_path,
 				'FileSysUtils: PROTECTED PATH ACCESS IS DISALLOWED !' // msg to display
 			);
 			return;
@@ -255,7 +255,7 @@ public static function raise_error_if_unsafe_path($y_path, $y_deny_absolute_path
 	if(strlen((string)$y_path) > 1024) {
 		//--
 		Smart::raise_error(
-			'SmartFramework // FileSystemUtils // Check Max Path Length (1024) // ACCESS DENIED to invalid path: '.$y_path,
+			'Smart.Framework // FileSystemUtils // Check Max Path Length (1024) // ACCESS DENIED to invalid path: '.$y_path,
 			'FileSysUtils: PATH LENGTH IS EXCEEDING THE MAX ALLOWED LENGTH !' // msg to display
 		);
 		return;
@@ -357,7 +357,7 @@ private static function test_absolute_path($y_path) {
 	//--
 	$y_path = (string) $y_path;
 	//--
-	if(substr(trim($y_path), 0, 1) == '/') {
+	if((string)substr((string)trim($y_path), 0, 1) == '/') {
 		return 0;
 	} //end if
 	//--
@@ -2222,7 +2222,7 @@ public static function move_uploaded($file_name, $newlocation, $check_moved_cont
 				self::delete($newlocation);
 				//--
 				if($check_moved_contents === true) {
-					$sha_tmp_f = sha1_file($file_name);
+					$sha_tmp_f = (string) sha1_file($file_name);
 				} //end if
 				$f_cx = @move_uploaded_file($file_name, $newlocation);
 				//--
@@ -2230,7 +2230,7 @@ public static function move_uploaded($file_name, $newlocation, $check_moved_cont
 					@touch($newlocation, time()); // touch modified time to avoid upload differences in time
 					self::fix_file_chmod($newlocation); // apply chmod
 					if($check_moved_contents === true) {
-						$sha_new_f = sha1_file($newlocation);
+						$sha_new_f = (string) sha1_file($newlocation);
 						if((string)$sha_tmp_f != (string)$sha_new_f) {
 							$f_cx = 0;
 							Smart::log_warning(__METHOD__.'() // MoveUploadedFile // Checksum Failed for: '.$file_name.' // to destination: '.$newlocation);

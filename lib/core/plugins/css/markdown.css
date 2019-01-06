@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: SmartFramework / Plugins / Markdown :: v.3.7.7 r.2018.10.19 / smart.framework.v.3.7 -- */
+/* -- CSS Start :: Smart.Framework / Plugins / Markdown v.20190105 :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7 -- */
 
 /* ----------------------------- */
 
@@ -29,7 +29,7 @@
 
 /* Table */
 #markdown table {
-	width: 100%;
+	max-width: 100%;
 	margin-bottom: 20px;
 	border-spacing: 0px;
 	border-collapse: collapse;
@@ -37,8 +37,12 @@
 	border: 0;
 }
 
+#markdown table.full-width-table {
+	width: 100%;
+}
+
 #markdown table th {
-	padding: 2px;
+	padding: 3px;
 	font-size: 15px;
 	font-weight: bold;
 }
@@ -51,8 +55,8 @@
 }
 
 #markdown table > tbody > tr > td {
-	padding: 1px;
-	font-size: 13px;
+	padding: 3px;
+	font-size: 15px;
 }
 #markdown table > tbody > tr:nth-child(odd) > td.stripped {
 	background: #F5F5F5;

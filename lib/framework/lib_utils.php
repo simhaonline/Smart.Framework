@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Utils]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Utils]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -32,7 +32,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //--
 if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
 	@http_response_code(500);
-	die('ERROR: The PHP ZLIB Extension (gzdeflate/gzinflate) is required for SmartFramework / Lib Utils');
+	die('ERROR: The PHP ZLIB Extension (gzdeflate/gzinflate) is required for Smart.Framework / Lib Utils');
 } //end if
 //--
 
@@ -44,12 +44,12 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
 
 
 /**
- * Class: SmartUtils - provides various utility functions for SmartFramework.
+ * Class: SmartUtils - provides various utility functions for Smart.Framework
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.181219
+ * @version 	v.20190103
  * @package 	Base
  *
  */
@@ -299,7 +299,7 @@ public static function data_archive($y_str) {
 	$out = @gzdeflate($y_str, -1, ZLIB_ENCODING_RAW); // don't make it string, may return false ; -1 = default compression of the zlib library is used which is 6
 	//-- check for possible deflate errors
 	if(($out === false) OR ((string)$out == '')) {
-		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
+		Smart::log_warning('Smart.Framework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
 		return '';
 	} //end if
 	$len_data = strlen((string)$y_str);
@@ -310,11 +310,11 @@ public static function data_archive($y_str) {
 		$ratio = 0;
 	} //end if
 	if($ratio <= 0) { // check for empty input / output !
-		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is zero ! ...');
+		Smart::log_warning('Smart.Framework Utils / Data Archive :: ZLib Data Ratio is zero ! ...');
 		return '';
 	} //end if
 	if($ratio > 32768) { // check for this bug in ZLib {{{SYNC-GZ-ARCHIVE-ERR-CHECK}}}
-		Smart::log_warning('SmartFramework Utils / Data Archive :: ZLib Data Ratio is higher than 32768 ! ...');
+		Smart::log_warning('Smart.Framework Utils / Data Archive :: ZLib Data Ratio is higher than 32768 ! ...');
 		return '';
 	} //end if
 	//--
@@ -324,7 +324,7 @@ public static function data_archive($y_str) {
 	//-- test unarchive
 	$unarch_checksum = SmartHashCrypto::sha1(self::data_unarchive($out));
 	if((string)$chksum != (string)$unarch_checksum) { // check: if there is a serious bug with ZLib or PHP we can't tolerate, so test decompress here !!
-		Smart::log_warning('SmartFramework Utils / Data Archive :: Data Encode Check Failed ! ...');
+		Smart::log_warning('Smart.Framework Utils / Data Archive :: Data Encode Check Failed ! ...');
 		return '';
 	} //end if
 	//-- if all test pass, return archived data
@@ -353,17 +353,17 @@ public static function data_unarchive($y_enc_data) {
 	$arr[1] = trim((string)$arr[1]); // signature
 	//-- check signature
 	if((string)$arr[1] != 'PHP.SF.151129/B64.ZLibRaw.HEX') { // signature is different, try to decode but log the error
-		Smart::log_notice('SmartFramework // Data Unarchive // Invalid Package Signature: '.$arr[1]);
+		Smart::log_notice('Smart.Framework // Data Unarchive // Invalid Package Signature: '.$arr[1]);
 	} //end if
 	//-- decode it (at least try)
 	$out = @base64_decode((string)$arr[0]); // NON-STRICT ! don't make it string, may return false
 	if(($out === false) OR ((string)trim((string)$out) == '')) { // use trim, the deflated string can't contain only spaces
-		Smart::log_warning('SmartFramework // Data Unarchive // Invalid B64 Data for packet with signature: '.$arr[1]);
+		Smart::log_warning('Smart.Framework // Data Unarchive // Invalid B64 Data for packet with signature: '.$arr[1]);
 		return '';
 	} //end if
 	$out = @gzinflate($out);
 	if(($out === false) OR ((string)trim((string)$out) == '')) {
-		Smart::log_warning('SmartFramework // Data Unarchive // Invalid Zlib GzInflate Data for packet with signature: '.$arr[1]);
+		Smart::log_warning('Smart.Framework // Data Unarchive // Invalid Zlib GzInflate Data for packet with signature: '.$arr[1]);
 		return '';
 	} //end if
 	//-- post-process
@@ -374,12 +374,12 @@ public static function data_unarchive($y_enc_data) {
 		$out = '';
 		$arr[0] = @hex2bin(strtolower(trim((string)$arr[0]))); // don't make it string, may return false ; it is the data packet
 		if(($arr[0] === false) OR ((string)$arr[0] == '')) { // no trim here ... (the real string may contain only some spaces)
-			Smart::log_warning('SmartFramework // Data Unarchive // Invalid HEX Data for packet with signature: '.$arr[1]);
+			Smart::log_warning('Smart.Framework // Data Unarchive // Invalid HEX Data for packet with signature: '.$arr[1]);
 			return '';
 		} //end if
 		$arr[1] = (string) trim((string)$arr[1]); // the checksum
 		if(SmartHashCrypto::sha1($arr[0]) != (string)$arr[1]) {
-			Smart::log_warning('SmartFramework // Data Unarchive // Invalid Packet, Checksum FAILED :: A checksum was found but is invalid: '.$arr[1]);
+			Smart::log_warning('Smart.Framework // Data Unarchive // Invalid Packet, Checksum FAILED :: A checksum was found but is invalid: '.$arr[1]);
 			return '';
 		} //end if
 		//--
@@ -388,7 +388,7 @@ public static function data_unarchive($y_enc_data) {
 		//--
 	} else {
 		//--
-		Smart::log_warning('SmartFramework // Data Unarchive // Invalid Packet, no Checksum :: This can occur if decompression failed or an invalid packet has been assigned ...');
+		Smart::log_warning('Smart.Framework // Data Unarchive // Invalid Packet, no Checksum :: This can occur if decompression failed or an invalid packet has been assigned ...');
 		return '';
 		//--
 	} //end if
@@ -1022,6 +1022,19 @@ public static function crypto_decrypt($y_data, $y_key='') {
 
 //================================================================
 // Create a Download Link for the Download Handler
+public static function decode_download_link($y_encrypted_link) {
+	//--
+	return (string) trim((string)SmartUtils::crypto_decrypt(
+		(string) $y_encrypted_link,
+		'Smart.Framework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY // {{{SYNC-DOWNLOAD-LINK-CRYPT-KEY}}}
+	));
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// Create a Download Link for the Download Handler
 public static function create_download_link($y_file, $y_ctrl_key) {
 	//--
 	$y_file = (string) trim((string)$y_file);
@@ -1050,28 +1063,41 @@ public static function create_download_link($y_file, $y_ctrl_key) {
 	$unique_key = SmartHashCrypto::sha1('Time='.$crrtime.'#'.SMART_SOFTWARE_NAMESPACE.'-'.SMART_FRAMEWORK_SECURITY_KEY.'-'.$access_key.'-'.self::unique_auth_client_private_key().':'.$y_file.'+'.$y_ctrl_key);
 	//-- {{{SYNC-DOWNLOAD-ENCRYPT-ARR}}}
 	$safe_download_link = self::crypto_encrypt(
-		trim((string)$crrtime)."\n". 							// set the current time
-		trim((string)$y_file)."\n". 							// the file path
-		trim((string)$access_key)."\n". 						// access key based on UniqueID cookie
-		trim((string)$unique_key)."\n".							// unique key based on: User-Agent and IP
-		'-'."\n",												// self robot browser UserAgentName/ID key (does not apply here)
-		'SmartFramework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY
+		trim((string)$crrtime)."\n". 									// set the current time
+		trim((string)$y_file)."\n". 									// the file path
+		trim((string)$access_key)."\n". 								// access key based on UniqueID cookie
+		trim((string)$unique_key)."\n".									// unique key based on: User-Agent and IP
+		'-'."\n",														// self robot browser UserAgentName/ID key (does not apply here)
+		'Smart.Framework//DownloadLink'.SMART_FRAMEWORK_SECURITY_KEY 	// {{{SYNC-DOWNLOAD-LINK-CRYPT-KEY}}}
 	);
 	//--
-	return (string) Smart::escape_url(trim((string)$safe_download_link));
+	return (string) Smart::escape_url((string)trim((string)$safe_download_link));
 	//--
 } //END FUNCTION
 //================================================================
 
 
 //================================================================
-// require the all bytes (full size string) of an image to detect if GIF / PNG or JPG
-public static function guess_image_extension_by_all_bytes($pict) {
+// require at least 256 bytes of an image to quick detect (or full size for GD detect) if: SVG / PNG / GIF / JPG
+public static function guess_image_extension_by_img_content($pict, $use_gd=false) {
 	//--
-	if(!function_exists('getimagesizefromstring')) {
+	if((stripos((string)$pict, '</svg>') !== false) OR (stripos((string)$pict, '<svg') !== false)) { // use OR as it may be partial content
+		return '.svg';
+	} //end if
+	//--
+	if(($use_gd === true) AND (!function_exists('getimagesizefromstring'))) {
 		//--
-		//Smart::log_notice('Cannot use PHP function: getimagesizefromstring(), so will use a fallback: '.__CLASS__.'::'.guess_image_extension_by_first_bytes.'()');
-		return (string) self::guess_image_extension_by_first_bytes(substr((string)$pict, 0, 16));
+		if(SmartFrameworkRuntime::ifDebug()) {
+			Smart::log_notice(__METHOD__.'(): GD / getimagesizefromstring is not available, fall back to quick detection ...');
+		} //end if
+		//--
+		$use_gd = false;
+		//--
+	} //end if
+	//--
+	if($use_gd != true) {
+		//--
+		return (string) self::guess_quick_image_extension(substr((string)$pict, 0, 16));
 		//--
 	} //end if
 	//--
@@ -1109,7 +1135,7 @@ public static function guess_image_extension_by_all_bytes($pict) {
 
 //================================================================
 // require the first 16 bytes (first 16 characters - string) of an image to detect if GIF / PNG or JPG
-public static function guess_image_extension_by_first_bytes($pict) {
+private static function guess_quick_image_extension($pict) {
 	//--
 	// .jpg:  FF D8 FF
 	// .png:  89 50 4E 47 0D 0A 1A 0A
@@ -1118,7 +1144,9 @@ public static function guess_image_extension_by_first_bytes($pict) {
 	//--
 	$pict = (string) $pict;
 	if(strlen($pict) < 16) {
-		Smart::log_warning(__METHOD__.'(): expects the first 16 bytes for detection ...');
+		if(SmartFrameworkRuntime::ifDebug()) {
+			Smart::log_notice(__METHOD__.'(): expects the first 16 bytes for detection (but have only '.strlen($pict).' bytes) ...');
+		} //end if
 		return '';
 	} //end if
 	//--
@@ -1158,7 +1186,7 @@ public static function guess_image_extension_by_url_head($y_headers) {
 			if((string)$eimg[0] == 'jpeg') {
 				$eimg[0] = 'jpg'; // correction
 			} //end if
-			if(((string)$eimg[0] == 'png') OR ((string)$eimg[0] == 'gif') OR ((string)$eimg[0] == 'jpg')) {
+			if(((string)$eimg[0] == 'svg') OR ((string)$eimg[0] == 'png') OR ((string)$eimg[0] == 'gif') OR ((string)$eimg[0] == 'jpg')) {
 				$temp_image_extension = '.'.$eimg[0]; // add the point
 				$temp_where_was_detected = ' * Embedded in HTML as # data:image/ + ;base64, = '.$eimg[0];
 			} //end if
@@ -1168,11 +1196,11 @@ public static function guess_image_extension_by_url_head($y_headers) {
 			$temp_where_was_detected = '??? Try to guess by headers ...';
 			//-- try to get file extension by the content (strategy 1)
 			$temp_guess_ext_tmp = array();
-			preg_match("/^content\-disposition:(.*)$/mi", (string)$y_headers, $temp_guess_ext_tmp);
+			preg_match('/^content\-disposition:(.*)$/mi', (string)$y_headers, $temp_guess_ext_tmp);
 			$temp_guess_extension = (string) trim((string)$temp_guess_ext_tmp[1]);
-			$temp_guess_extension = (array) explode(' filename=', (string)$temp_guess_extension);
+			$temp_guess_extension = (array)  explode(' filename=', (string)$temp_guess_extension);
 			$temp_guess_extension = (string) trim((string)$temp_guess_extension[1]);
-			$temp_guess_extension = (array) explode('"', (string)$temp_guess_extension);
+			$temp_guess_extension = (array)  explode('"', (string)$temp_guess_extension);
 			$temp_guess_extension = (string) trim((string)$temp_guess_extension[1]);
 			$temp_guess_extension = (string) trim(strtolower(SmartFileSysUtils::get_file_extension_from_path((string)$temp_guess_extension))); // [OK]
 			$temp_guess_ext_tmp = array();
@@ -1180,7 +1208,7 @@ public static function guess_image_extension_by_url_head($y_headers) {
 			if((string)$temp_guess_extension == 'jpeg') {
 				$temp_guess_extension = 'jpg'; // correction
 			} //end if
-			if(((string)$temp_guess_extension == 'png') OR ((string)$temp_guess_extension == 'gif') OR ((string)$temp_guess_extension == 'jpg')) {
+			if(((string)$temp_guess_extension == 'svg') OR ((string)$temp_guess_extension == 'png') OR ((string)$temp_guess_extension == 'gif') OR ((string)$temp_guess_extension == 'jpg')) {
 				// OK, we guess it
 				$temp_where_was_detected = '[content-disposition]: \''.$temp_guess_extension.'\'';
 				$temp_image_extension = Smart::safe_validname($temp_guess_extension); // make it safe
@@ -1190,7 +1218,7 @@ public static function guess_image_extension_by_url_head($y_headers) {
 			} else {
 				//-- try to guess by the content type (strategy 2)
 				$temp_guess_ext_tmp = array();
-				preg_match("/^content\-type:(.*)$/mi", (string)$y_headers, $temp_guess_ext_tmp);
+				preg_match('/^content\-type:(.*)$/mi', (string)$y_headers, $temp_guess_ext_tmp);
 				$temp_guess_extension = (string) trim((string)$temp_guess_ext_tmp[1]);
 				$temp_guess_extension = (array) explode('/', (string)$temp_guess_extension);
 				$temp_guess_extension = (string) trim((string)$temp_guess_extension[1]);
@@ -1198,12 +1226,16 @@ public static function guess_image_extension_by_url_head($y_headers) {
 				$temp_guess_extension = (string) trim((string)$temp_guess_extension[0]);
 				//--
 				switch((string)$temp_guess_extension) {
-					case 'gif':
-						$temp_image_extension = '.gif';
+					case 'svg':
+						$temp_image_extension = '.svg';
 						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
 						break;
 					case 'png':
 						$temp_image_extension = '.png';
+						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
+						break;
+					case 'gif':
+						$temp_image_extension = '.gif';
 						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
 						break;
 					case 'jpg':
@@ -1226,7 +1258,7 @@ public static function guess_image_extension_by_url_head($y_headers) {
 		//--
 	} //end if else
 	//--
-	return array('extension' => (string) $temp_image_extension, 'where-was-detected' => (string) $temp_where_was_detected);
+	return array('extension' => (string)$temp_image_extension, 'where-was-detected' => (string)$temp_where_was_detected);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1243,7 +1275,7 @@ public static function guess_image_extension_by_url_head($y_headers) {
  * @param ENUM		$y_ssl_method			:: SSL Mode: tls | sslv3 | sslv2 | ssl
  * @param STRING 	$y_auth_name			:: used only for URLs, the auth user name
  * @param STRING 	$y_auth_pass			:: used only for URLs, the auth password
- * @param YES/NO	y_allow_set_credentials	:: DEFAULT MUST BE set to NO ; if YES must be set just for internal URLs ; if the $y_url_or_path to get is detected to be under current URL will send also the Unique / session IDs ; more if detected that is from admin.php and if this is set to YES will send the HTTP-BASIC Auth credentials if detected (using YES with other URLs than SmartFramework's current URL can be a serious SECURITY ISSUE, so don't !)
+ * @param YES/NO	y_allow_set_credentials	:: DEFAULT MUST BE set to NO ; if YES must be set just for internal URLs ; if the $y_url_or_path to get is detected to be under current URL will send also the Unique / session IDs ; more if detected that is from admin.php and if this is set to YES will send the HTTP-BASIC Auth credentials if detected (using YES with other URLs than Smart.Framework's current URL can be a serious SECURITY ISSUE, so don't !)
  */
 public static function load_url_or_file($y_url_or_path, $y_timeout=30, $y_method='GET', $y_ssl_method='', $y_auth_name='', $y_auth_pass='', $y_allow_set_credentials='no') {
 	//-- v.2016-01-15
@@ -1485,7 +1517,7 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 	//--
 
 	//--
-	$unique_id = (string) SmartHashCrypto::sha1('@@::SmartFramework::Content::Cache@@'.$y_load_url);
+	$unique_id = (string) SmartHashCrypto::sha1('@@::Smart.Framework::Content::Cache@@'.$y_load_url);
 	//--
 	$dir = 'tmp/cache/'.$y_cache_prefix.SmartFileSysUtils::prefixed_sha1_path($unique_id);
 	SmartFileSysUtils::raise_error_if_unsafe_path($dir);
@@ -1774,7 +1806,7 @@ public static function unique_auth_client_private_key() {
 // this signature should be used just for the internal browsing operations
 public static function get_selfrobot_useragent_name() {
 	//--
-	return 'SmartFramework :: PHP/Robot :: SelfBrowser ('.php_uname().') @ '.SmartHashCrypto::sha1('SelfBrowser/PHP/'.php_uname().'/'.SMART_SOFTWARE_NAMESPACE.'/'.SMART_FRAMEWORK_SECURITY_KEY);
+	return 'Smart.Framework :: PHP/Robot :: SelfBrowser ('.php_uname().') @ '.SmartHashCrypto::sha1('SelfBrowser/PHP/'.php_uname().'/'.SMART_SOFTWARE_NAMESPACE.'/'.SMART_FRAMEWORK_SECURITY_KEY);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1821,7 +1853,7 @@ public static function get_server_current_request_method() {
 //================================================================
 public static function get_server_current_protocol() {
 	//--
-	if(trim(strtolower((string)$_SERVER['HTTPS'])) == 'on') {
+	if((isset($_SERVER['HTTPS'])) AND ((string)trim((string)strtolower((string)$_SERVER['HTTPS'])) == 'on')) {
 		$current_protocol = 'https://';
 	} else {
 		$current_protocol = 'http://';

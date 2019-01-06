@@ -2,8 +2,8 @@
 // [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/TemplatingTest
 // Route: ?/page/samples.templating-test (?page=samples.templating-test)
-// Author: unix-world.org
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -61,8 +61,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$title = 'Markers-TPL Templating Render Demo - Syntax';
 		//--
-		$data = [
-			//-- ##### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE ; variable names will allow also - (. is reserved for separator as arr[key] is ARR.KEY) #####
+		$data = [ // v.181222
+			//-- ### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE ; variable names will allow also - (. is reserved for separator as arr[key] is ARR.KEY)
 			'Version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
 			'heLLo__World' => '<h1>Demo: Markers-TPL Templating built-into Smart.Framework</h1>',
 			'NaViGaTiOn' => [
@@ -75,8 +75,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				['a1' => '2.1', 'a2' => '2.2', 'a3' => '2.3'],
 				['a1' => '3.1', 'a2' => '3.2', 'a3' => '3.3']
 			],
+			'tCount' => 3,
 			'A' 		=> 'Test-1',
-			'b' 		=> 'Test-2',
+			'b' 		=> 'Test-2'
 			//--
 		];
 		//--

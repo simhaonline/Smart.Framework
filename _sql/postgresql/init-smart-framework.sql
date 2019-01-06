@@ -1,5 +1,5 @@
 
--- START :: PostgreSQL Functions and Tables for SmartFramework :: r.171009 #####
+-- START :: PostgreSQL Functions and Tables for Smart.Framework :: r.20190107 #####
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -15,6 +15,11 @@ SET default_with_oids = false;
 -- BEGIN Transaction #####
 
 BEGIN;
+
+-- Smart Runtime Schema
+
+CREATE SCHEMA IF NOT EXISTS smart_runtime;
+COMMENT ON SCHEMA smart_runtime IS 'Smart Framework Runtime r.20190107 (do not delete)';
 
 -- General Functions #####
 
@@ -48,9 +53,9 @@ $_$;
 
 CREATE FUNCTION smart_date_diff(date_start date, date_end date) RETURNS bigint
 	LANGUAGE sql IMMUTABLE STRICT
-	AS $_$ -- return date diff in days (v.170325)
+	AS $_$ -- return date diff in days (v.190105)
 SELECT COALESCE(
-	EXTRACT('epoch' FROM ($2::timestamp - $1::timestamp)::interval)::bigint / (3600 * 24)::int
+	FLOOR(EXTRACT('epoch' FROM ($2::timestamp - $1::timestamp)::interval)::bigint / (3600 * 24)::int)::bigint
 , 0)
 $_$;
 
@@ -106,6 +111,7 @@ FROM (
 ) t;
 $_$;
 
+-- check for duplicates: OK (UNION not UNION ALL)
 CREATE OR REPLACE FUNCTION smart_jsonb_arr_append(data jsonb, aval jsonb)
 RETURNS jsonb
 IMMUTABLE
@@ -137,6 +143,7 @@ FROM (
 ) t;
 $_$;
 
+-- check for duplicates: OK (is UNION ALL but duplicate keys will merge)
 CREATE OR REPLACE FUNCTION smart_jsonb_obj_append(data jsonb, aobj jsonb)
 RETURNS jsonb
 IMMUTABLE

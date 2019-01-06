@@ -2,9 +2,9 @@
 
 #####
 # rclone sync WPUB for remote WebDAV servers, as in rclone.conf (see the section webdavSample:)
-# version: 2018-12-14
+# version: 20190103
 # This script is used by AppCodePack
-# (c) 2018 unix-world.org
+# (c) 2018-2019 unix-world.org
 #####
 
 ### Configs

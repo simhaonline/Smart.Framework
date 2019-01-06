@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Mail Mime Decode]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / Mail Mime Decode]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181123
+ * @version 	v.20190105
  * @package 	Mailer
  *
  */
@@ -181,7 +181,7 @@ public function get_header($message) {
 	//--
 	$export_attachments = 0; // attachments not detected
 	//--
-	if(preg_match("/^content-disposition:(\s)attachment(.*);/mi", (string)$message)) { // insensitive
+	if(preg_match('/^content-disposition:(\s)attachment(.*);/mi', (string)$message)) { // insensitive
 		$export_attachments = 1; // attachments were detected
 	} //end if
 	//--
@@ -356,12 +356,12 @@ public function get_header($message) {
 	$date = '';
 	//--
 	if(is_array($headers['date'])) {
-		$date = trim($headers['date'][0]);
+		$date = (string) trim((string)$headers['date'][0]);
 	} else {
-		$date = trim($headers['date']);
+		$date = (string) trim((string)$headers['date']);
 	} //end if else
 	//--
-	$export_date = trim($date);
+	$export_date = (string) trim((string)preg_replace('/[^0-9a-zA-Z,\+\:\-]/', ' ', (string)$date)); // fix: remove invalid characters in date
 	//--
 	if((string)$export_date == '') {
 		$export_date = '(?)';
@@ -677,7 +677,7 @@ private function printarray($array, $part_id) {
 final class SmartMailerMimeExtract {
 
 	// ->
-	// v.181123
+	// v.20190105
 
 //================================================================
 	//--
@@ -736,7 +736,7 @@ public function get_working_charset() {
 
 
 //================================================================
-// Begins the decoding process.
+// Begins the decoding process. (no more accepts to be called statically)
 // @param array An array of various parameters that determine various things:
 // :: include_bodies - Whether to include the body in the returned object.
 // :: decode_bodies  - Whether to decode the bodies of the parts. (Transfer encoding)
@@ -744,8 +744,6 @@ public function get_working_charset() {
 // @return object Decoded results
 // @access public
 public function decode($params = null) {
-
-	// no more accepts to be called statically
 
 	//-- Called via an object
 	$this->_include_bodies = isset($params['include_bodies']) ? $params['include_bodies']  : false;

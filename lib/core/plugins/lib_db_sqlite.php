@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / SQLite 3 Database Client]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / SQLite 3 Database Client]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.181203
+ * @version 	v.20190105
  * @package 	Database:SQLite
  *
  */
@@ -162,15 +162,47 @@ public function close() {
 
 //--
 /**
+ * Fix a string to be compliant with SQLite LIKE / SIMILAR syntax.
+ * It will use special quotes for the LIKE / SIMILAR special characters: % _
+ * This function IS NOT INTENDED TO ESCAPE AGAINST SQL INJECTIONS ; USE IT ONLY WITH PREPARED PARAMS OR USE escape_str() with mode 'likes'
+ *
+ * @param STRING $y_string						:: A String or a Number to be Quoted for LIKES
+ */
+public function quote_likes($y_string) {
+	//--
+	return (string) SmartSQliteUtilDb::quote_likes($y_string);
+	//--
+} //END FUNCTION
+//--
+
+
+//--
+/**
  * Escape a string to be compliant and Safe (against SQL Injection) with SQLite standards.
  * This function will not add the (single) quotes arround the string, but just will just escape it to be safe.
  *
  * @param STRING $string 						:: A String or a Number to be Escaped
+ * @param ENUM $y_mode							:: '' = default ; 'likes' = Escape LIKE Syntax (% _)
  * @return STRING 								:: The Escaped String / Number
  */
-public function escape_str($string) {
+public function escape_str($string, $y_mode='') {
 	$this->check_opened();
-	return SmartSQliteUtilDb::escape_str($this->db, $string);
+	return SmartSQliteUtilDb::escape_str($this->db, $string, $y_mode);
+} //END FUNCTION
+//--
+
+
+//--
+/**
+ * SQlite compliant and Safe Json Encode.
+ * This should be used with SQlite json fields.
+ *
+ * @param STRING $mixed_content					:: A mixed variable
+ * @return STRING 								:: JSON string
+ *
+ */
+public function json_encode($mixed_content) {
+	return SmartSQliteUtilDb::json_encode($mixed_content);
 } //END FUNCTION
 //--
 
@@ -179,12 +211,12 @@ public function escape_str($string) {
 /**
  * Registers a PHP function for use as an SQL scalar function with SQLite.
  *
- * @param STRING $func 							:: A PHP or custom Function Name
+ * @param STRING $func 							:: A PHP or custom Function Name (will be registered with `custom_fx_` as prefix
  * @param INTEGER $argnum 						:: The number of required args ; If this parameter is -1, then the SQL function may take any number of arguments
  */
-public static function register_sql_function($func, $argnum) {
+public function register_sql_function($func, $argnum, $sqlname) {
 	$this->check_opened();
-	SmartSQliteUtilDb::register_sql_function($this->db, $func, $argnum);
+	SmartSQliteUtilDb::register_sql_function($this->db, (string)$func, (int)$argnum, (string)$sqlname); // force $sqlname as string to avoid be null (null can be used ONLY internal)
 } //END FUNCTION
 //--
 
@@ -451,7 +483,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.181203
+ * @version 	v.20190105
  * @package 	Database:SQLite
  *
  */
@@ -606,30 +638,38 @@ public static function open($file_name, $timeout_busy_sec=60) {
 			'data' => 'Open SQLite Database: '.$file_name
 		]);
 	} //end if
-	//-- register basic user functions
-	$ext_functions = [
-		'utf8_encode' 				=> 1,
-		'utf8_decode' 				=> 1,
-		'urlencode' 				=> 1,
-		'urldecode' 				=> 1,
-		'rawurlencode' 				=> 1,
-		'rawurldecode' 				=> 1,
-		'base64_encode' 			=> 1,
-		'base64_decode' 			=> 1,
-		'hex2bin' 					=> 1,
-		'bin2hex' 					=> 1,
-		'md5' 						=> 1,
-		'sha1' 						=> 1,
-		'time' 						=> 0, // no arguments
-		'strtotime' 				=> 1,
-		'str_word_count' 			=> -1, // can have 1 .. 3 args
+	//-- register basic user functions (will use as prefix: `smart_` for each below)
+	$ext_functions = [ // 0 = no arguments ; -1 = variadic ; 1..n args
+		'time' 						=>  0, // no arguments
+		'strtotime' 				=>  1,
+		'date' 						=> -1, // can have 1 or 2 args
+		'date_diff' 				=>  2,
+		'period_diff' 				=>  2,
+		'base64_encode' 			=>  1,
+		'base64_decode' 			=>  1,
+		'bin2hex' 					=>  1,
+		'hex2bin' 					=>  1,
+		'crc32b' 					=>  1,
+		'md5' 						=>  1,
+		'sha1' 						=>  1,
+		'sha512' 					=>  1,
+		'strlen' 					=>  1,
+		'charlen' 					=>  1,
+		'str_wordcount' 			=>  1,
 		'strip_tags' 				=> -1, // can have 1 or 2 args
-		'htmlspecialchars' 			=> -1, // can have 1 .. 4 args
-		'htmlspecialchars_decode' 	=> -1, // can have 1 or 2 args
-		'strlen' 					=> 1
+		'striptags' 				=>  1,
+		'deaccent_str' 				=>  1,
+		'json_arr_contains' 		=>  2,
+		'json_obj_contains' 		=>  3,
+		'json_arr_delete' 			=>  2,
+		'json_obj_delete' 			=>  3,
+		'json_arr_append' 			=>  2,
+		'json_obj_append' 			=>  2
 	];
 	foreach($ext_functions as $func => $argnum) {
-		self::register_sql_function($db, (string)$func, (int)$argnum);
+		if(self::register_sql_function($db, (string)$func, (int)$argnum) !== true) {
+			Smart::log_warning('WARNING: '.__METHOD__.' # Failed to Register Internal Function: `'.(string)$func.'` with SQLite DB');
+		} //end if
 	} //end foreach
 	//-- create the first time table to record the sqlite version
 	if(!self::check_if_table_exists($db, '_smartframework_metadata')) {
@@ -708,11 +748,56 @@ public static function check_connection($db) {
 
 
 //======================================================
-public static function register_sql_function($db, $func, $argnum) {
+public static function register_sql_function($db, $func, $argnum, $custom=null) {
+	//--
+	if((string)trim((string)$func) == '') {
+		return false;
+	} //end if
 	//--
 	self::check_connection($db);
 	//--
-	return (bool) $db->createFunction((string)$func, (string)$func, (int)$argnum);
+	if($custom === null) {
+		$fx = 'smart_'.$func;
+		$ex = '\\SmartSQliteFunctions::'.$func;
+	} else {
+		$fx = 'custom_fx_'.$custom;
+		$ex = (string) $func;
+	} //end if else
+	//--
+	if(SmartFrameworkRuntime::ifDebug()) {
+		//--
+		$time_start = microtime(true);
+		//--
+	} //end if
+	//--
+	$ok = (bool) $db->createFunction((string)$fx, (string)$ex, (int)$argnum);
+	//--
+	if(SmartFrameworkRuntime::ifDebug()) {
+		//--
+		$time_end = (float) (microtime(true) - (float)$time_start);
+		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
+		//--
+		$args = [];
+		if((int)$argnum < 0) {
+			$args[] = 'variadic';
+		} elseif((int)$argnum > 0) {
+			for($i=0; $i<(int)$argnum; $i++) {
+				$args[] = 'arg'.($i+1);
+			} //end for
+		} //end if
+		//--
+		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
+			'type' => 'set',
+			'data' => 'SQLite Register PHP Function :: '.$fx.'('.implode(', ', (array)$args).')',
+			'query' => (string) $ex.'() :: '.($ok === true ? 'OK' : 'FAIL'),
+			'params' => '',
+			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+			'connection' => (string) self::get_connection_id($db)
+		]);
+		//--
+	} //end if
+	//--
+	return (bool) $ok;
 	//--
 } //END FUNCTION
 //======================================================
@@ -1182,17 +1267,46 @@ public static function write_data($db, $query, $qparams='', $qtitle='') {
 
 
 //======================================================
-public static function escape_str($db, $y_string) {
+public static function quote_likes($y_string) {
+	//--
+	return (string) str_replace(['_', '%'], ['\\_', '\\%'], (string)$y_string); // escape for LIKE / SIMILAR: extra special escape: _ = \_ ; % = \%
+	//--
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+public static function escape_str($db, $y_string, $y_mode='') {
 	//--
 	self::check_connection($db);
 	//--
 	$y_string = (string) SmartUnicode::fix_charset((string)$y_string); // Fix
+	$y_mode = (string) trim((string)strtolower((string)$y_mode));
+	//--
+	if((string)$y_mode == 'likes') { // escape for LIKE / ILIKE / SIMILAR: extra special escape: _ = \_ ; % = \%
+		$y_string = (string) self::quote_likes((string)$y_string);
+	} //end if
 	//--
 	$y_string = (string) @$db->escapeString((string)$y_string);
 	//--
 	return (string) $y_string;
 	//--
 } // END FUNCTION
+//======================================================
+
+
+//======================================================
+public static function json_encode($y_mixed_content) {
+	//--
+	$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); // Fix: must return a string ; depth was added in PHP 5.5 only !
+	if((string)$json == '') {
+		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($y_mixed_content,1)); // this should not happen except if PHP's json encode fails !!!
+		$json = '[]'; // FIX: to make compatible with PostgreSQL JSON/JSON-B fields that cannot be empty, consider empty array
+	} //end if
+	//--
+	return (string) $json;
+	//--
+} //END FUNCTION
 //======================================================
 
 
@@ -1333,7 +1447,7 @@ public static function prepare_statement($db, $arrdata, $mode) {
  * @return STRING								:: The SQL processed (partial/full) Statement
  */
 public static function prepare_param_query($db, $query, $replacements_arr) { // {{{SYNC-SQL-PARAM-QUERY}}}
-	//--
+	//-- version: 181219
 	if(!is_string($query)) {
 		self::error($db, 'PREPARE-PARAM-QUERY', 'Query is not a string !', print_r($query,1), $replacements_arr);
 		return ''; // query must be a string
@@ -1619,6 +1733,403 @@ die(''); // just in case
 //=====================================================================================
 //===================================================================================== CLASS END
 //=====================================================================================
+
+
+//=====================================================================================
+//===================================================================================== CLASS START
+//=====================================================================================
+
+
+/**
+ * Class: SmartSQliteFunctions - provides extended functionalities for SQLite supplied via PHP
+ *
+ * Tested and Stable on SQLite versions: 3.x
+ *
+ * THIS CLASS IS FOR PRIVATE USE ONLY (used in both: SmartSQliteDb and SmartSQliteUtilDb)
+ * @access 		private
+ * @internal
+ *
+ * @usage 		static object: Class::method() - This class provides only STATIC methods
+ *
+ * @version 	v.20190105
+ * @package 	Database:SQLite
+ *
+ */
+final class SmartSQliteFunctions {
+
+	// ::
+
+
+	public static function time() {
+		//--
+		return (int) time();
+		//--
+	} //END FUNCTION
+
+
+	public static function date($format='Y-m-d H:i:s', $timestamp=null) {
+		//--
+		if($timestamp === null) {
+			$timestamp = (int) time();
+		} //end if
+		//--
+		return (string) date((string)$format, (int)$timestamp);
+		//--
+	} //END FUNCTION
+
+
+	public static function date_diff($date_start, $date_end) { // return date diff in days
+		//--
+		return (int) floor(((int)@strtotime((string)$date_start) - (int)@strtotime((string)$date_end)) / (3600 * 24));
+		//--
+	} //END FUNCTION
+
+
+	public static function period_diff($date_start, $date_end) { // return date period diff in months
+		//--
+		$date_start = (string) date('Y-m-d', @strtotime((string)$date_start));
+		$date_end = (string) date('Y-m-d', @strtotime((string)$date_end));
+		//--
+		$datetime_start = new DateTime((string)$date_start);
+		$datetime_end 	= new DateTime((string)$date_end);
+		$diff = $datetime_start->diff($datetime_end);
+		//--
+		return (int) ($diff->format('%y') * 12 + $diff->format('%m'));
+		//--
+	} //END FUNCTION
+
+
+	public static function strtotime($str) {
+		//--
+		$time = (int) strtotime((string)$str);
+		if($time < 0) {
+			$time = 0;
+		} //end if
+		//--
+		return (int) $time;
+		//--
+	} //END FUNCTION
+
+
+	public static function utf8_encode($str) {
+		//--
+		return (string) utf8_encode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function utf8_decode($str) {
+		//--
+		return (string) utf8_decode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function urlencode($str) {
+		//--
+		return (string) urlencode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function urldecode($str) {
+		//--
+		return (string) urldecode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function rawurlencode($str) {
+		//--
+		return (string) rawurlencode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function rawurldecode($str) {
+		//--
+		return (string) rawurldecode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function base64_encode($str) {
+		//--
+		return (string) base64_encode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function base64_decode($str) {
+		//--
+		return (string) base64_decode((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function bin2hex($str) {
+		//--
+		return (string) bin2hex((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function hex2bin($str) {
+		//--
+		return (string) hex2bin((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function crc32b($str) {
+		//--
+		return (string) SmartHashCrypto::crc32b((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function md5($str) {
+		//--
+		return (string) SmartHashCrypto::md5((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function sha1($str) {
+		//--
+		return (string) SmartHashCrypto::sha1((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function sha512($str) {
+		//--
+		return (string) SmartHashCrypto::sha512((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function strlen($str) {
+		//--
+		return (int) strlen((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function charlen($str) {
+		//--
+		return (int) SmartUnicode::str_len((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function str_wordcount($str) {
+		//--
+		return (int) SmartUnicode::str_wordcount((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function strip_tags($str, $allowable_tags='') {
+		//--
+		$allowable_tags = (string) trim((string)$allowable_tags);
+		//--
+		if((string)$allowable_tags != '') {
+			$str = (string) strip_tags((string)$str, (string)$allowable_tags);
+		} else {
+			$str = (string) strip_tags((string)$str);
+		} //end if else
+		return (string) $str;
+		//--
+	} //END FUNCTION
+
+
+	public static function striptags($str) {
+		//--
+		return (string) Smart::striptags($str, 'yes');
+		//--
+	} //END FUNCTION
+
+
+	public static function deaccent_str($str) {
+		//--
+		return (string) SmartUnicode::deaccent_str($str);
+		//--
+	} //END FUNCTION
+
+
+	public static function json_arr_contains($json, $val) {
+		//--
+		$arr = Smart::json_decode((string)$json);
+		//--
+		if(!is_array($arr)) {
+			return false;
+		} //end if
+		//--
+		if(Smart::array_type_test($arr) != 1) { // expects non-associative array
+			return false;
+		} //end if
+		//--
+		return (bool) in_array((string)$val, (array)$arr);
+		//--
+	} //END FUNCTION
+
+
+	public static function json_obj_contains($json, $key, $val) {
+		//--
+		$key = (string) trim((string)$key);
+		if((string)$key == '') {
+			return false;
+		} //end if
+		//--
+		$arr = Smart::json_decode((string)$json);
+		//--
+		if(!is_array($arr)) {
+			return false;
+		} //end if
+		//--
+		if(Smart::array_type_test($arr) != 2) { // expects associative array
+			return false;
+		} //end if
+		//--
+		$exists = false;
+		foreach($arr as $k => $v) {
+			if((string)$k == (string)$key) {
+				if((string)$v == (string)$val) {
+					$exists = true;
+					break;
+				} //end if
+			} //end if
+		} //end foreach
+		//--
+		return (bool) $exists;
+		//--
+	} //END FUNCTION
+
+
+	public static function json_arr_delete($json, $val) {
+		//--
+		$arr = Smart::json_decode((string)$json);
+		//--
+		if(!is_array($arr)) {
+			return '[]';
+		} //end if
+		//--
+		if(Smart::array_type_test($arr) != 1) { // expects non-associative array
+			return '[]';
+		} //end if
+		//--
+		$newarr = [];
+		for($i=0; $i<Smart::array_size($arr); $i++) {
+			if((string)$arr[$i] != (string)$val) {
+				if((is_scalar($arr[$i])) OR (is_null($arr[$i]))) {
+					$newarr[] = $arr[$i]; // mixed: number or string (do not force string, to avoid change type)
+				} //end if
+			} //end if
+		} //end for
+		//--
+		return (string) SmartSQliteUtilDb::json_encode((array)$newarr);
+		//--
+	} //END FUNCTION
+
+
+	public static function json_obj_delete($json, $key, $val) {
+		//--
+		$arr = Smart::json_decode((string)$json);
+		//--
+		if(!is_array($arr)) {
+			return '[]';
+		} //end if
+		//--
+		if(Smart::array_type_test($arr) != 2) { // expects associative array
+			return '[]';
+		} //end if
+		//--
+		$newarr = [];
+		foreach($arr as $k => $v) {
+			if((string)$k == (string)$key) {
+				if((string)$v == (string)$val) {
+					continue; // skip
+				} //end if
+			} //end if
+			if((is_scalar($v)) OR (is_null($v))) {
+				$newarr[(string)$k] = $v; // mixed: number or string (do not force string, to avoid change type)
+			} //end if
+		} //end foreach
+		//--
+		return (string) SmartSQliteUtilDb::json_encode((array)$newarr);
+		//--
+	} //END FUNCTION
+
+
+	public static function json_arr_append($json, $jsval) {
+		//--
+		$arr = Smart::json_decode((string)$json);
+		//--
+		if(!is_array($arr)) {
+			return '[]';
+		} //end if
+		//--
+		if(Smart::array_type_test($arr) != 1) { // expects non-associative array
+			return '[]';
+		} //end if
+		//--
+		$val = Smart::json_decode((string)$jsval);
+		$jsval = ''; // free mem
+		if(Smart::array_type_test($val) == 2) { // expects non-associative array or string
+			return '[]';
+		} //end if
+		//--
+		if(is_array($val)) {
+			$newarr = (array) array_merge((array)$arr, (array)$val);
+		} else {
+			$newarr = (array) array_merge((array)$arr, [(string)$val]);
+		} //end if else
+		$arr = []; // free mem
+		$newarr = (array) array_values((array)array_unique((array)$newarr));
+		//--
+		return (string) SmartSQliteUtilDb::json_encode((array)$newarr);
+		//--
+	} //END FUNCTION
+
+
+	public static function json_obj_append($json, $jsval) {
+		//--
+		$arr = Smart::json_decode((string)$json);
+		//--
+		if(!is_array($arr)) {
+			return '[]';
+		} //end if
+		//--
+		if(Smart::array_type_test($arr) != 2) { // expects associative array
+			return '[]';
+		} //end if
+		//--
+		$val = Smart::json_decode((string)$jsval);
+		$jsval = ''; // free mem
+		if(Smart::array_type_test($val) == 1) { // expects associative array or string
+			return '[]';
+		} //end if
+		//--
+		if(is_array($val)) {
+			$newarr = (array) array_merge((array)$arr, (array)$val);
+		} else {
+			$newarr = (array) array_merge((array)$arr, [(string)$val]);
+		} //end if else
+		$arr = []; // free mem
+		//--
+		return (string) SmartSQliteUtilDb::json_encode((array)$newarr);
+		//--
+	} //END FUNCTION
+
+
+} //END CLASS
+
+
+//=====================================================================================
+//===================================================================================== CLASS END
+//=====================================================================================
+
 
 //end of php code
 ?>

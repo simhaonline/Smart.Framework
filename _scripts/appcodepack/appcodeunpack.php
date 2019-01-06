@@ -1,6 +1,7 @@
 <?php
 // AppCodeUnPack - Deploy Manager: NetArchive UnPacker
-// (c) 2006-2018 unix-world.org - all rights reserved
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //##############################################################################
 //############### RUNTIME: DO NOT MODIFY CODE BELOW !!!
@@ -193,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.181219.1127'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20190105.2107'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -245,6 +246,7 @@ AppPackUtils::raise_error_if_unsafe_path((string)$the_app_auth_logfile);
 
 //##### Parse INI
 $appcode_ini_file_options = [ //===== SETTINGS
+	'ADMIN_AREA_FORCE_HTTPS' => false,
 	'ADMIN_AREA_RESTRICT_IP_LIST' => false,
 	'ADMIN_AREA_USER' => false,
 	'ADMIN_AREA_PASSWORD' => false,
@@ -293,6 +295,15 @@ if((AppPackUtils::is_type_file((string)$appcode_ini_file_path)) AND (AppPackUtil
 } //end if else
 //#####
 
+//##### Check if HTTPS Restricted
+if(defined('ADMIN_AREA_FORCE_HTTPS')) {
+	if(ADMIN_AREA_FORCE_HTTPS == 1) {
+		if((!isset($_SERVER['HTTPS'])) OR ((string)strtolower((string)trim((string)$_SERVER['HTTPS'])) != 'on')) {
+			AppPackUtils::raise_error('ERROR: HTTPS is required !');
+			return;
+		} //end if
+	} //end if
+} //end if
 //##### Check IP Restrict Settings
 if(!defined('ADMIN_AREA_RESTRICT_IP_LIST')) {
 	AppPackUtils::raise_error('ERROR: IP Restrict List not set !');
@@ -953,7 +964,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.181219 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20190105 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1767,7 +1778,7 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	//##### Smart v.181203
+	//##### Smart v.20190105
 
 
 	//================================================================
@@ -1961,17 +1972,23 @@ Options -Indexes
 	 *
 	 */
 	public static function safe_fix_invalid_filesys_names($y_fsname) {
-		//-- v.170920
+		//-- v.190105
 		$y_fsname = (string) trim((string)$y_fsname);
 		//-- {{{SYNC-SAFE-PATH-CHARS}}} {{{SYNC-CHK-SAFE-PATH}}}
 		if(
 			((string)$y_fsname == '.') OR
 			((string)$y_fsname == '..') OR
+			((string)$y_fsname == ':') OR
 			((string)$y_fsname == '/') OR
 			((string)$y_fsname == '/.') OR
 			((string)$y_fsname == '/..') OR
-			(substr($y_fsname, -2, 2) == '/.') OR
-			(substr($y_fsname, -3, 3) == '/..')
+			((string)$y_fsname == '/:') OR
+			((string)ltrim((string)$y_fsname, '/') == '.') OR
+			((string)ltrim((string)$y_fsname, '/') == '..') OR
+			((string)ltrim((string)$y_fsname, '/') == ':') OR
+			((string)trim((string)$y_fsname, '/') == '') OR
+			((string)substr((string)$y_fsname, -2, 2) == '/.') OR
+			((string)substr((string)$y_fsname, -3, 3) == '/..')
 		) {
 			$y_fsname = '';
 		} //end if
@@ -2218,7 +2235,7 @@ Options -Indexes
 	public static function crc32b($y_str) {
 		//--
 		if(!self::algo_check('sha512')) {
-			self::raise_error('ERROR: SmartFramework Crypto Hash requires CRC32B Hash/Algo', 'CRC32B Hash/Algo is missing');
+			self::raise_error('ERROR: Smart.Framework Crypto Hash requires CRC32B Hash/Algo', 'CRC32B Hash/Algo is missing');
 			return '';
 		} //end if
 		//--
@@ -2256,7 +2273,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.181219
+	//##### SmartUtils v.20190103
 
 
 	//================================================================
@@ -2409,7 +2426,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.181115
+	//##### SmartFileSysUtils v.181225
 
 
 	//================================================================
@@ -2673,7 +2690,7 @@ Options -Indexes
 		//--
 		$y_path = (string) $y_path;
 		//--
-		if(substr(trim($y_path), 0, 1) == '/') {
+		if((string)substr((string)trim($y_path), 0, 1) == '/') {
 			return 0;
 		} //end if
 		//--

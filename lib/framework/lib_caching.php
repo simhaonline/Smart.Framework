@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Cache Support]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Cache Support]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -24,7 +24,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //--
 if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
 	@http_response_code(500);
-	die('ERROR: The PHP ZLIB Extension (gzencode/gzdecode) is required for SmartFramework / Lib Utils');
+	die('ERROR: The PHP ZLIB Extension (gzencode/gzdecode) is required for Smart.Framework / Lib Utils');
 } //end if
 //--
 

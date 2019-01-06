@@ -1,17 +1,36 @@
-<!-- start markers-tpl partial / sub-template v.181213 -->
-[%%%%COMMENT%%%%] Partial / Sub-Template: templating-test.inc.htm [%%%%/COMMENT%%%%]<!-- comments are removed -->
-<table style="border: 1px solid #ECECEC; width: 550px;">
-<tr>
-	<th>Column 1<th>
-	<th>Column 2<th>
-	<th>Column 3<th>
-</tr>
-[%%%%LOOP:TBL%%%%]
-<tr>
-	<td>cell [####TBL.A1|html####]<td>
-	<td>cell [####TBL.A2|html####]<td>
-	<td>cell [####TBL.A3|html####]<td>
-</tr>
-[%%%%/LOOP:TBL%%%%]
-</table>
+<!-- start markers-tpl partial / sub-template v.20190103 -->
+	[%%%%COMMENT%%%%] Partial / Sub-Template: templating-test.inc.htm [%%%%/COMMENT%%%%]<!-- comments are removed -->
+	<h5 id="qunit-test-result">Markers-TPL w. Sub-Template Render (Table with #[####TCOUNT|int####] columns):</h5>
+	<table style="border: 1px solid #ECECEC; width: 550px;" id="qunit-test-el">
+	<tr>
+		<th>Column 1<th>
+		<th>Column 2<th>
+		<th>Column 3<th>
+	</tr>
+	[%%%%LOOP:TBL%%%%]
+	<tr>
+		<td>cell [####TBL.A1|html####]<td>
+		<td>cell [####TBL.A2|html####]<td>
+		<td>cell [####TBL.A3|html####]<td>
+	</tr>
+	[%%%%/LOOP:TBL%%%%]
+	</table>
+	<ul>
+	[%%%%LOOP:NAVIGATION%%%%]
+		<li><a href="[####NAVIGATION.HREF|html####]">[####NAVIGATION.CAPTION|html####]</a></li>
+	[%%%%/LOOP:NAVIGATION%%%%]
+	</ul>
+	Test Condition#1:
+	[%%%%IF:A:==Test-1;%%%%]
+		<b>OK</b>
+	[%%%%ELSE:A%%%%]
+		<span style="color:#FF3300;"><b>NOT OK</b></span>
+	[%%%%/IF:A%%%%]
+	<br>
+	Test Condition#2:
+	[%%%%IF:B:==####A####;%%%%]
+		<span style="color:#FF3300;"><b>NOT OK</b></span>
+	[%%%%ELSE:B%%%%]
+		<b>OK</b>
+	[%%%%/IF:B%%%%]
 <!-- end markers-tpl partial / sub-template -->

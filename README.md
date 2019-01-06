@@ -1,14 +1,12 @@
-# Smart.Framework, a modern, high performance PHP / Javascript Framework for Web featuring MVC + Middlewares
-## License: BSD
-(c) 2009 - 2018 unix-world.org
-<b>For support or questions: <i>support @ unix-world.org</i></b>
-<br>
-#### Demo URL:
-<a href="http://demo.unix-world.org/smart-framework/">http://demo.unix-world.org/smart-framework/</a>
-#### Download URL:
-<a href="https://github.com/unix-world/Smart.Framework" target="_blank">https://github.com/unix-world/Smart.Framework</a>
-#### Download URL for Modules:
-<a href="https://github.com/unix-world/Smart.Framework.Modules" target="_blank">https://github.com/unix-world/Smart.Framework.Modules</a>
+# Smart.Framework: a BSD Licensed, modern and high performance PHP / Javascript Framework for Web featuring MVC + Middlewares
+<b>(c) 2009 - 2019 unix-world.org</b> / <i>support&#64;unix-world.org</i>
+
+ &nbsp; | &nbsp;
+------------- | -------------
+ **Demo URL:** | <a href="http://demo.unix-world.org/smart-framework/" target="_blank">http://demo.unix-world.org/smart-framework</a>
+ **Download URL:** | <a href="https://github.com/unix-world/Smart.Framework" target="_blank">https://github.com/unix-world/Smart.Framework</a>
+ **Download Modules URL:** | <a href="https://github.com/unix-world/Smart.Framework.Modules" target="_blank">https://github.com/unix-world/Smart.Framework.Modules</a>
+
 <br>
 
 ### Smart.Framework design philosophy:
@@ -47,11 +45,11 @@ Using a regular server as hardware platform (Supermicro):
 * 256 GB RAM, DDR4 ECC @ 2133 MHz
 * HDD 2 x 1TB SSD
 Software:
-* OS: Debian 9 Linux, 64-bit, up-to-date 2018-12-08
+* OS: Debian 9 Linux, 64-bit, up-to-date 2019-01-03
 * Apps: Apache 2.4.37, PHP 7.0.30 (with Zend Opcache)
 
-#### Benchmark Results of tested PHP Frameworks, with a simple controller that Outputs: 'Hello World' ; no Caching (Memcache or Redis):
-* Smart.Framework v.3.7.7 git@2018.12.08 with MarkersTPL Templating: ~ 27.7K (27877) requests / second
-* Symfony 4.2.1 git@2018.12.08 with Twig Templating: ~ 9.1K (9173) requests / second ( 3x slower than Smart.Framework )
-* Laravel 5.7.15 git@2018.12.08 with Blade Templating ~ 6.7K (6799) requests / second ( 4x slower than Smart.Framework )
-* Zend Framework 2.4.13 git@2018.12.08 with PHP Templating: ~ 5.2K (5231) requests / second ( 5x slower than Smart.Framework )
+#### Benchmark Results of tested PHP Frameworks, with a simple controller (no Caching) that Outputs: 'Hello World':
+* Smart.Framework v.3.7.8 head@2019.01.03 with MarkersTPL Templating: ~ 27.7K (27877) requests / second
+* Symfony 4.2.1 git@2019.01.03 with Twig Templating: ~ 9.1K (9173) requests / second ( 3x slower than Smart.Framework )
+* Laravel 5.7.15 git@2019.01.03 with Blade Templating ~ 6.7K (6802) requests / second ( 4x slower than Smart.Framework )
+* Zend Framework 2.4.13 git@2019.01.03 with PHP Templating: ~ 5.2K (5233) requests / second ( 5x slower than Smart.Framework )

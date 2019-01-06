@@ -1,6 +1,7 @@
 <?php
 // AppCodePack - Release Manager: a PHP, JS and CSS Optimizer + NetArchive Packer
-// (c) 2006-2018 unix-world.org - all rights reserved
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //===== CODE OPTIMIZATIONS INFO:
 // The AppCodePack optimize will process the following type of source code (php/js/css):
@@ -202,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.181219.1127'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20190105.2107'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -412,7 +413,7 @@ function RunApp() {
 		define('APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR', (string)APPCODEPACK_PROCESS_SOURCE_DIR.'.APPCODEPACK.'.'MINIFIED-'.APPCODEPACK_COMPRESS_UTILITY_TYPE);
 	} else {
 		define('APPCODEPACK_PROCESS_OPTIMIZATIONS_MODE', 'comments');
-		define('APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR', (string)APPCODEPACK_PROCESS_SOURCE_DIR.'.APPCODEPACK.'.'NO-COMMENTS');
+		define('APPCODEPACK_PROCESS_OPTIMIZATIONS_DIR', (string)APPCODEPACK_PROCESS_SOURCE_DIR.'.APPCODEPACK.'.'STRIP-NOCOMMENTS');
 	} //end if else
 	//--
 	define('APPCODEPACK_MARKER_OPTIMIZATIONS', '(PHP'.(defined('APPCODEPACK_LINT_PHP_UTILITY_BIN') ? '+Lint' : '').' / JS'.(defined('APPCODEPACK_LINT_NODEJS_UTILITY_BIN') ? '+Lint' : '').' / CSS)');
@@ -671,7 +672,7 @@ function RunApp() {
 					clearstatcache(true, (string)$the_archdir);
 					$arr_dir_packs = scandir((string)$the_archdir); // don't make it array, can be false
 					if(($arr_dir_packs !== false) AND (AppPackUtils::array_size($arr_dir_packs) > 0)) {
-						echo '<br><hr><div style="background:#ECECEC; color:#333333; border-radius:5px; padding:8px; margin-bottom:5px; font-weight:bold; cursor:help;"><h2>List of available Release Packages:</h2>';
+						echo '<br><hr><div style="background:#ECECEC; color:#333333; border-radius:5px; padding:8px; margin-bottom:5px; font-weight:bold;"><h2>List of available Release Packages:</h2>';
 						$pkcnt = 0;
 						for($i=0; $i<AppPackUtils::array_size($arr_dir_packs); $i++) {
 							if(((string)trim((string)$arr_dir_packs[$i]) != '') AND ((string)$arr_dir_packs[$i] != '.') AND ((string)$arr_dir_packs[$i] != '..')) { // fix ok
@@ -931,12 +932,12 @@ final class AppCodeOptimizer {
 									if((string)$mode == 'comments') { // remove comments
 										//--
 										$the_php_proc_mode = 'CS'; // {{{SYNC-SIGNATURE-STRIP-COMMENTS}}}
-										$tmp_content = PhpOptimizer::remove_php_comments($tmp_path);
+										$tmp_content = PhpOptimizer::strip_code($tmp_path);
 										//--
 									} else { // minify code
 										//--
 										$the_php_proc_mode = 'ZM'; // zend minify
-										$tmp_content = PhpOptimizer::strip_php_code($tmp_path);
+										$tmp_content = PhpOptimizer::minify_code($tmp_path);
 										//--
 									} //end if else
 									//--
@@ -958,7 +959,7 @@ final class AppCodeOptimizer {
 										break;
 									} else {
 										if((string)$mode == 'comments') { // if remove comments, recheck syntax
-											$tmp_chksyntax = PhpOptimizer::strip_php_code($tmp_dest);
+											$tmp_chksyntax = PhpOptimizer::minify_code($tmp_dest);
 											if((string)$tmp_chksyntax == '') {
 												$this->err = 'ERROR: A PHP FILE check syntax FAILED: '.$tmp_path.' @ '.$tmp_dest;
 												break;
@@ -1272,41 +1273,49 @@ final class AppCodeOptimizer {
 final class PhpOptimizer {
 
 	// ::
-	// v.170929
+	// v.181225
+
+	private static $strip_autoloaded = false;
 
 //====================================================
-// just remove PHP comments
-public static function remove_php_comments($file) {
+// php strip
+public static function strip_code($y_file) {
 	//--
-	$file = (string) $file;
+	$y_file = (string) $y_file;
 	//--
-	AppPackUtils::raise_error_if_unsafe_path($file, 'no');
+	AppPackUtils::raise_error_if_unsafe_path($y_file, 'no');
 	//--
-	if(!AppPackUtils::is_type_file($file)) {
+	if(!AppPackUtils::is_type_file($y_file)) {
 		return '';
 	} //end if
 	//--
-	$file_contents = (string) AppPackUtils::read($file, 0, 'no', 'no'); // don't deny absolute path
-	//-- remove comments
-	foreach(token_get_all($file_contents) as $token) {
-		//--
-		if(($token[0] !== T_COMMENT) AND ($token[0] !== T_DOC_COMMENT)) {
-			continue;
+	if(!self::$strip_autoloaded) {
+		if(!is_file('StripCode.php')) {
+			AppPackUtils::raise_error(
+				'Not Found: StripCode.php',
+				'A required PHP File was not Found: StripCode.php'
+			);
 		} //end if
-		//--
-		$file_contents = str_replace($token[1], "\n", $file_contents); // just for comments and doc comments
-		//--
-	} //end foreach
+		require_once('StripCode.php');
+		self::$strip_autoloaded = true;
+	} //end if
 	//--
-	return (string) $file_contents;
+	if(!method_exists('StripCode', 'strip_php_code')) {
+		AppPackUtils::raise_error(
+			'Method Not Found: StripCode::strip_php_code($y_file)',
+			'A required PHP Method Not Found: StripCode::strip_php_code($y_file) in StripCode.php'
+		);
+	} //end if
+	//--
+	return (string) StripCode::strip_php_code($y_file);
 	//--
 } //END FUNCTION
 //====================================================
 
 
 //====================================================
-// strip the PHP code (strip whitespace and comments)
-public static function strip_php_code($file) {
+// php minify
+public static function minify_code($file) {
 	//--
 	if((string)$file == '') {
 		return '';
@@ -1375,47 +1384,42 @@ public static function lint_code($y_script_path) {
 final class JsOptimizer {
 
 	// ::
-	// v.170929
+	// v.181225
+
+	private static $strip_autoloaded = false;
 
 
 //====================================================
-// strip comments and white spaces
+// js strip
 public static function strip_code($y_file) {
 	//--
 	$y_file = (string) trim((string)$y_file);
 	//--
 	AppPackUtils::raise_error_if_unsafe_path($y_file, 'no');
 	//--
-	$input = (string) AppPackUtils::read($y_file, 0, 'no', 'no'); // don't deny absolute path
-	if((string)trim((string)$input) == '') {
+	if(!AppPackUtils::is_type_file($y_file)) {
 		return '';
 	} //end if
 	//--
-	$output = '';
+	if(!self::$strip_autoloaded) {
+		if(!is_file('StripCode.php')) {
+			AppPackUtils::raise_error(
+				'Not Found: StripCode.php',
+				'A required PHP File was not Found: StripCode.php'
+			);
+		} //end if
+		require_once('StripCode.php');
+		self::$strip_autoloaded = true;
+	} //end if
 	//--
-	try {
-		//--
-		$jshrink = new JShrinkMinifier();
-		//--
-		$js = $jshrink->lock((string)$input);
-		$tmp = (string) $jshrink->minifyJsCode($js, []);
-		//--
-		$js = ltrim((string)$tmp); // sometimes there's a leading new line, so we trim that out here.
-		$tmp = '';
-		$js = $jshrink->unlock($js);
-		$jshrink = null;
-		//--
-		$output = (string) $js;
-		$js = '';
-		//--
-	} catch (Exception $e) {
-		//--
-		$jshrink = null;
-		$js = '';
-		//--
-	} //end try catch
+	if(!method_exists('StripCode', 'strip_js_code')) {
+		AppPackUtils::raise_error(
+			'Method Not Found: StripCode::strip_js_code($y_file)',
+			'A required PHP Method Not Found: StripCode::strip_js_code($y_file) in StripCode.php'
+		);
+	} //end if
 	//--
-	return (string) trim($output);
+	return (string) StripCode::strip_js_code($y_file);
 	//--
 } //END FUNCTION
 //====================================================
@@ -1564,31 +1568,42 @@ public static function lint_code($y_script_path) {
 final class CssOptimizer {
 
 	// ::
-	// v.170929
+	// v.181225
+
+	private static $strip_autoloaded = false;
 
 
 //====================================================
-// strip comments and white spaces
+// css strip
 public static function strip_code($y_file) {
 	//--
 	$y_file = (string) trim((string)$y_file);
 	//--
 	AppPackUtils::raise_error_if_unsafe_path($y_file, 'no');
 	//--
-	$input = (string) AppPackUtils::read($y_file, 0, 'no', 'no'); // don't deny absolute path
-	if((string)trim((string)$input) == '') {
+	if(!AppPackUtils::is_type_file($y_file)) {
 		return '';
 	} //end if
 	//--
-	$regex = array(
-		(string) APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS => ' ', // remove multi-line comments (this is OK for CSS)
-		"`^([\t\s]+)`ism" => '', // remove line start spaces
-		"`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism" => "\n" // normalize line endings
-	);
+	if(!self::$strip_autoloaded) {
+		if(!is_file('StripCode.php')) {
+			AppPackUtils::raise_error(
+				'Not Found: StripCode.php',
+				'A required PHP File was not Found: StripCode.php'
+			);
+		} //end if
+		require_once('StripCode.php');
+		self::$strip_autoloaded = true;
+	} //end if
 	//--
-	$output = (string) preg_replace(array_keys($regex), array_values($regex), (string)$input);
+	if(!method_exists('StripCode', 'strip_css_code')) {
+		AppPackUtils::raise_error(
+			'Method Not Found: StripCode::strip_css_code($y_file)',
+			'A required PHP Method Not Found: StripCode::strip_css_code($y_file) in StripCode.php'
+		);
+	} //end if
 	//--
-	return (string) trim($output);
+	return (string) StripCode::strip_css_code($y_file);
 	//--
 } //END FUNCTION
 //====================================================
@@ -2177,588 +2192,11 @@ private function conform_column($y_text) {
 //===================================================================================== CLASS START
 //=====================================================================================
 
-/**
- * JShrink
- * Minifier
- *
- * Usage - Minifier::minify($js);
- * Usage - Minifier::minify($js, $options);
- * Usage - Minifier::minify($js, array('flaggedComments' => false));
- *
- * @package JShrink
- * @author Robert Hafner <tedivm@tedivm.com>
- * @license http://www.opensource.org/licenses/bsd-license.php BSD License
- */
-
-final class JShrinkMinifier {
-
-	// ->
-	// v.170929
-
-	private $output = '';
-
-	/**
-	 * The input javascript to be minified.
-	 *
-	 * @var string
-	 */
-	private $input;
-
-	/**
-	 * The location of the character (in the input string) that is next to be
-	 * processed.
-	 *
-	 * @var int
-	 */
-	private $index = 0;
-
-	/**
-	 * The first of the characters currently being looked at.
-	 *
-	 * @var string
-	 */
-	private $a = '';
-
-	/**
-	 * The next character being looked at (after a);
-	 *
-	 * @var string
-	 */
-	private $b = '';
-
-	/**
-	 * This character is only active when certain look ahead actions take place.
-	 *
-	 *  @var string
-	 */
-	private $c;
-
-	/**
-	 * Contains the options for the current minification process.
-	 *
-	 * @var array
-	 */
-	private $options;
-
-	/**
-	 * Contains the default options for minification. This array is merged with
-	 * the one passed in by the user to create the request specific set of
-	 * options (stored in the $options attribute).
-	 *
-	 * @var array
-	 */
-	private $defaultOptions = array('flaggedComments' => false);
-
-	/**
-	 * Contains lock ids which are used to replace certain code patterns and
-	 * prevent them from being minified
-	 *
-	 * @var array
-	 */
-	private $locks = array();
-
-
-	public function __construct() {
-		// class constructor
-	} //END FUNCTION
-
-
-	/**
-	 * Processes a javascript string and outputs only the required characters,
-	 * stripping out all unneeded characters.
-	 *
-	 * @param string $js      The raw javascript to be minified
-	 * @param array  $options Various runtime options in an associative array
-	 */
-	public function minifyJsCode($js, $options) {
-		//--
-		$this->initialize($js, $options);
-		$this->loop();
-		$this->clean();
-		//--
-		return (string) $this->output;
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Replace patterns in the given string and store the replacement
-	 *
-	 * @param  string $js The string to lock
-	 * @return bool
-	 */
-	public function lock($js) {
-		//-- lock things like <code>"asd" + ++x;</code>
-		//$lock = '"LOCK---' . crc32(time()) . '"';
-		$lock = '"LOCK---' . sha1((string)microtime()) . '"';
-		$js = (string) $js;
-		$matches = array();
-		preg_match('/([+-])(\s+)([+-])/S', $js, $matches);
-		if(empty($matches)) {
-			return (string) $js;
-		} //end if
-		//--
-		$this->locks[$lock] = $matches[2];
-		//--
-		$js = preg_replace('/([+-])\s+([+-])/S', "$1{$lock}$2", $js);
-		//--
-		return (string) $js;
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Replace "locks" with the original characters
-	 *
-	 * @param  string $js The string to unlock
-	 * @return bool
-	 */
-	public function unlock($js) {
-		//--
-		if(empty($this->locks)) {
-			return (string) $js;
-		} //end if
-		//--
-		foreach($this->locks as $lock => $replacement) {
-			$js = str_replace($lock, $replacement, $js);
-		} //end foreach
-		//--
-		return (string) $js;
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 *  Initializes internal variables, normalizes new lines,
-	 *
-	 * @param string $js      The raw javascript to be minified
-	 * @param array  $options Various runtime options in an associative array
-	 */
-	private function initialize($js, $options=array()) {
-		//--
-		if(!is_array($options)) {
-			$options = array();
-		} //end if
-		//--
-		$this->options = array_merge($this->defaultOptions, $options);
-		//--
-		$js = (string) $js;
-		$js = str_replace("\r\n", "\n", $js);
-		$js = str_replace('/**/', '', $js);
-		$this->input = str_replace("\r", "\n", $js);
-		//--
-		// We add a newline to the end of the script to make it easier to deal
-		// with comments at the bottom of the script- this prevents the unclosed
-		// comment error that can otherwise occur.
-		$this->input .= PHP_EOL;
-		//--
-		// Populate "a" with a new line, "b" with the first character, before
-		// entering the loop
-		$this->a = "\n";
-		$this->b = $this->getReal();
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * The primary action occurs here. This function loops through the input string,
-	 * outputting anything that's relevant and discarding anything that is not.
-	 */
-	private function loop() {
-		//--
-		while($this->a !== false && !is_null($this->a) && $this->a !== '') {
-			//--
-			switch($this->a) {
-				//-- new lines
-				case "\n":
-					//-- if the next line is something that can't stand alone preserve the newline
-					if(strpos('(-+[@', $this->b) !== false) {
-						$this->output .= (string) $this->a;
-						$this->saveString();
-						break;
-					} //end if
-					//-- if B is a space we skip the rest of the switch block and go down to the string/regex check below, resetting $this->b with getReal
-					if($this->b === ' ') {
-						break;
-					} //end if
-					//--
-				//-- otherwise we treat the newline like a space
-				case ' ':
-					//--
-					if($this->isAlphaNumeric($this->b)) {
-						$this->output .= (string) $this->a;
-					} //end if
-					//--
-					$this->saveString();
-					break;
-					//--
-				default:
-					//--
-					switch($this->b) {
-						//--
-						case "\n":
-							if(strpos('}])+-"\'', $this->a) !== false) {
-								$this->output .= (string) $this->a;
-								$this->saveString();
-								break;
-							} else {
-								if($this->isAlphaNumeric($this->a)) {
-									$this->output .= (string) $this->a;
-									$this->saveString();
-								} //end if
-							} //end if else
-							break;
-						//--
-						case ' ':
-							if(!$this->isAlphaNumeric($this->a)) {
-								break;
-							} //end if
-						//--
-						default:
-							//-- check for some regex that breaks stuff
-							if($this->a === '/' && ($this->b === '\'' || $this->b === '"')) {
-								$this->saveRegex();
-								continue;
-							} //end if
-							//--
-							$this->output .= (string) $this->a;
-							$this->saveString();
-							break;
-							//--
-					} //end switch
-					//--
-			} //end switch
-			//-- do reg check of doom
-			$this->b = $this->getReal();
-			//--
-			if(((string)$this->b == '/' && strpos('(,=:[!&|?', $this->a) !== false)) {
-				$this->saveRegex();
-			} //end if
-			//--
-		} //end while
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Resets attributes that do not need to be stored between requests so that
-	 * the next request is ready to go. Another reason for this is to make sure
-	 * the variables are cleared and are not taking up memory.
-	 */
-	private function clean() {
-		//--
-		unset($this->input);
-		$this->index = 0;
-		$this->a = $this->b = '';
-		unset($this->c);
-		unset($this->options);
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Returns the next string for processing based off of the current index.
-	 *
-	 * @return string
-	 */
-	private function getChar() {
-		//-- check to see if we had anything in the look ahead buffer and use that.
-		if(isset($this->c)) {
-			//--
-			$char = $this->c;
-			unset($this->c);
-			//--
-		} else { // otherwise we start pulling from the input
-			//--
-			$char = substr($this->input, $this->index, 1);
-			//-- if the next character doesn't exist return false.
-			if(isset($char) && $char === false) {
-				return false;
-			} //end if
-			//-- otherwise increment the pointer and use this char.
-			$this->index++;
-			//--
-		} //end if else
-		//-- normalize all whitespace except for the newline character into a standard space.
-		if($char !== "\n" && ord($char) < 32) {
-			return ' ';
-		} //end if
-		//--
-		return $char;
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * This function gets the next "real" character. It is essentially a wrapper
-	 * around the getChar function that skips comments. This has significant
-	 * performance benefits as the skipping is done using native functions (ie,
-	 * c code) rather than in script php.
-	 *
-	 *
-	 * @return string            Next 'real' character to be processed.
-	 * @throws Exception
-	 */
-	private function getReal() {
-		//--
-		$startIndex = $this->index;
-		$char = $this->getChar();
-		//-- check to see if we're potentially in a comment
-		if($char !== '/') {
-			return $char;
-		} //end if
-		//--
-		$this->c = $this->getChar();
-		//--
-		if($this->c === '/') {
-			$this->processOneLineComments($startIndex);
-			return $this->getReal();
-		} elseif($this->c === '*') {
-			$this->processMultiLineComments($startIndex);
-			return $this->getReal();
-		} //end if else
-		//--
-		return $char;
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Removed one line comments, with the exception of some very specific types of
-	 * conditional comments.
-	 *
-	 * @param  int  $startIndex The index point where "getReal" function started
-	 * @return void
-	 */
-	private function processOneLineComments($startIndex) {
-		//--
-		$thirdCommentString = substr($this->input, $this->index, 1);
-		//-- kill rest of line
-		$this->getNext("\n");
-		//--
-		unset($this->c);
-		//--
-		if((string)$thirdCommentString == '@') {
-			$endPoint = $this->index - $startIndex;
-			$this->c = "\n" . substr($this->input, $startIndex, $endPoint);
-		} //end if
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Skips multiline comments where appropriate, and includes them where needed.
-	 * Conditional comments and "license" style blocks are preserved.
-	 *
-	 * @param  int               $startIndex The index point where "getReal" function started
-	 * @return void
-	 * @throws Exception Unclosed comments will throw an error
-	 */
-	private function processMultiLineComments($startIndex) {
-		//--
-		$this->getChar(); // current C
-		$thirdCommentString = $this->getChar();
-		//-- kill everything up to the next */ if it's there
-		if($this->getNext('*/')) {
-			//--
-			$this->getChar(); // get *
-			$this->getChar(); // get /
-			$char = $this->getChar(); // get next real character
-			//-- now we reinsert conditional comments and YUI-style licensing comments
-			if(($this->options['flaggedComments'] && $thirdCommentString === '!') || ($thirdCommentString === '@') ) {
-				//-- if conditional comments or flagged comments are not the first thing in the script we need to add to output a and fill it with a space before moving on.
-				if($startIndex > 0) {
-					//--
-					$this->output .= (string) $this->a;
-					$this->a = " ";
-					//-- if the comment started on a new line we let it stay on the new line
-					if($this->input[($startIndex - 1)] === "\n") {
-						$this->output .= (string) "\n";
-					} //end if
-					//--
-				} //end if
-				//--
-				$endPoint = ($this->index - 1) - $startIndex;
-				$this->output .= (string) substr($this->input, $startIndex, $endPoint);
-				//--
-				$this->c = $char;
-				//--
-				return;
-				//--
-			} //end if
-			//--
-		} else {
-			//--
-			$char = false;
-			//--
-		} //end if else
-		//--
-		if($char === false) {
-			throw new Exception('Unclosed multiline comment at position: '.($this->index - 2));
-		} //end if
-		//-- if we're here c is part of the comment and therefore tossed
-		$this->c = $char;
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Pushes the index ahead to the next instance of the supplied string. If it
-	 * is found the first character of the string is returned and the index is set
-	 * to it's position.
-	 *
-	 * @param  string       $string
-	 * @return string|false Returns the first character of the string or false.
-	 */
-	private function getNext($string) {
-		//-- find the next occurrence of "string" after the current position.
-		$pos = strpos($this->input, $string, $this->index);
-		//-- if it's not there return false.
-		if($pos === false) {
-			return false;
-		} //end if
-		//-- adjust position of index to jump ahead to the asked for string
-		$this->index = $pos;
-		//-- return the first character of that string.
-		return substr($this->input, $this->index, 1);
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * When a javascript string is detected this function crawls for the end of
-	 * it and saves the whole string.
-	 *
-	 * @throws Exception Unclosed strings will throw an error
-	 */
-	private function saveString() {
-		//--
-		$startpos = $this->index;
-		//-- saveString is always called after a gets cleared, so we push b into that spot.
-		$this->a = $this->b;
-		//-- if this isn't a string we don't need to do anything.
-		if($this->a !== "'" && $this->a !== '"') {
-			return;
-		} //end if
-		//-- string type is the quote used, " or '
-		$stringType = $this->a;
-		//-- output out that starting quote
-		$this->output .= (string) $this->a;
-		//--loop until the string is done
-		while(true) {
-			//-- grab the very next character and load it into a
-			$this->a = $this->getChar();
-			//--
-			switch ($this->a) {
-				//--
-				// If the string opener (single or double quote) is used
-				// output it and break out of the while loop-
-				// The string is finished!
-				case $stringType:
-					break 2;
-				//--
-				// New lines in strings without line delimiters are bad- actual
-				// new lines will be represented by the string \n and not the actual
-				// character, so those will be treated just fine using the switch
-				// block below.
-				case "\n":
-					throw new Exception('Unclosed string at position: ' . $startpos );
-					break;
-				//--
-				// Escaped characters get picked up here. If it's an escaped new line it's not really needed
-				case '\\':
-					//--
-					// a is a slash. We want to keep it, and the next character,
-					// unless it's a new line. New lines as actual strings will be
-					// preserved, but escaped new lines should be reduced.
-					$this->b = $this->getChar();
-					//--
-					// If b is a new line we discard a and b and restart the loop.
-					if($this->b === "\n") {
-						break;
-					} //end if
-					//--
-					// output out the escaped character and restart the loop.
-					$this->output .= (string) $this->a . $this->b;
-					break;
-					//--
-				//--
-				// Since we're not dealing with any special cases we simply
-				// output the character and continue our loop.
-				default:
-					$this->output .= (string) $this->a;
-				//--
-			} //end switch
-			//--
-		} //end while
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * When a regular expression is detected this function crawls for the end of
-	 * it and saves the whole regex.
-	 *
-	 * @throws Exception Unclosed regex will throw an error
-	 */
-	private function saveRegex() {
-		//--
-		$this->output .= (string) $this->a . $this->b;
-		//--
-		while(($this->a = $this->getChar()) !== false) {
-			//--
-			if($this->a === '/') {
-				break;
-			} //end if
-			if($this->a === '\\') {
-				$this->output .= (string) $this->a;
-				$this->a = $this->getChar();
-			} //end if
-			if($this->a === "\n") {
-				throw new Exception('Unclosed regex pattern at position: ' . $this->index);
-			} //end if
-			$this->output .= (string) $this->a;
-		} //end while
-		//--
-		$this->b = $this->getReal();
-		//--
-	} //END FUNCTION
-
-
-	/**
-	 * Checks to see if a character is alphanumeric.
-	 *
-	 * @param  string $char Just one character
-	 * @return bool
-	 */
-	private function isAlphaNumeric($char) {
-		//--
-		if((preg_match('/^[\w\$\pL]$/', $char) === 1) || ((string)$char == '/')) {
-			return true;
-		} else {
-			return false;
-		} //end if else
-		//--
-	} //END FUNCTION
-
-
-} //END CLASS
-
-
-//=====================================================================================
-//===================================================================================== CLASS END
-//=====================================================================================
-
-
-//=====================================================================================
-//===================================================================================== CLASS START
-//=====================================================================================
-
 
 final class AppPackUtils {
 
 	// ::
-	// v.181219 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20190105 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3572,7 +3010,7 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	//##### Smart v.181203
+	//##### Smart v.20190105
 
 
 	//================================================================
@@ -3766,17 +3204,23 @@ Options -Indexes
 	 *
 	 */
 	public static function safe_fix_invalid_filesys_names($y_fsname) {
-		//-- v.170920
+		//-- v.190105
 		$y_fsname = (string) trim((string)$y_fsname);
 		//-- {{{SYNC-SAFE-PATH-CHARS}}} {{{SYNC-CHK-SAFE-PATH}}}
 		if(
 			((string)$y_fsname == '.') OR
 			((string)$y_fsname == '..') OR
+			((string)$y_fsname == ':') OR
 			((string)$y_fsname == '/') OR
 			((string)$y_fsname == '/.') OR
 			((string)$y_fsname == '/..') OR
-			(substr($y_fsname, -2, 2) == '/.') OR
-			(substr($y_fsname, -3, 3) == '/..')
+			((string)$y_fsname == '/:') OR
+			((string)ltrim((string)$y_fsname, '/') == '.') OR
+			((string)ltrim((string)$y_fsname, '/') == '..') OR
+			((string)ltrim((string)$y_fsname, '/') == ':') OR
+			((string)trim((string)$y_fsname, '/') == '') OR
+			((string)substr((string)$y_fsname, -2, 2) == '/.') OR
+			((string)substr((string)$y_fsname, -3, 3) == '/..')
 		) {
 			$y_fsname = '';
 		} //end if
@@ -4023,7 +3467,7 @@ Options -Indexes
 	public static function crc32b($y_str) {
 		//--
 		if(!self::algo_check('sha512')) {
-			self::raise_error('ERROR: SmartFramework Crypto Hash requires CRC32B Hash/Algo', 'CRC32B Hash/Algo is missing');
+			self::raise_error('ERROR: Smart.Framework Crypto Hash requires CRC32B Hash/Algo', 'CRC32B Hash/Algo is missing');
 			return '';
 		} //end if
 		//--
@@ -4061,7 +3505,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.181219
+	//##### SmartUtils v.20190103
 
 
 	//================================================================
@@ -4214,7 +3658,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.181115
+	//##### SmartFileSysUtils v.181225
 
 
 	//================================================================
@@ -4478,7 +3922,7 @@ Options -Indexes
 		//--
 		$y_path = (string) $y_path;
 		//--
-		if(substr(trim($y_path), 0, 1) == '/') {
+		if((string)substr((string)trim($y_path), 0, 1) == '/') {
 			return 0;
 		} //end if
 		//--

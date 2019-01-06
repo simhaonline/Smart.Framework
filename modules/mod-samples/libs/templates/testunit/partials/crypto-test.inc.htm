@@ -1,4 +1,5 @@
 <!-- Partial Template: TestUnit.Partials.CryptoTest -->
+<div id="qunit-test-result"></div>
 <h2>PHP Unicode Crypto Tests [ [####EXE-TIME|html####] ] :</h2>
 <div style="white-space: nowrap !important;">
 Unicode@String:&nbsp;<span id="unicode-string" style="color:#FF5500;">[####UNICODE-TEXT|html####]</span><br>
@@ -72,97 +73,97 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[####HASHCRYPT-OPTIO
 	$('#testunit-partial-crypto').html(htmlcode);
 	//-- JS Tests
 	if((b64dec !== unicodeText) || (SmartJS_CryptoHash.sha1(b64dec) !== the_sha1)) {
-		alert('ERROR: Base64 Encode/Decode Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + b64dec + '` / ' + SmartJS_CryptoHash.sha1(b64dec));
+		console.error('ERROR: Base64 Encode/Decode Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + b64dec + '` / ' + SmartJS_CryptoHash.sha1(b64dec));
 		the_error++;
 	} //end if
 	if((hex2bin !== unicodeText) || (SmartJS_CryptoHash.sha1(hex2bin) !== the_sha1)) {
-		alert('ERROR: Bin2Hex / Hex2Bin Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + hex2bin + '` / ' + SmartJS_CryptoHash.sha1(hex2bin));
+		console.error('ERROR: Bin2Hex / Hex2Bin Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + hex2bin + '` / ' + SmartJS_CryptoHash.sha1(hex2bin));
 		the_error++;
 	} //end if
 	if((bf_dec !== unicodeText) || (SmartJS_CryptoHash.sha1(bf_dec) !== the_sha1)) {
-		alert('ERROR: BlowFish Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + bf_dec + '` / ' + SmartJS_CryptoHash.sha1(bf_dec));
+		console.error('ERROR: BlowFish Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + bf_dec + '` / ' + SmartJS_CryptoHash.sha1(bf_dec));
 		the_error++;
 	} //end if
 	if((unarch_bf_lzs !== bf_enc) || (SmartJS_CryptoHash.sha1(unarch_bf_lzs) !== SmartJS_CryptoHash.sha1(bf_enc))) {
-		alert('ERROR: Blowfish-Arch-LZS Test Failed:\n' + 'Before: `' + unarch_bf_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_bf_lzs) + '\n' + 'After: `' + bf_enc + '` / ' + SmartJS_CryptoHash.sha1(bf_enc));
+		console.error('ERROR: Blowfish-Arch-LZS Test Failed:\n' + 'Before: `' + unarch_bf_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_bf_lzs) + '\n' + 'After: `' + bf_enc + '` / ' + SmartJS_CryptoHash.sha1(bf_enc));
 		the_error++;
 	} //end if
 	if((unarch_lzs !== unicodeText) || (SmartJS_CryptoHash.sha1(unarch_lzs) !== the_sha1)) {
-		alert('ERROR: Arch-LZS Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + unarch_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_lzs));
+		console.error('ERROR: Arch-LZS Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + unarch_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_lzs));
 		the_error++;
 	} //end if
 	//-- compare with PHP
 	if($('#unicode-string').text() !== unicodeText) {
-		alert('ERROR: Text comparison with PHP failed ...');
+		console.error('ERROR: Text comparison with PHP failed ...');
 		the_error++;
 	} //end if
 	if($('#jsescaped-string').text() != jsescTxt) {
-		alert('ERROR: JS-Escaped comparison with PHP failed ...');
+		console.error('ERROR: JS-Escaped comparison with PHP failed ...');
 		the_error++;
 	} //end if
 	if($('#sha512-hash').text() !== the_sha512) {
-		alert('ERROR: SHA512 comparison with PHP Failed ...');
+		console.error('ERROR: SHA512 comparison with PHP Failed ...');
 		the_error++;
 	} //end if
 	if($('#sha1-hash').text() !== the_sha1) {
-		alert('ERROR: SHA1 comparison with PHP Failed ...');
+		console.error('ERROR: SHA1 comparison with PHP Failed ...');
 		the_error++;
 	} //end if
 	if($('#md5-hash').text() !== the_md5) {
-		alert('ERROR: MD5 comparison with PHP Failed ...');
+		console.error('ERROR: MD5 comparison with PHP Failed ...');
 		the_error++;
 	} //end if
 	if($('#crc32b-hash').text() !== the_crc32b) {
-		alert('ERROR: CRC32B comparison with PHP Failed ...');
+		console.error('ERROR: CRC32B comparison with PHP Failed ...');
 		the_error++;
 	} //end if
 	if($('#base64enc-string').text() != b64enc) {
-		alert('ERROR: B64-Encoded comparison with PHP failed ...');
+		console.error('ERROR: B64-Encoded comparison with PHP failed ...');
 		the_error++;
 	} //end if
 	if($('#base64dec-string').text() != b64dec) {
-		alert('ERROR: B64-Decoded comparison with PHP failed ...');
+		console.error('ERROR: B64-Decoded comparison with PHP failed ...');
 		the_error++;
 	} //end if
 	if($('#bin2hex-encoded').text() != bin2hex) {
-		alert('ERROR: Bin2Hex comparison with PHP failed ...');
+		console.error('ERROR: Bin2Hex comparison with PHP failed ...');
 		the_error++;
 	} //end if
 	if($('#hex2bin-decoded').text() != hex2bin) {
-		alert('ERROR: Hex2Bin comparison with PHP failed ...');
+		console.error('ERROR: Hex2Bin comparison with PHP failed ...');
 		the_error++;
 	} //end if
 	if((bf_enc != $('#blowfish-encrypted').text()) || (SmartJS_CryptoHash.sha1(bf_enc) != SmartJS_CryptoHash.sha1($('#blowfish-encrypted').text()))) {
-		alert('ERROR: PHP Blowfish encrypted is different than Javascript one ...');
+		console.error('ERROR: PHP Blowfish encrypted is different than Javascript one ...');
 		the_error++;
 	} //end if
 	var decode_php_blowfish = SmartJS_CryptoBlowfish.decrypt($('#blowfish-encrypted').text(), bf_key);
 	if((decode_php_blowfish != unicodeText) || (SmartJS_CryptoHash.sha1(decode_php_blowfish) != SmartJS_CryptoHash.sha1(unicodeText))) {
-		alert('ERROR: Javascript decrypted Blowfish is different than PHP one ...' + decode_php_blowfish);
+		console.error('ERROR: Javascript decrypted Blowfish is different than PHP one ...' + decode_php_blowfish);
 		the_error++;
 	} //end if
 	if($('#unicode-string').text() !== $('#blowfish-decrypted').text()) {
-		alert('ERROR: PHP Blowfish decrypted is different than original PHP string ...');
+		console.error('ERROR: PHP Blowfish decrypted is different than original PHP string ...');
 		the_error++;
 	} //end if
 	if((arch_lzs != $('#lzs-archived').text()) || (SmartJS_CryptoHash.sha1(arch_lzs) != SmartJS_CryptoHash.sha1($('#lzs-archived').text()))) {
-		alert('ERROR: PHP Arch-LZS Archive is different than Javascript one ...');
+		console.error('ERROR: PHP Arch-LZS Archive is different than Javascript one ...');
 		the_error++;
 	} //end if
 	if((arch_bf_lzs != $('#blowfish-lzs-encrypted').text()) || (SmartJS_CryptoHash.sha1(arch_bf_lzs) != SmartJS_CryptoHash.sha1($('#blowfish-lzs-encrypted').text()))) {
-		alert('ERROR: PHP Blowfish-Arch-LZS Archive is different than Javascript one ...');
+		console.error('ERROR: PHP Blowfish-Arch-LZS Archive is different than Javascript one ...');
 		the_error++;
 	} //end if
 	//--
 	if(($('#unicode-string').text() != $('#hash-decrypted').text()) || (SmartJS_CryptoHash.sha1($('#unicode-string').text()) != SmartJS_CryptoHash.sha1($('#hash-decrypted').text()))) {
-		alert('ERROR: PHP Hash Decrypted is different than than original PHP string ...');
+		console.error('ERROR: PHP Hash Decrypted is different than than original PHP string ...');
 		the_error++;
 	} //end if
 	//--
 	if(the_error === 0) {
 		[@@@@SUB-TEMPLATE:test-dialog-js.inc.htm@@@@]
 	} else {
-		alert('Unknown Error: #' + the_error);
+		console.error('Test ERROR: PHP / Javascript Unicode Crypto: ' + the_error);
 	} //end if
 	//--
 })();

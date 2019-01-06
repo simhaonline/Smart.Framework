@@ -2,8 +2,8 @@
 // [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/TestUnit
 // Route: ?/page/samples.testunit (?page=samples.testunit)
-// Author: unix-world.org
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -111,6 +111,13 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = \SmartModExtLib\Samples\TestUnitPCache::testPersistentCache();
 				//--
 				break;
+			case 'testunit.mongodb-server-test':
+				//--
+				sleep(1);
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitMongoDB::testMongoServer();
+				//--
+				break;
 			case 'testunit.pgsql-server-test':
 				//--
 				sleep(1);
@@ -118,11 +125,11 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = \SmartModExtLib\Samples\TestUnitPgSQL::testPgServer();
 				//--
 				break;
-			case 'testunit.mongodb-server-test':
+			case 'testunit.mysql-server-test':
 				//--
 				sleep(1);
 				$this->PageViewSetCfg('rawpage', true);
-				$main = \SmartModExtLib\Samples\TestUnitMongoDB::testMongoServer();
+				$main = \SmartModExtLib\Samples\TestUnitMySQLi::testMyServer();
 				//--
 				break;
 			case 'testunit.json-sqlite3-smartgrid':
@@ -236,9 +243,9 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'testunit.main':
 				//--
-				$is_modal = false;
-				if($this->IfRequestModalPopup() OR $this->IfRequestPrintable()) {
-					$is_modal = true;
+				$is_modal = $this->RequestVarGet('winmod', '', 'string');
+				$is_printable = $this->RequestVarGet('print', '', 'string');
+				if(((string)$is_modal == 'yes') OR ((string)$is_printable == 'yes')) {
 					$this->PageViewSetCfg('template-file', 'template-modal.htm');
 				} //end if
 				//--
@@ -248,7 +255,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 					$this->RequestVarGet('testformdata')
 				);
 				//--
-				if(!$is_modal) {
+				if(((string)$is_modal != 'yes') AND ((string)$is_printable != 'yes')) {
 					if($this->IfDebug()) {
 						$this->SetDebugData('TestUnit.Main', 'Loading all staticload libs at once for test purposes ...');
 					} //end if
@@ -258,7 +265,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//#####
 			case 'test.phpinfo':
 				//--
-				if(SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS === true) { // if trusted environment
+				if((defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS')) AND (SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS === true)) { // if trusted environment
 					$this->PageViewSetCfg('rawpage', true);
 					ob_start();
 					phpinfo();
@@ -279,6 +286,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 					]
 				);
 				$main .= '<hr>';
+				$main .= '<h5 id="qunit-test-result">Test OK: PHP Markdown Render.</h5>';
 				//--
 				break;
 			case 'test.json':
@@ -299,6 +307,8 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main .= '<b>Unicode Escaped / HTML-Safe / Pretty Print:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, true, false))."\n";
 				$main .= '<b>Unicode Escaped / Pretty Print:</b>'."\n".Smart::escape_html(Smart::json_encode($mixed_data, true, false, false))."\n";
 				$main .= '</pre>';
+				$main .= '<hr>';
+				$main .= '<h5 id="qunit-test-result">Test OK: PHP JSON Encode/Decode.</h5>';
 				//--
 				break;
 			case 'test.calendar':

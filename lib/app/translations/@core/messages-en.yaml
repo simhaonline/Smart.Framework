@@ -1,8 +1,8 @@
-# Language File: EN / CORE / Messages :: v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+# Language File: EN / CORE / Messages :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2018-05-09
+  @version: 2019-01-03
   messages:
     lang: 'Language'
     yes: 'Yes'

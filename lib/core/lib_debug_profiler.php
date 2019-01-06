@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Debug]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Debug Profiler]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.181219
+ * @version 	v.20190107
  *
  */
 final class SmartDebugProfiler {
@@ -1112,7 +1112,7 @@ private static function print_log_database($title, $db_log) {
 						if(Smart::array_size($tmp_arr['params']) > 0) {
 							$tmp_params = array();
 							foreach($tmp_arr['params'] as $key => $val) {
-								$tmp_params[] = SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html('$'.($key+1).' : `'.SmartUtils::pretty_print_var($val).'`'), true);
+								$tmp_params[] = SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html('$'.($key+1).' : '.SmartUtils::pretty_print_var($val)), true);
 							} //end foreach
 							$log .= '<br>'.'@PARAMS:&nbsp;{ '.implode(', ', $tmp_params).' }';
 							$tmp_params = array();

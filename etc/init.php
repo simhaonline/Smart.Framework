@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [SmartFramework / INIT] r.181219
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [Smart.Framework / INIT] r.20190103
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -108,9 +108,6 @@ Options -Indexes
 define('SMART_FRAMEWORK_IDENT_ROBOTS', '<robot>,<apache>,<httperf>,<benchmark>,<scanner>,<googlebot>,<google adsbot>,<google toolbar>,<google web preview>,<google feed fetcher>,<yahoo! slurp>,<webcrawler>,<domaincrawler>,<catchbot>,<webalta crawler>,<superbot>,<msnbot>,<ms url control>,<winhttp>,<roku dvp>,<linkwalker>,<aihitbot>,<ia_archiver>,<sanszbot>,<linguee bot>,<swish-e>,<tarantula>,<fast-webcrawler>,<jeeves>,<teoma>,<baiduspider>,<bing bot>,<yandex>,<exabot>,<everyfeed spider>,<gregarius>,<facebook scraper>,<email wolf>,<gaisbot>,<gulperbot>,<grub-client>,<peach >,<htmlparser>,<w3c css validator>,<w3c (x)html validator>,<w3c p3p validator>,<download demon>,<offline explorer>,<webcopier>,<web downloader>,<webzip>,<htmldoc>,<wget >,<curl/>,<php >,<libwww-perl>,<python-urllib>,<java >'); // robots identification by user agent portions of signature
 //--------------------------------------- SPECIAL URL PARAMS
 //define('SMART_FRAMEWORK_URL_PARAM_LANGUAGE', 		'lang');														// *Optional* (used only with multi languages) Language URL Param (if empty string, will not accept any language inputs by URL or Cookie) ; Default = 'lang' ; if not empty may contain only characters: [a-z]
-define('SMART_FRAMEWORK_URL_PARAM_PRINTABLE', 		'print');														// Printable URL Param ; Default = 'print'
-define('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP', 		'winmod');														// Modal/PopUp URL Param ; Default = 'winmod'
-define('SMART_FRAMEWORK_URL_VALUE_ENABLED', 		'yes');															// Enabled URL Value (used for Modal/PopUp and Printable) ; Default = 'yes'
 //---------------------------------------- SPECIAL FEATURES
 define('SMART_SOFTWARE_FRONTEND_ENABLED',			true);															// To Disable Frontend (index.php) set this to false
 define('SMART_SOFTWARE_BACKEND_ENABLED',			true);															// To Disable Backend (admin.php) set this to false
@@ -120,7 +117,7 @@ define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',			2);																// Set to: 0 = 
 //define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status
 //define('SMART_SOFTWARE_MKTPL_PCACHETIME',			86400);															// If set to a positive integer (>=0) will cache the marker template files to (memory) persistent cache to avoid repetitive reads to the FileSystem (on some systems this can boost the speed ...)
 //define('SMART_SOFTWARE_MKTPL_DEBUG_LEN', 			65535);															// If set will use this TPL Debug Length (255..524280) ; If not set will use default: 512
-define('SMART_SOFTWARE_MAILSEND_SAFE_RULES', 		true);															// If defined and TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
+define('SMART_SOFTWARE_MAILSEND_SAFE_RULES', 		true);															// If defined and TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages ; adding the X-AntiAbuse headers, ...)
 //---------------------------------------- CHARSET AND REGIONAL SETTINGS [ NEVER CHANGE THESE MUST BE UNICODE UTF-8 ; CHANGING IT YOU CAN BREAK THE UNICODE SUPPORT ]
 define('SMART_FRAMEWORK_CHARSET', 					'UTF-8');														// This must be `UTF-8` 	:: Default Character Set for PHP
 define('SMART_FRAMEWORK_DBSQL_CHARSET', 			'UTF8');														// This must be `UTF8` 		:: Default Character Set for DB SQL Servers
@@ -150,34 +147,34 @@ date_default_timezone_set((string)SMART_FRAMEWORK_TIMEZONE);
 ini_set('zlib.output_compression', '0'); // disable ZLib PHP Internal Output Compression as it will break sensitive control over headings and timeouts
 if((string)ini_get('zlib.output_compression') != '0') {
 	@http_response_code(500);
-	die('SmartFramework INI // The PHP.INI ZLib Output Compression must be disabled !');
+	die('Smart.Framework INI // The PHP.INI ZLib Output Compression must be disabled !');
 } //end if
 //-- output handlers
 if((string)ini_get('zlib.output_handler') != '') {
 	@http_response_code(500);
-	die('SmartFramework INI // The PHP.INI Zlib Output Handler must be unset !');
+	die('Smart.Framework INI // The PHP.INI Zlib Output Handler must be unset !');
 } //end if
 if((string)ini_get('output_handler') != '') {
 	@http_response_code(500);
-	die('SmartFramework INI // The PHP.INI Output Handler must be unset !');
+	die('Smart.Framework INI // The PHP.INI Output Handler must be unset !');
 } //end if
 //-- charset
 if((string)ini_get('zend.multibyte') != '0') {
 	@http_response_code(500);
-	die('SmartFramework INI // PHP.INI Zend-MultiByte must be disabled ! Unicode support is managed via MBString into SmartFramework ...');
+	die('Smart.Framework INI // PHP.INI Zend-MultiByte must be disabled ! Unicode support is managed via MBString into Smart.Framework ...');
 } //end if
 ini_set('default_charset', (string)SMART_FRAMEWORK_CHARSET); // default charset UTF-8
 if(!function_exists('mb_internal_encoding')) { // *** MBString is required ***
 	@http_response_code(500);
-	die('SmartFramework INI // The MBString PHP Module is required for SmartFramework / Unicode support (SMART-INIT) !');
+	die('Smart.Framework INI // The MBString PHP Module is required for Smart.Framework / Unicode support (SMART-INIT) !');
 } //end if
 if(mb_internal_encoding((string)SMART_FRAMEWORK_CHARSET) !== true) { // this setting is required for UTF-8 mode
 	@http_response_code(500);
-	die('SmartFramework INI // Failed to set MBString Internal Encoding to: '.SMART_FRAMEWORK_CHARSET);
+	die('Smart.Framework INI // Failed to set MBString Internal Encoding to: '.SMART_FRAMEWORK_CHARSET);
 } //end if
 if(mb_substitute_character(63) !== true) {
 	@http_response_code(500);
-	die('SmartFramework INI // Failed to set the MBString Substitute Character to standard: 63(?) ...');
+	die('Smart.Framework INI // Failed to set the MBString Substitute Character to standard: 63(?) ...');
 } //end if
 //-- check input limits
 if((int)ini_get('max_input_vars') < 1000) { // it should be at least 1000 ; cannot be set to zero as it will dissalow any input vars ; this limits the Request Input Vars (GET / POST / COOKIE) includding their nested levels ; recommended is 2500 ; minimum accepted is 1000 ; after changing this value you have to change the max_input_vars with a value like this or even higher in PHP.INI
@@ -206,16 +203,16 @@ ini_set('pcre.recursion_limit', '100001');									// PCRE Recursion Limit
 //ini_set('pcre.jit', '0');													// PCRE JIT
 //if((int)ini_get('pcre.jit') > 0) { // this may fail badly with very complex regex expressions, so if needed can be disabled
 //	@http_response_code(500);
-//	die('SmartFramework INI // The PcreJIT should be disabled when used with very complex regular expressions that can overflow the PCRE-JIT very limited memory !');
+//	die('Smart.Framework INI // The PcreJIT should be disabled when used with very complex regular expressions that can overflow the PCRE-JIT very limited memory !');
 //} //end if
 //-- session stuff
 if((string)ini_get('session.auto_start') != '0') {
 	@http_response_code(500);
-	die('SmartFramework INI // The PHP.INI Session AutoSTART must be DISABLED !');
+	die('Smart.Framework INI // The PHP.INI Session AutoSTART must be DISABLED !');
 } //end if
 if((string)ini_get('session.use_trans_sid') != '0') {
 	@http_response_code(500);
-	die('SmartFramework INI // The PHP.INI Session TransSID must be DISABLED !');
+	die('Smart.Framework INI // The PHP.INI Session TransSID must be DISABLED !');
 } //end if
 if((string)SMART_FRAMEWORK_SESSION_HANDLER !== 'files') {
 	ini_set('session.save_handler', 'user');								// store session in 'user' (mode) ; DB storage for example
@@ -238,7 +235,7 @@ ini_set('session.serialize_handler', 'php');								// use php (default) ; wddx 
 //---------------------------------------- security: avoid load this multiple times
 if(defined('SMART_FRAMEWORK_INITS')) {
 	@http_response_code(500);
-	die('SmartFramework / Inits already loaded ...');
+	die('Smart.Framework / Inits already loaded ...');
 } //end if
 define('SMART_FRAMEWORK_INITS', 'SET'); // avoid reload inits again (if accidentaly you do)
 //----------------------------------------

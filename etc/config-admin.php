@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [CFG - SETTINGS / ADMIN]
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [Smart.Framework / CFG - SETTINGS / ADMIN]
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -18,9 +18,16 @@ $configs['app']['admin-template-path'] 				= 'default';				// default admin temp
 $configs['app']['admin-template-file'] 				= 'template.htm';			// default admin template file
 //---------------------------------------
 
-//-- auth credentials for the admin area (admin.php): Sample Authentication only !!!
-define('ADMIN_AREA_USER', 'admin');
-define('ADMIN_AREA_PASSWORD', 'pass');
+//-- sample auth credentials for the admin area (admin.php) ; change them !!!
+define('APP_AUTH_ADMIN_USERNAME', 'admin');
+define('APP_AUTH_ADMIN_PASSWORD', 'pass');
+/* uncomment these for advanced authentication (must switch from simple to advanced authentication in modules/app/app-auth-admin.inc.php)
+define('APP_AUTH_PRIVILEGES', '<admin>,<custom-priv1>,...,<custom-privN>');
+$configs['app-auth']['adm-namespaces'] = [
+	'Admins Manager' => 'admin.php?page=auth-admins.manager.stml',
+	// ...
+];
+*/
 //--
 
 // end of php code

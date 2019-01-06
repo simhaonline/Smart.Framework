@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Smart Unicode Strings]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Unicode Strings]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -22,17 +22,17 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // other locales than C may break many things ; Example: 3.5 may become become 3,5 or dates may become uncompatible as format in the overall context ; starting from date() to SQL escapes all will be affected with unpredictable results when working in a mixed locales unicode context other than C
 if((string)setlocale(LC_ALL, 0) != 'C') { // {{{SYNC-LOCALES-CHECK}}}
 	@http_response_code(500);
-	die('ERROR: The PHP locales must be reset to C (default) to support the standard UTF-8 context in SmartFramework / Unicode');
+	die('ERROR: The PHP locales must be reset to C (default) to support the standard UTF-8 context in Smart.Framework / Unicode');
 } //end if
 //================================================================
 // require the PHP MBString Extension (this is the fastest and safest Unicode library to use in PHP)
 if(!function_exists('mb_stripos')) {
 	@http_response_code(500);
-	die('ERROR: The PHP MBString Extension is required for Unicode support into SmartFramework / Unicode');
+	die('ERROR: The PHP MBString Extension is required for Unicode support into Smart.Framework / Unicode');
 } //end if
 if((!function_exists('utf8_decode')) OR (!function_exists('utf8_encode'))) {
 	@http_response_code(500);
-	die('ERROR: The PHP UTF8-Decode/Encode (from XML Extension) is required for SmartFramework / Unicode');
+	die('ERROR: The PHP UTF8-Decode/Encode (from XML Extension) is required for Smart.Framework / Unicode');
 } //end if
 //================================================================
 // require UTF-8 Character Set
@@ -159,7 +159,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.181122
+ * @version     v.20190105
  * @package     Base
  *
  */
@@ -393,6 +393,22 @@ public static function str_icontains($ystring, $ypart) {
 	} else {
 		return false;
 	} //end if else
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+/**
+ * Unicode ~ Safe * 			:: Find the aproximative number of words in an unicode string
+ *
+ * @param STRING 	$str		:: The string to find words into
+ *
+ * @return INTEGER				:: Returns the number of words found
+ */
+public static function str_wordcount($str) {
+	//--
+	return (int) Smart::array_size(preg_split('/\s+/', (string)$str, -1, PREG_SPLIT_NO_EMPTY)); // no need to trim with this flag
 	//--
 } //END FUNCTION
 //================================================================

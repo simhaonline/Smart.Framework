@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Webdav / Library Admin Dav:Fs]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Webdav / Library Admin Dav:Fs]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 // Module Lib: \SmartModExtLib\Webdav\DavFileSystem
 // Type: Module Library
@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFileSystem {
 
 	// ::
-	// v.181217
+	// v.20190103
 
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	public static function methodOptions() { // 200

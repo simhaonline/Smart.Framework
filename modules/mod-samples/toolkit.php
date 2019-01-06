@@ -2,8 +2,8 @@
 // [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/Toolkit
 // Route: ?/page/samples.toolkit (?page=samples.toolkit)
-// Author: unix-world.org
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -50,7 +50,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$this->PageViewSetVars([
 			'title' => 'UX Toolkit Demo',
-			'main'	=> (string) '<h1 style="font-size:3em !important; display: inline !important;">Smart Framework / UI Toolkit Plugins - Demo<br><span style="color:#778899; font-size:50%; font-weight:normal;"><span style="cursor:help;" title="UX Toolkit is built into the Smart.Framework and provided as the default UI Toolkit. You can use it or not ... If you prefer you can use other UI Toolkits such as: UiKit, Bootstrap, PureCSS, jQueryUI or any other you may like !"><i>UX Toolkit</i> (built-in)</span>, a very lightweight <span style="cursor:help;" title="This size is calculated when the CSS is minified ...">(~15KB)</span>, CSS only, responsive front-end Toolkit for web interfaces &nbsp; <span style="cursor:help;" title="http://purecss.io"><i><sup>inspired from Pure.css UI Toolkit</sup></i></span></span></h1><hr>'.trim((string)$fcontent).'<hr><br><br>'
+			'main'	=> (string) '<h1 style="font-size:3em !important; display: inline !important;">Smart.Framework / UI Toolkit Plugins - Demo</h1><h2 font-size:2.5em !important; display: inline !important;><span style="color:#778899; font-weight:normal;"><span style="cursor:help;" title="UX Toolkit is built into the Smart.Framework and provided as the default UI Toolkit. You can use it or not ... If you prefer you can use other UI Toolkits such as: UiKit, Bootstrap, jQueryUI or any other you may like !"><i>UX Toolkit</i> (built-in)</span> - a very lightweight <span style="cursor:help;" title="This size is calculated when the CSS is minified ...">(~15KB)</span>, CSS only, responsive front-end Toolkit<br>for web interfaces &nbsp; <span style="cursor:help;" title="http://purecss.io"><i><sup style="color:#DCDCDC;">inspired from Pure.css UI Toolkit</sup></i></span></span></h2><hr>'.trim((string)$fcontent).'<hr><br><br>'
 		]);
 		//--
 		$fcontent = ''; // free mem

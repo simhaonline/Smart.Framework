@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Samples / Test MongoDB Server]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Samples / Test MongoDB Server]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 // Class: \SmartModExtLib\Samples\TestUnitMongoDB
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181220
+ * @version 	v.181221
  *
  */
 final class TestUnitMongoDB {
@@ -39,7 +39,7 @@ final class TestUnitMongoDB {
 	public static function testMongoServer() {
 
 		//--
-		if(SMART_FRAMEWORK_TESTUNIT_ALLOW_MONGO_TESTS !== true) {
+		if((!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS')) OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS !== true)) {
 			//--
 			return (string) \SmartComponents::operation_notice('Test Unit for MongoDB Server is DISABLED ...');
 			//--
@@ -595,11 +595,11 @@ final class TestUnitMongoDB {
 		$img_check = 'lib/core/img/db/mongodb-logo.svg';
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
-			$text_main = '<span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span>';
+			$text_main = '<span style="color:#83B953;">Test OK: PHP MongoDB.</span>';
 			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework MongoDB Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';
-			$text_main = '<span style="color:#FF5500;">An ERROR occured ... &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; エラーが発生しました ...</span>';
+			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP MongoDB Test FAILED !</span>';
 			$text_info = '<h2><span style="color:#FF5500;">A test FAILED</span> when testing MongoDB Server Operations.<span style="color:#FF5500;"><hr>FAILED Test Details</span>:</h2><br><h5 class="inline">'.\Smart::escape_html($tests[\Smart::array_size($tests)-1]).'</h5><br><span style="font-size:14px;"><pre>'.\Smart::escape_html($err).'</pre></span>';
 		} //end if else
 		//--

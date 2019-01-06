@@ -1,0 +1,106 @@
+
+/*
+ * SmartQUnit 1.0
+ *
+ * (c) 2018-2019 unix-world.org
+ * Released under the BSD license
+ */
+
+var SmartQUnit = new function() { // START CLASS :: r.20190103
+
+	//--
+
+	// :: static
+
+	//--
+
+	this.runAjaxTest = function(url, method, dataType, assert, testOK, fxDone) {
+		//--
+		var QAsyncTestDone = assert.async(); // qunit async promise
+		var testHtmlDiv = elHtmlDynDiv;
+		//--
+		jQuery.ajax({
+			async: true,
+			url: String(url),
+			method: String(method),
+			dataType: String(dataType),
+			timeout: parseInt(QUnit.config.testTimeout) * 1000, // ajax timeout in sec
+			cache: false // no cache at all for any ajax request !!!
+		}).done(function(msg) {
+			if(typeof fxDone == 'function') {
+				fxDone(QAsyncTestDone, testOK, msg, testHtmlDiv);
+			} else {
+				var value = 'Test Implementation ERROR: INVALID TEST DONE FUNCTION !';
+				assert.equal(
+					value, testOK,
+					testOK
+				);
+				QAsyncTestDone();
+			} //end if else
+		}).fail(function(msg) {
+			var value = 'Ajax REquest FAILED with HTTP Status: ' + String(msg.status) + ' ' + String(msg.statusText);
+			assert.equal(
+				value, testOK,
+				testOK
+			);
+			QAsyncTestDone();
+		});
+		//--
+	} //END FUNCTION
+
+	//--
+
+	this.runiFrameTest = function(url, timeoutMs, assert, testOK) {
+		//--
+		var QAsyncTestDone = assert.async(); // qunit async promise
+		//--
+		elHtmlDynIFrame(url, timeoutMs, assert, QAsyncTestDone, testOK);
+		//--
+	} //END FUNCTION
+
+	//--
+
+	var elHtmlDynDiv = function(assert, QAsyncTestDone, testOK, value, content, timeoutMs) {
+		//--
+		jQuery('<div id="qu-smart-div-sandbox" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; display:none;"></div>').html(String(content)).appendTo('body'); // create a temporary div, make it hidden, and attach to the DOM
+		//--
+		setTimeout(function() {
+			var value = jQuery('#qunit-test-result').text();
+			jQuery('#qu-smart-div-sandbox').empty().html('').remove();
+			assert.equal(
+				value, testOK,
+				testOK
+			);
+			QAsyncTestDone();
+		}, parseInt(timeoutMs));
+		//--
+	} //END FUNCTION
+
+	//--
+
+	var elHtmlDynIFrame = function(url, timeoutMs, assert, QAsyncTestDone, testOK) {
+		//--
+		var frame = jQuery('<iframe id="qu-smart-ifrm-sandbox" src="' + String(url) + '" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; display:none;"></iframe>').appendTo('body'); // create a temporary iframe, make it hidden, and attach to the DOM
+		jQuery(frame).on('load', function(){ // // proceed after the iframe has loaded content
+			var html = jQuery(this).contents();
+			//console.log(html);
+			setTimeout(function() {
+				var value = html.find('#qunit-test-result').text();
+				html = null;
+				assert.equal(
+					value, testOK,
+					testOK
+				);
+				jQuery('#qu-smart-ifrm-sandbox').attr('src', '').remove(); // remove the temporary iframe
+				QAsyncTestDone();
+			}, parseInt(timeoutMs));
+		});
+		//--
+	} //END FUNCTION
+
+	//--
+
+} //END CLASS
+
+
+// #END

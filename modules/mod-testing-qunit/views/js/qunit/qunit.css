@@ -1,6 +1,4 @@
 
-/* [@[#[!SF.DEV-ONLY!]#]@] */
-
 /*
  * QUnit 2.8.0
  * https://qunitjs.com/
@@ -12,11 +10,15 @@
  * Date: 2018-11-02T16:17Z
  */
 
+/* modified by unixman r.181221 */
+
 /** Font Family and Sizes */
 
+/* fix by unixman
 #qunit-tests, #qunit-header, #qunit-banner, #qunit-testrunner-toolbar, #qunit-filteredTest, #qunit-userAgent, #qunit-testresult {
 	font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
 }
+*/
 
 #qunit-testrunner-toolbar, #qunit-filteredTest, #qunit-userAgent, #qunit-testresult, #qunit-tests li { font-size: small; }
 #qunit-tests { font-size: smaller; }
@@ -32,16 +34,23 @@
 
 /** Header (excluding toolbar) */
 
-#qunit-header {
+#qunit-footer { /* added by unixman */
 	padding: 0.5em 0 0.5em 1em;
-
 	color: #8699A4;
 	background-color: #0D3349;
-
 	font-size: 1.5em;
 	line-height: 1em;
 	font-weight: 400;
+	border-radius: 0 0 5px 5px;
+}
 
+#qunit-header {
+	padding: 0.5em 0 0.5em 1em;
+	color: #8699A4;
+	background-color: #0D3349;
+	font-size: 1.5em;
+	line-height: 1em;
+	font-weight: 400;
 	border-radius: 5px 5px 0 0;
 }
 
@@ -69,7 +78,7 @@
 	padding: 0.5em 1em 0.5em 1em;
 	color: #FFF;
 	background-color: #2B81AF;
-	text-shadow: rgba(0, 0, 0, 0.5) 2px 2px 1px;
+/*	text-shadow: rgba(0, 0, 0, 0.5) 2px 2px 1px; fix by unixman */
 }
 
 
@@ -421,6 +430,7 @@
 	padding: 0.5em 1em 0.5em 1em;
 	width: 85%;
 	float:left;
+	color: #002255; /* fix by unixman */
 }
 #qunit-testresult-controls {
 	padding: 0.5em 1em 0.5em 1em;

@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Samples / Test FileSystem]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Samples / Test FileSystem]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 // Class: \SmartModExtLib\Samples\TestUnitFileSystem
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.170920
+ * @version 	v.181221
  *
  */
 final class TestUnitFileSystem {
@@ -39,7 +39,7 @@ final class TestUnitFileSystem {
 	public static function testFs() {
 
 		//--
-		if(SMART_FRAMEWORK_TESTUNIT_ALLOW_FS_TESTS !== true) {
+		if((!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS')) OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS !== true)) {
 			//--
 			return (string) \SmartComponents::operation_notice('Test Unit File System Tests are DISABLED ...');
 			//--
@@ -735,11 +735,11 @@ final class TestUnitFileSystem {
 		$img_check = 'modules/mod-samples/libs/templates/testunit/img/test-filesys.svg';
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
-			$text_main = '<span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span>';
+			$text_main = '<span style="color:#83B953;">Test OK: PHP FileSystem Operations.</span>';
 			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework FS Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><div style="font-size:14px; white-space:nowrap;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</div>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';
-			$text_main = '<span style="color:#FF5500;">An ERROR occured ... &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; エラーが発生しました ...</span>';
+			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP FileSystem Operations Test FAILED !</span>';
 			$text_info = '<h2><span style="color:#FF5500;">A test FAILED</span> when testing FS Operations.<span style="color:#FF5500;"><hr>FAILED Test Details</span>:</h2><br><h5 class="inline">'.\Smart::escape_html($tests[\Smart::array_size($tests)-1]).'</h5><br><span style="font-size:14px;"><pre>'.\Smart::escape_html($err).'</pre></span>';
 		} //end if else
 		//--

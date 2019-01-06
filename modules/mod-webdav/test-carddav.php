@@ -2,8 +2,8 @@
 // [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Webdav/TestCardDAV (CardDAV:FileSystem)
 // Route: admin.php/page/webdav.test-carddav/~
-// Author: unix-world.org
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_DIRECT_OUTPUT', true); // do direct output
  */
 class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCardDavFs {
 
-	// v.181217
+	// v.20190103
 
 	public function Run() {
 
@@ -33,7 +33,7 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCardDa
 			return;
 		} //end if
 		//--
-		if(!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_DAVFS_TESTS') OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_DAVFS_TESTS !== true)) {
+		if(!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_WEBDAV_TESTS') OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_WEBDAV_TESTS !== true)) {
 			http_response_code(503);
 			echo \SmartComponents::http_message_503_serviceunavailable('ERROR: CardDAV Test mode is disabled ...');
 			return;
@@ -47,15 +47,15 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCardDa
 			return;
 		} //end if
 		//--
-		// !!! To SECURE the below folder for PRIVATE access, create a .htaccess in wpub/webapps-content to deny all access to this folder and sub-folders !!!
+		// !!! To SECURE the below folder for PRIVATE access, create a .htaccess in wpub/test-webdav to deny all access to this folder and sub-folders !!!
 		$this->DavFsRunServer(
-			'wpub/webapps-content/test-carddav',
+			'wpub/test-webdav/addrbook',
 			true // you may disable this on large webdav file systems to avoid huge calculations
 		);
 		//--
 
 		//-- HINTS:
-		// # CardDAV Folder Structure [test-carddav/]:
+		// # CardDAV Folder Structure [addrbook/]:
 		// addressbooks/
 		// addressbooks/{user}/
 		// addressbooks/{user}/DefaultAddressBook/

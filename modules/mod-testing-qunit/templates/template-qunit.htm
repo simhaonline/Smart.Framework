@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!-- Version:          r.20190103 -->
+<!-- Template:         [####TEMPLATE-PATH|html####][####TEMPLATE-FILE|html####] -->
+<!-- Charset:          [####CHARSET|html####] -->
+<!-- Srv Script:       [####SRV-SCRIPT|html####] -->
+<!-- App Realm:        [####APP-REALM|html####] -->
+<!-- App Namespace:    [####APP-NAMESPACE|html####] -->
+<!-- TimeoutExecution: [####TIMEOUT-EXECUTION|html####] -->
+<!-- TimeoutNetSocket: [####TIMEOUT-NETSOCKET|html####] -->
+<!-- DateTimeStart:    [####TIME-DATE-START|html####] -->
+<!-- Debug Mode:       [####DEBUG-MODE|html####] -->
+<html>
+<head>
+	<meta charset="[####CHARSET|html####]">
+	<meta name="viewport" content="width=device-width">
+	<title>[####TITLE|html####]</title>
+	<!-- CSS Fonts -->
+	<link rel="stylesheet" type="text/css" href="lib/core/plugins/fonts/typo/mono/ibm-plex-mono.css?[####RELEASE-HASH|url|html####]">
+	<style type="text/css">
+	* {
+		font-family: 'IBM Plex Mono', mono;
+		font-smooth: always;
+	}
+	hr {
+		border: none 0;
+		border-top: 1px solid #CCCCCC;
+		height: 1px;
+	}
+	</style>
+	<!-- jQuery -->
+	<script src="lib/js/jquery/jquery.js?[####RELEASE-HASH|html####]"></script><script>jQuery.ajaxSetup({ timeout: [####TIMEOUT-NETSOCKET|int####] * 1000, cache: false });</script>
+	<!-- QUnit -->
+	<link href="modules/mod-testing-qunit/views/js/qunit/qunit.css?[####RELEASE-HASH|html####]" rel="stylesheet">
+	<script src="modules/mod-testing-qunit/views/js/qunit/qunit.js?[####RELEASE-HASH|html####]"></script>
+	<!-- SmartQUnit -->
+	<script src="modules/mod-testing-qunit/views/js/smart-qunit.js?[####RELEASE-HASH|html####]"></script>
+	<!-- Smart.Framework -->
+	<script src="lib/js/framework/src/core_utils.js?[####RELEASE-HASH|html####]"></script>
+	<script src="lib/js/framework/src/arch_utils.js?[####RELEASE-HASH|html####]"></script>
+	<script src="lib/js/framework/src/crypt_utils.js?[####RELEASE-HASH|html####]"></script>
+	<script src="lib/js/framework/src/browser_utils.js?[####RELEASE-HASH|html####]"></script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<div id="smart-qunit-results" style="position:fixed; top:10px; right:11px; width:360px; height:33px; line-height:15px; padding:3px; border:3px solid #2b81af; border-radius:5px; opacity:0.75; background:#c6e746; color:#0d3349; font-size:10px; font-weight:bold; white-space:pre; text-align:center;">[[####APP-REALM|html####]] // StartTime: [####TIME-DATE-START|html####]<br><img src="lib/framework/img/loading-cylon.svg" width="24" height="24"></div>
+<script>
+var testingQUnitDisabledTests = 0;
+QUnit.config.autostart = true; // TRUE to start testing
+QUnit.config.reorder = false; // if TRUE, QUnit will run tests first that failed on a previous run
+QUnit.config.testTimeout = [####TIMEOUT-NETSOCKET|int####] * 1000; // 1 min max per test ; Specify a global timeout in milliseconds after which all tests will fail with an appropriate message
+QUnit.done(function(details){
+	jQuery('#smart-qunit-results').empty().text('[[####APP-REALM|js####]] QUnit Tests DONE. Disabled Tests: ' + parseInt(testingQUnitDisabledTests) + '\n' + 'Total: ' + details.total + ' ; Failed: ' + details.failed + ' ; Passed: ' + details.passed + ' ; RunTime: ' + Math.ceil(details.runtime / 1000) + 's'); // create a temporary div, make it hidden, and attach to the DOM
+	jQuery('<hr><h1 id="qunit-footer">#&nbsp;END&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[####SEMAPHORE|html####]</h1>').appendTo('body');
+});
+</script>
+<script>
+[####MAIN####]
+</script>
+</body>
+</html>

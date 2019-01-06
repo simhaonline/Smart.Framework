@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / ExtraLibs / MongoDB Database Client]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / MongoDB Database Client]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -72,7 +72,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.181220
+ * @version 	v.181222
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
@@ -388,6 +388,7 @@ public function __call($method, array $args) {
 				return 0;
 			} //end if
 			//--
+			$this->check_max_doc_size((array)$args[1]); // filter
 			$qry = (array) $args[1]; // arrQuery
 			//--
 			$command = new \MongoDB\Driver\Command([
@@ -442,6 +443,7 @@ public function __call($method, array $args) {
 				return array();
 			} //end if
 			//--
+			$this->check_max_doc_size((array)$args[1]); // filter
 			$qry = (array) $args[1]; // arrQuery
 			//--
 			if(is_array($args[3])) {
@@ -555,6 +557,7 @@ public function __call($method, array $args) {
 					$opts = [];
 					for($i=0; $i<Smart::array_size($args[1]); $i++) {
 						if(Smart::array_size($args[1][$i]) > 0) {
+							$this->check_max_doc_size((array)$args[1][$i]); // doc
 							$write->insert(
 								(array) $args[1][$i] // doc
 							);
@@ -573,6 +576,7 @@ public function __call($method, array $args) {
 				$qry = 'insert';
 				$opts = [];
 				if(Smart::array_size($args[1]) > 0) {
+					$this->check_max_doc_size((array)$args[1]); // doc
 					$write->insert(
 						(array) $args[1] // doc
 					);
@@ -600,6 +604,8 @@ public function __call($method, array $args) {
 					];
 				} //end if else
 				if(Smart::array_size($args[3]) > 0) {
+					$this->check_max_doc_size((array)$args[1]); // filter
+					$this->check_max_doc_size((array)$args[3]); // doc
 					$write->update(
 						(array) $args[1], 									// filter
 						(array) [ (string)$args[2] => (array)$args[3] ], 	// must be in format: [ '$set|$inc|$mul|...' => (array)$doc ]
@@ -689,6 +695,7 @@ public function __call($method, array $args) {
 			$opts = [ // delete options
 				'limit' => false // delete all matching documents
 			];
+			$this->check_max_doc_size((array)$args[1]); // filter
 			$write->delete(
 				(array) $args[1], 									// filter
 				(array) $opts										// options
@@ -733,6 +740,7 @@ public function __call($method, array $args) {
 		case 'command': 	// ARGS [ arrCmd ]
 		case 'igcommand': 	// ARGS [ arrCmd ]
 			//-- dbg types: 'count', 'read', 'write', 'transaction', 'set', 'metainfo'
+			$this->check_max_doc_size((array)$args[0]); // cmd
 			$qry = (array) $args[0]; // arrQuery
 			foreach($qry as $kk => $vv) {
 				if((string)strtolower((string)$kk) == 'buildinfo') {
@@ -855,6 +863,29 @@ public function __call($method, array $args) {
 	return $obj; // mixed
 	//--
 
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * this is the internal connector (will connect just when needed)
+ *
+ * @access 		private
+ * @internal
+ *
+ */
+private function check_max_doc_size($doc) {
+	//--
+	$max_doc_size_bytes = 16000000; // max 16 MB
+	//--
+	$json_doc = \Smart::json_encode($doc, false, false, false); // ~ as bson
+	$size_doc = strlen((string)$json_doc);
+	//--
+	if((int)$size_doc > (int)$max_doc_size_bytes) {
+		$this->error('[CHECK]', 'BSON Document Size', 'CHECK: Current Document Size is '.\SmartUtils::pretty_print_bytes($size_doc)."\n".'Document: '.\SmartUtils::pretty_print_var($doc), 'MongoDB does not support documents larger than '.\SmartUtils::pretty_print_bytes($max_doc_size_bytes));
+	} //end if
+	//--
 } //END FUNCTION
 //======================================================
 

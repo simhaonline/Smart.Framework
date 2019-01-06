@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Plugins / OpenDocument Export]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / OpenDocument Export]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart, SmartZipArchive
- * @version 	v.180615
+ * @version 	v.20190103
  * @package 	Exporters
  *
  */
@@ -45,7 +45,7 @@ private $font_size = '';
 private $mime_ods = '';
 private $open_document_ns = '';
 private $open_document_styles = '';
-private $class_version = 'v.2018.06.15';
+private $class_version = 'v.2019.01.03';
 //=================================================
 
 

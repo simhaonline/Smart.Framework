@@ -2,9 +2,9 @@
 
 #####
 # PostgreSQL Restore for Online Sync
-# version: 2018-12-14
+# version: 20190103
 # This script is used by AppCodeUnPack
-# (c) 2018 unix-world.org
+# (c) 2018-2019 unix-world.org
 #####
 
 ### Configs

@@ -2,9 +2,9 @@
 
 #####
 # Update Project Repos Before Deployment: site -> svn ; sf -> git ; sfm -> git
-# version: 2018-12-14
+# version: 20190103
 # This script is used by AppCodePack
-# (c) 2018 unix-world.org
+# (c) 2018-2019 unix-world.org
 #####
 
 echo "=== Updating Repositories: site ; sf ; sfm ... ==="

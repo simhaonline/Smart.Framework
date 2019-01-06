@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Samples / Test Crypto]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Samples / Test Crypto]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 // Class: \SmartModExtLib\Samples\TestUnitCrypto
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181022
+ * @version 	v.181221
  *
  */
 final class TestUnitCrypto {
@@ -132,7 +132,7 @@ final class TestUnitCrypto {
 				'DIALOG-HEIGHT' 			=> '400',
 				'IMG-SIGN' 					=> 'lib/framework/img/sign-info.svg',
 				'IMG-CHECK' 				=> 'modules/mod-samples/libs/templates/testunit/img/test-crypto.svg',
-				'TXT-MAIN-HTML' 			=> '<span style="color:#83B953;">Good ... Perfect &nbsp;&nbsp;&nbsp; :: &nbsp;&nbsp;&nbsp; グッド ... パーフェクト</span>',
+				'TXT-MAIN-HTML' 			=> '<span style="color:#83B953;">Test OK: PHP / Javascript Unicode Crypto.</span>',
 				'TXT-INFO-HTML' 			=> '<h2><span style="color:#333333;"><span style="color:#83B953;">All</span> the SmartFramework Unicode <span style="color:#83B953;">Tests PASSED on both PHP&nbsp;&amp;&nbsp;Javascript</span>:</span></h2>'.'<span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html("##### Unicode CRYPTO / TESTS: ##### \n * Unicode support / UTF-8 \n * JS-Escape \n * SHA512 \n * SHA1 \n * MD5 \n * CRC32B \n * Base64: Encode / Decode \n * Bin2Hex / Hex2Bin \n * LZS-Arch: Archive / Unarchive \n * Blowfish (CBC): Encrypt / Decrypt \n * Custom: Encrypt / Decrypt (** Only for PHP: ".\Smart::escape_html((string)\SmartUtils::crypto_algo()).") \n ##### END TESTS ... #####")).'</span>',
 				'TEST-INFO' 				=> (string) 'Crypto Test Suite for SmartFramework: PHP + Javascript'
 				//--

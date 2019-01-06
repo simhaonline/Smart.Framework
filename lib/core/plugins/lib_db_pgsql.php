@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / PostgreSQL Database Client]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / PostgreSQL Database Client]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -68,7 +68,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.181219
+ * @version 	v.20190105
  * @package 	Database:PostgreSQL
  *
  */
@@ -497,8 +497,8 @@ public static function json_encode($y_mixed_content) {
 	//--
 	$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); // Fix: must return a string ; depth was added in PHP 5.5 only !
 	if((string)$json == '') {
-		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($y_mixed_content,1));
-		$json = '{}'; // FIX: in PostgreSQL JSON/JSON-B fields cannot be empty !!!
+		Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($y_mixed_content,1)); // this should not happen except if PHP's json encode fails !!!
+		$json = '[]'; // FIX: in PostgreSQL JSON/JSON-B fields cannot be empty, thus consider empty array
 	} //end if
 	//--
 	return (string) $json;
@@ -2318,7 +2318,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.181219
+ * @version 	v.20190105
  * @package 	Database:PostgreSQL
  *
  */

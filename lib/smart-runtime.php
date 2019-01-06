@@ -1,7 +1,7 @@
 <?php
-// [SmartFramework / App Runtime]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [Smart.Framework / App Runtime]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -13,7 +13,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 //======================================================
 // Smart-Framework - App Runtime (this should be loaded only from app web root)
-// DEPENDS: SmartFramework + SmartFramework/Components
+// DEPENDS: Smart.Framework + Smart.Framework/Components
 // DO NOT MODIFY THIS FILE OR ANY OTHER FILE(S) UNDER lib/* or index.php / admin.php [They will be all overwritten on any future framework upgrades] !!!
 // YOU CAN ONLY CHANGE / CUSTOMIZE:
 //	* Configurations: etc/*
@@ -46,8 +46,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.7'); // tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2018.12.20'); // tag release-date
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.8'); // tag version
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.01.06'); // tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -64,33 +64,6 @@ if(!headers_sent()) {
 if(!defined('SMART_FRAMEWORK_DEBUG_MODE')) {
 	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_DEBUG_MODE');
-} //end if
-//--
-if(!defined('SMART_FRAMEWORK_URL_VALUE_ENABLED')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_VALUE_ENABLED');
-} //end if
-if(!preg_match('/^[a-z0-9]+$/', (string)SMART_FRAMEWORK_URL_VALUE_ENABLED)) {
-	@http_response_code(500);
-	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_VALUE_ENABLED');
-} //end if
-//--
-if(!defined('SMART_FRAMEWORK_URL_PARAM_MODALPOPUP')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_MODALPOPUP');
-} //end if
-if(!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_MODALPOPUP)) {
-	@http_response_code(500);
-	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_PARAM_MODALPOPUP');
-} //end if
-//--
-if(!defined('SMART_FRAMEWORK_URL_PARAM_PRINTABLE')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_URL_PARAM_PRINTABLE');
-} //end if
-if(!preg_match('/^[a-z]+$/', (string)SMART_FRAMEWORK_URL_PARAM_PRINTABLE)) {
-	@http_response_code(500);
-	die('A required INIT constant contains invalid characters: SMART_FRAMEWORK_URL_PARAM_PRINTABLE');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_URL_PARAM_LANGUAGE')) {
@@ -124,19 +97,6 @@ if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 	define('SMART_FRAMEWORK_INFO_LOG', 'tmp/logs/adm/'.'info-'.date('Y-m-d@H').'.log');
 } else {
 	define('SMART_FRAMEWORK_INFO_LOG', 'tmp/logs/idx/'.'info-'.date('Y-m-d@H').'.log');
-} //end if else
-//--
-
-//--
-if(defined('SMART_FRAMEWORK_INSTALL_MODE')) {
-	@http_response_code(500);
-	die('A Reserved Constant have been already defined: SMART_FRAMEWORK_INSTALL_MODE');
-} //end if
-//--
-if((file_exists('____APP_Install_Mode__Enabled')) OR (is_link('____APP_Install_Mode__Enabled'))) { // here must be used the functions file_exists() and is_link() as the filesys lib is not yet initialized ... {{{SYNC-SF-PATH-EXISTS}}}
-	define('SMART_FRAMEWORK_INSTALL_MODE', 'yes');
-} else {
-	define('SMART_FRAMEWORK_INSTALL_MODE', 'no');
 } //end if else
 //--
 
@@ -336,6 +296,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 } //end if
 //---------------------------------------
 
+//--------------------------------------- If .ht-sf-singleuser-mode exists then Return 503, Maintenance: SingleUser Mode
+SmartFrameworkRuntime::SingleUser_Mode_Monitor();
 //--------------------------------------- Monitor High Loads and if detected Return 503 Too Busy
 SmartFrameworkRuntime::High_Load_Monitor();
 //---------------------------------------
@@ -362,38 +324,38 @@ if(!defined('SMART_SOFTWARE_APP_NAME')) {
 //--
 if(!class_exists('SmartPersistentCache')) {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartPersistentCache is missing ...');
+	die('Smart.Framework // Runtime: the Class SmartPersistentCache is missing ...');
 } //end if
 if((string)get_parent_class('SmartPersistentCache') != 'SmartAbstractPersistentCache') {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartPersistentCache must be extended from the Class SmartAbstractPersistentCache ...');
+	die('Smart.Framework // Runtime: the Class SmartPersistentCache must be extended from the Class SmartAbstractPersistentCache ...');
 } //end if
 //--
 if(!class_exists('SmartAdapterTextTranslations')) {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartAdapterTextTranslations is missing ...');
+	die('Smart.Framework // Runtime: the Class SmartAdapterTextTranslations is missing ...');
 } //end if
 if(!is_subclass_of('SmartAdapterTextTranslations', 'SmartInterfaceAdapterTextTranslations', true)) {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartAdapterTextTranslations must implement the SmartInterfaceAdapterTextTranslations ...');
+	die('Smart.Framework // Runtime: the Class SmartAdapterTextTranslations must implement the SmartInterfaceAdapterTextTranslations ...');
 } //end if
 //--
 if(!class_exists('SmartAppInfo')) {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartAppInfo is missing ...');
+	die('Smart.Framework // Runtime: the Class SmartAppInfo is missing ...');
 } //end if
 if(!is_subclass_of('SmartAppInfo', 'SmartInterfaceAppInfo', true)) {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartAppInfo must implement the SmartInterfaceAppInfo ...');
+	die('Smart.Framework // Runtime: the Class SmartAppInfo must implement the SmartInterfaceAppInfo ...');
 } //end if
 //--
 if(!class_exists('SmartAppBootstrap')) {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartAppBootstrap is missing ...');
+	die('Smart.Framework // Runtime: the Class SmartAppBootstrap is missing ...');
 } //end if
 if(!is_subclass_of('SmartAppBootstrap', 'SmartInterfaceAppBootstrap', true)) {
 	@http_response_code(500);
-	die('SmartFramework // Runtime: the Class SmartAppBootstrap must implement the SmartInterfaceAppBootstrap ...');
+	die('Smart.Framework // Runtime: the Class SmartAppBootstrap must implement the SmartInterfaceAppBootstrap ...');
 } //end if
 //---------------------------------------
 
@@ -1484,6 +1446,22 @@ public static function getAppReleaseHash() {
 //======================================================================
 // Avoid run this function before Smart.Framework was loaded, it depends on it
 // THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
+public static function SingleUser_Mode_Monitor() {
+	//--
+	if(is_file('.ht-sf-singleuser-mode')) { // here must be used the functions is_file() as the filesys lib is may yet initialized ...
+		if(!headers_sent()) {
+			http_response_code(503);
+		} //end if
+		die(SmartComponents::http_message_503_serviceunavailable('The Service is under Maintenance (SingleUser Mode), try again later ...'));
+	} //end if
+	//--
+} //END FUNCTION
+//======================================================================
+
+
+//======================================================================
+// Avoid run this function before Smart.Framework was loaded, it depends on it
+// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 public static function High_Load_Monitor() {
 	//--
 	if(is_array(self::$HighLoadMonitorStats)) {
@@ -1505,8 +1483,8 @@ public static function High_Load_Monitor() {
 				if(!headers_sent()) {
 					http_response_code(503);
 				} //end if
-				Smart::log_warning('#SMART-FRAMEWORK-HIGH-LOAD-PROTECT#'."\n".'SmartFramework // Web :: System Overload Protection: The System is Too Busy ... Try Again Later. The Load Averages reached the maximum allowed value by current settings ... ['.$tmp_sysload_avg[0].' of '.$tmp_max_load.']');
-				die(SmartComponents::http_message_503_serviceunavailable('The Service is Too busy, try again later ...', SmartComponents::operation_warn('<b>SmartFramework // Web :: System Overload Protection</b><br>The Load Averages reached the maximum allowed value by current settings ...', '100%')));
+				Smart::log_warning('#SMART-FRAMEWORK-HIGH-LOAD-PROTECT#'."\n".'Smart.Framework // Web :: System Overload Protection: The System is Too Busy ... Try Again Later. The Load Averages reached the maximum allowed value by current settings ... ['.$tmp_sysload_avg[0].' of '.$tmp_max_load.']');
+				die(SmartComponents::http_message_503_serviceunavailable('The Service is Too busy, try again later ...', SmartComponents::operation_warn('<b>Smart.Framework // Web :: System Overload Protection</b><br>The Load Averages reached the maximum allowed value by current settings ...', '100%')));
 				return array();
 			} //end if
 		} //end if
@@ -1529,7 +1507,7 @@ public static function Create_Required_Dirs() {
 		if(!headers_sent()) {
 			http_response_code(500);
 		} //end if
-		die('Smart Runtime // Create Required Dirs :: Requires SmartFramework to be loaded ...');
+		die('Smart Runtime // Create Required Dirs :: Requires Smart.Framework to be loaded ...');
 		return;
 	} //end if
 	//--
@@ -1646,11 +1624,18 @@ public static function Create_Required_Dirs() {
 	$robotsfile = $dir.'robots.txt';
 	if(!SmartFileSystem::is_type_dir($dir)) {
 		SmartFileSystem::dir_create($dir);
-		SmartFileSystem::write($dir.'index.html', '');
-		SmartFileSystem::write($robotsfile, 'User-agent: *'."\n".'Disallow: *'); // avoid robots to index it
-		SmartFileSystem::write($ctrlfile, 'FileName: #wpub (#WEB-PUBLIC)'."\n".'Created by: App-Runtime'."\n".date('Y-m-d H:i:s O'));
-		SmartFileSystem::write($htfile, trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n"); // trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".
+		if(SmartFileSystem::is_type_dir($dir)) {
+			SmartFileSystem::write($dir.'index.html', '');
+			SmartFileSystem::write($robotsfile, 'User-agent: *'."\n".'Disallow: *'); // by default avoid robots to index it ; this file can be edited manually
+		} //end if
 	} // end if
+	if(!SmartFileSystem::is_type_dir($dir)) {
+		Smart::raise_error(
+			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: #WEB-PUBLIC Folder: \''.$dir.'\' does NOT exists !',
+			'App Init ERROR :: (See Error Log for More Details)'
+		);
+		return;
+	} //end if
 	if(!SmartFileSystem::have_access_write($dir)) {
 		Smart::raise_error(
 			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: #WEB-PUBLIC Folder: \''.$dir.'\' is NOT writable !',
@@ -1659,31 +1644,24 @@ public static function Create_Required_Dirs() {
 		return;
 	} //end if
 	if(!SmartFileSystem::is_type_file($ctrlfile)) {
-		Smart::raise_error(
-			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'Cannot Connect to FileSystem #WEB-PUBLIC: '.$ctrlfile,
-			'App Init ERROR :: (See Error Log for More Details)'
-		);
-		return;
+		SmartFileSystem::write($ctrlfile, 'FileName: #wpub (#WEB-PUBLIC)'."\n".'Created by: App-Runtime'."\n".date('Y-m-d H:i:s O'));
+		if(!SmartFileSystem::is_type_file($ctrlfile)) {
+			Smart::raise_error(
+				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'Cannot Connect to FileSystem #WEB-PUBLIC: '.$ctrlfile,
+				'App Init ERROR :: (See Error Log for More Details)'
+			);
+			return;
+		} //end if
 	} //end if
 	if(!SmartFileSystem::is_type_file($htfile)) {
-		Smart::raise_error(
-			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #WEB-PUBLIC: '.$htfile,
-			'App Init ERROR :: (See Error Log for More Details)'
-		);
-		return;
-	} //end if
-	//-- wpub/webapps-content
-	$dir = 'wpub/webapps-content/'; // {{{SYNC-WEBAPPS-DIR}}}
-	if(!SmartFileSystem::is_type_dir($dir)) {
-		SmartFileSystem::dir_create($dir);
-		SmartFileSystem::write($dir.'index.html', '');
-	} // end if
-	if(!SmartFileSystem::have_access_write($dir)) {
-		Smart::raise_error(
-			'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
-			'App Init ERROR :: (See Error Log for More Details)'
-		);
-		return;
+		SmartFileSystem::write($htfile, (string)trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n"); // trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".
+		if(!SmartFileSystem::is_type_file($htfile)) {
+			Smart::raise_error(
+				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #WEB-PUBLIC: '.$htfile,
+				'App Init ERROR :: (See Error Log for More Details)'
+			);
+			return;
+		} //end if
 	} //end if
 	//--
 } //END FUNCTION
@@ -1699,7 +1677,7 @@ public static function Redirection_Monitor() {
 		if(!headers_sent()) {
 			http_response_code(500);
 		} //end if
-		die('Smart Runtime // Redirection Monitor :: Requires SmartFramework to be loaded ...');
+		die('Smart Runtime // Redirection Monitor :: Requires Smart.Framework to be loaded ...');
 		return;
 	} //end if
 	//--
@@ -1795,7 +1773,7 @@ public static function SetVisitorEntropyIDCookie() {
 	//--
 	if(!defined('SMART_FRAMEWORK_VERSION')) {
 		@http_response_code(500);
-		die('Smart Runtime // Set Visitor Entropy ID Cookie :: Requires SmartFramework to be loaded ...');
+		die('Smart Runtime // Set Visitor Entropy ID Cookie :: Requires Smart.Framework to be loaded ...');
 		return;
 	} //end if
 	//--
@@ -1876,7 +1854,7 @@ public static function DebugRequestLog($y_message) {
 //==
 if(defined('SMART_FRAMEWORK_APP_RUNTIME')) {
 	@http_response_code(500);
-	die('SmartFramework / App-Runtime already loaded ...');
+	die('Smart.Framework / App-Runtime already loaded ...');
 } //end if
 //==
 define('SMART_FRAMEWORK_APP_RUNTIME', 'SET');

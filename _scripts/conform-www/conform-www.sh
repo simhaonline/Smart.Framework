@@ -1,8 +1,8 @@
 #!/bin/sh
 # Linux / OpenBSD :: Smart.Framework Fix Privileges
-# (c) 2009-2018 unix-world.org
+# (c) 2009-2019 unix-world.org
 
-# v.180305
+# v.20190103
 # conform the www/smart-framework as chmod/chown (must be run as root)
 # info: run this script each time you add/modify manually files under www/smart-framework to fix privileges
 

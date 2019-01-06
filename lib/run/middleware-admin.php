@@ -1,7 +1,7 @@
 <?php
-// SmartFramework / Middleware / Admin
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// Smart.Framework / Middleware / Admin
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -21,7 +21,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //####################
 
 
-define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.7');
+define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.8');
 
 
 //==================================================================================
@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		181212
+ * @version		20190103
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -496,8 +496,8 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 		//--
 		if((string)$the_template_path == '@') {
 			$the_template_path = (string) $the_path_to_module.'templates/'; // must have the dir last slash as above
-		} else {
-			$the_template_path = (string) SMART_APP_TEMPLATES_DIR.$the_template_path; // finally normalize and set the complete template path
+		} elseif(strpos((string)trim((string)$the_template_path, '/'), '/') === false) { // if not contains a path but only a dir name, otherwise leave as is
+			$the_template_path = (string) SMART_APP_TEMPLATES_DIR.$the_template_path; // finally normalize and set the complete template path if only a dir name
 		} //end if else
 		$the_template_file = (string) $the_template_file; // finally normalize
 		//--

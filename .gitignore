@@ -2,7 +2,6 @@
 tmp
 wpub
 modules/mod-agile
-modules/mod-auth-admins
 modules/mod-cloud
 modules/mod-dbal-zend
 modules/mod-js-components

@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Session Management]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / Session Manager]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -12,7 +12,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //======================================================
-// Smart-Framework - Session
+// Smart-Framework - Session Manager
 // DEPENDS:
 //	* Smart::
 //	* SmartHashCrypto::
@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //--
 if(!function_exists('session_start')) {
 	@http_response_code(500);
-	die('ERROR: PHP Session Module is required for the SmartFramework');
+	die('ERROR: PHP Session Module is required for the Smart.Framework');
 } //end if
 //--
 

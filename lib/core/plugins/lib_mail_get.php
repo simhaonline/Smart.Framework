@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / IMAP4 and POP3 Clients]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / Mail Get (IMAP4 and POP3 Client)]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170613
+ * @version 	v.20190105
  * @package 	Mailer
  *
  */
@@ -50,6 +50,7 @@ public $log = '';			// if debug is enabled, this is the log
 private $socket = false; 	// socket resource ID
 private $tag = '';			// unique ID Tag
 private $username = '';		// the username
+private $authmec = ''; 		// the auth mechanism
 //--
 private $crr_mbox = '';		// current selected mailbox
 private $crr_uiv = 0;		// current UIVALIDITY for the selected mailbox folder
@@ -71,6 +72,7 @@ public function __construct($buffer=0) { // IMAP4
 	$this->crr_mbox = '';
 	//--
 	$this->username = '';
+	$this->authmec = '';
 	//--
 	if($buffer > 0) {
 		$this->buffer = (int) $buffer;
@@ -126,7 +128,7 @@ public function connect($server, $port=143, $sslversion='') { // IMAP4
 	//--
 	$protocol = '';
 	//--
-	if(strlen($sslversion) > 0) {
+	if((string)$sslversion != '') {
 		//--
 		if(!function_exists('openssl_open')) {
 			$this->error = '[ERR] PHP OpenSSL Extension is required to perform SSL requests !';
@@ -150,7 +152,7 @@ public function connect($server, $port=143, $sslversion='') { // IMAP4
 
 	//--
 	if($this->debug) {
-		$this->log .= '[INF] Connecting to Mail Server (Tag='.$this->tag.'): '.$protocol.$server.':'.$port."\n";
+		$this->log .= '[INF] Connecting to Mail Server: '.$protocol.$server.':'.$port."\n";
 	} //end if
 	//--
 
@@ -324,11 +326,12 @@ public function quit() { // IMAP4
 // Sends both user and pass. Returns 1 on Success and 0 on Error
 public function login($username, $pass, $mode='') { // IMAP4
 	//--
-	$this->tag = 'smart'.strtoupper(md5(Smart::unique_entropy('imapv4'))).'framework';
+	$this->tag = 'smart77'.strtolower(Smart::uuid_10_seq()).'7framework';
 	$this->username = (string) $username;
+	$this->authmec = 'PLAIN';
 	//--
 	if($this->debug) {
-		$this->log .= '[INF] Login to Mail Server (USER = '.$username.')'."\n";
+		$this->log .= '[INF] Login to Mail Server (TAG='.$this->tag.' ; MODE='.$mode.' ; USER='.$username.')'."\n";
 	} //end if
 	//--
 	if(strlen($this->error) > 0) {
@@ -338,12 +341,16 @@ public function login($username, $pass, $mode='') { // IMAP4
 	if($this->debug) {
 		$this->log .= '[INF] Login Method: Normal'."\n";
 	} //end if
+	$this->send_cmd('CAPABILITY');
 	//--
-	$reply = $this->send_cmd('LOGIN '.$username.' '.$pass);
+	if((string)$mode == 'login') {
+		$reply = $this->send_cmd('LOGIN '.$username.' '.$pass);
+	} else {
+		$reply = $this->send_cmd('AUTHENTICATE '.$this->authmec.' '.(string)base64_encode("\0".$username."\0".$pass));
+	} //end if else
 	if(strlen($this->error) > 0) {
 		return 0;
 	} //end if
-	//--
 	$test = $this->is_ok($reply);
 	if((string)$test != 'ok') {
 		$this->error = '[ERR] IMAP4 User or Password Failed ['.$reply.']';
@@ -390,7 +397,7 @@ public function select_mailbox($mbox_name, $allow_create=false) { // IMAP4
 	$tmp_arr = (array) explode('] UIDs', (string)$tmp_uiv);
 	$this->crr_uiv = trim($tmp_arr[0]);
 	//--
-	$size = 0; // we can't determine in IMAP
+	$size = 0; // we can't determine in IMAP except situation below
 	//--
 	$count = 0;
 	$recent = 0;
@@ -419,15 +426,80 @@ public function select_mailbox($mbox_name, $allow_create=false) { // IMAP4
 			} //end if
 		} //end if
 	} //end for
+	$tmp_arr = array();
+	//--
+	$reply = $this->send_cmd('STATUS "'.$this->mailbox_escape($mbox_name).'" (MESSAGES UIDNEXT SIZE)'); // example: '* STATUS Inbox (MESSAGES 8 UIDNEXT 12345 SIZE 45678)';
+	$test = $this->is_ok($reply);
+	if((string)$test == 'ok') {
+		$tmp_arr = (array) explode(' SIZE ', (string)$reply);
+		$count = (int) rtrim((string)$tmp_arr[1], ') ');
+		if($count < 0) {
+			$count = 0;
+		} //end if
+		$tmp_arr = array();
+	} //end if
 	//--
 	$this->inf_count = $count;
 	$this->inf_recent = $recent;
-	$this->inf_size = 0;
+	$this->inf_size = 0; // imap size is not reported except if server have STATUS=SIZE Extension, so try below
 	//--
 	$this->send_cmd('CHECK'); // maintenance over mailbox
 	//--
 	return 1;
 	//--
+} //END FUNCTION
+//=====================================================================================
+
+
+//=====================================================================================
+public function parse_uidls($y_list) { // this is just for IMAP4, n/a for POP3
+
+	// ID[SPACE]UID\n
+
+	//--
+	$y_list = (string) trim((string)str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), (string)$y_list));
+	//--
+	$uidls = (array) explode("\n", (string)$y_list);
+	//--
+
+	//--
+	$new_uidls = array();
+	//--
+	if(Smart::array_size($uidls) > 0) {
+		//--
+		foreach($uidls as $key => $val) {
+			//--
+			$val = (string) trim((string)$val);
+			//--
+			$tmp_arr = array();
+			//--
+			if((string)$val != '') {
+				//--
+				$tmp_arr = (array) explode(' ', (string)$val);
+				$tmp_arr[0] = (string) trim((string)$tmp_arr[0]);
+				$tmp_arr[1] = (string) trim((string)$tmp_arr[1]);
+				//--
+				if(preg_match('/^([0-9])+$/', (string)$tmp_arr[0])) {
+					//--
+					if((string)$tmp_arr[1] != '') {
+						$new_uidls[(string)$tmp_arr[0]] = (string) $tmp_arr[1];
+					} //end if
+					//--
+				} //end if
+				//--
+			} //end if
+			//--
+		} //end foreach
+		//--
+	} //end if
+	//--
+	$uidls = array();
+	//--
+
+	//--
+	return (array) $new_uidls;
+	//--
+
 } //END FUNCTION
 //=====================================================================================
 
@@ -986,6 +1058,8 @@ private function send_cmd($cmd) { // IMAP4
 		//--
 		if(substr(trim($original_cmd), 0, 6) == 'LOGIN ') {
 			$tmp_cmd = $this->tag.' LOGIN '.$this->username.' *****'; // hide the password protection
+		} elseif(substr(trim($original_cmd), 0, 13) == 'AUTHENTICATE ') {
+			$tmp_cmd = $this->tag.' AUTHENTICATE '.$this->authmec.' ['.$this->username.':*****]'; // hide the password protection
 		} else {
 			$tmp_cmd = $cmd;
 		} //end if else
@@ -1073,7 +1147,7 @@ private function get_answer_data() { // IMAP4
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.170613
+ * @version 	v.20190105
  * @package 	Mailer
  *
  */
@@ -1158,7 +1232,7 @@ public function connect($server, $port=110, $sslversion='') {
 	//--
 	$protocol = '';
 	//--
-	if(strlen($sslversion) > 0) {
+	if((string)$sslversion != '') {
 		//--
 		if(!function_exists('openssl_open')) {
 			$this->error = '[ERR] PHP OpenSSL Extension is required to perform SSL requests !';
@@ -1376,10 +1450,15 @@ public function quit() {
 //=====================================================================================
 // [PUBLIC]
 // Sends both user and pass. Returns 1 on Success and 0 on Error
-public function login($username, $pass, $apop=false) {
+public function login($username, $pass, $mode='') {
+	//--
+	$apop = false;
+	if((string)$mode == 'apop') {
+		$apop = true;
+	} //end if
 	//--
 	if($this->debug) {
-		$this->log .= '[INF] Login to Mail Server (USER = '.$username.')'."\n";
+		$this->log .= '[INF] Login to Mail Server (MODE='.$mode.' ; USER='.$username.')'."\n";
 	} //end if
 	//--
 	if(strlen($this->error) > 0) {

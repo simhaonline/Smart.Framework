@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Smart Components]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Smart Components]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
@@ -43,12 +43,12 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 /**
- * Class: SmartComponents - provides various components for SmartFramework.
+ * Class: SmartComponents - provides various components for Smart.Framework
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.181211
+ * @version 	v.20190107
  * @package 	Components:Core
  *
  */
@@ -825,7 +825,7 @@ public static function html_select_list_single($y_id, $y_selected_value, $y_mode
 				$tmp_desc_val = Smart::escape_html($yarr_data[$i_val]);
 			} //end if else
 			//--
-			if((string)$yarr_data[$i_key] == '#OPTGROUP#') {
+			if(strpos((string)$yarr_data[$i_key], '#OPTGROUP#') === 0) {
 				$out .= '<optgroup label="'.$tmp_desc_val.'">'."\n"; // the optgroup
 			} else {
 				$out .= '<option value="'.Smart::escape_html($yarr_data[$i_key]).'"'.$tmp_sel.'>'.$tmp_desc_val.'</option>'."\n";
@@ -1060,7 +1060,7 @@ public static function html_select_list_multi($y_id, $y_selected_value, $y_mode,
 				//--
 			} else { // list
 				//--
-				if((string)$yarr_data[$i_key] == '#OPTGROUP#') {
+				if(strpos((string)$yarr_data[$i_key], '#OPTGROUP#') === 0) {
 					$out .= '<optgroup label="'.Smart::escape_html($yarr_data[$i_val]).'">'."\n"; // the optgroup
 				} else {
 					$out .= '<option value="'.Smart::escape_html($yarr_data[$i_key]).'"'.$tmp_sel.'>&nbsp;'.Smart::escape_html($yarr_data[$i_val]).'</option>'."\n";
@@ -2789,20 +2789,20 @@ public static function app_powered_info($y_show_versions='no', $y_plugins=array(
 		'logo' 	=> (string) $base_url.'lib/framework/img/php-logo.svg',
 		'url' 	=> (string) 'http://www.php.net'
 	];
+	//-- sqlite
+	if(is_array($configs['sqlite'])) {
+		$arr_powered_sside[] = [
+			'name' 	=> (string) 'SQLite Embedded Database',
+			'logo' 	=> (string) $base_url.'lib/core/img/db/sqlite-logo.svg',
+			'url' 	=> (string) 'https://www.sqlite.org'
+		];
+	} //end if
 	//-- redis
 	if(is_array($configs['redis'])) {
 		$arr_powered_sside[] = [
 			'name' 	=> (string) 'Redis In-Memory Distributed Key-Value Store (Caching Data Store)',
 			'logo' 	=> (string) $base_url.'lib/core/img/db/redis-logo.svg',
 			'url' 	=> (string) 'https://redis.io'
-		];
-	} //end if
-	//-- pgsql
-	if(is_array($configs['pgsql'])) {
-		$arr_powered_sside[] = [
-			'name' 	=> (string) 'PostgreSQL Database Server',
-			'logo' 	=> (string) $base_url.'lib/core/img/db/postgresql-logo.svg',
-			'url' 	=> (string) 'https://www.postgresql.org'
 		];
 	} //end if
 	//-- mongodb
@@ -2813,12 +2813,21 @@ public static function app_powered_info($y_show_versions='no', $y_plugins=array(
 			'url' 	=> (string) 'https://docs.mongodb.com'
 		];
 	} //end if
-	//-- sqlite
-	if(is_array($configs['sqlite'])) {
+	//-- pgsql
+	if(is_array($configs['pgsql'])) {
 		$arr_powered_sside[] = [
-			'name' 	=> (string) 'SQLite Embedded Database',
-			'logo' 	=> (string) $base_url.'lib/core/img/db/sqlite-logo.svg',
-			'url' 	=> (string) 'https://www.sqlite.org'
+			'name' 	=> (string) 'PostgreSQL Database Server',
+			'logo' 	=> (string) $base_url.'lib/core/img/db/postgresql-logo.svg',
+			'url' 	=> (string) 'https://www.postgresql.org'
+		];
+	} //end if
+	//-- mysqli
+	if(is_array($configs['mysqli'])) {
+		$tmp_name = (string) trim((string)$configs['mysqli']['type']);
+		$arr_powered_sside[] = [
+			'name' 	=> (string) ucfirst((string)$tmp_name).' Database Server',
+			'logo' 	=> (string) $base_url.'lib/core/img/db/mysql-logo.svg',
+			'url' 	=> (string) 'https://mariadb.org'
 		];
 	} //end if
 	//--
@@ -2891,7 +2900,7 @@ public static function app_powered_info($y_show_versions='no', $y_plugins=array(
 
 //================================================================
 // This conform the var names to lowercase and set the meta vars into a template array context (by default this is used by ::render_app_template() but can be used outside if needed ...
-public static function set_app_template_conform_metavars($arr_data) {
+public static function set_app_template_conform_metavars($arr_data=[]) {
 	//--
 	if(!is_array($arr_data)) {
 		return array();
@@ -2939,6 +2948,9 @@ public static function set_app_template_conform_metavars($arr_data) {
 	$arr_data['srv-script'] 				= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
 	$arr_data['srv-urlquery'] 				= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
 	$arr_data['srv-requri'] 				= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
+	$arr_data['timeout-execution'] 			= (int)    SMART_FRAMEWORK_EXECUTION_TIMEOUT; 						// execution timeout
+	$arr_data['timeout-netsocket'] 			= (int)    SMART_FRAMEWORK_NETSOCKET_TIMEOUT; 						// netsocket timeout
+	$arr_data['time-date-start'] 			= (string) date('Y-m-d H:i:s O'); 									// date time start
 	$arr_data['debug-mode'] 				= (string) (SmartFrameworkRuntime::ifDebug() ? 'yes' : 'no'); 		// yes | no
 	//--
 	return (array) $arr_data;

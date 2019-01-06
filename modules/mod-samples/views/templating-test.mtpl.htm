@@ -1,7 +1,6 @@
-<!-- start markers-tpl template v.181213 -->
+<!-- start markers-tpl template v.20190103 -->
 [%%%%COMMENT%%%%] Template: templating-test.mtpl.htm [%%%%/COMMENT%%%%]<!-- comments are removed -->
 <div align="center">
-	<br>
 	<div>
 		<img src="lib/framework/img/sf-logo.svg" width="160" height="160">
 		<br>
@@ -17,31 +16,5 @@
 	</div>
 	<br>
 	[@@@@SUB-TEMPLATE:templating-test.inc.htm@@@@]
-	<ul>
-	[%%%%LOOP:NAVIGATION%%%%]
-		<li><a href="[####NAVIGATION.HREF|html####]">[####NAVIGATION.CAPTION|html####]</a></li>
-	[%%%%/LOOP:NAVIGATION%%%%]
-	</ul>
-	Test Condition#1:
-	[%%%%IF:A:==Test-1;%%%%]
-		<b>OK</b>
-	[%%%%ELSE:A%%%%]
-		<span style="color:#FF3300;"><b>NOT OK</b></span>
-	[%%%%/IF:A%%%%]
-	<br>
-	Test Condition#2:
-	[%%%%IF:B:==####A####;%%%%]
-		<span style="color:#FF3300;"><b>NOT OK</b></span>
-	[%%%%ELSE:B%%%%]
-		<b>OK</b>
-	[%%%%/IF:B%%%%]
 </div>
 <!-- end markers-tpl template -->
-<div align="center">
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<a href="?page=samples.templating-test-extended" class="ux-button ux-button-small"><i class="fa fa-link"></i> &nbsp; Load TPL Extended Render Test</a>
-</div>

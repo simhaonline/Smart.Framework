@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Plugins / PDF Export]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / PDF Export]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // [REGEX-SAFE-OK]
 
 /* Config settings required for this library:
-define('SMART_FRAMEWORK_PDF_GENERATOR_APP', 	'/usr/bin/htmldoc'); 			// path to HtmlDoc Utility (change to match your system) ; can be `/usr/bin/htmldoc` or `/usr/local/bin/htmldoc` or `c:/open_runtime/htmldoc/htmldoc.exe` or any custom path
+define('SMART_FRAMEWORK_PDF_GENERATOR_APP', 	'/usr/local/bin/htmldoc'); 		// path to HtmlDoc Utility (change to match your system) ; can be `/usr/bin/htmldoc` or `/usr/local/bin/htmldoc` or `c:/open_runtime/htmldoc/htmldoc.exe` or any custom path
 define('SMART_FRAMEWORK_PDF_GENERATOR_FORMAT', 	'pdf13'); 						// PDF format: `pdf14` | `pdf13` | `pdf12`
 define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `color` | `gray`
 */
@@ -40,7 +40,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.181019
+ * @version 	v.181226
  * @package 	Exporters
  *
  */
@@ -225,7 +225,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 			$orientation = self::tag_page_normal();
 		} //end if else
 		//--
-		$tmp_prefix_dir = 'tmp/cache/pdf/';
+		$tmp_prefix_dir = 'tmp/cache/pdf#export/';
 		$protect_file = $tmp_prefix_dir.'.htaccess';
 		$dir = $tmp_prefix_dir.SMART_FRAMEWORK_SESSION_PREFIX.'/'; // we use different for index / admin / @
 		//--
@@ -302,7 +302,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_run
 				$tmp_where_we_guess = (string) $guess_arr['where-was-detected'];
 				$guess_arr = array();
 				if((string)$tmp_img_ext == '') {
-					$tmp_img_ext = SmartUtils::guess_image_extension_by_first_bytes(substr($tmp_arr['content'], 0, 16));
+					$tmp_img_ext = SmartUtils::guess_image_extension_by_img_content(substr($tmp_arr['content'], 0, 256));
 					if((string)$tmp_img_ext != '') {
 						$tmp_where_we_guess = ' First Bytes ...';
 					} //end if

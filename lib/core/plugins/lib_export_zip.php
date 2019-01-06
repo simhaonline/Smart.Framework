@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Plugins / ZIP Archive]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / ZIP Archiver]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -23,7 +23,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //--
 if((!function_exists('gzcompress')) OR (!function_exists('gzuncompress'))) {
 	@http_response_code(500);
-	die('ERROR: The PHP ZLIB Extension (gzcompress/gzuncompress) is required for SmartFramework / Lib ZipArchive');
+	die('ERROR: The PHP ZLIB Extension (gzcompress/gzuncompress) is required for Smart.Framework / Lib ZipArchive');
 } //end if
 //--
 

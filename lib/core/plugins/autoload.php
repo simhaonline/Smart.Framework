@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Plugins / AutoLoad]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / AutoLoad]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -111,11 +111,16 @@ function autoload__SmartFrameworkPlugins($classname) {
 			break;
 		case 'SmartSQliteDb':
 		case 'SmartSQliteUtilDb':
+		case 'SmartSQliteFunctions':
 			require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
 			break;
 		case 'SmartPgsqlDb':
 		case 'SmartPgsqlExtDb':
 			require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
+			break;
+		case 'SmartMysqliDb':
+		case 'SmartMysqliExtDb':
+			require_once('lib/core/plugins/lib_db_mysqli.php'); 		// mysqli db connector
 			break;
 		case 'SmartMongoDb':
 			require_once('lib/core/plugins/lib_db_mongo.php');			// mongo db connector

@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Mail Utils]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / Mail Utils]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.181123
+ * @version 	v.20190105
  * @package 	Mailer
  *
  */
@@ -228,7 +228,7 @@ public static function validate_mx_email_address($helo, $email, $y_smtp_port) {
 
 //==================================================================
 /**
- * Send Email Mime Message from SmartFramework to a destination with optional log of sent messages to a specific directory
+ * Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory
  * It will use the default server settings from configs: $configs['sendmail'][]
  *
  * @param STRING 		$logsend_dir 		A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'
@@ -243,24 +243,83 @@ public static function validate_mx_email_address($helo, $email, $y_smtp_port) {
  * @param STRING 		$inreplyto			* In Reply To: '' | the ID of message that is replying to :: default is ''
  * @param ENUM			$priority			* Priority: 1=High ; 3=Normal ; 5=Low :: default is 3
  * @param ENUM			$charset			* charset :: default is UTF-8
- * @return TRUE/FALSE	OPERATION RESULT [0 / 1]
+ * @return TRUE/FALSE	OPERATION RESULT [1 = OK ; 0 = send error ; -1 = error, empty config ]
  */
 public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority='3', $charset='UTF-8') {
 
 	//-- Get Default SMTP from configs
-	$def_cfg_smtp = (array) Smart::get_from_config('sendmail');
+	$def_mail_cfg = Smart::get_from_config('sendmail');
+	//--
+	if(Smart::array_size($def_mail_cfg) <= 0) {
+		return -1; // warning: the default config is empty
+	} //end if
+	//--
+
+	//--
+	 $arr_send_result = (array) self::send_custom_email(
+		(array) $def_mail_cfg,
+		$logsend_dir,
+		$to,
+		$cc,
+		$bcc,
+		$subj,
+		$message,
+		$is_html,
+		$attachments,
+		$replytoaddr,
+		$inreplyto,
+		$priority,
+		$charset
+	);
+	//--
+
+	//--
+	return (int) $arr_send_result['result']; // only return the result as 0 for error and 1 for success
+	//--
+
+} //END FUNCTION
+//==================================================================
+
+
+
+//==================================================================
+/**
+ * Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory
+ * It will use custom server settings as 1st parameter: $mail_config
+ *
+ * @param ARRAY 		$mail_config 		config array: [ server-mx-domain, server-host, server-port, server-ssl, server-cafile, auth-user, auth-password, from-address, from-name, use-qp-encoding ]
+ * @param STRING 		$logsend_dir 		A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'
+ * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
+ * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
+ * @param STRING 		$bcc				Bcc: '' | bcc@addr
+ * @param STRING 		$subj				Subject: Your Subject
+ * @param STRING 		$message			Message: The body of the message
+ * @param TRUE/FALSE 	$is_html			Format: FALSE = Text/Plain ; TRUE = HTML
+ * @param ARRAY 		$attachments		* Attachments array: [] | ['file1.txt'=>'This is the file 1 content', ...] :: default is []
+ * @param STRING 		$replytoaddr 		* Reply To Addr: '' | reply-to@addr :: default is ''
+ * @param STRING 		$inreplyto			* In Reply To: '' | the ID of message that is replying to :: default is ''
+ * @param ENUM			$priority			* Priority: 1=High ; 3=Normal ; 5=Low :: default is 3
+ * @param ENUM			$charset			* charset :: default is UTF-8
+ * @return ARRAY							[ 'result' => 'Operation RESULT', 'error' => 'ERROR Message if any', 'log' => 'Send LOG', 'message' => 'The Mime MESSAGE' ]
+ */
+public static function send_custom_email($mail_config, $logsend_dir, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority='3', $charset='UTF-8') {
+
+	//--
+	$mail_config = (array) $mail_config;
+	//--
+
 	//-- SMTP connection vars
 	$server_settings = [
-		'smtp_mxdomain' 	=> (string) $def_cfg_smtp['server-mx-domain'],
-		'server_name' 		=> (string) $def_cfg_smtp['server-host'],
-		'server_port' 		=> (string) $def_cfg_smtp['server-port'],
-		'server_sslmode' 	=> (string) $def_cfg_smtp['server-ssl'],
-		'server_cafile' 	=> (string) $def_cfg_smtp['server-cafile'],
-		'server_auth_user' 	=> (string) $def_cfg_smtp['auth-user'],
-		'server_auth_pass' 	=> (string) $def_cfg_smtp['auth-password'],
-		'send_from_addr' 	=> (string) $def_cfg_smtp['from-address'],
-		'send_from_name' 	=> (string) $def_cfg_smtp['from-name'],
-		'use_qp_encoding' 	=> (string) $def_cfg_smtp['use-qp-encoding']
+		'smtp_mxdomain' 	=> (string) $mail_config['server-mx-domain'],
+		'server_name' 		=> (string) $mail_config['server-host'],
+		'server_port' 		=> (string) $mail_config['server-port'],
+		'server_sslmode' 	=> (string) $mail_config['server-ssl'],
+		'server_cafile' 	=> (string) $mail_config['server-cafile'],
+		'server_auth_user' 	=> (string) $mail_config['auth-user'],
+		'server_auth_pass' 	=> (string) $mail_config['auth-password'],
+		'send_from_addr' 	=> (string) $mail_config['from-address'],
+		'send_from_name' 	=> (string) $mail_config['from-name'],
+		'use_qp_encoding' 	=> (string) $mail_config['use-qp-encoding']
 	];
 	//--
 
@@ -270,7 +329,7 @@ public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message,
 	$stmp_d = (string) date('d');
 	$stmp_time = (string) date('His');
 	//--
-	if((string)$def_cfg_smtp['log-messages'] != 'yes') { // no
+	if((string)$mail_config['log-messages'] != 'yes') { // no
 		$logsend_dir = '';
 	} else { // yes
 		$logsend_dir = (string) trim((string)$logsend_dir);
@@ -326,7 +385,7 @@ public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message,
 	//--
 
 	//--
-	return (int) $arr_send_result['result']; // only return the result as 0 for error and 1 for success
+	return (array) $arr_send_result; // check the ['result'] as 0 for error and 1 for success
 	//--
 
 } // END FUNCTION
@@ -335,11 +394,11 @@ public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message,
 
 //==================================================================
 /**
- * Send Email Mime Message from custom MailBox to a destination
- * It can use custom server settings
+ * Send Email Mime Message from Smart.Framework to a destination with many options that can be customized
+ * This is for very advanced use only.
  *
- * @param ARRAY			$y_server_settings	config array: [ smtp_mxdomain, server_name, server_port, server_sslmode, server_cafile, server_auth_user, server_auth_pass, send_from_addr, send_from_name, use_qp_encoding ]
- * @param ENUM			$y_mode				mode: 'send' = do send | 'send-return' = do send + return | 'return' = return mime formated mail
+ * @param ARRAY			$y_server_settings	smtp cfg array: [ smtp_mxdomain, server_name, server_port, server_sslmode, server_cafile, server_auth_user, server_auth_pass, send_from_addr, send_from_name, use_qp_encoding ]
+ * @param ENUM			$y_mode				mode: 'send' = do send | 'send-return' = do send + return | 'return' = no send, just return mime formated mail
  * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
  * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
  * @param STRING 		$bcc				Bcc: '' | bcc@addr
@@ -352,6 +411,10 @@ public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message,
  * @param ENUM			$priority			* Priority: 1=High ; 3=Normal ; 5=Low :: default is 3
  * @param ENUM			$charset			* charset :: default is UTF-8
  * @return ARRAY							[ 'result' => 'Operation RESULT', 'error' => 'ERROR Message if any', 'log' => 'Send LOG', 'message' => 'The Mime MESSAGE' ]
+ *
+ * @access 		private
+ * @internal
+ *
  */
 public static function send_extended_email($y_server_settings, $y_mode, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority=3, $charset='UTF-8') {
 
@@ -443,31 +506,36 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 
 	//--
 	$tmp_explode_arr = (array) explode('@', (string)$send_from_addr);
-	$tmp_name = trim($tmp_explode_arr[0]); // not used
-	$tmp_domain = trim($tmp_explode_arr[1]); // used for message ID
+	$tmp_name = (string) trim((string)$tmp_explode_arr[0]); // not used
+	$tmp_domain = (string) trim((string)$tmp_explode_arr[1]); // used for message ID
 	//--
-	$tmp_my_uid = getmyuid();
-	$tmp_my_gid = getmygid();
+	$tmp_my_uid = (int) getmyuid();
+	$tmp_my_gid = (int) getmygid();
+	$tmp_my_pid = (int) getmypid();
 	//--
 
 	//-- Extra Mail Headers
 	$mail->headers = '';
 	//-- Errors Reporting Header
-	$mail->headers .= 'Errors-To: '.$send_from_addr."\r\n";
+	$mail->headers .= 'Errors-To: '.$mail->secure_header($send_from_addr)."\r\n";
 	//-- In-Reply-To Header
 	if((string)$inreplyto != '') {
-		$mail->headers .= 'In-Reply-To: '.$inreplyto."\r\n";
+		$mail->headers .= 'In-Reply-To: '.$mail->secure_header($inreplyto)."\r\n";
 	} //end if else
 	//-- Reply-To Header
 	if((string)$replytoaddr != '') {
-		$mail->headers .= 'Reply-To: '.$replytoaddr."\r\n";
+		$mail->headers .= 'Reply-To: '.$mail->secure_header($replytoaddr)."\r\n";
 	} //end if
 	//-- antiSPAM Header
-	$mail->headers .= 'X-AntiAbuse: This header was added to track abuse, please include it with any abuse report'."\r\n";
-	$mail->headers .= 'X-AntiAbuse: Primary Hostname - '.$server_helo."\r\n";
-	$mail->headers .= 'X-AntiAbuse: Original Domain - '.$server_helo."\r\n";
-	$mail->headers .= 'X-AntiAbuse: Originator/Caller UID/GID - [48880 48885] / ['.$tmp_my_uid.' '.$tmp_my_gid.']'."\r\n";
-	$mail->headers .= 'X-AntiAbuse: Sender Address Domain - '.$tmp_domain."\r\n";
+	if(defined('SMART_SOFTWARE_MAILSEND_SAFE_RULES')) {
+		if(SMART_SOFTWARE_MAILSEND_SAFE_RULES === true) {
+			$mail->headers .= 'X-AntiAbuse: This header was added to track abuse, please include it with any abuse report'."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Primary Hostname - '.$mail->secure_header($server_helo)."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Original Domain - '.$mail->secure_header($server_helo)."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Originator/Caller UID/GID - ['.$mail->secure_header($tmp_my_pid).' 48880] / ['.$mail->secure_header($tmp_my_uid).' '.$mail->secure_header($tmp_my_gid).']'."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Sender Address Domain - '.$mail->secure_header($tmp_domain)."\r\n";
+		} //end if
+	} //end if
 	//--
 
 	//--
@@ -504,7 +572,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 			//-- reverse the &amp; back to & (generated from JavaScript) ...
 			$tmp_imglink = str_replace('&amp;', '&', (string)$tmp_original_img_link);
 			//--
-			$tmp_cid = 'img_'.sha1('SmartFramework eMail-Utils // CID Embed // '.'@'.$tmp_imglink.'#'); // this should not vary by $i or others because if duplicate images are detected only the first is attached
+			$tmp_cid = 'img_'.sha1('Smart.Framework eMail-Utils // CID Embed // '.'@'.$tmp_imglink.'#'); // this should not vary by $i or others because if duplicate images are detected only the first is attached
 			//--
 			if(!$chk_duplicates_arr[(string)$tmp_cid]) { // avoid browse twice the same image
 				//--
@@ -537,19 +605,20 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 				$tmp_where_we_guess = (string) $guess_arr['where-was-detected'];
 				//Smart::log_notice('Guess Ext by URL Head: '.$tmp_browse_arr['headers']."\n".'### '.print_r($guess_arr,1)."\n".'#');
 				if((string)$tmp_img_ext == '') {
-					$tmp_img_ext = SmartUtils::guess_image_extension_by_first_bytes(substr($tmp_browse_arr['content'], 0, 16)); // needs 1st 16 bytes
+					$tmp_img_ext = SmartUtils::guess_image_extension_by_img_content((string)$tmp_browse_arr['content'], true);
 					if((string)$tmp_img_ext != '') {
-						$tmp_where_we_guess = ' First Bytes ...';
+						$tmp_where_we_guess = ' Img Content ...';
 					} //end if
 				} //end if
-				//Smart::log_notice('Guess Ext by First Bytes: '.$tmp_img_ext."\n".'#');
+				//Smart::log_notice('Guess Ext by Img Content: '.$tmp_img_ext."\n".'#');
 				if((string)$tmp_eval_link == '') {
 					$tmp_eval_link = 'file'.$tmp_img_ext;
 				} //end if
 				//--
 				$tmp_fcontent = '';
 				if(((string)$tmp_browse_arr['result'] == '1') AND ((string)$tmp_browse_arr['code'] == '200')) {
-					if(((string)$tmp_img_ext == '') OR ((string)$tmp_img_ext == '.png') OR ((string)$tmp_img_ext == '.gif') OR ((string)$tmp_img_ext == '.jpg')) {
+				//	if(((string)$tmp_img_ext == '') OR ((string)$tmp_img_ext == '.svg') OR ((string)$tmp_img_ext == '.png') OR ((string)$tmp_img_ext == '.gif') OR ((string)$tmp_img_ext == '.jpg')) {
+					if(((string)$tmp_img_ext == '.svg') OR ((string)$tmp_img_ext == '.png') OR ((string)$tmp_img_ext == '.gif') OR ((string)$tmp_img_ext == '.jpg')) { // using a deep detection above and is not safe unknown image extension
 						$tmp_fcontent = (string) $tmp_browse_arr['content'];
 					} //end if
 				} //end if else
@@ -747,7 +816,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.181123
+ * @version 	v.20190105
  * @package 	Mailer
  *
  */
@@ -791,7 +860,7 @@ public static function encode_mime_fileurl($y_msg_file, $y_ctrl_key) {
 		trim((string)$access_key)."\n". 		// access key based on UniqueID cookie
 		trim((string)$unique_key)."\n". 		// unique key based on: AuthUserID, User-Agent and IP
 		trim((string)$self_robot_key)."\n", 		// self robot browser UserAgentName/ID key
-		'SmartFramework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
+		'Smart.Framework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
 	);
 	//--
 	return (string) $safe_link;
@@ -844,7 +913,7 @@ public static function decode_mime_fileurl($y_enc_msg_file, $y_ctrl_key) {
 	//--
 	$decoded_link =  trim((string)SmartUtils::crypto_decrypt(
 		(string)$y_enc_msg_file,
-		'SmartFramework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
+		'Smart.Framework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
 	));
 	$dec_arr = (array) explode("\n", trim((string)$decoded_link));
 	//print_r($dec_arr);
@@ -948,7 +1017,7 @@ public static function get_message_data_structure($y_enc_msg_file, $y_ctrl_key, 
 
 //==================================================================
 // the link can be empty as '' just for 'reply' process mode when forwards
-// for the rest of cases the link is something like: yourscript?page=your.action&your_url_param_message={{{MESSAGE}}}&your_url_param_rawmode={{{RAWMODE}}}&your_url_param_mime={{{MIME}}}&your_url_param_disp={{{DISP}}}
+// for the rest of cases the link is something like: yourscript?page=your.action&your_url_param_message={{{MESSAGE}}}&your_url_param_rawmode={{{RAWMODE}}}&your_url_param_mime={{{MIME}}}&your_url_param_disp={{{DISP}}}&&your_url_param_mode={{{MODE}}}
 // [PRIVATE]
 private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_show_headers, $y_title, $y_link, $y_target) {
 
@@ -992,7 +1061,16 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 
 	//--
 	$out = ''; // init
-	$reply_text = array(); // init
+	//--
+	$reply_text 				= array(); // init
+	$reply_text['from'] 		= '';
+	$reply_text['to'] 			= '';
+	$reply_text['cc'] 			= '';
+	$reply_text['date'] 		= '';
+	$reply_text['subject'] 		= '';
+	$reply_text['in-reply-to'] 	= '';
+	$reply_text['message-id'] 	= '';
+	$reply_text['message'] 		= '';
 	//--
 
 	//==
@@ -1078,14 +1156,14 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 			} //end switch
 			//--
 			if((string)$skip_part_linking != 'yes') { // avoid display the print link when only a part is displayed
-				$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, $eval_arr[0], $eval_arr[1], 'print').'" target="'.$y_target.'__mimepart" data-smart="open.modal">'.'<img align="right" src="lib/core/plugins/img/email/bttn-print.svg" title="Print" alt="Print">'.'</a>';
+				$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, $eval_arr[0], $eval_arr[1], 'print').'" target="'.Smart::escape_html($y_target).'__mimepart" data-smart="open.popup">'.'<img align="right" src="lib/core/plugins/img/email/bttn-print.svg" title="Print View" alt="Print View">'.'</a>';
 			} //end if
 			//--
 			switch((string)$y_show_headers) {
 				case 'subject':
 					//--
 					if((string)$head['subject'] != '[?]') {
-						$out .= '<h1><font size="4">'.Smart::escape_html($head['subject']).'</font></h1><br>';
+						$out .= '<h1 style="display:inline-block!important; line-height:16px;"><font size="4">'.Smart::escape_html($head['subject']).'</font></h1><br>';
 					} //end if
 					//--
 					break;
@@ -1093,7 +1171,7 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 				default:
 					//--
 					if((string)$head['subject'] != '[?]') {
-						$out .= '<h1><font size="4">&nbsp;'.Smart::escape_html($head['subject']).'</font>'.$priority_img.'</h1><hr>';
+						$out .= '<h1 style="display:inline-block!important; line-height:16px;"><font size="4">&nbsp;'.Smart::escape_html($head['subject']).'</font>'.$priority_img.'</h1><hr>';
 					} //end if
 					//--
 					if((string)$head['date'] != '(?)') {
@@ -1135,7 +1213,9 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 				//--
 				$tmp_att_img = '<img src="lib/core/plugins/img/email/attachment.svg">';
 				//--
-				foreach ($msg['attachments'] as $key => $val) {
+				foreach($msg['attachments'] as $key => $val) {
+					//--
+					$key = (string) $key;
 					//--
 					$tmp_arr = array();
 					$tmp_arr = (array) $val;
@@ -1151,7 +1231,7 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 						$reg_atts_num += 1;
 						$reg_atts_list .= str_replace(array("\r", "\n", "\t"), array('', '', ''), (string)$tmp_arr['filename'])."\n";
 						//--
-						$atts .= '<div align="left"><table border="0" cellpadding="2" cellspacing="0" title="Attachment #'.$cnt.'"><tr><td>'.$tmp_att_img.'</td><td>&nbsp;</td><td><a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $key, $y_link, $eval_arr[0], $eval_arr[1]).'" target="'.$y_target.'__mimepart" data-smart="open.modal"><font size="1"><b>'.$tmp_att_name.'</b></font></a></td><td><font size="1"> &nbsp;<b><i>'.$tmp_att_size.'</i></b></font></td></tr></table></div>';
+						$atts .= '<div align="left"><table border="0" cellpadding="2" cellspacing="0" title="Attachment #'.$cnt.'"><tr><td>'.$tmp_att_img.'</td><td>&nbsp;</td><td><a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $key, $y_link, $eval_arr[0], $eval_arr[1]).'" target="'.$y_target.'__mimepart" data-smart="open.popup"><font size="1"><b>'.$tmp_att_name.'</b></font></a></td><td><font size="1"> &nbsp;<b><i>'.$tmp_att_size.'</i></b></font></td></tr></table></div>';
 						$xatts .= '<div align="left">'.$tmp_att_img.'&nbsp;&nbsp;<font size="1">'.$tmp_att_name.'&nbsp;&nbsp;<i>'.$tmp_att_size.'</i></font></div>';
 						//--
 					} //end if
@@ -1191,11 +1271,17 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 			$numparts = 0;
 			foreach($msg['texts'] as $key => $val) {
 				//--
+				$key = (string) $key;
+				$val = (array) $val;
+				//--
 				$numparts += 1;
 				//--
 				if((string)$val['type'] == 'text') { // assure we don't print other things
 					//--
-					if((string)$val['mode'] == 'text/plain') { // Plain TEXT
+					if((string)$val['mode'] == 'text/x-watch-html') { // Apple watch Text: skip
+						$val['skip'] = true;
+						$msg['texts'][$key]['skip'] = true; // write back
+					} elseif((string)$val['mode'] == 'text/plain') { // Plain TEXT
 						//-- sanitize text
 						$val['content'] = '<!-- MIMEREAD:PART:TEXT -->'.Smart::escape_html($val['content']);
 						$val['content'] = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", '<br>'), $val['content']);
@@ -1228,22 +1314,9 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 							//--
 						} else {
 							//-- sanitize this html part
-							$val['content'] = (new SmartHtmlParser($val['content']))->get_clean_html();
+							$val['content'] = (string) self::mime_fix_clean_html($val['content']);
 							//-- replace cid images
-							$tmp_matches = array();
-							preg_match_all('/<img[^>]+src=[\'"]?(cid:)([^\'"]*)[\'"]?[^>]*>/si', (string)$val['content'], $tmp_matches); // fix: previous was just i (not si) ; modified on 160205
-							// $tmp_matches[0][i] : the full link
-							// $tmp_matches[1][i] : 'cid:'
-							// $tmp_matches[2][i] : cid part id
-							for($cids=0; $cids<Smart::array_size($tmp_matches[0]); $cids++) {
-								$tmp_replace_cid_link = '';
-								$tmp_replace_cid_link = (string)$tmp_matches[0][$cids];
-								$tmp_replace_cid_link = str_replace("\n", ' ', $tmp_replace_cid_link);
-								$tmp_replace_cid_link = str_replace($tmp_matches[1][$cids].$tmp_matches[2][$cids], self::mime_link($y_ctrl_key, $the_message_eml, 'cid_'.$tmp_matches[2][$cids], $y_link, 'image', 'inline'), $tmp_replace_cid_link);
-								//echo '<pre>'.Smart::escape_html($tmp_replace_cid_link).'</pre>';
-								$val['content'] = str_replace($tmp_matches[0][$cids], $tmp_replace_cid_link, $val['content']);
-							} //end for
-							$tmp_matches = array();
+							$val['content'] = (string) self::mime_fix_cids($the_message_eml, $val['content'], $y_ctrl_key, $y_link);
 							//--
 						} //end if else
 						//--
@@ -1279,14 +1352,17 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 			$cnt=0;
 			foreach($msg['texts'] as $key => $val) {
 				//--
-				if((string)$val['type'] == 'text') { // assure we don't print other things
+				$key = (string) $key;
+				$val = (array) $val;
+				//--
+				if(((string)$val['type'] == 'text') AND ($val['skip'] !== true)) { // assure we don't print other things
 					//--
 					$cnt += 1;
 					//--
 					$eval_arr = array();
 					$eval_arr = SmartFileSysUtils::mime_eval('part_'.$cnt.'.html', 'inline');
 					//--
-					$tmp_link_pre = '<span title="Mime Part #'.$cnt.' ( '.Smart::escape_html(strtolower($val['mode']).' : '.strtoupper($val['charset'])).' )"><a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $key, $y_link, $eval_arr[0], $eval_arr[1], 'minimal').'" target="'.$y_target.'__mimepart" data-smart="open.modal">';
+					$tmp_link_pre = '<span title="Mime Part #'.$cnt.' ( '.Smart::escape_html(strtolower($val['mode']).' : '.strtoupper($val['charset'])).' )"><a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $key, $y_link, $eval_arr[0], $eval_arr[1], 'partial').'" target="'.$y_target.'__mimepart" data-smart="open.popup">';
 					$tmp_link_pst = '</a></span>';
 					//--
 					if((string)$skips[$key] == '') { // print part if not skipped by similarity ...
@@ -1302,8 +1378,13 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 								$reply_text['message'] = (string) $val['content'];
 							} //end if
 						} else {
+							$htmid = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$key));
 							$out .= $tmp_pict_img;
-							$out .= $val['content'];
+							if(((string)$val['mode'] == 'text/plain') OR ((string)$y_process_mode == 'print')) {
+								$out .= $val['content'];
+							} else { // for non text/plain parts, use sandbox iframe if non-print mode ; for print mode the iframe sandbox must be manually added to ensure safety !
+								$out .= '<div title="MimeMessage HTML Safe SandBox / iFrame" style="position:relative;"><img height="16" src="lib/core/plugins/img/email/safe.svg" style="cursor:help; position:absolute; top:5px; left:49vw; opacity:0.25;"><iframe name="'.Smart::escape_html($htmid).'" id="'.Smart::escape_html($htmid).'" width="100%" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="height:75vh; max-height:max-content; border:1px solid #ECECEC;" srcdoc="'.Smart::escape_html('<!DOCTYPE html><html><head><title>Mime Message</title><meta charset="'.Smart::escape_html(SMART_FRAMEWORK_CHARSET).'">'.SmartFileSystem::read('lib/core/templates/base-html-styles.inc.htm').'</head><body>'.$val['content'].'<script>alert(\'If you can see this alert the Mime Message iFrame Sandbox is unsafe ...\');</script></body></html>').'" sandbox></iframe></div>';
+							} //end if else
 							$out .= '<br><hr><br>';
 						} //end if
 						//--
@@ -1334,9 +1415,6 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 	if((string)$y_process_mode == 'data-full') { // output an array with message and all header info as data structure
 		//--
 		return array(
-			'message' 		=> (string) $out,
-			'message-id' 	=> (string) $head['message-id'],
-			'in-reply-to' 	=> (string) $head['in-reply-to'],
 			'from' 			=> (string) $head['from_addr'],
 			'to' 			=> (string) $head['to_addr'],
 			'cc' 			=> (string) $head['cc_addr'],
@@ -1344,19 +1422,22 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 			'atts_num' 		=> (int)    $reg_atts_num,
 			'atts_lst' 		=> (string) $reg_atts_list,
 			'filepath' 		=> (string) $the_message_eml,
-			'is_part' 		=> (string) $reg_is_part // yes/no
+			'is_part' 		=> (string) $reg_is_part, // yes/no
+			'in-reply-to' 	=> (string) $head['in-reply-to'],
+			'message-id' 	=> (string) $head['message-id'],
+			'message' 		=> (string) $out
 		);
 		//--
 	} elseif((string)$y_process_mode == 'data-reply') { // output a special array for replies only
 		//--
-		$reply_text['message'] 		= (string) $reply_text['message']; // this comes from above
 		$reply_text['from'] 		= (string) $head['from_addr'];
 		$reply_text['to'] 			= (string) $head['to_addr'];
 		$reply_text['cc'] 			= (string) $head['cc_addr'];
 		$reply_text['date'] 		= (string) $head['date'];
 		$reply_text['subject'] 		= (string) $head['subject'];
-		$reply_text['message-id'] 	= (string) $head['message-id'];
 		$reply_text['in-reply-to'] 	= (string) $head['in-reply-to'];
+		$reply_text['message-id'] 	= (string) $head['message-id'];
+		$reply_text['message'] 		= (string) $reply_text['message']; // this comes from above
 		//--
 		return (array) $reply_text;
 		//--
@@ -1367,6 +1448,52 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 	} //end if
 	//--
 
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+// [PRIVATE]
+private static function mime_fix_clean_html($y_mime_part) {
+	//--
+	return (new SmartHtmlParser((string)$y_mime_part))->get_clean_html();
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
+// [PRIVATE]
+private static function mime_fix_cids($y_msg_file, $y_mime_part, $y_ctrl_key, $y_link) {
+	//--
+	$matches = array(); // init
+	//--
+	preg_match_all('/<img[^>]+src=[\'"]?(cid:)([^\'"]*)[\'"]?[^>]*>/si', (string)$y_mime_part, $matches, PREG_SET_ORDER, 0); // fix: previous was just i (not si) ; modified on 160205
+	// $matches[i][0] : the full link
+	// $matches[i][1] : 'cid:'
+	// $matches[i][2] : cid part id
+	for($i=0; $i<Smart::array_size($matches); $i++) {
+		$tmp_replace_cid_link = (string) str_replace(
+			["\r\n", "\n", "\r", "\t"],
+			' ',
+			(string) $matches[$i][0]
+		);
+		$tmp_replace_cid_link = (string) str_replace(
+			(string) $matches[$i][1].$matches[$i][2],
+			(string) self::mime_link($y_ctrl_key, $y_msg_file, 'cid_'.$matches[$i][2], $y_link, 'image', 'inline'),
+			(string) $tmp_replace_cid_link
+		);
+		$y_mime_part = (string) str_replace(
+			(string) $matches[$i][0],
+			(string) $tmp_replace_cid_link,
+			(string) $y_mime_part
+		);
+	} //end for
+	//--
+	$matches = array(); // free mem
+	//--
+	return (string) $y_mime_part;
+	//--
 } //END FUNCTION
 //==================================================================
 
@@ -1393,14 +1520,14 @@ private static function mime_separe_part_link($y_msg_file) {
 
 //==================================================================
 // [PRIVATE]
-private static function mime_link($y_ctrl_key, $y_msg_file, $y_part, $y_link, $y_rawmime, $y_rawdisp, $y_printable='') {
+private static function mime_link($y_ctrl_key, $y_msg_file, $y_part, $y_link, $y_rawmime, $y_rawdisp, $y_display='') {
 	//--
 	$y_msg_file = (string) $y_msg_file;
 	$y_part = (string) $y_part;
 	$y_link = (string) $y_link;
 	$y_rawmime = (string) $y_rawmime;
 	$y_rawdisp = (string) $y_rawdisp;
-	$y_printable = (string) $y_printable;
+	$y_display = (string) $y_display; // print | partial
 	//--
 	$the_url_param_msg = '';
 	$the_url_param_raw = '';
@@ -1423,23 +1550,28 @@ private static function mime_link($y_ctrl_key, $y_msg_file, $y_part, $y_link, $y
 			$the_url_param_disp = (string) Smart::escape_url(SmartUtils::url_hex_encode((string)$y_rawdisp));
 		} //end if
 		//--
-		if((string)$y_printable != '') { // printable display
-			$y_link .= '&'.SMART_FRAMEWORK_URL_PARAM_PRINTABLE.'='. Smart::escape_url((string)SMART_FRAMEWORK_URL_VALUE_ENABLED); // .'&'.SMART_FRAMEWORK_URL_PARAM_MODALPOPUP.'='. Smart::escape_url((string)SMART_FRAMEWORK_URL_VALUE_ENABLED).'&';
+		$the_url_param_mode = '';
+		if((string)$y_display == 'print') { // printable display mode
+			$the_url_param_mode = 'print';
+		} elseif((string)$y_display == 'partial') { // partial display mode
+			$the_url_param_mode = 'partial';
 		} //end if else
 		//--
-		$y_link = str_replace(
-			array(
+		$y_link = (string) str_replace(
+			[
 				'{{{MESSAGE}}}',
 				'{{{RAWMODE}}}',
 				'{{{MIME}}}',
-				'{{{DISP}}}'
-			),
-			array(
+				'{{{DISP}}}',
+				'{{{MODE}}}'
+			],
+			[
 				(string) $the_url_param_msg,
 				(string) $the_url_param_raw,
 				(string) $the_url_param_mime,
-				(string) $the_url_param_disp
-			),
+				(string) $the_url_param_disp,
+				(string) $the_url_param_mode
+			],
 			(string) $y_link
 		);
 		//--

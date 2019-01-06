@@ -1,9 +1,9 @@
 
-/* -- CSS Start :: SmartFramework / Components / Notifications :: v.3.7.7 r.2018.10.19 / smart.framework.v.3.7 -- */
+/* -- CSS Start :: Smart.Framework / Components / Notifications :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7 -- */
 
 /* ----------------------------- */
 
-/* Notifications r.180405.1905 */
+/* Notifications r.181227 */
 
 div#operation_question {
 	background-color: #FFFFFF !important;
@@ -20,7 +20,7 @@ div#operation_question {
 	padding-right: 16px;
 	padding-top: 12px;
 	padding-bottom: 8px;
-	margin: 0 auto;
+/*	margin: 0 auto; */
 	margin-top: 8px;
 	margin-bottom: 8px;
 	max-width: calc(98% - 10px) !important;
@@ -49,7 +49,7 @@ div#operation_notice {
 	padding-right: 16px;
 	padding-top: 12px;
 	padding-bottom: 8px;
-	margin: 0 auto;
+/*	margin: 0 auto; */
 	margin-top: 8px;
 	margin-bottom: 8px;
 	max-width: calc(98% - 10px) !important;
@@ -78,7 +78,7 @@ div#operation_info {
 	padding-right: 16px;
 	padding-top: 12px;
 	padding-bottom: 8px;
-	margin: 0 auto;
+/*	margin: 0 auto; */
 	margin-top: 8px;
 	margin-bottom: 8px;
 	max-width: calc(98% - 10px) !important;
@@ -107,7 +107,7 @@ div#operation_warn {
 	padding-right: 16px;
 	padding-top: 12px;
 	padding-bottom: 8px;
-	margin: 0 auto;
+/*	margin: 0 auto; */
 	margin-top: 8px;
 	margin-bottom: 8px;
 	max-width: calc(98% - 10px) !important;
@@ -136,7 +136,7 @@ div#operation_error {
 	padding-right: 16px;
 	padding-top: 12px;
 	padding-bottom: 8px;
-	margin: 0 auto;
+/*	margin: 0 auto; */
 	margin-top: 8px;
 	margin-bottom: 8px;
 	max-width: calc(98% - 10px) !important;

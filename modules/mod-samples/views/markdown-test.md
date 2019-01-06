@@ -1,6 +1,6 @@
 # [####TITLE|html####] (H1)
 
-&copy;&nbsp;&nbsp;2015-2018&nbsp;unix-world.org # v.181205
+&copy;&nbsp;&nbsp;2015-2019&nbsp;unix-world.org # v.20190105
 
 ## H2 (Unicode Test) ăĂîÎâÂşŞţŢ
 
@@ -185,8 +185,8 @@ Content Cell  | Content Cell
 
 | Name | Description |
 | ----- | ----- |
-| ^Help^ | ~~Display the ăĂîÎâÂşŞţŢșȘțȚ~~ help **window**.|
-| ~Close~ | _Closes_ a window |
+| Action ^Help^ | ~~Display the ăĂîÎâÂşŞţŢșȘțȚ~~ help **window**.|
+| Action ~Close~ | _Closes_ a window |
 
 | Left-Aligned {@class=dbordered}  | Center Aligned {@class=dbordered}  | Right Aligned {@class=dbordered} |
 | :------------ |:---------------:| -----:|
@@ -196,10 +196,10 @@ Content Cell  | Content Cell
 
 The outer pipes (|) are optional, and you don't need to make the raw Markdown line up prettily. You can also use inline Markdown.
 
-Markdown | Less | Pretty
+Markdown {@class=dbordered} | Less {@class=dbordered} | Pretty {@class=dbordered}
 --- | --- | ---
-*Still* | `renders` | **nicely**
-1 | 2 | 3
+*Still* {@class=dbordered} | `renders` {@class=dbordered} | **nicely** {@class=dbordered}
+1 {@class=dbordered} | 2 {@class=dbordered} | 3 {@class=dbordered}
 
 > Blockquotes are very handy in email to emulate reply text.
 > This line is part of the same quote.
@@ -234,7 +234,7 @@ This line is separated from the one above by two newlines, so it will be a *sepa
 This line is also a separate paragraph, but...
 This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
 
-[![IMAGE ALT TEXT HERE](//img.youtube.com/vi/4rUrYN4cnGs/0.jpg)](http://www.youtube.com/watch?v=4rUrYN4cnGs "My Title"){.primary9 #link .Upper-Case @target=_blank}
+[![IMAGE ALT TEXT HERE](//img.youtube.com/vi/4rUrYN4cnGs/0.jpg)](//www.youtube.com/watch?v=4rUrYN4cnGs "My Title"){.video-link #link .Extra-Class @target=_blank}
 
 Fenced code blocks
 

@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Mail or SMTP Send, Mime Compose]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Plugins / Mail Send (Mail, SMTP, Mime Compose)]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181211
+ * @version 	v.20190105
  * @package 	Mailer
  *
  */
@@ -424,6 +424,18 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 
 
 //=====================================================================================
+public function secure_header($str) {
+	//--
+	return (string) Smart::normalize_spaces((string)SmartUnicode::fix_charset((string)$str));
+	//--
+} //END FUNCTION
+//=====================================================================================
+
+
+//##### PRIVATES
+
+
+//=====================================================================================
 private function cleanup() {
 	//--
 	$this->parts = array();
@@ -462,15 +474,6 @@ private function cleanup() {
 	$this->smtp_login = false;
 	$this->smtp_user = '';
 	$this->smtp_password = '';
-	//--
-} //END FUNCTION
-//=====================================================================================
-
-
-//=====================================================================================
-private function secure_header($str) {
-	//--
-	return (string) Smart::normalize_spaces((string)SmartUnicode::fix_charset((string)$str));
 	//--
 } //END FUNCTION
 //=====================================================================================
@@ -647,7 +650,7 @@ private function build_multipart() {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181123
+ * @version 	v.20190105
  * @package 	Mailer
  *
  */

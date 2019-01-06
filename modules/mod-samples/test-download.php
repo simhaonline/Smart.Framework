@@ -2,8 +2,8 @@
 // [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/BenchMark
 // Route: ?/page/samples.benchmark (?page=samples.benchmark)
-// Author: unix-world.org
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -49,8 +49,14 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			return;
 		} //end if
 
-		if(!SmartFileSystem::is_type_file((string)$this->download_file)) { // avoid re-copy each time this script runs ...
-			SmartFileSystem::copy('lib/core/img/app/session.svg', (string)$this->download_file); // copy a file from lib/ to wpub/ to allow doanload it (the internal security mechanisms dissalow download files except what is defined in SMART_FRAMEWORK_DOWNLOAD_FOLDERS ...)
+		$test_file = 'modules/mod-samples/views/img/osi.svg';
+		if(SmartFileSystem::is_type_file((string)$this->download_file)) { // avoid re-copy each time this script runs, compare using sha1 file ...
+			if((string)sha1_file((string)$this->download_file) != (string)sha1_file((string)$test_file)) {
+				SmartFileSystem::delete((string)$this->download_file);
+			} //end if
+		} //end if
+		if(!SmartFileSystem::is_type_file((string)$this->download_file)) {
+			SmartFileSystem::copy((string)$test_file, (string)$this->download_file, true); // copy a file to wpub/ to allow download it (the internal security mechanisms dissalow download files except what is defined in SMART_FRAMEWORK_DOWNLOAD_FOLDERS ...)
 		} //end if
 
 		if(!SmartFileSystem::is_type_file((string)$this->download_file)) {
@@ -67,8 +73,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$download_link 	= (string) SmartUtils::create_download_link((string)$this->download_file, (string)$download_key); // generate an encrypted internal download link to serve that file once
 
 		$this->PageViewSetRawHeaders([
-			'Z-Test-Header-FileMTime:' => filemtime($this->download_file),
-			'Z-Test-Header-SHA1File:' => sha1_file($this->download_file)
+			'Z-Test-Header-FileMTime:' 	=> (int)    filemtime($this->download_file),
+			'Z-Test-Header-SHA1File:' 	=> (string) sha1_file($this->download_file)
 		]);
 
 		$this->PageViewSetCfgs([

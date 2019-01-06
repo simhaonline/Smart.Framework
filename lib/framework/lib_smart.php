@@ -1,7 +1,7 @@
 <?php
-// [LIB - SmartFramework / Base]
-// (c) 2006-2018 unix-world.org - all rights reserved
-// v.3.7.7 r.2018.10.19 / smart.framework.v.3.7
+// [LIB - Smart.Framework / Base]
+// (c) 2006-2019 unix-world.org - all rights reserved
+// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
 if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
@@ -24,15 +24,15 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //================================================================
 if((!function_exists('json_encode')) OR (!function_exists('json_decode'))) {
 	@http_response_code(500);
-	die('ERROR: The PHP JSON Extension is required for the SmartFramework / Base');
+	die('ERROR: The PHP JSON Extension is required for the Smart.Framework / Base');
 } //end if
 if(!function_exists('hex2bin')) {
 	@http_response_code(500);
-	die('ERROR: The PHP hex2bin Function is required for SmartFramework / Base');
+	die('ERROR: The PHP hex2bin Function is required for Smart.Framework / Base');
 } //end if
 if(!function_exists('bin2hex')) {
 	@http_response_code(500);
-	die('ERROR: The PHP bin2hex Function is required for SmartFramework / Base');
+	die('ERROR: The PHP bin2hex Function is required for Smart.Framework / Base');
 } //end if
 //================================================================
 
@@ -62,7 +62,7 @@ if((string)$var == 'some-string') {
 
 
 /**
- * Class: Smart (Base Functions) - provides the base methods for an easy and secure development with SmartFramework and PHP.
+ * Class: Smart (Base Functions) - provides the base methods for an easy and secure development with Smart.Framework and PHP.
  *
  * <code>
  * // Usage example:
@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.181211
+ * @version     v.20190105
  * @package     Base
  *
  */
@@ -1184,9 +1184,9 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 	$yhtmlcode = (string) $yhtmlcode;
 	$ynewline = (string) $ynewline;
 	//-- fix xhtml tag ends and add spaces between tags
-	$yhtmlcode = (string) str_replace(array(' />', '/>', '>'), array('>', '>', '> '), (string)$yhtmlcode);
+	$yhtmlcode = (string) str_replace([' />', '/>', '>'], ['>', '>', '> '], (string)$yhtmlcode);
 	//-- remove special tags
-	$html_regex_h = array(
+	$html_regex_h = [
 		'#<head[^>]*?>.*?</head[^>]*?>#si',				// head
 		'#<style[^>]*?>.*?</style[^>]*?>#si',			// style
 		'#<script[^>]*?>.*?</script[^>]*?>#si',			// script
@@ -1203,57 +1203,119 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
 		'#<form[^>]*?>.*?</form[^>]*?>#si',				// form
 		'#<link[^>]*?>#si',								// link
 		'#<img[^>]*?>#si'								// img
-	);
-	$html_regex_r = array(
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' ',
-		' '
-	);
-	$yhtmlcode = (string) preg_replace((array)$html_regex_h, (array)$html_regex_r, (string)$yhtmlcode);
+	];
+	$yhtmlcode = (string) preg_replace((array)$html_regex_h, ' ', (string)$yhtmlcode);
 	$yhtmlcode = str_replace(["\r\n", "\r", "\t", "\f"], ["\n", "\n", ' ', ' '], $yhtmlcode);
 	//-- replace new line tags
 	if((string)$ynewline == 'yes') {
-		$yhtmlcode = (string) str_ireplace(['<br>', '</br>'], ["\n", ''], (string)$yhtmlcode);
+		$replchr = "\n"; // newline
 	} else {
-		$yhtmlcode = (string) str_ireplace(['<br>', '</br>'], [' ', ''], (string)$yhtmlcode);
+		$replchr = ' '; // space
 	} //end if else
+	$yhtmlcode = (string) str_ireplace(['<br>', '</br>'], [(string)$replchr, ''], (string)$yhtmlcode);
 	//-- strip the tags
 	$yhtmlcode = (string) strip_tags((string)$yhtmlcode);
 	//-- restore some usual html entities
-	$regex_h = array(
-		'&nbsp;',
-		'&amp;',
-		'&quot;',
-		'&lt;',
-		'&gt;',
-		'&copy;',
-		'&euro;',
-		'&middot;'
-	);
-	$regex_r = array(
-		' ',
-		'&',
-		'"',
-		'<',
-		'>',
-		'(c)',
-		'EURO',
-		'.'
-	);
-	$yhtmlcode = (string) str_ireplace((array)$regex_h, (array)$regex_r, (string)$yhtmlcode);
+	$arr_replacements = [
+		'&nbsp;' 	=> ' ',
+		'&amp;' 	=> '&',
+		'&quot;' 	=> '"',
+		'&apos;' 	=> "'",
+		'&#039;' 	=> "'",
+		'&lt;' 		=> '<',
+		'&gt;' 		=> '>',
+		'&middot;' 	=> '.',
+		'&bull;' 	=> '.',
+		'&sdot;' 	=> '.',
+		'&copy;' 	=> '(c)',
+		'&reg;' 	=> '(R)',
+		'&trade;' 	=> '(TM)',
+		'&curren;' 	=> '¤',
+		'&euro;' 	=> '€',
+		'&cent;' 	=> '¢',
+		'&pound;' 	=> '£',
+		'&yen;' 	=> '¥',
+		'&lsaquo;' 	=> '‹',
+		'&rsaquo;' 	=> '›',
+		'&laquo;' 	=> '«',
+		'&raquo;' 	=> '»',
+		'&lsquo;' 	=> '‘',
+		'&rsquo;' 	=> '’',
+		'&ldquo;' 	=> '“',
+		'&rdquo;' 	=> '”',
+		'&acute;' 	=> '`',
+		'&prime;' 	=> '`',
+		'&ndash;' 	=> '-',
+		'&mdash;' 	=> '-',
+		'&minus;' 	=> '-',
+		'&macr;' 	=> '-',
+		'&uml;' 	=> '..',
+		'&hellip;' 	=> '...',
+		'&tilde;' 	=> '~',
+		'&sim;' 	=> '~',
+		'&circ;' 	=> '^',
+		'&spades;' 	=> '♠',
+		'&clubs;' 	=> '♣',
+		'&hearts;' 	=> '♥',
+		'&diams;' 	=> '♦',
+		'&fnof;' 	=> 'ƒ',
+		'&radic;' 	=> '√',
+		'&sum;' 	=> '∑',
+		'&prod;' 	=> '∏',
+		'&int;' 	=> '∫',
+		'&infin;' 	=> '∞',
+		'&lowast;' 	=> '*',
+		'&divide;' 	=> '÷',
+		'&times;' 	=> 'x',
+		'&frac12;' 	=> '1/2',
+		'&frac14;' 	=> '1/4',
+		'&frac34;' 	=> '3/4',
+		'&brvbar;' 	=> '¦',
+		'&sect;' 	=> '§',
+		'&para;' 	=> '¶',
+		'&micro;' 	=> 'µ',
+		'&iexcl;' 	=> '¡',
+		'&iquest;' 	=> '¿',
+		'&deg;' 	=> '°',
+		'&ordm;' 	=> 'º',
+		'&plusmn;' 	=> '±',
+		'&sup1;' 	=> '¹',
+		'&sup2;' 	=> '²',
+		'&sup3;' 	=> '³',
+		'&ordf;' 	=> 'ª',
+		'&cedil;' 	=> '¸',
+		'&not;' 	=> '¬',
+		'&forall;' 	=> '∀',
+		'&part;' 	=> '∂',
+		'&exist;' 	=> '∃',
+		'&empty;' 	=> '∅',
+		'&nabla;' 	=> '∇',
+		'&isin;' 	=> '∈',
+		'&notin;' 	=> '∉',
+		'&ni;' 		=> '∋',
+		'&prop;' 	=> '∝',
+		'&ang;' 	=> '∠',
+		'&and;' 	=> '∧',
+		'&or;' 		=> '∨',
+		'&cap;' 	=> '∩',
+		'&cup;' 	=> '∪',
+		'&there4;' 	=> '∴',
+		'&cong;' 	=> '≅',
+		'&asymp;' 	=> '≈',
+		'&ne;' 		=> '≠',
+		'&equiv;' 	=> '≡',
+		'&le;' 		=> '≤',
+		'&ge;' 		=> '≥',
+		'&sub;' 	=> '⊂',
+		'&sup;' 	=> '⊃',
+		'&nsub;' 	=> '⊄',
+		'&sube;' 	=> '⊆',
+		'&supe;' 	=> '⊇',
+		'&oplus;' 	=> '+',
+		'&otimes;' 	=> 'x',
+		'&perp;' 	=> '⊥'
+	];
+	$yhtmlcode = (string) str_replace((array)array_keys((array)$arr_replacements), (array)array_values((array)$arr_replacements), (string)$yhtmlcode);
 	//-- if new tags may appear after strip tags that is natural as they were encoded already with entities ... ; Anyway, the following can't be used as IT BREAKS TEXT THAT COMES AFTER < which was previous encoded as &lt; !!!
 	//$yhtmlcode = (string) strip_tags((string)$yhtmlcode); // fix: after all fixes when reversing entities, new tags can appear that were encoded, so needs run again for safety ...
 	//-- restore html unicode entities
@@ -1288,17 +1350,23 @@ public static function striptags($yhtmlcode, $ynewline='yes') {
  *
  */
 public static function safe_fix_invalid_filesys_names($y_fsname) {
-	//-- v.170920
+	//-- v.190105
 	$y_fsname = (string) trim((string)$y_fsname);
 	//-- {{{SYNC-SAFE-PATH-CHARS}}} {{{SYNC-CHK-SAFE-PATH}}}
 	if(
 		((string)$y_fsname == '.') OR
 		((string)$y_fsname == '..') OR
+		((string)$y_fsname == ':') OR
 		((string)$y_fsname == '/') OR
 		((string)$y_fsname == '/.') OR
 		((string)$y_fsname == '/..') OR
-		(substr($y_fsname, -2, 2) == '/.') OR
-		(substr($y_fsname, -3, 3) == '/..')
+		((string)$y_fsname == '/:') OR
+		((string)ltrim((string)$y_fsname, '/') == '.') OR
+		((string)ltrim((string)$y_fsname, '/') == '..') OR
+		((string)ltrim((string)$y_fsname, '/') == ':') OR
+		((string)trim((string)$y_fsname, '/') == '') OR
+		((string)substr((string)$y_fsname, -2, 2) == '/.') OR
+		((string)substr((string)$y_fsname, -3, 3) == '/..')
 	) {
 		$y_fsname = '';
 	} //end if
