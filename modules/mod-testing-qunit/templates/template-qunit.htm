@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Version:          r.20190103 -->
+<!-- Version:          r.20190107 -->
 <!-- Template:         [####TEMPLATE-PATH|html####][####TEMPLATE-FILE|html####] -->
 <!-- Charset:          [####CHARSET|html####] -->
 <!-- Srv Script:       [####SRV-SCRIPT|html####] -->
@@ -50,7 +50,7 @@ QUnit.config.autostart = true; // TRUE to start testing
 QUnit.config.reorder = false; // if TRUE, QUnit will run tests first that failed on a previous run
 QUnit.config.testTimeout = [####TIMEOUT-NETSOCKET|int####] * 1000; // 1 min max per test ; Specify a global timeout in milliseconds after which all tests will fail with an appropriate message
 QUnit.done(function(details){
-	jQuery('#smart-qunit-results').empty().text('[[####APP-REALM|js####]] QUnit Tests DONE. Disabled Tests: ' + parseInt(testingQUnitDisabledTests) + '\n' + 'Total: ' + details.total + ' ; Failed: ' + details.failed + ' ; Passed: ' + details.passed + ' ; RunTime: ' + Math.ceil(details.runtime / 1000) + 's'); // create a temporary div, make it hidden, and attach to the DOM
+	jQuery('#smart-qunit-results').empty().text('[[####APP-REALM|js####]] QUnit Tests DONE. Disabled: ' + parseInt(testingQUnitDisabledTests) + '\n' + 'Total: ' + details.total + ' ; Failed: ' + details.failed + ' ; Passed: ' + details.passed + ' ; RunTime: ' + Math.ceil(details.runtime / 1000) + 's'); // create a temporary div, make it hidden, and attach to the DOM
 	jQuery('<hr><h1 id="qunit-footer">#&nbsp;END&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[####SEMAPHORE|html####]</h1>').appendTo('body');
 });
 </script>

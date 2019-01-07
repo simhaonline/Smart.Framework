@@ -118,7 +118,7 @@ $configs['pgsql']['transact']		= 'READ COMMITTED';						// postgresql session De
 /*
 //-- MySQL related configuration of Default SQL Server (add this in etc/config.php)
 $configs['mysqli']['type'] 			= 'mariadb'; 							// mysql / mariadb / percona
-$configs['mysqli']['server-host'] 	= 'localhost';							// server host (default is 127.0.0.1)
+$configs['mysqli']['server-host'] 	= '127.0.0.1';							// server host (default is 127.0.0.1)
 $configs['mysqli']['server-port']	= 3306;									// server port (default is 3306)
 $configs['mysqli']['dbname']		= 'smart_framework';					// database name
 $configs['mysqli']['username']		= 'root';								// server username
