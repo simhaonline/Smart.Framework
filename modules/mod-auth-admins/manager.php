@@ -15,9 +15,13 @@ define('SMART_APP_MODULE_AREA', 'ADMIN');
 define('SMART_APP_MODULE_AUTH', true); 		// if set to TRUE requires auth always
 
 
+/**
+ * Admin Controller (direct output)
+ * @ignore
+ */
 final class SmartAppAdminController extends SmartAbstractAppController {
 
-	// v.20190103
+	// v.20190107
 
 	public function Run() { // (OUTPUTS: HTML)
 

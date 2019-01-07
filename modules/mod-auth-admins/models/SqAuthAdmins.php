@@ -18,6 +18,10 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //=====================================================================================
 
 
+/**
+ * SQLite Model for ModAuthAdmins
+ * @ignore
+ */
 final class SqAuthAdmins {
 
 	// ->
