@@ -1,12 +1,12 @@
 /*!
- * QUnit 2.9.0
+ * QUnit 2.9.1
  * https://qunitjs.com/
  *
  * Copyright jQuery Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2019-01-06T22:43Z
+ * Date: 2019-01-07T16:37Z
  */
 
 (function (global$1) {
@@ -4257,7 +4257,7 @@
 	QUnit.isLocal = !(defined.document && window$1.location.protocol !== "file:");
 
 	// Expose the current QUnit version
-	QUnit.version = "2.9.0";
+	QUnit.version = "2.9.1";
 
 	extend(QUnit, {
 		on: on,

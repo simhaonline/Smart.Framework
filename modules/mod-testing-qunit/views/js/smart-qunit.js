@@ -1,12 +1,12 @@
 
 /*
- * SmartQUnit 1.0
+ * SmartQUnit 1.1
  *
  * (c) 2018-2019 unix-world.org
  * Released under the BSD license
  */
 
-var SmartQUnit = new function() { // START CLASS :: r.20190103
+var SmartQUnit = new function() { // START CLASS :: r.20190108
 
 	//--
 
@@ -30,7 +30,7 @@ var SmartQUnit = new function() { // START CLASS :: r.20190103
 			if(typeof fxDone == 'function') {
 				fxDone(QAsyncTestDone, testOK, msg, testHtmlDiv);
 			} else {
-				var value = 'Test Implementation ERROR: INVALID TEST DONE FUNCTION !';
+				var value = 'Test Implementation ERROR: INVALID AJAX TEST DONE FUNCTION !';
 				assert.equal(
 					value, testOK,
 					testOK
@@ -38,7 +38,7 @@ var SmartQUnit = new function() { // START CLASS :: r.20190103
 				QAsyncTestDone();
 			} //end if else
 		}).fail(function(msg) {
-			var value = 'Ajax REquest FAILED with HTTP Status: ' + String(msg.status) + ' ' + String(msg.statusText);
+			var value = 'Ajax REQUEST FAILED with HTTP Status: ' + String(msg.status) + ' ' + String(msg.statusText);
 			assert.equal(
 				value, testOK,
 				testOK
@@ -80,7 +80,7 @@ var SmartQUnit = new function() { // START CLASS :: r.20190103
 
 	var elHtmlDynIFrame = function(url, timeoutMs, assert, QAsyncTestDone, testOK) {
 		//--
-		var frame = jQuery('<iframe id="qu-smart-ifrm-sandbox" src="' + String(url) + '" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; display:none;"></iframe>').appendTo('body'); // create a temporary iframe, make it hidden, and attach to the DOM
+		var frame = jQuery('<iframe id="qu-smart-ifrm-sandbox" src="' + htmlspecialchars(url) + '" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; display:none;"></iframe>').appendTo('body'); // create a temporary iframe, make it hidden, and attach to the DOM
 		jQuery(frame).on('load', function(){ // // proceed after the iframe has loaded content
 			var html = jQuery(this).contents();
 			//console.log(html);
@@ -95,6 +95,24 @@ var SmartQUnit = new function() { // START CLASS :: r.20190103
 				QAsyncTestDone();
 			}, parseInt(timeoutMs));
 		});
+		//--
+	} //END FUNCTION
+
+
+	var htmlspecialchars = function(str) {
+		//--
+		if((typeof str == 'undefined') || (str == undefined) || (str == null)) {
+			str = '';
+		} else {
+			str = String(str); // force string
+		} //end if else
+		//-- replace basics
+		str = str.replace(/&/g, '&amp;');
+		str = str.replace(/</g, '&lt;');
+		str = str.replace(/>/g, '&gt;');
+		str = str.replace(/"/g, '&quot;');
+		//--
+		return String(str); // fix to return empty string instead of null
 		//--
 	} //END FUNCTION
 
