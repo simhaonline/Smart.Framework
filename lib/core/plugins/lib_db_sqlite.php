@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190105
+ * @version 	v.20190108
  * @package 	Database:SQLite
  *
  */
@@ -483,7 +483,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190105
+ * @version 	v.20190108
  * @package 	Database:SQLite
  *
  */
@@ -548,7 +548,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		return;
 	} //end if
 	if(!SmartFileSystem::is_type_file((string)$dir_of_db.'.htaccess')) {
-		SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'.htaccess', 'yes', 'yes'); 	// deny absolute path access ; allow protected path access (starting with #)
+		SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'.htaccess', 'yes', 'yes'); // deny absolute path access ; allow protected path access (starting with #)
 		if(!@file_put_contents((string)$dir_of_db.'.htaccess', (string)'### Smart.Framework // '.__METHOD__.' @ HtAccess Data Protection ###'."\n".SMART_FRAMEWORK_HTACCESS_NOINDEXING.SMART_FRAMEWORK_HTACCESS_FORBIDDEN."\n".'### END ###', LOCK_EX)) {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder access-protection not initialized !', '', '');
 			return;
@@ -560,7 +560,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		} //end if
 	} //end if
 	if(!SmartFileSystem::is_type_file((string)$dir_of_db.'index.html')) {
-		SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'index.html', 'yes', 'yes'); 	// deny absolute path access ; allow protected path access (starting with #)
+		SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'index.html', 'yes', 'yes'); // deny absolute path access ; allow protected path access (starting with #)
 		@file_put_contents((string)$dir_of_db.'index.html', '', LOCK_EX);
 		if(!SmartFileSystem::is_type_file((string)$dir_of_db.'index.html')) {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder index-protection not found !', '', '');
@@ -572,7 +572,7 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		//--
 		$db = @new SQLite3((string)$file_name, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
 		//--
-		$db->busyTimeout((int)$timeout_busy_sec * 1000); // $timeout_busy_sec is in seconds ; we set a busy timeout in miliseconds
+		$db->busyTimeout((int)$timeout_busy_sec * 1000); // the $timeout_busy_sec is in seconds ; we set a busy timeout in miliseconds
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
@@ -1751,7 +1751,7 @@ die(''); // just in case
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20190105
+ * @version 	v.20190108
  * @package 	Database:SQLite
  *
  */
@@ -1958,38 +1958,40 @@ final class SmartSQliteFunctions {
 	} //END FUNCTION
 
 
+	// SQLite does not have BOOLEAN, so map to INT
 	public static function json_arr_contains($json, $val) {
 		//--
 		$arr = Smart::json_decode((string)$json);
 		//--
 		if(!is_array($arr)) {
-			return false;
+			return 0; // false (as int)
 		} //end if
 		//--
 		if(Smart::array_type_test($arr) != 1) { // expects non-associative array
-			return false;
+			return 0; // false (as int)
 		} //end if
 		//--
-		return (bool) in_array((string)$val, (array)$arr);
+		return (int) in_array((string)$val, (array)$arr); // true/false (as int)
 		//--
 	} //END FUNCTION
 
 
+	// SQLite does not have BOOLEAN, so map to INT
 	public static function json_obj_contains($json, $key, $val) {
 		//--
 		$key = (string) trim((string)$key);
 		if((string)$key == '') {
-			return false;
+			return 0; // false (as int)
 		} //end if
 		//--
 		$arr = Smart::json_decode((string)$json);
 		//--
 		if(!is_array($arr)) {
-			return false;
+			return 0; // false (as int)
 		} //end if
 		//--
 		if(Smart::array_type_test($arr) != 2) { // expects associative array
-			return false;
+			return 0; // false (as int)
 		} //end if
 		//--
 		$exists = false;
@@ -2002,7 +2004,7 @@ final class SmartSQliteFunctions {
 			} //end if
 		} //end foreach
 		//--
-		return (bool) $exists;
+		return (int) $exists; // true/false (as int)
 		//--
 	} //END FUNCTION
 

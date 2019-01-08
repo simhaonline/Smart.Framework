@@ -25,7 +25,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class SqAuthAdmins {
 
 	// ->
-	// v.20190107
+	// v.20190108
 
 	private $db;
 
@@ -33,7 +33,7 @@ final class SqAuthAdmins {
 	public function __construct() {
 		//--
 		if(!defined('APP_AUTH_DB_SQLITE')) {
-			throw new \Exception('AUTH DB SQLITE is NOT Defined !');
+			\Smart::raise_error('AUTH DB SQLITE is NOT Defined !');
 			return;
 		} //end if
 		//--
@@ -44,7 +44,7 @@ final class SqAuthAdmins {
 			if($this->db instanceof \SmartSQliteDb) {
 				$this->db->close();
 			} //end if
-			throw new \Exception('AUTH DB SQLITE File does NOT Exists !');
+			\Smart::raise_error('AUTH DB SQLITE File does NOT Exists !');
 			return;
 		} //end if
 		//--
@@ -67,7 +67,7 @@ final class SqAuthAdmins {
 	public function getLoginData($auth_user_name, $auth_user_hash_pass) {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return array();
 		} //end if
 		//--
@@ -82,7 +82,7 @@ final class SqAuthAdmins {
 	public function getById($id) {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return array();
 		} //end if
 		//--
@@ -97,7 +97,7 @@ final class SqAuthAdmins {
 	public function countByFilter($id='') {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return 0;
 		} //end if
 		//--
@@ -120,7 +120,7 @@ final class SqAuthAdmins {
 	public function getListByFilter($fields=array(), $limit=10, $ofs=0, $sortby='id', $sortdir='ASC', $id='') {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return array();
 		} //end if
 		//--
@@ -176,7 +176,7 @@ final class SqAuthAdmins {
 	public function insertAccount($data) {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return -100;
 		} //end if
 		//--
@@ -252,7 +252,7 @@ final class SqAuthAdmins {
 	public function updateStatus($id, $status) {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return -100;
 		} //end if
 		//--
@@ -300,7 +300,7 @@ final class SqAuthAdmins {
 	public function updatePassword($id, $hash) {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return -100;
 		} //end if
 		//--
@@ -345,7 +345,7 @@ final class SqAuthAdmins {
 	public function updateAccount($id, $data) {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return -100;
 		} //end if
 		//--
@@ -424,13 +424,13 @@ final class SqAuthAdmins {
 	} //END FUNCTION
 
 
-//--
+	//@@@@@
 
 
 	private function initDBSchema() {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
-			throw new \Exception('Invalid AUTH DB Connection !');
+			\Smart::raise_error('Invalid AUTH DB Connection !');
 			return 0;
 		} //end if
 		//--
@@ -482,32 +482,34 @@ final class SqAuthAdmins {
 
 	private function dbDefaultSchema() { // {{{SYNC-TABLE-AUTH_TEMPLATE}}}
 //-- default schema ; default user: APP_AUTH_ADMIN_USERNAME ; default pass: APP_AUTH_ADMIN_PASSWORD
-$schema = <<<'SQL'
+$version = (string) $this->db->escape_str(SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION);
+$schema = <<<SQL
+INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES ('version@auth-admins', '{$version}');
 CREATE TABLE 'admins' (
-id character varying(25) PRIMARY KEY NOT NULL,
-pass character varying(128) NOT NULL,
-active smallint DEFAULT 0 NOT NULL,
-quota bigint DEFAULT 0 NOT NULL,
-email character varying(96) DEFAULT NULL NULL,
-title character varying(16) DEFAULT '' NOT NULL,
-name_f character varying(64) DEFAULT '' NOT NULL,
-name_l character varying(64) DEFAULT '' NOT NULL,
-address character varying(64) DEFAULT '' NOT NULL,
-city character varying(64) DEFAULT '' NOT NULL,
-region character varying(64) DEFAULT '' NOT NULL,
-country character varying(2) DEFAULT '' NOT NULL,
-zip character varying(64) DEFAULT '' NOT NULL,
-phone character varying(32) DEFAULT '' NOT NULL,
-ip_addr character varying(39) DEFAULT '' NOT NULL,
-logintime bigint DEFAULT 0 NOT NULL,
-tries smallint DEFAULT 0 NOT NULL,
-trytime bigint DEFAULT 0 NOT NULL,
-priv text DEFAULT '' NOT NULL,
-restrict text DEFAULT '' NOT NULL,
-settings text DEFAULT '' NOT NULL,
-keys text DEFAULT '' NOT NULL,
-modif INTEGER DEFAULT 0 NOT NULL,
-created INTEGER DEFAULT 0 NOT NULL
+	`id` character varying(25) PRIMARY KEY NOT NULL,
+	`pass` character varying(128) NOT NULL,
+	`active` smallint DEFAULT 0 NOT NULL,
+	`quota` bigint DEFAULT 0 NOT NULL,
+	`email` character varying(96) DEFAULT NULL NULL,
+	`title` character varying(16) DEFAULT '' NOT NULL,
+	`name_f` character varying(64) DEFAULT '' NOT NULL,
+	`name_l` character varying(64) DEFAULT '' NOT NULL,
+	`address` character varying(64) DEFAULT '' NOT NULL,
+	`city` character varying(64) DEFAULT '' NOT NULL,
+	`region` character varying(64) DEFAULT '' NOT NULL,
+	`country` character varying(2) DEFAULT '' NOT NULL,
+	`zip` character varying(64) DEFAULT '' NOT NULL,
+	`phone` character varying(32) DEFAULT '' NOT NULL,
+	`ip_addr` character varying(39) DEFAULT '' NOT NULL,
+	`logintime` bigint DEFAULT 0 NOT NULL,
+	`tries` smallint DEFAULT 0 NOT NULL,
+	`trytime` bigint DEFAULT 0 NOT NULL,
+	`priv` text DEFAULT '' NOT NULL,
+	`restrict` text DEFAULT '' NOT NULL,
+	`settings` text DEFAULT '' NOT NULL,
+	`keys` text DEFAULT '' NOT NULL,
+	`modif` INTEGER DEFAULT 0 NOT NULL,
+	`created` INTEGER DEFAULT 0 NOT NULL
 );
 CREATE UNIQUE INDEX 'id' ON `admins` (`id` ASC);
 CREATE UNIQUE INDEX 'email' ON `admins` (`email`);

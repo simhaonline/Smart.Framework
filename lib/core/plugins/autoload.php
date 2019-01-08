@@ -123,7 +123,7 @@ function autoload__SmartFrameworkPlugins($classname) {
 			require_once('lib/core/plugins/lib_db_mysqli.php'); 		// mysqli db connector
 			break;
 		case 'SmartMongoDb':
-			require_once('lib/core/plugins/lib_db_mongo.php');			// mongo db connector
+			require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
 			break;
 		//-- session handler
 		case 'SmartSession':

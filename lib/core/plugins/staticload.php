@@ -40,7 +40,7 @@ require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
 require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
 require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
 require_once('lib/core/plugins/lib_db_mysqli.php');			// mysqli db connector
-require_once('lib/core/plugins/lib_db_mongo.php');			// mongo db connector
+require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
 //--
 require_once('lib/core/plugins/lib_session.php');			// session storage
 //--

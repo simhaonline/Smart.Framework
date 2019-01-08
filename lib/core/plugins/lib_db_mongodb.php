@@ -68,7 +68,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * </code>
  *
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
- * @hint 		Important: MongoDB database specifies that max BSON document size is 16 megabytes, thus this limit cannot be exceeded from PHP side when creating new mongodb documents: https://docs.mongodb.com/manual/reference/limits/
+ * @hint 		Important: MongoDB database specifies that max BSON document size is 16 megabytes and supports no more than 100 levels of nesting, thus this limit cannot be exceeded from PHP side when creating new mongodb documents: https://docs.mongodb.com/manual/reference/limits/ ; To store documents larger than the maximum size, MongoDB provides the GridFS API
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
@@ -95,6 +95,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 /** @var string */
 private $server;
 private $srvver;
+private $extver;
 
 /** @var string */
 private $db;
@@ -135,8 +136,10 @@ private $connected = false;
 public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
 
 	//--
-	if(version_compare(phpversion('mongodb'), '1.0.1') < 0) {
-		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.0.1 or later');
+	$this->extver = (string) phpversion('mongodb');
+	//--
+	if(version_compare((string)$this->extver, '1.3.0') < 0) {
+		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.3.0 or later. The current version is: '.$this->extver);
 		return;
 	} //end if
 	//--
@@ -161,7 +164,7 @@ public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
 		$username 	= (string) $y_configs_arr['username'];
 		$password 	= (string) $y_configs_arr['password'];
 		$timeslow 	= (float)  $y_configs_arr['slowtime'];
-	//	$transact 	= (string) $y_configs_arr['transact']; // reserved for future usage
+	//	$transact 	= (string) $y_configs_arr['transact']; // reserved for future usage (only MongoDB v.4+ supports transactions ...)
 	} else {
 		$this->error('[CHECK-CONFIGS]', 'MongoDB Configuration Init', 'CHECK Connection Config', 'Empty Configuration');
 		return;
@@ -268,6 +271,22 @@ public function assign_uuid() {
 
 	//--
 	return (string) Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str();
+	//--
+
+} //END FUNCTION
+//======================================================
+
+
+//======================================================
+/**
+ * Get the MongoDB Extension version
+ *
+ * @return 	STRING						:: MongoDB extension version
+ */
+public function get_ext_version() {
+
+	//--
+	return (string) $this->extver;
 	//--
 
 } //END FUNCTION
@@ -388,7 +407,6 @@ public function __call($method, array $args) {
 				return 0;
 			} //end if
 			//--
-			$this->check_max_doc_size((array)$args[1]); // filter
 			$qry = (array) $args[1]; // arrQuery
 			//--
 			$command = new \MongoDB\Driver\Command([
@@ -443,7 +461,6 @@ public function __call($method, array $args) {
 				return array();
 			} //end if
 			//--
-			$this->check_max_doc_size((array)$args[1]); // filter
 			$qry = (array) $args[1]; // arrQuery
 			//--
 			if(is_array($args[3])) {
@@ -557,7 +574,6 @@ public function __call($method, array $args) {
 					$opts = [];
 					for($i=0; $i<Smart::array_size($args[1]); $i++) {
 						if(Smart::array_size($args[1][$i]) > 0) {
-							$this->check_max_doc_size((array)$args[1][$i]); // doc
 							$write->insert(
 								(array) $args[1][$i] // doc
 							);
@@ -576,7 +592,6 @@ public function __call($method, array $args) {
 				$qry = 'insert';
 				$opts = [];
 				if(Smart::array_size($args[1]) > 0) {
-					$this->check_max_doc_size((array)$args[1]); // doc
 					$write->insert(
 						(array) $args[1] // doc
 					);
@@ -604,8 +619,6 @@ public function __call($method, array $args) {
 					];
 				} //end if else
 				if(Smart::array_size($args[3]) > 0) {
-					$this->check_max_doc_size((array)$args[1]); // filter
-					$this->check_max_doc_size((array)$args[3]); // doc
 					$write->update(
 						(array) $args[1], 									// filter
 						(array) [ (string)$args[2] => (array)$args[3] ], 	// must be in format: [ '$set|$inc|$mul|...' => (array)$doc ]
@@ -677,25 +690,24 @@ public function __call($method, array $args) {
 			//--
 			$this->collection = (string) trim((string)$args[0]); // strCollection
 			if((string)trim((string)$this->collection) == '') {
-				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
+				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'()', 'ERROR: Empty Collection name ...', $args);
 				return array();
 			} //end if
 			//--
 			$write = new \MongoDB\Driver\BulkWrite();
 			if(!is_object($write)) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Write Object is null ...', $args);
+				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Write Object is null ...', $args);
 				return array();
 			} //end if
 			//--
 			if(!is_array($args[1])) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Invalid Filter provided ...', $args);
+				$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Invalid Filter provided ...', $args);
 				return array();
 			} //end if
 			$qry = 'delete';
 			$opts = [ // delete options
 				'limit' => false // delete all matching documents
 			];
-			$this->check_max_doc_size((array)$args[1]); // filter
 			$write->delete(
 				(array) $args[1], 									// filter
 				(array) $opts										// options
@@ -703,11 +715,11 @@ public function __call($method, array $args) {
 			try {
 				$result = $this->mongodbclient->executeBulkWrite($this->db.'.'.$this->collection, $write);
 			} catch(Exception $err) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete Execute', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: '.$err->getMessage(), $args);
+				$this->error((string)$this->connex_key, 'MongoDB Write Execute', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: '.$err->getMessage(), $args);
 				return array();
 			} //end try
 			if(!is_object($result)) {
-				$this->error((string)$this->connex_key, 'MongoDB Delete Result', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is null ...', $args);
+				$this->error((string)$this->connex_key, 'MongoDB Write Result', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is null ...', $args);
 				return array();
 			} //end if
 			$obj = array();
@@ -724,7 +736,7 @@ public function __call($method, array $args) {
 				$msg = '';
 				$drows = (int) $obj[1];
 			} else {
-				$this->error((string)$this->connex_key, 'MongoDB Delete Result Type', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is not instance of WriteResult ...', $args);
+				$this->error((string)$this->connex_key, 'MongoDB Write Result Type', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Result Object is not instance of WriteResult ...', $args);
 				return array();
 			} //end if
 			//--
@@ -740,7 +752,6 @@ public function __call($method, array $args) {
 		case 'command': 	// ARGS [ arrCmd ]
 		case 'igcommand': 	// ARGS [ arrCmd ]
 			//-- dbg types: 'count', 'read', 'write', 'transaction', 'set', 'metainfo'
-			$this->check_max_doc_size((array)$args[0]); // cmd
 			$qry = (array) $args[0]; // arrQuery
 			foreach($qry as $kk => $vv) {
 				if((string)strtolower((string)$kk) == 'buildinfo') {
@@ -875,29 +886,6 @@ public function __call($method, array $args) {
  * @internal
  *
  */
-private function check_max_doc_size($doc) {
-	//--
-	$max_doc_size_bytes = 16000000; // max 16 MB
-	//--
-	$json_doc = \Smart::json_encode($doc, false, false, false); // ~ as bson
-	$size_doc = strlen((string)$json_doc);
-	//--
-	if((int)$size_doc > (int)$max_doc_size_bytes) {
-		$this->error('[CHECK]', 'BSON Document Size', 'CHECK: Current Document Size is '.\SmartUtils::pretty_print_bytes($size_doc)."\n".'Document: '.\SmartUtils::pretty_print_var($doc), 'MongoDB does not support documents larger than '.\SmartUtils::pretty_print_bytes($max_doc_size_bytes));
-	} //end if
-	//--
-} //END FUNCTION
-//======================================================
-
-
-//======================================================
-/**
- * this is the internal connector (will connect just when needed)
- *
- * @access 		private
- * @internal
- *
- */
 private function connect($type, $username, $password) {
 
 	//--
@@ -972,6 +960,11 @@ private function connect($type, $username, $password) {
 		} //end if
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
+			//--
+			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
+				'type' => 'metainfo',
+				'data' => 'MongoDB Extension Version: '.$this->extver
+			]);
 			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 				'type' => 'metainfo',
@@ -1055,7 +1048,7 @@ $y_warning = (string) trim((string)$y_warning);
 if(Smart::array_size($y_query) > 0) {
 	$y_query = (string) print_r($y_query,1);
 } //end if
-$the_params = '- '.'MongoDB Manager v.'.phpversion('mongodb').' -';
+$the_params = '- '.'MongoDB Manager v.'.$this->extver.' -';
 if(SmartFrameworkRuntime::ifDebug()) {
 	$width = 750;
 	$the_area = (string) $y_area;

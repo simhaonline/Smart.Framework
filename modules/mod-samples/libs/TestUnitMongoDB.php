@@ -79,6 +79,7 @@ final class TestUnitMongoDB {
 		//--
 
 		//--
+		$tests[] = 'MongoDB Extension Version: '.$mongo->get_ext_version();
 		$tests[] = 'MongoDB Server Version: '.$mongo->get_server_version();
 		//--
 
