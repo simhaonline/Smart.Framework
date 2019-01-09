@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.181217.r2
+ * @version 	v.20190109
  * @package 	Archivers
  *
  */
@@ -188,10 +188,12 @@ public static function decompressFromBase64($input) {
 	$enc3 = NULL;
 	$enc4 = NULL;
 	//--
-	$input = (string) preg_replace('/[^A-Za-z0-9\+\/\=]/', '', (string)$input);
+	$input = (string) trim((string)preg_replace('/[^A-Za-z0-9\+\/\=]/', '', (string)$input));
+	if((string)$input == '') {
+		return '';
+	} //end if
 	//--
 	$i=0;
-	//--
 //	while($i < SmartUnicode::str_len($input)) { // bug fix by unixman
 	while($i < strlen($input)) {
 		//-- hint: needs err flexibility, don't make needle string, may be NULL ; also the $enc1..4 will not force as string
