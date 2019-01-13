@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20190112
  *
  */
 final class TestUnitMongoDB {
@@ -103,7 +103,39 @@ final class TestUnitMongoDB {
 					'create' => (string) 'myTestCollection'
 				]
 			);
-			if(!$mongo->is_command_ok($result)) {
+			if($mongo->is_command_ok($result)) {
+			//	if(version_compare('3.2', (string)$mongo->get_server_version()) <= 0) {
+					$tst = 'Create Collection Indexes (incl. Unique and FTS)';
+					$tests[] = (string) $tst;
+					$result = $mongo->igcommand(
+						[
+							'createIndexes' => (string) 'myTestCollection',
+							'indexes' 		=> [
+								[
+									'name' 			=> 'id',
+									'key' 			=> [ 'id' => 1 ],
+									'unique' 		=> true
+								],
+								[
+									'name' 				=> 'text',
+								//	'key' 				=> [ 'src' => 'text' ],
+									'key' 				=> [ 'title' => 'text', 'excerpt' => 'text', 'src' => 'text' ],
+									'weights' 			=> [ 'title' => 10, 'excerpt' => 5, 'src' => 1 ],
+									'default_language' 	=> 'none'
+								//	'language_override' => 'idioma'
+								],
+								[
+									'name' 			=> 'cost',
+									'key' 			=> [ 'cost' => -1 ]
+								]
+							]
+						]
+					);
+					if(!$mongo->is_command_ok($result)) {
+						$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
+					} //end if
+			//	} //end if else
+			} else {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
 			} //end if
 		} //end if
@@ -116,7 +148,7 @@ final class TestUnitMongoDB {
 			$docs = array();
 			for($i=0; $i<10; $i++) {
 				$docs[] = [
-					'_id'  => $mongo->assign_uuid(),
+					'id'  => $mongo->assign_uuid(),
 					'name' => 'Test #'.$i,
 					'cost' => ($i+1),
 					'data' => [
@@ -141,7 +173,7 @@ final class TestUnitMongoDB {
 			$tst = 'Insert Single Document';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['_id']  = $uuid;
+			$doc['id']  = $uuid;
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 0;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
@@ -154,13 +186,13 @@ final class TestUnitMongoDB {
 			$tst = 'Upsert Single Document, existing, with the same UUID as previous';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['_id']  = $uuid;
+			$doc['id']  = $uuid;
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 0;
 			$doc['upsert'] = 'update';
 			$result = $mongo->upsert(
 				'myTestCollection',
-				[ '_id' => $uuid ], 	// filter (update only this)
+				[ 'id' => $uuid ], 		// filter (update only this)
 				'$set', 				// increment operation
 				(array) $doc			// update array
 			);
@@ -174,13 +206,13 @@ final class TestUnitMongoDB {
 			$tst = 'Upsert Single Document, not existing, with a new UUID';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['_id']  = $uuid;
+			$doc['id']  = $uuid;
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 0;
 			$doc['upsert'] = 'insert';
 			$result = $mongo->upsert(
 				'myTestCollection',
-				[ '_id' => $uuid ], 	// filter (update only this)
+				[ 'id' => $uuid ], 		// filter (update only this)
 				'$set', 				// increment operation
 				(array) $doc			// update array
 			);
@@ -196,7 +228,7 @@ final class TestUnitMongoDB {
 			$tst = 'Insert Another Single Document';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['_id'] = $mongo->assign_uuid();
+			$doc['id'] = $mongo->assign_uuid();
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 2;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
@@ -212,7 +244,7 @@ final class TestUnitMongoDB {
 			$tst = 'Insert Another Single Document';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['_id'] = $mongo->assign_uuid();
+			$doc['id'] = $mongo->assign_uuid();
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 3;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
@@ -324,7 +356,7 @@ final class TestUnitMongoDB {
 			$tst = 'Insert Another Document';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['_id'] = $mongo->assign_uuid();
+			$doc['id'] = $mongo->assign_uuid();
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 7;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
@@ -385,7 +417,7 @@ final class TestUnitMongoDB {
 				'myTestCollection',
 				[ 'cost' => 7 ], // filter (update all except these)
 				[ // projection
-					'_id' => 1,
+					'id' => 1,
 					'name' => 1,
 					'cost' => 1
 				],
@@ -407,7 +439,7 @@ final class TestUnitMongoDB {
 				'myTestCollection',
 				[ 'cost' => 7 ], // filter (update all except these)
 				[ // projection
-					'_id',
+					'id',
 					'cost'
 				],
 				[
@@ -447,7 +479,7 @@ final class TestUnitMongoDB {
 				'myTestCollection',
 				[ 'cost' => [ '$gt' => 5 ] ], // filter (update all except these)
 				[ // projection
-					'_id' => 1,
+					'id' => 1,
 					'name' => 1,
 					'cost' => [ '$slice' => -1 ]
 				],
@@ -481,7 +513,7 @@ final class TestUnitMongoDB {
 					'pipeline' => [ // return a pipeline
 						[
 							'$match' => [ // query
-								'_id' => [ '$exists' => true ],
+								'id' => [ '$exists' => true ],
 								'cost' => [ '$gte' => 0, '$lte' => 10 ]
 							]
 						],
@@ -515,7 +547,7 @@ final class TestUnitMongoDB {
 					'aggregate' => (string) 'myTestCollection',
 					'pipeline' => [ // return a pipeline
 						[
-							'$match' => [ '_id' => [ '$exists' => true ], 'cost' => 7 ] // query
+							'$match' => [ 'id' => [ '$exists' => true ], 'cost' => 7 ] // query
 						],
 						[
 							'$group' => [

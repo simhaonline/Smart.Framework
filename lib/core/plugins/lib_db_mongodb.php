@@ -72,7 +72,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.181222
+ * @version 	v.20190112
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
@@ -952,7 +952,7 @@ private function connect($type, $username, $password) {
 		//--
 		$this->get_server_version(); // this will register the $this->srvver if req.
 		//--
-		$min_ver_srv = '2.4.0';
+		$min_ver_srv = '2.6.0';
 		if(((string)$this->srvver == '') OR (version_compare((string)$min_ver_srv, (string)$this->srvver) > 0)) {
 			$this->mongodbclient = null;
 			$this->error((string)$this->connex_key, 'MongoDB Manager', 'Invalid MongoDB Server Version on '.$this->server, 'ERROR: Minimum MongoDB supported Server version is: '.$min_ver_srv.' but this Server version is: '.$this->srvver);

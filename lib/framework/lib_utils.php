@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20190103
+ * @version 	v.20190113
  * @package 	Base
  *
  */
@@ -731,12 +731,12 @@ public static function calc_percent($number, $maxnumber) {
 // extract HTML title (must not exceed 128 characters ; recommended is max 65) ; no changes
 public static function extract_title($ytxt, $y_limit=65, $clear_numbers=false) {
 	//--
-	if($clear_numbers === true) {
-		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt);
-	} //end if
-	//--
 	$ytxt = (string) Smart::striptags((string)$ytxt, 'no'); // will do strip tags
 	$ytxt = (string) Smart::normalize_spaces((string)$ytxt); // will do normalize spaces
+	//--
+	if($clear_numbers === true) {
+		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt); // do after strip tags to avoid break html
+	} //end if
 	//--
 	$ytxt = (string) trim((string)$ytxt);
 	if((string)$ytxt == '') {
@@ -760,10 +760,6 @@ public static function extract_title($ytxt, $y_limit=65, $clear_numbers=false) {
 // extract HTML meta description (must not exceed 256 characters ; recommended is max 155 characters)
 public static function extract_description($ytxt, $y_limit=155, $clear_numbers=false) {
 	//--
-	if($clear_numbers === true) {
-		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt);
-	} //end if
-	//--
 	$ytxt = (string) trim((string)$ytxt);
 	if((string)$ytxt == '') {
 		return '';
@@ -781,6 +777,10 @@ public static function extract_description($ytxt, $y_limit=155, $clear_numbers=f
 	$ytxt = (string) implode(' ', (array)$arr);
 	$arr = null; // free mem
 	//--
+	if($clear_numbers === true) {
+		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt); // do after strip tags to avoid break html
+	} //end if
+	//--
 	return (string) trim((string)Smart::text_cut_by_limit((string)$ytxt, (int)$y_limit, false, ''));
 	//--
 } //END FUNCTION
@@ -794,10 +794,6 @@ public static function extract_description($ytxt, $y_limit=155, $clear_numbers=f
 // keywords with higher frequency will be listed first
 // We add Strategy: Max 2% up to 7% of keywords from existing text (SEO req.)
 public static function extract_keywords($ytxt, $y_count=97, $clear_numbers=true) {
-	//--
-	if($clear_numbers === true) {
-		$ytxt = (string) self::cleanup_numbers_from_text((string)$ytxt);
-	} //end if
 	//--
 	$ytxt = (string) trim((string)$ytxt);
 	if((string)$ytxt == '') {
@@ -821,16 +817,26 @@ public static function extract_keywords($ytxt, $y_count=97, $clear_numbers=true)
 	$cnt = 0;
 	$out = '';
 	for($i=0; $i<Smart::array_size($arr); $i++) { // allow: '&', '-', '.'
+		//--
 		$tmp_word = (string) trim((string)str_replace(['`', '~', '!', '@', '#', '$', '%', '^', '*', '(', ')', '_', '+', '=', '[', ']', '{', '}', '|', '\\', '/', '?', '<', '>', ',', ':', ';', '"', "'"], ' ', (string)$arr[$i]));
 		$tmp_word = (string) preg_replace("/(\.)\\1+/", '.', $tmp_word); // suppress multiple . dots and replace with single dot
 		$tmp_word = (string) preg_replace("/(\-)\\1+/", '-', $tmp_word); // suppress multiple - minus signs and replace with single minus sign
+		//--
+		if($clear_numbers === true) {
+			$tmp_word = (string) self::cleanup_numbers_from_text((string)$tmp_word); // do on each keyword after all processing
+		} //end if
+		//--
+		$tmp_word = (string) trim((string)$tmp_word);
+		//--
 		if((string)$tmp_word != '') {
 			$out .= $tmp_word.', ';
 			$cnt++;
 		} //end if
+		//--
 		if($cnt >= $y_count) {
 			break;
 		} //end if
+		//--
 	} //end for
 	//--
 	return (string) trim((string)$out, ' ,');
