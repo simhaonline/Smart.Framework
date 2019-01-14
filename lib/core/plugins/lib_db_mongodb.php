@@ -72,7 +72,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.20190112
+ * @version 	v.20190114
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
@@ -138,7 +138,7 @@ public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
 	//--
 	$this->extver = (string) phpversion('mongodb');
 	//--
-	if(version_compare((string)$this->extver, '1.3.0') < 0) {
+	if(version_compare((string)$this->extver, '1.1.0') < 0) {
 		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.3.0 or later. The current version is: '.$this->extver);
 		return;
 	} //end if
