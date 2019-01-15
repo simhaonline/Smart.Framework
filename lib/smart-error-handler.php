@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// # r.20190103 # this should be loaded from app web root only
+// # r.20190115 # this should be loaded from app web root only
 
 // ===== ATTENTION =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE GET/POST AND CAN CAUSE SECURITY ISSUES
@@ -54,7 +54,7 @@ if(defined('SMART_ERROR_AREA')) { // display this error area
 	@http_response_code(500);
 	die('SMART_ERROR_AREA cannot be defined outside ERROR HANDLER');
 } //end if
-if(defined('SMART_ERROR_LOGFILE')) { // for 'log' or 'off' the errors will be registered into this local error log file
+if(defined('SMART_ERROR_LOGFILE')) { // if set as 'log' or 'off' the errors will be registered into this local error log file
 	@http_response_code(500);
 	die('SMART_ERROR_LOGFILE cannot be defined outside ERROR HANDLER');
 } //end if
@@ -73,7 +73,7 @@ $smart_____framework_____last__error = ''; // initialize
 if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MODE != 'yes')) { // log :: hide errors and just log them
 	ini_set('display_startup_errors', '0');
 	ini_set('display_errors', '0');
-} else { // dev :: display errors + log them
+} else { // dev :: display errors and log them
 	ini_set('display_startup_errors', '1');
 	ini_set('display_errors', '1');
 } //end if else
