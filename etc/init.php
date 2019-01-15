@@ -1,6 +1,6 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [Smart.Framework / INIT] r.20190107
+// [Smart.Framework / INIT] r.20190115
 // v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
@@ -11,7 +11,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 // ===== NOTICE =====
-//	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IT IS LOADED BEFORE GET/POST VARS ARE REGISTERED AND CAN CAUSE SECURITY ISSUES !!!
+//	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IT IS LOADED BEFORE THE GET/POST VARS ARE REGISTERED AND CAN CAUSE SECURITY ISSUES !!!
 //	* ONLY CONSTANTS SHOULD BE DEFINED HERE ; IF .htaccess PHP settings will be used, be sure to sync them with this file too
 // ==================
 
@@ -68,7 +68,7 @@ define('SMART_FRAMEWORK_CHMOD_FILES', 		0660);											// File Permissions: 06
 define('SMART_FRAMEWORK_DOWNLOAD_FOLDERS', 			'<wpub>');								// Allow downloads ONLY from these folders: <folder1>,<folder2> (relative to the app root)
 define('SMART_FRAMEWORK_DOWNLOAD_EXPIRE',			1);										// Download expiration time in hours (between 1 and 24 hours)
 //define('SMART_FRAMEWORK_DOWNLOAD_SKIP_LOG',			true);								// If defined will disable logging for Downloads
-define('SMART_FRAMEWORK_UPLOAD_PICTS', 				'<png>,<gif>,<jpeg>,<jpg>,<svg>');		// Uploads images type ALLOWED extensions list
+define('SMART_FRAMEWORK_UPLOAD_PICTS', 				'<svg>,<png>,<gif>,<jpg>,<jpeg>,<jpe>');// Uploads images type ALLOWED extensions list
 define('SMART_FRAMEWORK_UPLOAD_MOVIES', 			'<webm>,<ogv>,<mp4>,<mov>');			// Uploads video type ALLOWED extensions list
 define('SMART_FRAMEWORK_UPLOAD_DOCS', 				'<txt>,<md>,<pdf>,<odt>,<ods>,<odp>,<csv>,<doc>,<rtf>,<xls>,<ppt>'); // Uploads document type ALLOWED extensions list
 define('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS',	SMART_FRAMEWORK_UPLOAD_PICTS.','.SMART_FRAMEWORK_UPLOAD_MOVIES.','.SMART_FRAMEWORK_UPLOAD_DOCS.',<json>,<yaml>,<xml>,<eml>,<ics>,<vcf>,<7z>,<zip>,<rar>,<tar>,<tgz>,<tbz>,<gz>,<bz2>,<xz>,<ps>,<eps>,<tif>,<tiff>,<wmf>,<bmp>,<swf>'); // *OPTIONAL* list of allowed extensions (if this is not defined will allow any extension except ones listed at SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS)
@@ -179,15 +179,15 @@ if(mb_substitute_character(63) !== true) {
 //-- check input limits
 if((int)ini_get('max_input_vars') < 1000) { // it should be at least 1000 ; cannot be set to zero as it will dissalow any input vars ; this limits the Request Input Vars (GET / POST / COOKIE) includding their nested levels ; recommended is 2500 ; minimum accepted is 1000 ; after changing this value you have to change the max_input_vars with a value like this or even higher in PHP.INI
 	@http_response_code(500);
-	die('The PHP.INI MaxInputVars must be set to a higher value than 1000 ...');
+	die('Smart.Framework INI // The PHP.INI MaxInputVars must be set to a higher value than 1000 ...');
 } //end if
 if((int)ini_get('max_input_nesting_level') < 5) { // it should be at least 5 ; the max_input_nesting_level cannot be set to zero as it will dissalow any arrays
 	@http_response_code(500);
-	die('The PHP.INI MaxInputNestingLevel must be set to a higher value than 5 ...');
+	die('Smart.Framework INI // The PHP.INI MaxInputNestingLevel must be set to a higher value than 5 ...');
 } //end if
 if((int)ini_get('max_input_time') < 60) { // it should be at least 60 ; the max_input_time cannot be set to zero as it will have no time for parsing input vars
 	@http_response_code(500);
-	die('The PHP.INI MaxInputTime must be set to a higher value than 60 ...');
+	die('Smart.Framework INI // The PHP.INI MaxInputTime must be set to a higher value than 60 ...');
 } //end if
 //-- misc settings and limits
 ini_set('memory_limit', (string)SMART_FRAMEWORK_MEMORY_LIMIT);				// set the memory limit
@@ -199,11 +199,11 @@ ini_set('y2k_compliance', '0');												// it is recommended to use this as d
 ini_set('precision', '14');													// decimal number precision
 ini_set('pcre.backtrack_limit', '1000001');									// PCRE BackTrack Limit
 ini_set('pcre.recursion_limit', '100001');									// PCRE Recursion Limit
-//-- pcre JIT
+//-- pcre JIT (you can disable this if you have very complex PCRE expressions combined with PHP functions that overflow the PCRE-JIT Memory)
 //ini_set('pcre.jit', '0');													// PCRE JIT
 //if((int)ini_get('pcre.jit') > 0) { // this may fail badly with very complex regex expressions, so if needed can be disabled
 //	@http_response_code(500);
-//	die('Smart.Framework INI // The PcreJIT should be disabled when used with very complex regular expressions that can overflow the PCRE-JIT very limited memory !');
+//	die('Smart.Framework INI // The PCRE-JIT should be disabled when very complex regular expressions are used that can overflow the PCRE-JIT very limited memory !');
 //} //end if
 //-- session stuff
 if((string)ini_get('session.auto_start') != '0') {
@@ -235,7 +235,7 @@ ini_set('session.serialize_handler', 'php');								// use php (default) ; wddx 
 //---------------------------------------- security: avoid load this multiple times
 if(defined('SMART_FRAMEWORK_INITS')) {
 	@http_response_code(500);
-	die('Smart.Framework / Inits already loaded ...');
+	die('Smart.Framework INI / Inits already loaded ...');
 } //end if
 define('SMART_FRAMEWORK_INITS', 'SET'); // avoid reload inits again (if accidentaly you do)
 //----------------------------------------

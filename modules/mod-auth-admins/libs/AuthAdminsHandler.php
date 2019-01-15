@@ -53,7 +53,7 @@ define('APP_AUTH_DB_SQLITE', '#db/auth-admins-'.sha1((string)SMART_FRAMEWORK_SEC
  * @access 		private
  * @internal
  *
- * @version 	v.20190107
+ * @version 	v.20190115
  *
  */
 final class AuthAdminsHandler {
@@ -185,6 +185,19 @@ public static function Authenticate($enforce_ssl=false, $tpl_path='', $tpl_file=
 		);
 		//--
 	} elseif((string)$try_auth != 'no') { // requires login ; check login
+		//-- try to check the failed logins
+		if((string)$auth_user_name != '') {
+			//--
+			$check_fail = (int) $db->checkFailLoginData((string)$auth_user_name, (string)$_SERVER['REMOTE_ADDR']);
+			$retry_seconds = (int) \Smart::format_number_int(($check_fail - time()), '+');
+			//--
+			if($check_fail > 0) {
+				http_response_code(503);
+				header('Retry-After: '.(int)$retry_seconds);
+				die(\SmartComponents::http_error_message('503 FAILED LOGIN TIMEOUT: '.(int)$retry_seconds.'sec.', 'Next Allowed Login Time is: '.date('Y-m-d H:i:s O', (int)$check_fail).' / Current Server Time is: '.date('Y-m-d H:i:s O')));
+			} //end if
+			//--
+		} //end if
 		//-- try to get the user account from DB
 		if(((string)$auth_user_name == '') OR ((string)$auth_user_pass == '')) {
 			//--
@@ -224,6 +237,19 @@ public static function Authenticate($enforce_ssl=false, $tpl_path='', $tpl_file=
 				'ADMINS-AREA', // realm
 				'HTTP-BASIC', // method
 				(string) $auth_user_pass // safe store password
+			);
+			//--
+			$db->logSuccessfulLoginData(
+				(string) $admin_login['id'], 			// successful auth account ID
+				(string) $_SERVER['REMOTE_ADDR'] 		// client IP
+			);
+			//--
+		} else { // log unsuccessful login
+			//--
+			$db->logUnsuccessfulLoginData(
+				(string) $auth_user_name, 				// failed auth account ID
+				(string) $_SERVER['REMOTE_ADDR'], 		// client IP
+				(string) $_SERVER['HTTP_USER_AGENT'] 	// client Browser Signature
 			);
 			//--
 		} //end if else

@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190108
+ * @version 	v.20190115
  * @package 	Database:SQLite
  *
  */
@@ -483,7 +483,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190108
+ * @version 	v.20190115
  * @package 	Database:SQLite
  *
  */
@@ -1573,7 +1573,7 @@ public static function create_table($db, $table_name, $table_schema, $table_inde
 	//-- samples
 	// $table_indexes = '';
 	// $table_indexes = 'date_time ASC, status_delete, status_read';
-	// $table_indexes = array('idx_uidls' => 'date_time ASC, status_delete, status_read');
+	// $table_indexes = [ 'idx_uidls' => 'date_time ASC, status_delete, status_read', 'unq_idx' => [ 'mode' => 'unique', 'index' => 'id DESC' ] ];
 	//--
 	self::check_connection($db);
 	//-- check names
@@ -1583,7 +1583,7 @@ public static function create_table($db, $table_name, $table_schema, $table_inde
 		return '';
 	} //end if
 	//-- the create table query
-	$tbl_query = "CREATE TABLE {$table_name} ({$table_schema});";
+	$tbl_query = "CREATE TABLE {$table_name} (\n{$table_schema}\n);";
 	//--
 	$idx_query = '';
 	//--
@@ -1594,7 +1594,11 @@ public static function create_table($db, $table_name, $table_schema, $table_inde
 				self::error($db, 'CREATE TABLE', 'Create Table: '.$table_name, 'Invalid Index Name', (string)$key);
 				return '';
 			} //end if
-			$idx_query .= ' CREATE INDEX '.(string)$key.' ON '.(string)$table_name.' ('.$val.');';
+			if(is_array($val)) {
+				$idx_query .= ' CREATE '.strtoupper((string)$val['mode']).' INDEX \''.(string)$key.'\' ON `'.(string)$table_name.'` ('.$val['index'].');';
+			} else {
+				$idx_query .= ' CREATE INDEX \''.(string)$key.'\' ON `'.(string)$table_name.'` ('.$val.');';
+			} //end if else
 		} //end for
 		//--
 	} //end if
@@ -1751,7 +1755,7 @@ die(''); // just in case
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20190108
+ * @version 	v.20190115
  * @package 	Database:SQLite
  *
  */

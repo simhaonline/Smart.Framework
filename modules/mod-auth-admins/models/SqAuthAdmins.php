@@ -25,7 +25,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class SqAuthAdmins {
 
 	// ->
-	// v.20190108
+	// v.20190115
 
 	private $db;
 
@@ -77,6 +77,136 @@ final class SqAuthAdmins {
 		);
 		//--
 	} //END FUNCTION
+
+
+	public function checkFailLoginData($id, $ip) {
+		//--
+		// FAIL LOGINS LIMIT: 7
+		//--
+		$arr = (array) $this->db->read_asdata(
+			'SELECT * FROM `authfail` WHERE ((`id` = ?) AND (`ip_addr` = ?)) LIMIT 1 OFFSET 0',
+			[
+				(string) $id,
+				(string) $ip
+			]
+		);
+		//--
+		if(\Smart::array_size($arr) < 0) {
+			return 0;
+		} //end if
+		//--
+		if((int)$arr['tries'] <= 7) {
+			return 0;
+		} //end if
+		if((int)$arr['trytime'] <= 0) {
+			return 0;
+		} //end if
+		//--
+		$nowtime 	= (int) time();
+		$allowtime 	= (int) ((int)$arr['trytime'] + (((int)$arr['tries'] - 7) * 60));
+		if((int)$nowtime >= (int)$allowtime) {
+			return 0;
+		} //end if
+		//--
+		return (int) $allowtime;
+		//--
+	} //END FUNCTION
+
+
+	public function logSuccessfulLoginData($id, $ip) {
+		//--
+		if(!$this->db instanceof \SmartSQliteDb) {
+			\Smart::raise_error('Invalid AUTH DB Connection !');
+			return false;
+		} //end if
+		//--
+		$arr = (array) $this->db->read_asdata(
+			'SELECT SUM(`tries`) AS `tot_tries`, MAX(`trytime`) AS `tot_trytime` FROM `authfail` WHERE (`id` = ?) LIMIT 1 OFFSET 0',
+			[
+				(string) $id
+			]
+		);
+		//--
+		$del = (array) $this->db->write_data(
+			'DELETE FROM `authfail` WHERE (`id` = ?)',
+			[
+				(string) $id
+			]
+		);
+		//--
+		$upd = [];
+		if((int)$arr['tot_tries'] > 0) {
+			$upd = (array) $this->db->write_data(
+				'UPDATE `admins` SET `ip_addr` = ?, `logintime` = ?, `tries` = ?, `trytime` = ? WHERE (`id` = ?)',
+				[
+					(string) $ip,
+					(int)    time(),
+					(int)    $arr['tot_tries'],
+					(int)    $arr['tot_trytime'],
+					(string) $id
+				]
+			);
+		} else {
+			$upd = (array) $this->db->write_data(
+				'UPDATE `admins` SET `ip_addr` = ?, `logintime` = ? WHERE ((`id` = ?) AND (`logintime` < ?))',
+				[
+					(string) $ip,
+					(int)    time(),
+					(string) $id,
+					(int)    (time() - 60) // log just once per minute
+				]
+			);
+		} //end if else
+		//--
+		return (bool) (($upd[1] == 1) ? true : false);
+		//--
+	} //END FUNCTION
+
+
+	public function logUnsuccessfulLoginData($id, $ip, $ua) {
+		//--
+		if(!$this->db instanceof \SmartSQliteDb) {
+			\Smart::raise_error('Invalid AUTH DB Connection !');
+			return false;
+		} //end if
+		//--
+		$arr = (array) $this->getById($id);
+		if(\Smart::array_size($arr) <= 0) {
+			return false;
+		} //end if
+		//--
+		@file_put_contents(
+			'tmp/logs/adm/'.'auth-fail-'.date('Y-m-d@H').'.log',
+			'[ERR]'."\t".\Smart::normalize_spaces((string)date('Y-m-d H:i:s O'))."\t".\Smart::normalize_spaces((string)$id)."\t".\Smart::normalize_spaces((string)$ip)."\t".\Smart::normalize_spaces((string)$ua)."\n",
+			FILE_APPEND | LOCK_EX
+		);
+		//--
+		$this->db->write_data('INSERT OR IGNORE INTO `authfail`'.$this->db->prepare_statement(
+			[
+				'id' 		=> (string) $id,
+				'ip_addr' 	=> (string) $ip,
+				'tries' 	=> 0,
+				'trytime' 	=> 0,
+				'ua' 		=> ''
+			],
+			'insert'
+		));
+		$upd = (array) $this->db->write_data(
+			'UPDATE `authfail` SET `tries` = `tries` + 1, `trytime` = ?, `ua` = ? WHERE ((`id` = ?) AND (`ip_addr` = ?))',
+			[
+				(int)    time(),
+				(string) $ua,
+				(string) $id,
+				(string) $ip
+			]
+		);
+		//--
+		return (bool) (($upd[1] == 1) ? true : false);
+		//--
+	} //END FUNCTION
+
+
+	//##### Management
 
 
 	public function getById($id) {
@@ -475,6 +605,27 @@ final class SqAuthAdmins {
 			//--
 		} //end if
 		//--
+		if($this->db->check_if_table_exists('authfail') != 1) {
+			$this->db->write_data('BEGIN');
+			$this->db->create_table( // {{{SYNC-TABLE-AUTH_TEMPLATE}}}
+				'authfail',
+				"-- #START: table schema: authfail
+				`id` character varying(25) NOT NULL,
+				`ip_addr` character varying(39) NOT NULL,
+				`tries` smallint NOT NULL,
+				`trytime` bigint NOT NULL,
+				`ua` text NOT NULL,
+				PRIMARY KEY (`id`, `ip_addr`)
+				-- #END: table schema",
+				[ // indexes
+					'authfail_id' 		=> '`id` ASC',
+				//	'authfail_uuid' 	=> [ 'mode' => 'unique', 'index' => '`id` ASC, `ip_addr` ASC' ], // not necessary as they are primary key
+					'authfail_tries' 	=> '`tries`'
+				]
+			);
+			$this->db->write_data('COMMIT');
+		} //end if
+		//--
 		return 1;
 		//--
 	} //END FUNCTION
@@ -511,11 +662,11 @@ CREATE TABLE 'admins' (
 	`modif` INTEGER DEFAULT 0 NOT NULL,
 	`created` INTEGER DEFAULT 0 NOT NULL
 );
-CREATE UNIQUE INDEX 'id' ON `admins` (`id` ASC);
-CREATE UNIQUE INDEX 'email' ON `admins` (`email`);
-CREATE INDEX 'active' ON `admins` (`active`);
-CREATE INDEX 'modif' ON `admins` (`modif`);
-CREATE INDEX 'created' ON `admins` (`created`);
+CREATE UNIQUE INDEX 'admins_id' ON `admins` (`id` ASC);
+CREATE UNIQUE INDEX 'admins_email' ON `admins` (`email`);
+CREATE INDEX 'admins_active' ON `admins` (`active`);
+CREATE INDEX 'admins_modif' ON `admins` (`modif`);
+CREATE INDEX 'admins_created' ON `admins` (`created`);
 SQL;
 //--
 	//--

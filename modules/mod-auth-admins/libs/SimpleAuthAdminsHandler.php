@@ -39,7 +39,7 @@ if(headers_sent()) {
  * @access 		private
  * @internal
  *
- * @version 	v.20190107
+ * @version 	v.20190115
  *
  */
 final class SimpleAuthAdminsHandler {
@@ -107,6 +107,14 @@ final class SimpleAuthAdminsHandler {
 			);
 			//--
 		} else {
+			//-- log unsuccessful login
+			if((string)$_SERVER['PHP_AUTH_USER'] != '') {
+				@file_put_contents(
+					'tmp/logs/adm/'.'simple-auth-fail-'.date('Y-m-d@H').'.log',
+					'[ERR]'."\t".\Smart::normalize_spaces((string)date('Y-m-d H:i:s O'))."\t".\Smart::normalize_spaces((string)$_SERVER['PHP_AUTH_USER'])."\t".\Smart::normalize_spaces((string)$_SERVER['REMOTE_ADDR'])."\t".\Smart::normalize_spaces((string)$_SERVER['HTTP_USER_AGENT'])."\n",
+					FILE_APPEND | LOCK_EX
+				);
+			} //end if
 			//-- NOT OK, display the Login Form and Exit
 			header('WWW-Authenticate: Basic realm="Private Area"');
 			http_response_code(401);
