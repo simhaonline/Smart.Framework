@@ -60,19 +60,19 @@ if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // Handles the Language Detection by S
 	AppSetLanguageBySubdomain();
 } //end if
 //--
-function AppSetLanguageBySubdomain() { // r.181019
+function AppSetLanguageBySubdomain() { // r.20190115
 	//--
-	$sdom = \SmartUtils::get_server_current_domain_name();
+	$sdom = (string) \SmartUtils::get_server_current_domain_name();
 	if((string)\SmartValidator::validate_filter_ip_address($sdom) != '') {
 		return; // if not domain but IP, stop
 	} //end if
 	//--
-	$dom = \SmartUtils::get_server_current_basedomain_name();
+	$dom = (string) \SmartUtils::get_server_current_basedomain_name();
 	if((string)$dom == (string)$sdom) {
 		return; // if not using sub-domains, stop
 	} //end if
 	//--
-	$pdom = substr($sdom, 0, (strlen($sdom)-strlen($dom)-1));
+	$pdom = (string) substr($sdom, 0, (strlen($sdom)-strlen($dom)-1));
 	//--
 	\SmartTextTranslations::setLanguage((string)\SmartTextTranslations::getDefaultLanguage()); // EN
 	if((string)$pdom != 'www') {

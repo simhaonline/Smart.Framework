@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // this is intended for on-the-fly archive/unarchive not for storing (where ZLib is a better option)
 // it compatible with Smart.Framework/JS/SmartJS_Archiver_LZS
 // License: BSD
-// (c) unix-world.org : optimizations, fixes, unicode safe
+// (c) 2013-2019 unix-world.org : optimizations, fixes, unicode safe
 // Original work by Tobias Neeb <tobias.neeb@gmail.com>
 
 /**
@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.20190109
+ * @version 	v.20190115.r2
  * @package 	Archivers
  *
  */
@@ -94,7 +94,7 @@ public static function compressToBase64($input) {
 	$enc3 = false;
 	$enc4 = false;
 	//--
-	$strlen = SmartUnicode::str_len($input);
+	$strlen = SmartUnicode::str_len($input); // must be unicode strlen !
 	//--
 	$i = 0;
 	//--
@@ -150,7 +150,7 @@ public static function compressToBase64($input) {
 		//	$enc4.' = '.self::$keyStr{$enc4}
 		//));
 		//--
-		$output = $output.self::$keyStr{$enc1}.self::$keyStr{$enc2}.self::$keyStr{$enc3}.self::$keyStr{$enc4};
+		$output .= (string) self::$keyStr{$enc1}.self::$keyStr{$enc2}.self::$keyStr{$enc3}.self::$keyStr{$enc4};
 		//--
 	} //end while
 	//--
@@ -194,13 +194,33 @@ public static function decompressFromBase64($input) {
 	} //end if
 	//--
 	$i=0;
-//	while($i < SmartUnicode::str_len($input)) { // bug fix by unixman
-	while($i < strlen($input)) {
-		//-- hint: needs err flexibility, don't make needle string, may be NULL ; also the $enc1..4 will not force as string
-		$enc1 = strpos(self::$keyStr, $input{$i++});
-		$enc2 = strpos(self::$keyStr, $input{$i++});
-		$enc3 = strpos(self::$keyStr, $input{$i++});
-		$enc4 = strpos(self::$keyStr, $input{$i++});
+	while($i < strlen($input)) { // no unicode strlen !
+		//-- unixman: fix to avoid the strpos(): Empty needle (v.190115)
+		$needle = '';
+		//--
+		$enc1 = false;
+		$enc2 = false;
+		$enc3 = false;
+		$enc4 = false;
+		//--
+		$needle = (string) $input{$i++};
+		if((string)$needle != '') {
+			$enc1 = strpos(self::$keyStr, $needle);
+		} //end if
+		$needle = (string) $input{$i++};
+		if((string)$needle != '') {
+			$enc2 = strpos(self::$keyStr, $needle);
+		} //end if
+		$needle = (string) $input{$i++};
+		if((string)$needle != '') {
+			$enc3 = strpos(self::$keyStr, $needle);
+		} //end if
+		$needle = (string) $input{$i++};
+		if((string)$needle != '') {
+			$enc4 = strpos(self::$keyStr, $needle);
+		} //end if
+		//--
+		$needle = '';
 		//--
 		$chr1 = ($enc1 << 2) | ($enc2 >> 4);
 		$chr2 = (($enc2 & 15) << 4) | ($enc3 >> 2);
@@ -713,7 +733,7 @@ private static function RawInflate($compressed) {
 final class SmartArchiverObjContextLZS {
 	//--
 	// ->
-	// v.181217.r2
+	// v.20190115.r2
 	//--
 	public $c = '';
 	public $w = '';
@@ -754,7 +774,7 @@ final class SmartArchiverObjContextLZS {
 final class SmartArchiverObjDataLZS {
 	//--
 	// ->
-	// v.181217.r2
+	// v.20190115.r2
 	//--
 	public $str;
 	public $val;

@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.181217
+ * @version 	v.20190115
  * @package 	Templating:Engines
  *
  */
