@@ -9,6 +9,13 @@
 
 		<script type="text/javascript" src="../../jquery.js"></script>
 		<script type="text/javascript" src="../../jquery.smart.compat.js"></script>
+
+		<!-- Required just if enableColumnReorder option is set to TRUE
+		<link rel="stylesheet" href="../../ui-interractions/jquery.ui-interractions.css" type="text/css">
+		<script type="text/javascript" src="../../ui-interractions/jquery.ui-interractions.js"></script>
+		<script type="text/javascript" src="../../ui-interractions/jquery.ui-touch-punch.js"></script>
+		-->
+
 		<script type="text/javascript" src="../../../framework/src/core_utils.js"></script>
 
 		<script type="text/javascript" src="../../jquery.event.drag.js"></script>
@@ -17,7 +24,6 @@
 		<script type="text/javascript" src="../../jquery.sparkline.js"></script>
 
 		<script type="text/javascript" src="../slick.editors.js"></script>
-
 	</head>
 	<body>
 		<table width="100%">
@@ -76,7 +82,7 @@
 		var options = {
 			enableAddRow: false,
 			enableCellNavigation: true,
-			enableColumnReorder: false,
+		//	enableColumnReorder: true,
 			enableAsyncPostRender: true, // req. by spark graph
 			editable: true,
 			autoEdit: false
