@@ -8,6 +8,7 @@ January 03, 2019 :: Version 3.7.8
 	* moved lib MySQL / MariaDB from Smart.Framework.Modules to Smart.Framework
 	* bug fixes and optimizations
 	* fix compatibility with PHP 7.3 for all code
+	* added SmartJS_DateUtils to lib/js/framework
 
 October 10, 2018 :: Version 3.7.7
 	* many optimizations for controllers, translators

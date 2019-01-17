@@ -1,6 +1,6 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [Smart.Framework / INIT] r.20190115
+// [Smart.Framework / INIT] # r.20190117
 // v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// ===== NOTICE =====
+// ===== IMPORTANT =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IT IS LOADED BEFORE THE GET/POST VARS ARE REGISTERED AND CAN CAUSE SECURITY ISSUES !!!
 //	* ONLY CONSTANTS SHOULD BE DEFINED HERE ; IF .htaccess PHP settings will be used, be sure to sync them with this file too
 // ==================

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Combine all required Smart.Framework JS source scripts from lib/js/framework/src/*.js into one package JS file: lib/js/framework/smart-framework.js # r.20190103
+# Combine all required Smart.Framework JS source scripts from lib/js/framework/src/*.js into one package JS file: lib/js/framework/smart-framework.js # r.20190117
 
 THE_FILE=../lib/js/framework/smart-framework.js
 
@@ -19,6 +19,10 @@ echo "" >> ${THE_FILE}
 
 echo "// ############### core_utils.js" >> ${THE_FILE}
 cat ../lib/js/framework/src/core_utils.js >> ${THE_FILE}
+echo "" >> ${THE_FILE}
+
+echo "// ############### date_utils.js" >> ${THE_FILE}
+cat ../lib/js/framework/src/date_utils.js >> ${THE_FILE}
 echo "" >> ${THE_FILE}
 
 echo "// ############### arch_utils.js" >> ${THE_FILE}

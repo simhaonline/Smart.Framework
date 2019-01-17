@@ -31,11 +31,11 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //======================================================
 
 //-- defines the modules version (required for AppReleaseHash)
-define('SMART_APP_MODULES_RELEASE', 'm.2019-01-16'); // this can be used for tracking changes to custom app modules
+define('SMART_APP_MODULES_RELEASE', 'm.2019-01-17'); // this can be used for tracking changes to custom app modules
 //--
 
 //-- checks the minimum version of the Smart.Framework to run on
-define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.8.r.2019.01.16'); // this must be used to validate the required minimum framework version
+define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.8.r.2019.01.17'); // this must be used to validate the required minimum framework version
 if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
 	@http_response_code(500);
 	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_MIN_FRAMEWORK_VER.' or later !');
@@ -60,16 +60,16 @@ if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // Handles the Language Detection by S
 	AppSetLanguageBySubdomain();
 } //end if
 //--
-function AppSetLanguageBySubdomain() { // r.20190115
+function AppSetLanguageBySubdomain() { // r.20190117
 	//--
 	$sdom = (string) \SmartUtils::get_server_current_domain_name();
 	if((string)\SmartValidator::validate_filter_ip_address($sdom) != '') {
-		return; // if not domain but IP, stop
+		return; // if no domain but only IP, stop
 	} //end if
 	//--
 	$dom = (string) \SmartUtils::get_server_current_basedomain_name();
 	if((string)$dom == (string)$sdom) {
-		return; // if not using sub-domains, stop
+		return; // if not using sub-domain of domain, stop
 	} //end if
 	//--
 	$pdom = (string) substr($sdom, 0, (strlen($sdom)-strlen($dom)-1));
@@ -77,7 +77,7 @@ function AppSetLanguageBySubdomain() { // r.20190115
 	\SmartTextTranslations::setLanguage((string)\SmartTextTranslations::getDefaultLanguage()); // EN
 	if((string)$pdom != 'www') {
 		if(\SmartTextTranslations::validateLanguage($pdom)) {
-			\SmartTextTranslations::setLanguage($pdom); // other languages if valid: RO, DE, ...
+			\SmartTextTranslations::setLanguage($pdom); // set only other languages if valid: RO, DE, ...
 		} else {
 			http_response_code(301); // permanent redirect if the language code is not valid
 			header('Location: '.\SmartUtils::get_server_current_protocol().'www.'.\SmartUtils::get_server_current_basedomain_name()); // force redirect
