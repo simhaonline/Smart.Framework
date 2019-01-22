@@ -1,7 +1,7 @@
-/* SlimBox, fix by unixman r.141214 */
+/* SlimBox, fix by unixman r.20190121 (all using svg icons) */
 
 .lbLoading {
-	background: #FFFFFF url(loading.gif) no-repeat center;
+	background: #FFFFFF url(loading.svg) no-repeat center;
 }
 
 #lbOverlay {
@@ -45,7 +45,7 @@
 }
 
 #lbPrevLink:hover {
-	background: transparent url(previcon.png) no-repeat 0 15%;
+	background: transparent url(previcon.svg) no-repeat 0 15%;
 }
 
 #lbNextLink {
@@ -53,7 +53,7 @@
 }
 
 #lbNextLink:hover {
-	background: transparent url(nexticon.png) no-repeat 100% 15%;
+	background: transparent url(nexticon.svg) no-repeat 100% 15%;
 }
 
 #lbBottom {
@@ -74,7 +74,7 @@
 	float: right;
 	width: 35px;
 	height: 35px;
-	background: transparent url(closeicon.png) no-repeat center;
+	background: transparent url(closeicon.svg) no-repeat center;
 	margin: 5px 0;
 	outline: none;
 }

@@ -27,6 +27,12 @@
 	font-size: 20px;
 }
 
+.vtml-timeline-icon div i.fa {
+	margin-top: 10px;
+	display: block;
+	font-size: 20px !important;
+}
+
 .vtml-timeline-content {
 	padding: 0.75rem;
 }

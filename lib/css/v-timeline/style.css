@@ -71,9 +71,13 @@
 	width: 36px;
 	height: 36px;
 	margin-left: 9px;
-	margin-top: 9px;
+	margin-top: 7px;
 	text-align:center;
 	font-size: 30px;
+}
+.vtml-timeline-icon div i.fa {
+	margin-top: 13px;
+	display: block;
 }
 .vtml-timeline-icon.vtml-green {
 	background: #6D8813;
