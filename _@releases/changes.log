@@ -1,6 +1,9 @@
 
 # CHANGELOG / MIGRATION NOTES for Milestone Releases Only - SMART.FRAMEWORK #
 
+February 07, 2019 :: Version 3.7.8 # rev.190207
+	* changed the license to dual-licensing (see LICENSE)
+
 January 03, 2019 :: Version 3.7.8
 	* new feature: QUnit Test Module
 	* new feature: Admins Auth Module with Simple or Multi-Account Authentication for admin.php area
@@ -121,4 +124,6 @@ June 5, 2015 :: Version 1.2
 
 March 07, 2015 :: Version 1.1
 
-#END#
+March 17, 2009 :: Version 0.1
+
+# END #

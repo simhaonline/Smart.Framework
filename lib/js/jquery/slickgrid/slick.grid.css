@@ -1,5 +1,5 @@
 /*
-SlickGrid Styles :: v1.4.3.1.smart.20190103
+SlickGrid Styles :: v1.4.3.1.smart.20190205
 IMPORTANT: In order to preserve the uniform grid appearance, all cell styles need to have padding, margin and border sizes. No built-in (selected, editable, highlight, flashing, invalid, loading, :focus) or user-specified CSS classes should alter those!
 */
 
@@ -30,7 +30,7 @@ IMPORTANT: In order to preserve the uniform grid appearance, all cell styles nee
 	color: #555555;
 	border-top: 1px solid #DDDDDD !important;
 	border-bottom: 1px solid #DDDDDD !important;
-	border-right: 1px dotted #DDDDDD !important;
+	border-right: 1px solid #DDDDDD !important;
 	border-bottom-color: #DDDDDD;
 }
 
@@ -105,7 +105,7 @@ IMPORTANT: In order to preserve the uniform grid appearance, all cell styles nee
 .slick-cell {
 	float: left;
 	border: 1px solid transparent;
-	border-right: 1px dotted #DDDDDD;
+	border-right: 1px solid #DDDDDD;
 	border-bottom-color: #DDDDDD;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -159,11 +159,46 @@ IMPORTANT: In order to preserve the uniform grid appearance, all cell styles nee
 .slick-selection {
 	z-index: 10;
 	position: absolute;
-	background: gray;
-	border: 1px solid black;
+	background: #FFFFCC;
+	border: 1px solid #FF9900;
 	opacity: 0.3;
-	filter: alpha(opacity=30);
-	-webkit-box-shadow: 0px 0px 10px black;
-	-moz-box-shadow: 0px 0px 10px black;
-	box-shadow: 0px 0px 10px black;
+/*	box-sizing: border-box; */
 }
+
+/* fixes by unixman */
+
+/*
+div.slick-cell {
+	will-change: left, top, contents, scroll-position;
+}
+*/
+
+/* fix left border */
+div.slick-viewport {
+	border-left: 1px solid #DDDDDD !important;
+}
+
+div.slick-header {
+	border-left: 1px solid #DDDDDD !important;
+}
+/*
+div.slick-cell.c0, div.slick-header-column.c0 {
+	border-left: 1px solid #DDDDDD !important;
+}
+*/
+/* end fix */
+
+div.slick-header-column {
+	background-color: #F8F8F8;
+}
+
+[class^="slick"],
+[class^="slick"] div {
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+}
+
+/* END */
+
+

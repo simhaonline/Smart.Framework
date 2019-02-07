@@ -9,9 +9,8 @@
 	<style type="text/css">
 		body, html {
 			padding:0px;
-			margin:0px;
+			margin:20px;
 			background: #778899;
-			text-align:center;
 			color:#fff;
 			line-height: 1.4em;
 			font-family: "Trebuchet MS", Helvetica, sans-serif;
@@ -21,7 +20,6 @@
 		}
 		h1 {
 			font-family: sans-serif;
-			text-align: center;
 			font-size: 48px;
 			text-shadow: 0 0px 30px rgba(0, 0, 0, 0.2);
 		}
@@ -108,18 +106,18 @@
 </head>
 <body>
 <div class="page">
-		<h1>Events Calendar</h1>
-		<div style="width:100%; max-width:600px; display:inline-block;">
-			<div class="monthly" id="mycalendar"></div>
-		</div>
-		<br><br>
-		<h2>Example Two - Date Picker</h2>
-		<div style="display:inline-block; width:250px;">
-			<input type="text" id="mytarget" value="Select Date">
+		<div style="width:40vw; display:inline-block; margin-right:20px;">
+			<h2>Events Calendar as Date Picker</h2>
+			<input type="text" id="mytarget" value="Select Date" autocomplete="off">
 			<div class="monthly" id="mycalendar2"></div>
+		</div>
+		<div style="width:40vw; display:inline-block; text-align:right;">
+			<h2>Events Calendar (Default)</h2>
+			<div class="monthly" id="mycalendar"></div>
 		</div>
 		<br>
 <!--	<a href="https://github.com/kthornbloom/Monthly" class="button">DOWNLOAD / DOCS</a> -->
+		<br>
 </div>
 <script type="text/javascript">
 jQuery(function() {
@@ -142,7 +140,8 @@ jQuery(function() {
 			startHidden: true,
 			showTrigger: '#mytarget',
 			stylePast: true,
-			disablePast: true
+			disablePast: true,
+		//	useIsoDateFormat: false
 		});
 
 	// just test to see if ajax is working, as this example needs to run on URL not file protocol

@@ -11,6 +11,18 @@
 	<script type="text/javascript" src="../plugins/row-group/dataTables.rowGroup.js"></script>
 </head>
 <body>
+<div align="center">
+	<select onChange="if(this.value) { self.location = this.value; }">
+		<option value="">--- Select a demo from below ---</option>
+		<option value="sample.html">Default, Responsive</option>
+		<option value="sample-fixed-columns.html">Fixed Columns</option>
+		<option value="sample-fixed-header.html">Fixed Header</option>
+		<option value="sample-column-reorder.html">Column Reorder</option>
+		<option value="sample-row-reorder.html">Row Reorder</option>
+		<option value="sample-row-group.html" selected>Row Group</option>
+		<option value="sample-virtual-scroller.html">Virtual Scroll</option>
+	</select>
+</div>
 <h1>DataTables example - Plugin: Row Group</h1>
 <table id="example" class="display" style="width:100%">
 	<thead>

@@ -110,6 +110,14 @@
 			box-shadow: 1px 1px 3px 0 rgba(38, 154, 188, 0.5);
 	border-color: #269abc;
 }
+
+/* fix by unixman */
+button.ui-keyboard-accept,
+button.ui-keyboard-cancel {
+	background-color: #777777;
+	font-weight: bold;
+}
+
 /* (in)valid inputs */
 button.ui-keyboard-accept.ui-keyboard-valid-input {
 	-webkit-box-shadow: 1px 1px 3px 0 rgba(57, 132, 57, 0.5);

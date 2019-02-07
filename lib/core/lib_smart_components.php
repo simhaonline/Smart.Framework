@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.20190107
+ * @version 	v.20190129
  * @package 	Components:Core
  *
  */
@@ -1594,11 +1594,16 @@ public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select
 		$the_first_day = 0; // Calendar Start on Sunday
 	} //end if else
 	//--
-	$the_altdate_format = self::get_date_format_for_js((string)Smart::get_from_config('regional.calendar-date-format-client'));
-	//--
 	if(!is_array($y_extra_options)) {
 		$y_extra_options = array();
 	} //end if
+	//--
+	if((string)$y_extra_options['format'] == '') {
+		$the_altdate_format = self::get_date_format_for_js((string)Smart::get_from_config('regional.calendar-date-format-client'));
+	} else {
+		$the_altdate_format = self::get_date_format_for_js((string)$y_extra_options['format']);
+	} //end if else
+	//--
 	if((string)$y_extra_options['width'] == '') {
 		$the_option_size = '85';
 	} else {
