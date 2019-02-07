@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <!--
-V-TimeLine r.20190207
+V-TimeLine, Small r.20190207
 	License: BSD
 	(c) 2015-2019 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -15,8 +15,9 @@ V-TimeLine r.20190207
 	<link rel="stylesheet" href="../../../core/plugins/fonts/typo/sans/ibm-plex-sans.css">
 	<link rel="stylesheet" href="../../../core/plugins/fonts/icons/fontawesome.css">
 	<link rel="stylesheet" href="../style.css">
+	<link rel="stylesheet" href="../style-small.css">
 	<link rel="stylesheet" href="../style-responsive.css">
-	<title>Responsive Vertical Timeline</title>
+	<title>Responsive Vertical Timeline (Small)</title>
 	<style>
 		* {
 			font-family: 'IBM Plex Sans',arial,sans-serif;
@@ -31,12 +32,12 @@ V-TimeLine r.20190207
 </head>
 <body>
 	<div align="center">
-		<h1>Responsive Vertical Timeline</h1>
+		<h1>Responsive Vertical Timeline (Small)</h1>
 	</div>
 	<div id="the-timeline-placeholder"></div>
 	<hr class="vtml-hr">
 	<br>
-	<button onclick="self.location='sample-small.html';" style="position:fixed; top:20px; right:20px;">Small Sized TimeLine</button>
+	<button onclick="self.location='sample.html';" style="position:fixed; top:20px; right:20px;">Default Sized TimeLine</button>
 	<script>
 		function renderTimeline(code) {
 			$('#the-timeline-placeholder').html(code);

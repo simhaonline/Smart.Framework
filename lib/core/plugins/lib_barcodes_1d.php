@@ -31,7 +31,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
 //		* Code39: 	39 / 39+C / 39E / 39E+C
 //		* RMS4CC: 	CBC / KIX
 // License: BSD
-// (c) 2015 unix-world.org
+// (c) 2015-2019 unix-world.org
 //============================================================
 // Class to create DataMatrix ECC 200 barcode arrays.
 // DataMatrix (ISO/IEC 16022:2006) is a 2-D bar code.
@@ -57,7 +57,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.170413
+ * @version 	v.20190207
  * @package 	Components:Misc
  *
  */
@@ -542,7 +542,7 @@ final class SmartBarcode1D {
 final class SmartBarcode1D_128 {
 
 	// ->
-	// v.160827
+	// v.20190207
 
 	private $code = '';
 	private $mode = '';
@@ -839,7 +839,7 @@ final class SmartBarcode1D_128 {
 final class SmartBarcode1D_93 {
 
 	// ->
-	// v.160827
+	// v.20190207
 
 	private $code = '';
 	private $extended = true;
@@ -1112,7 +1112,7 @@ final class SmartBarcode1D_93 {
 final class SmartBarcode1D_39 {
 
 	// ->
-	// v.160827
+	// v.20190207
 
 	private $code = '';
 	private $extended = true;
@@ -1365,7 +1365,7 @@ final class SmartBarcode1D_39 {
 //============================================================
 // BarCode 1D:	RMS4CC (CBC / KIX)
 // License: BSD
-// (c) 2015 unix-world.org
+// (c) 2015-2019 unix-world.org
 //============================================================
 // Class to create RMS 1D barcodes.
 // RMS4CC (Royal Mail 4-state Customer Code)
@@ -1398,7 +1398,7 @@ final class SmartBarcode1D_39 {
 final class SmartBarcode1D_RMS4CC {
 
 	// ->
-	// v.160827
+	// v.20190207
 
 	private $code = '';
 	private $mode = '';

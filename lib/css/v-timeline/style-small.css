@@ -1,6 +1,6 @@
 
 /***** V-TimeLine Small CSS :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7 *****/
-/* V-TimeLine r.20190103
+/* V-TimeLine r.20190207
 	License: BSD
 	(c) 2015-2019 unix-world.org
 */
@@ -8,10 +8,10 @@
 .vtml-timeline-icon {
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 20px !important;
 	width: 48px;
 	height: 48px;
-	margin-left: -7px;
+	margin-left: -24px !important;
 	border: 4px solid #E4E4E4;
 	border-radius: 10%;
 	cursor: default;

@@ -48,7 +48,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.170413
+ * @version 	v.20190207
  * @package 	Components:Misc
  *
  */
@@ -464,7 +464,7 @@ final class SmartBarcode2D {
 //============================================================
 // BarCode 2D: QRCode
 // License: BSD
-// (c) 2015 unix-world.org
+// (c) 2015-2019 unix-world.org
 //============================================================
 // Class to create QR-Code barcode arrays.
 // QR Code symbol is a 2D barcode that can be scanned by
@@ -517,7 +517,7 @@ final class SmartBarcode2D {
 final class SmartBarcode2D_QRcode {
 
 	// ->
-	// v.160827
+	// v.20190207
 
 
 	// Encoding modes (characters which can be encoded in QRcode)
@@ -3264,7 +3264,7 @@ final class SmartBarcode2D_QRcode {
 final class SmartBarcode2D_DataMatrix {
 
 	// ->
-	// v.160827
+	// v.20190207
 
 
 	const SEMACODE_ENCODE_ASCII = 0; 		// ASCII encoding: ASCII character 0 to 127 (1 byte per CW)
@@ -4483,7 +4483,7 @@ final class SmartBarcode2D_DataMatrix {
 final class SmartBarcode2D_Pdf417 {
 
 	// ->
-	// v.160827
+	// v.20190207
 
 
 	const BCODE2D_PDF_417_ROW_HEIGHT = 4; // Row height respect X dimension of single module

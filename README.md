@@ -1,6 +1,6 @@
 # Smart.Framework: a modern and high performance PHP / Javascript Framework for Web featuring MVC + Middlewares
-## Dual-licensed: under BSD license or LGPLv3 license (at your choice)
-### This software project is open source. You must choose which license to use depending on your use case: BSD license or LGPLv3 license (see LICENSE file)
+## Dual-licensed: under BSD license or GPLv3 license (at your choice)
+### This software project is open source. You must choose which license to use depending on your use case: BSD license or GPLv3 license (see LICENSE file)
 <b>(c) 2009 - 2019 unix-world.org</b> / <i>support&#64;unix-world.org</i>
 
  &nbsp; | &nbsp;
