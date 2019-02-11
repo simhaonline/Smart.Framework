@@ -24,7 +24,7 @@
 	<script src="../../jquery.event.drag.js"></script>
 	<script src="../../jquery.event.drop.js"></script>
 	<link rel="stylesheet" href="../../jquery.sortable.css" type="text/css">
-	<script src="../../jquery.event.sortable.js"></script>
+	<script src="../../jquery.sortable.js"></script>
 	<script src="../../jquery.hammer.js"></script>
 	<link rel="stylesheet" href="../../jquery.highlight.css" type="text/css">
 	<script src="../../jquery.highlight.js"></script>
@@ -35,8 +35,6 @@
 	<script src="../../jquery.sparkline.js"></script>
 	<link rel="stylesheet" href="../../jquery.tiptop.css" type="text/css">
 	<script src="../../jquery.tiptop.js"></script>
-	<link rel="stylesheet" href="../../qunit.css" type="text/css">
-	<script src="../../qunit.js"></script>
 	<!-- #END not required -->
 
 	<script src="../simpletree.js"></script>
@@ -50,6 +48,7 @@
 	</h1>
 	<p>intentionally basic, with highlight on word 'lorem' (e.g. no custom styling) ; modified by unixman, for Smart.Framework</p>
 
+	<b>this tree is sortable</b>
 	<ul class="hierarchy">
 		<li>hello</li>
 		<li>
@@ -91,7 +90,7 @@
 	<script>
 		jQuery('ul.hierarchy').simpletree({
 			useAnimation: true
-		});
+		}).sortable();
 		jQuery('ul.selection').simpletree({
 			signCollapsed: '+',
 			signExpanded: '-'

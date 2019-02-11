@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="../../../core/plugins/fonts/typo/sans/ibm-plex-sans.css">
 	<script src="../../jquery/jquery.js"></script>
 	<link rel="stylesheet" href="../themes/keyboard.css">
-	<link rel="stylesheet" href="../themes/keyboard-light.css">
+	<link rel="stylesheet" href="../themes/keyboard-dark.css">
 	<script src="../jquery.keyboard.js"></script>
 	<script src="../keyboard-layouts-combined.js"></script>
 	<link rel="stylesheet" href="../extensions/css/keyboard-previewkeyset.css">
@@ -25,10 +25,13 @@
 	</style>
 </head>
 <body>
-<div id="keyboard-wrapper">
-	<h1>Virtual Keyboard</h1>
+<form id="login-form" autocomplete="off">
+<div id="keyboard-wrapper">user:
+	<input type="text" class="vkeyboard" autocomplete="off">
 	<input style="display:none;" type="text" id="kblayout" value="querty" readonly>
-	Keyboard Layout:
+	<br>pass:
+	<input name="pass1234567890" type="password" class="vkeyboard password" autocomplete="off">
+	<br>Keyboard Layout:
 	<select id="switcher" autocomplete="off">
 		<option value="qwerty" selected>English-US (Querty)</option>
 		<option value="french-bepo-V1.0rc2">French</option>
@@ -46,16 +49,13 @@
 		<option value="ethiopic">Ethiopic</option>
 		<option value="burmese">Burmese</option>
 	</select>
-	<br>
-	<br>
-	<textarea style="width:300px; height:150px;" class="vkeyboard" autocomplete="off" spellcheck="false"></textarea>
+</form>
 </div>
 <script>
 
 jQuery('.vkeyboard').keyboard({
 	layout: 'qwerty',
-	usePreview: false,
-	autoAccept: true
+	usePreview: false
 })
 .previewKeyset({
 	sets : [ 'normal', 'shift', 'alt', 'alt-shift' ]

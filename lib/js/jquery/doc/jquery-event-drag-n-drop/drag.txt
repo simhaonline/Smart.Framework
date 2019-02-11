@@ -1,6 +1,35 @@
 
 jquery.event.drag
 
+=== sample
+
+var diffX = 0;
+$('.target').bind("dragstart", function(e,d) {
+	var $wnd = $(this).parent().parent();
+	$wnd.css({'opacity':0.1});
+	ofs = $wnd.offset();
+	diffX = e.pageX - parseInt(ofs.left);
+	if(diffX <= 0) {
+		diffX = 0;
+	} else if(diffX > parseInt($(window).width()) / 2) {
+		diffX = 0;
+	}
+}).bind("drag", function(e,d) {
+	if(e && e.pageX && e.pageY) {
+		$(this).parent().parent().offset({
+			top: e.pageY,
+			left: e.pageX - diffX
+		});
+	}
+}).bind("dragend", function(e,d) {
+	var $wnd = $(this).parent().parent();
+	diffX = 0;
+	ofs = $wnd.offset();
+	$(this).parent().parent().css({'opacity':1});
+});
+
+===
+
 A jquery special event plugin that makes the task of adding complex drag interactions, to any element, simple and powerful.
 Overview
 

@@ -20,7 +20,8 @@ modules/mod-ui-fonts
 modules/mod-ui-jqueryui
 modules/mod-ui-uikit
 modules/mod-ui-w3
-modules/mod-vanilla
+modules/mod-xtra-bizz
+modules/mod-xtra-vanilla
 modules/mod-wflow-components
 modules/smart-extra-libs
 modules/vendor

@@ -1,0 +1,115 @@
+
+/*
+// jquery.alertable.js - Minimal alert, confirmation, and prompt alternatives.
+// Developed by Cory LaViska for A Beautiful Site, LLC
+// Licensed under the MIT license: http://opensource.org/licenses/MIT
+
+// r.20190211
+// (c) 2019 unix-world.org
+// License: BSD
+// contains fixes by unixman
+*/
+
+/* Modal */
+.alertable {
+	position: fixed;
+	z-index: 9999;
+	top: 10vh;
+	left: calc(50% - 150px);
+	width: 300px;
+	background: white;
+	border-radius: 4px;
+	padding: 20px;
+	margin: 0 auto;
+}
+
+/* Overlay */
+.alertable-overlay {
+	position: fixed;
+	z-index: 9998;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0, 0, 0, .5);
+}
+
+/* Message */
+.alertable-message {
+	margin-bottom: 20px;
+	white-space: pre-wrap;
+}
+
+/* Prompt */
+.alertable-prompt {
+	margin-bottom: 20px;
+}
+
+.alertable-input {
+	width: 100%;
+	border-radius: 4px;
+	box-shadow: none;
+	border: solid 1px #ccc;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+	padding: 6px 12px;
+	display: block;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+}
+
+/* Button group */
+.alertable-buttons {
+	text-align: right;
+}
+
+/* OK button */
+.alertable-ok {
+/*
+	background: #09d;
+	border: solid 1px #09d;
+	color: white;
+*/
+	background: #FFFFFF;
+	border: solid 1px #DDDDDD;
+	color: #333333;
+	font-family: inherit;
+	font-size: inherit;
+	border-radius: 4px;
+	padding: 6px 12px;
+	margin-left: 4px;
+	cursor: pointer;
+}
+
+.alertable-ok:hover,
+.alertable-ok:focus,
+.alertable-ok:active {
+/*	background-color: #08c; */
+	background-color: #DCDCDC;
+	outline: none;
+}
+.alertable-ok::-moz-focus-inner { /* disable mozilla focus selector as dotted border */
+	border: 0 !important;
+}
+
+/* Cancel button */
+.alertable-cancel {
+	border: solid 1px #DDDDDD;
+	background: #FFFFFF;
+	font-family: inherit;
+	font-size: inherit;
+	color: #888888;
+	border-radius: 4px;
+	padding: 6px 12px;
+	margin-left: 4px;
+	cursor: pointer;
+}
+
+.alertable-cancel:hover,
+.alertable-cancel:focus,
+.alertable-cancel:active {
+	background-color: #f2f2f2;
+}
+
+/* END */
