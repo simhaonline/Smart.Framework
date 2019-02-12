@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190105
+ * @version 	v.20190211
  * @package 	Mailer
  *
  */
@@ -117,7 +117,7 @@ public function send($do_send, $raw_message='') {
 	$tmp_domain = (string) trim($tmp_explode_arr[1]); // used for message ID
 	//--
 	if((string)$this->namefrom != '') {
-		$tmp_name = SmartUnicode::deaccent_str($this->namefrom);
+		$tmp_name = (string) SmartUnicode::deaccent_str((string)$this->namefrom);
 	} else {
 		$tmp_name = (string) ucwords((string)str_replace(array('.', '-', '_'), array(' ', ' ', ' '), (string)$tmp_name));
 	} //end if
@@ -209,7 +209,7 @@ public function send($do_send, $raw_message='') {
 				$this->log = 'SendMail :: DEBUG :: MAIL';
 			} //end if
 			//--
-			if(SmartUnicode::mailsend($this->to, $this->prepare_subject($this->subject), '', $this->mime_message) != true) {
+			if(SmartUnicode::mailsend((string)$this->to, (string)$this->prepare_subject($this->subject), '', (string)$this->mime_message) != true) {
 				$err = 'Mail Method Failed !';
 				if($this->debuglevel > 0) {
 					$this->log .= ' :: '.$err;
@@ -350,7 +350,7 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 			} //end if else
 			//--
 			if((string)$disp == 'inline') {
-				$charset = (string) self::secure_header((string)SmartUnicode::str_toupper((string)trim((string)$this->charset)));
+				$charset = (string) self::secure_header((string)strtoupper((string)trim((string)$this->charset)));
 			} //end if
 			//--
 			$name = (string) self::secure_header((string)$name);
@@ -650,7 +650,7 @@ private function build_multipart() {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190105
+ * @version 	v.20190211
  * @package 	Mailer
  *
  */
@@ -875,7 +875,7 @@ public function connect($helo, $server, $port=25, $sslversion='') {
 	//--
 	$chk_crypto = (array) @stream_get_meta_data($this->socket);
 	if(((string)$protocol != '') OR ($start_tls === true)) { // avoid connect normally if SSL/TLS was explicit required
-		if(!SmartUnicode::str_icontains($chk_crypto['stream_type'], '/ssl')) { // will return something like: tcp_socket/ssl
+		if(stripos((string)$chk_crypto['stream_type'], '/ssl') === false) { // expects to have something like: tcp_socket/ssl
 			//--
 			$this->error = '[ERR] Connection CRYPTO CHECK Failed ...';
 			//--
@@ -1362,10 +1362,10 @@ public function data_send($msg_data) {
 	// Currently assuming rfc 822 definitions of msg headers and if the first field of the first line (':' sperated) does not contain a space
 	// then it _should_ be a header and we can process all lines before a blank "" line as headers.
 	//--
-	$field = SmartUnicode::sub_str($lines[0], 0, SmartUnicode::str_pos($lines[0], ':'));
+	$field = (string) substr((string)$lines[0], 0, strpos((string)$lines[0], ':'));
 	$in_headers = false;
 	//--
-	if(((string)$field != '') AND (!SmartUnicode::str_contains($field, ' '))) {
+	if(((string)$field != '') AND (strpos((string)$field, ' ') === false)) {
 		$in_headers = true;
 	} //end if
 	//--
@@ -1382,11 +1382,11 @@ public function data_send($msg_data) {
 			$in_headers = false;
 		} //end if
 		//-- ok we need to break this line up into several smaller lines
-		while(SmartUnicode::str_len($line) > $max_line_length) {
+		while((int)strlen((string)$line) > (int)$max_line_length) {
 			//--
-			$pos = SmartUnicode::str_rpos(SmartUnicode::sub_str($line, 0, $max_line_length), ' '); // here we need reverse strpos
-			$lines_out[] = SmartUnicode::sub_str($line, 0, $pos);
-			$line = SmartUnicode::sub_str($line, ($pos + 1));
+			$pos = strrpos((string)substr((string)$line, 0, (int)$max_line_length), ' '); // here we need reverse strpos
+			$lines_out[] = (string) substr((string)$line, 0, $pos);
+			$line = (string) substr((string)$line, ($pos + 1));
 			//-- if we are processing headers we need to add a LWSP-char to the front of the new line rfc 822 on long msg headers
 			if($in_headers) {
 				$line = "\t".$line;
@@ -1396,12 +1396,11 @@ public function data_send($msg_data) {
 		//--
 		$lines_out[] = $line;
 		//-- now send the lines to the server
-		//while(list(,$line_out) = @each($lines_out)) {
 		//while(list($key,$line_out) = @each($lines_out)) { // FIX to be compatible with the upcoming PHP 7
 		foreach($lines_out as $key => $line_out) { // Fix: the above is deprecated as of PHP 7.2
 			//--
 			if((string)$line_out != '') {
-				if(SmartUnicode::sub_str($line_out, 0, 1) == '.') {
+				if((string)substr((string)$line_out, 0, 1) == '.') {
 					$line_out = '.'.$line_out;
 				} //end if
 			} //end if
@@ -1445,7 +1444,9 @@ public function data_send($msg_data) {
 // [PRIVATE]
 // read the server code (1st 3 chars ; Ex: 220 = OK)
 private function answer_code($reply) {
-	return (string) trim((string)SmartUnicode::sub_str(trim($reply), 0, 3));
+	//--
+	return (string) trim((string)substr((string)trim((string)$reply), 0, 3));
+	//--
 } //END FUNCTION
 //=====================================================================================
 
@@ -1475,7 +1476,7 @@ private function retry_data() {
 			} //end if
 		} //end if
 		//-- if the 4th character is a space then we are done reading so just break the loop (else the 4th char. is '-')
-		if(SmartUnicode::sub_str($str, 3, 1) == ' ') {
+		if((string)substr((string)$str, 3, 1) == ' ') {
 			break;
 		} //end if
 		//--
