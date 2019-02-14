@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.181019
+ * @version     v.20190214
  * @package     Parsers
  *
  */
@@ -50,7 +50,7 @@ final class SmartXmlParser {
 
 //===============================
 private $encoding = 'ISO-8859-1';
-private $mode = 'simple'; // simple | extended | domxml (requires: DOMDocument)
+private $mode = 'simple'; // simple | extended | domxml (requires/prefer: DOMDocument)
 //===============================
 
 
@@ -67,6 +67,7 @@ public function __construct($mode='simple', $encoding='') {
 		$this->encoding = (string) $encoding;
 	} //end if
 	//--
+	$mode = (string) strtolower((string)$mode);
 	if((string)$mode === 'domxml') {
 		$this->mode = 'domxml';
 	} elseif((string)$mode === 'extended') {
@@ -79,15 +80,12 @@ public function __construct($mode='simple', $encoding='') {
 //===============================
 
 
-//===============================
-public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warns=false) {
+//=============================== Safe Validate and Format XML ; DomXML if used will also apply prettyPrint
+public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warns=false, $use_strict_validation=false) {
 
 	//--
 	$xml_str = (string) trim((string)$xml_str);
 	if((string)$xml_str == '') {
-		if((string)$this->mode == 'domxml') { // mandatory validation of XML
-			Smart::log_warning(__METHOD__.' # WARNING [XML-Format('.$this->mode.') / Encoding: '.$this->encoding.']:'."\n".'The XML is Empty ...'."\n".'#END'."\n");
-		} //end if
 		return '';
 	} //end if
 	//--
@@ -97,13 +95,13 @@ public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warn
 	//--
 
 	//--
-	if(!class_exists('DOMDocument')) {
-		if((string)$this->mode == 'domxml') { // mandatory validation of XML
-			Smart::log_warning(__METHOD__.' # WARNING [XML-Format('.$this->mode.') / Encoding: '.$this->encoding.']:'."\n".'The PHP DOMDocument() class is missing ...'."\n".'#END'."\n");
-			return ''; // must validate via DomDocument and cannot !!
-		} else {
-			return (string) $xml_str; // return as is
-		} //end if else
+	$validate_mode = 'simplexml'; // 'simple' | 'extended'
+	if((string)$this->mode == 'domxml') {
+		if(class_exists('DOMDocument')) {
+			$validate_mode = 'domxml'; // 'domxml'
+		} elseif($use_strict_validation === true) {
+			Smart::log_warning(__METHOD__.' # WARNING [XML-Format('.$this->mode.') / Encoding: '.$this->encoding.']:'."\n".'The PHP DOMDocument class is missing ; Using SimpleXML instead ...'."\n".'#END'."\n");
+		} //end if
 	} //end if
 	//--
 
@@ -113,18 +111,28 @@ public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warn
 	//--
 
 	//--
-	$dom = new DOMDocument('1.0', (string)SMART_FRAMEWORK_CHARSET);
-	$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
-	$dom->strictErrorChecking = false; 							// do not throw errors
-	$dom->preserveWhiteSpace = (bool) $preserve_whitespace; 	// do not remove redundant white space
-	$dom->formatOutput = true; 									// do not try to format pretty-print the code
-	$dom->resolveExternals = false; 							// disable load external entities from a doctype declaration
-	$dom->validateOnParse = false; 								// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
-	//--
-	@$dom->loadXML(
-		(string) $xml_str, // no need to fix root element on DomDocument !
-		LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
-	);
+	if((string)$validate_mode == 'domxml') {
+		//--
+		$dom = new DOMDocument('1.0', (string)SMART_FRAMEWORK_CHARSET);
+		$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
+		$dom->strictErrorChecking = false; 							// do not throw errors
+		$dom->preserveWhiteSpace = (bool) $preserve_whitespace; 	// do not remove redundant white space
+		$dom->formatOutput = true; 									// do not try to format pretty-print the code
+		$dom->resolveExternals = false; 							// disable load external entities from a doctype declaration
+		$dom->validateOnParse = false; 								// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
+		//--
+		@$dom->loadXML(
+			(string) $xml_str, // no need to fix root element on DomDocument !
+			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
+		);
+	} else { // simpleXML
+		//--
+		$sxml = new SimpleXMLElement(
+			(string) $xml_str, // no need to fix root element, can be unsafe :: $this->FixXmlRoot((string)$xml_str)
+			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
+		);
+		//--
+	} //end if else
 	//--
 
 	//-- log errors if any
@@ -148,15 +156,28 @@ public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warn
 	//--
 
 	//--
-	if(is_object($dom)) {
-		$xml_str = (string) @$dom->saveXML();
+	if((string)$validate_mode == 'domxml') {
+		if(is_object($dom)) {
+			$xml_str = (string) @$dom->saveXML();
+			$xml_str = (string) trim((string)$xml_str);
+			if((string)$xml_str != '') {
+				$xml_str .= "\n".'<!-- SafeFilter: SmartFramework.XML.Format(Validate:DomXML) -->';
+			} //end if
+		} else {
+			$xml_str = ''; // document is not valid, return empty string
+		} //end if else
 		$dom = null; // free mem
 	} else {
-		$dom = null; // free mem
-		if((string)$this->mode == 'domxml') { // mandatory validation of XML
-			Smart::log_warning(__METHOD__.' # WARNING [XML-Format('.$this->mode.') / PreserveWhiteSpace('.(int)(bool)$preserve_whitespace.') / Encoding: '.$this->encoding.']:'."\n".'The PHP DOMDocument() object Failed to Validate the XML code ...'."\n".'#END'."\n");
-			return ''; // document is not valid
-		} //end if
+		if(is_object($sxml)) {
+			$xml_str = (string) @$sxml->asXML();
+			$xml_str = (string) trim((string)$xml_str);
+			if((string)$xml_str != '') {
+				$xml_str .= "\n".'<!-- SafeFilter: SmartFramework.XML.Format(Validate:SimpleXML) -->';
+			} //end if
+		} else {
+			$xml_str = ''; // document is not valid, return empty string
+		} //end if else
+		$sxml = null; // free mem
 	} //end if else
 	//--
 
@@ -580,19 +601,28 @@ private function DomNode2Array($node) {
  * <code>
  *   //-- Sample use:
  *   $array = array(
- *   	'xml' => array(
- *   		'id' => '15',
- *   		'name' => 'Test',
- *   		'data' => array(
- *   			'key1' => '12345',
- *   			'key2' => '67890',
- *   			'key3' => 'ABCDEF'
- *   		),
- *   		'date' => '2016-02-05 09:30:05'
- *   	)
+ *   	'id' => '15',
+ *   	'name' => 'Test',
+ *   	'data' => array(
+ *   		'key1' => '12345',
+ *   		'key2' => '67890',
+ *   		'key3' => 'ABCDEF'
+ *   	),
+ *   	'date' => '2016-02-05 09:30:05'
  *   );
- *   $xml = (new SmartXmlComposer())->transform($array);
+ *   $xml = (new SmartXmlComposer())->transform($array, 'myxml');
  *   echo $xml;
+ *   //-- will have something like:
+ *   <myxml>
+ *     <id>15</id>
+ *     <name>Test</name>
+ *     <data>
+ *       <key1>12345</key1>
+ *       <key2>67890</key2>
+ *       <key3>ABCDEF</key3>
+ *     </data>
+ *     <date>2016-02-05 09:30:05</date>
+ *   </myxml>
  *   //--
  * </code>
  *
@@ -601,7 +631,7 @@ private function DomNode2Array($node) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.181019
+ * @version     v.20190214
  * @package     Parsers
  *
  */
@@ -632,9 +662,15 @@ public function __construct($encoding='') {
 
 
 //===============================
-public function transform($y_array) {
+public function transform($y_array, $xmlroot='xml') {
 	//--
-	return '<'.'?xml version="1.0" encoding="'.Smart::escape_html($this->encoding).'"?'.'>'."\n".$this->CreateFromArr($y_array);
+	$xmlroot = (string) trim((string)$xmlroot);
+	if((string)$xmlroot == '') {
+		Smart::log_warning(__METHOD__.' # expects the XML root element parameter to be non-empty ...');
+		return '<error>XML Writer requires the XML root element as parameter</error>';
+	} //end if
+	//--
+	return '<'.'?xml version="1.0" encoding="'.Smart::escape_html($this->encoding).'"?'.'>'."\n".'<'.Smart::escape_html($xmlroot).'>'."\n".trim((string)$this->CreateFromArr($y_array))."\n".'</'.Smart::escape_html($xmlroot).'>';
 	//--
 } //END FUNCTION
 //===============================
@@ -661,14 +697,14 @@ private function CreateFromArr($y_array) {
 	foreach($y_array as $key => $val) {
 		//--
 		if($arrtype === 2) { // fix keys for associative array
-			if((is_numeric($key)) OR ((string)$key == '')) {
-				$key = (string) '_'.$key; // numeric or empty keys are not allowed: _#
+			if((is_bool($key)) OR (is_numeric($key)) OR ((string)$key == '')) {
+				$key = (string) '_'.$key; // boolean, numeric or empty keys are not xml compliant, will be converted to string and prefixed with an underscore: _
 			} //end if
 		} //end if
 		//--
 		if(is_array($val)) {
 			if(is_numeric($key)) { // this can happen only if non-associative array as for associative arrays the numeric key is fixed above as _#
-				$out .= $this->CreateFromArr($val);
+				$out .= (string) $this->CreateFromArr($val);
 			} else {
 				$out .= '<'.Smart::escape_html($key).'>'."\n".$this->CreateFromArr($val).'</'.Smart::escape_html($key).'>'."\n";
 			} //end if else

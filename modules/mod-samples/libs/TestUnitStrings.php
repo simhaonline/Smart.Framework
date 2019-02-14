@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20190214
  *
  */
 final class TestUnitStrings {
@@ -301,24 +301,36 @@ final class TestUnitStrings {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$the_test = 'XML Unicode Test: Compose from Array / Parse from XML';
+			$the_test = 'XML Unicode Test: Compose XML from Array / Format (Validate) XML / Parse XML to Array';
 			$tests[] = $the_test;
 			$test_arr = array(
-				'TEST' => 'Testing weird key characters',
-				'line1' => 'Some ISO-8859-1 String: @ # $ % ^ & * (\') _ - + = { [ " ] } ; < ,. > / ? \\ |',
+				'LINE0' => 'Testing weird key characters with case sensitive keys',
+				'line1' => 'Some ISO-8859-1 Unsafe Characters: @ # $ % ^ & * (\') _ - + = { [ " ] } ; < ,. > ~` / ! ? \\ |',
 				'line2' => '<Unicode> ("long") \'String\': '.$unicode_text.' '.\SmartUnicode::str_toupper($unicode_text).' '.$unicode_text.' '.\SmartUnicode::str_tolower($unicode_text).' '.$unicode_text.' '.\SmartUnicode::deaccent_str($unicode_text).' '.$unicode_text,
-				'line3' => ['A' => 'b', 'c' => 'D', 'e' => '', 'f' => ['g' => 'h', 'i' => '']],
+				'line3' => ['A' => 'b', 'c' => 'D', 'e' => '', 'F' => ['g' => 'H', 'i' => '']],
 				'line4' => '',
-				'line5' => date('Y-m-d H:i:s')
+				'line5' => date('Y-m-d H:i:s'),
+				'Line6' => \SmartHashCrypto::sha1((string)time()),
+				'linE7' => \SmartHashCrypto::sha256((string)time()),
+				'LiNe8' => \SmartHashCrypto::sha384((string)time()),
+				'LiNE9' => \SmartHashCrypto::sha512((string)time())
 			);
-			$test_xml = (string) (new \SmartXmlComposer())->transform($test_arr);
+			$test_xml = (string) (new \SmartXmlComposer())->transform($test_arr, 'xml');
+		//	\Smart::log_notice($test_xml);
+			$test_xml = (string) (new \SmartXmlParser())->format($test_xml);
+		//	\Smart::log_notice($test_xml);
+			$test_xml = (string) (new \SmartXmlParser('domxml'))->format($test_xml);
+		//	\Smart::log_notice($test_xml);
 			$test_parr = (new \SmartXmlParser())->transform($test_xml);
-			if($test_arr !== $test_parr) {
-				$err = 'ERROR: '.$the_test.' FAILED ...'.' #ORIGINAL Array ['.print_r($test_arr,1).']'."\n\n".'#XML Array (from XML String): '.print_r($test_parr,1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
+			if(!is_array($test_parr)) {
+				$test_parr = array();
+			} //end if
+			if($test_arr !== $test_parr['xml']) {
+				$err = 'ERROR: '.$the_test.' FAILED ...'.' #ORIGINAL Array ['.print_r($test_arr,1).']'."\n\n".'#XML Array (from XML String): '.print_r($test_parr['xml'],1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
 			} //end if
 		} //end if
 		//--
-		$the_random_unicode_text = sha1($unicode_text.\Smart::random_number(1000,9999)).'-'.$unicode_text." \r\n\t".'-'.\Smart::uuid_10_num().'-'.\Smart::uuid_10_str().'-'.\Smart::uuid_10_seq();
+		$the_random_unicode_text = (string) sha1($unicode_text.\Smart::random_number(1000,9999)).'-'.$unicode_text." \r\n\t".'-'.\Smart::uuid_10_num().'-'.\Smart::uuid_10_str().'-'.\Smart::uuid_10_seq();
 		//--
 		if((string)$err == '') {
 			$the_test = 'Data: Archive / Unarchive';

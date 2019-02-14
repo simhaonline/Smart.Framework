@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20190113
+ * @version 	v.20190214
  * @package 	Base
  *
  */
@@ -1596,8 +1596,179 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 
 
 //================================================================
-// Handle Upload One File ; To handle many files upload at once must iterate using this function by var_index=0..n
-// returns FALSE if no file uploaded ; Empty String if OK ; Error String otherwise
+// Reads and return one Uploaded File
+// To handle many uploaded files must iterate using this function by var_index=0..n ; else must be var_index=-1
+// RETURN: array [ status => 'OK' | 'WARN' | 'ERR', 'message' => '' | 'WARN Message' | 'ERR Message', 'filename' => '' | 'filename.ext', 'filetype' => '' | 'ext', 'filesize' => Bytes, 'filecontent' => '' | 'the Contents of the file ...' ]
+// {{{SYNC-HANDLE-F-UPLOADS}}}
+public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0, $allowed_extensions='') {
+	//--
+	$var_name 	= (string) trim((string)$var_name);
+	$var_index 	= (int)    $var_index; // can be negative or 0..n
+	$max_size 	= (int)    Smart::format_number_int($max_size,'+');
+	if($max_size <= 0) {
+		$max_size = (int) SmartFileSysUtils::max_upload_size();
+	} //end if
+	$allowed_extensions = (string) trim((string)$allowed_extensions);
+	//--
+	$out = [
+		'status' 		=> 'ERR', 			// 'OK' | 'WARN' | 'ERR'
+		'message' 		=> '???', 			// '' | 'WARN Message' | 'ERR Message'
+		'filename' 		=> '', 				// '' | 'filename.ext'
+		'filetype' 		=> '', 				// '' | 'ext'
+		'filesize' 		=> 0, 				// Bytes
+		'filecontent' 	=> '' 				// '' | 'the Contents of the file ...'
+	];
+	//--
+	if(Smart::array_size($_FILES) <= 0) {
+		$out['status'] = 'WARN';
+		$out['message'] = 'No files uploads detected ...';
+		return (array) $out;
+	} //end if
+	//--
+	if((string)$var_name == '') {
+		$out['status'] = 'ERR';
+		$out['message'] = 'Invalid File VarName for Upload';
+		return (array) $out;
+	} //end if
+	//--
+	if($var_index >= 0) {
+		$the_upld_file_name 	= (string) $_FILES[$var_name]['name'][$var_index];
+		$the_upld_file_tmpname 	= (string) $_FILES[$var_name]['tmp_name'][$var_index];
+		$the_upld_file_error 	= (int)    $_FILES[$var_name]['error'][$var_index];
+	} else {
+		$the_upld_file_name 	= (string) $_FILES[$var_name]['name'];
+		$the_upld_file_tmpname 	= (string) $_FILES[$var_name]['tmp_name'];
+		$the_upld_file_error 	= (int)    $_FILES[$var_name]['error'];
+	} //end if else
+	//-- check uploaded tmp name
+	$the_upld_file_tmpname = (string) trim((string)$the_upld_file_tmpname);
+	if((string)$the_upld_file_tmpname == '') {
+		$out['status'] = 'WARN';
+		$out['message'] = 'No File Uploaded (Empty TMP Name) ...';
+		return (array) $out;
+	} //end if
+	//-- fix file name
+	$the_upld_file_name = (string) SmartUnicode::deaccent_str($the_upld_file_name);
+	$the_upld_file_name = (string) str_replace('#', '-', $the_upld_file_name); // {{{SYNC-WEBDAV-#-ISSUE}}}
+	$the_upld_file_name = (string) Smart::safe_filename($the_upld_file_name, '-'); // {{{SYNC-SAFE-FNAME-REPLACEMENT}}}
+	//-- remove versioning if any
+	$the_upld_file_name = (string) SmartFileSysUtils::version_remove($the_upld_file_name);
+	//-- remove dangerous characters
+	$the_upld_file_name = (string) trim((string)str_replace(['\\', ' ', '?'], ['-', '-', '-'], (string)$the_upld_file_name));
+	$the_upld_file_name = (string) trim((string)$the_upld_file_name);
+	//-- hard limit for file name length for max 100 characters
+	if((string)$the_upld_file_name == '') {
+		$out['status'] = 'WARN';
+		$out['message'] = 'Uploaded File Name is Invalid (Empty)';
+		return (array) $out;
+	} //end if
+	if(strlen((string)$the_upld_file_name) > 100) {
+		$out['status'] = 'WARN';
+		$out['message'] = 'Uploaded File Name is too long (oversize 100 characters): '.$the_upld_file_name;
+		return (array) $out;
+	} //end if
+	if(!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_upld_file_name)) {
+		$out['status'] = 'WARN';
+		$out['message'] = 'Uploaded File Name is Invalid (not Safe): '.$the_upld_file_name;
+		return (array) $out;
+	} //end if
+	//-- protect against dot files .*
+	if(substr((string)$the_upld_file_name, 0, 1) == '.') {
+		$out['status'] = 'WARN';
+		$out['message'] = 'Uploaded File Name is Invalid (Dot .Files are not allowed for safety): '.$the_upld_file_name;
+		return (array) $out;
+	} //end if
+	//--
+	$tmp_fext = (string) strtolower((string)SmartFileSysUtils::get_file_extension_from_path((string)$the_upld_file_name)); // get the extension
+	//-- {{{SYNC-CHK-ALLOWED-DENIED-EXT}}}
+	if((string)$allowed_extensions != '') {
+		if(stripos((string)$allowed_extensions, '<'.$tmp_fext.'>') === false) {
+			$out['status'] = 'WARN';
+			$out['message'] = 'Upload Failed: The uploaded file extension is not in the current custom allowed extensions list for file: '.$the_upld_file_name;
+			return (array) $out;
+		} //end if
+	} //end if
+	if((defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) AND ((string)trim((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS) != '')) {
+		if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
+			$out['status'] = 'WARN';
+			$out['message'] = 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration for file: '.$the_upld_file_name;
+			return (array) $out;
+		} //end if
+	} //end if
+	if((!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) OR (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false)) {
+		$out['status'] = 'WARN';
+		$out['message'] = 'Upload Failed: The uploaded file extension is denied by the current configuration for file: '.$the_upld_file_name;
+		return (array) $out;
+	} //end if
+	//-- check for upload errors
+	$up_err = '';
+	switch((int)$the_upld_file_error) {
+		case UPLOAD_ERR_OK:
+			// OK, no error
+			break;
+		case UPLOAD_ERR_INI_SIZE:
+			$up_err = 'UPLOAD ERROR: The uploaded file exceeds the upload_max_filesize directive in php.ini';
+			break;
+		case UPLOAD_ERR_FORM_SIZE:
+			$up_err = 'UPLOAD ERROR: The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+			break;
+		case UPLOAD_ERR_PARTIAL:
+			$up_err = 'UPLOAD ERROR: The uploaded file was only partially uploaded';
+			break;
+		case UPLOAD_ERR_NO_FILE:
+			$up_err = 'UPLOAD ERROR: No file was uploaded';
+			break;
+		case UPLOAD_ERR_NO_TMP_DIR:
+			$up_err = 'UPLOAD ERROR: Missing a temporary folder';
+			break;
+		case UPLOAD_ERR_CANT_WRITE:
+			$up_err = 'UPLOAD ERROR: Failed to write file to disk';
+			break;
+		case UPLOAD_ERR_EXTENSION:
+			$up_err = 'UPLOAD ERROR: File upload stopped by extension';
+			break;
+		default:
+			$up_err =  'UPLOAD ERROR: Unknown error ...';
+	} //end switch
+	if((string)$up_err != '') {
+		$out['status'] = 'ERR';
+		$out['message'] = (string) $up_err.' for file: '.$the_upld_file_name;
+		return (array) $out;
+	} //end if
+	//-- do upload
+	if(!is_uploaded_file((string)$the_upld_file_tmpname)) {
+		$out['status'] = 'ERR';
+		$out['message'] = 'UPLOAD ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name.' at: '.$the_upld_file_tmpname;
+		return (array) $out;
+	} //end if
+	$fsize_upld = (int) SmartFileSystem::get_file_size($the_upld_file_tmpname);
+	if((int)$fsize_upld <= 0) { // dissalow upload empty files, does not make sense or there was an error !!!
+		$out['status'] = 'WARN';
+		$out['message'] = 'Upload Failed: File is empty: '.$the_upld_file_name;
+		return (array) $out;
+	} elseif((int)$fsize_upld > (int)$max_size) {
+		$out['status'] = 'WARN';
+		$out['message'] = 'Upload Failed: File is oversized: '.$the_upld_file_name;
+		return (array) $out;
+	} //end if
+	//--
+	$out['status'] = 'OK';
+	$out['message'] = '';
+	$out['filename'] = (string) $the_upld_file_name;
+	$out['filetype'] = (string) $tmp_fext;
+	$out['filecontent'] = (string) SmartFileSystem::read_uploaded($the_upld_file_tmpname);
+	$out['filesize'] = (int) strlen($out['filecontent']);
+	return (array) $out;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+// Store one Uploaded File
+// To handle many uploaded files must iterate using this function by var_index=0..n ; else must be var_index=-1
+// Returns: FALSE if no file uploaded ; Empty String if OK ; Error String otherwise
+// {{{SYNC-HANDLE-F-UPLOADS}}}
 public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, $allow_rewrite=true, $max_size=0, $allowed_extensions='', $new_name='', $enforce_lowercase=false) {
 	//--
 	$dest_dir = (string) $dest_dir;
@@ -1620,7 +1791,7 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 	} //end if
 	//--
 	if((string)$var_name == '') {
-		return 'Invalid File Var Name';
+		return 'Invalid File VarName for Upload';
 	} //end if
 	//--
 	if(SmartFileSysUtils::check_if_safe_path((string)$dest_dir) != '1') {
@@ -1635,13 +1806,13 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 	} //end if
 	//--
 	if($var_index >= 0) {
-		$the_upld_file_name = (string) $_FILES[$var_name]['name'][$var_index];
-		$the_upld_file_tmpname = (string) $_FILES[$var_name]['tmp_name'][$var_index];
-		$the_upld_file_error = (int) $_FILES[$var_name]['error'][$var_index];
+		$the_upld_file_name 	= (string) $_FILES[$var_name]['name'][$var_index];
+		$the_upld_file_tmpname 	= (string) $_FILES[$var_name]['tmp_name'][$var_index];
+		$the_upld_file_error 	= (int)    $_FILES[$var_name]['error'][$var_index];
 	} else {
-		$the_upld_file_name = (string) $_FILES[$var_name]['name'];
-		$the_upld_file_tmpname = (string) $_FILES[$var_name]['tmp_name'];
-		$the_upld_file_error = (int) $_FILES[$var_name]['error'];
+		$the_upld_file_name 	= (string) $_FILES[$var_name]['name'];
+		$the_upld_file_tmpname 	= (string) $_FILES[$var_name]['tmp_name'];
+		$the_upld_file_error 	= (int)    $_FILES[$var_name]['error'];
 	} //end if else
 	//-- check uploaded tmp name
 	$the_upld_file_tmpname = (string) trim((string)$the_upld_file_tmpname);
@@ -1755,7 +1926,7 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 	} //end if
 	//-- do upload
 	if(!is_uploaded_file((string)$the_upld_file_tmpname)) {
-		return 'FATAL ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name;
+		return 'UPLOAD ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name.' at: '.$the_upld_file_tmpname;
 	} //end if
 	$fsize_upld = (int) SmartFileSystem::get_file_size($the_upld_file_tmpname);
 	if((int)$fsize_upld <= 0) { // dissalow upload empty files, does not make sense or there was an error !!!

@@ -1,4 +1,4 @@
-/* Gritter for jQuery Version: 1.7.4.2 :: with fixes by unixman r.20190105 */
+/* Gritter for jQuery Version: 1.7.4.2 :: with fixes by unixman r.20190213 */
 
 #gritter-notice-wrapper {
 	z-index: 2147483000;
@@ -81,7 +81,7 @@
 	position: absolute;
 	top: 4px;
 	right: -4px;
-	background: url(img/closex.png) no-repeat left top;
+	background: url(img/closex.svg) no-repeat left top;
 	cursor: pointer;
 	width: 20px;
 	height: 20px;
