@@ -196,7 +196,7 @@ button.Zebra_DatePicker_Icon {
 	position: absolute;
 	width: 16px;
 	height: 16px;
-	background: url('images/calendar.png') no-repeat left top;
+	background: url('images/calendar.svg') no-repeat left top;
 	text-indent: -9000px;
 	border: none;
 	cursor: pointer;
@@ -206,7 +206,7 @@ button.Zebra_DatePicker_Icon {
 }
 
 button.Zebra_DatePicker_Icon_Disabled {
-	background-image: url('images/calendar-disabled.png');
+	background-image: url('images/calendar-disabled.svg');
 }
 
 /* MARGINS */

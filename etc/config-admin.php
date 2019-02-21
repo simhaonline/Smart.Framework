@@ -14,7 +14,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 $configs['app']['admin-domain'] 					= 'localhost.local'; 		// admin domain as yourdomain.ext
 $configs['app']['admin-home'] 						= 'samples.welcome';		// admin home page action
 $configs['app']['admin-default-module'] 			= 'samples';				// admin default module
-$configs['app']['admin-template-path'] 				= 'default';				// default admin templates folder from etc/templates/
+$configs['app']['admin-template-path'] 				= 'default';				// default admin template folder from etc/templates/
 $configs['app']['admin-template-file'] 				= 'template.htm';			// default admin template file
 //---------------------------------------
 

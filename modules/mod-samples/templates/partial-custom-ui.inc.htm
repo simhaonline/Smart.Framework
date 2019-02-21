@@ -1,0 +1,7 @@
+<!-- CustomUI: [####CUSTOM-JS-UI|html####] ; Semaphore: [####SEMAPHORE|html####] -->
+[%%%%IF:SEMAPHORE:==skip-js-ui;%%%%]
+	[%%%%IF:CUSTOM-JS-UI:==jqueryui;%%%%]
+		[@@@@SUB-TEMPLATE:?!modules/mod-ui-jqueryui/views/js-ui.inc.htm!@@@@]
+	[%%%%/IF:CUSTOM-JS-UI%%%%]
+[%%%%/IF:SEMAPHORE%%%%]
+<!-- # -->

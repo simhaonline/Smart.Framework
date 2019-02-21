@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20190105), (c) 2015-2019 unix-world.org
+	extended by unixman, (stable.20190219), (c) 2015-2019 unix-world.org
 	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
 */
 
@@ -263,7 +263,7 @@ a.ux-link:hover {
 
 .ux-button {
 	/* Structure */
-	display: inline-block !important;
+	display: inline-block; /* do not mark as important as it can't hide using jquery hide() */
 	padding: 7px 15px 7px 15px !important;
 	line-height: normal !important;
 	white-space: nowrap !important;
@@ -1297,7 +1297,7 @@ ul.ux-breadcrumb li a:hover {
 	color: #3C4663 !important;
 	background: #FFFFFF !important;
 	border: 1px solid #6C757D;
-	display: block !important;
+	display: block;
 	padding: 7px !important;
 	padding-left: 15px !important;
 	padding-right: 15px !important;
@@ -1309,7 +1309,7 @@ ul.ux-breadcrumb li a:hover {
 	color: #FFFFFF !important;
 	background: #3C4663 !important;
 	border: 1px solid #6D748C;
-	display: block !important;
+	display: block;
 	padding: 5px !important;
 	padding-left: 10px !important;
 	padding-right: 10px !important;

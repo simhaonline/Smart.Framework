@@ -38,6 +38,16 @@ if(SMART_FRAMEWORK_ADMIN_AREA === true) {
 class SmartAppAdminController extends SmartAbstractAppController {
 
 
+	public function Initialize() {
+		//--
+		// this is pre-run
+		//--
+		$this->PageViewSetCfg('template-path', '@');
+		$this->PageViewSetCfg('template-file', 'template.htm');
+		//--
+	} //END FUNCTION
+
+
 	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
@@ -381,10 +391,14 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
+		$the_semaphore 	= ((SmartAppInfo::TestIfModuleExists('mod-ui-jqueryui')) && (SMART_FRAMEWORK_ADMIN_AREA === true)) ? 'skip-js-ui' : '';
+		$custom_ui 		= $the_semaphore ? 'jqueryui' : '';
+		//--
 		$this->PageViewSetVars([
-			'title' => 'Smart.Framework Test and Demo Suite',
-			'main' => $main,
-			'semaphore' => ((SMART_FRAMEWORK_ADMIN_AREA === true) && (SmartAppInfo::TestIfModuleExists('mod-ui-jqueryui'))) ? 'jqueryui' : ''
+			'title' 		=> 'Smart.Framework Test and Demo Suite',
+			'main' 			=> (string) $main,
+			'semaphore' 	=> (string) $the_semaphore, // skip load the default JS-UI if jQueryUI is available
+			'custom-js-ui' 	=> (string) $custom_ui // load custom JS-UI (jqueryUI if available)
 		]);
 		//--
 

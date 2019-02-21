@@ -1,4 +1,5 @@
-<!-- JS-UI / LightJS :: r.20190103 -->
+<!-- JS-UI / LightJS :: r.20190215 -->
+[%%%%IF:SEMAPHORE:!=skip-js-ui;%%%%]
 <!-- UI Dialog --><link rel="stylesheet" type="text/css" href="lib/js/jquery/dialog/simple-dialog.css?[####RELEASE-HASH|url|html####]"><script type="text/javascript" src="lib/js/jquery/dialog/simple-dialog.js?[####RELEASE-HASH|url|html####]"></script>
 <!-- UI AutoComplete --><link rel="stylesheet" type="text/css" href="lib/js/jquery/autosuggest/smart-suggest.css?[####RELEASE-HASH|url|html####]"><script type="text/javascript" src="lib/js/jquery/autosuggest/smart-suggest.js?[####RELEASE-HASH|url|html####]"></script>
 <!-- UI Tabs --><link rel="stylesheet" href="lib/js/jquery/tabs/jquery.tabs.css?[####RELEASE-HASH|url|html####]" type="text/css"><script src="lib/js/jquery/tabs/jquery.tabs.js?[####RELEASE-HASH|url|html####]" type="text/javascript"></script>
@@ -8,4 +9,7 @@
 <!-- UI Tables --><link rel="stylesheet" type="text/css" href="lib/js/jquery/datatables/datatables-responsive.css?[####RELEASE-HASH|url|html####]"><script type="text/javascript" src="lib/js/jquery/datatables/datatables-responsive.js?[####RELEASE-HASH|url|html####]"></script>
 <!-- UI ToolTip --><link rel="stylesheet" type="text/css" href="lib/js/jquery/jquery.tiptop.css?[####RELEASE-HASH|url|html####]"><script type="text/javascript" src="lib/js/jquery/jquery.tiptop.js?[####RELEASE-HASH|url|html####]"></script>
 <!-- UI Framework Bindings --><script type="text/javascript" src="lib/js/jquery/jquery.smartframework.ui.js?[####RELEASE-HASH|url|html####]"></script>
+[%%%%ELSE:SEMAPHORE%%%%]
+<!-- SKIP Loading / Semaphore: [####SEMAPHORE|html####] -->
+[%%%%/IF:SEMAPHORE%%%%]
 <!-- # -->

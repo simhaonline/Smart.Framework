@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <!--
-V-TimeLine, Small r.20190207
+V-TimeLine Small r.20190215
 	License: BSD
 	(c) 2015-2019 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -15,7 +15,6 @@ V-TimeLine, Small r.20190207
 	<link rel="stylesheet" href="../../../core/plugins/fonts/typo/sans/ibm-plex-sans.css">
 	<link rel="stylesheet" href="../../../core/plugins/fonts/icons/fontawesome.css">
 	<link rel="stylesheet" href="../style.css">
-	<link rel="stylesheet" href="../style-small.css">
 	<link rel="stylesheet" href="../style-responsive.css">
 	<title>Responsive Vertical Timeline (Small)</title>
 	<style>
@@ -40,6 +39,7 @@ V-TimeLine, Small r.20190207
 	<button onclick="self.location='sample.html';" style="position:fixed; top:20px; right:20px;">Default Sized TimeLine</button>
 	<script>
 		function renderTimeline(code) {
+			code = code.replace(/(vtml-container)/g, 'vtml-container vtml-small-container');
 			$('#the-timeline-placeholder').html(code);
 		}
 		$.get('timeline.inc.htm', renderTimeline, 'text');

@@ -185,7 +185,7 @@ final class TestUnitMain {
 				'TEST-ELEMENTS_SINGLE-SELECT' 				=> 'SingleSelect DropDown List without Blank: '.$one_single_select,
 				'TEST-ELEMENTS_SINGLE-BLANK-SELECT' 		=> 'SingleSelect DropDown List (from Multi): '.$one_single_with_blank_select,
 				'TEST-ELEMENTS_SINGLE-SEARCH-SELECT' 		=> 'SingleSelect DropDown List with Search: '.$elem_single_select,
-				'TEST-ELEMENTS_MULTI-SELECT' 				=> 'MultiSelect DropDown List: '.$elem_multi_select,
+				'TEST-ELEMENTS_MULTI-SELECT' 				=> '<span>MultiSelect DropDown List: </span>'.$elem_multi_select,
 				'TEST-ELEMENTS_MULTIBOX-SELECT' 			=> 'MultiSelect CheckBoxes:<br>'.$elem_multi_boxes,
 				'TEST-ELEMENTS_NORMAL-LIST-S' 				=> (string) $test_normal_list_s,
 				'TEST-ELEMENTS_NORMAL-LIST-M' 				=> (string) $test_normal_list_m,

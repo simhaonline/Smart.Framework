@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.20190214
+ * @version     v.20190219
  * @package     Parsers
  *
  */
@@ -104,6 +104,15 @@ public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warn
 		} //end if
 	} //end if
 	//--
+	if((string)$validate_mode == 'simplexml') {
+		if(!function_exists('simplexml_load_string')) {
+			Smart::raise_error(
+				__METHOD__.' :: Missing PHP SimpleXML Extension'
+			);
+			return '';
+		} //end if
+	} //end if
+	//--
 
 	//--
 	@libxml_use_internal_errors(true);
@@ -122,13 +131,13 @@ public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warn
 		$dom->validateOnParse = false; 								// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
 		//--
 		@$dom->loadXML(
-			(string) $xml_str, // no need to fix root element on DomDocument !
+			(string) $this->FixXmlHeader($xml_str), // need to fix just xml header
 			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
 		);
 	} else { // simpleXML
 		//--
 		$sxml = new SimpleXMLElement(
-			(string) $xml_str, // no need to fix root element, can be unsafe :: $this->FixXmlRoot((string)$xml_str)
+			(string) $this->FixXmlHeader($xml_str), // need to fix just xml header
 			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
 		);
 		//--
@@ -277,40 +286,19 @@ public function transform($xml_str, $log_parse_err_warns=false) {
 private function SimpleXML2Array($xml_str) {
 	//--
 	if(!function_exists('simplexml_load_string')) {
-		Smart::log_warning(__METHOD__.' # WARNING [XML-Process('.$this->mode.') / Encoding: '.$this->encoding.']:'."\n".'The PHP simplexml_load_string() function is missing ...'."\n".'#END'."\n");
+		Smart::raise_error(
+			__METHOD__.' :: Missing PHP SimpleXML Extension'
+		);
 		return array();
 	} //end if
 	//--
 	return (array) $this->SimpleXMLNode2Array(
 		@simplexml_load_string( // object not array !!
-			$this->FixXmlRoot((string)$xml_str),
+			$this->FixSimpleXmlRoot((string)$xml_str), // simplexml needs an xml root to give the same array back ; also fixes the xml header, too
 			'SimpleXMLElement', // this element class is referenced and check in SimpleXMLNode2Array
 			LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
 		)
 	);
-	//--
-} //END FUNCTION
-//===============================
-
-
-//=============================== fix parser bugs by adding the xml markup tag and a valid xml root
-private function FixXmlRoot($xml_str) {
-	//--
-	$xml_str = (string) trim((string)preg_replace('#<\?xml (.*?)>#si', '', (string)$xml_str)); // remove the xml markup tag
-	//$xml_str = str_replace(['<'.'?', '?'.'>'], ['<!-- ', ' -->'], $xml_str); // comment out any markup tags
-	//--
-	if(!SmartValidator::validate_html_or_xml_code($xml_str)) { // fix parser bug if empty data passed
-		//--
-		Smart::log_notice(__METHOD__.' # GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xml_str."\n".'#END');
-		$xml_str = '<'.'?'.'xml version="1.0" encoding="'.$this->encoding.'"'.'?'.'>'."\n".'<smart_framework_xml_data_parser_fix_tag>'."\n".'</smart_framework_xml_data_parser_fix_tag>';
-		//--
-	} else {
-		//--
-		$xml_str = '<'.'?'.'xml version="1.0" encoding="'.$this->encoding.'"'.'?'.'>'."\n".'<smart_framework_xml_data_parser_fix_tag>'."\n".trim($xml_str)."\n".'</smart_framework_xml_data_parser_fix_tag>';
-		//--
-	} //end if
-	//--
-	return (string) $xml_str;
 	//--
 } //END FUNCTION
 //===============================
@@ -441,7 +429,7 @@ private function DomXML2Array($xmlstr) {
 	$dom->validateOnParse = false; 		// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
 	//--
 	@$dom->loadXML(
-		(string) $xmlstr, // no need to fix root element on DomDocument !
+		(string) $this->FixXmlHeader($xmlstr), // need to fix just xml header
 		LIBXML_ERR_WARNING | LIBXML_NONET | LIBXML_PARSEHUGE | LIBXML_BIGLINES | LIBXML_NOCDATA // {{{SYNC-LIBXML-OPTIONS}}} ; Fix: LIBXML_NOCDATA converts all CDATA to String
 	);
 	//--
@@ -531,6 +519,62 @@ private function DomNode2Array($node) {
 	} //end switch
 	//--
 	return $output; // mixed
+	//--
+} //END FUNCTION
+//===============================
+
+
+//===============================
+private function RemoveXmlHeader($xml_str) {
+	//--
+	return (string) trim((string)preg_replace('#<\?xml (.*?)>#si', '', (string)$xml_str)); // remove the xml markup tag ; extra: str_replace(['<'.'?', '?'.'>'], ['<!-- ', ' -->'], $xml_str); // comment out any markup tags
+	//--
+} //END FUNCTION
+//===============================
+
+
+//===============================
+private function AddXmlHeader($xml_str) {
+	//--
+	$xml_str = '<'.'?'.'xml version="1.0" encoding="'.Smart::escape_html(strtoupper($this->encoding)).'"'.'?'.'>'."\n".$xml_str;
+	//--
+	return (string) $xml_str;
+	//--
+} //END FUNCTION
+//===============================
+
+
+//===============================
+private function FixXmlHeader($xml_str) {
+	//--
+	$xml_str = (string) trim((string)$xml_str);
+	if((string)$xml_str == '') {
+		return '';
+	} //end if
+	//--
+	$xml_str = (string) $this->RemoveXmlHeader($xml_str);
+	//--
+	if(!SmartValidator::validate_html_or_xml_code($xml_str)) { // fix parser bug if empty data passed
+		return ''; // invalid xml
+	} //end if
+	//--
+	return (string) $this->AddXmlHeader((string)$xml_str);
+	//--
+} //END FUNCTION
+//===============================
+
+
+//=============================== fix for simpleXML parser to array ; needs an external xml root to the supplied xml
+private function FixSimpleXmlRoot($xml_str) {
+	//--
+	$xml_str = (string) $this->RemoveXmlHeader($xml_str);
+	//--
+	if(!SmartValidator::validate_html_or_xml_code($xml_str)) { // fix parser bug if empty data passed
+		Smart::log_notice(__METHOD__.' # GetXMLTree: Invalid XML Detected (555)'."\n".'Encoding: '.$this->encoding.' // Xml-String:'."\n".$xml_str."\n".'#END');
+		$xml_str = ''; // clear invalid xml
+	} //end if
+	//--
+	return (string) $this->AddXmlHeader('<smart_framework_xml_data_parser_fix_tag>'."\n".trim((string)$xml_str)."\n".'</smart_framework_xml_data_parser_fix_tag>');
 	//--
 } //END FUNCTION
 //===============================
@@ -631,7 +675,7 @@ private function DomNode2Array($node) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.20190214
+ * @version     v.20190219
  * @package     Parsers
  *
  */

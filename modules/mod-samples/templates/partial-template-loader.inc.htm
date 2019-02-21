@@ -1,0 +1,45 @@
+[%%%%IF:APP-REALM:==IDX;%%%%]
+<!-- partial-template-loader :: r.20190215 -->
+<!-- :: TPL MISC. VARIABLES :: -->
+<!-- Release-Hash:     [####RELEASE-HASH|html####] -->
+<!-- App Env:          [####APP-ENV|html####] -->
+<!-- App Namespace:    [####APP-NAMESPACE|html####] -->
+<!-- App Realm:        [####APP-REALM|html####] -->
+<!-- App Domain:       [####APP-DOMAIN|html####] -->
+<!-- Client-Browser:   [####CLIENT-BROWSER|html####] -->
+<!-- Client-Class:     [####CLIENT-CLASS|html####] -->
+<!-- Client-Is-Mobile: [####CLIENT-IS-MOBILE|html####] -->
+<!-- Client-OS:        [####CLIENT-OS|html####] -->
+<!-- Client-IP:        [####CLIENT-IP|html####] -->
+<!-- Base URL:         [####BASE-URL|html####] -->
+<!-- Base Path:        [####BASE-PATH|html####] -->
+<!-- Base-Domain:      [####BASE-DOMAIN|html####] -->
+<!-- Srv Domain:       [####SRV-DOMAIN|html####] -->
+<!-- Srv IP Addr:      [####SRV-IP-ADDR|html####] -->
+<!-- Srv Proto:        [####SRV-PROTO|html####] -->
+<!-- Net Proto:        [####NET-PROTO|html####] -->
+<!-- Srv Port:         [####SRV-PORT|html####] -->
+<!-- Net Port:         [####NET-PORT|html####] -->
+<!-- Srv Script:       [####SRV-SCRIPT|html####] -->
+<!-- Srv UrlQuery:     [####SRV-URLQUERY|html####] -->
+<!-- Srv ReqUri:       [####SRV-REQURI|html####] -->
+<!-- Debug Mode:       [####DEBUG-MODE|html####] -->
+<div id="page-loader"></div>
+<script type="text/javascript">
+jQuery('#page-loader').css({
+	position: 'fixed',
+	left: '0px',
+	top: '0px',
+	width: '100%',
+	height: '100%',
+	background: "url('lib/framework/img/loading-spokes.svg') 50% 50% no-repeat rgb(249,249,249)",
+	'z-index': 2147483001,
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	setTimeout(function(){ $('#page-loader').fadeOut('slow') }, 250);
+});
+</script>
+<!-- #END# partial-template-loader -->
+[%%%%/IF:APP-REALM%%%%]

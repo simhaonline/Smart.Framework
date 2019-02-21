@@ -1,54 +1,20 @@
-<!-- r.20190103 -->
-<!-- :: TPL MISC. VARIABLES :: -->
-<!-- Release-Hash:     [####RELEASE-HASH|html####] -->
-<!-- Template Path:    [####TEMPLATE-PATH|html####] -->
-<!-- Template File:    [####TEMPLATE-FILE|html####] -->
-<!-- Language (Set):   [####LANG|html####] -->
-<!-- Charset:          [####CHARSET|html####] -->
-<!-- Timezone:         [####TIMEZONE|html####] -->
-<!-- App Env:          [####APP-ENV|html####] -->
-<!-- App Namespace:    [####APP-NAMESPACE|html####] -->
-<!-- App Realm:        [####APP-REALM|html####] -->
-<!-- App Domain:       [####APP-DOMAIN|html####] -->
-<!-- Client-Browser:   [####CLIENT-BROWSER|html####] -->
-<!-- Client-Class:     [####CLIENT-CLASS|html####] -->
-<!-- Client-Is-Mobile: [####CLIENT-IS-MOBILE|html####] -->
-<!-- Client-OS:        [####CLIENT-OS|html####] -->
-<!-- Client-IP:        [####CLIENT-IP|html####] -->
-<!-- Base URL:         [####BASE-URL|html####] -->
-<!-- Base Path:        [####BASE-PATH|html####] -->
-<!-- Base-Domain:      [####BASE-DOMAIN|html####] -->
-<!-- Srv Domain:       [####SRV-DOMAIN|html####] -->
-<!-- Srv IP Addr:      [####SRV-IP-ADDR|html####] -->
-<!-- Srv Proto:        [####SRV-PROTO|html####] -->
-<!-- Net Proto:        [####NET-PROTO|html####] -->
-<!-- Srv Port:         [####SRV-PORT|html####] -->
-<!-- Net Port:         [####NET-PORT|html####] -->
-<!-- Srv Script:       [####SRV-SCRIPT|html####] -->
-<!-- Srv UrlQuery:     [####SRV-URLQUERY|html####] -->
-<!-- Srv ReqUri:       [####SRV-REQURI|html####] -->
-<!-- Debug Mode:       [####DEBUG-MODE|html####] -->
+<!-- r.20190215 -->
+<!-- Template Path: [####TEMPLATE-PATH|html####] -->
+<!-- Template File: [####TEMPLATE-FILE|html####] -->
+<!-- Timezone:      [####TIMEZONE|html####] -->
+<!-- Language:      [####LANG|html####] -->
 <meta charset="[####CHARSET|html####]">
 <meta http-equiv="Content-Type" content="text/html; charset=[####CHARSET|html####]">
 <title>[####TITLE|html####]</title>
 <!-- Meta -->
 [####HEAD-META####]
 <!-- Styles -->
-[@@@@SUB-TEMPLATE:css-app.inc.htm@@@@]
-<link rel="stylesheet" type="text/css" href="[####TEMPLATE-PATH|html####]styles.css?[####RELEASE-HASH|url|html####]">
+[@@@@SUB-TEMPLATE:!etc/templates/default/css-app.inc.htm!@@@@]
+<link rel="stylesheet" type="text/css" href="etc/templates/default/styles.css?[####RELEASE-HASH|url|html####]">
 [####HEAD-CSS####]
 <!-- Scripts -->
-[@@@@SUB-TEMPLATE:js-base.inc.htm@@@@]
-[%%%%IF:APP-REALM:==IDX;%%%%]
-	[@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
-[%%%%ELSE:APP-REALM%%%%]
-	[%%%%IF:SEMAPHORE:!=jqueryui;%%%%]
-		[@@@@SUB-TEMPLATE:js-ui.inc.htm@@@@]
-	[%%%%ELSE:SEMAPHORE%%%%]
-		[@@@@SUB-TEMPLATE:?!modules/mod-ui-jqueryui/views/js-ui.inc.htm!@@@@]<!-- jQueryUI detected and loaded by semaphore: [####SEMAPHORE|html####] -->
-	[%%%%/IF:SEMAPHORE%%%%]
-<script type="text/javascript" src="lib/js/jquery/jquery.idle.js?[####RELEASE-HASH|url|html####]"></script>
-[%%%%/IF:APP-REALM%%%%]
-[@@@@SUB-TEMPLATE:js-settings.inc.htm@@@@]
+[@@@@SUB-TEMPLATE:!etc/templates/default/js-base.inc.htm!@@@@]
+[@@@@SUB-TEMPLATE:!etc/templates/default/js-ui.inc.htm!@@@@]
+[@@@@SUB-TEMPLATE:!etc/templates/default/js-settings.inc.htm!@@@@]
 [####HEAD-JS####]
 <!-- #.# -->

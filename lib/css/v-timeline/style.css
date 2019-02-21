@@ -1,6 +1,6 @@
 
 /***** V-TimeLine CSS :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7 *****/
-/* V-TimeLine r.20190207
+/* V-TimeLine r.20190215
 	License: BSD
 	(c) 2015-2019 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -8,6 +8,8 @@
 		(c) 2014 https://github.com/soundarapandian/timeline
 		(c) 2015 https://github.com/CodyHouse/vertical-timeline
 */
+
+/* --- Default --- */
 
 .vtml-container {
 	width: 96%;
@@ -19,17 +21,19 @@
 	clear: both;
 }
 
-#vtml-timeline *, #vtml-timeline *:after, #vtml-timeline *:before {
+.vtml-container *,
+.vtml-container *:after,
+.vtml-container *:before {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
 
-#vtml-timeline {
+.vtml-container {
 	position: relative;
 	padding: 2rem 0;
 }
-#vtml-timeline::before {
+.vtml-container::before {
 	content: '';
 	position: absolute;
 	top: 0;
@@ -124,12 +128,15 @@
 	display: inline !important;
 	color: #222222;
 }
-.vtml-timeline-content p, .vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
+.vtml-timeline-content p,
+.vtml-timeline-content .vtml-read-more,
+.vtml-timeline-content .vtml-date {
 	font-size: 14px;
 	/* @alternate */ font-size: 0.875rem;
 	text-align: justify;
 }
-.vtml-timeline-content .vtml-read-more, .vtml-timeline-content .vtml-date {
+.vtml-timeline-content .vtml-read-more,
+.vtml-timeline-content .vtml-date {
 	display: inline-block;
 }
 .vtml-timeline-content p {
@@ -173,5 +180,68 @@ hr.vtml-hr {
 	border-top: 1px solid #E4E4E4;
 	height: 1px;
 }
+
+/* --- Small --- */
+
+/* icons */
+
+.vtml-small-container .vtml-timeline-icon {
+	position: absolute;
+	top: 0;
+	left: 20px !important;
+	width: 48px;
+	height: 48px;
+	margin-left: -24px !important;
+	border: 4px solid #E4E4E4;
+	border-radius: 10%;
+	cursor: default;
+}
+
+.vtml-small-container .vtml-timeline-icon div {
+	position: relative;
+	width: 24px;
+	height: 24px;
+	margin-left: 8px;
+	margin-top: 7px;
+	text-align:center;
+	font-size: 20px;
+}
+
+.vtml-small-container .vtml-timeline-icon div i.fa {
+	margin-top: 10px;
+	display: block;
+	font-size: 20px !important;
+}
+
+/* content */
+
+.vtml-small-container .vtml-timeline-content {
+	padding: 0.75rem;
+}
+
+.vtml-small-container .vtml-timeline-content p,
+.vtml-small-container .vtml-timeline-content .vtml-read-more,
+.vtml-small-container .vtml-timeline-content .vtml-date {
+	font-size: 0.813rem;
+	text-align: initial;
+}
+
+.vtml-small-container .vtml-timeline-content p {
+	margin: 0.25rem 0;
+	line-height: 1.4;
+}
+
+.vtml-small-container .vtml-timeline-content .vtml-date {
+	padding: 0;
+	font-size: 0.938rem;
+}
+
+.vtml-small-container .vtml-timeline-content h2 {
+	display: inline !important;
+	color: #222222;
+	font-size: 1.125rem;
+}
+
+/* END */
 
 /* END */

@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190214
+ * @version 	v.20190219
  *
  */
 final class TestUnitStrings {
@@ -301,7 +301,10 @@ final class TestUnitStrings {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$the_test = 'XML Unicode Test: Compose XML from Array / Format (Validate) XML / Parse XML to Array';
+			$the_test = 'XML Unicode Test: Compose ArrayToXML / Format+Validate / XMLToArray :: Simple / Extended';
+			if(class_exists('DOMDocument')) {
+				$the_test .= ', DomXML';
+			} //end if
 			$tests[] = $the_test;
 			$test_arr = array(
 				'LINE0' => 'Testing weird key characters with case sensitive keys',
@@ -315,18 +318,33 @@ final class TestUnitStrings {
 				'LiNe8' => \SmartHashCrypto::sha384((string)time()),
 				'LiNE9' => \SmartHashCrypto::sha512((string)time())
 			);
-			$test_xml = (string) (new \SmartXmlComposer())->transform($test_arr, 'xml');
-		//	\Smart::log_notice($test_xml);
-			$test_xml = (string) (new \SmartXmlParser())->format($test_xml);
-		//	\Smart::log_notice($test_xml);
-			$test_xml = (string) (new \SmartXmlParser('domxml'))->format($test_xml);
-		//	\Smart::log_notice($test_xml);
-			$test_parr = (new \SmartXmlParser())->transform($test_xml);
+			$test_xml = (string) (new \SmartXmlComposer())->transform($test_arr, 'xml'); // array to xml
+			$test_xml = (string) (new \SmartXmlParser())->format($test_xml); // simple and extended
+			if(class_exists('DOMDocument')) {
+				$test_xml = (string) (new \SmartXmlParser('domxml'))->format($test_xml); // domxml
+			} //end if
+			$test_parr = (new \SmartXmlParser())->transform($test_xml); // simple : xml to array
 			if(!is_array($test_parr)) {
 				$test_parr = array();
 			} //end if
 			if($test_arr !== $test_parr['xml']) {
 				$err = 'ERROR: '.$the_test.' FAILED ...'.' #ORIGINAL Array ['.print_r($test_arr,1).']'."\n\n".'#XML Array (from XML String): '.print_r($test_parr['xml'],1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
+			} //end if
+			$test_parr = (new \SmartXmlParser('extended'))->transform($test_xml); // extended : xml to array
+			if(!is_array($test_parr)) {
+				$test_parr = array();
+			} //end if
+			if((\Smart::array_size($test_parr['xml']) <= 0) OR (\Smart::array_size($test_parr['xml'][0]) <= 0) OR (\Smart::array_size($test_parr['xml'][0]['line2']) <= 0) OR ((string)$test_parr['xml'][0]['line2'][0] != (string)$test_arr['line2'])) {
+				$err = 'ERROR: '.$the_test.' EXTENDED FAILED ...'.'#XML Array (from XML String): '.print_r($test_parr['xml'],1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
+			} //end if
+			if(class_exists('DOMDocument')) {
+				$test_parr = (new \SmartXmlParser('domxml'))->transform($test_xml); // domxml : xml to array
+				if(!is_array($test_parr)) {
+					$test_parr = array();
+				} //end if
+				if(((string)$test_parr['@root'] != 'xml') OR ((string)$test_parr['line2'] != (string)$test_arr['line2'])) {
+					$err = 'ERROR: '.$the_test.' EXTENDED FAILED ...'.'#XML Array (from XML String): '.print_r($test_parr,1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
+				} //end if
 			} //end if
 		} //end if
 		//--

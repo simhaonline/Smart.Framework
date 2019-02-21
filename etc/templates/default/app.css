@@ -1,0 +1,45 @@
+
+/* -- CSS Start :: Smart.Framework / App :: r.20190215 -- */
+
+/* ----------------------------- */
+
+/* -- ui toolkit -- */
+
+@import url("../../../lib/css/toolkit/ux-toolkit.css");
+@import url("../../../lib/css/toolkit/ux-toolkit-responsive.css");
+
+/* -- ui toolkit extras -- */
+
+@import url("../../../lib/css/v-timeline/style.css");
+@import url("../../../lib/css/v-timeline/style-responsive.css");
+
+@import url("../../../lib/css/txt-columns/style.css");
+@import url("../../../lib/css/txt-columns/style-responsive.css");
+
+/* -- core -- */
+
+@import url("../../../lib/core/css/notifications.css");
+
+@import url("../../../lib/core/css/date-time.css");
+
+@import url("../../../lib/core/css/navpager.css");
+
+@import url("../../../lib/core/css/tpl-highlight.css");
+
+/* -- plugins -- */
+
+@import url("../../../lib/core/plugins/css/markdown.css");
+
+@import url("../../../lib/core/plugins/css/calendar.css");
+
+@import url("../../../lib/core/plugins/css/email.css");
+
+@import url("../../../lib/core/plugins/css/captcha.css");
+
+/* -- iconic font -- */
+
+@import url("../../../lib/core/plugins/fonts/icons/fontawesome.css");
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
