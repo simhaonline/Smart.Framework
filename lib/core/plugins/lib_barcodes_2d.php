@@ -48,7 +48,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20190207
+ * @version 	v.20190226
  * @package 	Components:Misc
  *
  */
@@ -96,7 +96,7 @@ final class SmartBarcode2D {
 				$barcode_type = 'semacode';
 				break;
 			case 'pdf417':
-				$y_extraoptions = (int) (0 + $y_extraoptions);
+				$y_extraoptions = (int) $y_extraoptions;
 				if($y_extraoptions <= 0) {
 					$y_extraoptions = 1;
 				} //end if

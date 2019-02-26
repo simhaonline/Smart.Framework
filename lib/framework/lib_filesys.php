@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181225
+ * @version 	v.20190221
  * @package 	Filesystem
  *
  */
@@ -82,7 +82,7 @@ public static function max_upload_size() {
 		return 0;
 	} //end if
 	//--
-	$last = (string) strtoupper(substr((string)$inival, -1, 1));
+	$last = (string) strtoupper((string)substr((string)$inival, -1, 1));
 	$value = (int) $inival;
 	//--
 	if((string)$last === 'K') {
@@ -300,21 +300,21 @@ private static function test_valid_path($y_path) {
 	} //end if
 	//--
 	if(
-		((string)trim($y_path) == '') OR 			// empty path: error
-		((string)trim($y_path) == '.') OR 			// special: protected
-		((string)trim($y_path) == '..') OR 			// special: protected
-		((string)trim($y_path) == '/') OR 			// root dir: security
-		(strpos($y_path, ' ') !== false) OR 		// no space allowed
-		(strpos($y_path, '\\') !== false) OR 		// no backslash allowed
-		(strpos($y_path, '://') !== false) OR 		// no protocol access allowed
-		(strpos($y_path, ':') !== false) OR 		// no dos/win disk access allowed
-		(strpos($y_path, '|') !== false) OR 		// no macos disk access allowed
-		((string)trim($y_path) == './') OR 			// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something
-		((string)trim($y_path) == '../') OR 		// backward path access denied: security
-		((string)trim($y_path) == './.') OR 		// this is a risk that can lead to unpredictable results
-		(strpos($y_path, '...') !== false) OR 		// this is a risk that can lead to unpredictable results
-		(substr(trim($y_path), -2, 2) == '/.') OR 	// special: protected ; this may lead to rewrite/delete the special protected . in a directory if refered as a filename or dirname that may break the filesystem
-		(substr(trim($y_path), -3, 3) == '/..')  	// special: protected ; this may lead to rewrite/delete the special protected .. in a directory if refered as a filename or dirname that may break the filesystem
+		((string)trim($y_path) == '') OR 							// empty path: error
+		((string)trim($y_path) == '.') OR 							// special: protected
+		((string)trim($y_path) == '..') OR 							// special: protected
+		((string)trim($y_path) == '/') OR 							// root dir: security
+		(strpos($y_path, ' ') !== false) OR 						// no space allowed
+		(strpos($y_path, '\\') !== false) OR 						// no backslash allowed
+		(strpos($y_path, '://') !== false) OR 						// no protocol access allowed
+		(strpos($y_path, ':') !== false) OR 						// no dos/win disk access allowed
+		(strpos($y_path, '|') !== false) OR 						// no macos disk access allowed
+		((string)trim($y_path) == './') OR 							// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something
+		((string)trim($y_path) == '../') OR 						// backward path access denied: security
+		((string)trim($y_path) == './.') OR 						// this is a risk that can lead to unpredictable results
+		(strpos($y_path, '...') !== false) OR 						// this is a risk that can lead to unpredictable results
+		((string)substr((string)trim($y_path), -2, 2) == '/.') OR 	// special: protected ; this may lead to rewrite/delete the special protected . in a directory if refered as a filename or dirname that may break the filesystem
+		((string)substr((string)trim($y_path), -3, 3) == '/..')  	// special: protected ; this may lead to rewrite/delete the special protected .. in a directory if refered as a filename or dirname that may break the filesystem
 	) {
 		return 0;
 	} //end if else
@@ -619,7 +619,7 @@ public static function get_noext_file_name_from_path($y_path) {
  * Return the file extension (without .) from path
  *
  * @param STRING 		$ypath		path or file
- * @return STRING 				[FILE EXTENSION]
+ * @return STRING 					[FILE EXTENSION]
  */
 public static function get_file_extension_from_path($y_path) {
 	//--
@@ -631,7 +631,7 @@ public static function get_file_extension_from_path($y_path) {
 	//--
 	$arr = (array) Smart::path_info((string)$y_path);
 	//--
-	return (string) trim(strtolower(Smart::safe_filename((string)$arr['extension'])));
+	return (string) trim((string)strtolower(Smart::safe_filename((string)$arr['extension'])));
 	//--
 } //END FUNCTION
 //================================================================
@@ -653,14 +653,14 @@ public static function get_file_extension_from_path($y_path) {
  */
 public static function prefixed_uuid10_dir($y_id) { // check len is default 10 as set in lib core uuid 10s
 	//--
-	$y_id = (string) strtoupper(trim((string)$y_id));
+	$y_id = (string) strtoupper((string)trim((string)$y_id));
 	//--
-	if((strlen($y_id) != 10) OR (!preg_match('/^[A-Z0-9]+$/', (string)$y_id))) {
+	if((strlen((string)$y_id) != 10) OR (!preg_match('/^[A-Z0-9]+$/', (string)$y_id))) {
 		Smart::log_warning(__METHOD__.'() // Prefixed Path UID10(B36) // Invalid ID ['.$y_id.']');
 		$y_id = '0000000000'; // str-10.B36 (uuid10)
 	} //end if
 	//--
-	$dir = self::add_dir_last_slash(self::add_dir_last_slash((string)implode('/', (array)str_split((string)substr((string)$y_id, 0, 8), 2))).$y_id); // split by 2 grouping except last 2 chars
+	$dir = (string) self::add_dir_last_slash(self::add_dir_last_slash((string)implode('/', (array)str_split((string)substr((string)$y_id, 0, 8), 2))).$y_id); // split by 2 grouping except last 2 chars
 	//--
 	if(!self::check_if_safe_path($dir)) {
 		Smart::log_warning(__METHOD__.'() // Prefixed Path UID10(B36) // Invalid Dir Path: ['.$dir.'] :: From ID: ['.$y_id.']');
@@ -691,12 +691,12 @@ public static function prefixed_sha1_path($y_id) { // here the number of levels 
 	//--
 	$y_id = (string) strtolower(trim((string)$y_id));
 	//--
-	if((strlen($y_id) != 40) OR (!preg_match('/^[a-f0-9]+$/', (string)$y_id))) {
+	if((strlen((string)$y_id) != 40) OR (!preg_match('/^[a-f0-9]+$/', (string)$y_id))) {
 		Smart::log_warning(__METHOD__.'() // Prefixed Path SHA1-40(B16) // Invalid ID ['.$y_id.']');
 		$y_id = '0000000000000000000000000000000000000000'; // str-40.hex (sha1)
 	} //end if
 	//--
-	$dir = self::add_dir_last_slash((string)substr((string)$y_id, 0, 1).'/'.implode('/', (array)str_split((string)substr((string)$y_id, 1, 36), 3))); // split by 3 grouping
+	$dir = (string) self::add_dir_last_slash((string)substr((string)$y_id, 0, 1).'/'.implode('/', (array)str_split((string)substr((string)$y_id, 1, 36), 3))); // split by 3 grouping
 	//--
 	if(!self::check_if_safe_path($dir)) {
 		Smart::log_warning(__METHOD__.'() // Prefixed Path SHA1-40(B16) // Invalid Dir Path: ['.$dir.'] :: From ID: ['.$y_id.']');
@@ -1278,7 +1278,7 @@ public static function mime_eval($yfile, $ydisposition='') {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.181217
+ * @version 	v.20190221
  * @package 	Filesystem
  *
  */
@@ -2189,7 +2189,7 @@ public static function move_uploaded($file_name, $newlocation, $check_moved_cont
 		return 0;
 	} //end if
 	//--
-	if(!is_uploaded_file($file_name)) {
+	if(!is_uploaded_file($file_name)) { // double check if uploaded
 		Smart::log_warning(__METHOD__.'() // Move-Uploaded: Cannot Find the Uploaded File or it is NOT an Uploaded File: '.$file_name);
 		return 0;
 	} //end if
@@ -3121,7 +3121,7 @@ private static function test_filename_file_by_filter($file, $filter_fname, $filt
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.170921
+ * @version 	v.20190221
  * @package 	Filesystem
  *
  */
@@ -3192,7 +3192,7 @@ final class SmartGetFileSystem {
 			return array();
 		} //end if
 		//-- fix invalid path (must end with /)
-		$dir_name = SmartFileSysUtils::add_dir_last_slash($dir_name);
+		$dir_name = (string) SmartFileSysUtils::add_dir_last_slash($dir_name);
 		//-- protection
 		SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
 		//--
@@ -3249,7 +3249,7 @@ final class SmartGetFileSystem {
 			return array();
 		} //end if
 		//-- fix invalid path (must end with /)
-		$dir_name = SmartFileSysUtils::add_dir_last_slash($dir_name);
+		$dir_name = (string) SmartFileSysUtils::add_dir_last_slash($dir_name);
 		//-- protection
 		SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
 		//--
@@ -3310,7 +3310,7 @@ final class SmartGetFileSystem {
 			return; // this function does not return anything, but just stop here in this case
 		} //end if
 		//-- fix invalid path (must end with /)
-		$dir_name = SmartFileSysUtils::add_dir_last_slash($dir_name);
+		$dir_name = (string) SmartFileSysUtils::add_dir_last_slash($dir_name);
 		//-- protection
 		SmartFileSysUtils::raise_error_if_unsafe_path($dir_name);
 		//--
@@ -3323,7 +3323,7 @@ final class SmartGetFileSystem {
 		if((SmartFileSystem::path_exists($dir_name)) AND (!SmartFileSystem::is_type_file($dir_name))) { // can be dir or link
 			//list
 			//--
-			$arr_dir_files = scandir((string)$dir_name); // don't make it array, can be false
+			$arr_dir_files = scandir((string)$dir_name); // mixed: can be array or false
 			//--
 			//if($handle = opendir($dir_name)) {
 			if(($arr_dir_files !== false) AND (Smart::array_size($arr_dir_files) > 0)) {

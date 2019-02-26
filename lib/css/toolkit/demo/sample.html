@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <!-- Smart UX CSS Toolkit :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7 -->
-<!-- extended by unixman, (c) 2015-2019 unix-world.org :: License: BSD :: based on Pure.css v.0.6 by Yahoo :: http://purecss.io/ -->
+<!-- extended by unixman, (c) 2015-2019 unix-world.org :: License: BSD :: based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc. -->
 <html>
 <head>
 	<!-- basepath -->
 	<meta charset="UTF-8">
 	<title>Smart :: UX CSS Toolkit / Test</title>
-	<link rel="stylesheet" type="text/css" href="../../core/plugins/fonts/typo/sans/ibm-plex-sans.css">
-	<link rel="stylesheet" href="ux-toolkit.css">
+	<link rel="stylesheet" type="text/css" href="../../../core/plugins/fonts/typo/sans/ibm-plex-sans.css">
+	<link rel="stylesheet" href="../ux-toolkit.css">
+	<link rel="stylesheet" href="../ux-toolkit-responsive.css">
+	<link rel="stylesheet" href="../../animate/animate.css">
 	<style>
 	* {
 		font-family: 'IBM Plex Sans',arial,sans-serif;
@@ -30,7 +32,7 @@
 <div style="width:100% !important; padding-left:10px; padding-top:2px; padding-right:10px; box-sizing: border-box !important; -moz-box-sizing: border-box !important; -webkit-box-sizing: border-box !important;">
 
 	<div class="ux-section">
-		<h1>UX Toolkit <span style="color:#CCCCCC!important; font-weight:normal!important; font-size:75%!important;">r.20190105</span> - Overview</h1>
+		<h1 class="lightSpeedIn animated delay-1s">UX Toolkit <span style="color:#CCCCCC!important; font-weight:normal!important; font-size:75%!important;">r.20190223</span> - Overview</h1>
 	</div>
 
 	<br>
@@ -1012,6 +1014,26 @@
 		<input type="reset" class="ux-button ux-button-highlight" value="Reset">
 	</form>
 
+
+	<h3>Buttons Group</h3>
+
+	<div class="ux-button-group" role="group" aria-label="...">
+		<button class="ux-button">A Default Button</button>
+		<button class="ux-button">Another Button</button>
+		<button class="ux-button">Again a Button</button>
+	</div>
+
+	<div class="ux-button-group" role="group" aria-label="...">
+		<button class="ux-button ux-button-primary">Primary Button</button>
+		<button class="ux-button ux-button-info">Info Button</button>
+		<button class="ux-button ux-button-secondary">Secondary Button</button>
+		<button class="ux-button ux-button-regular">Regular Button</button>
+		<button class="ux-button ux-button-highlight">Highlight Button</button>
+		<button class="ux-button ux-button-special">Special Button</button>
+		<button class="ux-button ux-button-dark">Dark Button</button>
+	</div>
+
+	<br>
 	<br>
 	<br>
 
@@ -1022,14 +1044,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-darkblue">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1037,14 +1060,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-lightblue">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1052,14 +1076,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-red">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1067,14 +1092,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-lightgreen">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1082,14 +1108,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-orange">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1097,14 +1124,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-grey">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1112,14 +1140,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-black">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1127,14 +1156,15 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-bluegrey">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
@@ -1142,18 +1172,20 @@
 	<br>
 
 	<div class="ux-menubar-bar ux-menubar-color-purplegrey">
-		<a href="#" class="ux-menubar-bar-item ux-menubar-button">&#9776;&nbsp; <b>MenuBar Entry One</b></a>
+		<span class="ux-menubar-bar-item ux-menubar-bar-ctrl"></span>
+		<a href="#" class="ux-menubar-bar-item ux-menubar-button"><b>MenuBar Entry One</b></a>
 		<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Two</a>
 		<div class="ux-menubar-dropdown-hover">
-			<button class="ux-menubar-button">MenuBar Entry DropDown &nbsp;&#9662;</button>
+			<button class="ux-menubar-button ux-menubar-dropbutton">MenuBar Entry DropDown</button>
 			<div class="ux-menubar-dropdown-content ux-menubar-bar-block" style="min-width:239px;">
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Three</a>
 				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Four</a>
-				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five &nbsp;&diams;</a>
+				<a href="#" class="ux-menubar-bar-item ux-menubar-button">MenuBar Entry Five</a>
 			</div>
 		</div>
 	</div>
 
+	<br>
 	<br>
 	<br>
 
@@ -1204,6 +1236,57 @@
 		</ul>
 	</div>
 
+	<br>
+	<div class="ux-dropdown">
+		<span class="ux-dropbutton">DropDown Button</span>
+		<ul>
+			<li>Area 1</li>
+			<li>
+				<a href="#">Link 1.1</a>
+				<a href="#">Link 1.2</a>
+			</li>
+			<li>Area 2</li>
+			<li><a href="#">Link 2.1</a></li>
+			<li><a href="#">Link 2.2</a></li>
+			<li>Area 3</li>
+			<li>
+				<a href="#">Link 3.1</a>
+				<a href="#">Link 3.2</a>
+			</li>
+			<li>Area 4</li>
+			<li><a href="#">Link 4.1</a></li>
+			<li><a href="#">Link 4.2</a></li>
+			<li>Area 5</li>
+			<li>
+				<a href="#">Link 5.1</a>
+				<a href="#">Link 5.2</a>
+			</li>
+		</ul>
+	</div>
+	<div class="ux-dropdown">
+		<span class="ux-droparea">DropDown Area</span>
+		<ul>
+			<li>Area 6</li>
+			<li><a href="#">Link 6.1</a></li>
+			<li><a href="#">Link 6.2</a></li>
+			<li>Area 7</li>
+			<li>
+				<button class="ux-button ux-button-small">Link 7.1</button>
+				<a class="ux-button ux-button-small" href="#">Link 7.2</a>
+				<a class="ux-button ux-button-secondary ux-button-small" href="#">Link 7.3</a>
+			</li>
+			<li>Area 8</li>
+			<li>
+				<a href="#">Link 8.1</a>
+				<a href="#">Link 8.2</a>
+			</li>
+			<li>Area 9</li>
+			<li><a href="#">Link 9.1</a></li>
+			<li><a href="#">Link 9.2</a></li>
+		</ul>
+	</div>
+
+	<br>
 	<br>
 	<br>
 

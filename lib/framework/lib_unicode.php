@@ -159,7 +159,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.20190105
+ * @version     v.20190221
  * @package     Base
  *
  */
@@ -686,12 +686,12 @@ public static function html_entities($str) {
  *
  * @param STRING 	$str				:: The string to be wrapped
  * @param INTEGER+ 	$width				:: The number of characters at which the string will be wrapped
- * @param STRING	$break 	OPTIONAL	:: The line is broken using the optional break parameter ; Default is: \n
+ * @param STRING	$break 	OPTIONAL	:: The line is broken using the optional break parameter ; Default is: \n ; will also add the optional visual break by default '¬'
  * @param BOOLEAN 	$cut 	OPTIONAL	:: If the cut is set to TRUE, the string is always wrapped at or before the specified width ; When FALSE the function dose not split the word until the end of the word even if the width is smaller than the word width. Default is FALSE.
  *
  * @return STRING						:: The processed string
  */
-public static function word_wrap($str, $width=75, $break="\n", $cut=false) {
+public static function word_wrap($str, $width=75, $break="\n", $cut=false, $visualbreak='¬') {
 	//-- there is no mb_word_wrap, so this would be like ; an alternative but not well tested on unicode strings and may break them would be: return preg_replace('/([^\s]{'.(int)$width.'})(?=[^\s])/m', '$1` '.$break, (string)$str); // this needs the unicode modifier to avoid break characters
 	if((string)$str == '') {
 		return '';
@@ -719,7 +719,7 @@ public static function word_wrap($str, $width=75, $break="\n", $cut=false) {
 	//--
 	foreach($lines as &$line) { // PHP7-CHECK:FOREACH-BY-VAL
 		//--
-		$line = rtrim($line);
+		$line = (string) rtrim((string)$line);
 		//--
 		if(self::str_len($line) <= $width) {
 			continue;
@@ -739,7 +739,7 @@ public static function word_wrap($str, $width=75, $break="\n", $cut=false) {
 				//--
 				if((string)$actual != '') {
 					//--
-					$line .= rtrim($actual).$break;
+					$line .= (string) rtrim((string)$actual).$break;
 					//--
 				} //end if
 				//--
@@ -748,7 +748,7 @@ public static function word_wrap($str, $width=75, $break="\n", $cut=false) {
 				if($cut) {
 					//--
 					while(self::str_len($actual) > $width) {
-						$line .= (string) self::sub_str($actual, 0, $width).'¬'.$break;
+						$line .= (string) self::sub_str($actual, 0, $width).$visualbreak.$break;
 						$actual = (string) self::sub_str($actual, $width);
 					} //end while
 					//--
@@ -760,11 +760,11 @@ public static function word_wrap($str, $width=75, $break="\n", $cut=false) {
 			//--
 		} //end foreach
 		//--
-		$line .= trim($actual);
+		$line .= (string) trim((string)$actual);
 		//--
 	} //end foreach
 	//--
-	return (string) implode($break, (array)$lines);
+	return (string) implode((string)$break, (array)$lines);
 	//--
 } //END FUNCTION
 //================================================================

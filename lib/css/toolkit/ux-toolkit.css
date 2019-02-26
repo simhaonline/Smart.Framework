@@ -2,8 +2,8 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20190219), (c) 2015-2019 unix-world.org
-	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
+	extended by unixman, (stable.20190223), (c) 2015-2019 unix-world.org
+	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
 /*** Base ***/
@@ -15,7 +15,7 @@ License: BSD
 }
 
 /* Clearing */
-.ux-clear:before, .ux-clear:after {
+.ux-clear::before, .ux-clear::after {
 	content: "";
 	display: table;
 	clear: both;
@@ -54,7 +54,7 @@ License: BSD
 	-webkit-box-sizing: border-box !important;
 }
 
-.ux-grid-row:before, .ux-grid-row:after {
+.ux-grid-row::before, .ux-grid-row::after {
 	content: "";
 	display: table;
 	clear: both;
@@ -420,6 +420,29 @@ a.ux-link:hover {
 }
 
 .ux-button-responsive {
+}
+
+/*** Button Groups ***/
+
+.ux-button-group {
+	display: inline-block; /* do not mark as important as it can't hide using jquery hide() */
+	margin-bottom: 5px;
+	margin-right: 5px;
+}
+
+.ux-button-group .ux-button {
+	margin: 0px;
+	margin-right: -5px;
+	border-radius: 0 !important;
+}
+.ux-button-group .ux-button:first-child {
+	border-top-left-radius: 3px !important;
+	border-bottom-left-radius: 3px !important;
+}
+.ux-button-group .ux-button:last-child {
+	border-top-right-radius: 3px !important;
+	border-bottom-right-radius: 3px !important;
+	margin-right: 5px;
 }
 
 /*** Tables ***/
@@ -917,7 +940,14 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 
 /*** Menu Bars ***/
 
-
+.ux-menubar-dropbutton::after {
+	content: ' ▾';
+	right: 0px;
+	top: 0px;
+	width: 1.5rem;
+	height: 50%;
+	font-size: 1rem !important;
+}
 .ux-menubar-button {
 	border: none;
 	display: inline-block;
@@ -991,6 +1021,15 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	width: 100%;
 	text-align: left;
 	padding: 9px 16px;
+}
+
+.ux-menubar-bar-ctrl::before {
+	content: '\2630';
+	right: 0px;
+	top: 0px;
+	width: 1.5rem;
+	height: 50%;
+	font-size: 1rem !important;
 }
 
 .ux-menubar-bar {
@@ -1270,7 +1309,7 @@ ul.ux-breadcrumb li {
 }
 
 /* Add a slash symbol (/) before/behind each list item */
-ul.ux-breadcrumb li+li:before {
+ul.ux-breadcrumb li+li::before {
 	padding: 8px;
 	color: #6C757D;
 	font-weight: bold;
@@ -1289,6 +1328,105 @@ ul.ux-breadcrumb li a:hover {
 	color: #01447e;
 	text-decoration: underline;
 	font-weight: bold;
+}
+
+/*** DropDown (by Unixman) ***/
+
+div.ux-dropdown {
+	cursor: pointer;
+	display: inline-block; /* do not mark as important as it can't hide using jquery hide() */
+	margin-bottom: 5px;
+	margin-right: 5px;
+}
+
+div.ux-dropdown span.ux-dropbutton::before,
+div.ux-dropdown span.ux-droparea::before {
+	content: '▾ ';
+	right: 0px;
+	top: 0px;
+	width: 1.5rem;
+	height: 50%;
+	font-size: 1rem !important;
+}
+
+div.ux-dropdown span.ux-dropbutton {
+	display: inline-block; /* do not mark as important as it can't hide using jquery hide() */
+	padding: 7px 15px 7px 15px !important;
+	line-height: normal !important;
+	white-space: nowrap !important;
+	vertical-align: middle !important;
+	text-align: center !important;
+	font-family: inherit !important;
+	font-size: 1rem !important;
+	font-weight: bold !important;
+	text-decoration: none !important;
+	border-radius: 3px !important;
+	border: 1px solid #90979d !important;
+	background-color: #6c757d !important;
+	color: #FFFFFF !important;
+	cursor: pointer !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	box-sizing: border-box !important;
+	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
+	appearance: none !important;
+	-moz-appearance: none !important;
+	-webkit-appearance: none !important;
+	user-select: none !important;
+	zoom: 1 !important;
+}
+
+div.ux-dropdown ul {
+	z-index: 5555;
+	visibility: hidden;
+	opacity: 0;
+	background: #FFFFFF;
+	margin: 0;
+	padding: 5px 10px 10px 5px;
+	display: block;
+	position: absolute;
+	min-width: 1px;
+	max-width: 1px;
+	height: 1px;
+	transform: translateY(-25px);
+}
+
+div.ux-dropdown:hover ul {
+	visibility: visible;
+	opacity: 1;
+	border: 1px solid #dde1e9;
+	cursor: default;
+	min-width: 125px;
+	max-width: 300px;
+	height: auto;
+	border-radius: 1px;
+	transform: translateY(0);
+}
+
+div.ux-dropdown ul li {
+	display: block;
+	float: none;
+	width: 100%;
+	text-align: left;
+	margin: 0;
+	padding: 8px 0 0 16px;
+	line-height: 1.5;
+	color: #8b939c;
+}
+
+div.ux-dropdown ul li a:not(.ux-button) {
+	color: #ee4b34;
+	padding: 0 10px;
+	line-height: 1.5;
+	text-decoration: none !important;
+	border-bottom: 0px !important;
+}
+div.ux-dropdown ul li a:not(.ux-button):hover {
+	text-decoration: underline !important;
+	border-bottom: 0px !important;
 }
 
 /*** Bars (by Unixman) ***/
@@ -1342,12 +1480,12 @@ ul.ux-breadcrumb li a:hover {
 	background: #666666;
 	position: relative;
 }
-/*since the first link does not have a triangle before it we can reduce the left padding to make it look consistent with other links*/
+/* since the first link does not have a triangle before it we can reduce the left padding to make it look consistent with other links */
 .ux-stepsbar a:first-child {
 	padding-left: 46px;
 	border-radius: 5px 0 0 5px; /*to match with the parent's radius*/
 }
-.ux-stepsbar a:first-child:before {
+.ux-stepsbar a:first-child::before {
 	left: 14px;
 }
 .ux-stepsbar a:last-child {
@@ -1355,16 +1493,16 @@ ul.ux-breadcrumb li a:hover {
 	padding-right: 20px;
 }
 
-/*hover/active styles*/
+/* hover/active styles */
 .ux-stepsbar a.active, .ux-stepsbar a:hover{
 	background: #333333;
 }
-.ux-stepsbar a.active:after, .ux-stepsbar a:hover:after {
+.ux-stepsbar a.active::after, .ux-stepsbar a:hover::after {
 	background: #333333;
 }
 
-/*adding the arrows for the steps bar using rotated pseudo elements*/
-.ux-stepsbar a:after {
+/* adding the arrows for the steps bar using rotated pseudo elements */
+.ux-stepsbar a::after {
 	content: '';
 	position: absolute;
 	top: 0;
@@ -1387,12 +1525,12 @@ ul.ux-breadcrumb li a:hover {
 		/* 5px - for rounded arrows and 50px - to prevent hover glitches on the border created using shadows */
 	border-radius: 0 5px 0 50px;
 }
-/*we dont need an arrow after the last link*/
-.ux-stepsbar a:last-child:after {
+/* dont need an arrow after the last link */
+.ux-stepsbar a:last-child::after {
 	content: none;
 }
-/*we will use the :before element to show numbers*/
-.ux-stepsbar a:before {
+/* will use the ::before element to show numbers */
+.ux-stepsbar a::before {
 	text-align: center;
 	content: counter(flag);
 	counter-increment: flag;
@@ -1412,17 +1550,17 @@ ul.ux-breadcrumb li a:hover {
 .ux-stepsbar-light a {
 	color: #333333 !important;
 }
-.ux-stepsbar-light a, .ux-stepsbar-light a:after {
+.ux-stepsbar-light a, .ux-stepsbar-light a::after {
 	background: #FFFFFF;
 	color: #000000;
 	transition: all 0.5s;
 }
-.ux-stepsbar-light a:before {
+.ux-stepsbar-light a::before {
 	background: #FFFFFF;
 	box-shadow: 0 0 0 1px #CCCCCC;
 }
 .ux-stepsbar-light a:hover, .ux-stepsbar-light a.active,
-.ux-stepsbar-light a:hover:after, .ux-stepsbar-light a.active:after{
+.ux-stepsbar-light a:hover::after, .ux-stepsbar-light a.active::after{
 	background: #BBBBBB;
 }
 

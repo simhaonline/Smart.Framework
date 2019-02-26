@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.181219
+ * @version 	v.20190221
  * @package 	Application
  *
  */
@@ -306,7 +306,7 @@ final class SmartTextTranslations {
 				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Creating a New Translator: '.$translator_key,
-						'data' => 'Content:'."\n".print_r(self::$translators[(string)$translator_key],1)
+						'data' => 'Content:'."\n".print_r(self::$translators[(string)$translator_key],1) // object
 					]);
 				} //end if
 			} //end if
@@ -315,7 +315,7 @@ final class SmartTextTranslations {
 				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Re-Using an Existing Translator: '.$translator_key,
-						'data' => 'Content:'."\n".print_r(self::$translators[(string)$translator_key],1)
+						'data' => 'Content:'."\n".print_r(self::$translators[(string)$translator_key],1) // object
 					]);
 				} //end if
 			} //end if
@@ -524,7 +524,7 @@ final class SmartTextTranslations {
 				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Get Text from Internal Cache for Key: '.$the_cache_key,
-						'data' => 'Content:'."\n".print_r($translations,1)
+						'data' => 'Content:'."\n".SmartUtils::pretty_print_var($translations)
 					]);
 				} //end if
 			} //end if
@@ -538,7 +538,7 @@ final class SmartTextTranslations {
 				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Get Text from Persistent Cache for Key: '.$the_cache_key,
-						'data' => 'Version:'."\n".$version_translations."\n".'Content:'."\n".print_r($translations,1)
+						'data' => 'Version:'."\n".$version_translations."\n".'Content:'."\n".SmartUtils::pretty_print_var($translations)
 					]);
 				} //end if
 			} //end if
@@ -552,7 +552,7 @@ final class SmartTextTranslations {
 				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 						'title' => 'Get Text from Sources for Key: '.$the_cache_key,
-						'data' => 'Content:'."\n".print_r($translations,1)
+						'data' => 'Content:'."\n".SmartUtils::pretty_print_var($translations)
 					]);
 				} //end if
 			} //end if
@@ -565,7 +565,7 @@ final class SmartTextTranslations {
 			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('extra', '***REGIONAL-TEXTS***', [
 					'title' => '*** NOT FOUND: the Text from Sources for Key: '.$the_cache_key,
-					'data' => 'Content:'."\n".print_r($translations,1)
+					'data' => 'Content:'."\n".SmartUtils::pretty_print_var($translations)
 				]);
 			} //end if
 		} //end if
@@ -665,7 +665,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.181219
+ * @version 	v.20190221
  *
  * @access 		private
  * @internal
@@ -767,7 +767,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.181219
+ * @version 	v.20190221
  *
  */
 interface SmartInterfaceAdapterTextTranslations {

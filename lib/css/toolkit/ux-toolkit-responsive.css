@@ -2,15 +2,17 @@
 
 /*
 License: BSD
-	extended by unixman (stable.20190219), (c) 2015-2019 unix-world.org
-	based on Pure.css v.0.6 by Yahoo :: http://purecss.io/
+	extended by unixman (stable.20190223), (c) 2015-2019 unix-world.org
+	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
 @media all and (max-width:767px) {
 
 	/* All buttons Responsive and Forms */
 
-	.ux-button, .ux-button-responsive, .ux-form {
+	.ux-button,
+	.ux-button-responsive,
+	.ux-form {
 		width: calc(98% - 10px) !important;
 		min-width: calc(98% - 10px) !important;
 		margin: 5px 0 5px 0 !important;
@@ -19,6 +21,24 @@ License: BSD
 
 	.ux-form {
 		width: 100% !important;
+	}
+
+	.ux-button-group {
+		margin-bottom: 15px !important;
+	}
+	.ux-button-group .ux-button {
+		margin-bottom: -6px !important;
+		border-radius: 0 !important;
+	}
+	.ux-button-group .ux-button:first-child {
+		border-radius: 0 !important;
+		border-top-left-radius: 3px !important;
+		border-top-right-radius: 3px !important;
+	}
+	.ux-button-group .ux-button:last-child {
+		border-radius: 0 !important;
+		border-bottom-left-radius: 3px !important;
+		border-bottom-right-radius: 3px !important;
 	}
 
 	/* Reflow Tables */
@@ -124,8 +144,48 @@ License: BSD
 		padding: 0.2rem 0 0.8rem;
 	}
 
+	.ux-menubar-bar .ux-menubar-bar-item,
+	.ux-menubar-bar .ux-menubar-dropdown-hover {
+		float:none;
+		width: 100% !important;
+		text-align: left;
+	}
+	.ux-menubar-dropdown-content {
+		width: calc(98% - 50px) !important;
+	}
+
 	.ux-menu-horizontal {
 		white-space: normal !important;
+	}
+
+	div.ux-dropdown,
+	div.ux-dropdown span.ux-dropbutton,
+	div.ux-dropdown span.ux-droparea {
+		width: calc(98% - 10px) !important;
+		min-width: calc(98% - 10px) !important;
+		font-size: 0.9rem !important;
+	}
+	div.ux-dropdown span.ux-droparea {
+		line-height: 1.5;
+	}
+	div.ux-dropdown {
+		margin: 5px 0 5px 0 !important;
+	}
+	div.ux-dropdown ul {
+		width: calc(98% - 20px) !important;
+		max-width: calc(98% - 20px) !important;
+		left: 5px;
+	}
+
+	.ux-stepsbar a {
+		width: 100%;
+	}
+	.ux-stepsbar a:first-child {
+		padding-left: 60px;
+		border-radius: 0 0 0 0;
+	}
+	.ux-stepsbar a:first-child::before {
+		left: 30px;
 	}
 
 }

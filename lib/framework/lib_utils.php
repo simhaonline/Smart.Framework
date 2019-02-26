@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20190215
+ * @version 	v.20190226
  * @package 	Base
  *
  */
@@ -200,12 +200,12 @@ public static function local_display_number($y_number, $y_decimals=-1, $y_usetho
 				$localnum = (string) $intx_part.$separator_dec.str_pad(substr((string)(int)$dec_part, 0, (int)$y_decimals), (int)$y_decimals, '0');
 				break;
 			case '-2': // auto decimals but force at least one
-				$autodec = (int) 0 + $dec_part;
+				$autodec = (int) $dec_part;
 				$localnum = (string) $intx_part.$separator_dec.$autodec;
 				break;
 			case '-1': // auto decimals (zero or more)
 			default:
-				$autodec = (int) 0 + $dec_part;
+				$autodec = (int) $dec_part;
 				if((int)$autodec > 0) {
 					$localnum = (string) $intx_part.$separator_dec.$autodec;
 				} else {
@@ -230,15 +230,15 @@ public static function local_number_sign_reverse($y_number) {
 	$separator_thd = (string) Smart::get_from_config('regional.thousands-separator');
 	//-- test if zero
 	$tmp_number = str_replace(['.', ',', ' ', $separator_dec, $separator_thd], ['', '', '', '', ''], (string)$y_number); // remove garbage characters
-	if((0+$tmp_number) == 0) {
+	if((float)$tmp_number == 0) {
 		return (string) $y_number; // it is zero, so no sign should be used
 	} //end if
 	//-- inverse the sign
 	$y_number = (string) trim((string)$y_number);
-	if(substr($y_number, 0, 1) == '-') {
-		$y_number = trim(substr($y_number, 1)); // remove the minus sign -
+	if((string)substr($y_number, 0, 1) == '-') {
+		$y_number = (string) trim((string)substr($y_number, 1)); // remove the minus sign -
 	} else {
-		$y_number = '-'.$y_number; // add the minus sign -
+		$y_number = (string) '-'.$y_number; // add the minus sign -
 	} //end if
 	//--
 	return (string) $y_number;
@@ -713,12 +713,13 @@ public static function roman_to_number($roman) {
 //================================================================
 public static function calc_percent($number, $maxnumber) {
 	//--
-	$maxnumber = 0 + $maxnumber;
+	$number = (float) $number;
+	$maxnumber = (float) $maxnumber;
 	//--
 	if($maxnumber <= 0) {
 		$out = 0 ;
 	} else {
-		$out = (0+$number) / $maxnumber * 100 ;
+		$out = $number / $maxnumber * 100 ;
 	} //end if else
 	//--
 	return Smart::format_number_dec($out, 2, '.', '') ;

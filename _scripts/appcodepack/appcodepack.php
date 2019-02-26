@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20190215.1007'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20190226.1427'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2196,7 +2196,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20190215 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20190226 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3010,7 +3010,7 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	//##### Smart v.20190105
+	//##### Smart v.20190226
 
 
 	//================================================================
@@ -3082,7 +3082,7 @@ Options -Indexes
 	public static function format_number_int($y_number, $y_signed='') {
 		//--
 		if((string)$y_signed == '+') { // unsigned integer
-			if($y_number < 0) { // {{{SYNC-SMART-INT+}}}
+			if((int)$y_number < 0) { // {{{SYNC-SMART-INT+}}}
 				$y_number = 0; // it must be zero if negative for the all logic in this framework
 			} //end if
 		} //end if
@@ -3505,7 +3505,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.20190215
+	//##### SmartUtils v.20190226
 
 
 	//================================================================
@@ -3658,7 +3658,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.181225
+	//##### SmartFileSysUtils v.20190221
 
 
 	//================================================================
@@ -3865,21 +3865,21 @@ Options -Indexes
 		} //end if
 		//--
 		if(
-			((string)trim($y_path) == '') OR 			// empty path: error
-			((string)trim($y_path) == '.') OR 			// special: protected
-			((string)trim($y_path) == '..') OR 			// special: protected
-			((string)trim($y_path) == '/') OR 			// root dir: security
-			(strpos($y_path, ' ') !== false) OR 		// no space allowed
-			(strpos($y_path, '\\') !== false) OR 		// no backslash allowed
-			(strpos($y_path, '://') !== false) OR 		// no protocol access allowed
-			(strpos($y_path, ':') !== false) OR 		// no dos/win disk access allowed
-			(strpos($y_path, '|') !== false) OR 		// no macos disk access allowed
-			((string)trim($y_path) == './') OR 			// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something
-			((string)trim($y_path) == '../') OR 		// backward path access denied: security
-			((string)trim($y_path) == './.') OR 		// this is a risk that can lead to unpredictable results
-			(strpos($y_path, '...') !== false) OR 		// this is a risk that can lead to unpredictable results
-			(substr(trim($y_path), -2, 2) == '/.') OR 	// special: protected ; this may lead to rewrite/delete the special protected . in a directory if refered as a filename or dirname that may break the filesystem
-			(substr(trim($y_path), -3, 3) == '/..')  	// special: protected ; this may lead to rewrite/delete the special protected .. in a directory if refered as a filename or dirname that may break the filesystem
+			((string)trim($y_path) == '') OR 							// empty path: error
+			((string)trim($y_path) == '.') OR 							// special: protected
+			((string)trim($y_path) == '..') OR 							// special: protected
+			((string)trim($y_path) == '/') OR 							// root dir: security
+			(strpos($y_path, ' ') !== false) OR 						// no space allowed
+			(strpos($y_path, '\\') !== false) OR 						// no backslash allowed
+			(strpos($y_path, '://') !== false) OR 						// no protocol access allowed
+			(strpos($y_path, ':') !== false) OR 						// no dos/win disk access allowed
+			(strpos($y_path, '|') !== false) OR 						// no macos disk access allowed
+			((string)trim($y_path) == './') OR 							// this must not be used - dissalow FS operations to the app root path, enforce use relative paths such as path/to/something
+			((string)trim($y_path) == '../') OR 						// backward path access denied: security
+			((string)trim($y_path) == './.') OR 						// this is a risk that can lead to unpredictable results
+			(strpos($y_path, '...') !== false) OR 						// this is a risk that can lead to unpredictable results
+			((string)substr((string)trim($y_path), -2, 2) == '/.') OR 	// special: protected ; this may lead to rewrite/delete the special protected . in a directory if refered as a filename or dirname that may break the filesystem
+			((string)substr((string)trim($y_path), -3, 3) == '/..')  	// special: protected ; this may lead to rewrite/delete the special protected .. in a directory if refered as a filename or dirname that may break the filesystem
 		) {
 			return 0;
 		} //end if else
@@ -3968,7 +3968,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.181217
+	//##### SmartFileSystem v.20190221
 
 
 	//================================================================

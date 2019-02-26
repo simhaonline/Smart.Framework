@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.8'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.02.21'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.02.26'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -388,7 +388,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @access 		PUBLIC
  *
  * @depends 	-
- * @version 	v.181019
+ * @version 	v.20190226
  * @package 	Application
  *
  */
@@ -402,7 +402,7 @@ final class SmartFrameworkSecurity {
 // Validate variable names (by default allow to register ONLY lowercase variables to avoid interfere with PHP reserved variables !! security fix !! ; allow camel case or upper is optional)
 public static function ValidateVariableName($y_varname, $y_allow_upper_camelcase=false) {
 
-	// VALIDATE INPUT VARIABLE NAMES v.181217
+	// VALIDATE INPUT VARIABLE NAMES v.190226
 
 	//--
 	$y_varname = (string) $y_varname; // force string
@@ -422,9 +422,9 @@ public static function ValidateVariableName($y_varname, $y_allow_upper_camelcase
 		$out = 1;
 	} //end if else
 	//-- corrections (variable name must be between 1 char and 255 chars)
-	if(strlen($y_varname) < 1) {
+	if((int)strlen((string)$y_varname) < 1) {
 		$out = 0;
-	} elseif(strlen($y_varname) > 255) {
+	} elseif((int)strlen((string)$y_varname) > 255) {
 		$out = 0;
 	} //end if
 	//--
@@ -566,7 +566,7 @@ public static function urlVarDecodeStr($y_urlencoded_str_var, $y_filter=true) {
  * @internal
  *
  * @depends 	-
- * @version 	v.181019
+ * @version 	v.20190226
  * @package 	Application
  *
  */
@@ -721,7 +721,7 @@ final class SmartFrameworkRegistry {
 					$val = (string) number_format(((float)$val), 4, '.', ''); // {{{SYNC-SMART-DECIMAL}}}
 					break;
 				case 'numeric':
-					$val = 0 + (float) $val;
+					$val = (float) $val;
 					break;
 				case 'mixed': // mixed variable types, can vary by context, leave as is
 				case 'raw': // raw, alias for mixed, leave as is
@@ -969,7 +969,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR ADVANCED USE ONLY !!!
  *
  * @depends 	classes: Smart
- * @version		181212
+ * @version		v.20190226
  * @package 	Application
  *
  */
@@ -1060,7 +1060,7 @@ public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
 	} //end if
 	//--
 	$expiration = (int) $expiration; // expire time, in seconds, since now
-	$modified = (int) $modified;
+	$modified   = (int) $modified;
 	//--
 	if(!headers_sent()) {
 		//--
@@ -1076,7 +1076,7 @@ public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
 			if($expiration < 60) {
 				$expiration = 60;
 			} //end if
-			$expires = (int) time() + $expiration;
+			$expires = (int) (time() + $expiration);
 			//--
 			$modified = (int) $modified; // last modification timestamp of the contents, in seconds, must be > 0 <= now
 			if(($modified <= 0) OR ($modified > time())) {

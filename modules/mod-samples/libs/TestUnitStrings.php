@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190219
+ * @version 	v.20190221
  *
  */
 final class TestUnitStrings {
@@ -278,6 +278,14 @@ final class TestUnitStrings {
 			$the_test = 'Deaccent String';
 			$tests[] = $the_test;
 			if(\SmartUnicode::deaccent_str($unicode_text) !== '"Unicode78zz:aAiIaAsStTsStT???') {
+				$err = 'ERROR: '.$the_test.' FAILED ...';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$the_test = 'Word Wrap';
+			$tests[] = $the_test;
+			if(\SmartUnicode::word_wrap($unicode_text, 13, "\n", true, '') !== '"Unicode78źź:'."\n".'ăĂîÎâÂșȘțȚşŞţ'."\n".'Ţグッド') {
 				$err = 'ERROR: '.$the_test.' FAILED ...';
 			} //end if
 		} //end if

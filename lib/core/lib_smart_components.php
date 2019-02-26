@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.20190129
+ * @version 	v.20190226
  * @package 	Components:Core
  *
  */
@@ -1581,7 +1581,7 @@ private static function html_navpager_type_numeric($tpl, $link, $total, $limit, 
  * @return STRING 							[HTML Code]
  */
 public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', $y_extra_options=array(), $y_js_evcode='') {
-	//-- v.160306
+	//-- v.190226
 	if((string)$yvalue != '') {
 		$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
 	} //end if
@@ -1609,7 +1609,7 @@ public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select
 	} else {
 		$the_option_size = (string) $y_extra_options['width'];
 	} //end if
-	$the_option_size = 0 + $the_option_size;
+	$the_option_size = (float) $the_option_size;
 	if($the_option_size >= 1) {
 		$the_option_size = ' width:'.((int)$the_option_size).'px;';
 	} elseif($the_option_size > 0) {
@@ -1667,7 +1667,7 @@ public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select
  * @return STRING 							[HTML Code]
  */
 public static function html_js_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', $y_extra_options=array(), $y_js_evcode='') {
-	//-- v.160306
+	//-- v.190226
 	if((string)$yvalue != '') {
 		$yvalue = date('H:i', @strtotime(date('Y-m-d').' '.$yvalue)); // enforce this time format for internals and be sure is valid
 	} //end if
@@ -1689,7 +1689,7 @@ public static function html_js_time_field($y_id, $y_var, $yvalue, $y_text_select
 	} else {
 		$the_option_size = (string) $y_extra_options['width'];
 	} //end if
-	$the_option_size = 0 + $the_option_size;
+	$the_option_size = (float) $the_option_size;
 	if($the_option_size >= 1) {
 		$the_option_size = ' width:'.((int)$the_option_size).'px;';
 	} elseif($the_option_size > 0) {
@@ -2316,16 +2316,16 @@ public static function js_code_ui_alert_dialog($y_message, $y_ok_jscript_functio
 public static function js_code_confirm_form_submit($y_question, $y_popuptarget='', $y_width='', $y_height='', $y_force_popup='', $y_force_dims='') {
 	//--
 	if((string)$y_width != '') {
-		$y_width = Smart::format_number_int((0+$y_width), '+');
+		$y_width = Smart::format_number_int($y_width, '+');
 	} //end if
 	if((string)$y_height != '') {
-		$y_height = Smart::format_number_int((0+$y_height), '+');
+		$y_height = Smart::format_number_int($y_height, '+');
 	} //end if
 	if((string)$y_force_popup != '') {
-		$y_force_popup = Smart::format_number_int((0+$y_force_popup)); // this can be -1, 0, 1
+		$y_force_popup = Smart::format_number_int($y_force_popup); // this can be -1, 0, 1
 	} //end if
 	if((string)$y_force_dims != '') {
-		$y_force_dims = Smart::format_number_int((0+$y_force_dims), '+'); // 0 or 1
+		$y_force_dims = Smart::format_number_int($y_force_dims, '+'); // 0 or 1
 	} //end if
 	//--
 	return 'SmartJS_BrowserUtils.confirmSubmitForm(\''.Smart::escape_js($y_question).'\', this.form, \''.Smart::escape_js($y_popuptarget).'\', \''.$y_width.'\', \''.$y_height.'\', \''.$y_force_popup.'\', \''.$y_force_dims.'\'); return false;';

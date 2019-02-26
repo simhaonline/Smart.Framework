@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20190105
+ * @version     v.20190226
  * @package     Base
  *
  */
@@ -738,7 +738,7 @@ public static function unseryalize($y_json) {
 public static function format_number_int($y_number, $y_signed='') {
 	//--
 	if((string)$y_signed == '+') { // unsigned integer
-		if($y_number < 0) { // {{{SYNC-SMART-INT+}}}
+		if((int)$y_number < 0) { // {{{SYNC-SMART-INT+}}}
 			$y_number = 0; // it must be zero if negative for the all logic in this framework
 		} //end if
 	} //end if
@@ -1605,7 +1605,7 @@ public static function normalize_spaces($y_txt) {
  */
 public static function check_int_number_overflow_max($y_number) {
 	//--
-	if(abs(0+$y_number) > (int)PHP_INT_MAX) {
+	if(abs((int)$y_number) > (int)PHP_INT_MAX) {
 		$out = true;
 	} else {
 		$out = false;
@@ -1631,7 +1631,7 @@ public static function check_dec_number_overflow_max($y_number) {
 	//--
 	$max_number = '999999999999.9900'; // DECIMAL [12].[4] (no higher decimal numbers than this are safe using a precision like 14, the max in PHP)
 	//--
-	if(abs(0+$y_number) > (0+$max_number)) {
+	if(abs((float)$y_number) > (float)$max_number) {
 		$out = true;
 	} else {
 		$out = false;

@@ -1,6 +1,6 @@
 
 /***** V-TimeLine Responsive CSS :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7 *****/
-/* V-TimeLine r.20190215
+/* V-TimeLine r.20190223
 	License: BSD
 	(c) 2015-2019 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -9,7 +9,7 @@
 		(c) 2015 https://github.com/CodyHouse/vertical-timeline
 */
 
-@media all and (min-width: 1280px) {
+@media all and (min-width: 1024px) {
 
 	.vtml-responsive-container::before {
 		left: 50%;

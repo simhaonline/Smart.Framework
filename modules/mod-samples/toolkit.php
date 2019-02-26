@@ -41,7 +41,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$fcontent = (string) SmartFileSystem::read('lib/css/toolkit/ux-toolkit-samples.html');
+		$fcontent = (string) SmartFileSystem::read('lib/css/toolkit/demo/sample.html');
 		$arr_data = explode('<body>', $fcontent);
 		$fcontent = (string) $arr_data[1];
 		$arr_data = explode('</body>', $fcontent);

@@ -53,7 +53,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181025
+ * @version 	v.20190221
  * @package 	Application
  *
  */
@@ -94,10 +94,10 @@ public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='
 	//--
 	self::$AuthData = array(); // reset the auth data
 	//--
-	$y_user_id = trim((string)$y_user_id); // user ID
-	$y_user_alias = trim((string)$y_user_alias); // username (user alias ; can be the same as userID or different)
-	$y_user_email = trim((string)$y_user_email);
-	$y_user_fullname = trim((string)$y_user_fullname);
+	$y_user_id = (string) trim((string)$y_user_id); // user ID
+	$y_user_alias = (string) trim((string)$y_user_alias); // username (user alias ; can be the same as userID or different)
+	$y_user_email = (string) trim((string)$y_user_email);
+	$y_user_fullname = (string) trim((string)$y_user_fullname);
 	//--
 	if(is_array($y_user_privileges_list)) {
 		$y_user_privileges_list = (string) strtolower((string)Smart::array_to_list((array)$y_user_privileges_list));
@@ -107,7 +107,7 @@ public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='
 	//--
 	$y_user_quota = Smart::format_number_int($y_user_quota); // can be also negative
 	//--
-	switch(strtoupper((string)$y_method)) {
+	switch((string)strtoupper((string)$y_method)) {
 		case 'HTTP-BASIC':
 			$y_method = 'HTTP-BASIC';
 			break;
@@ -122,7 +122,7 @@ public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='
 	$the_key = '#'.Smart::random_number(10000,99999).'#';
 	$the_pass = '';
 	if((string)$y_pass != '') {
-		$the_pass = SmartCipherCrypto::encrypt('hash/sha1', (string)$the_key, (string)$y_pass);
+		$the_pass = (string) SmartCipherCrypto::encrypt('hash/sha1', (string)$the_key, (string)$y_pass);
 	} //end if
 	//--
 	if((string)$y_user_id != '') {
@@ -321,7 +321,7 @@ public static function get_login_arr_privileges() {
  */
 public static function test_login_privilege($y_privilege_to_test) {
 	//--
-	$y_privilege_to_test = trim((string)$y_privilege_to_test);
+	$y_privilege_to_test = (string) trim((string)$y_privilege_to_test);
 	//--
 	$have_this_privilege = false;
 	//--
@@ -382,7 +382,7 @@ public static function get_login_realm() {
 	$login_realm = 'DEFAULT';
 	//--
 	if((string)self::$AuthData['USER_LOGIN_REALM'] != '') {
-		$login_realm = strtoupper((string)self::$AuthData['USER_LOGIN_REALM']);
+		$login_realm = (string) strtoupper((string)self::$AuthData['USER_LOGIN_REALM']);
 	} //end if
 	//--
 	return (string) $login_realm;
@@ -410,9 +410,9 @@ public static function build_arr_privileges($y_priv_list) {
 	$out_arr = array();
 	for($i=0; $i<Smart::array_size($y_priv_list); $i++) {
 		//--
-		$y_priv_list[$i] = (string) strtolower(trim((string)$y_priv_list[$i]));
+		$y_priv_list[$i] = (string) strtolower((string)trim((string)$y_priv_list[$i]));
 		if((string)$y_priv_list[$i] != '') {
-			$out_arr[(string)$y_priv_list[$i]] = (string) trim(ucwords(str_replace(array('_', '-'), array(' ', ' '), (string)$y_priv_list[$i])));
+			$out_arr[(string)$y_priv_list[$i]] = (string) trim((string)ucwords((string)str_replace(['_', '-'], [' ', ' '], (string)$y_priv_list[$i])));
 		} //end if
 		//--
 	} //end for

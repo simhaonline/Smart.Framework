@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.8');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20190103
+ * @version		20190226
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -470,7 +470,7 @@ final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
 			if((string)$rawdisp != '') {
 				header('Content-Disposition: '.$rawdisp);
 			} //end if
-			header('Content-Length: '.(0+strlen((string)$appData['main']))); // must be strlen NOT SmartUnicode::str_len as it must get number of bytes not characters
+			header('Content-Length: '.((int)strlen((string)$appData['main']))); // must be strlen NOT SmartUnicode::str_len as it must get number of bytes not characters
 			echo (string) $appData['main'];
 			return; // break stop
 			//--
