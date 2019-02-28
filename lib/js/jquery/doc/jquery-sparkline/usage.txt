@@ -16,7 +16,7 @@ Here's a simple web page that will display some sparklines:
 	"http://www.w3.org/TR/html4/strict.dtd">
 <head>
 
-	<script type="text/javascript" src="jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="jquery.sparkline.js"></script>
 
 	<script type="text/javascript">

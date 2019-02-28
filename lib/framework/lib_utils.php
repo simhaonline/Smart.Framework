@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20190226
+ * @version 	v.20190228
  * @package 	Base
  *
  */
@@ -1597,12 +1597,17 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 
 
 //================================================================
-// Reads and return one Uploaded File
-// To handle many uploaded files must iterate using this function by var_index=0..n ; else must be var_index=-1
-// RETURN: array [ status => 'OK' | 'WARN' | 'ERR', 'message' => '' | 'WARN Message' | 'ERR Message', 'filename' => '' | 'filename.ext', 'filetype' => '' | 'ext', 'filesize' => Bytes, 'filecontent' => '' | 'the Contents of the file ...' ]
-// {{{SYNC-HANDLE-F-UPLOADS}}}
+/**
+ * Reads and return one Uploaded File
+ *
+ * @param STRING 	$var_name					:: The HTML Variable Name
+ * @param INTEGER 	$var_index					:: The HTML Variable Index: -1 for single file uploads ; 0..n for multi-file uploads ; DEFAULT is -1
+ * @param INTEGER 	$max_size					:: The max file size in bytes that would be accepted ; set to zero for allow maximum size supported by PHP via INI settings ; DEFAULT is zero
+ * @param STRING	$allowed_extensions			:: The list of allowed file extensions ; Default is '' ; Example to restrict to several extensions: '<ext1>,<ext2>,...<ext100>,...' ; set to empty string to allow all extenstions supported via Smart.Framework INI: SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS / SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS
+ * @return ARRAY								:: array [ status => 'OK' | 'WARN' | 'ERR', 'message' => '' | 'WARN Message' | 'ERR Message', 'msg-code' => 0..n, 'filename' => '' | 'filename.ext', 'filetype' => '' | 'ext', 'filesize' => Bytes, 'filecontent' => '' | 'the Contents of the file ...' ]
+ */
 public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0, $allowed_extensions='') {
-	//--
+	//-- {{{SYNC-HANDLE-F-UPLOADS}}}
 	$var_name 	= (string) trim((string)$var_name);
 	$var_index 	= (int)    $var_index; // can be negative or 0..n
 	$max_size 	= (int)    Smart::format_number_int($max_size,'+');
@@ -1614,6 +1619,7 @@ public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0,
 	$out = [
 		'status' 		=> 'ERR', 			// 'OK' | 'WARN' | 'ERR'
 		'message' 		=> '???', 			// '' | 'WARN Message' | 'ERR Message'
+		'msg-code' 		=> -999, 			// Message Code
 		'filename' 		=> '', 				// '' | 'filename.ext'
 		'filetype' 		=> '', 				// '' | 'ext'
 		'filesize' 		=> 0, 				// Bytes
@@ -1623,12 +1629,14 @@ public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0,
 	if(Smart::array_size($_FILES) <= 0) {
 		$out['status'] = 'WARN';
 		$out['message'] = 'No files uploads detected ...';
+		$out['msg-code'] = 1;
 		return (array) $out;
 	} //end if
 	//--
 	if((string)$var_name == '') {
 		$out['status'] = 'ERR';
 		$out['message'] = 'Invalid File VarName for Upload';
+		$out['msg-code'] = 2;
 		return (array) $out;
 	} //end if
 	//--
@@ -1646,6 +1654,7 @@ public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0,
 	if((string)$the_upld_file_tmpname == '') {
 		$out['status'] = 'WARN';
 		$out['message'] = 'No File Uploaded (Empty TMP Name) ...';
+		$out['msg-code'] = 3;
 		return (array) $out;
 	} //end if
 	//-- fix file name
@@ -1661,22 +1670,26 @@ public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0,
 	if((string)$the_upld_file_name == '') {
 		$out['status'] = 'WARN';
 		$out['message'] = 'Uploaded File Name is Invalid (Empty)';
+		$out['msg-code'] = 4;
 		return (array) $out;
 	} //end if
 	if(strlen((string)$the_upld_file_name) > 100) {
 		$out['status'] = 'WARN';
 		$out['message'] = 'Uploaded File Name is too long (oversize 100 characters): '.$the_upld_file_name;
+		$out['msg-code'] = 5;
 		return (array) $out;
 	} //end if
 	if(!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_upld_file_name)) {
 		$out['status'] = 'WARN';
 		$out['message'] = 'Uploaded File Name is Invalid (not Safe): '.$the_upld_file_name;
+		$out['msg-code'] = 6;
 		return (array) $out;
 	} //end if
 	//-- protect against dot files .*
 	if(substr((string)$the_upld_file_name, 0, 1) == '.') {
 		$out['status'] = 'WARN';
 		$out['message'] = 'Uploaded File Name is Invalid (Dot .Files are not allowed for safety): '.$the_upld_file_name;
+		$out['msg-code'] = 7;
 		return (array) $out;
 	} //end if
 	//--
@@ -1686,75 +1699,93 @@ public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0,
 		if(stripos((string)$allowed_extensions, '<'.$tmp_fext.'>') === false) {
 			$out['status'] = 'WARN';
 			$out['message'] = 'Upload Failed: The uploaded file extension is not in the current custom allowed extensions list for file: '.$the_upld_file_name;
+			$out['msg-code'] = 8;
 			return (array) $out;
 		} //end if
-	} //end if
-	if((defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) AND ((string)trim((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS) != '')) {
-		if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
+	} else {
+		if(defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+			if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
+				$out['status'] = 'WARN';
+				$out['message'] = 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration for file: '.$the_upld_file_name;
+				$out['msg-code'] = 9;
+				return (array) $out;
+			} //end if
+		} //end if
+		if((!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) OR (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false)) {
 			$out['status'] = 'WARN';
-			$out['message'] = 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration for file: '.$the_upld_file_name;
+			$out['message'] = 'Upload Failed: The uploaded file extension is denied by the current configuration for file: '.$the_upld_file_name;
+			$out['msg-code'] = 10;
 			return (array) $out;
 		} //end if
-	} //end if
-	if((!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) OR (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false)) {
-		$out['status'] = 'WARN';
-		$out['message'] = 'Upload Failed: The uploaded file extension is denied by the current configuration for file: '.$the_upld_file_name;
-		return (array) $out;
-	} //end if
+	} //end if else
 	//-- check for upload errors
 	$up_err = '';
+	$up_code = 0;
 	switch((int)$the_upld_file_error) {
 		case UPLOAD_ERR_OK:
 			// OK, no error
 			break;
 		case UPLOAD_ERR_INI_SIZE:
+			$up_code = 101;
 			$up_err = 'UPLOAD ERROR: The uploaded file exceeds the upload_max_filesize directive in php.ini';
 			break;
 		case UPLOAD_ERR_FORM_SIZE:
+			$up_code = 102;
 			$up_err = 'UPLOAD ERROR: The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
 			break;
 		case UPLOAD_ERR_PARTIAL:
+			$up_code = 103;
 			$up_err = 'UPLOAD ERROR: The uploaded file was only partially uploaded';
 			break;
 		case UPLOAD_ERR_NO_FILE:
+			$up_code = 104;
 			$up_err = 'UPLOAD ERROR: No file was uploaded';
 			break;
 		case UPLOAD_ERR_NO_TMP_DIR:
+			$up_code = 105;
 			$up_err = 'UPLOAD ERROR: Missing a temporary folder';
 			break;
 		case UPLOAD_ERR_CANT_WRITE:
+			$up_code = 106;
 			$up_err = 'UPLOAD ERROR: Failed to write file to disk';
 			break;
 		case UPLOAD_ERR_EXTENSION:
+			$up_code = 107;
 			$up_err = 'UPLOAD ERROR: File upload stopped by extension';
 			break;
 		default:
+			$up_code = 108;
 			$up_err =  'UPLOAD ERROR: Unknown error ...';
 	} //end switch
 	if((string)$up_err != '') {
 		$out['status'] = 'ERR';
 		$out['message'] = (string) $up_err.' for file: '.$the_upld_file_name;
+		$out['msg-code'] = (int) $up_code;
 		return (array) $out;
 	} //end if
 	//-- do upload
 	if(!is_uploaded_file((string)$the_upld_file_tmpname)) {
 		$out['status'] = 'ERR';
 		$out['message'] = 'UPLOAD ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name.' at: '.$the_upld_file_tmpname;
+		$out['msg-code'] = 11;
 		return (array) $out;
 	} //end if
 	$fsize_upld = (int) SmartFileSystem::get_file_size($the_upld_file_tmpname);
 	if((int)$fsize_upld <= 0) { // dissalow upload empty files, does not make sense or there was an error !!!
 		$out['status'] = 'WARN';
 		$out['message'] = 'Upload Failed: File is empty: '.$the_upld_file_name;
+		$out['msg-code'] = 12;
 		return (array) $out;
 	} elseif((int)$fsize_upld > (int)$max_size) {
 		$out['status'] = 'WARN';
 		$out['message'] = 'Upload Failed: File is oversized: '.$the_upld_file_name;
+		$out['msg-code'] = 13;
 		return (array) $out;
 	} //end if
 	//--
 	$out['status'] = 'OK';
 	$out['message'] = '';
+	$out['msg-code'] = 0;
 	$out['filename'] = (string) $the_upld_file_name;
 	$out['filetype'] = (string) $tmp_fext;
 	$out['filecontent'] = (string) SmartFileSystem::read_uploaded($the_upld_file_tmpname);
@@ -1766,12 +1797,21 @@ public static function read_uploaded_file($var_name, $var_index=-1, $max_size=0,
 
 
 //================================================================
-// Store one Uploaded File
-// To handle many uploaded files must iterate using this function by var_index=0..n ; else must be var_index=-1
-// Returns: FALSE if no file uploaded ; Empty String if OK ; Error String otherwise
-// {{{SYNC-HANDLE-F-UPLOADS}}}
+/**
+ * Store one Uploaded File to a destination directory
+ *
+ * @param STRING 	$dest_dir 					:: The destination directory ; Example: 'wpub/my-test/'
+ * @param STRING 	$var_name					:: The HTML Variable Name
+ * @param INTEGER 	$var_index					:: The HTML Variable Index: -1 for single file uploads ; 0..n for multi-file uploads
+ * @param BOOLEAN 	$allow_rewrite 				:: Allow rewrite if already exists that file in the destination directory ; default is TRUE
+ * @param INTEGER 	$max_size					:: The max file size in bytes that would be accepted ; set to zero for allow maximum size supported by PHP via INI settings
+ * @param STRING	$allowed_extensions			:: The list of allowed file extensions ; Default is '' ; Example to restrict to several extensions: '<ext1>,<ext2>,...<ext100>,...' ; set to empty string to allow all extenstions supported via Smart.Framework INI: SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS / SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS
+ * @param STRING 	$new_name 					:: Use a new file name for the uploaded file instead of the original one ; Set to empty string to preserve the uploaded file name ; DEFAULT is ''
+ * @param BOOLEAN 	$enforce_lowercase 			:: Set to TRUE to enforce lowercase file name ; DEFAULT is FALSE
+ * @return MIXED								:: '' (empty string) if all OK ; FALSE (boolean) if upload failed ; otherwise will return a non-empty string with the ERROR / WARNING message if the file was not successfuly stored in the destination directory
+ */
 public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, $allow_rewrite=true, $max_size=0, $allowed_extensions='', $new_name='', $enforce_lowercase=false) {
-	//--
+	//-- {{{SYNC-HANDLE-F-UPLOADS}}}
 	$dest_dir = (string) $dest_dir;
 	$var_name = (string) trim((string)$var_name);
 	$var_index = (int) $var_index;
@@ -1869,15 +1909,16 @@ public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, 
 		if(stripos((string)$allowed_extensions, '<'.$tmp_fext.'>') === false) {
 			return 'Upload Failed: The uploaded file extension is not in the current custom allowed extensions list for file: '.$the_upld_file_name;
 		} //end if
-	} //end if
-	if((defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) AND ((string)trim((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS) != '')) {
-		if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
-			return 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration for file: '.$the_upld_file_name;
+	} else {
+		if(defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+			if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') === false) {
+				return 'Upload Failed: The uploaded file extension is not in the current allowed extensions list configuration for file: '.$the_upld_file_name;
+			} //end if
 		} //end if
-	} //end if
-	if((!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) OR (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false)) {
-		return 'Upload Failed: The uploaded file extension is denied by the current configuration for file: '.$the_upld_file_name;
-	} //end if
+		if((!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) OR (stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$tmp_fext.'>') !== false)) {
+			return 'Upload Failed: The uploaded file extension is denied by the current configuration for file: '.$the_upld_file_name;
+		} //end if
+	} //end if else
 	//-- check for upload errors
 	$up_err = '';
 	switch((int)$the_upld_file_error) {
