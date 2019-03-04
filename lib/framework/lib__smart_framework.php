@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181226
+ * @version 	v.20190303
  * @package 	Application
  *
  */
@@ -1139,14 +1139,15 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Set a single value for the current controller into PageView Vars
+	 * Set a single value for the current controller into PageView Vars, with Optional OverWrite (if not empty) parameter
 	 *
 	 * @param 	STRING 		$param		:: the variable to be set
 	 * @param 	STRING 		$value		:: the value
+	 * @param 	BOOL 		$overwrite 	:: overwrite (default is TRUE) ; set to FALSE to set only if value is empty
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
-	final public function PageViewSetVar($param, $value) {
+	final public function PageViewSetVar($param, $value, $overwrite=true) {
 		//--
 		if($this->directoutput === true) {
 			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
@@ -1158,6 +1159,12 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		} //end if
 		//--
 		$param = (string) strtolower((string)$param);
+		//--
+		if($overwrite === false) {
+			if((string)$this->pageview[(string)$param] != '') {
+				return true;
+			} //end if
+		} //end if
 		//--
 		$this->pageview[(string)$param] = (string)$value; // set
 		//--
@@ -1236,7 +1243,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Reset all variables for the current controller into PageView Vars
+	 * Reset all variables for the current controller into PageView Vars and unset all keys
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
@@ -1257,7 +1264,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Reset a single variable value for the current controller into PageView Vars
+	 * Reset a single variable value for the current controller into PageView Vars and unset the key
 	 *
 	 * @param 	STRING 		$param		:: the variable to be reset (unset)
 	 *

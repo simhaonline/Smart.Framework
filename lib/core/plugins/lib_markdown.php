@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	Smart, SmartUnicode, SmartUtils
- * @version 	v.20190105
+ * @version 	v.20190301
  * @package 	Converters
  *
  */
@@ -39,7 +39,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.20190105@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
+	private $mkdw_version = 'v.1.5.4-r.20190301@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -72,7 +72,8 @@ final class SmartMarkdownToHTML {
 		'_' => array('Rule'),
 		'`' => array('FencedCode'),
 		'|' => array('Table'),
-		'~' => array('FencedCode'),
+	//	'~' => array('FencedCode'),
+		'~' => array('FencedPreformat'), // fix by unixman
 	);
 //	private $DefinitionTypes = array(
 //		'[' => array('Reference'),
@@ -553,6 +554,77 @@ final class SmartMarkdownToHTML {
 
 
 	private function blockFencedCodeComplete($Block) {
+		//--
+		$text = $Block['element']['text']['text'];
+		$text = Smart::escape_html($text); // fix from: html special chars ENT_NOQUOTES UTF-8
+		//--
+		$Block['element']['text']['text'] = $text;
+		//--
+		return $Block;
+		//--
+	} //END FUNCTION
+
+
+	//-- # Pre(format) :: by unixman (copied from *FencedCode*) to separate handle pre from code
+
+
+	private function blockFencedPreformat($Line) {
+		//--
+		//if(preg_match('/^(['.$Line['text'][0].']{3,})[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches)) {
+		if(preg_match('/^['.$Line['text'][0].']{3,}[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches)) { // fix from 1.5.4
+			//--
+			$Element = array(
+				'name' => 'pre',
+				'text' => '',
+			);
+			//--
+			$Block = array(
+				'char' => $Line['text'][0],
+				'element' => array(
+					'name' => 'div',
+					'handler' => 'element',
+					'text' => $Element,
+				),
+			);
+			//--
+			return $Block;
+			//--
+		} //end if
+		//--
+	} //END FUNCTION
+
+
+	private function blockFencedPreformatContinue($Line, $Block) {
+		//--
+		if(isset($Block['complete'])) {
+			return;
+		} //end if
+		//--
+		if(isset($Block['interrupted'])) {
+			//--
+			$Block['element']['text']['text'] .= "\n";
+			//--
+			unset($Block['interrupted']);
+			//--
+		} //end if
+		//--
+		if(preg_match('/^'.$Block['char'].'{3,}[ ]*$/', $Line['text'])) {
+			//--
+			$Block['element']['text']['text'] = substr($Block['element']['text']['text'], 1);
+			$Block['complete'] = true;
+			//--
+			return $Block;
+			//--
+		} //end if
+		//--
+		$Block['element']['text']['text'] .= "\n".$Line['body'];;
+		//--
+		return $Block;
+		//--
+	} //END FUNCTION
+
+
+	private function blockFencedPreformatComplete($Block) {
 		//--
 		$text = $Block['element']['text']['text'];
 		$text = Smart::escape_html($text); // fix from: html special chars ENT_NOQUOTES UTF-8

@@ -23,8 +23,8 @@ modules/mod-ui-w3
 modules/mod-xtra-bizz
 modules/mod-xtra-vanilla
 modules/mod-wflow-components
+modules/mod-zzz-tests
 modules/smart-extra-libs
 modules/vendor
-modules/mod-tests
 .DS_Store
 !.gitignore

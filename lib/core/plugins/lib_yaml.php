@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.171124
+ * @version 	v.20190302
  * @package 	Parsers
  *
  */
@@ -66,14 +66,26 @@ private $yaml_arr_saved_groups = array();
 private $indent;
 //--
 private $delayedPath = array(); // @var array :: Path modifier that should be applied after adding current element.
+//--
+private $logerr = true;
+private $err = '';
 //================================================================
 
 
 //================================================================
 // Constructor
-public function __construct() {
+public function __construct($log_errors=true) {
 	//--
-	// INIT
+	$this->logerr = (bool) $log_errors;
+	//--
+} //END FUNCTION
+//================================================================
+
+
+//================================================================
+public function getError() {
+	//--
+	return (string) $this->err;
 	//--
 } //END FUNCTION
 //================================================================
@@ -87,6 +99,8 @@ public function __construct() {
 * @return array
 */
 public function parse($input) {
+	//--
+	$this->err = '';
 	//--
 	return (array) $this->loadWithSource((array)$this->loadFromString((string)$input));
 	//--
@@ -119,6 +133,8 @@ public function compose($array, $indent=2) {
 	//--
 	// Dumps to some very clean YAML.  We'll have to add some more features
 	// and options soon.  And better support for folding.
+	//--
+	$this->err = '';
 	//-- New features and options.
 	if(!is_int($indent)) {
 		$this->yaml_dump_indent = 2;
@@ -751,7 +767,10 @@ private function referenceContentsByAlias($alias) {
 	do {
 		//-
 		if(!isset($this->yaml_arr_saved_groups[$alias])) {
-			Smart::log_warning('YAML // Bad group name: '.$alias);
+			$this->err = 'Bad group name: '.$alias;
+			if($this->logerr !== false) {
+				Smart::log_warning('YAML // '.$this->err);
+			} //end if
 			break; // just in case
 		} //end if
 		//--
@@ -1316,6 +1335,7 @@ $array = $yaml->parse($yaml_string);
 print_r($array);
 // Usage PHP -> YAML:
 echo $yaml->compose($array);
+$err = $yaml->getError(); // returns empty or err msg
 */
 
 /* Sample YAML Code

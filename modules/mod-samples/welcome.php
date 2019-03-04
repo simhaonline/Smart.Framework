@@ -168,6 +168,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			'title' => SmartUtils::extract_title('Smart Framework - A   PHP / Javascript Framework for 123 Web !!!!!', 57, true),
 			'main'	=> '<h1>This text should not be displayed, it was RESET !!!</h1>'
 		]);
+		$this->PageViewSetVar('title', 'This title should not overwrite the above', false);
 		$this->PageViewResetVar('main'); // test reset
 		$this->PageViewSetVar(
 			'main',

@@ -28,6 +28,11 @@ Line2
 
 Emphasis, aka italics, with *asterisks* or _underscores_.
 
+~~~~
+This is a pre-formated text
+and this is another line ...
+~~~~
+
 PHP code (PHP Start-Tag and PHP End-Tag must be removed ...)
 ```php
 <?php
