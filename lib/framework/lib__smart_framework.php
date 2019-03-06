@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190303
+ * @version 	v.20190306
  * @package 	Application
  *
  */
@@ -290,6 +290,73 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		} else {
 			$this->directoutput = false;
 		} //end if else
+		//--
+		switch((string)$y_area) {
+			case 'index':
+			case 'admin':
+				break;
+			default: // invalid value
+				Smart::raise_error(
+					__METHOD__.'() :: Invalid Parameter: Area: '.$y_area
+				);
+				return;
+		} //end switch
+		//--
+		if((string)$y_module_path == '') {
+			Smart::raise_error(
+				__METHOD__.'() :: Empty Parameter: Module Path'
+			);
+			return;
+		} //end if
+		if(strpos((string)$y_module_path, 'modules/') !== 0) {
+			Smart::raise_error(
+				__METHOD__.'() :: Invalid Parameter: Module Path: '.$y_module_path
+			);
+			return;
+		} //end if
+		if(!SmartFileSysUtils::check_if_safe_path((string)$y_module_path)) {
+			Smart::raise_error(
+				__METHOD__.'() :: Unsafe Parameter: Module Path: '.$y_module_path
+			);
+			return;
+		} //end if
+		if(!SmartFileSystem::is_type_dir((string)$y_module_path)) {
+			Smart::raise_error(
+				__METHOD__.'() :: Wrong Parameter: Module Path does not exists: '.$y_module_path
+			);
+			return;
+		} //end if
+		//--
+		if((string)$y_url_script != (string)$y_area.'.php') {
+			Smart::raise_error(
+				__METHOD__.'() :: Invalid Parameter: URL-Script: '.$y_url_script
+			);
+			return;
+		} //end switch
+		if((string)$y_url_path == '') {
+			Smart::raise_error(
+				__METHOD__.'() :: Empty Parameter: URL-Path: '.$y_url_path
+			);
+			return;
+		} //end switch
+		if((string)$y_url_addr == '') {
+			Smart::raise_error(
+				__METHOD__.'() :: Empty Parameter: URL-Addr: '.$y_url_addr
+			);
+			return;
+		} //end switch
+		if((string)$y_url_page == '') {
+			Smart::raise_error(
+				__METHOD__.'() :: Empty Parameter: URL-Page: '.$y_url_page
+			);
+			return;
+		} //end switch
+		if((string)$y_controller == '') {
+			Smart::raise_error(
+				__METHOD__.'() :: Empty Parameter: Controller: '.$y_controller
+			);
+			return;
+		} //end switch
 		//--
 		$ctrl_arr = (array) explode('.', (string)$y_controller);
 		//--
