@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190306
+ * @version 	v.20190307
  * @package 	Application
  *
  */
