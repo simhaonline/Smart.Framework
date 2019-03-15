@@ -1,8 +1,8 @@
 #!/bin/sh
 
 #####
-# Update Project Repos Before Deployment: site -> svn ; sf -> git ; sfm -> git
-# version: 20190103
+# Update Repos: SF, SFM, (App) Site
+# version: 2019-03-06 18:03:00
 # This script is used by AppCodePack
 # (c) 2018-2019 unix-world.org
 #####
@@ -20,10 +20,15 @@ if [ ! -d site/ ]; then
 	exit 2
 fi
 cd site/
-echo "##### SVN ### Update Backup4all @@@ Tag: STABLE #####"
+echo "##### SVN ### Update (App) Site @@@ Tag: STABLE #####"
 svn st
-#svn --no-auth-cache --username readonly --password readonly up
-svn up
+svn --no-auth-cache --username readonly --password readonly up
+#svn up
+THE_EXIT_CODE=$?
+if [ ${THE_EXIT_CODE} != 0 ]; then
+	echo "=== FAIL (${THE_EXIT_CODE}): SVN UPDATE ERROR ==="
+	exit ${THE_EXIT_CODE}
+fi
 svn st
 cd ..
 echo ""
@@ -36,6 +41,11 @@ cd sf/
 echo "##### GIT ### Update Smart.Framework @@@ HEAD #####"
 git status
 git pull
+THE_EXIT_CODE=$?
+if [ ${THE_EXIT_CODE} != 0 ]; then
+	echo "=== FAIL (${THE_EXIT_CODE}): GIT UPDATE ERROR ==="
+	exit ${THE_EXIT_CODE}
+fi
 git status
 cd ..
 echo ""
@@ -48,6 +58,11 @@ cd sfm/
 echo "##### GIT ### Update Smart.Framework.Modules @@@ HEAD #####"
 git status
 git pull
+THE_EXIT_CODE=$?
+if [ ${THE_EXIT_CODE} != 0 ]; then
+	echo "=== FAIL (${THE_EXIT_CODE}): GIT UPDATE ERROR ==="
+	exit ${THE_EXIT_CODE}
+fi
 git status
 cd ..
 echo ""
@@ -55,4 +70,4 @@ echo ""
 echo "=== Done. ==="
 exit 0
 
-# END
+#END

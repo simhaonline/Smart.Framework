@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20190115
+ * @version 	v.20190313
  * @package 	Templating:Engines
  *
  */
@@ -1504,7 +1504,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 									//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$qk).'] = '.print_r($qv,1)."\n\n";
 									$mks_line = (string) self::process_loop_syntax(
 										(string) $mks_line,
-										[ (string) $bind_var_key.'.'.strtoupper((string)$qk) => (array) $qv ],
+										(array) array_merge((array)$y_arr_vars, [ (string) $bind_var_key.'.'.strtoupper((string)$qk) => (array) $qv ]),
 										(int) $level
 									);
 								} //end if
@@ -1598,7 +1598,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 								//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$zkey).'] = '.print_r($zval,1)."\n\n";
 								$mks_line = (string) self::process_loop_syntax(
 									(string) $mks_line,
-									[ (string) $bind_var_key.'.'.strtoupper((string)$zkey) => (array) $zval ],
+									(array) array_merge((array)$y_arr_vars, [ (string) $bind_var_key.'.'.strtoupper((string)$zkey) => (array) $zval ]),
 									(int) $level
 								);
 							} //end if
@@ -1607,7 +1607,7 @@ private static function process_loop_syntax($mtemplate, $y_arr_vars, $level=0) {
 									//echo '***** ['.$bind_var_key.'.'.'_-VAL-_'.'] = '.print_r($zval,1)."\n\n";
 									$mks_line = (string) self::process_loop_syntax(
 										(string) $mks_line,
-										[ (string) $bind_var_key.'.'.'_-VAL-_' => (array) $zval ],
+										(array) array_merge((array)$y_arr_vars, [ (string) $bind_var_key.'.'.'_-VAL-_' => (array) $zval ]),
 										(int) $level
 									);
 								} //end if
