@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20190302), (c) 2015-2019 unix-world.org
+	extended by unixman, (stable.20190319), (c) 2015-2019 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -74,6 +74,47 @@ License: BSD
 
 .ux-grid-col.nofloat {
 	float: none !important;
+}
+
+/* UX Grid Fixed (on all screens, mostly used for fixed layouts such as tables) */
+.ux-grid-col.c-hidden {
+	display: none;
+}
+.ux-grid-col.c1 {
+	width:8.33333%;
+}
+.ux-grid-col.c2 {
+	width:16.66666%;
+}
+.ux-grid-col.c3 {
+	width:24.99999%;
+}
+.ux-grid-col.c4 {
+	width:33.33333%;
+}
+.ux-grid-col.c5 {
+	width:41.66666%;
+}
+.ux-grid-col.c6 {
+	width:49.99999%;
+}
+.ux-grid-col.c7 {
+	width:58.33333%;
+}
+.ux-grid-col.c8 {
+	width:66.66666%;
+}
+.ux-grid-col.c9 {
+	width:74.99999%;
+}
+.ux-grid-col.c10 {
+	width:83.33333%;
+}
+.ux-grid-col.c11 {
+	width:91.66666%;
+}
+.ux-grid-col.c12 {
+	width:99.99999%;
 }
 
 /* UX Grid Very-Small Screen (Width <= 639px) */

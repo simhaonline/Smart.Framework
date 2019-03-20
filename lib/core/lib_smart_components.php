@@ -48,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartHTMLCalendar, SmartTextTranslations
- * @version 	v.20190226
+ * @version 	v.20190320
  * @package 	Components:Core
  *
  */
@@ -2956,6 +2956,11 @@ public static function set_app_template_conform_metavars($arr_data=[]) {
 	$arr_data['timeout-execution'] 			= (int)    SMART_FRAMEWORK_EXECUTION_TIMEOUT; 						// execution timeout
 	$arr_data['timeout-netsocket'] 			= (int)    SMART_FRAMEWORK_NETSOCKET_TIMEOUT; 						// netsocket timeout
 	$arr_data['time-date-start'] 			= (string) date('Y-m-d H:i:s O'); 									// date time start
+	$arr_data['auth-login-ok'] 				= (string) (SmartAuth::check_login() === true ? 'yes' : 'no'); 		// Auth Login OK: yes/no
+	$arr_data['auth-login-id'] 				= (string) SmartAuth::get_login_id(); 								// Auth Login ID
+	$arr_data['auth-login-alias'] 			= (string) SmartAuth::get_login_alias(); 							// Auth Login Alias (UserName)
+	$arr_data['auth-login-fullname'] 		= (string) SmartAuth::get_login_fullname(); 						// Auth Login FullName
+	$arr_data['auth-login-privileges'] 		= (string) SmartAuth::get_login_privileges(); 						// Auth Login Privileges
 	$arr_data['debug-mode'] 				= (string) (SmartFrameworkRuntime::ifDebug() ? 'yes' : 'no'); 		// yes | no
 	//--
 	return (array) $arr_data;
