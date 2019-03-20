@@ -72,7 +72,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart
- * @version 	v.20190115
+ * @version 	v.20190320
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
@@ -80,7 +80,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single document in a collection with optional filter criteria / limit
  * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)									# add multiple documents to a collection
  * @method MIXED		insert($strCollection, $arrDoc)												# add single document to a collection
- * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# insert single or modify single or multi documents in a collection that are matching the filter criteria
+ * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# insert single or modify single or multi documents in a collection that are matching the filter criteria ; this is always non-fatal, will throw catcheable exception on error ...
  * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# modify single or many documents in a collection that are matching the filter criteria
  * @method MIXED		delete($strCollection, $arrFilter)											# delete single or many documents from a collection that are matching the filter criteria
  * @method MIXED		command($arrCmd)															# run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...
@@ -640,7 +640,20 @@ public function __call($method, array $args) {
 			try {
 				$result = $this->mongodbclient->executeBulkWrite($this->db.'.'.$this->collection, $write);
 			} catch(Exception $err) {
-				$this->error((string)$this->connex_key, 'MongoDB Write Execute', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: '.$err->getMessage(), $args);
+				if((string)$method == 'upsert') {
+					$is_fatal = false; // for upsert, will throw catcheable exception because: 'Multiple clients can simultaneously update the collection. Wiredtiger will lock the document to be updated, rather than the collection), thus may result in multi-concurrency error !!
+				} else {
+					$is_fatal = null; // leave as default (depends on how $this->fatal_err is set)
+				} //end if else
+				$this->error(
+					(string) $this->connex_key,
+					'MongoDB Write Execute',
+					'MongoDB->'.$method.'() :: '.$this->collection,
+					'ERROR: '.$err->getMessage(),
+					$args,
+					'', // warning
+					$is_fatal // mixed: false OR null
+				);
 				return array();
 			} //end try
 			if(!is_object($result)) {
@@ -1036,9 +1049,19 @@ public function disconnect() {
  * @return :: HALT EXECUTION WITH ERROR MESSAGE
  *
  */
-private function error($y_conhash, $y_area, $y_info, $y_error_message, $y_query='', $y_warning='') {
+private function error($y_conhash, $y_area, $y_info, $y_error_message, $y_query='', $y_warning='', $y_is_fatal=null) {
 //--
-if($this->fatal_err === false) {
+if(($y_is_fatal === true) OR ($y_is_fatal === false)) { // depends on how is set, conform
+	$y_is_fatal = (bool) $y_is_fatal;
+} else { // NULL :: default, depend on how $this->fatal_err is
+	if($this->fatal_err === false) {
+		$y_is_fatal = false;
+	} else {
+		$y_is_fatal = true;
+	} //end if else
+} //end if else
+//--
+if($y_is_fatal === false) {
 	throw new Exception('#MONGO-DB@'.$y_conhash.'# :: Q# // MongoDB Client :: EXCEPTION :: '.$y_area."\n".$y_info.': '.$y_error_message);
 	return;
 } //end if

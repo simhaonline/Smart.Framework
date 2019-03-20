@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190115
+ * @version 	v.20190230
  *
  */
 final class TestUnitMongoDB {
@@ -190,12 +190,16 @@ final class TestUnitMongoDB {
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 0;
 			$doc['upsert'] = 'update';
-			$result = $mongo->upsert(
-				'myTestCollection',
-				[ 'id' => $uuid ], 		// filter (update only this)
-				'$set', 				// increment operation
-				(array) $doc			// update array
-			);
+			try {
+				$result = $mongo->upsert(
+					'myTestCollection',
+					[ 'id' => $uuid ], 		// filter (update only this)
+					'$set', 				// increment operation
+					(array) $doc			// update array
+				);
+			} catch(\Exception $err) {
+				\Smart::log_warning(__METHOD__.'() # MongoDB Upsert (#1) :: Exception: '.$err->getMessage());
+			} //end try catch
 			$doc = array();
 			if($result[1] != 1) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
@@ -210,12 +214,16 @@ final class TestUnitMongoDB {
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 0;
 			$doc['upsert'] = 'insert';
-			$result = $mongo->upsert(
-				'myTestCollection',
-				[ 'id' => $uuid ], 		// filter (update only this)
-				'$set', 				// increment operation
-				(array) $doc			// update array
-			);
+			try {
+				$result = $mongo->upsert(
+					'myTestCollection',
+					[ 'id' => $uuid ], 		// filter (update only this)
+					'$set', 				// increment operation
+					(array) $doc			// update array
+				);
+			} catch(\Exception $err) {
+				\Smart::log_warning(__METHOD__.'() # MongoDB Upsert (#2) :: Exception: '.$err->getMessage());
+			} //end try catch
 			$doc = array();
 			if($result[1] != 1) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
