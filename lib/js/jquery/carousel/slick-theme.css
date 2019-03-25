@@ -11,8 +11,7 @@
 	font-family: 'slick';
 	font-weight: normal;
 	font-style: normal;
-	src: url('fonts/slick.woff') format('woff'),
-		 url('fonts/slick.ttf') format('truetype');
+	src: url('fonts/slick.woff2') format('woff2'), url('fonts/slick.ttf') format('truetype');
 }
 /* Arrows */
 .slick-prev,
