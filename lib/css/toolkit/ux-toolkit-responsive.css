@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman (stable.20190319), (c) 2015-2019 unix-world.org
+	extended by unixman (stable.20190323), (c) 2015-2019 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -144,9 +144,11 @@ License: BSD
 		padding: 0.2rem 0 0.8rem;
 	}
 
+	/* Menu Bars (by Unixman) */
+
 	.ux-menubar-bar .ux-menubar-bar-item,
 	.ux-menubar-bar .ux-menubar-dropdown-hover {
-		float:none;
+		float: none;
 		width: 100% !important;
 		text-align: left;
 	}
@@ -154,9 +156,132 @@ License: BSD
 		width: calc(98% - 50px) !important;
 	}
 
+	/* Menus, Horizontal */
+
 	.ux-menu-horizontal {
 		white-space: normal !important;
 	}
+
+	/* Responsive NavBar Menu (by Unixman) */
+
+	nav.ux-navbar div#logo span {
+		display: none;
+	}
+	nav.ux-navbar div#logo {
+		display: block;
+		padding: 0;
+		width: 100%;
+		text-align: center;
+		float: none;
+	}
+	nav.ux-navbar {
+		margin: 0;
+	}
+	nav.ux-navbar label.toggle + a,
+	nav.ux-navbar ul.menu {
+		display: none;
+	}
+	nav.ux-navbar label.toggle {
+		display: block;
+		background-color: #3f51b5;
+		padding: 0 20px;
+		color: #FFFFFF;
+		font-size: 20px;
+		line-height: 50px;
+		text-decoration: none;
+		border: none;
+	}
+	nav.ux-navbar label.toggle::after {
+		content: ' ▾';
+	}
+	nav.ux-navbar label.toggle:hover {
+		color: #FFFFFF;
+		background-color: #1d3093;
+	}
+	nav.ux-navbar input[id^=drop]:checked + ul {
+		display: block;
+	}
+	nav.ux-navbar ul li {
+		display: block;
+		width: 100%;
+	}
+	nav.ux-navbar ul ul .toggle,
+	nav.ux-navbar ul ul a {
+		padding: 0 40px;
+	}
+	nav.ux-navbar ul ul ul a {
+		padding: 0 80px;
+	}
+	nav.ux-navbar a:hover {
+		color: #FFFFFF;
+		background-color: #1d3093;
+	}
+	nav.ux-navbar ul ul ul a {
+		color: #FFFFFF;
+		background-color: #2e40a4;
+	}
+	nav.ux-navbar ul li ul li .toggle,
+	nav.ux-navbar ul ul a {
+		background-color: #2e40a4;
+	}
+	nav.ux-navbar ul ul {
+		float: none;
+		position: static;
+		color: #ffffff;
+	}
+	nav.ux-navbar ul ul li:hover > ul,
+	nav.ux-navbar ul li:hover > ul {
+		display: none;
+	}
+	nav.ux-navbar ul ul li {
+		display: block;
+		width: 100%;
+	}
+	nav.ux-navbar ul ul ul li {
+		position: static;
+	}
+	/*
+	nav.ux-navbar ul li {
+		display: block;
+		width: 94%;
+	}
+	*/
+
+	nav.ux-navbar.navbar-green label.toggle {
+		background-color: #6a9d4e;
+	}
+	nav.ux-navbar.navbar-green label.toggle:hover {
+		background-color: #487b2c;
+	}
+	nav.ux-navbar.navbar-green a:hover {
+		background-color: #487b2c;
+	}
+	nav.ux-navbar.navbar-green ul ul ul a {
+		background-color: #598c3d;
+	}
+	nav.ux-navbar.navbar-green ul li ul li .toggle,
+	nav.ux-navbar.navbar-green ul ul a {
+		background-color: #598c3d;
+	}
+
+	nav.ux-navbar.navbar-black label.toggle {
+		background-color: #3b4250;
+	}
+	nav.ux-navbar.navbar-black label.toggle:hover {
+		background-color: #192030;
+	}
+	nav.ux-navbar.navbar-black a:hover {
+		background-color: #192030;
+	}
+	nav.ux-navbar.navbar-black ul ul ul a {
+		background-color: #2a3140;
+	}
+	nav.ux-navbar.navbar-black ul li ul li .toggle,
+	nav.ux-navbar.navbar-black ul ul a {
+		background-color: #2a3140;
+	}
+
+	/* DropDown (by Unixman) */
 
 	div.ux-dropdown,
 	div.ux-dropdown span.ux-dropbutton,
@@ -176,6 +301,8 @@ License: BSD
 		max-width: calc(98% - 20px) !important;
 		left: 5px;
 	}
+
+	/* Steps Bar (by Unixman) */
 
 	.ux-stepsbar a {
 		width: 100%;
