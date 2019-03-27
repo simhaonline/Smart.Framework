@@ -81,7 +81,7 @@ final class TestUnitBrowserWinInterractions {
 			$btn = 'Open Modal or PopUp (auto)';
 		} //end if else
 		//--
-		return (string) '<a class="ux-button ux-button-regular" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'</a>';
+		return (string) '<a class="ux-button ux-button-regular" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'  &nbsp; <i class="sfi sfi-terminal"></i>'.'</a>';
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -103,7 +103,7 @@ final class TestUnitBrowserWinInterractions {
 			$btn = 'Open PopUp or Modal (auto)';
 		} //end if else
 		//--
-		return (string) '<a class="ux-button ux-button-highlight" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'</a>';
+		return (string) '<a class="ux-button ux-button-highlight" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'  &nbsp; <i class="sfi sfi-shift"></i>'.'</a>';
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -112,7 +112,7 @@ final class TestUnitBrowserWinInterractions {
 	//============================================================
 	private static function bttn_close_modal_or_popup() {
 		//--
-		return (string) '<button class="ux-button ux-button-special" style="min-width:320px;" onClick="SmartJS_BrowserUtils.CloseModalPopUp(); return false;">[ Close: Modal / PopUp ]</button>';
+		return (string) '<button class="ux-button ux-button-special" style="min-width:320px;" onClick="SmartJS_BrowserUtils.CloseModalPopUp(); return false;">[ Close: Modal / PopUp ] &nbsp; <i class="sfi sfi-cancel-circle"></i></button>';
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -121,7 +121,7 @@ final class TestUnitBrowserWinInterractions {
 	//============================================================
 	private static function bttn_set_parent_refresh() {
 		//--
-		return (string) '<button class="ux-button ux-button-dark" style="min-width:320px;" onClick="SmartJS_BrowserUtils.RefreshParent(); return false;">[ Set: Parent Refresh / Reload ]</button>';
+		return (string) '<button class="ux-button ux-button-dark" style="min-width:320px;" onClick="SmartJS_BrowserUtils.RefreshParent(); return false;">[ Set: Parent Refresh / Reload ] &nbsp; <i class="sfi sfi-notification"></i></button>';
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -134,7 +134,7 @@ final class TestUnitBrowserWinInterractions {
 			$question = 'This is a test for Confirm Unload. Are you sure you want to close this page ?';
 		} //end if
 		//--
-		return '<button class="ux-button ux-button-dark" style="min-width:320px;" onClick="SmartJS_BrowserUtils.PageAwayControl(\''.\Smart::escape_js($question).'\'); return false;">[ Set: Confirm Unload ]</button>';
+		return '<button class="ux-button ux-button-dark" style="min-width:320px;" onClick="SmartJS_BrowserUtils.PageAwayControl(\''.\Smart::escape_js($question).'\'); return false;">[ Set: Confirm Unload ] &nbsp; <i class="sfi sfi-question"></i></button>';
 		//--
 	} //END FUNCTION
 	//============================================================

@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190211
+ * @version 	v.20190326
  *
  */
 final class TestUnitMain {
@@ -71,7 +71,7 @@ final class TestUnitMain {
 		//--
 
 		//-- ajax post form
-		$btnop = '<button title="Submit this Test Form by AJAX (with Confirmation)" class="ux-button ux-button-large ux-button-primary" onClick="'.\SmartComponents::js_ajax_submit_html_form('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#smart__CaptchaFrm__img\').click();').' return false;">Submit this Test Form by AJAX &nbsp; <span class="fa fa-send"></span></button>';
+		$btnop = '<button title="Submit this Test Form by AJAX (with Confirmation)" class="ux-button ux-button-large ux-button-primary" onClick="'.\SmartComponents::js_ajax_submit_html_form('test_form_ajax', SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#smart__CaptchaFrm__img\').click();').' return false;">Submit this Test Form by AJAX &nbsp; <span class="sfi sfi-compass"></span></button>';
 		//-- end
 
 		//-- lists with one element
@@ -176,8 +176,8 @@ final class TestUnitMain {
 				'TEST-JS_SCRIPTS_Init-Tabs' 				=> '<script type="text/javascript">'.\SmartComponents::js_code_uitabs_init('tabs_draw', \Smart::format_number_int($tab,'+')).'</script>', // '<script type="text/javascript">'.\SmartComponents::js_code_uitabs_activate('tabs_draw', false).'</script>',
 				'Test-Buttons_AJAX-POST' 					=> (string) $btnop,
 				'TEST-VAR'  								=> '<div style="background-color: #ECECEC; padding: 10px;"><b>Smart.Framework</b> :: PHP/Javascript web framework :: Test and Demo Suite @ '.$info_adm.'</div>',
-				'TEST-ELEMENTS_DIALOG' 						=> '<a class="ux-button ux-button-primary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_confirm_dialog('<h1>Do you like this framework ?</h1><div>Option: <select id="test-dlg-select-el-sf"><option value="Yes">Yes</option><option value="No">No</option></select></div>', 'alert(\'Well ... then you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Dialog</a>',
-				'TEST-ELEMENTS_ALERT' 						=> '<a class="ux-button ux-button-secondary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_alert_dialog('<h2>You can press now OK !</h2><div>Option: <select id="test-dlg-select-el-sf"><option value="One">One</option><option value="Two">Two</option></select></div>', 'alert(\'Good ... you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \'] ... \\\' " <tag> !\');').' return false;">Test JS-UI Alert</a>',
+				'TEST-ELEMENTS_DIALOG' 						=> '<a class="ux-button ux-button-primary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_confirm_dialog('<h1>Do you like this framework ?</h1><div>Option: <select id="test-dlg-select-el-sf" class="ux-field"><option value="Yes">Yes</option><option value="No">No</option></select></div>', 'jQuery.alertable.alert(\'Well ... then you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \']\\n ... \\\' " <tag> !\').always(function(){});').' return false;">Test JS-UI Dialog &nbsp; <i class="sfi sfi-share"></i></a>',
+				'TEST-ELEMENTS_ALERT' 						=> '<a class="ux-button ux-button-secondary" style="min-width:320px;" href="#" onClick="'.\SmartComponents::js_code_ui_alert_dialog('<h2>You can press now OK !</h2><div>Option: <select id="test-dlg-select-el-sf" class="ux-field"><option value="One">One</option><option value="Two">Two</option></select></div>', 'jQuery.alertable.alert(\'Good ... you selected the value: [\' + $(\'#test-dlg-select-el-sf\').val() + \']\\n ... \\\' " <tag> !\').always(function(){});').' return false;">Test JS-UI Alert  &nbsp; <i class="sfi sfi-share"></i></a>',
 				'TEST-ELEMENTS_SEND-CONFIRM-MODAL' 			=> (string) $basic_form_start.$basic_form_send_modal.$basic_form_end,
 				'TEST-ELEMENTS_SEND-CONFIRM-POPUP' 			=> (string) $basic_form_start.$basic_form_send_popup.$basic_form_end,
 				'TEST-ELEMENTS-WND-INTERRACTIONS-MODAL' 	=> (string) \SmartModExtLib\Samples\TestUnitBrowserWinInterractions::bttnModalTestInit(),

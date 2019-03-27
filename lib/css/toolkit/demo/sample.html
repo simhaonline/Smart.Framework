@@ -7,6 +7,7 @@
 	<meta charset="UTF-8">
 	<title>Smart :: UX CSS Toolkit / Test</title>
 	<link rel="stylesheet" type="text/css" href="../../../core/plugins/fonts/typo/sans/ibm-plex-sans.css">
+	<link rel="stylesheet" href="../sf-icons.css">
 	<link rel="stylesheet" href="../ux-toolkit.css">
 	<link rel="stylesheet" href="../ux-toolkit-responsive.css">
 	<link rel="stylesheet" href="../../animate/animate.css">
@@ -32,7 +33,7 @@
 <div style="width:100% !important; padding-left:10px; padding-top:2px; padding-right:10px; box-sizing: border-box !important; -moz-box-sizing: border-box !important; -webkit-box-sizing: border-box !important;">
 
 	<div class="ux-section">
-		<h1 class="lightSpeedIn animated delay-1s">UX Toolkit <span style="color:#CCCCCC!important; font-weight:normal!important; font-size:75%!important;">r.20190323</span> - Overview</h1>
+		<h1 class="lightSpeedIn animated delay-1s">UX Toolkit <span style="color:#CCCCCC!important; font-weight:normal!important; font-size:75%!important;">r.20190327</span> - Overview</h1>
 	</div>
 
 	<br>
@@ -98,30 +99,30 @@
 	<h3>Custom Buttons with Various Icons</h3>
 	<p>
 		<button class="ux-button ux-button-custom ux-button-responsive">
-			&clubs;
+			<i class="sfi sfi-bullhorn"></i> &nbsp;
 			Custom Button
 		</button>
 		<a class="ux-button ux-button-custom ux-button-responsive" href="#">
-			<span style="color:#5CB85C;">&clubs;</span>
+			<span style="color:#5CB85C;"><i class="sfi sfi-bullhorn"></i> &nbsp; </span>
 			Custom anchor Button
 		</a>
 		<button class="ux-button ux-button-custom ux-button-disabled ux-button-responsive">
-			<span style="color:#FF6600;">&clubs;</span>
+			<span style="color:#FF6600;"><i class="sfi sfi-bullhorn"></i> &nbsp; </span>
 			Custom Button disabled
 		</button>
 		<a class="ux-button ux-button-custom ux-button-disabled ux-button-responsive" href="#">
-			&clubs;
+			<i class="sfi sfi-bullhorn"></i> &nbsp;
 			Custom anchor Button disabled
 		</a>
 	</p>
 
 	<h3>Send Buttons</h3>
 	<p>
-		<button class="ux-button ux-button-primary ux-button-xlarge">&#9973; &nbsp; Submit Button</button> &nbsp;
-		<button class="ux-button ux-button-secondary ux-button-large">&#9973; &nbsp; Submit Button</button> &nbsp;
-		<button class="ux-button ux-button-regular">&#9973; &nbsp; Submit (Button)</button> &nbsp;
-		<button class="ux-button ux-button-highlight ux-button-small">&#9973; &nbsp; Submit Button</button> &nbsp;
-		<button class="ux-button ux-button-special ux-button-xsmall">&#9973; &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-primary ux-button-xlarge"><i class="sfi sfi-arrow-up sfi-xl"></i> &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-secondary ux-button-large"><i class="sfi sfi-arrow-up sfi-lg"></i> &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-regular"><i class="sfi sfi-arrow-up"></i> &nbsp; Submit (Button)</button> &nbsp;
+		<button class="ux-button ux-button-highlight ux-button-small"><i class="sfi sfi-arrow-up sfi-sm"></i> &nbsp; Submit Button</button> &nbsp;
+		<button class="ux-button ux-button-special ux-button-xsmall"><i class="sfi sfi-arrow-up sfi-xs"></i> &nbsp; Submit Button</button> &nbsp;
 		<br>
 		<input class="ux-button ux-button-special ux-button-xlarge" type="submit" value="Submit Input"> &nbsp;
 		<input class="ux-button ux-button-info ux-button-large" type="button" value="Submit Input"> &nbsp;
@@ -707,7 +708,7 @@
 			<textarea rows="7" cols="50">This is some text ...</textarea>
 		</fieldset>
 		<fieldset>
-			<button type="submit" class="ux-button ux-button-primary ux-button-responsive">Sign in &nbsp; &#9752;</button>
+			<button type="submit" class="ux-button ux-button-primary ux-button-responsive">Sign out &nbsp; <i class="sfi sfi-exit"></i></button>
 		</fieldset>
 	</form>
 
@@ -724,7 +725,7 @@
 				<input type="checkbox"> Remember me
 			</label>
 
-			<button type="submit" class="ux-button">Sign in &nbsp; &#9752;</button>
+			<button type="submit" class="ux-button">Sign in &nbsp; <i class="sfi sfi-enter"></i></button>
 		</fieldset>
 	</form>
 
@@ -768,8 +769,8 @@
 				<input type="checkbox"> I've read the terms and conditions
 			</label>
 
-			<button type="submit" class="ux-button ux-button-primary">Submit &nbsp; &#9973;</button>
-			<button type="reset" class="ux-button ux-button-special">Reset &nbsp; &#9730;</button>
+			<button type="submit" class="ux-button ux-button-primary">Submit &nbsp; <i class="sfi sfi-checkmark"></i></button>
+			<button type="reset" class="ux-button ux-button-special">Reset &nbsp; <i class="sfi sfi-cross"></i></button>
 		</fieldset>
 	</form>
 
@@ -810,8 +811,8 @@
 				<input type="checkbox"> I've read the terms and conditions
 			</label>
 
-			<button type="submit" class="ux-button notice">Submit &nbsp; &#9973;</button>
-			<button type="reset" class="ux-button">Reset &nbsp; &#9730;</button>
+			<button type="submit" class="ux-button notice">Submit &nbsp; <i class="sfi sfi-checkmark2"></i></button>
+			<button type="reset" class="ux-button">Reset &nbsp; <i class="sfi sfi-cancel-circle"></i></button>
 		</fieldset>
 	</form>
 
@@ -852,7 +853,7 @@
 					<input type="checkbox"> Remember Me
 				</label>
 
-				<button type="submit" class="ux-button">Submit &nbsp; &#9973;</button>
+				<button type="submit" class="ux-button">Submit &nbsp; <i class="sfi sfi-arrow-up2"></i></button>
 			</div>
 		</fieldset>
 	</form>
@@ -873,7 +874,7 @@
 			<input type="text" class="ux-input-1-2" placeholder="Even More Stuff">
 			<input type="text" class="ux-input-1-2" placeholder="Last Item">
 		</fieldset>
-		<button type="submit" class="ux-button ux-button-primary ux-input-1-2">Sign in &nbsp; &#9752;</button>
+		<button type="submit" class="ux-button ux-button-primary ux-input-1-2">Sign in &nbsp; <i class="sfi sfi-enter"></i></button>
 	</form>
 
 
@@ -895,8 +896,8 @@
 		}
 		</script>
 		<fieldset class="ux-group">
-			<button type="submit" class="ux-button" onclick="testDynamicGroupAdd()">+ &nbsp; Add field</button>
-			<button type="submit" class="ux-button" onclick="testDynamicGroupRemove()">- &nbsp; Remove field</button>
+			<button type="submit" class="ux-button" onclick="testDynamicGroupAdd()"><i class="sfi sfi-plus"></i> &nbsp; Add field</button>
+			<button type="submit" class="ux-button" onclick="testDynamicGroupRemove()"><i class="sfi sfi-minus"></i> &nbsp; Remove field</button>
 		</fieldset>
 		<fieldset class="ux-group" id="test-dynamic-group">
 			<input type="text" class="ux-input-1-3" placeholder="Add or remove fields to test">
@@ -943,8 +944,8 @@
 		<input type="text" class="ux-input-rounded" placeholder="Subject">
 		<label>Message</label>
 		<textarea class="ux-input-rounded" rows="5" cols="40" placeholder="Message..."></textarea>
-		<button type="submit" class="ux-button ux-input-rounded">&#9740; &nbsp; Search</button>
-		<button type="reset" class="ux-button ux-input-rounded">Reset x</button>
+		<button type="submit" class="ux-button ux-input-rounded"><i class="sfi sfi-search"></i> &nbsp; Search</button>
+		<button type="reset" class="ux-button ux-input-rounded">Reset &nbsp; <i class="sfi sfi-cancel-circle"></i></button>
 	</form>
 
 
@@ -1004,12 +1005,12 @@
 	<h3>Form Button</h3>
 
 	<form class="ux-form">
-		<a class="ux-button">&#9875; &nbsp; Anchor</a>
+		<a class="ux-button"><i class="sfi sfi-magnet"></i> &nbsp; Anchor</a>
 		<a class="ux-button ux-button-special" href="#">&raquo; &nbsp; Link</a>
 		<button class="ux-button ux-button-primary">Button &nbsp; &middot;</button>
 		<a class="ux-button ux-button-dark" href="#">&laquo; &nbsp; Link</a>
 		<button type="submit" class="ux-button ux-button-info">Search</button>
-		<button type="submit" class="ux-button ux-button-secondary">Submit &nbsp; &#9973;</button>
+		<button type="submit" class="ux-button ux-button-secondary"><i class="sfi sfi-compass"></i> &nbsp; Submit</button>
 		<input type="button" class="ux-button ux-button-regular" value="Input Button">
 		<input type="reset" class="ux-button ux-button-highlight" value="Reset">
 	</form>

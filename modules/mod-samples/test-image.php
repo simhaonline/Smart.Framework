@@ -65,9 +65,9 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		ob_start();
 		//--
 		if(function_exists('imagecreatetruecolor')) {
-			$im = imagecreatetruecolor(320, 90);
+			$im = imagecreatetruecolor(280, 90);
 		} else {
-			$im = imagecreate(320, 90);
+			$im = imagecreate(280, 90);
 		} //end if else
 		if(!$im) {
 			Smart::log_warning('Cannot create the image in: '.__METHOD__);
@@ -78,8 +78,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$bgcolor = imagecolorallocate($im, 0xEC, 0xEC, 0xEC); // color for background
 		imagefill($im, 0, 0, $bgcolor);
 		$text_color = imagecolorallocate($im, 33, 33, 33); // color for text
-		imagestring($im, 25, 25, 30, 'This is a sample PNG image ...', $text_color);
-		imagestring($im, 25, 25, 50, 'Generated from PHP GD Library', $text_color);
+		imagestring($im, 20, 5, 20, 'This is a sample PNG image ...', $text_color);
+		imagestring($im, 20, 5, 45, 'Generated from PHP GD Library', $text_color);
 		//--
 		ob_end_clean(); // #end 1st level buffering
 		//--
@@ -152,9 +152,9 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 		ob_start(); // avoid echo warnings or errors !
 		if(function_exists('imagecreatetruecolor')) {
-			$im = imagecreatetruecolor(320, 90);
+			$im = imagecreatetruecolor(280, 90);
 		} else {
-			$im = imagecreate(320, 90);
+			$im = imagecreate(280, 90);
 		} //end if else
 		ob_end_clean();
 		if(!$im) {
@@ -172,8 +172,8 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		$bgcolor = imagecolorallocate($im, 0xEC, 0xEC, 0xEC); // color for background
 		imagefill($im, 0, 0, $bgcolor);
 		$text_color = imagecolorallocate($im, 33, 33, 33); // color for text
-		imagestring($im, 25, 25, 30, 'This is a sample JPEG image ...', $text_color);
-		imagestring($im, 25, 25, 50, 'Generated from PHP GD Library', $text_color);
+		imagestring($im, 20, 5, 20, 'This is a sample JPEG image ...', $text_color);
+		imagestring($im, 20, 5, 45, 'Generated from PHP GD Library', $text_color);
 		ob_end_clean();
 		//--
 

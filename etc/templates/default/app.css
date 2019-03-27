@@ -5,6 +5,7 @@
 
 /* -- ui toolkit -- */
 
+@import url("../../../lib/css/toolkit/sf-icons.css");
 @import url("../../../lib/css/toolkit/ux-toolkit.css");
 @import url("../../../lib/css/toolkit/ux-toolkit-responsive.css");
 
@@ -37,10 +38,6 @@
 @import url("../../../lib/core/plugins/css/email.css");
 
 @import url("../../../lib/core/plugins/css/captcha.css");
-
-/* -- iconic font -- */
-
-@import url("../../../lib/core/plugins/fonts/icons/fontawesome.css");
 
 /* ----------------------------- */
 

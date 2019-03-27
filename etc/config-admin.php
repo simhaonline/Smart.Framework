@@ -22,7 +22,7 @@ $configs['app']['admin-template-file'] 				= 'template.htm';			// default admin 
 define('APP_AUTH_ADMIN_USERNAME', 'admin');
 define('APP_AUTH_ADMIN_PASSWORD', 'pass');
 /* uncomment these for advanced authentication (must switch from simple to advanced authentication in modules/app/app-auth-admin.inc.php)
-define('APP_AUTH_PRIVILEGES', '<admin>,<custom-priv1>,...,<custom-privN>');
+define('APP_AUTH_PRIVILEGES', '<admin>,<custom-priv1>,<custom-priv...>,<custom-privN>');
 $configs['app-auth']['adm-namespaces'] = [
 	'Admins Manager' => 'admin.php?page=auth-admins.manager.stml',
 	// ...

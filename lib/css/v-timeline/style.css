@@ -1,6 +1,6 @@
 
 /***** V-TimeLine CSS :: v.3.7.8 r.2019.01.03 / smart.framework.v.3.7 *****/
-/* V-TimeLine r.20190223
+/* V-TimeLine r.20190327
 	License: BSD
 	(c) 2015-2019 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -79,7 +79,13 @@
 	text-align:center;
 	font-size: 30px;
 }
-.vtml-timeline-icon div i.fa {
+.vtml-timeline-icon div .sfi { /* sf icons */
+	margin-left: 0px;
+	margin-top: 7px;
+	display: block;
+	font-size: 32px !important;
+}
+.vtml-timeline-icon div .fa { /* font awesome icons */
 	margin-top: 13px;
 	display: block;
 }
@@ -196,7 +202,6 @@ hr.vtml-hr {
 	border-radius: 10%;
 	cursor: default;
 }
-
 .vtml-small-container .vtml-timeline-icon div {
 	position: relative;
 	width: 24px;
@@ -206,8 +211,13 @@ hr.vtml-hr {
 	text-align:center;
 	font-size: 20px;
 }
-
-.vtml-small-container .vtml-timeline-icon div i.fa {
+.vtml-small-container .vtml-timeline-icon div .sfi { /* sf icons */
+	margin-left: 0px;
+	margin-top: -2px;
+	display: block;
+	font-size: 24px !important;
+}
+.vtml-small-container .vtml-timeline-icon div .fa { /* font awesome icons */
 	margin-top: 10px;
 	display: block;
 	font-size: 20px !important;

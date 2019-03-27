@@ -5,21 +5,6 @@
 
 	<title>Virtual Keyboard jQuery Mobile 1.4 Demo</title>
 
-	<!-- demo -->
-	<link href="css/demo.css" rel="stylesheet">
-
-	<!-- jQuery & jQuery UI + theme (required) -->
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-
-	<link href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" rel="stylesheet">
-	<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-
-	<!-- keyboard widget css & script (required) -->
-	<link href="../css/keyboard.css" rel="stylesheet">
-	<script src="../js/jquery.keyboard.js"></script>
-	<script src="../js/jquery.keyboard.extension-mobile.js"></script>
-
 	<style>
 	.ui-page {
 		padding: 1em;
@@ -49,13 +34,11 @@
 	</style>
 
 	<script>
+	/*
 	$(function () {
 	});
 
-	/**
-	This widget will automatically add a virtual numeric keypad to all numeric <input> elements.
-	by Brandon White (https://github.com/BrandonLWhite)
-	*/
+	// This widget will automatically add a virtual numeric keypad to all numeric <input> elements by Brandon White (https://github.com/BrandonLWhite)
 	$.widget("bw.virtualNumericKeyboard", {
 		initSelector: "input.numeric",
 
@@ -75,20 +58,14 @@
 
 				create: $.proxy(self._onCreateKeyboard, self),
 
-				/**
-				When we're done with the keyboard, clean up it's DOM elements and prepare it for the next showing.
-				Otherwise, keyboard prefers to keep the DOM elements intact (one for each input the user touches!)
-				which isn't ideal for mobile environment.
-
-				TODO : Kick this over to the core Keyboard.  Thinking an option like 'destroyWhenHidden'
-				*/
+				// When we're done with the keyboard, clean up it's DOM elements and prepare it for the next showing. Otherwise, keyboard prefers to keep the DOM elements intact (one for each input the user touches!) which isn't ideal for mobile environment.
+				// TODO : Kick this over to the core Keyboard.  Thinking an option like 'destroyWhenHidden'
 				hidden: function (eventInfo, keyboard) {
 					keyboard.removeKeyboard();
 					keyboard.mobile_initialized = false;
 				}
 			})
 			.addMobile();
-
 			self.keyboard = $(self.element).keyboard().getkeyboard();
 		},
 
@@ -96,17 +73,12 @@
 			self.keyboard && self.keyboard.destroy();
 		},
 
-		/**
-		Handle the keyboard create event so we can attach our own custom style.
-		*/
+		// Handle the keyboard create event so we can attach our own custom style.
 		_onCreateKeyboard: function (keyboard) {
 			return keyboard.buildKeyboard().addClass("ui-keyboard-numpad");
 		},
 
-		/**
-		Event handler for when the keyboard is shown to the user.  This is used to setup key enable states for things
-		like the sign key.
-		*/
+		// Event handler for when the keyboard is shown to the user.  This is used to setup key enable states for things like the sign key.
 		_onKeyboardBeforeVisible: function (eventInfo, keyboard) {
 			// Allow the sign key if the "min" attribute isn't explicitly defined as 0 or positive.
 			//
@@ -116,9 +88,7 @@
 			this.permitOrDenyDecimal();
 		},
 
-		/**
-		Allow the decimal key if the step is less than zero or "any".
-		*/
+		// Allow the decimal key if the step is less than zero or "any".
 		permitOrDenyDecimal: function () {
 			var step = $(this.element).attr("step");
 			var bAllowDecimal = step === "any" || step < 1 || step === undefined;
@@ -134,16 +104,12 @@
 			this.keyboard.$decBtn = $();
 		},
 
-		/**
-		Retrieve a key object from the keyboard given it's class name.
-		*/
+		// Retrieve a key object from the keyboard given it's class name.
 		getKey: function (keyboard, sKeyClass) {
 			return keyboard.$keyboard.find("button.ui-keyboard-button." + sKeyClass);
 		},
 
-		/**
-		Set the enable state for a key object in the keyboard given it's class name.
-		*/
+		// Set the enable state for a key object in the keyboard given it's class name.
 		setKeyEnable: function (keyboard, sKeyClass, bEnable) {
 			this.getKey(keyboard, sKeyClass)
 			.toggleClass("ui-state-disabled", !bEnable)
@@ -151,6 +117,7 @@
 			.prop("disabled", !bEnable);
 		}
 	});
+	*/
 	</script>
 </head>
 <body data-role="page" data-theme="b" class="ui-page-theme-b">

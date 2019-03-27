@@ -8,7 +8,7 @@ ul.json-dict, ol.json-array {
 	list-style-type: none;
 	margin: 0 0 0 1px;
 	border-left: 1px dotted #ccc;
-	padding-left: 2em;
+	padding-left: 28px;
 }
 .json-string {
 	color: #0B7500;
@@ -23,28 +23,28 @@ a.json-toggle {
 	position: relative;
 	color: inherit;
 	text-decoration: none;
+	font-size: 14px;
+	line-height: 14px;
 }
 a.json-toggle:focus {
 	outline: none;
 }
-a.json-toggle:before {
+a.json-toggle::before {
 	color: #aaa;
 	content: "\25BC"; /* down arrow */
 	position: absolute;
 	display: inline-block;
-	width: 1em;
-	left: -1em;
+	width: 14px;
+	left: -14px;
 }
-a.json-toggle.collapsed:before {
-	transform: rotate(-90deg); /* Use rotated down arrow, prevents right arrow appearing smaller than down arrow in some browsers */
-	-ms-transform: rotate(-90deg);
-	-webkit-transform: rotate(-90deg);
+a.json-toggle.collapsed::before {
+	content: "\25B6"; /* right arrow */
 }
 
 /* Collapsable placeholder links */
 a.json-placeholder {
 	color: #aaa;
-	padding: 0 1em;
+	padding: 0 14px;
 	text-decoration: none;
 }
 a.json-placeholder:hover {

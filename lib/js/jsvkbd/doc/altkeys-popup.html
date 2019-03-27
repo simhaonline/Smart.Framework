@@ -5,32 +5,10 @@
 
 	<title>Virtual Keyboard Basic Demo</title>
 
-	<!-- demo -->
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/font-awesome.min.css" rel="stylesheet">
-	<link href="css/demo.css" rel="stylesheet">
-
-	<!-- jQuery & jQuery UI + theme (required) -->
-	<link href="css/jquery-ui.min.css" rel="stylesheet">
-	<script src="js/jquery-latest.min.js"></script>
-	<script src="js/jquery-ui.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-
-	<!-- keyboard widget css & script (required) -->
-	<link href="../css/keyboard.css" rel="stylesheet">
-	<style>
-	code { background: #333; padding: 2px 4px; }
-	#footer2 div { text-align: left; }
-	</style>
-	<script src="../js/jquery.keyboard.js"></script>
-
-	<!-- keyboard extensions (optional) -->
-	<script src="../js/jquery.mousewheel.js"></script>
-	<script src="../js/jquery.keyboard.extension-altkeyspopup.js"></script>
-
 	<!-- initialize keyboard (required) -->
 	<script>
-	/* add some custom popups */
+	/*
+	// add some custom popups
 	$.extend( $.keyboard.altKeys, {
 		1   : '\u2460 \u2474 \u2488 \u2776 \u278a \u2780',
 		'!' : '\u00a1 \u2762 \u2763', // adding two more exclamation points!
@@ -83,6 +61,7 @@
 			popupVisible : 'popup-visible'
 		});
 	});
+	*/
 	</script>
 </head>
 <body>
@@ -97,7 +76,6 @@
 					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" name="top">
-					<span class="fa fa-keyboard-o fa-lg"></span>
 				</a>
 			</div>
 
@@ -111,7 +89,7 @@
 							<li><a href="layouts.html">Standard</a></li>
 							<li><a href="layouts2.html">Greywyvern</a></li>
 							<li><a href="layouts3.html">Microsoft Keyboard</a></li>
-							<li><a href="calculator.html"><span class="fa fa-calculator fa-lg"></span> Calculator</a></li>
+							<li><a href="calculator.html">Calculator</a></li>
 						</ul>
 					</li>
 					<li class="dropdown active">
@@ -129,16 +107,7 @@
 							<li><a href="../index.html#typing">Typing</a></li>
 						</ul>
 					</li>
-					<li><a href="https://jsfiddle.net/Mottie/egb3a1sk/"><span class="fa fa-flask fa-lg"></span> Playground</a></li>
 				</ul>
-
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="https://github.com/Mottie/Keyboard"><span class="fa fa-github fa-lg" title="GitHub"></span></a></li>
-					<li><a href="https://github.com/Mottie/Keyboard/archive/master.zip"><span class="fa fa-download fa-lg" title="Download"></span></a></li>
-					<li><a href="https://github.com/Mottie/Keyboard/wiki"><span class="fa fa-file-text-o fa-lg" title="Documentation"></span></a></li>
-					<li><a href="https://github.com/Mottie/Keyboard/issues"><span class="fa fa-bug fa-lg" title="Issues"></span></a></li>
-				</ul>
-
 			</div><!-- /.navbar-collapse -->
 		</div><!-- /.container-fluid -->
 	</nav>
