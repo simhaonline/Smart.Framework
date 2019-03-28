@@ -1,4 +1,5 @@
 # unveil.js
+## THIS IS A MODIFIED VERSION ; contains fixes by unixman
 ### A very lightweight plugin to lazy load images for jQuery
 
 Most of us are familiar with the [Lazy Load](http://www.appelsiini.net/projects/lazyload) plugin by [Mika Tuupola](http://www.appelsiini.net/).
@@ -24,7 +25,7 @@ That's what I did and this is my lightweight version of Lazy Load with support f
 
 ## Usage
 Use a placeholder image in the src attribute - something to be displayed while the original image loads - and include the actual image source in a "data-src" attribute.
-<img src="bg.png" data-src="img1.jpg">
+<img src="blank.png" data-src="img1.jpg">
 If you care about users without javascript enabled, you can include the original image inside a <noscript> tag:
 <noscript>
   <img src="img1.jpg">
@@ -37,8 +38,12 @@ $(document).ready(function() {
 
 ## Threshold
 By default, images are only loaded and "unveiled" when the user scrolls to them and they became visible on the screen.
+<img class="unveil" src="" data-src="img1.jpg" data-src-alt="img1.webp">
 If you want your images to load earlier than that, lets say 200px before they appear on the screen, you just have to:
-$("img").unveil(200);
+$("img.unveil").unveil({
+	threshold: 200, // unveil if 200px above image
+	attribute: 'data-src-alt' // if this is not present will fallback to 'data-src' attribute
+});
 
 ## Callback
 As a second parameter you can also specify a callback function that will fire after an image has been "unveiled".
@@ -47,7 +52,7 @@ img {
   opacity: 0;
   transition: opacity .3s ease-in;
 }
-$("img").unveil(200, function() {
+$("img").unveil({}, function() {
   $(this).load(function() {
     this.style.opacity = 1;
   });
@@ -61,7 +66,7 @@ $("img").trigger("unveil");
 ## Lookup
 It is also possible to lookup for images in the viewport that haven't been "unveiled" yet.
 This can be useful, for instance, in case of a tabbed layout.
-$(window).trigger("lookup");
+$(window).trigger("lookup"); // this should be also used with dynamic components that contain unveil images
 
 ## Cancel
 You can remove all the "unveil" event handlers from "window":
