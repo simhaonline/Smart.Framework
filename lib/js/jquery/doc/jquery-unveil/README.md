@@ -1,6 +1,6 @@
 # unveil.js
-## THIS IS A MODIFIED VERSION ; contains fixes by unixman
-### A very lightweight plugin to lazy load images for jQuery
+## A very lightweight plugin to lazy load images for jQuery
+### THIS IS A MODIFIED VERSION ; contains fixes by unixman
 
 Most of us are familiar with the [Lazy Load](http://www.appelsiini.net/projects/lazyload) plugin by [Mika Tuupola](http://www.appelsiini.net/).
 This plugin is very useful and it boosts performance delaying loading of images in long web pages because images outside of viewport (visible part of web page) won't be loaded until the user scrolls to them.
