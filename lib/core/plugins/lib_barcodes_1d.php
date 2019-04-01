@@ -57,7 +57,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20190207
+ * @version 	v.20190401
  * @package 	Components:Misc
  *
  */
@@ -76,12 +76,12 @@ final class SmartBarcode1D {
 	 * @param INTEGER+	$y_height			The Height in pixels for the Barcode
 	 * @param HEXCOLOR	$y_color			The Hexadecimal Color for the Barcode Bars ; default is Black = #000000
 	 * @param BOOLEAN	$y_display_text		If TRUE will display the Code below of BarCode Bars ; default is FALSE
-	 * @param YES/NO	$y_cache			If YES will cache the Barcode to avoid on-the-fly generation ; default is set to NO
+	 * @param INTEGER	$y_cachetime		If > 0 will cache it for this number of seconds ; if zero will never expire ; if < 0 will use no cache
 	 *
 	 * @return MIXED	By Type Selection: 	HTML Code / PNG Image / SVG Code
 	 *
 	 */
-	public static function getBarcode($y_code, $y_type, $y_format, $y_size, $y_height, $y_color='#000000', $y_display_text=false, $y_cache='no') {
+	public static function getBarcode($y_code, $y_type, $y_format, $y_size, $y_height, $y_color='#000000', $y_display_text=false, $y_cachetime=-1) {
 		//--
 		switch((string)$y_type) {
 			case '128': // 128 B (Extended)
@@ -124,13 +124,13 @@ final class SmartBarcode1D {
 				return '';
 		} //end switch
 		//--
-
-		//--
-		if($y_display_text) {
+		if($y_display_text === true) {
 			$barcode_show_text = 'TX';
 		} else {
 			$barcode_show_text = 'XX';
 		} //end if else
+		//--
+		$y_cachetime = (int) $y_cachetime;
 		//--
 
 		//--
@@ -139,9 +139,9 @@ final class SmartBarcode1D {
 		//--
 
 		//--
-		if((string)$y_cache == 'yes') {
+		if((int)$y_cachetime >= 0) {
 			//--
-			$out = SmartUtils::load_cached_content($barcode_format, $realm, $memory_cache_url, ''); // (try to) get from cache
+			$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$memory_cache_url, '', (int)$y_cachetime); // (try to) get from cache
 			//--
 			if((string)$out != '') {
 				return $out; // if found in cache return it
@@ -190,9 +190,9 @@ final class SmartBarcode1D {
 		//--
 
 		//--
-		if((string)$y_cache == 'yes') {
+		if((int)$y_cachetime >= 0) {
 			//--
-			$out = SmartUtils::load_cached_content($barcode_format, $realm, $memory_cache_url, $out); // set + get from cache
+			$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$memory_cache_url, (string)$out, (int)$y_cachetime); // set + get from cache
 			//--
 		} //end if
 		//--

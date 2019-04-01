@@ -48,7 +48,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20190226
+ * @version 	v.20190401
  * @package 	Components:Misc
  *
  */
@@ -66,12 +66,12 @@ final class SmartBarcode2D {
 	 * @param INTEGER+ 	$y_size				The Scale-Size for Barcode (1..4)
 	 * @param HEXCOLOR	$y_color			The Hexadecimal Color for the Barcode Pixels ; default is Black = #000000
 	 * @param MIXED		$y_extraoptions		Extra Options: for QRCode = Quality [L, M, Q, H] L as default ; for PDF417 a Ratio Integer between 1 and 17
-	 * @param YES/NO	$y_cache			If YES will cache the Barcode to avoid on-the-fly generation ; default is set to NO
+	 * @param INTEGER	$y_cachetime		If > 0 will cache it for this number of seconds ; if zero will never expire ; if < 0 will use no cache
 	 *
 	 * @return MIXED	By Type Selection: 	HTML Code / PNG Image / SVG Code
 	 *
 	 */
-	public static function getBarcode($y_code, $y_type, $y_format, $y_size, $y_color='#000000', $y_extraoptions='', $y_cache='no') {
+	public static function getBarcode($y_code, $y_type, $y_format, $y_size, $y_color='#000000', $y_extraoptions='', $y_cachetime=-1) {
 		//--
 		switch((string)$y_type) {
 			case 'qrcode':
@@ -133,6 +133,8 @@ final class SmartBarcode2D {
 				return '';
 		} //end switch
 		//--
+		$y_cachetime = (int) $y_cachetime;
+		//--
 
 		//--
 		$memory_cache_url = 'memory://barcode-2d/'.$barcode_type.'/'.$barcode_format.'/'.$y_size.'/'.$y_color.'/'.$y_extraoptions.'/'.$y_code;
@@ -140,9 +142,9 @@ final class SmartBarcode2D {
 		//--
 
 		//--
-		if((string)$y_cache == 'yes') {
+		if((int)$y_cachetime >= 0) {
 			//--
-			$out = SmartUtils::load_cached_content($barcode_format, $realm, $memory_cache_url, ''); // (try to) get from cache
+			$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$memory_cache_url, '', (int)$y_cachetime); // (try to) get from cache
 			//--
 			if((string)$out != '') {
 				return $out; // if found in cache return it
@@ -188,9 +190,9 @@ final class SmartBarcode2D {
 		//--
 
 		//--
-		if((string)$y_cache == 'yes') {
+		if((int)$y_cachetime >= 0) {
 			//--
-			$out = SmartUtils::load_cached_content($barcode_format, $realm, $memory_cache_url, $out); // set + get from cache
+			$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$memory_cache_url, (string)$out, (int)$y_cachetime); // set + get from cache
 			//--
 		} //end if
 		//--

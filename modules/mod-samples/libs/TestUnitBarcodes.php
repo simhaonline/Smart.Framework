@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20190401
  *
  */
 final class TestUnitBarcodes {
@@ -40,7 +40,13 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'BAR Code # 128B';
 		//--
-		return \SmartBarcode1D::getBarcode($str, '128', 'html-svg', 1, 20, '#3B5897', true, 'no');
+		if(\Smart::random_number(1, 100) > 50) {
+			$use_cache = 60; // seconds
+		} else {
+			$use_cache = -1; // no
+		} //end if else
+		//--
+		return \SmartBarcode1D::getBarcode($str, '128', 'html-svg', 1, 20, '#3B5897', true, (int)$use_cache);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -51,7 +57,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'BAR Code # 93E+c';
 		//--
-		return \SmartBarcode1D::getBarcode($str, '93', 'html-png', 1, 20, '#3B5897', true, 'no');
+		return \SmartBarcode1D::getBarcode($str, '93', 'html-png', 1, 20, '#3B5897', true);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -62,7 +68,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'BAR Code # 39E';
 		//--
-		return \SmartBarcode1D::getBarcode($str, '39', 'html-svg', 1, 20, '#3B5897', true, 'no');
+		return \SmartBarcode1D::getBarcode($str, '39', 'html-svg', 1, 20, '#3B5897', true);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -73,7 +79,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = '1231FZ13XHS';
 		//--
-		return \SmartBarcode1D::getBarcode($str, 'KIX', 'html-png', 2, 20, '#3B5897', true, 'no');
+		return \SmartBarcode1D::getBarcode($str, 'KIX', 'html-png', 2, 20, '#3B5897', true);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -84,7 +90,13 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
 		//--
-		return \SmartBarcode2D::getBarcode($str, 'qrcode', 'html-svg', 2, '#3B5897', 'M', 'no');
+		if(\Smart::random_number(1, 100) > 50) {
+			$use_cache = 60; // seconds
+		} else {
+			$use_cache = -1; // no
+		} //end if else
+		//--
+		return \SmartBarcode2D::getBarcode($str, 'qrcode', 'html-svg', 2, '#3B5897', 'M', (int)$use_cache);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -95,7 +107,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = 'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
 		//--
-		return \SmartBarcode2D::getBarcode($str, 'semacode', 'html-png', 2, '#3B5897', '', 'no');
+		return \SmartBarcode2D::getBarcode($str, 'semacode', 'html-png', 2, '#3B5897', '');
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -106,7 +118,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = '1234567890 abcdefghij klmnopqrst uvwxzy 234DSKJFH23YDFKJHaS 1234567890 abcdefghij klmnopqrst uvwxzy 234DSKJFH23YDFKJHaS';
 		//--
-		return \SmartBarcode2D::getBarcode($str, 'pdf417', 'html-svg', 1, '#3B5897', '1', 'no');
+		return \SmartBarcode2D::getBarcode($str, 'pdf417', 'html-svg', 1, '#3B5897', '1');
 		//--
 	} //END FUNCTION
 	//============================================================

@@ -337,7 +337,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'test.load-url':
 				//--
-				$browser = (array) SmartUtils::load_url_or_file('http://www.unix-world.org', 20, 'GET');
+				$browser = (array) SmartUtils::load_url_content('http://www.unix-world.org', 20, 'GET');
 				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
 					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
 					unset($browser);
@@ -350,7 +350,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'test.load-secure-url':
 				//--
-				$browser = (array) SmartUtils::load_url_or_file('https://www.unix-world.org', 20, 'GET', 'tls');
+				$browser = (array) SmartUtils::load_url_content('https://www.unix-world.org', 20, 'GET', (string)SMART_FRAMEWORK_SSL_MODE);
 				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
 					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
 					unset($browser);

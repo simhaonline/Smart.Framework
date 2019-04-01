@@ -606,7 +606,8 @@ private function build_multipart() {
 //$mail->is_html = false; // false | true
 //$mail->body = "This is just a test.";
 //$attachment = file_get_contents(test.jpg);
-//$mail->add_attachment("$attachment", "test.jpg", "image/jpeg");
+//$mail->add_attachment((string)$attachment, 'test.jpg', 'image/jpeg', 'attachment', '', 'yes'); // to embedd
+//$mail->add_attachment((string)$attachment, 'test2.jpg', 'image/jpeg', 'inline', 'cid:12345'); // to display as inline contents ID
 //$mail->send();
 //=====================================================
 
