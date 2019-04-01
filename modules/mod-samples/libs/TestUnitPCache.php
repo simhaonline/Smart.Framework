@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20190401
  *
  */
 final class TestUnitPCache {
@@ -73,7 +73,7 @@ final class TestUnitPCache {
 		//--
 		$tests = array();
 		$tests[] = '***** Persistent Cache Backend: ['.SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND.'] *****';
-		$tests[] = '##### Persistent Cache / TESTS with a Variable Key-Size of '.\SmartUtils::pretty_print_bytes(strlen($pcache_test_arch_content), 2).' : #####';
+		$tests[] = '##### Persistent Cache / TESTS with a huge size Variable (String/Json) Key-Size of 2x'.\SmartUtils::pretty_print_bytes(strlen($pcache_test_arch_content), 2).' : #####';
 		//--
 		$err = '';
 		//--
@@ -91,6 +91,15 @@ final class TestUnitPCache {
 		$time = microtime(true);
 		//--
 		$tests[] = '++ START Counter ...';
+		//--
+
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Clearing All Data (FLUSHDB)';
+			if(\SmartPersistentCache::clearData() !== true) {
+				$err = 'Persistent Cache FAILED to Clear All Data (FLUSHDB)';
+			} //end if
+		} //end if
 		//--
 
 		//--

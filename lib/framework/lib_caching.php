@@ -47,7 +47,7 @@ if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190221
+ * @version 	v.20190401
  * @package 	Application
  *
  */
@@ -91,7 +91,7 @@ final class SmartCache {
 	 * @param STRING	$y_realm	The Cache Realm
 	 * @param STRING	$y_key		The Cache Key
 	 *
-	 * @return MIXED	The value of the stored key or NULL
+	 * @return MIXED	The value of the stored key or NULL if key not found in cache
 	 */
 	public static function getKey($y_realm, $y_key) {
 		//--
@@ -157,15 +157,36 @@ final class SmartCache {
 
 	/**
 	 * Get All Data from the non-persistent Cache.
-	 * This is non-standard but can be used for development ...
+	 * This is non-standard but can be used for very advanced development purposes ...
 	 *
 	 * @access 		private
 	 * @internal
 	 *
+	 * @return ARRAY 	all the data ...
 	 */
 	public static function getAll() {
 		//--
 		return (array) self::$CachedData;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Empty the non-persistent Cache by deleting all existing keys.
+	 * This is non-standard but can be used for very advanced development purposes ...
+	 * Use this ONLY for extreme situations where you choose to manually reset all the non-persistent Cache operations just because you want so ;) ...
+	 * Clearing all data will be very inefficient and not recommended at all !!!
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @return BOOLEAN	TRUE if is success or FALSE if fail
+	 */
+	public static function clearData() {
+		//--
+		self::$CachedData = array();
+		//--
+		return true;
 		//--
 	} //END FUNCTION
 
@@ -194,7 +215,7 @@ final class SmartCache {
  * @internal
  *
  * @depends 	-
- * @version 	v.20190221
+ * @version 	v.20190401
  * @package 	Application
  *
  */
@@ -229,6 +250,18 @@ abstract class SmartAbstractPersistentCache {
 
 
 	/**
+	 * Empty the persistent Cache by deleting all existing keys.
+	 *
+	 * @return BOOLEAN	TRUE if is success or FALSE if fail
+	 */
+	public static function clearData() {
+		//--
+		return false;
+		//--
+	} //END FUNCTION
+
+
+	/**
 	 * Check if a Key exists in the persistent Cache
 	 *
 	 * @param STRING	$y_realm	The Cache Realm
@@ -249,7 +282,7 @@ abstract class SmartAbstractPersistentCache {
 	 * @param STRING	$y_realm	The Cache Realm
 	 * @param STRING	$y_key		The Cache Key
 	 *
-	 * @return MIXED	The value of the stored key or NULL
+	 * @return MIXED	The value of the stored key or NULL if key not found in cache
 	 */
 	public static function getKey($y_realm, $y_key) {
 		//--

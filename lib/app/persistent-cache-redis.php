@@ -36,7 +36,7 @@ define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based')
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181105
+ * @version 	v.20190401
  * @package 	Application
  *
  */
@@ -81,6 +81,24 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	public static function isMemoryBased() {
 		//--
 		return true; // Redis is a memory based cache backend, so it is TRUE
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Empty the persistent Cache by deleting all existing keys.
+	 *
+	 * @return BOOLEAN	TRUE if is success or FALSE if fail
+	 */
+	public static function clearData() {
+		//--
+		if(!self::isActive()) {
+			return false;
+		} //end if
+		//--
+		self::initCacheManager();
+		//--
+		return (bool) self::$redis->flushdb();
 		//--
 	} //END FUNCTION
 

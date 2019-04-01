@@ -28,7 +28,7 @@ define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Blackhole: None');
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181019
+ * @version 	v.20190401
  * @package 	Caching
  *
  * @ignore
