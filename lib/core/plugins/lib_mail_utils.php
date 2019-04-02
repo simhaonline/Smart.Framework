@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20190401
+ * @version 	v.20190402
  * @package 	Mailer
  *
  */
@@ -558,7 +558,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 		$arr_links = array();
 		//-- embed all images
 		$htmlparser = new SmartHtmlParser($message);
-		$htmlparser->get_clean_html(); // to be tested ...
+		$htmlparser->get_clean_html(); // clean html before ; don't care of html comments
 		$arr_links = $htmlparser->get_tags('img');
 		$htmlparser = '';
 		unset($htmlparser);
@@ -779,7 +779,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.20190401
+ * @version 	v.20190402
  * @package 	Mailer
  *
  */
@@ -1419,7 +1419,7 @@ private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_proce
 // [PRIVATE]
 private static function mime_fix_clean_html($y_mime_part) {
 	//--
-	return (new SmartHtmlParser((string)$y_mime_part))->get_clean_html();
+	return (new SmartHtmlParser((string)$y_mime_part))->get_clean_html(false); // clean, without html comments
 	//--
 } //END FUNCTION
 //==================================================================

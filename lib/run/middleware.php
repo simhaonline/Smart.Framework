@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20190226
+ * @version		20190402
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -377,10 +377,9 @@ abstract class SmartAbstractAppMiddleware {
 						//--
 						if(!headers_sent()) {
 							//--
-							$fp = @fopen($filepath, 'rb');
-							$fsize = @filesize($filepath);
+							$fsize = (int) SmartFileSystem::get_file_size($filepath);
 							//--
-							if((!$fp) || ($fsize <= 0)) {
+							if(($fsize <= 0) OR (!SmartFileSystem::have_access_read($filepath))) {
 								//--
 								Smart::log_info('File Download', 'Failed: 404 / The requested File is Empty or Not Readable: '.$filepath.' on Client: '.$client_signature);
 								self::Raise404Error('WARNING: The requested File is Empty or Not Readable !');
@@ -396,9 +395,7 @@ abstract class SmartAbstractAppMiddleware {
 							header('Content-Disposition: '.$mime_disp);
 							header('Content-Length: '.$fsize);
 							//--
-							@fpassthru($fp); // output without reading all in memory
-							//--
-							@fclose($fp);
+							@readfile((string)$filepath); // output without reading all in memory
 							//--
 						} else {
 							//--

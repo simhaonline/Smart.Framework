@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.181019
+ * @version 	v.20190402
  * @package 	Parsers
  *
  */
@@ -315,15 +315,19 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			} //end if
 		} //end for
 	} //end if
-	$arr_tags_2x_repl_bad = (array) $arr_tags_0x_list_comments;
-	for($i=0; $i<count($arr_tags_0x_list_comments); $i++) {
-		$arr_tags_2x_repl_good[] = '<!-- # -->'; // comment
-	} //end for
+	$arr_tags_2x_repl_bad = array();
+	$arr_tags_2x_repl_good = array();
+	if($y_comments === false) {
+		for($i=0; $i<count($arr_tags_0x_list_comments); $i++) {
+			$arr_tags_2x_repl_bad[] = (string) $arr_tags_0x_list_comments[$i];
+			$arr_tags_2x_repl_good[] = (string) '<!-- # -->'; // comment ; must be non-empty to avoid break compatibility with DOMDocument !!
+		} //end for
+	} //end if
 	for($i=0; $i<count($arr_tags_2x_list_bad); $i++) {
 		$tmp_regex_tag = (array) $this->regex_tag((string)$arr_tags_2x_list_bad[$i]);
 		// currently if nested tags some content between those tags may remain not removed ... but that is ok as long as the tag is replaced ; possible fix: match with siU instead of si but will go ungreedy and will match all content until very last end tag ... which may remove too many content
-		$arr_tags_2x_repl_bad[] = $tmp_regex_tag['delimiter'].'('.$tmp_regex_tag['tag-start'].')'.'.*?'.'('.$tmp_regex_tag['tag-end'].')'.$tmp_regex_tag['delimiter'].'si'; // fix: paranthesis are required to correct match in this case (balanced regex)
-		$arr_tags_2x_repl_good[] = '<!-- '.Smart::escape_html((string)$arr_tags_2x_list_bad[$i]).'/ -->';
+		$arr_tags_2x_repl_bad[] = (string) $tmp_regex_tag['delimiter'].'('.$tmp_regex_tag['tag-start'].')'.'.*?'.'('.$tmp_regex_tag['tag-end'].')'.$tmp_regex_tag['delimiter'].'si'; // fix: paranthesis are required to correct match in this case (balanced regex)
+		$arr_tags_2x_repl_good[] = (string) '<!-- '.Smart::escape_html((string)$arr_tags_2x_list_bad[$i]).'/ -->';
 	} //end if
 	//--
 
@@ -446,14 +450,6 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 	//--
 	$this->html = (string) SmartUnicode::convert_charset((string)implode('', (array)$this->elements), 'UTF-8', 'HTML-ENTITIES');
 	//--
-	if($y_comments === false) {
-		$this->html = preg_replace(
-			(array) $arr_tags_0x_list_comments,
-			'',
-			$this->html
-		);
-	} //end if
-	//--
 
 	//--
 	if(Smart::array_size($y_allowed_tags) > 0) {
@@ -531,6 +527,16 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			//--
 		} //end if
 		//--
+	} //end if
+	//--
+
+	//-- this must be done after DOMDocument processing due to the too many new empty lines between tags that breaks html code in DOMDocument (don't now why ...)
+	if($y_comments === false) {
+		$this->html = (string) preg_replace(
+			'#\<\s*?\!\-\-(.*?)\-\-\>#si', // {{{SYNC-COMMENTS-REGEX}}} ; just VALID comments
+			'',
+			(string) $this->html
+		);
 	} //end if
 	//--
 

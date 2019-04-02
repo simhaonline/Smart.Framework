@@ -18,8 +18,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //		* SmartUtils::
 //		* SmartFileSysUtils::
 //		* SmartHtmlParser->
-// DEPENDS-EXT: HTMLDOC Executable 1.8.x (external)
-// 		tested with htmldoc-1.8.24 / htmldoc-1.8.25 / htmldoc-1.8.26 / htmldoc-1.8.27
+// DEPENDS-EXT: HTMLDOC Executable 1.8.x (external) ; Rsvg-Convert Executable 2.x
+// 		tested with htmldoc-1.8.24 / htmldoc-1.8.25 / htmldoc-1.8.26 / htmldoc-1.8.27 ; rsvg-convert-2.40.20
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -28,6 +28,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 define('SMART_FRAMEWORK_PDF_GENERATOR_APP', 	'/usr/local/bin/htmldoc'); 		// path to HtmlDoc Utility (change to match your system) ; can be `/usr/bin/htmldoc` or `/usr/local/bin/htmldoc` or `c:/open_runtime/htmldoc/htmldoc.exe` or any custom path
 define('SMART_FRAMEWORK_PDF_GENERATOR_FORMAT', 	'pdf13'); 						// PDF format: `pdf14` | `pdf13` | `pdf12`
 define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `color` | `gray`
+define('SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG', '/usr/local/bin/rsvg-convert');	// path to RsvgConvert Utility (used to convert SVG to PNG)
 */
 
 //=====================================================================================
@@ -40,7 +41,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_MODE', 	'color'); 						// PDF mode: `colo
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.20190331
+ * @version 	v.20190402
  * @package 	Exporters
  *
  */
@@ -61,11 +62,33 @@ public static function is_active() {
 	//--
 	if((defined('SMART_FRAMEWORK_PDF_GENERATOR_APP')) AND ((string)SMART_FRAMEWORK_PDF_GENERATOR_APP != '')) {
 		if(SmartFileSystem::have_access_executable(SMART_FRAMEWORK_PDF_GENERATOR_APP)) {
-			$out = SMART_FRAMEWORK_PDF_GENERATOR_APP;
+			$out = (string) SMART_FRAMEWORK_PDF_GENERATOR_APP;
 		} //end if
 	} //end if
 	//--
-	return $out;
+	return (string) $out;
+	//--
+} //END FUNCTION
+//=====================================================================
+
+
+//=====================================================================
+/**
+ * Check if HTMLDoc exists and is set correctly
+ *
+ * @return '' OR '/path/to/rsvg-convert.exe'
+ */
+public static function is_svg2png_active() {
+	//--
+	$out = '';
+	//--
+	if((defined('SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG')) AND ((string)SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG != '')) {
+		if(SmartFileSystem::have_access_executable(SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG)) {
+			$out = (string) SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG;
+		} //end if
+	} //end if
+	//--
+	return (string) $out;
 	//--
 } //END FUNCTION
 //=====================================================================
@@ -213,7 +236,8 @@ public static function generate($y_html_content, $y_orientation='normal', $y_all
 	//--
 	$pdfdata = '';
 	//--
-	$htmldoc = self::is_active();
+	$htmldoc = (string) self::is_active();
+	$rsvg = (string) self::is_svg2png_active();
 	//--
 	if((string)$htmldoc != '') {
 		//--
@@ -287,7 +311,21 @@ public static function generate($y_html_content, $y_orientation='normal', $y_all
 						//--
 					} elseif((string)$tmp_img_ext == '.svg') {
 						//-- SVG not supported !
-						$y_html_content = (string) @str_replace('src="'.$tmp_img_src.'"', 'src=""', (string)$y_html_content);
+						if((string)$rsvg != '') {
+							$tmp_fname = (string) 'pdf_img_'.SmartHashCrypto::sha256('@@PDF#File::Cache::IMG@@'.'#'.$i.'@'.$tmp_img_src.'//'.$tmp_uuid);
+							SmartFileSystem::write($the_dir.$tmp_fname.$tmp_img_ext, $tmp_fcontent);
+							$svg2png_options = (string) self::svg2png_options($the_dir.$tmp_fname.$tmp_img_ext);
+							if((string)$svg2png_options != '') {
+								@exec($rsvg.' '.$svg2png_options);
+							} //end if
+							if(SmartFileSystem::is_type_file($the_dir.$tmp_fname.$tmp_img_ext.'.png')) {
+								$y_html_content = (string) @str_replace('src="'.$tmp_img_src.'"', 'src="'.$tmp_fname.$tmp_img_ext.'.png'.'"', (string)$y_html_content);
+							} else { // get rid of SVG images
+								$y_html_content = (string) @str_replace('src="'.$tmp_img_src.'"', 'src=""', (string)$y_html_content);
+							} //end if else
+						} else { // ignore SVG images
+								$y_html_content = (string) @str_replace('src="'.$tmp_img_src.'"', 'src="'.$tmp_fname.$tmp_img_ext.'"', (string)$y_html_content);
+						} //end if else
 						//--
 					} else {
 						//--
@@ -320,19 +358,36 @@ public static function generate($y_html_content, $y_orientation='normal', $y_all
 		$arr_imgs = array();
 		unset($arr_imgs);
 		//--
-		SmartFileSystem::write($file, $orientation."\n".$y_html_content);
+		$y_html_content = (string) $orientation."\n".$y_html_content;
+		//--
+		$y_html_content = (string) str_replace(['<hr ','<hr>'], ['<hr size="1" noshade ', '<hr size="1" noshade>'], (string)$y_html_content);
+		$y_html_content = (string) (new SmartHtmlParser((string)$y_html_content))->get_clean_html(); // security fix: cleanup HTML to avoid security issues with the old HTMLDoc
+		if(stripos($y_html_content, '<html') === false) {
+			$y_html_content = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>PDF</title></head><body>'.$y_html_content.'</body></html>';
+		} //end if
+		//--
+		SmartFileSystem::write($file, $y_html_content);
 		//--
 		if(SmartFileSystem::is_type_file($file)) {
 			//--
-			ob_start();
-			//--
-			@passthru($htmldoc.' '.self::pdf_options($file));
-			//--
-			$pdfdata = ob_get_clean();
+			$pdf_options = (string) self::pdf_options($file);
+			if((string)$pdf_options != '') {
+				ob_start();
+				@passthru($htmldoc.' '.$pdf_options);
+				$pdfdata = ob_get_clean();
+			} else {
+				Smart::log_warning('ERROR: PDF Generator detected Invalid Options for the PDF Document: '.$file);
+				if(SmartFrameworkRuntime::ifDebug()) {
+				Smart::log_notice('ERROR: PDF Generator HTML Document: '.$y_html_content);
+				} //end if
+			} //end if else
 			//--
 		} else {
 			//--
-			Smart::log_warning('ERROR: PDF Generator Failed to find the PDF Document: '.$file."\n".$y_html_content);
+			Smart::log_warning('ERROR: PDF Generator Failed to find the PDF Document: '.$file);
+			if(SmartFrameworkRuntime::ifDebug()) {
+				Smart::log_notice('ERROR: PDF Generator HTML Document: '.$y_html_content);
+			} //end if
 			//--
 		} //end if else
 		//-- cleanup
@@ -390,23 +445,26 @@ private static function safe_charset($html) {
 
 //=====================================================================
 /**
- * Return HTMLDoc Options
+ * Return HTMLDoc Options, Safe, Shell Escaped
  *
- * @param STRING $y_html_file 	:: HTMLDoc Input File as: /path/to/file.html
+ * @param STRING $y_html_file 	:: HTMLDoc Input File as Relative Path: path/to/file.html
  * @return STRING
  */
 private static function pdf_options($y_html_file) {
 	//--
-	$y_html_file = (string) $y_html_file;
+	$y_html_file = (string) trim((string)$y_html_file);
+	if((string)$y_html_file == '') {
+		return '';
+	} //end if
 	//--
-	if((defined('SMART_FRAMEWORK_PDF_GENERATOR_MODE')) AND (strtolower((string)SMART_FRAMEWORK_PDF_GENERATOR_MODE == 'gray'))) {
+	if((defined('SMART_FRAMEWORK_PDF_GENERATOR_MODE')) AND ((string)strtolower((string)SMART_FRAMEWORK_PDF_GENERATOR_MODE == 'gray'))) {
 		$pdf_color = '--gray';
 	} else {
 		$pdf_color = '--color';
 	} //end if else
 	//--
 	if(defined('SMART_FRAMEWORK_PDF_GENERATOR_FORMAT')) {
-		switch(strtolower((string)SMART_FRAMEWORK_PDF_GENERATOR_FORMAT)) {
+		switch((string)strtolower((string)SMART_FRAMEWORK_PDF_GENERATOR_FORMAT)) {
 			case 'pdf14':
 				$pdf_ver = 'pdf14';
 				break;
@@ -420,10 +478,41 @@ private static function pdf_options($y_html_file) {
 	} else {
 		$pdf_ver = 'pdf13';
 	} //end if else
-	//-- replace "
-	$y_html_file = trim(str_replace('"', '', $y_html_file));
+	//--
+	$y_html_file = (string) trim((string)str_replace('"', '', (string)$y_html_file)); // replace "
 	//-- executable convert options as FILE/STDIN output
-	return '--quiet '.$pdf_color.' --format '.$pdf_ver.' --charset ISO-8859-1 --browserwidth 900 --embedfonts --permissions no-modify,no-annotate,no-copy --encryption --no-links --no-strict --no-toc --jpeg=100 --compression 5 --numbered --fontspacing 1.2 --textfont Helvetica --fontsize 9.0 --headfootfont Helvetica --headfootsize 7.0 --header ... --footer ../ --continuous --left 10mm --right 10mm --top 7mm --bottom 7mm --pagelayout single --pagemode document "'.$y_html_file.'"';
+	return (string) '--quiet '.self::escape_cmd_arg($pdf_color).' --format '.self::escape_cmd_arg($pdf_ver).' --charset ISO-8859-1 --browserwidth 900 --embedfonts --permissions no-modify,no-annotate,no-copy --encryption --no-links --no-strict --no-toc --jpeg=100 --compression 5 --numbered --fontspacing 1.2 --textfont Helvetica --fontsize 9.0 --headfootfont Helvetica --headfootsize 7.0 --header ... --footer ../ --continuous --left 10mm --right 10mm --top 7mm --bottom 7mm --pagelayout single --pagemode document '.self::escape_cmd_arg($y_html_file);
+	//--
+} //END FUNCTION
+//=====================================================================
+
+
+//=====================================================================
+/**
+ * Return RsvgConvert Options, Safe, Shell Escaped
+ *
+ * @param STRING $y_svg_file 	:: RsvgConvert Input File as Relative Path: path/to/file.svg
+ * @return STRING
+ */
+private static function svg2png_options($y_svg_file) {
+	//--
+	$y_svg_file = (string) trim((string)$y_svg_file);
+	if((string)$y_svg_file == '') {
+		return '';
+	} //end if
+	//--
+	return (string) '--zoom=1 --keep-aspect-ratio '.self::escape_cmd_arg($y_svg_file).' --output '.self::escape_cmd_arg($y_svg_file).'.png';
+	//--
+} //END FUNCTION
+//=====================================================================
+
+
+//=====================================================================
+private static function escape_cmd_arg($arg) {
+	//--
+	$arg = (string) trim((string)Smart::normalize_spaces((string)$arg));
+	//--
+	return (string) escapeshellarg((string)$arg);
 	//--
 } //END FUNCTION
 //=====================================================================
