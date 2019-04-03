@@ -1,15 +1,15 @@
 /*!
- * QUnit 2.9.1
+ * QUnit 2.9.2
  * https://qunitjs.com/
  *
  * Copyright jQuery Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2019-01-07T16:37Z
+ * Date: 2019-02-21T22:49Z
  */
 
-/* modified by unixman r.20190108 */
+/* modified by unixman r.20190403 */
 
 /** Font Family and Sizes */
 
@@ -30,9 +30,7 @@
 	padding: 0;
 }
 
-
-/** Header (excluding toolbar) */
-
+/** Footer */
 #qunit-footer { /* added by unixman */
 	padding: 0.5em 0 0.5em 1em;
 	color: #8699A4;
@@ -42,6 +40,8 @@
 	font-weight: 400;
 	border-radius: 0 0 5px 5px;
 }
+
+/** Header (excluding toolbar) */
 
 #qunit-header {
 	padding: 0.5em 0 0.5em 1em;

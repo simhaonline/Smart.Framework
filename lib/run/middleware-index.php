@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.8');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20190226
+ * @version		20190403
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -66,8 +66,7 @@ final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
 		//--
 		if(SMART_FRAMEWORK_ADMIN_AREA !== false) {
 			Smart::raise_error(
-				'Index Middleware ERROR: SMART_FRAMEWORK_ADMIN_AREA is not set to FALSE',
-				'Invalid Area / This middleware is designed for Index area and requires to turn OFF the Administration flag ...' // msg to display
+				'Index Middleware ERROR: SMART_FRAMEWORK_ADMIN_AREA is not set to FALSE'
 			);
 			return;
 		} //end if

@@ -84,7 +84,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 
 		// for the rest the framework will take care as:
 		// 		* detect the mime type and set the required headers (includding atatchment/inline type and file name)
-		// 		* serve the file: output it using fpassthru() so the file can be up to 4GB (on some 64-bit file systems can be even larger)
+		// 		* serve the file: output it using readfile() so the file can be up to 4GB (on some 64-bit file systems can be even larger)
 
 		// for your information, as long as you ensure a strong $download_key
 		// the key is automatically composed with several parts additions: the http user agent signature + visitor IP

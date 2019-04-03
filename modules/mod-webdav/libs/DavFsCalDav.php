@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCalDav {
 
 	// ::
-	// v.20190103
+	// v.20190403
 
 	private static $caldav_ns = 'xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/"';
 	private static $caldav_urn = 'urn:ietf:params:xml:ns:caldav';
@@ -454,7 +454,7 @@ final class DavFsCalDav {
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		header('Content-length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
 		header('Content-Type: '.(string)self::mimeTypeFile($dav_vfs_path));
-		readfile($dav_vfs_path);
+		@readfile($dav_vfs_path);
 		return 200;
 		//--
 	} //END FUNCTION

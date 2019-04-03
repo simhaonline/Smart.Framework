@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCardDav {
 
 	// ::
-	// v.20190103
+	// v.20190403
 
 	private static $carddav_ns = 'xmlns:card="urn:ietf:params:xml:ns:carddav"';
 	private static $carddav_urn = 'urn:ietf:params:xml:ns:carddav';
@@ -454,7 +454,7 @@ final class DavFsCardDav {
 		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 		header('Content-length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
 		header('Content-Type: '.(string)self::mimeTypeFile($dav_vfs_path));
-		readfile($dav_vfs_path);
+		@readfile($dav_vfs_path);
 		return 200;
 		//--
 	} //END FUNCTION

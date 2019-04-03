@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.8');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20190226
+ * @version		20190403
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -66,8 +66,7 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 		//--
 		if(SMART_FRAMEWORK_ADMIN_AREA !== true) {
 			Smart::raise_error(
-				'Admin Middleware ERROR: SMART_FRAMEWORK_ADMIN_AREA is not set to TRUE',
-				'Invalid Area / This middleware is designed for Admin area and requires to turn ON the Administration flag ...' // msg to display
+				'Admin Middleware ERROR: SMART_FRAMEWORK_ADMIN_AREA is not set to TRUE'
 			);
 			return;
 		} //end if

@@ -41,7 +41,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG', '/usr/local/bin/rsvg-convert');	
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.20190402
+ * @version 	v.20190403
  * @package 	Exporters
  *
  */
