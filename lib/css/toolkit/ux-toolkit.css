@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20190327), (c) 2015-2019 unix-world.org
+	extended by unixman, (stable.20190409), (c) 2015-2019 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -15,6 +15,9 @@ License: BSD
 }
 
 /* Clearing */
+.ux-clearfix {
+	clear: both;
+}
 .ux-clear::before, .ux-clear::after {
 	content: "";
 	display: table;
