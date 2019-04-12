@@ -1,11 +1,14 @@
 
+/*
+// Monthly (Events Calendar and Date Picker) 2.2.2 by Kevin Thornbloom # https://github.com/kthornbloom/Monthly
+// License: Creative Commons Attribution-ShareAlike 4.0 International License.
+// with fixes by unixman r.20190412
+*/
+
 /* Overall wrapper */
 .monthly {
 	background: #F3F3F5;
 	color: #545454;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 	position: relative;
 }
@@ -102,8 +105,8 @@
 }
 
 /* Arrows */
-.monthly-prev:after,
-.monthly-next:after {
+.monthly-prev::after,
+.monthly-next::after {
 	content: '';
 	position: absolute;
 	top: 50%;
@@ -113,16 +116,14 @@
 	width: 0.6rem;
 	height: 0.6rem;
 	margin: -0.4rem 0 0 -0.4rem;
-	-webkit-transform: rotate(45deg);
-		-ms-transform: rotate(45deg);
-			transform: rotate(45deg);
+	transform: rotate(45deg);
 }
 /* Left Arrow */
-.monthly-prev:after{
+.monthly-prev::after{
 	border-width: 0 0 0.2rem 0.2rem;
 }
 /* Right Arrow */
-.monthly-next:after {
+.monthly-next::after {
 	border-width: 0.2rem 0.2rem 0 0;
 }
 
@@ -164,14 +165,13 @@
 	color: inherit;
 	background: #fff;
 	box-shadow: 0 0 0 1px #EBEBEB;
-	-webkit-transition: .25s;
 	transition: .25s;
 	padding: 0;
 	text-decoration: none;
 }
 
 /* Trick to make the days' width equal their height */
-.monthly-day:before {
+.monthly-day::before {
 	content: '';
 	display: block;
 	padding-top: 100%;
@@ -188,6 +188,10 @@
 	background: #F3F3F5;
 }
 
+.monthly-day-event {
+	cursor: pointer;
+}
+
 /* Event calendar day number styles */
 .monthly-day-event > .monthly-day-number {
 	position: absolute;
@@ -201,8 +205,8 @@
 	margin: 0;
 }
 
-.monthly-day-pick > .monthly-day-number:before,
-.monthly-day-pick > .monthly-day-number:after {
+.monthly-day-pick > .monthly-day-number::before,
+.monthly-day-pick > .monthly-day-number::after {
 	content: '';
 	display: block;
 	padding-top: calc(50% - 0.8rem);
@@ -211,16 +215,16 @@
 }
 
 /* Days in the past in "picker" mode */
-.monthly-past-day:after{
+.monthly-past-day {
+	color: #999999;
+	cursor: not-allowed;
+}
+.monthly-past-day::after{
 	content: '';
 	width: 150%;
 	height: 2px;
-	-webkit-transform-origin: left top;
-		-ms-transform-origin: left top;
-			transform-origin: left top;
-	-webkit-transform: rotate(45deg);
-		-ms-transform: rotate(45deg);
-			transform: rotate(45deg);
+	transform-origin: left top;
+	transform: rotate(45deg);
 	background: rgba(0, 0, 0, 0.1);
 	position: absolute;
 	left: 0;
@@ -246,8 +250,8 @@
 }
 .monthly-day-pick.monthly-today .monthly-day-number {
 	padding: 0.15rem;
-	margin: calc(50% - 0.7rem) auto auto auto;
-	font-size: 1rem;
+	margin: calc(50% - 0.85rem) auto auto auto;
+	font-size: 0.9rem;
 }
 
 /* Wrapper around events */
@@ -287,11 +291,8 @@
 	width: 100%;
 	height: calc(100% - 2.5rem);
 	display: none;
-	-webkit-transition: .25s;
 	transition: .25s;
-	-webkit-transform: scale(0);
-		-ms-transform: scale(0);
-			transform: scale(0);
+	transform: scale(0);
 }
 
 /* Days in Events List */
@@ -303,7 +304,7 @@
 	text-align: left;
 }
 
-.monthly-list-item:after{
+.monthly-list-item::after{
 	padding: 0.4rem 1rem;
 	display: block;
 	margin-bottom: 0.5rem;
@@ -330,7 +331,7 @@
 	display: block;
 }
 
-.item-has-event:after{
+.item-has-event::after{
 	display: none!important;
 }
 
@@ -349,7 +350,7 @@
 	font-size: 0.8rem;
 	display: inline-block;
 }
-.monthly-list-time-end:not(:empty):before {
+.monthly-list-time-end:not(:empty)::before {
 	content: '\2013';
 	padding: 0 2px;
 }
@@ -369,14 +370,9 @@
 .monthly-event-list::-webkit-scrollbar-thumb:hover {background: #555;}
 
 /* Language-specific. Default is English. */
-.monthly-reset:after		{ content: 'Today'; }
-.monthly-cal:after			{ content: 'Month'; }
-.monthly-list-item:after	{ content: 'No Events'; }
-
-.monthly-locale-fr .monthly-reset:after		{ content: "aujourd'hui"; }
-.monthly-locale-fr .monthly-cal:after		{ content: "mois"; }
-.monthly-locale-fr .monthly-list-item:after	{ content: 'aucun événement'; }
-
+.monthly-reset::after		{ content: 'Today'; }
+.monthly-cal::after			{ content: 'Month'; }
+.monthly-list-item::after	{ content: 'No Events'; }
 
 /*
 Calendar shows event titles if the device width allows for at least 3rem per day (rounded
@@ -398,7 +394,7 @@ establish the rules based on the calendar element width rather than the device w
 	.monthly-indicator-wrap {
 		padding: 0;
 	}
-	.monthly-day:before {
+	.monthly-day::before {
 		padding-top: calc(100% - 1.2rem);
 	}
 	.monthly-day .monthly-event-indicator {
