@@ -71,7 +71,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20190105
+ * @version 	v.20190412
  * @package 	Database:MySQL
  *
  */
@@ -1465,7 +1465,7 @@ public static function check_server_version($y_connection='DEFAULT', $y_revalida
 	//--
 
 	//--
-	if(version_compare(self::major_version($minimum_mysql_version_for_smartframework), self::major_version($mysql_num_version)) > 0) {
+	if(version_compare((string)self::major_version($minimum_mysql_version_for_smartframework), (string)self::major_version($mysql_num_version)) > 0) {
 		self::error($y_connection, 'Server-Version', 'Server Version not supported', $mysql_num_version, 'version='.self::major_version($minimum_mysql_version_for_smartframework).' or later is required to run this software !');
 		return '';
 	} //end if
@@ -1760,7 +1760,7 @@ die(''); // just in case
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20190105
+ * @version 	v.20190412
  * @package 	Database:MySQL
  *
  */

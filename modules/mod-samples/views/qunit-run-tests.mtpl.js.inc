@@ -45,6 +45,7 @@
 
 	// Smart.Framework.Modules Tests (optional)
 	[@@@@SUB-TEMPLATE:?!modules/mod-lang-detect/tests/module-test.mtpl.js.inc!@@@@]
+	[@@@@SUB-TEMPLATE:?!modules/mod-zzz-tests/tests/module-test.mtpl.js.inc!@@@@]
 
 })();
 

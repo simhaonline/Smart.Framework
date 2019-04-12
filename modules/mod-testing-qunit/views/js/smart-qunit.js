@@ -1,12 +1,12 @@
 
 /*
- * SmartQUnit 1.1
+ * SmartQUnit 1.2
  *
  * (c) 2018-2019 unix-world.org
  * Released under the BSD license
  */
 
-var SmartQUnit = new function() { // START CLASS :: r.20190108
+var SmartQUnit = new function() { // START CLASS :: r.20190412
 
 	//--
 
@@ -62,7 +62,7 @@ var SmartQUnit = new function() { // START CLASS :: r.20190108
 
 	var elHtmlDynDiv = function(assert, QAsyncTestDone, testOK, value, content, timeoutMs) {
 		//--
-		jQuery('<div id="qu-smart-div-sandbox" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; display:none;"></div>').html(String(content)).appendTo('body'); // create a temporary div, make it hidden, and attach to the DOM
+		jQuery('<div id="qu-smart-div-sandbox" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; visibility:hidden;"></div>').html(String(content)).appendTo('body'); // create a temporary div, make it hidden, and attach to the DOM
 		//--
 		setTimeout(function() {
 			var value = jQuery('#qunit-test-result').text();
@@ -80,7 +80,7 @@ var SmartQUnit = new function() { // START CLASS :: r.20190108
 
 	var elHtmlDynIFrame = function(url, timeoutMs, assert, QAsyncTestDone, testOK) {
 		//--
-		var frame = jQuery('<iframe id="qu-smart-ifrm-sandbox" src="' + htmlspecialchars(url) + '" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; display:none;"></iframe>').appendTo('body'); // create a temporary iframe, make it hidden, and attach to the DOM
+		var frame = jQuery('<iframe id="qu-smart-ifrm-sandbox" src="' + htmlspecialchars(url) + '" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; visibility:hidden;"></iframe>').appendTo('body'); // create a temporary iframe, make it hidden, and attach to the DOM # iFrame display:none loading jquery will throw since jquery >= 3.4.0
 		jQuery(frame).on('load', function(){ // // proceed after the iframe has loaded content
 			var html = jQuery(this).contents();
 			//console.log(html);

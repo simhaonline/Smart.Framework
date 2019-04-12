@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190230
+ * @version 	v.20190412
  *
  */
 final class TestUnitMongoDB {
@@ -104,37 +104,35 @@ final class TestUnitMongoDB {
 				]
 			);
 			if($mongo->is_command_ok($result)) {
-			//	if(version_compare('3.2', (string)$mongo->get_server_version()) <= 0) {
-					$tst = 'Create Collection Indexes (incl. Unique and FTS)';
-					$tests[] = (string) $tst;
-					$result = $mongo->igcommand(
-						[
-							'createIndexes' => (string) 'myTestCollection',
-							'indexes' 		=> [
-								[
-									'name' 			=> 'id',
-									'key' 			=> [ 'id' => 1 ],
-									'unique' 		=> true
-								],
-								[
-									'name' 				=> 'text',
-								//	'key' 				=> [ 'src' => 'text' ],
-									'key' 				=> [ 'title' => 'text', 'excerpt' => 'text', 'src' => 'text' ],
-									'weights' 			=> [ 'title' => 10, 'excerpt' => 5, 'src' => 1 ],
-									'default_language' 	=> 'none'
-								//	'language_override' => 'idioma'
-								],
-								[
-									'name' 			=> 'cost',
-									'key' 			=> [ 'cost' => -1 ]
-								]
+				$tst = 'Create Collection Indexes (incl. Unique and FTS)';
+				$tests[] = (string) $tst;
+				$result = $mongo->igcommand(
+					[
+						'createIndexes' => (string) 'myTestCollection',
+						'indexes' 		=> [
+							[
+								'name' 			=> 'id',
+								'key' 			=> [ 'id' => 1 ],
+								'unique' 		=> true
+							],
+							[
+								'name' 				=> 'text',
+								'sparse' 			=> false, // if true, the index only references documents with the specified field (use less space but behave differently in some situations)
+								'key' 				=> [ 'title' => 'text', 'name' => 'text' ],
+								'weights' 			=> [ 'title' => 10, 'name' => 5 ],
+							//	'default_language' 	=> 'none', // must be a valid language code
+								'language_override' => 'dictionary' // override field from document
+							],
+							[
+								'name' 			=> 'cost',
+								'key' 			=> [ 'cost' => -1 ]
 							]
 						]
-					);
-					if(!$mongo->is_command_ok($result)) {
-						$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
-					} //end if
-			//	} //end if else
+					]
+				);
+				if(!$mongo->is_command_ok($result)) {
+					$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
+				} //end if
 			} else {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
 			} //end if
@@ -365,6 +363,9 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$doc = array();
 			$doc['id'] = $mongo->assign_uuid();
+			$doc['title'] = 'This is a test ...';
+			$doc['language'] = 'en';
+			$doc['dictionary'] = (string) $mongo->getFtsDictionaryByLang((string)$doc['language']);
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 7;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
@@ -609,6 +610,67 @@ final class TestUnitMongoDB {
 			);
 			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['results']) <= 0) OR (\Smart::array_size($result[0]['results'][0]) <= 0) OR ($result[0]['results'][0]['value'] != 5)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+			} //end if
+		} //end if
+		//--
+
+		//--
+		if((string)$err == '') {
+			if(version_compare((string)$mongo->get_server_version(), '3.4') >= 0) {
+				$tst = 'Facet Aggregation with FTS (only for MongoDB >= 3.4)';
+				$tests[] = (string) $tst;
+				$result = $mongo->command(
+					[
+						'aggregate' => (string) 'myTestCollection',
+						'pipeline' => [ // return a pipeline
+							[
+								'$match' => [
+									'id' => [ '$exists' => true ], // query
+									'$text' => [ '$search' => 'test', '$language' => 'en' ] // FTS query
+								]
+							],
+							[
+								'$facet' => [ // $facet only works on MongoDB 3.4 or later !!
+									'records@ALL' => [
+										[
+											'$project' => [
+												'id' => true,
+												'title' => true,
+												'name' => true,
+												'cost' => true,
+												'language' => true,
+												'dictionary' => true,
+												'score' => [ '$meta' => 'textScore' ], // only for FTS
+											]
+										],
+										[ '$sort' => [ 'score' => -1 ] ], // order desc by FTS score
+										[ '$skip' => 0 ], // offset
+										[ '$limit' => 100 ] // limit
+									],
+									'count@ALL' => [
+										[ '$count' => 'total' ]
+									],
+									'countBy@COST' => [
+										[ '$unwind' => '$cost' ],
+										[ '$sortByCount' => '$cost' ]
+									],
+									'count@TITLE:#exists' => [
+										[ '$match' => [ 'title' => [ '$exists' => true ] ] ],
+										[ '$count' => 'count' ]
+									],
+									'count@TITLE:#!exists' => [
+										[ '$match' => [ 'title' => [ '$exists' => false ] ] ],
+										[ '$count' => 'count' ]
+									]
+								],
+							]
+						],
+						'cursor' => [ 'batchSize' => 0 ] // this is required by MongoDB Server 3.6
+					]
+				);
+				if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['records@ALL']) != 11) OR (\Smart::array_size($result[0]['count@TITLE:#exists']) <= 0) OR (\Smart::array_size($result[0]['count@TITLE:#exists'][0]) <= 0) OR ($result[0]['count@TITLE:#exists'][0]['count'] != 1)) {
+					$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				} //end if
 			} //end if
 		} //end if
 		//--

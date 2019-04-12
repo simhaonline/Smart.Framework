@@ -68,7 +68,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20190105
+ * @version 	v.20190412
  * @package 	Database:PostgreSQL
  *
  */
@@ -1357,7 +1357,7 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 
 	//--
 	/* At the moment, in PgSQL 9.5 only works ON CONFLICT DO NOTHING for INSERT (for UPDATE statements fails ...)
-	if(version_compare(self::check_server_version($y_connection), '9.6') >= 0) {
+	if(version_compare((string)self::check_server_version($y_connection), '9.6') >= 0) {
 		//--
 		$xmode = 'affected';
 		$vmode = '[ON CONFLICT DO NOTHING]';
@@ -1987,7 +1987,7 @@ public static function check_server_version($y_connection='DEFAULT', $y_revalida
 	//--
 
 	//--
-	if(((string)$pgsql_txt_version != 'POSTGRESQL') OR (version_compare(self::major_version($minimum_pgsql_version_for_smartframework), self::major_version($pgsql_num_version)) > 0)) {
+	if(((string)$pgsql_txt_version != 'POSTGRESQL') OR (version_compare((string)self::major_version($minimum_pgsql_version_for_smartframework), (string)self::major_version($pgsql_num_version)) > 0)) {
 		self::error($y_connection, 'Server-Version', 'PgSQL Server Version not supported', $pgsql_txt_version.' '.$pgsql_num_version, 'PgSQL.version='.self::major_version($minimum_pgsql_version_for_smartframework).' or later is required to run this software !');
 		return '';
 	} //end if
@@ -2318,7 +2318,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20190105
+ * @version 	v.20190412
  * @package 	Database:PostgreSQL
  *
  */
