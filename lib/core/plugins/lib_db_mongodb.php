@@ -14,7 +14,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - MongoDB Client
 // DEPENDS:
 //	* Smart::
-// DEPENDS-EXT: PHP MongoDB / PECL (v.1.3.0 or later)
+// DEPENDS-EXT: PHP MongoDB / PECL (v.1.1.0 or later)
 //======================================================
 
 
@@ -24,7 +24,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 /**
- * Class Smart MongoDB Client (for PHP MongoDB extension v.1.3.0 or later)
+ * Class Smart MongoDB Client (for PHP MongoDB extension v.1.1.0 or later)
  * Tested and Stable on MongoDB Server versions: 3.2 / 3.3 / 3.4 / 3.5 / 3.6 / 3.7 / 3.8 / 3.9 / 4.0 / 4.1
  *
  * <code>
@@ -71,8 +71,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hint 		Important: MongoDB database specifies that max BSON document size is 16 megabytes and supports no more than 100 levels of nesting, thus this limit cannot be exceeded from PHP side when creating new mongodb documents: https://docs.mongodb.com/manual/reference/limits/ ; To store documents larger than the maximum size, MongoDB provides the GridFS API
  *
  * @access 		PUBLIC
- * @depends 	extensions: PHP MongoDB (v.1.3.0 or later) ; classes: Smart
- * @version 	v.20190412
+ * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
+ * @version 	v.20190418
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
@@ -138,8 +138,8 @@ public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
 	//--
 	$this->extver = (string) phpversion('mongodb');
 	//--
-	if(version_compare((string)$this->extver, '1.3.0') < 0) { // to have all features req. 1.3.0
-		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.3.0 or later. The current version is: '.$this->extver);
+	if(version_compare((string)$this->extver, '1.1.0') < 0) { // to have all features req. 1.1.0
+		$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.1.0 or later. The current version is: '.$this->extver);
 		return;
 	} //end if
 	//--

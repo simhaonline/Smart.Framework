@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190412
+ * @version 	v.20190418
  *
  */
 final class TestUnitMongoDB {
@@ -616,8 +616,8 @@ final class TestUnitMongoDB {
 
 		//--
 		if((string)$err == '') {
-			if(version_compare((string)$mongo->get_server_version(), '3.4') >= 0) {
-				$tst = 'Facet Aggregation with FTS (only for MongoDB >= 3.4)';
+			if((version_compare((string)$mongo->get_server_version(), '3.4') >= 0) AND (version_compare((string)$mongo->get_ext_version(), '1.3') >= 0)) {
+				$tst = 'Facet Aggregation with FTS (only for MongoDB Server >= 3.4 / MongoDB Extension >= 1.3)';
 				$tests[] = (string) $tst;
 				$result = $mongo->command(
 					[
