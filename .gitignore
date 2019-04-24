@@ -4,6 +4,7 @@ wpub
 modules/mod-agile
 modules/mod-cloud
 modules/mod-dbal-zend
+modules/mod-ecomm-cart
 modules/mod-js-components
 modules/mod-lang-detect
 modules/mod-maps-cache

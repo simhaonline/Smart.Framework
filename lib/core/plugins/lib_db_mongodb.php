@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 /**
  * Class Smart MongoDB Client (for PHP MongoDB extension v.1.1.0 or later)
- * Tested and Stable on MongoDB Server versions: 3.2 / 3.3 / 3.4 / 3.5 / 3.6 / 3.7 / 3.8 / 3.9 / 4.0 / 4.1
+ * Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1
  *
  * <code>
  *
@@ -72,7 +72,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20190418
+ * @version 	v.20190423
  * @package 	Database:MongoDB
  *
  * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
