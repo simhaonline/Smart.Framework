@@ -3,6 +3,13 @@
  * @author: Alexandre Bodelot <alexandre.bodelot@gmail.com>
  */
 
+/* fix by unixman */
+.json-render-area {
+	border: 1px solid #DDDDDD;
+	padding: 0.5em 1.5em;
+	overflow: auto;
+}
+
 /* Syntax highlighting for JSON objects */
 ul.json-dict, ol.json-array {
 	list-style-type: none;
