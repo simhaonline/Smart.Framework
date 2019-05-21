@@ -361,17 +361,19 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				} //end if else
 				//--
 				break;
-			case 'test.ods':
+			case 'test.spreadsheet-export':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$oo = new SmartExportToOpenOffice();
-				$this->PageViewSetCfg('rawmime', $oo->ODS_Mime_Header());
-				$this->PageViewSetCfg('rawdisp', $oo->ODS_Disposition_Header('myfile.ods', 'attachment'));
-				$main = $oo->ODS_SpreadSheet(
+				$sse = new SmartSpreadSheetExport();
+				$this->PageViewSetCfg('rawmime', $sse->getMimeType());
+				$this->PageViewSetCfg('rawdisp', $sse->getDispositionHeader('myfile.excel2003.xml', 'attachment'));
+				$main = $sse->getFileContents(
 					'A Table',
-					array('<column 1>', 'column " 2', 'column & 3'),
-					array('data 1.1', 'data 1.2', 1.30, 'data 2.1', 'data 2.2', 2.31),
-					array('', '', 'decimal4')
+					['<column 1>', 'column " 2', 'column & 3'], // header
+					[ // data
+						['data 1.1', 'data 1.2', 1.30],
+						['data 2.1', 'data 2.2'."\n".'some extra text here ...', 2.31]
+					]
 				);
 				//--
 				break;

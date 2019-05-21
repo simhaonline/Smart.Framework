@@ -44,8 +44,7 @@ require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
 //--
 require_once('lib/core/plugins/lib_session.php');			// session storage
 //--
-require_once('lib/core/plugins/lib_export_zip.php');		// export zip archive
-require_once('lib/core/plugins/lib_export_ooffice.php');	// export ooffice (opendocument)
+require_once('lib/core/plugins/lib_spreadsheet.php');		// spreadsheet export / import
 require_once('lib/core/plugins/lib_export_pdf.php'); 		// pdf export
 //--
 

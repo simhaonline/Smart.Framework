@@ -130,13 +130,10 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartAbstractCustomSession':
 			require_once('lib/core/plugins/lib_session.php');			// session handler
 			break;
-		//-- zip archive
-		case 'SmartZipArchive':
-			require_once('lib/core/plugins/lib_export_zip.php');		// zip archive
-			break;
-		//-- ooffice export
-		case 'SmartExportToOpenOffice':
-			require_once('lib/core/plugins/lib_export_ooffice.php'); 	// ooffice export
+		//-- spreadsheet export / import
+		case 'SmartSpreadSheetExport':
+		case 'SmartSpreadSheetImport':
+			require_once('lib/core/plugins/lib_spreadsheet.php');		// spreadsheet export / import
 			break;
 		case 'SmartPdfExport':
 			require_once('lib/core/plugins/lib_export_pdf.php'); 		// pdf export
