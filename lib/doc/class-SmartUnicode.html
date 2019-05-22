@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartUnicode | Smart.Framework Documentation :: 2019-01-07 12:29</title>
+	<title>Class SmartUnicode | Smart.Framework Documentation :: 2019-05-22 09:50</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3544134270"></script>
+	<script src="elementlist.js?3687643906"></script>
 </head>
 
 <body>
@@ -275,7 +275,7 @@ class="php-comment">//----------------------------------------------------------
 		<b>Package:</b> <a href="package-Base.html">Base</a><br>
 
 				<b>Version:</b>
-				v.20190105<br>
+				v.20190221<br>
 				<b>Depends:</b>
 				extensions: PHP MBString, PHP XML<br>
 				<b>Hints:</b>
@@ -1381,7 +1381,7 @@ ISO-8859-1 character set</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_word_wrap">#</a>
-		<code>word_wrap( <span>STRING <var>$str</var></span>, <span>INTEGER+ <var>$width</var> = <span class="php-num">75</span></span>, <span>STRING <var>$break</var> = <span class="php-quote">&quot;\n&quot;</span></span>, <span>BOOLEAN <var>$cut</var> = <span class="php-keyword1">false</span></span> )</code>
+		<code>word_wrap( <span>STRING <var>$str</var></span>, <span>INTEGER+ <var>$width</var> = <span class="php-num">75</span></span>, <span>STRING <var>$break</var> = <span class="php-quote">&quot;\n&quot;</span></span>, <span>BOOLEAN <var>$cut</var> = <span class="php-keyword1">false</span></span>, <span>mixed <var>$visualbreak</var> = <span class="php-quote">'¬'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -1403,12 +1403,14 @@ ISO-8859-1 character set</dd>
 					<dd>:: The number of characters at which the string will be wrapped</dd>
 					<dt><var>$break</var></dt>
 					<dd>OPTIONAL :: The line is broken using the optional break parameter ; Default is:
-\n</dd>
+\n ; will also add the optional visual break by default '¬'</dd>
 					<dt><var>$cut</var></dt>
 					<dd>OPTIONAL :: If the cut is set to TRUE, the string is always wrapped at or before
 the specified width ; When FALSE the function dose not split the word until the
 end of the word even if the width is smaller than the word width. Default is
 FALSE.</dd>
+					<dt><var>$visualbreak</var></dt>
+					<dd></dd>
 				</dl></div>
 
 				<h4>Returns</h4>
@@ -1444,7 +1446,7 @@ FALSE.</dd>
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-01-07 12:29</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
 	</div>
 </div>
 </div>

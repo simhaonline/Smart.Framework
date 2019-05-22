@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190521
+ * @version 	v.20190522
  * @package 	Exporters
  *
  */
@@ -38,7 +38,7 @@ final class SmartSpreadSheetExport {
 
 	//->
 
-	private $version = 'excel.2003.xml.spreadsheet:20190521';
+	private $version = 'excel.2003.xml.spreadsheet:20190522';
 	private $cellWidth = 150;
 	private $cellHeight = 15;
 
@@ -92,7 +92,7 @@ final class SmartSpreadSheetExport {
 		$str .= "\t\t".'<Style ss:ID="Default" ss:Name="Default"/>'."\n";
 		$str .= "\t\t".'<Style ss:ID="Bold" ss:Name="Bold"><Font ss:Bold="1"/></Style>'."\n";
 		$str .= "\t".'</Styles>'."\n";
-		$str .= "\t".'<ss:Worksheet ss:Name="'.$this->escapeStr($y_sheet_name, true).'">'."\n";
+		$str .= "\t".'<Worksheet ss:Name="'.$this->escapeStr($y_sheet_name, true).'">'."\n";
 		$str .= "\t\t".'<Table>'."\n";
 		//--
 		if(Smart::array_size($y_arr_fields) > 0) {
@@ -123,7 +123,7 @@ final class SmartSpreadSheetExport {
 		//--
 		$str .= "\t\t".'</Table>'."\n";
 		$str .= "\t\t".'<x:WorksheetOptions/>'."\n";
-		$str .= "\t".'</ss:Worksheet>'."\n";
+		$str .= "\t".'</Worksheet>'."\n";
 		$str .= '</Workbook>'."\n";
 		//--
 		$str .= '<!-- # SpreadSheet ('.$this->version.' / '.SMART_FRAMEWORK_VERSION.') # -->'."\n";
@@ -168,7 +168,7 @@ final class SmartSpreadSheetExport {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190521
+ * @version 	v.20190522
  * @package 	Parsers
  *
  */
@@ -198,10 +198,13 @@ final class SmartSpreadSheetImport {
 		if(Smart::array_size($csv_arr) <= 0) {
 			return array();
 		} //end if
-		if(Smart::array_size($csv_arr['ss:Worksheet']) <= 0) {
+		if(Smart::array_size($csv_arr['Worksheet']) > 0) {
+			$csv_arr = (array) $csv_arr['Worksheet']; // standard
+		} elseif(Smart::array_size($csv_arr['ss:Worksheet']) > 0) {
+			$csv_arr = (array) $csv_arr['ss:Worksheet']; // bugfix for OOffice
+		} else {
 			return array();
-		} //end if
-		$csv_arr = (array) $csv_arr['ss:Worksheet'];
+		} //end if else
 		if(Smart::array_size($csv_arr['Table']) <= 0) {
 			return array();
 		} //end if

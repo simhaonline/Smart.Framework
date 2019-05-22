@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartAbstractAppController | Smart.Framework Documentation :: 2019-01-07 12:29</title>
+	<title>Class SmartAbstractAppController | Smart.Framework Documentation :: 2019-05-22 09:50</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3544134270"></script>
+	<script src="elementlist.js?3687643906"></script>
 </head>
 
 <body>
@@ -296,7 +296,7 @@ class="php-comment">//END CLASS</span>
 		<b>Package:</b> <a href="package-Application.html">Application</a><br>
 
 				<b>Version:</b>
-				v.181226<br>
+				v.20190307<br>
 				<b>Depends:</b>
 				-<br>
 				<b>Hints:</b>
@@ -1517,17 +1517,19 @@ into PageView Vars</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_PageViewSetVar">#</a>
-		<code>PageViewSetVar( <span>STRING <var>$param</var></span>, <span>STRING <var>$value</var></span> )</code>
+		<code>PageViewSetVar( <span>STRING <var>$param</var></span>, <span>STRING <var>$value</var></span>, <span>BOOL <var>$overwrite</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			
-<p>Set a single value for the current controller into PageView Vars</p>
+<p>Set a single value for the current controller into PageView Vars, with
+Optional OverWrite (if not empty) parameter</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>Set a single value for the current controller into PageView Vars</p>
+<p>Set a single value for the current controller into PageView Vars, with
+Optional OverWrite (if not empty) parameter</p>
 
 
 
@@ -1537,6 +1539,8 @@ into PageView Vars</p>
 					<dd>:: the variable to be set</dd>
 					<dt><var>$value</var></dt>
 					<dd>:: the value</dd>
+					<dt><var>$overwrite</var></dt>
+					<dd>:: overwrite (default is TRUE) ; set to FALSE to set only if value is empty</dd>
 				</dl></div>
 
 				<h4>Returns</h4>
@@ -1657,13 +1661,15 @@ Vars</p>
 
 		<div class="description short">
 			
-<p>Reset all variables for the current controller into PageView Vars</p>
+<p>Reset all variables for the current controller into PageView Vars and unset
+all keys</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>Reset all variables for the current controller into PageView Vars</p>
+<p>Reset all variables for the current controller into PageView Vars and unset
+all keys</p>
 
 
 
@@ -1694,15 +1700,15 @@ Vars</p>
 
 		<div class="description short">
 			
-<p>Reset a single variable value for the current controller into PageView
-Vars</p>
+<p>Reset a single variable value for the current controller into PageView Vars
+and unset the key</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>Reset a single variable value for the current controller into PageView
-Vars</p>
+<p>Reset a single variable value for the current controller into PageView Vars
+and unset the key</p>
 
 
 
@@ -2089,7 +2095,7 @@ unexpected results !!!</p>
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-01-07 12:29</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
 	</div>
 </div>
 </div>

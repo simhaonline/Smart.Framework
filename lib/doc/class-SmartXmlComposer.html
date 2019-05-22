@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartXmlComposer | Smart.Framework Documentation :: 2019-01-07 12:29</title>
+	<title>Class SmartXmlComposer | Smart.Framework Documentation :: 2019-05-22 09:50</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3544134270"></script>
+	<script src="elementlist.js?3687643906"></script>
 </head>
 
 <body>
@@ -63,6 +63,7 @@
 			<h3>Classes</h3>
 			<ul>
 				<li><a href="class-SmartHtmlParser.html">SmartHtmlParser</a></li>
+				<li><a href="class-SmartSpreadSheetImport.html">SmartSpreadSheetImport</a></li>
 				<li class="active"><a href="class-SmartXmlComposer.html">SmartXmlComposer</a></li>
 				<li><a href="class-SmartXmlParser.html">SmartXmlParser</a></li>
 				<li><a href="class-SmartYamlConverter.html">SmartYamlConverter</a></li>
@@ -122,39 +123,56 @@ tag attributes are not supported.</p>
 class="php-var">$array</span> = <span
 class="php-keyword1">array</span>(
       <span
-class="php-quote">'xml'</span> =&gt; <span
-class="php-keyword1">array</span>(
-              <span
 class="php-quote">'id'</span> =&gt; <span
 class="php-quote">'15'</span>,
-              <span
+      <span
 class="php-quote">'name'</span> =&gt; <span
 class="php-quote">'Test'</span>,
-              <span
+      <span
 class="php-quote">'data'</span> =&gt; <span
 class="php-keyword1">array</span>(
-                      <span
+              <span
 class="php-quote">'key1'</span> =&gt; <span
 class="php-quote">'12345'</span>,
-                      <span
+              <span
 class="php-quote">'key2'</span> =&gt; <span
 class="php-quote">'67890'</span>,
-                      <span
+              <span
 class="php-quote">'key3'</span> =&gt; <span
 class="php-quote">'ABCDEF'</span>
-              ),
-              <span
+      ),
+      <span
 class="php-quote">'date'</span> =&gt; <span
 class="php-quote">'2016-02-05 09:30:05'</span>
-      )
 );
 <span
 class="php-var">$xml</span> = (<span
 class="php-keyword1">new</span> SmartXmlComposer())-&gt;transform(<span
-class="php-var">$array</span>);
-<span class="php-keyword1">echo</span> <span
-class="php-var">$xml</span>;
-<span class="php-comment">//--</span>
+class="php-var">$array</span>, <span class="php-quote">'myxml'</span>);
+<span
+class="php-keyword1">echo</span> <span class="php-var">$xml</span>;
+<span
+class="php-comment">//-- will have something like:</span>
+&lt;myxml&gt;
+  &lt;id&gt;<span
+class="php-num">15</span>&lt;/id&gt;
+  &lt;name&gt;Test&lt;/name&gt;
+  &lt;data&gt;
+    &lt;key1&gt;<span
+class="php-num">12345</span>&lt;/key1&gt;
+    &lt;key2&gt;<span
+class="php-num">67890</span>&lt;/key2&gt;
+    &lt;key3&gt;ABCDEF&lt;/key3&gt;
+  &lt;/data&gt;
+  &lt;<span
+class="php-keyword2">date</span>&gt;<span class="php-num">2016</span>-<span
+class="php-num">02</span>-<span class="php-num">05</span> <span
+class="php-num">09</span>:<span class="php-num">30</span>:<span
+class="php-num">05</span>&lt;/<span
+class="php-keyword2">date</span>&gt;
+&lt;/myxml&gt;
+<span
+class="php-comment">//--</span>
 </pre>
 
 	</div>
@@ -174,7 +192,7 @@ class="php-var">$xml</span>;
 		<b>Package:</b> <a href="package-Parsers.html">Parsers</a><br>
 
 				<b>Version:</b>
-				v.181019<br>
+				v.20190219<br>
 				<b>Depends:</b>
 				classes: Smart<br>
 				<b>Hints:</b>
@@ -229,7 +247,7 @@ methods<br>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_transform">#</a>
-		<code>transform( <span>mixed <var>$y_array</var></span> )</code>
+		<code>transform( <span>mixed <var>$y_array</var></span>, <span>mixed <var>$xmlroot</var> = <span class="php-quote">'xml'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -269,7 +287,7 @@ methods<br>
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-01-07 12:29</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
 	</div>
 </div>
 </div>

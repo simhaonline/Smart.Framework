@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartMongoDb | Smart.Framework Documentation :: 2019-01-07 12:29</title>
+	<title>Class SmartMongoDb | Smart.Framework Documentation :: 2019-05-22 09:50</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3544134270"></script>
+	<script src="elementlist.js?3687643906"></script>
 </head>
 
 <body>
@@ -110,9 +110,8 @@
 
 	<div class="description">
 	
-<p>Class Smart MongoDB Client (for PHP MongoDB extension v.1.0.1 or later)
-Tested and Stable on MongoDB Server versions: 3.2 / 3.3 / 3.4 / 3.5 / 3.6 / 3.7
-/ 3.8 / 3.9 / 4.0 / 4.1</p>
+<p>Class Smart MongoDB Client (for PHP MongoDB extension v.1.1.0 or later)
+Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1</p>
 
 <pre>
 
@@ -237,14 +236,16 @@ class="php-var">$query</span>);
 		<b>Package:</b> <a href="package-Database.MongoDB.html">Database:MongoDB</a><br>
 
 				<b>Version:</b>
-				v.181222<br>
+				v.20190423<br>
 				<b>Depends:</b>
-				extensions: PHP MongoDB (v.1.0.1 or later) ; classes: Smart<br>
+				extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart<br>
 				<b>Hint:</b>
 				Important: MongoDB database specifies that max BSON document size is 16
-megabytes, thus this limit cannot be exceeded from PHP side when creating new
-mongodb documents: <a
-href="https://docs.mongodb.com/manual/reference/limits/">https://docs.mongodb.com/manual/reference/limits/</a><br>
+megabytes and supports no more than 100 levels of nesting, thus this limit
+cannot be exceeded from PHP side when creating new mongodb documents: <a
+href="https://docs.mongodb.com/manual/reference/limits/">https://docs.mongodb.com/manual/reference/limits/</a>
+; To store documents larger than the maximum size, MongoDB provides the GridFS
+API<br>
 				<b>Usage:</b>
 				dynamic object: (new Class())-&gt;method() - This class provides only DYNAMIC
 methods<br>
@@ -335,6 +336,43 @@ characters very unique UUID</p>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="get_ext_version" id="_get_ext_version">
+
+		<td class="attributes"><code>
+			 public 
+			STRING
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_get_ext_version">#</a>
+		<code>get_ext_version( )</code>
+
+		<div class="description short">
+			
+<p>Get the MongoDB Extension version</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Get the MongoDB Extension version</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>STRING</code><br>:: MongoDB extension version<br>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="get_server_version" id="_get_server_version">
 
 		<td class="attributes"><code>
@@ -364,6 +402,43 @@ characters very unique UUID</p>
 				<h4>Returns</h4>
 				<div class="list">
 					<code>STRING</code><br>:: MongoDB version<br>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getFtsDictionaryByLang" id="_getFtsDictionaryByLang">
+
+		<td class="attributes"><code>
+			 public 
+			STRING
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getFtsDictionaryByLang">#</a>
+		<code>getFtsDictionaryByLang( <span>mixed <var>$lang</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Get the MongoDB FTS Dictionary by Two Letter language code (ISO 639-1)</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Get the MongoDB FTS Dictionary by Two Letter language code (ISO 639-1)</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>STRING</code><br>:: dictionary name (ex: 'english' - if available or 'none' - if n/a)<br>
 				</div>
 
 
@@ -672,14 +747,16 @@ limit</p>
 		<div class="description short">
 			
 <p># insert single or modify single or multi documents in a collection that are
-matching the filter criteria</p>
+matching the filter criteria ; this is always non-fatal, will throw catcheable
+exception on error ...</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
 <p># insert single or modify single or multi documents in a collection that are
-matching the filter criteria</p>
+matching the filter criteria ; this is always non-fatal, will throw catcheable
+exception on error ...</p>
 
 
 
@@ -913,7 +990,7 @@ already exists, drop Collection, similar if does not exists</p>
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-01-07 12:29</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
 	</div>
 </div>
 </div>

@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartMailerMimeDecode | Smart.Framework Documentation :: 2019-05-22 09:50</title>
+	<title>Class SmartSpreadSheetExport | Smart.Framework Documentation :: 2019-05-22 09:50</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
 	<script src="elementlist.js?3687643906"></script>
@@ -41,11 +41,11 @@
 						</li>
 				<li><a href="package-Database.SQLite.html">Database:SQLite</a>
 						</li>
-				<li><a href="package-Exporters.html">Exporters</a>
+				<li class="active"><a href="package-Exporters.html">Exporters</a>
 						</li>
 				<li><a href="package-Filesystem.html">Filesystem</a>
 						</li>
-				<li class="active"><a href="package-Mailer.html">Mailer</a>
+				<li><a href="package-Mailer.html">Mailer</a>
 						</li>
 				<li><a href="package-Network.html">Network</a>
 						</li>
@@ -62,13 +62,8 @@
 		<div id="elements">
 			<h3>Classes</h3>
 			<ul>
-				<li><a href="class-SmartMailerImap4Client.html">SmartMailerImap4Client</a></li>
-				<li class="active"><a href="class-SmartMailerMimeDecode.html">SmartMailerMimeDecode</a></li>
-				<li><a href="class-SmartMailerMimeParser.html">SmartMailerMimeParser</a></li>
-				<li><a href="class-SmartMailerPop3Client.html">SmartMailerPop3Client</a></li>
-				<li><a href="class-SmartMailerSend.html">SmartMailerSend</a></li>
-				<li><a href="class-SmartMailerSmtpClient.html">SmartMailerSmtpClient</a></li>
-				<li><a href="class-SmartMailerUtils.html">SmartMailerUtils</a></li>
+				<li><a href="class-SmartPdfExport.html">SmartPdfExport</a></li>
+				<li class="active"><a href="class-SmartSpreadSheetExport.html">SmartSpreadSheetExport</a></li>
 			</ul>
 
 
@@ -96,7 +91,7 @@
 				<a href="index.html" title="Overview"><span>Overview</span></a>
 			</li>
 			<li>
-				<a href="package-Mailer.html" title="Summary of Mailer"><span>Package</span></a>
+				<a href="package-Exporters.html" title="Summary of Exporters"><span>Package</span></a>
 			</li>
 			<li class="active">
 <span>Class</span>			</li>
@@ -111,17 +106,13 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Class SmartMailerMimeDecode</h1>
+	<h1>Class SmartSpreadSheetExport</h1>
 
 
 	<div class="description">
 	
-<p>Class: SmartMailerMimeDecode - provides an eMail MIME decoder. This class is
-for very advanced use.</p>
-
-<p>It just implements the mime decoding to a PHP array by decoding Mime Email
-Messages. To easy parse mime messages and display them on-the-fly use the class:
-SmartMailerMimeParser.</p>
+<p>Class: SmartSpreadSheetExport - Exports (structured) Data to XML Spreadsheet
+(Excel 2003).</p>
 
 	</div>
 
@@ -137,16 +128,16 @@ SmartMailerMimeParser.</p>
 		<b>Final</b><br>
 		
 		
-		<b>Package:</b> <a href="package-Mailer.html">Mailer</a><br>
+		<b>Package:</b> <a href="package-Exporters.html">Exporters</a><br>
 
 				<b>Version:</b>
-				v.20190105<br>
+				v.20190522<br>
 				<b>Depends:</b>
 				classes: Smart<br>
 				<b>Usage:</b>
 				dynamic object: (new Class())-&gt;method() - This class provides only DYNAMIC
 methods<br>
-		<b>Located at</b> core/plugins/lib_mail_decode.php<br>
+		<b>Located at</b> core/plugins/lib_spreadsheet.php<br>
 	</div>
 
 
@@ -164,7 +155,7 @@ methods<br>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code>__construct( <span>mixed <var>$encoding</var> = <span class="php-quote">''</span></span> )</code>
+		<code>__construct( <span>mixed <var>$y_cell_width</var> = <span class="php-num">0</span></span>, <span>mixed <var>$y_cell_height</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -182,7 +173,7 @@ methods<br>
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="get_working_charset" id="_get_working_charset">
+	<tr data-order="getMimeType" id="_getMimeType">
 
 		<td class="attributes"><code>
 			 public 
@@ -192,8 +183,8 @@ methods<br>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_get_working_charset">#</a>
-		<code>get_working_charset( )</code>
+		<a class="anchor" href="#_getMimeType">#</a>
+		<code>getMimeType( )</code>
 
 		<div class="description short">
 			
@@ -211,7 +202,7 @@ methods<br>
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="reset" id="_reset">
+	<tr data-order="getDispositionHeader" id="_getDispositionHeader">
 
 		<td class="attributes"><code>
 			 public 
@@ -221,8 +212,8 @@ methods<br>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_reset">#</a>
-		<code>reset( )</code>
+		<a class="anchor" href="#_getDispositionHeader">#</a>
+		<code>getDispositionHeader( <span>mixed <var>$y_filename</var> = <span class="php-quote">'file.xml'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -240,7 +231,7 @@ methods<br>
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="get_bodies" id="_get_bodies">
+	<tr data-order="getFileContents" id="_getFileContents">
 
 		<td class="attributes"><code>
 			 public 
@@ -250,66 +241,8 @@ methods<br>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_get_bodies">#</a>
-		<code>get_bodies( <span>mixed <var>$message</var></span>, <span>mixed <var>$part_id</var></span> )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
-
-
-
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="separe_email_from_name" id="_separe_email_from_name">
-
-		<td class="attributes"><code>
-			 public 
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_separe_email_from_name">#</a>
-		<code>separe_email_from_name( <span>mixed <var>$y_address</var></span> )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
-
-
-
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="get_header" id="_get_header">
-
-		<td class="attributes"><code>
-			 public 
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_get_header">#</a>
-		<code>get_header( <span>mixed <var>$message</var></span> )</code>
+		<a class="anchor" href="#_getFileContents">#</a>
+		<code>getFileContents( <span>mixed <var>$y_sheet_name</var></span>, <span>array <var>$y_arr_fields</var></span>, <span>array <var>$y_arr_data</var></span> )</code>
 
 		<div class="description short">
 			
@@ -340,66 +273,6 @@ methods<br>
 
 
 
-	<table class="summary properties" id="properties">
-	<caption>Properties summary</caption>
-	<tr data-order="arr_heads" id="$arr_heads">
-		<td class="attributes"><code>
-			public  
-			mixed
-		</code></td>
-
-		<td class="name">
-<var>$arr_heads</var>
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</td>
-		<td class="value"><div><a href="#$arr_heads" class="anchor">#</a><code></code></div></td>
-	</tr>
-	<tr data-order="arr_parts" id="$arr_parts">
-		<td class="attributes"><code>
-			public  
-			mixed
-		</code></td>
-
-		<td class="name">
-<var>$arr_parts</var>
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</td>
-		<td class="value"><div><a href="#$arr_parts" class="anchor">#</a><code></code></div></td>
-	</tr>
-	<tr data-order="arr_atts" id="$arr_atts">
-		<td class="attributes"><code>
-			public  
-			mixed
-		</code></td>
-
-		<td class="name">
-<var>$arr_atts</var>
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</td>
-		<td class="value"><div><a href="#$arr_atts" class="anchor">#</a><code></code></div></td>
-	</tr>
-	</table>
 
 
 

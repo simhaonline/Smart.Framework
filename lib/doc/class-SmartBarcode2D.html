@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartBarcode2D | Smart.Framework Documentation :: 2019-01-07 12:29</title>
+	<title>Class SmartBarcode2D | Smart.Framework Documentation :: 2019-05-22 09:50</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3544134270"></script>
+	<script src="elementlist.js?3687643906"></script>
 </head>
 
 <body>
@@ -131,7 +131,7 @@ PDF417.</p>
 		<b>Package:</b> <a href="package-Components.Misc.html">Components:Misc</a><br>
 
 				<b>Version:</b>
-				v.170413<br>
+				v.20190401<br>
 				<b>Depends:</b>
 				Smart.Framework<br>
 				<b>Usage:</b>
@@ -154,7 +154,7 @@ PDF417.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getBarcode">#</a>
-		<code>getBarcode( <span>STRING <var>$y_code</var></span>, <span>ENUM <var>$y_type</var></span>, <span>ENUM <var>$y_format</var></span>, <span>INTEGER+ <var>$y_size</var></span>, <span>HEXCOLOR <var>$y_color</var> = <span class="php-quote">'#000000'</span></span>, <span>MIXED <var>$y_extraoptions</var> = <span class="php-quote">''</span></span>, <span>YES/NO <var>$y_cache</var> = <span class="php-quote">'no'</span></span> )</code>
+		<code>getBarcode( <span>STRING <var>$y_code</var></span>, <span>ENUM <var>$y_type</var></span>, <span>ENUM <var>$y_format</var></span>, <span>INTEGER+ <var>$y_size</var></span>, <span>HEXCOLOR <var>$y_color</var> = <span class="php-quote">'#000000'</span></span>, <span>MIXED <var>$y_extraoptions</var> = <span class="php-quote">''</span></span>, <span>INTEGER <var>$y_cachetime</var> = -<span class="php-num">1</span></span> )</code>
 
 		<div class="description short">
 			
@@ -183,9 +183,9 @@ PDF417.</p>
 					<dt><var>$y_extraoptions</var></dt>
 					<dd>Extra Options: for QRCode = Quality [L, M, Q, H] L as default ; for PDF417 a
 Ratio Integer between 1 and 17</dd>
-					<dt><var>$y_cache</var></dt>
-					<dd>If YES will cache the Barcode to avoid on-the-fly generation ; default is set to
-NO</dd>
+					<dt><var>$y_cachetime</var></dt>
+					<dd>If &amp;gt; 0 will cache it for this number of seconds ; if zero will never expire ;
+if &amp;lt; 0 will use no cache</dd>
 				</dl></div>
 
 				<h4>Returns</h4>
@@ -221,7 +221,7 @@ NO</dd>
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-01-07 12:29</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
 	</div>
 </div>
 </div>
