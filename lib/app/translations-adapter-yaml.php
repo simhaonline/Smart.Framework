@@ -36,7 +36,7 @@ define('SMART_FRAMEWORK__INFO__TEXT_TRANSLATIONS_ADAPTER', 'YAML: File based');
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181105
+ * @version 	v.20190524
  * @package 	Application
  *
  */
@@ -46,7 +46,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 
 
 	//==================================================================
-	// This reads and parse the YAML translation files
+	// This reads and parse the YAML translation files by language, area and sub-area
 	public static function getTranslationsFromSource($the_lang, $y_area, $y_subarea) {
 		//--
 		$the_lang = (string) Smart::safe_varname((string)$the_lang);
@@ -140,7 +140,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 
 
 	//==================================================================
-	// This validates the translations last update version
+	// This returns the last update version of the translations
 	public static function getTranslationsVersion() {
 		//--
 		$version = 'Smart.Framework :: '.SMART_FRAMEWORK_RELEASE_VERSION.' '.SMART_FRAMEWORK_RELEASE_TAGVERSION;
@@ -150,6 +150,30 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 		} //end if
 		//--
 		return (string) trim('#TextTranslations::Version#'."\n".$version."\n".'#.#');
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	// This register the usage of every translation as pair of language, area and sub-area, key
+	public static function setTranslationsKeyUsageCount($the_lang, $y_area, $y_subarea, $y_textkey) {
+		//--
+		if(!defined('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS')) {
+			return; // only go below if this has been explicit defined
+		} //end if
+		//--
+		if(SMART_FRAMEWORK_ADMIN_AREA === true) {
+			$the_translations_area = 'adm';
+		} else {
+			$the_translations_area = 'idx';
+		} //end if else
+		//--
+		@file_put_contents(
+			(string) Smart::safe_pathname('tmp/logs/'.Smart::safe_filename($the_translations_area).'/yaml-translations-usage-'.date('Y-m-d@H').'.tab.tsv'),
+			(string) $the_lang."\t".$y_area."\t".$y_subarea."\t".$y_textkey."\t".'1'."\t".str_replace(["\t", "\n", "\r"], ' ', (string)'['.$_SERVER['REQUEST_METHOD'].']'.$_SERVER['REQUEST_URI'])."\n",
+			FILE_APPEND | LOCK_EX
+		);
 		//--
 	} //END FUNCTION
 	//==================================================================

@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.20190221
+ * @version 	v.20190524
  * @package 	Application
  *
  */
@@ -358,6 +358,12 @@ final class SmartTextTranslations {
 			$the_lang = (string) self::getLanguage(); // use default language
 		} //end if else
 		//--
+		if((string)SMART_ERROR_HANDLER == 'dev') {
+			if(self::checkSourceParser() === true) {
+				SmartAdapterTextTranslations::setTranslationsKeyUsageCount($the_lang, $y_area, $y_subarea, $y_textkey);
+			} //end if
+		} //end if
+		//--
 		$translations = (array) self::getFromOptimalPlace($the_lang, $y_area, $y_subarea);
 		//--
 		return (string) $translations[(string)$y_textkey];
@@ -665,7 +671,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.20190221
+ * @version 	v.20190524
  *
  * @access 		private
  * @internal
@@ -767,7 +773,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.20190221
+ * @version 	v.20190524
  *
  */
 interface SmartInterfaceAdapterTextTranslations {
@@ -777,10 +783,10 @@ interface SmartInterfaceAdapterTextTranslations {
 
 	//=====
 	/**
-	 * Smart Parse Regional Text Parse Translation Source
+	 * Get Regional Text Translation from Source by: Language, Area, Subarea
 	 * This function must implement a Text Translations parser.
-	 * It can be implemented to read from one of the variety of sources: Arrays, INI, YAML, XML, JSON, SQLite, PostgreSQL, GetText, ...
-	 * RETURN: an associative array as [key => value] for the specific translation
+	 * It can be implemented to read from one of the variety of sources: Arrays, INI, YAML, XML, JSON, SQLite, PostgreSQL, MySQL, MongoDB, GetText, ...
+	 * RETURN: an associative array as [key => value] for the specific translation set
 	 */
 	public static function getTranslationsFromSource($the_lang, $y_area, $y_subarea);
 	//=====
@@ -788,13 +794,25 @@ interface SmartInterfaceAdapterTextTranslations {
 
 	//=====
 	/**
-	 * Smart Parse Regional Text Get Latest Version
+	 * Get Regional Text containing the Latest Version of the Translations
 	 * This function must implement a way to get last version string to validate Text Translations.
 	 * If a version cannot be provided, must return (string) date('Y-m-d') and this way the texts persistent cache will be re-validated daily.
 	 * If a real version can be provided it is the best, so persistent cache would be re-validated just upon changes !
 	 * RETURN: a non-empty string the provides the latest version string of the current texts translations
 	 */
 	public static function getTranslationsVersion();
+	//=====
+
+
+	//=====
+	/**
+	 * Set the Counter (increment or register) for a Regional Text Translation into Source or alternate source by: Language, Area, Subarea, Key
+	 * This function must implement a way to increment or register the usage of every used pair of Language/Area/Subarea/Key as it was used to help the cleanup of unused translations.
+	 * This function will operate only in DEV mode (SMART_ERROR_HANDLER == 'dev') and add in init.php: define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS', true);
+	 * It can be implemented to write into one of the variety of sources: Text/CSV, Database, ...
+	 * RETURN: N/A
+	 */
+	public static function setTranslationsKeyUsageCount($the_lang, $y_area, $y_subarea, $y_textkey);
 	//=====
 
 
