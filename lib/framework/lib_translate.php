@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.20190524
+ * @version 	v.20190527
  * @package 	Application
  *
  */
@@ -671,7 +671,7 @@ final class SmartTextTranslations {
  * This is intended just for internal use.
  * This class may be changed or removed unattended, you should never rely on this class when coding !
  *
- * @version 	v.20190524
+ * @version 	v.20190527
  *
  * @access 		private
  * @internal
@@ -773,7 +773,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.20190524
+ * @version 	v.20190527
  *
  */
 interface SmartInterfaceAdapterTextTranslations {
@@ -806,7 +806,7 @@ interface SmartInterfaceAdapterTextTranslations {
 
 	//=====
 	/**
-	 * Set the Counter (increment or register) for a Regional Text Translation into Source or alternate source by: Language, Area, Subarea, Key
+	 * Register the usage (increment counter or register in logs) for a Regional Text Translation into Source or alternate source by: Language, Area, Subarea, Key
 	 * This function must implement a way to increment or register the usage of every used pair of Language/Area/Subarea/Key as it was used to help the cleanup of unused translations.
 	 * This function will operate only in DEV mode (SMART_ERROR_HANDLER == 'dev') and add in init.php: define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS', true);
 	 * It can be implemented to write into one of the variety of sources: Text/CSV, Database, ...

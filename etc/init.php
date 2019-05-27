@@ -1,6 +1,6 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [Smart.Framework / INIT] # r.20190117
+// [Smart.Framework / INIT] # r.20190527
 // v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
@@ -105,23 +105,24 @@ Options -Indexes
 ');
 //--
 //---------------------------------------- ROBOTS IDENTIFY :: DON'T CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING :: Sample (spaces between <> counts): '<bot signature 1>,<bot signature 2 >,< another-bot >'
-define('SMART_FRAMEWORK_IDENT_ROBOTS', '<robot>,<apache>,<httperf>,<benchmark>,<scanner>,<googlebot>,<google adsbot>,<google toolbar>,<google web preview>,<google feed fetcher>,<yahoo! slurp>,<webcrawler>,<domaincrawler>,<catchbot>,<webalta crawler>,<superbot>,<msnbot>,<ms url control>,<winhttp>,<roku dvp>,<linkwalker>,<aihitbot>,<ia_archiver>,<sanszbot>,<linguee bot>,<swish-e>,<tarantula>,<fast-webcrawler>,<jeeves>,<teoma>,<baiduspider>,<bing bot>,<yandex>,<exabot>,<everyfeed spider>,<gregarius>,<facebook scraper>,<email wolf>,<gaisbot>,<gulperbot>,<grub-client>,<peach >,<htmlparser>,<w3c css validator>,<w3c (x)html validator>,<w3c p3p validator>,<download demon>,<offline explorer>,<webcopier>,<web downloader>,<webzip>,<htmldoc>,<wget >,<curl/>,<php >,<libwww-perl>,<python-urllib>,<java >'); // robots identification by user agent portions of signature
+define('SMART_FRAMEWORK_IDENT_ROBOTS', 					'<robot>,<apache>,<httperf>,<benchmark>,<scanner>,<googlebot>,<google adsbot>,<google toolbar>,<google web preview>,<google feed fetcher>,<yahoo! slurp>,<webcrawler>,<domaincrawler>,<catchbot>,<webalta crawler>,<superbot>,<msnbot>,<ms url control>,<winhttp>,<roku dvp>,<linkwalker>,<aihitbot>,<ia_archiver>,<sanszbot>,<linguee bot>,<swish-e>,<tarantula>,<fast-webcrawler>,<jeeves>,<teoma>,<baiduspider>,<bing bot>,<yandex>,<exabot>,<everyfeed spider>,<gregarius>,<facebook scraper>,<email wolf>,<gaisbot>,<gulperbot>,<grub-client>,<peach >,<htmlparser>,<w3c css validator>,<w3c (x)html validator>,<w3c p3p validator>,<download demon>,<offline explorer>,<webcopier>,<web downloader>,<webzip>,<htmldoc>,<wget >,<curl/>,<php >,<libwww-perl>,<python-urllib>,<java >'); // robots identification by user agent portions of signature
 //--------------------------------------- SPECIAL URL PARAMS
-//define('SMART_FRAMEWORK_URL_PARAM_LANGUAGE', 		'lang');														// *Optional* (used only with multi languages) Language URL Param (if empty string, will not accept any language inputs by URL or Cookie) ; Default = 'lang' ; if not empty may contain only characters: [a-z]
+//define('SMART_FRAMEWORK_URL_PARAM_LANGUAGE', 			'lang');													// *Optional* (used only with multi languages) Language URL Param (if empty string, will not accept any language inputs by URL or Cookie) ; Default = 'lang' ; if not empty may contain only characters: [a-z]
 //---------------------------------------- SPECIAL FEATURES
-define('SMART_SOFTWARE_FRONTEND_ENABLED',			true);															// To Disable Frontend (index.php) set this to false
-define('SMART_SOFTWARE_BACKEND_ENABLED',			true);															// To Disable Backend (admin.php) set this to false
-define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',			2);																// Set to: 0 = none ; 1 = only admin ; 2 = both index & admin ; 3 = only index :: To Disable/Enable PathInfo (index|admin.php/path/info/)
-//define('SMART_SOFTWARE_MEMDB_FATAL_ERR',			true);															// If defined / set to true will not ignore (fatal / connection errors) on all memory DB servers such as Redis ; normally memory db servers can be ignored if fail and must behave like no cache
-//define('SMART_SOFTWARE_SQLDB_FATAL_ERR',			false);															// If defined / set to false will use exceptions that can be catched instead of fatal errors on all SQL / NOSQL DB adapters such as PostgreSQL / SQLite / MongoDB ; this is not safe to use with transatctions (DO NOT modify or use this parameter unless you know what you are doing !!!)
-//define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',	true);															// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status
-//define('SMART_SOFTWARE_MKTPL_PCACHETIME',			86400);															// If set to a positive integer (>=0) will cache the marker template files to (memory) persistent cache to avoid repetitive reads to the FileSystem (on some systems this can boost the speed ...)
-//define('SMART_SOFTWARE_MKTPL_DEBUG_LEN', 			65535);															// If set will use this TPL Debug Length (255..524280) ; If not set will use default: 512
-define('SMART_SOFTWARE_MAILSEND_SAFE_RULES', 		true);															// If defined and TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages ; adding the X-AntiAbuse headers, ...)
+define('SMART_SOFTWARE_FRONTEND_ENABLED',				true);														// To Disable Frontend (index.php) set this to false
+define('SMART_SOFTWARE_BACKEND_ENABLED',				true);														// To Disable Backend (admin.php) set this to false
+define('SMART_SOFTWARE_URL_ALLOW_PATHINFO',				2);															// Set to: 0 = none ; 1 = only admin ; 2 = both index & admin ; 3 = only index :: To Disable/Enable PathInfo (index|admin.php/path/info/)
+//define('SMART_SOFTWARE_MEMDB_FATAL_ERR',				true);														// If defined / set to true will not ignore (fatal / connection errors) on all memory DB servers such as Redis ; normally memory db servers can be ignored if fail and must behave like no cache
+//define('SMART_SOFTWARE_SQLDB_FATAL_ERR',				false);														// If defined / set to false will use exceptions that can be catched instead of fatal errors on all SQL / NOSQL DB adapters such as PostgreSQL / SQLite / MongoDB ; this is not safe to use with transatctions (DO NOT modify or use this parameter unless you know what you are doing !!!)
+//define('SMART_SOFTWARE_DISABLE_STATUS_POWERED',		true);														// If set to TRUE will enable the status powered info accesible via ?/smartframeworkservice/status
+//define('SMART_SOFTWARE_MKTPL_PCACHETIME',				86400);														// If set to a positive integer (>=0) will cache the marker template files to (memory) persistent cache to avoid repetitive reads to the FileSystem (on some systems this can boost the speed ...)
+//define('SMART_SOFTWARE_MKTPL_DEBUG_LEN', 				65535);														// If set will use this TPL Debug Length (255..524280) ; If not set will use default: 512
+define('SMART_SOFTWARE_MAILSEND_SAFE_RULES', 			true);														// If defined and TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages ; adding the X-AntiAbuse headers, ...)
 //---------------------------------------- CHARSET AND REGIONAL SETTINGS [ NEVER CHANGE THESE MUST BE UNICODE UTF-8 ; CHANGING IT YOU CAN BREAK THE UNICODE SUPPORT ]
-define('SMART_FRAMEWORK_CHARSET', 					'UTF-8');														// This must be `UTF-8` 	:: Default Character Set for PHP
-define('SMART_FRAMEWORK_DBSQL_CHARSET', 			'UTF8');														// This must be `UTF8` 		:: Default Character Set for DB SQL Servers
-define('SMART_FRAMEWORK_LANGUAGES_CACHE_DIR', 		'modules/app/translations/');									// Languages Cache Dir		:: Default Languages Cache Dir, should be created by runtime ...
+define('SMART_FRAMEWORK_CHARSET', 						'UTF-8');													// This must be `UTF-8` 	:: Default Character Set for PHP
+define('SMART_FRAMEWORK_DBSQL_CHARSET', 				'UTF8');													// This must be `UTF8` 		:: Default Character Set for DB SQL Servers
+define('SMART_FRAMEWORK_LANGUAGES_CACHE_DIR', 			'modules/app/translations/');								// Languages Cache Dir		:: Default Languages Cache Dir, should be created by runtime ...
+//define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS'	true); 														// If this is set will register the Translation usage for every: Language, Area, Subarea, Key ; (only will operate in DEV mode (SMART_ERROR_HANDLER == 'dev')
 //----------------------------------------
 
 //############################################################

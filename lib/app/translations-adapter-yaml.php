@@ -36,7 +36,7 @@ define('SMART_FRAMEWORK__INFO__TEXT_TRANSLATIONS_ADAPTER', 'YAML: File based');
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190524
+ * @version 	v.20190527
  * @package 	Application
  *
  */
@@ -156,7 +156,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 
 
 	//==================================================================
-	// This register the usage of every translation as pair of language, area and sub-area, key
+	// This will register the usage of every translation as pair of language, area and sub-area, key ; only if used in DEV mode (SMART_ERROR_HANDLER == 'dev')
 	public static function setTranslationsKeyUsageCount($the_lang, $y_area, $y_subarea, $y_textkey) {
 		//--
 		if(!defined('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS')) {
