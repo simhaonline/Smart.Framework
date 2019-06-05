@@ -64,7 +64,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.181019
+ * @version 	v.20190605
  * @package 	Application
  *
  */
@@ -227,20 +227,18 @@ public static function start() {
 		return;
 	} //end if
 	//--
-	$detected_session_mode = (string) ini_get('session.save_handler');
-	if((string)$detected_session_mode === 'files') {
-		if((string)SMART_FRAMEWORK_SESSION_HANDLER !== 'files') {
-			Smart::log_warning('FATAL ERROR: The value set for SMART_FRAMEWORK_SESSION_HANDLER is not set to: files / but the value found in session.save_handler is: '.$detected_session_mode);
+	$ini_sess_mode = (string) ini_get('session.save_handler');
+	if((string)SMART_FRAMEWORK_SESSION_HANDLER === 'files') {
+		if((string)$ini_sess_mode !== 'files') {
+			Smart::log_warning('FATAL ERROR: The value set for SMART_FRAMEWORK_SESSION_HANDLER is set to: files / but the value found in session.save_handler is: '.$ini_sess_mode);
 			return;
 		} //end if
-	} elseif((string)$detected_session_mode === 'user') {
-		if((string)SMART_FRAMEWORK_SESSION_HANDLER === 'files') {
-			Smart::log_warning('FATAL ERROR: The value set for SMART_FRAMEWORK_SESSION_HANDLER is set to: files / but the value found in session.save_handler is: '.$detected_session_mode);
-			return;
+		$detected_session_mode = 'files';
+	} else { // redis or another
+		if(((string)$ini_sess_mode !== 'files') AND ((string)$ini_sess_mode !== 'user')) {
+			return; // can be memcached ...
 		} //end if
-	} else {
-		Smart::log_warning('FATAL ERROR: The value set for session.save_handler must be set to one of these modes: files or user');
-		return;
+		$detected_session_mode = 'user';
 	} //end if
 	//--
 	//=====
@@ -374,15 +372,15 @@ public static function start() {
 		//--
 		$_SESSION = array(); // reset it
 		//--
-		$_SESSION['SoftwareFramework_VERSION'] 		= (string) SMART_FRAMEWORK_VERSION; 	// software version
-		$_SESSION['SoftwareFramework_SessionMode'] 	= (string) $sf_sess_mode; 				// session mode
-		$_SESSION['website_ID'] 					= (string) SMART_SOFTWARE_NAMESPACE; 	// the website ID
-		$_SESSION['visitor_UUID'] 					= (string) SMART_APP_VISITOR_COOKIE; 	// the visitor UUID
-		$_SESSION['visit_COUNTER'] 					= (int)    0; 							// the session visit counter
-		$_SESSION['session_AREA'] 					= (string) $sf_sess_area; 				// session area
-		$_SESSION['session_NS'] 					= (string) $sf_sess_ns; 				// session namespace
-		$_SESSION['session_ID'] 					= (string) @session_id(); 				// read current session ID
-		$_SESSION['session_STARTED'] 				= (string) date('Y-m-d H:i:s O'); 		// read current session ID
+		$_SESSION['SoftwareFramework_VERSION'] 		= (string) SMART_FRAMEWORK_VERSION; 							// software version
+		$_SESSION['SoftwareFramework_SessionMode'] 	= (string) $sf_sess_mode.':'.SMART_FRAMEWORK_SESSION_HANDLER; 	// session mode
+		$_SESSION['website_ID'] 					= (string) SMART_SOFTWARE_NAMESPACE; 							// the website ID
+		$_SESSION['visitor_UUID'] 					= (string) SMART_APP_VISITOR_COOKIE; 							// the visitor UUID
+		$_SESSION['visit_COUNTER'] 					= (int)    0; 													// the session visit counter
+		$_SESSION['session_AREA'] 					= (string) $sf_sess_area; 										// session area
+		$_SESSION['session_NS'] 					= (string) $sf_sess_ns; 										// session namespace
+		$_SESSION['session_ID'] 					= (string) @session_id(); 										// read current session ID
+		$_SESSION['session_STARTED'] 				= (string) date('Y-m-d H:i:s O'); 								// read current session ID
 		//--
 	} //end if
 	//--
@@ -428,7 +426,7 @@ public static function start() {
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.181019
+	// v.20190605
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

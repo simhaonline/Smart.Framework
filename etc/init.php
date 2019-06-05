@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// 
 //define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME', intval(60 * 60 * 24));				// The UniqueID Cookie LifeTime in seconds ; set to 0 for expire on browser close
 //define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN', '*');									// The UniqueID Cookie domain: set it (empty) `` for the current subdomain as `sdom.domain.tld` ; set it as `*` or explicit `domain.tld` for all sub-domains of domain.tld ; default is `` (empty) if not defined at all ; this is for advanced use of cookies management in sensitive production environments where you need per sub-domain encapsulated cookies
 //--------------------------------------- SESSION
-define('SMART_FRAMEWORK_SESSION_HANDLER', 	'files');										// Session Handler: 'files' (default / file storage: lightweight but in high concurencies may have locking issues) ; 'redis' (DB / in-memory, very fast)
+define('SMART_FRAMEWORK_SESSION_HANDLER', 	'files');										// Session Handler: 'files' (default / file storage: lightweight but in high concurencies may have locking issues) ; 'redis' (DB / in-memory, very fast) ; 'custom' - To use your own custom adapter for the session in Smart.Framework you have to build it by extending the SmartAbstractCustomSession abstract class and define it in etc/init.php at the begining such as: define('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER', 'modules/app/session-custom-adapter.php');
 define('SMART_FRAMEWORK_SESSION_NAME', 		'SmartFramework__SESSION'); 					// Session Name ; *** YOU HAVE TO CHANGE IT *** this must be static and must contain only Letters and _
 //define('SMART_FRAMEWORK_SESSION_LIFETIME', 	intval(60 * 60 * 24));						// Session Lifetime in seconds (0 by default) ; set to 0 for expire on browser close ; must be not higher than SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME
 //define('SMART_FRAMEWORK_SESSION_DOMAIN', 	'*');											// Session (cookie) Domain: set it (empty) `` for the current subdomain as `sdom.domain.tld` ; set it as `*` or explicit `domain.tld` for all sub-domains of domain.tld ; default is `` (empty) if not defined at all ; this is for advanced use of the PHP session cookie management in sensitive production environments where you need per sub-domain encapsulated cookies
@@ -215,11 +215,7 @@ if((string)ini_get('session.use_trans_sid') != '0') {
 	@http_response_code(500);
 	die('Smart.Framework INI // The PHP.INI Session TransSID must be DISABLED !');
 } //end if
-if((string)SMART_FRAMEWORK_SESSION_HANDLER !== 'files') {
-	ini_set('session.save_handler', 'user');								// store session in 'user' (mode) ; DB storage for example
-} else {
-	ini_set('session.save_handler', 'files');								// store session in 'files' (default) ; file storage
-} //end if else
+ini_set('session.save_handler', 'files');									// store session in 'files' (default) ; file storage as default ; need reset
 ini_set('session.gc_maxlifetime', 3600);									// GC Max Life Time in seconds after each sessions that were modified longer than this will be cleaned ; min is 1440 ; max is 65535 seconds
 ini_set('session.gc_probability', '1');										// GC Probability, Must be > 0 to use GC
 ini_set('session.gc_divisor', '100');										// GC Divisor ; The probability is calculated by using gc_probability/gc_divisor, e.g. 1/100 means there is a 1% chance that the GC process starts on each request.

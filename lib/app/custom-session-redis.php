@@ -32,20 +32,17 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
  * Class App.Custom.Session.Redis - Provides a custom session adapter to use Redis (an alternative for the default files based session).
  * NOTICE: using this adapter if the Session is set to expire as 0 (when browser is closed), in redis the session will expire at session.gc_maxlifetime seconds ...
  *
- * To use your own custom adapter for the session in Smart.Framework you have to build it by extending the SmartAbstractCustomSession abstract class and define it in etc/init.php at the begining such as: define('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER', 'modules/app/session-custom-adapter.php');
- *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.181105
+ * @version 	v.20190605
  * @package 	Application
  *
  */
 final class SmartCustomSession extends SmartAbstractCustomSession {
 
 	// ->
-	// v.181019
 	// Redis Custom Session [OPTIONAL]
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 
