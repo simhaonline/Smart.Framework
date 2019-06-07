@@ -675,7 +675,7 @@ private function FixSimpleXmlRoot($xml_str) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.20190219
+ * @version     v.20190607
  * @package     Parsers
  *
  */
@@ -710,11 +710,14 @@ public function transform($y_array, $xmlroot='xml') {
 	//--
 	$xmlroot = (string) trim((string)$xmlroot);
 	if((string)$xmlroot == '') {
-		Smart::log_warning(__METHOD__.' # expects the XML root element parameter to be non-empty ...');
-		return '<error>XML Writer requires the XML root element as parameter</error>';
+		$xml_tag_start = '';
+		$xml_tag_end = '';
+	} else {
+		$xml_tag_start = "\n".'<'.Smart::escape_html($xmlroot).'>';
+		$xml_tag_end = "\n".'</'.Smart::escape_html($xmlroot).'>';
 	} //end if
 	//--
-	return '<'.'?xml version="1.0" encoding="'.Smart::escape_html($this->encoding).'"?'.'>'."\n".'<'.Smart::escape_html($xmlroot).'>'."\n".trim((string)$this->CreateFromArr($y_array))."\n".'</'.Smart::escape_html($xmlroot).'>';
+	return '<'.'?xml version="1.0" encoding="'.Smart::escape_html($this->encoding).'"?'.'>'.$xml_tag_start."\n".trim((string)$this->CreateFromArr($y_array)).$xml_tag_end;
 	//--
 } //END FUNCTION
 //===============================
