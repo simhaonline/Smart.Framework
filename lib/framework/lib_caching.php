@@ -215,7 +215,7 @@ final class SmartCache {
  * @internal
  *
  * @depends 	-
- * @version 	v.20190401
+ * @version 	v.20190715
  * @package 	Application
  *
  */
@@ -272,6 +272,21 @@ abstract class SmartAbstractPersistentCache {
 	public static function keyExists($y_realm, $y_key) {
 		//--
 		return false;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * get the TTL in seconds for a key from the persistent Cache or Error code
+	 *
+	 * @param STRING	$y_realm	The Cache Realm
+	 * @param STRING	$y_key		The Cache Key
+	 *
+	 * @return INTEGER	number of seconds the key will expire ; -1 if the key does not expire (is persistent) ; -2 if the key does not exists ; -3 if N/A or ERR
+	 */
+	public static function getTtl($y_realm, $y_key) {
+		//--
+		return -3;
 		//--
 	} //END FUNCTION
 

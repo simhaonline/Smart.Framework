@@ -36,7 +36,7 @@ define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based')
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190401
+ * @version 	v.20190715
  * @package 	Application
  *
  */
@@ -130,6 +130,40 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 			return (bool) self::$redis->exists((string)$y_key);
 		} else {
 			return (bool) self::$redis->exists((string)$y_realm.':'.$y_key);
+		} //end if else
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * get the TTL in seconds for a key from the persistent Cache or Error code
+	 *
+	 * @param STRING	$y_realm	The Cache Realm
+	 * @param STRING	$y_key		The Cache Key
+	 *
+	 * @return INTEGER	number of seconds the key will expire ; -1 if the key does not expire (is persistent) ; -2 if the key does not exists ; -3 if N/A or ERR
+	 */
+	public static function getTtl($y_realm, $y_key) {
+		//--
+		if(!self::isActive()) {
+			return -3;
+		} //end if
+		//--
+		if(!self::validateRealm((string)$y_realm)) {
+			Smart::log_warning('Persistent Cache / Invalid Realm: '.$y_realm);
+			return -3;
+		} //end if
+		if(!self::validateKey((string)$y_key)) {
+			Smart::log_warning('Persistent Cache / Invalid Key: '.$y_key);
+			return -3;
+		} //end if
+		//--
+		self::initCacheManager();
+		//--
+		if((string)$y_realm == '') {
+			return (int) self::$redis->ttl((string)$y_key);
+		} else {
+			return (int) self::$redis->ttl((string)$y_realm.':'.$y_key);
 		} //end if else
 		//--
 	} //END FUNCTION
