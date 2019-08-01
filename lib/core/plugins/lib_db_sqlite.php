@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190115
+ * @version 	v.20190801
  * @package 	Database:SQLite
  *
  */
@@ -483,7 +483,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190115
+ * @version 	v.20190801
  * @package 	Database:SQLite
  *
  */
@@ -764,37 +764,41 @@ public static function register_sql_function($db, $func, $argnum, $custom=null) 
 		$ex = (string) $func;
 	} //end if else
 	//--
-	if(SmartFrameworkRuntime::ifDebug()) {
-		//--
-		$time_start = microtime(true);
-		//--
+	if(SmartFrameworkRuntime::ifInternalDebug()) {
+		if(SmartFrameworkRuntime::ifDebug()) {
+			//--
+			$time_start = microtime(true);
+			//--
+		} //end if
 	} //end if
 	//--
 	$ok = (bool) $db->createFunction((string)$fx, (string)$ex, (int)$argnum);
 	//--
-	if(SmartFrameworkRuntime::ifDebug()) {
-		//--
-		$time_end = (float) (microtime(true) - (float)$time_start);
-		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
-		//--
-		$args = [];
-		if((int)$argnum < 0) {
-			$args[] = 'variadic';
-		} elseif((int)$argnum > 0) {
-			for($i=0; $i<(int)$argnum; $i++) {
-				$args[] = 'arg'.($i+1);
-			} //end for
+	if(SmartFrameworkRuntime::ifInternalDebug()) {
+		if(SmartFrameworkRuntime::ifDebug()) {
+			//--
+			$time_end = (float) (microtime(true) - (float)$time_start);
+			SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|total-time', $time_end, '+');
+			//--
+			$args = [];
+			if((int)$argnum < 0) {
+				$args[] = 'variadic';
+			} elseif((int)$argnum > 0) {
+				for($i=0; $i<(int)$argnum; $i++) {
+					$args[] = 'arg'.($i+1);
+				} //end for
+			} //end if
+			//--
+			SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
+				'type' => 'set',
+				'data' => 'SQLite Register PHP Function :: '.$fx.'('.implode(', ', (array)$args).')',
+				'query' => (string) $ex.'() :: '.($ok === true ? 'OK' : 'FAIL'),
+				'params' => '',
+				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
+				'connection' => (string) self::get_connection_id($db)
+			]);
+			//--
 		} //end if
-		//--
-		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
-			'type' => 'set',
-			'data' => 'SQLite Register PHP Function :: '.$fx.'('.implode(', ', (array)$args).')',
-			'query' => (string) $ex.'() :: '.($ok === true ? 'OK' : 'FAIL'),
-			'params' => '',
-			'time' => Smart::format_number_dec($time_end, 9, '.', ''),
-			'connection' => (string) self::get_connection_id($db)
-		]);
-		//--
 	} //end if
 	//--
 	return (bool) $ok;
@@ -1755,7 +1759,7 @@ die(''); // just in case
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20190115
+ * @version 	v.20190801
  * @package 	Database:SQLite
  *
  */
