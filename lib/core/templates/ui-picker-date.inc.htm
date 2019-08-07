@@ -1,18 +1,18 @@
 <!-- Partial Template: Core.UIPickerDate -->
-<span id="date-area-[####THE-ID|jsvar|html####]" title="[####TEXT-SELECT|html####] [[####ALT-DATE-FORMAT|html####]]">
-<input type="hidden" id="[####THE-ID|jsvar|html####]" name="[####THE-VAR|html####]" value="[####THE-VALUE|html####]">
-<input type="text" id="date-entry-[####THE-ID|jsvar|html####]" name="dtfmt__[####THE-VAR|html####]" maxlength="13" value="" readonly="readonly" class="ux-field datetime_Field_DatePicker" style="[####STYLE-SIZE|html####]" autocomplete="off">
+<span id="date-area-[####THE-ID|htmid|html####]" title="[####TEXT-SELECT|html####] [[####ALT-DATE-FORMAT|html####]]">
+<input type="hidden" id="[####THE-ID|htmid|html####]" name="[####THE-VAR|html####]" value="[####THE-VALUE|html####]">
+<input type="text" id="date-entry-[####THE-ID|htmid|html####]" name="dtfmt__[####THE-VAR|html####]" maxlength="13" value="" readonly="readonly" class="ux-field datetime_Field_DatePicker" style="[####STYLE-SIZE|html####]" autocomplete="off">
 </span>
 <script type="text/javascript">
 if(typeof SmartJS_BrowserUIUtils != 'undefined') {
 	(function() {
 		try {
-			SmartJS_BrowserUIUtils.Date_Picker_Init('[####THE-ID|jsvar|js####]', '[####ALT-DATE-FORMAT|js####]', '[####THE-VALUE|js####]', [####FDOW|int####], [####DATE-MIN####], [####DATE-MAX####], 2, '[####EVAL-JS|js####]');
-			jQuery('#date-entry-[####THE-ID|jsvar|js####]').on('click', function(e){
-				setTimeout(function(){ try { SmartJS_BrowserUIUtils.Date_Picker_Display('[####THE-ID|jsvar|js####]'); } catch(err){} }, 200);
+			SmartJS_BrowserUIUtils.Date_Picker_Init('[####THE-ID|htmid|js####]', '[####ALT-DATE-FORMAT|js####]', '[####THE-VALUE|js####]', [####FDOW|int####], [####DATE-MIN####], [####DATE-MAX####], 2, '[####EVAL-JS|js####]');
+			jQuery('#date-entry-[####THE-ID|htmid|js####]').on('click', function(e){
+				setTimeout(function(){ try { SmartJS_BrowserUIUtils.Date_Picker_Display('[####THE-ID|htmid|js####]'); } catch(err){} }, 200);
 			}).on('dblclick doubletap', function(e){
-				jQuery('#[####THE-ID|jsvar|js####]').val('');
-				jQuery('#date-bttn-[####THE-ID|jsvar|js####]').attr('title', '');
+				jQuery('#[####THE-ID|htmid|js####]').val('');
+				jQuery('#date-bttn-[####THE-ID|htmid|js####]').attr('title', '');
 				jQuery(this).val('');
 			});
 		} catch(err) {
