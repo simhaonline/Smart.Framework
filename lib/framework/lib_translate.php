@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.20190527
+ * @version 	v.20190808
  * @package 	Application
  *
  */
@@ -94,13 +94,19 @@ final class SmartTextTranslations {
 
 	//=====
 	/**
-	 * Regional Text :: Checks if the Current Language is the Default Language for the current session
+	 * Regional Text :: Checks if the Current Language is the Default Language for the current session / or parameter
 	 *
-	 * @return 	BOOLEAN						:: Returns TRUE if the Current Language is the Default Language for the current session otherwise returns FALSE
+	 * @param 	STRING 	$y_language 		:: Optional, the language ID to be checked ; otherwise will check the session language ; sample (for English) will be: 'en'
+	 *
+	 * @return 	BOOLEAN						:: Returns TRUE if the Current Language is the Default Language for the current session / or parameter otherwise returns FALSE
 	 */
-	public static function isDefaultLanguage() {
+	public static function isDefaultLanguage($y_language='') {
 		//--
-		if((string)self::getLanguage() == (string)self::getDefaultLanguage()) {
+		if((string)$y_language == '') {
+			$y_language = (string) self::getDefaultLanguage();
+		} //end if else
+		//--
+		if((string)self::getLanguage() == (string)$y_language) {
 			return true;
 		} else {
 			return false;
