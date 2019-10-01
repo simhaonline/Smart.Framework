@@ -12,7 +12,7 @@ Template: templating-test-extended.mtpl.htm
 </div>
 <h2 id="qunit-test-result">...</h2>
 <div id="tpl-test">
-<!-- Test for Markers-Templating v.181122 -->
+<!-- Test for Markers-Templating v.20190930 -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
 <!-- Test INTEGER ([####TEST-NUM|html####]) : [####TEST-NUM|int####] -->
 <!-- Test NUMERIC ([####TEST-NUM|html####]) : [####TEST-NUM|num####] -->
@@ -30,15 +30,19 @@ Template: templating-test-extended.mtpl.htm
 <!-- Test SUBTXT13 w. space after 10 ([####TEST-UNISTR|html####]) : [####TEST-UNISTR|subtxt13|html####] -->
 <!-- Test NL2BR ([####TEST-TXT|html####]) : [####TEST-TXT|html|nl2br####] -->
 <!-- Test CSS ([####TEST-UNISTR|html####]) : '[####TEST-UNISTR|css|html####]' -->
-[%%%%|SPACE%%%%]@SPACE[%%%%|T%%%%]@TAB[%%%%|R%%%%]@NEW-LINE(CR+LF)[%%%%|N%%%%]#
 <hr>
 <div>
+	[%%%%IF:TEXTIFSTR:!=1234567890 . コアテスト·スイート . abcdefghijklmniopqrstuvwxyz : ; <####END####> ;(1)%%%%]
+	<span style="color:#FF5500; font-weight:bold; font-size:32px;">RENDER-ERROR: IF/TEXTIFSTR != [####TEXTIFSTR|html####]</span><br>
+	[%%%%ELSE:TEXTIFSTR(1)%%%%]
+	<!-- IF/TEXTIFSTR: `[####TEXTIFSTR|html####]` :: OK -->
+	[%%%%/IF:TEXTIFSTR(1)%%%%]
 	<b>Switch Eval for Status = [####STATUS####]</b>
 	<div>
 		[%%%%IF:STATUS:==####TEST-COMPARE####;%%%%]
-			<span style="color:#003399; cursor:help;" title="STATUS=[####STATUS|html####] ; TEST-COMPARE=[####TEST-COMPARE|html####]">is equal with TEST-COMPARE [a]</span>
+			<span style="font-weight:bold; font-style:italic; color:#666699; cursor:help;" title="STATUS=[####STATUS|html####] ; TEST-COMPARE=[####TEST-COMPARE|html####]">is equal with TEST-COMPARE [a]</span>
 		[%%%%ELSE:STATUS%%%%]
-			<span style="color:#778899; cursor:help;" title="STATUS=[####STATUS|html####] ; TEST-COMPARE=[####TEST-COMPARE|html####]">is NOT equal with TEST-COMPARE [a]</span>
+			<span style="font-weight:bold; font-style:italic; text-decoration: line-through; color:#666699; cursor:help;" title="STATUS=[####STATUS|html####] ; TEST-COMPARE=[####TEST-COMPARE|html####]">is NOT equal with TEST-COMPARE [a]</span>
 		[%%%%/IF:STATUS%%%%]
 	</div>
 	<div>

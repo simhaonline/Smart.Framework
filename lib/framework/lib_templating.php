@@ -47,7 +47,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Because the recursion patterns are un-predictable, as a template can be rendered in other template in controllers or libs,
 // the str_replace() is used internally instead of strtr()
 // but with a fix: will replace all values before assign as:
-// [#### => (####- ; ####] => -####) ; [%%%% => (%%%%+/- ; %%%%] => -/+%%%%) ; [@@@@ -> (@@@@+/- ; @@@@] -> -/+@@@@]
+// [#### => ⁅####- ; ####] => -####⁆ ; [%%%% => ⁅%%%%+/- ; %%%%] => -/+%%%%⁆ ; [@@@@ -> ⁅@@@@+/- ; @@@@] -> -/+@@@@⁆
 // in order to protect against unwanted or un-predictable recursions / replacements
 //#####
 
@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20190313
+ * @version 	v.20190930.r2
  * @package 	Templating:Engines
  *
  */
@@ -140,7 +140,7 @@ public static function analyze_debug_file_template($y_file_path, $y_arr_sub_temp
 	if(Smart::array_size($arr_sub_templates) > 0) {
 		$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
 		$mtemplate = (string) self::load_subtemplates('no', $tpl_basepath, $mtemplate, $arr_sub_templates); // load sub-templates before template processing and use caching also for sub-templates if set
-		$mtemplate = str_replace(array('(@@@@-', '-@@@@)'), array('[@@@@', '@@@@]'), (string)$mtemplate); // FIX: revert protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+		$mtemplate = str_replace(array('⁅@@@@-', '-@@@@⁆'), array('[@@@@', '@@@@]'), (string)$mtemplate); // FIX: revert protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 	} //end if
 	$arr_sub_templates = array();
 	//--
@@ -783,7 +783,7 @@ private static function template_renderer($mtemplate, $y_arr_vars) {
 	if(self::have_marker((string)$mtemplate) === true) {
 		$arr_marks = (array) self::analize_extract_markers($mtemplate);
 		Smart::log_notice('Invalid or Undefined Markers-TPL: Markers detected in Template:'."\n".'MARKERS:'.print_r($arr_marks,1)."\n".self::log_template($mtemplate));
-		$mtemplate = (string) str_replace(array('[####', '####]'), array('(####-', '-####)'), (string)$mtemplate); // finally protect against undefined variables
+		$mtemplate = (string) str_replace(array('[####', '####]'), array('⁅####-', '-####⁆'), (string)$mtemplate); // finally protect against undefined variables
 	} //end if
 	//-- debug end
 	if(SmartFrameworkRuntime::ifDebug()) {
@@ -896,18 +896,18 @@ private static function replace_marker($mtemplate, $key, $val) { // v.181211
 			$arr_fix_dbg = array();
 			//--
 			if(self::have_marker((string)$val)) {
-				$arr_fix_safe['[####'] = '(####+';
-				$arr_fix_safe['####]'] = '+####)';
+				$arr_fix_safe['[####'] = '⁅####+';
+				$arr_fix_safe['####]'] = '+####⁆';
 				$arr_fix_dbg[] = 'Markers';
 			} //end if
 			if(self::have_syntax((string)$val)) {
-				$arr_fix_safe['[%%%%'] = '(%%%%+';
-				$arr_fix_safe['%%%%]'] = '+%%%%)';
+				$arr_fix_safe['[%%%%'] = '⁅%%%%+';
+				$arr_fix_safe['%%%%]'] = '+%%%%⁆';
 				$arr_fix_dbg[] = 'Marker Syntax';
 			} //end if
 			if(self::have_subtemplate((string)$val)) {
-				$arr_fix_safe['[@@@@'] = '(@@@@+';
-				$arr_fix_safe['@@@@]'] = '+@@@@)';
+				$arr_fix_safe['[@@@@'] = '⁅@@@@+';
+				$arr_fix_safe['@@@@]'] = '+@@@@⁆';
 				$arr_fix_dbg[] = 'Marker Sub-Templates';
 			} //end if
 			//--
@@ -1100,7 +1100,7 @@ private static function process_syntax($mtemplate, $y_arr_vars) {
 	//-- 2nd process loop syntax (max 3 nested levels)
 	$mtemplate = (string) self::process_loop_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any LOOP Syntax
 	//-- 3rd, process special characters: \r \n \t SPACE syntax
-	$mtemplate = (string) self::process_rntspace_syntax($mtemplate);
+	$mtemplate = (string) self::process_brntspace_syntax($mtemplate);
 	//-- 4th, finally if any garbage syntax is detected log warning
 	if(self::have_syntax((string)$mtemplate) === true) {
 		$arr_ifs = (array) self::analize_extract_ifs($mtemplate);
@@ -1122,7 +1122,7 @@ private static function process_syntax($mtemplate, $y_arr_vars) {
 			$arr_specials = '';
 		} //end if else
 		Smart::log_notice('Invalid or Undefined Markers-TPL: Marker Syntax detected in Template:'.$arr_ifs.$arr_loops.$arr_specials."\n".self::log_template($mtemplate));
-		$mtemplate = (string) str_replace(array('[%%%%', '%%%%]'), array('(%%%%-', '-%%%%)'), (string)$mtemplate); // finally protect against invalid loops (may have not bind to an existing var or invalid syntax)
+		$mtemplate = (string) str_replace(array('[%%%%', '%%%%]'), array('⁅%%%%-', '-%%%%⁆'), (string)$mtemplate); // finally protect against invalid loops (may have not bind to an existing var or invalid syntax)
 	} //end if
 	//--
 	return (string) $mtemplate;
@@ -1150,19 +1150,23 @@ private static function process_comments_syntax($mtemplate) {
 
 
 //================================================================
-// process the template \r \n \t SPACE syntax to preserve special characters if required
-private static function process_rntspace_syntax($mtemplate) {
+// process the template special syntax to preserve special characters if required: Square-Brackets(L/R), \r, \n, \t, SPACE
+private static function process_brntspace_syntax($mtemplate) {
 	//--
 	if(strpos((string)$mtemplate, '[%%%%|') !== false) {
 		//--
 		$mtemplate = (string) str_replace(
 			[
+				'[%%%%|SB-L%%%%]', // left square bracket
+				'[%%%%|SB-R%%%%]', // right square bracket
 				'[%%%%|R%%%%]',
 				'[%%%%|N%%%%]',
 				'[%%%%|T%%%%]',
 				'[%%%%|SPACE%%%%]'
 			],
 			[
+				'［',
+				'］',
 				"\r",
 				"\n",
 				"\t",
@@ -1198,7 +1202,8 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 			$y_arr_context = [];
 		} //end if
 		//-- {{{SYNC-TPL-EXPR-IF}}}
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|\!%|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU';
+	//	$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|\!%|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // previous OK
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|\!%|@\=|@\!|@\+|@\-)([^\[\]]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // new
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
 		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
@@ -1862,7 +1867,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 							$arr_subtpls = (array) self::analize_extract_subtpls($stemplate);
 							Smart::log_notice('Invalid or Undefined Markers-TPL: Marker Sub-Templates detected in Template:'."\n".'SUB-TEMPLATES:'.print_r($arr_subtpls,1)."\n".self::log_template($stemplate));
 						} //end if
-						$stemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+						$stemplate = str_replace(array('[@@@@', '@@@@]'), array('⁅@@@@-', '-@@@@⁆'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 					} //end if
 					$mtemplate = str_replace('[@@@@SUB-TEMPLATE:'.$pfx.$key.'@@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
 					$arr_sub_sub_templates = array();
@@ -1908,7 +1913,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 			$arr_subtpls = (array) self::analize_extract_subtpls($mtemplate);
 			Smart::log_notice('Invalid or Undefined Markers-TPL: Marker Sub-Templates detected in Template:'."\n".'SUB-TEMPLATES:'.print_r($arr_subtpls,1)."\n".self::log_template($mtemplate));
 		} //end if
-		$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('(@@@@-', '-@@@@)'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+		$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('⁅@@@@-', '-@@@@⁆'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 	} //end if
 	//--
 	return (string) $mtemplate;

@@ -62,6 +62,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$title = 'Markers-TPL Templating Render Demo - Extended Syntax';
 		//--
 		$test_switch_arr = ['a', 'b', 'c', 'd'];
+		$txtstr = '1234567890 . コアテスト·スイート . abcdefghijklmniopqrstuvwxyz';
 		$this->PageViewSetVars([
 			'title' => $title,
 			'main' => SmartMarkersTemplating::render_file_template(
@@ -72,7 +73,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'VIEWS-PATH' => (string) $this->ControllerGetParam('module-view-path'),
 						'NUMBER' => (rand(0,1)) ? '1' : '-1',
 						'MARKER' => (string) Smart::json_encode('<a>&amp;1234567890.コアテスト·スイート.abcdefghijklmniopqrstuvwxyz:'.date('Y-m-d H:i:s').':~`!@#$%^&*()_-+={}[]|,.?</a>'),
-						'TEXTSTR' => '1234567890 . コアテスト·スイート . abcdefghijklmniopqrstuvwxyz',
+						'TEXTSTR' => (string) $txtstr,
+						'TEXTIFSTR' => (string) $txtstr.' : ; <####END####> ',
 						'MARK-AREA' => 'php',
 						'TEST-COMPARE' => 'a',
 						'DATA' => [
