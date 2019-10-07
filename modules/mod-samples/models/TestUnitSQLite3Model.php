@@ -9,10 +9,10 @@
 
 namespace SmartModDataModel\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -37,7 +37,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190108
+ * @version 	v.20191006
  *
  */
 final class TestUnitSQLite3Model {
@@ -133,14 +133,14 @@ final class TestUnitSQLite3Model {
 		//--
 
 		//--
-		if((string)strtoupper((string)$sortdir) == 'DESC') {
+		if((string)\strtoupper((string)$sortdir) == 'DESC') {
 			$syntax_sort_dir = 'DESC';
 		} else {
 			$syntax_sort_dir = 'ASC';
 		} //end if else
 		//--
 		$syntax_sort_mode = '';
-		switch((string)strtolower((string)$sortby)) {
+		switch((string)\strtolower((string)$sortby)) {
 			case 'iso':
 				$syntax_sort_mode = ' ORDER BY `iso` '.$syntax_sort_dir;
 				break;
@@ -180,11 +180,11 @@ final class TestUnitSQLite3Model {
 		$where = '';
 		//--
 		if((string)$src != '') {
-			if(is_numeric($src)) {
+			if(\is_numeric($src)) {
 				$where = $this->connection->prepare_param_query(' WHERE numcode = ?', array((int)$src));
-			} elseif(strlen((string)$src) == 2) {
+			} elseif(\strlen((string)$src) == 2) {
 				$where = $this->connection->prepare_param_query(' WHERE iso = ?', array(\SmartUnicode::str_toupper($src)));
-			} elseif(strlen((string)$src) == 3) {
+			} elseif(\strlen((string)$src) == 3) {
 				$where = $this->connection->prepare_param_query(' WHERE iso3 = ?', array(\SmartUnicode::str_toupper($src)));
 			} else {
 				$where = $this->connection->prepare_param_query(' WHERE name LIKE ?', array($src.'%'));
@@ -223,7 +223,7 @@ final class TestUnitSQLite3Model {
 		//--
 		$this->connection->register_sql_function('md5', 1, 'mymd5');
 		$test = (array) $this->connection->read_asdata('SELECT custom_fx_mymd5(\''.$this->connection->escape_str('123', 'likes').'\') AS test'); // escape likes is for test only
-		if((string)$test['test'] != (string)md5('123')) {
+		if((string)$test['test'] != (string)\md5('123')) {
 			\Smart::raise_error('Invalid SQLite3 Test: Custom-MD5()');
 		} //end if
 		//--
@@ -282,7 +282,7 @@ final class TestUnitSQLite3Model {
 			\Smart::raise_error('Invalid SQLite3 Test: TIME()');
 		} //end if
 		$test = (array) $this->connection->read_asdata('SELECT smart_date(\'Y-m-d\') AS test');
-		if((string)$test['test'] != (string)date('Y-m-d')) {
+		if((string)$test['test'] != (string)\date('Y-m-d')) {
 			\Smart::raise_error('Invalid SQLite3 Test: DATE()');
 		} //end if
 		$test = (array) $this->connection->read_asdata('SELECT smart_date_diff(?, ?) AS test', ['2019-01-07 08:00:00', '2019-01-05 07:30:59']);
@@ -294,8 +294,8 @@ final class TestUnitSQLite3Model {
 			\Smart::raise_error('Invalid SQLite3 Test: PERIOD_DIFF()'.$test['test']);
 		} //end if
 		//--
-		$test = (array) $this->connection->read_asdata('SELECT smart_strtotime(?) AS test', [(string)date('Y-m-d')]);
-		if((string)$test['test'] != (string)\SmartSQliteFunctions::strtotime((string)date('Y-m-d'))) {
+		$test = (array) $this->connection->read_asdata('SELECT smart_strtotime(?) AS test', [(string)\date('Y-m-d')]);
+		if((string)$test['test'] != (string)\SmartSQliteFunctions::strtotime((string)\date('Y-m-d'))) {
 			\Smart::raise_error('Invalid SQLite3 Test: STRTOTIME()');
 		} //end if
 		//--

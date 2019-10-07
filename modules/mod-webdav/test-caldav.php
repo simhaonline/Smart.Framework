@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_DIRECT_OUTPUT', true); // do direct output
  */
 class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCalDavFs {
 
-	// v.20190403
+	// v.20191007
 
 	public function Run() {
 
@@ -61,7 +61,7 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCalDav
 		// calendars/{user}/DefaultCalendar/
 		// principals/
 		// principals/{user}/
-		// # ThunderBird Lightning Calendar URL: {http(s)://prefix-and-path}/admin.php/page/webdav.test-caldav/~/addressbooks/admin/DefaultCalendar/
+		// # ThunderBird Lightning Calendar URL: {http(s)://prefix-and-path}/admin.php/page/webdav.test-caldav/~/calendars/admin/DefaultCalendar/
 		// # MacOS iCalendar / iOS Calendar URL: {http(s)://prefix-and-path}/admin.php/page/webdav.test-caldav/~/principals/admin/
 		//--
 

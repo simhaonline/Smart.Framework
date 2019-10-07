@@ -9,16 +9,16 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190401
+ * @version 	v.20191006
  *
  */
 final class TestUnitPCache {
@@ -39,7 +39,7 @@ final class TestUnitPCache {
 	public static function testPersistentCache() {
 
 		//--
-		if((!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS')) OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS !== true)) {
+		if((!\defined('\\SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS')) OR (\SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS !== true)) {
 			//--
 			return \SmartComponents::operation_notice('Test Unit for Persistent Cache is DISABLED ...');
 			//--
@@ -65,15 +65,15 @@ final class TestUnitPCache {
 			'big-key-test' => (string) $pcache_big_content, // a big key
 			'random-key' => \Smart::uuid_10_str().'.'. \Smart::uuid_10_seq().'.'.\Smart::random_number(1000,9999) // a very random key
 		);
-		$pcache_test_checkum = \SmartHashCrypto::sha1(implode("\n", (array)$pcache_test_value));
+		$pcache_test_checkum = \SmartHashCrypto::sha1(\implode("\n", (array)$pcache_test_value));
 		$pcache_test_arch_content = \SmartPersistentCache::varCompress($pcache_test_value);
 		$pcache_test_arch_checksum = \SmartHashCrypto::sha1($pcache_test_arch_content);
 		//--
 
 		//--
 		$tests = array();
-		$tests[] = '***** Persistent Cache Backend: ['.SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND.'] *****';
-		$tests[] = '##### Persistent Cache / TESTS with a huge size Variable (String/Json) Key-Size of 2x'.\SmartUtils::pretty_print_bytes(strlen($pcache_test_arch_content), 2).' : #####';
+		$tests[] = '***** Persistent Cache Backend: ['.\SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND.'] *****';
+		$tests[] = '##### Persistent Cache / TESTS with a huge size Variable (String/Json) Key-Size of 2x'.\SmartUtils::pretty_print_bytes(\strlen($pcache_test_arch_content), 2).' : #####';
 		//--
 		$err = '';
 		//--
@@ -88,7 +88,7 @@ final class TestUnitPCache {
 		//--
 
 		//--
-		$time = microtime(true);
+		$time = \microtime(true);
 		//--
 		$tests[] = '++ START Counter ...';
 		//--
@@ -164,7 +164,7 @@ final class TestUnitPCache {
 			$pcache_set_rxkey = \SmartPersistentCache::setKey(
 				'',
 				'No-Realm-'.$pcache_test_key,
-				date('Y-m-d H:i:s'),
+				\date('Y-m-d H:i:s'),
 				30
 			);
 			if($pcache_set_rxkey !== true) {
@@ -181,7 +181,7 @@ final class TestUnitPCache {
 				$tests[] = 'Check if Persistent Cache Key is valid (array-keys)';
 				if(((string)$pcache_cached_value['unicode-test'] != '') AND ((string)$pcache_cached_value['big-key-test'] != '')) {
 					$tests[] = 'Check if Persistent Cache Key is valid (checksum)';
-					if((string)\SmartHashCrypto::sha1(implode("\n", (array)$pcache_cached_value)) == (string)$pcache_test_checkum) {
+					if((string)\SmartHashCrypto::sha1(\implode("\n", (array)$pcache_cached_value)) == (string)$pcache_test_checkum) {
 						if($pcache_test_value === $pcache_cached_value) {
 							$tests[] = 'Unset Persistent Cache Key';
 							$pcache_unset_key = \SmartPersistentCache::unsetKey($the_test_realm, $pcache_test_key);
@@ -211,11 +211,11 @@ final class TestUnitPCache {
 		//--
 
 		//--
-		$time = 'TOTAL TIME (Except building the test archive) was: '.(microtime(true) - $time); // substract the 3 seconds waiting time for Persistent Cache Key to expire
+		$time = 'TOTAL TIME (Except building the test archive) was: '.(\microtime(true) - $time); // substract the 3 seconds waiting time for Persistent Cache Key to expire
 		//--
 		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
 		//--
-		if(stripos((string)SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND, 'redis:') === 0) {
+		if(stripos((string)\SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND, 'redis:') === 0) {
 			$img_check = 'lib/core/img/db/redis-logo.svg';
 		} else {
 			$img_check = 'lib/framework/img/sf-logo.svg';
@@ -223,7 +223,7 @@ final class TestUnitPCache {
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
 			$text_main = '<span style="color:#83B953;">Test OK: PHP PersistentCache.</span>';
-			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework PersistentCache Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
+			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework PersistentCache Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(\implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';
 			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP PersistentCache Test FAILED !</span>';
@@ -267,10 +267,10 @@ final class TestUnitPCache {
 		$out = '';
 		if((string)$testsrcfile != '') {
 			//--
-			$testsrcfile = (string) base64_encode((string)$testsrcfile);
+			$testsrcfile = (string) \base64_encode((string)$testsrcfile);
 			$vlen = \Smart::random_number(100000,900000);
 			//--
-			while(strlen((string)$out) < (8388608 + $vlen)) {
+			while(\strlen((string)$out) < (8388608 + $vlen)) {
 				$randomizer = (string) '#'.\Smart::random_number().'#'."\n";
 				$testfile = \SmartUtils::data_archive((string)$randomizer.$testsrcfile);
 				if(\SmartHashCrypto::sha1((string)\SmartUtils::data_unarchive((string)$testfile)) !== \SmartHashCrypto::sha1((string)$randomizer.$testsrcfile)) {

@@ -9,16 +9,16 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190423
+ * @version 	v.20191006
  *
  */
 final class TestUnitMongoDB {
@@ -39,7 +39,7 @@ final class TestUnitMongoDB {
 	public static function testMongoServer() {
 
 		//--
-		if((!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS')) OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS !== true)) {
+		if((!\defined('\\SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS')) OR (\SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS !== true)) {
 			//--
 			return (string) \SmartComponents::operation_notice('Test Unit for MongoDB Server is DISABLED ...');
 			//--
@@ -63,11 +63,11 @@ final class TestUnitMongoDB {
 		//--
 
 		//--
-		$time = microtime(true);
+		$time = \microtime(true);
 		//--
 
 		//--
-		$dtime = date('Y-m-d H:i:s');
+		$dtime = \date('Y-m-d H:i:s');
 		$comments = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド'.'-'.\Smart::random_number(1000,9999)."'";
 		//--
 
@@ -131,10 +131,10 @@ final class TestUnitMongoDB {
 					]
 				);
 				if(!$mongo->is_command_ok($result)) {
-					$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
+					$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.\print_r($result,1);
 				} //end if
 			} else {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -153,14 +153,14 @@ final class TestUnitMongoDB {
 						'unicodeStr' => (string) $comments,
 						'dTime' => (string) $dtime,
 						'isBulk' => true,
-						'rating' => rand(1,9) / 100
+						'rating' => \Smart::random_number(1,9) / 100
 					]
 				];
 			} //end for
 			$result = $mongo->bulkinsert('myTestCollection', (array)$docs);
 			$docs = array();
 			if($result[1] != 10) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 10 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 10 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -177,7 +177,7 @@ final class TestUnitMongoDB {
 			$result = $mongo->insert('myTestCollection', (array)$doc);
 			$doc = array();
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		if((string)$err == '') {
@@ -200,7 +200,7 @@ final class TestUnitMongoDB {
 			} //end try catch
 			$doc = array();
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		$uuid = $mongo->assign_uuid();
@@ -224,7 +224,7 @@ final class TestUnitMongoDB {
 			} //end try catch
 			$doc = array();
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -240,7 +240,7 @@ final class TestUnitMongoDB {
 			$result = $mongo->insert('myTestCollection', (array)$doc);
 			$doc = array();
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -256,7 +256,7 @@ final class TestUnitMongoDB {
 			$result = $mongo->insert('myTestCollection', (array)$doc);
 			$doc = array();
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -274,7 +274,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if($result[1] !== 0) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 0 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 0 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -292,7 +292,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -310,7 +310,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if($result[1] != 10) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 10 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 10 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -324,7 +324,7 @@ final class TestUnitMongoDB {
 				[ 'name' => 'Test:'.$comments, 'cost' => 1 ] // filter
 			);
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -338,7 +338,7 @@ final class TestUnitMongoDB {
 				[ 'name' => 'Test:'.$comments ] // filter
 			);
 			if($result[1] != 3) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 3 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 3 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -352,7 +352,7 @@ final class TestUnitMongoDB {
 				[ 'name' => 'Test:'.$comments ] // filter
 			);
 			if($result[1] !== 0) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 0 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 0 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -371,7 +371,7 @@ final class TestUnitMongoDB {
 			$result = $mongo->insert('myTestCollection', (array)$doc);
 			$doc = array();
 			if($result[1] != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -385,7 +385,7 @@ final class TestUnitMongoDB {
 				[ 'name' => [ '$ne' => 'Test:'.$comments ] ] // filter (update all except these)
 			);
 			if($result != 10) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 10 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 10 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -399,7 +399,7 @@ final class TestUnitMongoDB {
 				[ 'name' => [ '$eq' => 'Test:'.$comments ] ] // filter (update all except these)
 			);
 			if($result != 1) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -413,7 +413,7 @@ final class TestUnitMongoDB {
 				[ 'name' => [ '$eq' => 'Test:!' ] ] // filter (update all except these)
 			);
 			if($result !== 0) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 0 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 0 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -435,7 +435,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((\Smart::array_size($result) <= 0) OR ((int)$result['cost'] != 7)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -457,7 +457,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 7)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -475,7 +475,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 7)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -498,7 +498,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((\Smart::array_size($result) != 2) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['cost'] != 10) OR (\Smart::array_size($result[1]) <= 0) OR ($result[1]['cost'] != 9)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -542,7 +542,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((\Smart::array_size($result) != 3) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[1]) <= 0) OR (\Smart::array_size($result[2]) <= 0)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -570,7 +570,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR ($result[0]['count'] != 2)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -587,7 +587,7 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((!$mongo->is_command_ok($result)) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['values']) != 5)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
@@ -609,14 +609,14 @@ final class TestUnitMongoDB {
 				]
 			);
 			if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['results']) <= 0) OR (\Smart::array_size($result[0]['results'][0]) <= 0) OR ($result[0]['results'][0]['value'] != 5)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
 
 		//--
 		if((string)$err == '') {
-			if((version_compare((string)$mongo->get_server_version(), '3.4') >= 0) AND (version_compare((string)$mongo->get_ext_version(), '1.3') >= 0)) {
+			if((\version_compare((string)$mongo->get_server_version(), '3.4') >= 0) AND (\version_compare((string)$mongo->get_ext_version(), '1.3') >= 0)) {
 				$tst = 'Facet Aggregation with FTS (only for MongoDB Server >= 3.4 / MongoDB Extension >= 1.3)';
 				$tests[] = (string) $tst;
 				$result = $mongo->command(
@@ -669,7 +669,7 @@ final class TestUnitMongoDB {
 					]
 				);
 				if((\Smart::array_size($result) != 1) OR (\Smart::array_size($result[0]) <= 0) OR (\Smart::array_size($result[0]['records@ALL']) != 11) OR (\Smart::array_size($result[0]['count@TITLE:#exists']) <= 0) OR (\Smart::array_size($result[0]['count@TITLE:#exists'][0]) <= 0) OR ($result[0]['count@TITLE:#exists'][0]['count'] != 1)) {
-					$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.print_r($result,1);
+					$err = 'The Test: '.$tst.' FAILED ! Expected result of one specific document but is different: '.\print_r($result,1);
 				} //end if
 			} //end if
 		} //end if
@@ -685,13 +685,13 @@ final class TestUnitMongoDB {
 				]
 			);
 			if(!$mongo->is_command_ok($result)) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.print_r($result,1);
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.\print_r($result,1);
 			} //end if
 		} //end if
 		//--
 
 		//--
-		$time = 'TOTAL TIME was: '.(microtime(true) - $time);
+		$time = 'TOTAL TIME was: '.(\microtime(true) - $time);
 		//--
 		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
 		//--
@@ -699,7 +699,7 @@ final class TestUnitMongoDB {
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
 			$text_main = '<span style="color:#83B953;">Test OK: PHP MongoDB.</span>';
-			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework MongoDB Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
+			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework MongoDB Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(\implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';
 			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP MongoDB Test FAILED !</span>';

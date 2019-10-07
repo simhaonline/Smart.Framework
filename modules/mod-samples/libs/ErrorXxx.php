@@ -9,11 +9,17 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
+
+
+//=====================================================================================
+//===================================================================================== CLASS START [OK: NAMESPACE]
+//=====================================================================================
 
 /**
  * Sample Helper to implement custom Error Handlers for HTTP Status Errors (4xx, 5xx)
@@ -21,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181212
+ * @version 	v.20191004
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {
@@ -29,22 +35,23 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 	protected $errcode = 000;
 	protected $errtext = '???';
 
+	private $tpldir = 'modules/mod-samples/libs/views/';
 
 	final public function Run() {
 
 		//-- detect page extension
 		$uri = (string) \SmartUtils::get_server_current_request_uri();
-		$uri = (string) ltrim($uri, '/');
-		$uri = (array)  explode('?', (string)$uri);
-		$uri = (string) $uri[0];
-		if((string)substr((string)$uri, -1, 1) != '/') {
+		$uri = (string) \ltrim($uri, '/');
+		$uri = (array)  \explode('?', (string)$uri);
+		$uri = (string) \trim((string)$uri[0]);
+		if(((string)$uri != '') AND ((string)\substr((string)$uri, -1, 1) != '/')) {
 			$ext = (string) \SmartFileSysUtils::get_file_extension_from_path($uri);
-			$lext = (string) strtolower((string)$ext);
+			$lext = (string) \strtolower((string)$ext);
 		} else {
 			$ext = (string) $this->RequestVarGet('page', '', 'string');
 			$lext = '';
-			if(strpos((string)$ext, '.') !== false) { // if at least module.controller
-				$ext = (array) explode('.', (string)$ext);
+			if(\strpos((string)$ext, '.') !== false) { // if at least module.controller
+				$ext = (array) \explode('.', (string)$ext);
 				if(\Smart::array_size($ext) == 3) { // module.controller.ext
 					$ext = (string) $ext[2];
 				} elseif(\Smart::array_size($ext) == 4) { // module.controller.seo.ext
@@ -52,7 +59,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 				} else {
 					$ext = ''; // n/a
 				} //end if else
-				$lext = (string) strtolower((string)$ext);
+				$lext = (string) \strtolower((string)$ext);
 			} //end if
 		} //end if else
 		//-- remap some extensions
@@ -78,7 +85,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 				$this->PageViewSetCfg('rawpage', true);
 				$this->PageViewSetCfg('rawmime', 'image/'.$lext);
 				$this->PageViewSetCfg('rawdisp', 'inline; filename="'.(int)$this->errcode.'.'.$lext.'"');
-				$this->PageViewSetVar('main', (string)\SmartFileSystem::read('modules/mod-samples/libs/views/img/error-xxx.'.$lext));
+				$this->PageViewSetVar('main', (string)\SmartFileSystem::read($this->tpldir.'img/error-xxx.'.$lext));
 				return;
 				break;
 			case 'svg':
@@ -86,7 +93,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 				$this->PageViewSetCfg('rawpage', true);
 				$this->PageViewSetCfg('rawmime', 'image/svg+xml');
 				$this->PageViewSetCfg('rawdisp', 'inline; filename="'.(int)$this->errcode.'.'.$lext.'"');
-				$this->PageViewSetVar('main', (string)\SmartFileSystem::read('modules/mod-samples/libs/views/img/error-xxx.'.$lext));
+				$this->PageViewSetVar('main', (string)\SmartFileSystem::read($this->tpldir.'img/error-xxx.'.$lext));
 				return;
 				break;
 			case 'json':
@@ -157,7 +164,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 		$this->PageViewSetVars([
 			'title'				=> (string) (int)$this->errcode.' '.(string)$this->errtext,
 			'main' 				=> (string) \SmartMarkersTemplating::render_file_template(
-				'modules/mod-samples/libs/views/error-xxx.mtpl.htm',
+				$this->tpldir.'error-xxx.mtpl.htm',
 				[
 					'CRR-URL' 		=> (string) \SmartUtils::get_server_current_url(),
 					'STATUS-CODE' 	=> (int) $this->errcode,
@@ -178,20 +185,20 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 		$cfgs = $this->getRenderCfgs();
 		$vars = $this->getRenderVars();
 		//--
-		if(!headers_sent()) {
+		if(!\headers_sent()) {
 			\SmartFrameworkRuntime::outputHttpHeadersNoCache();
 			if($this->isRawPage()) {
-				header('Content-Type: '.$cfgs['rawmime']);
-				header('Content-Disposition: '.$cfgs['rawdisp']);
+				\header('Content-Type: '.$cfgs['rawmime']);
+				\header('Content-Disposition: '.$cfgs['rawdisp']);
 				return (string) $vars['main'];
 			} //end if
 		} //end if
 		//--
-		$template_path = (string) \SmartFileSysUtils::add_dir_last_slash(SMART_APP_TEMPLATES_DIR.\Smart::get_from_config('app.index-template-path'));
+		$template_path = (string) \SmartFileSysUtils::add_dir_last_slash(\SMART_APP_TEMPLATES_DIR.\Smart::get_from_config('app.index-template-path'));
 		$template_file = (string) \Smart::get_from_config('app.index-template-file');
 		//--
 		$vars['FOOTER'] = (string) \SmartMarkersTemplating::render_file_template(
-			'modules/mod-samples/libs/views/error-xxx-footer.mtpl.htm',
+			$this->tpldir.'error-xxx-footer.mtpl.htm',
 			[
 				'CRR-URL' 		=> (string) \SmartUtils::get_server_current_url(),
 				'ERR-MESSAGE' 	=> (string) $y_message
@@ -234,6 +241,11 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 
 
 } //END CLASS
+
+
+//=====================================================================================
+//===================================================================================== CLASS END
+//=====================================================================================
 
 
 //end of php code

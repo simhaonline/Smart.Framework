@@ -5,10 +5,10 @@
 
 namespace SmartModExtLib\AuthAdmins;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
@@ -19,12 +19,12 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //	* SmartFrameworkSecurity
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 //--
-if(headers_sent()) {
-	http_response_code(500);
+if(\headers_sent()) {
+	\http_response_code(500);
 	die(\SmartComponents::http_error_message('500 Internal Server Error', 'Authentication Failed, Headers Already Sent ...'));
 } //end if
 //--
@@ -35,11 +35,12 @@ if(headers_sent()) {
  * This class provide a very simple authentication for admin area (admin.php) using a single account with username/password set in config-admin.php
  *
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD (must be set in set in config-admin.php)
+ * Optional constants: APP_AUTH_PRIVILEGES (set in set in config-admin.php)
  *
  * @access 		private
  * @internal
  *
- * @version 	v.20190115
+ * @version 	v.20191002
  *
  */
 final class SimpleAuthAdminsHandler {
@@ -49,40 +50,40 @@ final class SimpleAuthAdminsHandler {
 	//================================================================
 	public static function Authenticate($enforce_ssl=false) {
 		//--
-		if(!defined('SMART_FRAMEWORK_ADMIN_AREA') OR (SMART_FRAMEWORK_ADMIN_AREA !== true)) {
-			http_response_code(500);
+		if(!\defined('\\SMART_FRAMEWORK_ADMIN_AREA') OR (\SMART_FRAMEWORK_ADMIN_AREA !== true)) {
+			\http_response_code(500);
 			die(\SmartComponents::http_message_500_internalerror('Authentication system is designed for admin area only ...'));
 		} //end if
 		//--
 		if($enforce_ssl === true) {
 			if((string)\SmartUtils::get_server_current_protocol() !== 'https://') {
-				http_response_code(403);
+				\http_response_code(403);
 				die(\SmartComponents::http_error_message('This Web Area require SSL', 'You have to switch from http:// to https:// in order to use this Web Area'));
 			} //end if
 		} //end if
 		//--
-		if(!defined('APP_AUTH_ADMIN_USERNAME') OR !defined('APP_AUTH_ADMIN_PASSWORD')) {
+		if(!\defined('\\APP_AUTH_ADMIN_USERNAME') OR !defined('\\APP_AUTH_ADMIN_PASSWORD')) {
 			//--
-			http_response_code(503);
+			\http_response_code(503);
 			die(\SmartComponents::http_message_503_serviceunavailable('Authentication APP_AUTH_ADMIN_USERNAME / APP_AUTH_ADMIN_PASSWORD not set in config ...')); // must be set in config-admin.php
 			//--
-		} elseif((string)trim((string)APP_AUTH_ADMIN_USERNAME) == '') {
+		} elseif((string)\trim((string)\APP_AUTH_ADMIN_USERNAME) == '') {
 			//--
-			http_response_code(503);
+			\http_response_code(503);
 			die(\SmartComponents::http_message_503_serviceunavailable('Authentication APP_AUTH_ADMIN_USERNAME was set but is Empty ...'));
 			//--
-		} elseif((string)trim((string)APP_AUTH_ADMIN_PASSWORD) == '') {
+		} elseif((string)\trim((string)\APP_AUTH_ADMIN_PASSWORD) == '') {
 			//--
-			http_response_code(503);
+			\http_response_code(503);
 			die(\SmartComponents::http_message_503_serviceunavailable('Authentication APP_AUTH_ADMIN_PASSWORD was set but is Empty ...'));
 			//--
 		} //end if
 		//--
-		if(((string)$_SERVER['PHP_AUTH_USER'] === (string)APP_AUTH_ADMIN_USERNAME) AND ((string)$_SERVER['PHP_AUTH_PW'] === (string)APP_AUTH_ADMIN_PASSWORD)) {
+		if(((string)$_SERVER['PHP_AUTH_USER'] === (string)\APP_AUTH_ADMIN_USERNAME) AND ((string)$_SERVER['PHP_AUTH_PW'] === (string)\APP_AUTH_ADMIN_PASSWORD)) {
 			//-- OK, loggen in
 			$privileges = '<superadmin>,<admin>';
-			if(defined('APP_AUTH_PRIVILEGES')) {
-				$privileges .= ','.APP_AUTH_PRIVILEGES;
+			if(\defined('\\APP_AUTH_PRIVILEGES')) {
+				$privileges .= ','.\APP_AUTH_PRIVILEGES;
 			} //end if
 			$privileges = (array) \Smart::list_to_array(
 				(string) $privileges,
@@ -109,15 +110,15 @@ final class SimpleAuthAdminsHandler {
 		} else {
 			//-- log unsuccessful login
 			if((string)$_SERVER['PHP_AUTH_USER'] != '') {
-				@file_put_contents(
-					'tmp/logs/adm/'.'simple-auth-fail-'.date('Y-m-d@H').'.log',
-					'[ERR]'."\t".\Smart::normalize_spaces((string)date('Y-m-d H:i:s O'))."\t".\Smart::normalize_spaces((string)$_SERVER['PHP_AUTH_USER'])."\t".\Smart::normalize_spaces((string)$_SERVER['REMOTE_ADDR'])."\t".\Smart::normalize_spaces((string)$_SERVER['HTTP_USER_AGENT'])."\n",
-					FILE_APPEND | LOCK_EX
+				@\file_put_contents(
+					'tmp/logs/adm/'.'simple-auth-fail-'.\date('Y-m-d@H').'.log',
+					'[ERR]'."\t".\Smart::normalize_spaces((string)\date('Y-m-d H:i:s O'))."\t".\Smart::normalize_spaces((string)$_SERVER['PHP_AUTH_USER'])."\t".\Smart::normalize_spaces((string)$_SERVER['REMOTE_ADDR'])."\t".\Smart::normalize_spaces((string)$_SERVER['HTTP_USER_AGENT'])."\n",
+					\FILE_APPEND | \LOCK_EX
 				);
 			} //end if
 			//-- NOT OK, display the Login Form and Exit
-			header('WWW-Authenticate: Basic realm="Private Area"');
-			http_response_code(401);
+			\header('WWW-Authenticate: Basic realm="Private Area"');
+			\http_response_code(401);
 			die(\SmartComponents::http_message_401_unauthorized('Authorization Required', \SmartComponents::operation_notice('Login Failed. Either you supplied the wrong credentials or your browser doesn\'t understand how to supply the credentials required.', '100%')));
 			//--
 		} //end if

@@ -8,15 +8,15 @@
 
 namespace SmartModExtLib\Webdav;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 /**
@@ -26,7 +26,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 final class DavFsCardDav {
 
 	// ::
-	// v.20190403
+	// v.20191007
 
 	private static $carddav_ns = 'xmlns:card="urn:ietf:params:xml:ns:carddav"';
 	private static $carddav_urn = 'urn:ietf:params:xml:ns:carddav';
@@ -37,15 +37,15 @@ final class DavFsCardDav {
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	public static function methodOptions() { // 200 @ https://tools.ietf.org/html/rfc6352
 		//--
-		http_response_code(200);
+		\http_response_code(200);
 		//--
-		header('Date: '.date('D, d M Y H:i:s O'));
-		header('Content-length: 0');
-		header('MS-Author-Via: DAV'); // Microsoft clients are set default to the Frontpage protocol unless we tell them to use DAV
-		header('DAV: 1, 2, addressbook'); // don't support (LOCK / UNLOCK) as seen in sabreDAV 1.5.x
-		header('Allow: OPTIONS, HEAD, GET, PROPFIND, REPORT, PUT, DELETE');
-		header('Accept-Ranges: none');
-		header('Z-Cloud-Service: CardDAV Server (Addressbook vcf / contacts)');
+		\header('Date: '.\date('D, d M Y H:i:s O'));
+		\header('Content-length: 0');
+		\header('MS-Author-Via: DAV'); // Microsoft clients are set default to the Frontpage protocol unless we tell them to use DAV
+		\header('DAV: 1, 2, addressbook'); // don't support (LOCK / UNLOCK) as seen in sabreDAV 1.5.x
+		\header('Allow: OPTIONS, HEAD, GET, PROPFIND, REPORT, PUT, DELETE');
+		\header('Accept-Ranges: none');
+		\header('Z-Cloud-Service: CardDAV Server (Addressbook vcf / contacts)');
 		//--
 		return 200;
 		//--
@@ -58,30 +58,30 @@ final class DavFsCardDav {
 		$dav_vfs_path = (string) $dav_vfs_path; // safe on .ht* names
 		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
-			http_response_code(415); // unsupported media type
+			\http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
 		//--
 		if(!\SmartFileSystem::path_exists($dav_vfs_path)) {
-			http_response_code(404);
+			\http_response_code(404);
 			return 404;
 		} //end if
 		//--
 		if(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
-			http_response_code(200);
-			header('Content-Type: '.self::mimeTypeDir($dav_vfs_path)); // directory
-			header('Content-length: 0');
+			\http_response_code(200);
+			\header('Content-Type: '.self::mimeTypeDir($dav_vfs_path)); // directory
+			\header('Content-length: 0');
 		} elseif(\SmartFileSystem::is_type_file($dav_vfs_path)) {
-			http_response_code(200);
-			header('Content-Type: '.self::mimeTypeFile($dav_vfs_path));
-			header('Content-Length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
-			header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
+			\http_response_code(200);
+			\header('Content-Type: '.self::mimeTypeFile($dav_vfs_path));
+			\header('Content-Length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
+			\header('ETag: "'.(string)\md5_file((string)$dav_vfs_path).'"');
 		} else { // unknown media type
-			http_response_code(415);
+			\http_response_code(415);
 			return 415;
 		} //end if else
 		//--
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s', (int)\SmartFileSystem::get_file_mtime($dav_vfs_path)).' GMT');
+		\header('Last-Modified: '.\gmdate('D, d M Y H:i:s', (int)\SmartFileSystem::get_file_mtime($dav_vfs_path)).' GMT');
 		return 200;
 		//--
 	} //END FUNCTION
@@ -94,8 +94,8 @@ final class DavFsCardDav {
 		//--
 		$dav_vfs_path = (string) $dav_vfs_path; // safe on .ht* names
 		//--
-		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 day')).' '.date('H:i:s').' GMT'); // HTTP 1.0
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+		\header('Expires: '.\gmdate('D, d M Y', @\strtotime('-1 day')).' '.\date('H:i:s').' GMT'); // HTTP 1.0
+		\header('Last-Modified: '.\gmdate('D, d M Y H:i:s').' GMT');
 		//--
 		if(\SmartFileSystem::is_type_file($dav_vfs_path)) { // file
 			$statuscode = 207;
@@ -144,7 +144,7 @@ final class DavFsCardDav {
 		//--
 		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
 		//--
-		if(((string)trim((string)$heads['range']) != '') OR ((string)trim((string)$heads['content-range']) != '')) { // (SabreDAV)
+		if(((string)\trim((string)$heads['range']) != '') OR ((string)\trim((string)$heads['content-range']) != '')) { // (SabreDAV)
 			// Content-Range is dangerous for PUT requests:  PUT per definition
 			// stores a full resource.  draft-ietf-httpbis-p2-semantics-15 says
 			// in section 7.6:
@@ -156,123 +156,123 @@ final class DavFsCardDav {
 			//   overlaps a portion of the larger resource, or by using a different
 			//   method that has been specifically defined for partial updates (for
 			//   example, the PATCH method defined in [RFC5789]).
-			header('Accept-Ranges: none');
-			http_response_code(400); // unsupported: ranges
+			\header('Accept-Ranges: none');
+			\http_response_code(400); // unsupported: ranges
 			return 400;
 		} //end if
 		//--
-		$head_content_length = (string) trim((string)$heads['content-length']);
+		$head_content_length = (string) \trim((string)$heads['content-length']);
 		if((string)$head_content_length == '') {
-			http_response_code(411); // content length required
+			\http_response_code(411); // content length required
 			return 411;
 		} //end if
 		$head_content_length = (int) $head_content_length;
 	/*	if($head_content_length < 0) {
-			http_response_code(400); // invalid content length
+			\http_response_code(400); // invalid content length
 			return 400;
 		} //end if */
 		if($head_content_length <= 0) {
-			http_response_code(411); // dissalow empty files (0 bytes)
+			\http_response_code(411); // dissalow empty files (0 bytes)
 			return 411;
 		} //end if
 		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
-			http_response_code(415); // unsupported media type
+			\http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
 		//--
-		$the_dname = (string) trim((string)\SmartFileSysUtils::get_dir_from_path((string)$dav_vfs_path));
+		$the_dname = (string) \trim((string)\SmartFileSysUtils::get_dir_from_path((string)$dav_vfs_path));
 		if(((string)$the_dname == '') OR (!\SmartFileSysUtils::check_if_safe_path($the_dname))) {
-			http_response_code(415); // do not allow: (empty / unsafe dir paths are not allowed)
+			\http_response_code(415); // do not allow: (empty / unsafe dir paths are not allowed)
 			return 415;
 		} //end if
 		$the_dname = (string) \SmartFileSysUtils::add_dir_last_slash((string)$the_dname);
 		if((!\SmartFileSysUtils::check_if_safe_path($the_dname)) OR (!\SmartFileSystem::is_type_dir($the_dname))) {
-			http_response_code(409); // conflict: cannot PUT a resource if all ancestors do not already exist
+			\http_response_code(409); // conflict: cannot PUT a resource if all ancestors do not already exist
 			return 409;
 		} //end if
 		//--
-		$the_fname = (string) trim((string)\SmartFileSysUtils::get_file_name_from_path((string)$dav_vfs_path));
-		if(((string)$the_fname == '') OR (substr($the_fname, 0, 1) == '.') OR (!\SmartFileSysUtils::check_if_safe_file_or_dir_name($the_fname))) {
-			http_response_code(415); // unsupported media type (empty / dot / unsafe file names are not allowed)
+		$the_fname = (string) \trim((string)\SmartFileSysUtils::get_file_name_from_path((string)$dav_vfs_path));
+		if(((string)$the_fname == '') OR (\substr($the_fname, 0, 1) == '.') OR (!\SmartFileSysUtils::check_if_safe_file_or_dir_name($the_fname))) {
+			\http_response_code(415); // unsupported media type (empty / dot / unsafe file names are not allowed)
 			return 415;
 		} //end if
 		//--
 		if((string)$the_dname.$the_fname != (string)$dav_vfs_path) {
 			\Smart::log_warning(__METHOD__.'() : Unsafe recompose path: '.$the_dname.$the_fname.' # '.$dav_vfs_path);
-			http_response_code(406); // not acceptable: weird path ... failed to decompose
+			\http_response_code(406); // not acceptable: weird path ... failed to decompose
 			return 406;
 		} //end if
 		//--
-		$the_ext = (string) strtolower(trim((string)\SmartFileSysUtils::get_file_extension_from_path((string)$dav_vfs_path)));
-		if(!defined('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) {
-			http_response_code(415); // unsupported media type
+		$the_ext = (string) \strtolower((string)\trim((string)\SmartFileSysUtils::get_file_extension_from_path((string)$dav_vfs_path)));
+		if(!\defined('\\SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS')) {
+			\http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
-		if(stripos((string)SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$the_ext.'>') !== false) {
-			http_response_code(415); // unsupported media type
+		if(\stripos((string)\SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS, '<'.$the_ext.'>') !== false) {
+			\http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
-		if(defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
-			if(stripos((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$the_ext.'>') === false) {
-				http_response_code(415); // unsupported media type
+		if(\defined('\\SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) {
+			if(\stripos((string)\SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS, '<'.$the_ext.'>') === false) {
+				\http_response_code(415); // unsupported media type
 				return 415;
 			} //end if
 		} //end if
 		if((string)$the_ext != 'vcf') {
-			http_response_code(415); // unsupported media type ; allow just .vcf !!!
+			\http_response_code(415); // unsupported media type ; allow just .vcf !!!
 			return 415;
 		} //end if
 		//--
 		// NOTICE: enforcing lowercase file name fails with Thunderbird/SoGOAddrbook
 		//--
 		$fp = \SmartModExtLib\Webdav\DavServer::getRequestBody(true); // get as resource stream
-		if(!is_resource($fp)) {
-			http_response_code(500); // internal server error
+		if(!\is_resource($fp)) {
+			\http_response_code(500); // internal server error
 			return 500;
 		} //end if
 		//--
 		if(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
-			http_response_code(405); // the destination exists and is a directory
+			\http_response_code(405); // the destination exists and is a directory
 			return 405;
 		} //end if
 		//--
 		$oversized = false;
 		$max_res_size = \Smart::format_number_int(self::$carddav_max_res_size,'+');
 		$vcf_data = '';
-		while($data = fread($fp, 1024*8)) {
+		while($data = @\fread($fp, 1024*8)) {
 			$vcf_data .= $data;
-			if((int)strlen((string)$vcf_data) > (int)$max_res_size) {
+			if((int)\strlen((string)$vcf_data) > (int)$max_res_size) {
 				$oversized = true;
 				break;
 			} //end if
 		} //end while
 		//--
-		fclose($fp);
+		@\fclose($fp);
 		//--
-		if((string)trim((string)$vcf_data) == '') {
-			http_response_code(423); // locked: could not achieve fopen advisory lock
+		if((string)\trim((string)$vcf_data) == '') {
+			\http_response_code(423); // locked: could not achieve fopen advisory lock
 			return 423;
 		} //end if
 		if($oversized === true) {
-			http_response_code(507); // not enough space (for oversized)
+			\http_response_code(507); // not enough space (for oversized)
 			return 507;
 		} //end if
 		//--
-		$fsize = (int) strlen((string)$vcf_data);
+		$fsize = (int) \strlen((string)$vcf_data);
 		if((int)$fsize != (int)$head_content_length) {
-			http_response_code(408); // request timeout (delivered a smaller size content than expected)
+			\http_response_code(408); // request timeout (delivered a smaller size content than expected)
 			return 408;
 		} //end if
 		//--
 		if(!\SmartFileSystem::write((string)$dav_vfs_path, (string)$vcf_data)) {
 			\Smart::log_warning(__METHOD__.'() : Failed to Write a new File: '.$dav_vfs_path);
-			http_response_code(423); // locked: could not achieve fopen advisory lock
+			\http_response_code(423); // locked: could not achieve fopen advisory lock
 			return 423;
 		} //end if
 		$vcf_data = ''; // free mem
 		//--
-	/*	if((int)trim((string)$heads['x-expected-entity-length']) > 0) { // intercepting the MacOS Finder problem (SabreDAV)
+	/*	if((int)\trim((string)$heads['x-expected-entity-length']) > 0) { // intercepting the MacOS Finder problem (SabreDAV)
 			// Many webservers will not cooperate well with Finder PUT requests, because it uses 'Chunked' transfer encoding for the request body.
 			// The symptom of this problem is that Finder sends files to the server, but they arrive as 0-lenght files in PHP.
 			// If we don't do anything, the user might think they are uploading files successfully, but they end up empty on the server.
@@ -282,15 +282,15 @@ final class DavFsCardDav {
 			// Instead it sends the X-Expected-Entity-Length header with the size of the file at the very start of the request.
 			// If this header is set, but we don't get a request body we will fail the request to protect the end-user.
 			if((int)$fsize <= 0) {
-				http_response_code(411); // content length required
+				\http_response_code(411); // content length required
 				return 411;
 			} //end if
 		} //end if */
 		//--
-		http_response_code(201); // HTTP/1.1 201 Created
-		header('Content-length: 0');
-		header('ETag: "'.(string)md5_file((string)$dav_vfs_path).'"');
-		header('Z-Cloud-DAV-Put-FileSize: '.$fsize);
+		\http_response_code(201); // HTTP/1.1 201 Created
+		\header('Content-length: 0');
+		\header('ETag: "'.(string)\md5_file((string)$dav_vfs_path).'"');
+		\header('Z-Cloud-DAV-Put-FileSize: '.$fsize);
 		return 201;
 		//--
 	} //END FUNCTION
@@ -302,7 +302,7 @@ final class DavFsCardDav {
 		$dav_vfs_path = (string) $dav_vfs_path; // safe on .ht* names
 		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
-			http_response_code(415); // unsupported media type
+			\http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
 		//--
@@ -312,18 +312,18 @@ final class DavFsCardDav {
 			} elseif(\SmartFileSystem::is_type_file($dav_vfs_path)) {
 				\SmartFileSystem::delete($dav_vfs_path);
 			} else {
-				http_response_code(405); // method not allowed: unknown resource type
+				\http_response_code(405); // method not allowed: unknown resource type
 				return 405;
 			} //end if
 		} //end if
 		//--
 		if(\SmartFileSystem::path_exists($dav_vfs_path)) {
-			http_response_code(423); // locked: could not remove the resource, perhaps locked
+			\http_response_code(423); // locked: could not remove the resource, perhaps locked
 			return 423;
 		} //end if
 		//--
-		http_response_code(204); // HTTP/1.1 204 No Content
-		header('Content-length: 0');
+		\http_response_code(204); // HTTP/1.1 204 No Content
+		\header('Content-length: 0');
 		return 204;
 		//--
 	} //END FUNCTION
@@ -334,9 +334,9 @@ final class DavFsCardDav {
 		//--
 		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
 		//--
-		if(((string)trim((string)$heads['range']) != '') OR ((string)trim((string)$heads['content-range']) != '')) {
-			header('Accept-Ranges: none'); // !!! IMPORTANT BUG FIX: without this, if the client ask a partial range content will result in corrupted file content: MacOS Finder with GET files > 8.5 MB) !!!
-			http_response_code(400); // unsupported: ranges
+		if(((string)\trim((string)$heads['range']) != '') OR ((string)\trim((string)$heads['content-range']) != '')) {
+			\header('Accept-Ranges: none'); // !!! IMPORTANT BUG FIX: without this, if the client ask a partial range content will result in corrupted file content: MacOS Finder with GET files > 8.5 MB) !!!
+			\http_response_code(400); // unsupported: ranges
 			return 400;
 		} //end if
 		//--
@@ -344,12 +344,12 @@ final class DavFsCardDav {
 		$dav_vfs_root = (string) $dav_vfs_root; // safe on .ht* names
 		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
-			http_response_code(415); // unsupported media type
+			\http_response_code(415); // unsupported media type
 			return 415;
 		} //end if
 		//--
 		if(!\SmartFileSystem::path_exists($dav_vfs_path)) {
-			http_response_code(404); // path does not exist
+			\http_response_code(404); // path does not exist
 			echo (string) self::answerPostErr404('The requested URL was Not Found on this server', $dav_url);
 			return 404;
 		} //end if
@@ -360,16 +360,16 @@ final class DavFsCardDav {
 			//--
 			$bw = (array) \SmartUtils::get_os_browser_ip();
 			//--
-			if(!in_array((string)$bw['bw'], ['fox', 'crm', 'opr', 'sfr', 'iee', 'iex', 'eph', 'nsf'])) {
-				http_response_code(405); // method not allowed: only files can be GET !
+			if(!\in_array((string)$bw['bw'], (array)\SmartModExtLib\Webdav\DavServer::getSupportedBrowserIds())) {
+				\http_response_code(405); // method not allowed: only files can be GET !
 				return 405;
 			} //end if
 			//--
-			http_response_code(200);
+			\http_response_code(200);
 			$arr_quota = (array) self::getQuotaAndUsageInfo($dav_vfs_root);
 			$files_n_dirs = (array) (new \SmartGetFileSystem(true))->get_storage($dav_vfs_path, false, false, '.vcf'); // non-recuring, no dot files, only VCF
 			$fixed_vfs_dir = (string) \SmartFileSysUtils::add_dir_last_slash($dav_vfs_path);
-			$fixed_dav_url = (string) rtrim((string)$dav_url, '/').'/';
+			$fixed_dav_url = (string) \rtrim((string)$dav_url, '/').'/';
 			$base_url = (string) \SmartUtils::get_server_current_url();
 			$arr_f_dirs = array();
 			for($i=0; $i<\Smart::array_size($files_n_dirs['list-dirs']); $i++) {
@@ -377,7 +377,7 @@ final class DavFsCardDav {
 					'name'  => (string) $files_n_dirs['list-dirs'][$i],
 					'type'  => (string) self::mimeTypeDir((string)$fixed_vfs_dir.$files_n_dirs['list-dirs'][$i]),
 					'size'  => '-',
-					'modif' => (string) date('Y-m-d H:i:s O', (int)\SmartFileSystem::get_file_mtime($fixed_vfs_dir.$files_n_dirs['list-dirs'][$i])),
+					'modif' => (string) \date('Y-m-d H:i:s O', (int)\SmartFileSystem::get_file_mtime($fixed_vfs_dir.$files_n_dirs['list-dirs'][$i])),
 					'link'  => (string) $fixed_dav_url.$files_n_dirs['list-dirs'][$i]
 				];
 			} //end for
@@ -387,36 +387,36 @@ final class DavFsCardDav {
 					'name'  => (string) $files_n_dirs['list-files'][$i],
 					'type'  => (string) self::mimeTypeFile((string)$files_n_dirs['list-files'][$i]),
 					'size'  => (string) \SmartUtils::pretty_print_bytes((int)\SmartFileSystem::get_file_size($fixed_vfs_dir.$files_n_dirs['list-files'][$i]), 2, ' '),
-					'modif' => (string) date('Y-m-d H:i:s O', (int)\SmartFileSystem::get_file_mtime($fixed_vfs_dir.$files_n_dirs['list-files'][$i])),
+					'modif' => (string) \date('Y-m-d H:i:s O', (int)\SmartFileSystem::get_file_mtime($fixed_vfs_dir.$files_n_dirs['list-files'][$i])),
 					'link'  => (string) $fixed_dav_url.$files_n_dirs['list-files'][$i]
 				];
 			} //end for
-			$detect_dav_url_root = (array) explode('~', (string)$dav_url);
-			if((string)trim((string)$detect_dav_url_root[0]) != '') {
-				$detect_dav_url_back = (string) trim((string)$detect_dav_url_root[0]).'~/'.$dav_request_back_path;
+			$detect_dav_url_root = (array) \explode('~', (string)$dav_url);
+			if((string)\trim((string)$detect_dav_url_root[0]) != '') {
+				$detect_dav_url_back = (string) \trim((string)$detect_dav_url_root[0]).'~/'.$dav_request_back_path;
 			} else {
 				$detect_dav_url_back = '';
 			} //end if else
 			$info_extensions_list = '';
-			if((defined('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) AND ((string)trim((string)SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS) != '')) {
-				$info_extensions_list = 'Allowed Extensions List: '.SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS;
+			if((\defined('\\SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS')) AND ((string)\trim((string)\SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS) != '')) {
+				$info_extensions_list = 'Allowed Extensions List: '.\SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS;
 			} else {
-				$info_extensions_list = 'Disallowed Extensions List: '.SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS;
+				$info_extensions_list = 'Disallowed Extensions List: '.\SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS;
 			} //end if else
 			$info_restr_charset = 'restricted charset as [ _ a-z A-Z 0-9 - . @ ]';
 			$html = (string) \SmartMarkersTemplating::render_file_template(
 				\SmartModExtLib\Webdav\DavServer::getTplPath().'answer-get-path.mtpl.htm',
 				[
-					'CHARSET' 			=> (string) SMART_FRAMEWORK_CHARSET,
+					'CHARSET' 			=> (string) \SMART_FRAMEWORK_CHARSET,
 					'IMG-SVG-LOGO' 		=> (string) $nfo_svg_logo,
 					'TEXT-WELCOME' 		=> (string) $nfo_txt_welcome,
 					'LINK-WELCOME' 		=> (string) $nfo_lnk_welcome,
 					'INFO-HEADING' 		=> (string) $nfo_title,
 					'INFO-SIGNATURE' 	=> (string) $nfo_signature,
 					'INFO-ROOT' 		=> (string) '{DAV:'.$dav_vfs_root.'}',
-					'INFO-TITLE' 		=> (string) $nfo_signature.' - '.$nfo_title.' / '.$nfo_crrpath.' @ '.date('Y-m-d H:i:s O'),
+					'INFO-TITLE' 		=> (string) $nfo_signature.' - '.$nfo_title.' / '.$nfo_crrpath.' @ '.\date('Y-m-d H:i:s O'),
 					'INFO-AUTHNAME' 	=> (string) $dav_author,
-					'INFO-VERSION' 		=> (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION,
+					'INFO-VERSION' 		=> (string) \SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.\SMART_FRAMEWORK_RELEASE_VERSION,
 					'CRR-PATH' 			=> (string) $nfo_crrpath,
 					'NUM-CRR-DIRS' 		=> (int)    $files_n_dirs['dirs'],
 					'NUM-CRR-FILES' 	=> (int)    $files_n_dirs['files'],
@@ -430,7 +430,7 @@ final class DavFsCardDav {
 					'BASE-URL' 			=> (string) $base_url,
 					'IS-ROOT' 			=> (string) ($dav_is_root_path ? 'yes' : 'no'),
 					'BACK-PATH' 		=> (string) $detect_dav_url_back,
-					'DISPLAY-QUOTA' 	=> (string) (defined('SMART_WEBDAV_SHOW_USAGE_QUOTA') AND (SMART_WEBDAV_SHOW_USAGE_QUOTA === true)) ? 'yes' : 'no',
+					'DISPLAY-QUOTA' 	=> (string) (\defined('\\SMART_WEBDAV_SHOW_USAGE_QUOTA') AND (\SMART_WEBDAV_SHOW_USAGE_QUOTA === true)) ? 'yes' : 'no',
 					'DIR-NEW-INFO' 		=> (string) 'INFO: Directory Creation is dissalowed ...', // TODO: add support to create new addressbooks ...
 					'MAX-UPLOAD-INFO' 	=> (string) 'INFO: Direct Files Uploads is dissalowed ...', // TODO: add support to upload validated VCFs only
 					'SHOW-POST-FORM' 	=> 'no'
@@ -440,21 +440,21 @@ final class DavFsCardDav {
 			echo (string) $html;
 			return 200;
 		} elseif((string)$dav_method == 'POST') { // POST to a file is not allowed
-			http_response_code(405); // method not allowed: only dirs can be POST !
+			\http_response_code(405); // method not allowed: only dirs can be POST !
 			return 405;
 		} //end if
 		//--
 		if(!\SmartFileSystem::have_access_read($dav_vfs_path)) {
-			http_response_code(423); // locked: file is not accessible
+			\http_response_code(423); // locked: file is not accessible
 			return 423;
 		} //end if
 		//--
-		http_response_code(200); // HTTP/1.1 200 OK
-		header('Expires: '.gmdate('D, d M Y', @strtotime('-1 day')).' '.date('H:i:s').' GMT'); // HTTP 1.0
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-		header('Content-length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
-		header('Content-Type: '.(string)self::mimeTypeFile($dav_vfs_path));
-		@readfile($dav_vfs_path);
+		\http_response_code(200); // HTTP/1.1 200 OK
+		\header('Expires: '.\gmdate('D, d M Y', @\strtotime('-1 day')).' '.\date('H:i:s').' GMT'); // HTTP 1.0
+		\header('Last-Modified: '.\gmdate('D, d M Y H:i:s').' GMT');
+		\header('Content-length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
+		\header('Content-Type: '.(string)self::mimeTypeFile($dav_vfs_path));
+		@\readfile($dav_vfs_path);
 		return 200;
 		//--
 	} //END FUNCTION
@@ -481,43 +481,44 @@ final class DavFsCardDav {
 		//--
 		if(\SmartFileSystem::is_type_file((string)$dav_vfs_path)) {
 			// \Smart::log_notice('CardDAV REPORT Method called for a file type, which is not supported ...');
-			http_response_code(400); // bad request
+			\http_response_code(400); // bad request
 			return 400;
 		} //end if
 		if(!\SmartFileSystem::is_type_dir((string)$dav_vfs_path)) {
 			// \Smart::log_notice('CardDAV REPORT Method called for a non-existing folder ...');
-			http_response_code(400); // bad request
+			\http_response_code(400); // bad request
 			return 400;
 		} //end if
 		if((int)self::testIsAddressbookCollection((string)$dav_vfs_path) !== 1) {
 			// \Smart::log_notice('CardDAV REPORT Method called for a non-addressbook folder, which is not supported ...');
-			http_response_code(400); // bad request
+			\http_response_code(400); // bad request
 			return 400;
 		} //end if
 		//--
 		$heads = (array) \SmartModExtLib\Webdav\DavServer::getRequestHeaders();
-		// \Smart::log_notice(print_r($heads,1));
+		// \Smart::log_notice(\print_r($heads,1));
 		$body = (string) \SmartModExtLib\Webdav\DavServer::getRequestBody();
-		// \Smart::log_notice(print_r($body,1));
+		// \Smart::log_notice(\print_r($body,1));
 		//-- OR (stripos((string)$body, ':addressbook-multiget ') === false)
 		$arr = array();
-		if((string)trim((string)$body) != '') { // test only if non-empty body, otherwise suppose it requested for all files
-			if((stripos((string)$body, (string)self::$carddav_urn) === false) OR (strpos((string)$body, (string)self::$carddav_rep_data) === false)) {
+		if((string)\trim((string)$body) != '') { // test only if non-empty body, otherwise suppose it requested for all files
+			if((\stripos((string)$body, (string)self::$carddav_urn) === false) OR (\strpos((string)$body, (string)self::$carddav_rep_data) === false)) {
 				// \Smart::log_notice('CardDAV REPORT is invalid: '.$body);
-				http_response_code(400); // bad request
+				\http_response_code(400); // bad request
 				return 400;
 			} //end if
+			// \Smart::log_notice('CardDAV REPORT ...');
 			$arr = (array) \SmartModExtLib\Webdav\DavServer::parseXMLBody((string)$body, '', 'href');
 		} //end if
 		//--
 		$files = [];
 		if(\Smart::array_size($arr) > 0) { // if successfuly extracted some links from the body
 			for($i=0; $i<\Smart::array_size($arr); $i++) {
-				$link = (string) trim((string)$arr[$i]);
-				if(((string)$link != '') AND ((string)strtolower((string)substr((string)$link, -4, 4)) == '.vcf')) { // don't test for safe path as this is the server full url path and may not be compliant with this check
+				$link = (string) \trim((string)$arr[$i]);
+				if(((string)$link != '') AND ((string)\strtolower((string)\substr((string)$link, -4, 4)) == '.vcf')) { // don't test for safe path as this is the server full url path and may not be compliant with this check
 					$link = (string) \SmartFileSysUtils::get_file_name_from_path((string)$link);
-					$link = (string) trim((string)$link);
-					if(((string)$link != '') AND ((string)strtolower((string)substr((string)$link, -4, 4)) == '.vcf') AND (\SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$link) == '1')) { // but the file must be safe compliant ; safe on .ht* names
+					$link = (string) \trim((string)$link);
+					if(((string)$link != '') AND ((string)\strtolower((string)\substr((string)$link, -4, 4)) == '.vcf') AND (\SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$link) == '1')) { // but the file must be safe compliant ; safe on .ht* names
 						$files[] = (string) $link;
 					} //end if
 				} //end if
@@ -534,14 +535,14 @@ final class DavFsCardDav {
 			$files = (array) $arr_list_vcf['list-files'];
 			$arr_list_vcf = array();
 		} //end if
-		// \Smart::log_notice($dbg_data.' <'.$dav_uri.'> ('.$dav_request_path.') ['.$dav_vfs_path.']:'."\n".print_r($files,1));
+		// \Smart::log_notice($dbg_data.' <'.$dav_uri.'> ('.$dav_request_path.') ['.$dav_vfs_path.']:'."\n".\print_r($files,1));
 		//--
 		$arr = array();
 	//	$arr[] = (array) self::getItemTypeCollection($dav_uri, $dav_vfs_path); // add the folder tho this request # THIS MUST NOT BE SET IN REPORT !!!
 		$arr = self::addSubItem($dav_uri, $dav_vfs_path, $arr, $files, 'files', true); // safe on .ht*
 		//--
 		$statuscode = 207;
-		//ob_start();
+		// \ob_start();
 		\SmartModExtLib\Webdav\DavServer::answerMultiStatus(
 			(string) self::$carddav_ns,
 			(string) $dav_method,
@@ -552,10 +553,10 @@ final class DavFsCardDav {
 			(array)  $arr,
 			(array)  self::getQuotaAndUsageInfo($dav_vfs_root)
 		);
-		//$tst = ob_get_contents();
-		//ob_end_clean();
-		//echo $tst;
-		// \Smart::log_notice('HEADERS:['.http_response_code().']'."\n".print_r(headers_list(),1));
+		// $tst = \ob_get_contents();
+		// \ob_end_clean();
+		// echo $tst;
+		// \Smart::log_notice('HEADERS:['.http_response_code().']'."\n".\print_r(\headers_list(),1));
 		// \Smart::log_notice('REPORT:'."\n".$tst);
 		//--
 		return (int) $statuscode;
@@ -581,14 +582,14 @@ final class DavFsCardDav {
 			return array();
 		} //end if
 		//--
-		if((!defined('SMART_WEBDAV_SHOW_USAGE_QUOTA')) OR (SMART_WEBDAV_SHOW_USAGE_QUOTA !== true)) {
+		if((!\defined('\\SMART_WEBDAV_SHOW_USAGE_QUOTA')) OR (\SMART_WEBDAV_SHOW_USAGE_QUOTA !== true)) {
 			return array(); // skip quota info if not express specified
 		} //end if
 		//--
 		$arr_storage = (new \SmartGetFileSystem())->get_storage((string)$dav_vfs_root, true, true, ''); // recuring, with dot files ; safe on .ht* names as it only calculate sizes
-		// \Smart::log_notice(print_r($arr_storage,1));
+		// \Smart::log_notice(\print_r($arr_storage,1));
 		$used_space = (int) $arr_storage['size-files']; // 'size'
-		$free_space = (int) floor(disk_free_space((string)$dav_vfs_root));
+		$free_space = (int) \floor(\disk_free_space((string)$dav_vfs_root));
 		//--
 		return array(
 			'root-dir' 		=> (string) $dav_vfs_root, 		// vfs root dir ; safe on .ht* names
@@ -605,8 +606,8 @@ final class DavFsCardDav {
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	private static function getItem($dav_request_path, $dav_vfs_path) {
 		//--
-		$dav_request_path = (string) trim((string)$dav_request_path);
-		$dav_vfs_path = (string) trim((string)$dav_vfs_path); // safe on .ht* names
+		$dav_request_path = (string) \trim((string)$dav_request_path);
+		$dav_vfs_path = (string) \trim((string)$dav_vfs_path); // safe on .ht* names
 		//--
 		if(((string)$dav_request_path == '') OR ((string)$dav_vfs_path == '')) {
 			return array();
@@ -622,11 +623,11 @@ final class DavFsCardDav {
 		} elseif(\SmartFileSystem::is_type_dir($dav_vfs_path)) {
 			$arr[] = (array) self::getItemTypeCollection($dav_request_path, $dav_vfs_path); // safe on .ht* names
 			$files_n_dirs = (array) (new \SmartGetFileSystem(true))->get_storage($dav_vfs_path, false, false, '.vcf'); // non-recuring, no dot files, only VCF ; safe on .ht* names
-			//print_r($files_n_dirs); die();
-			//print_r($arr); die();
+			// \print_r($files_n_dirs); die();
+			// \print_r($arr); die();
 			$arr = self::addSubItem($dav_request_path, $dav_vfs_path, $arr, $files_n_dirs['list-dirs'], 'dirs'); // safe on .ht* names
 			$arr = self::addSubItem($dav_request_path, $dav_vfs_path, $arr, $files_n_dirs['list-files'], 'files'); // safe on .ht* names
-			//print_r($arr); die();
+			// \print_r($arr); die();
 		} //end if else
 		//--
 		return (array) $arr;
@@ -637,14 +638,14 @@ final class DavFsCardDav {
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	private static function testIsAddressbookCollection($dav_vfs_path) {
 		//--
-		if(defined('SMART_WEBDAV_CARDDAV_ABOOK_PATH')) {
-			if(strpos((string)$dav_vfs_path, (string)SMART_WEBDAV_CARDDAV_ABOOK_PATH) === 0) {
+		if(\defined('\\SMART_WEBDAV_CARDDAV_ABOOK_PATH')) {
+			if(\strpos((string)$dav_vfs_path, (string)\SMART_WEBDAV_CARDDAV_ABOOK_PATH) === 0) {
 				return 1; // addressbook
 			} //end if
 		} //end if
 		//--
-		if(defined('SMART_WEBDAV_CARDDAV_ACC_PATH')) {
-			if(strpos((string)$dav_vfs_path, (string)SMART_WEBDAV_CARDDAV_ACC_PATH) === 0) {
+		if(\defined('\\SMART_WEBDAV_CARDDAV_ACC_PATH')) {
+			if(\strpos((string)$dav_vfs_path, (string)\SMART_WEBDAV_CARDDAV_ACC_PATH) === 0) {
 				return 2; // account
 			} //end if
 		} //end if
@@ -696,7 +697,7 @@ final class DavFsCardDav {
 				if(\SmartFileSysUtils::check_if_safe_file_or_dir_name($subitems[$i])) {
 					if(\SmartFileSysUtils::check_if_safe_path($subitems[$i])) { // will dissalow #paths
 						if(\SmartModExtLib\Webdav\DavServer::safeCheckPathAgainstHtFiles($subitems[$i])) { // dissalow .ht*
-							$tmp_new_req_path = (string) rtrim((string)$dav_request_path, '/').'/'.$subitems[$i];
+							$tmp_new_req_path = (string) \rtrim((string)$dav_request_path, '/').'/'.$subitems[$i];
 							$tmp_new_vfs_path = (string) \SmartFileSysUtils::add_dir_last_slash((string)$dav_vfs_path).$subitems[$i];
 							if(\SmartFileSysUtils::check_if_safe_path($tmp_new_vfs_path)) {
 								if(((string)$type == 'dirs') AND (\SmartFileSystem::is_type_dir($tmp_new_vfs_path))) {
@@ -733,8 +734,8 @@ final class DavFsCardDav {
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	private static function getItemTypeNonCollection($dav_request_path, $dav_vfs_path) {
 		//--
-		$dav_request_path = (string) trim((string)$dav_request_path);
-		$dav_vfs_path = (string) trim((string)$dav_vfs_path); // safe on .ht* names
+		$dav_request_path = (string) \trim((string)$dav_request_path);
+		$dav_vfs_path = (string) \trim((string)$dav_vfs_path); // safe on .ht* names
 		//--
 		if(((string)$dav_request_path == '') OR ((string)$dav_vfs_path == '')) {
 			return array();
@@ -746,16 +747,16 @@ final class DavFsCardDav {
 			return array();
 		} //end if
 		//--
-		return (array) [
+		return array(
 			'dav-resource-type' 		=> (string) \SmartModExtLib\Webdav\DavServer::DAV_RESOURCE_TYPE_NONCOLLECTION,
 			'dav-request-path' 			=> (string) $dav_request_path,
 			'dav-vfs-path' 				=> (string) $dav_vfs_path, // private
 			'date-creation-timestamp' 	=> (int) 	0, // \SmartFileSystem::get_file_ctime($dav_vfs_path), // currently is unused
 			'date-modified-timestamp' 	=> (int) 	\SmartFileSystem::get_file_mtime($dav_vfs_path),
 			'size-bytes' 				=> (int)    \SmartFileSystem::get_file_size($dav_vfs_path),
-			'etag-hash' 				=> (string) md5_file($dav_vfs_path),
+			'etag-hash' 				=> (string) \md5_file($dav_vfs_path),
 			'mime-type' 				=> (string) self::mimeTypeFile($dav_vfs_path)
-		];
+		);
 		//--
 	} //END FUNCTION
 
@@ -763,8 +764,8 @@ final class DavFsCardDav {
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	private static function getItemTypeCollection($dav_request_path, $dav_vfs_path) {
 		//--
-		$dav_request_path = (string) trim((string)$dav_request_path);
-		$dav_vfs_path = (string) trim((string)$dav_vfs_path); // safe on .ht* names
+		$dav_request_path = (string) \trim((string)$dav_request_path);
+		$dav_vfs_path = (string) \trim((string)$dav_vfs_path); // safe on .ht* names
 		//--
 		if(((string)$dav_request_path == '') OR ((string)$dav_vfs_path == '')) {
 			return array();
@@ -782,9 +783,9 @@ final class DavFsCardDav {
 		$restype .= '<d:collection/>';
 		//--
 		$ext_prop .= '<d:displayname>'.\Smart::escape_html(\SmartFileSysUtils::get_file_name_from_path((string)$dav_request_path)).'</d:displayname>'; // iOS Fix
-		$ext_prop .= '<d:current-user-principal><d:href>'.\Smart::escape_html((string)SMART_WEBDAV_CARDDAV_ABOOK_ACC).'</d:href></d:current-user-principal>'; // iOS Fix
-		$ext_prop .= '<d:principal-collection-set>'.\Smart::escape_html((string)SMART_WEBDAV_CARDDAV_ABOOK_PPS).'</d:principal-collection-set>'; // iOS Fix
-		$ext_prop .= '<d:principal-URL><d:href>'.\Smart::escape_html((string)SMART_WEBDAV_CARDDAV_ABOOK_ACC).'</d:href></d:principal-URL>'; // iOS Fix
+		$ext_prop .= '<d:current-user-principal><d:href>'.\Smart::escape_html((string)\SMART_WEBDAV_CARDDAV_ABOOK_ACC).'</d:href></d:current-user-principal>'; // iOS Fix
+		$ext_prop .= '<d:principal-collection-set>'.\Smart::escape_html((string)\SMART_WEBDAV_CARDDAV_ABOOK_PPS).'</d:principal-collection-set>'; // iOS Fix
+		$ext_prop .= '<d:principal-URL><d:href>'.\Smart::escape_html((string)\SMART_WEBDAV_CARDDAV_ABOOK_ACC).'</d:href></d:principal-URL>'; // iOS Fix
 		//--
 		switch((int)self::testIsAddressbookCollection($dav_vfs_path)) {
 			case 1: // addressbook
@@ -795,15 +796,15 @@ final class DavFsCardDav {
 				break;
 			case 2: // principal
 				$restype  .= '<d:principal/>';
-				$ext_prop .= '<card:addressbook-home-set><d:href>'.\Smart::escape_html((string)SMART_WEBDAV_CARDDAV_ABOOK_HOME).'</d:href></card:addressbook-home-set>';
+				$ext_prop .= '<card:addressbook-home-set><d:href>'.\Smart::escape_html((string)\SMART_WEBDAV_CARDDAV_ABOOK_HOME).'</d:href></card:addressbook-home-set>';
 				break;
 			default:
 				// nothing to add
 		} //end if
 		//--
-		return (array) [
+		return array(
 			'dav-resource-type' 		=> (string) \SmartModExtLib\Webdav\DavServer::DAV_RESOURCE_TYPE_COLLECTION,
-			'dav-request-path' 			=> (string) rtrim($dav_request_path, '/').'/',
+			'dav-request-path' 			=> (string) \rtrim($dav_request_path, '/').'/',
 			'dav-vfs-path' 				=> (string) $dav_vfs_path, // private
 			'date-creation-timestamp' 	=> (int) 	0, // \SmartFileSystem::get_file_ctime($dav_vfs_path), // currently is unused
 			'date-modified-timestamp' 	=> (int) 	\SmartFileSystem::get_file_mtime($dav_vfs_path),
@@ -812,7 +813,7 @@ final class DavFsCardDav {
 			'mime-type' 				=> (string) self::mimeTypeDir($dav_vfs_path),
 			'c-xml-restype' 			=> (string) $restype,
 			'c-xml-data' 				=> (string) $ext_prop
-		];
+		);
 		//--
 	} //END FUNCTION
 

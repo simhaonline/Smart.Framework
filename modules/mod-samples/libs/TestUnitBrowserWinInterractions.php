@@ -9,16 +9,16 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20191006
  *
  */
 final class TestUnitBrowserWinInterractions {
@@ -38,7 +38,7 @@ final class TestUnitBrowserWinInterractions {
 	//============================================================
 	public static function winModalPopupContentHtml() {
 		//--
-		return (string) '<div><h1>Interractions Test for Browser Window '.\Smart::escape_html(date('Y-m-d H:i:s')).'</h1></div>'.self::bttn_open_modal(true).' &nbsp;&nbsp;&nbsp; '.self::bttn_open_modal(false).'<br><br>'.self::bttn_open_popup(true).' &nbsp;&nbsp;&nbsp; '.self::bttn_open_popup(false).'<br><br>'.self::bttn_set_confirm_unload().' &nbsp;&nbsp;&nbsp; '.self::bttn_set_parent_refresh().'<br><br>'.self::bttn_close_modal_or_popup();
+		return (string) '<div><h1>Interractions Test for Browser Window '.\Smart::escape_html(\date('Y-m-d H:i:s')).'</h1></div>'.self::bttn_open_modal(true).' &nbsp;&nbsp;&nbsp; '.self::bttn_open_modal(false).'<br><br>'.self::bttn_open_popup(true).' &nbsp;&nbsp;&nbsp; '.self::bttn_open_popup(false).'<br><br>'.self::bttn_set_confirm_unload().' &nbsp;&nbsp;&nbsp; '.self::bttn_set_parent_refresh().'<br><br>'.self::bttn_close_modal_or_popup();
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -81,7 +81,7 @@ final class TestUnitBrowserWinInterractions {
 			$btn = 'Open Modal or PopUp (auto)';
 		} //end if else
 		//--
-		return (string) '<a class="ux-button ux-button-regular" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'  &nbsp; <i class="sfi sfi-terminal"></i>'.'</a>';
+		return (string) '<a class="ux-button ux-button-regular" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'  &nbsp; <i class="sfi sfi-terminal"></i>'.'</a>';
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -103,7 +103,7 @@ final class TestUnitBrowserWinInterractions {
 			$btn = 'Open PopUp or Modal (auto)';
 		} //end if else
 		//--
-		return (string) '<a class="ux-button ux-button-highlight" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'  &nbsp; <i class="sfi sfi-shift"></i>'.'</a>';
+		return (string) '<a class="ux-button ux-button-highlight" style="min-width:320px;" target="'.\Smart::escape_html($wname).'" href="'.\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.interractions'.'" onClick="SmartJS_BrowserUtils.PopUpLink(this.href, this.target, null, null, '.(int)$set.'); return false;">'.\Smart::escape_html($btn).'  &nbsp; <i class="sfi sfi-shift"></i>'.'</a>';
 		//--
 	} //END FUNCTION
 	//============================================================

@@ -9,16 +9,16 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20191006
  *
  */
 final class TestUnitCrypto {
@@ -43,37 +43,37 @@ final class TestUnitCrypto {
 		//--
 
 		//--
-		$unicode_text = "Unicode String [ ".time()." ]: @ Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム '".implode('', array_keys(\SmartUnicode::accented_chars()))." \" <p></p>
-		? & * ^ $ @ ! ` ~ % () [] {} | \\ / + - _ : ; , . #'".microtime().'#';
+		$unicode_text = "Unicode String [ ".\time()." ]: @ Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム '".\implode('', \array_keys(\SmartUnicode::accented_chars()))." \" <p></p>
+		? & * ^ $ @ ! ` ~ % () [] {} | \\ / + - _ : ; , . #'".\microtime().'#';
 		//--
 
 		//--
-		$b64enc = (string) base64_encode((string)$unicode_text);
-		$b64dec = (string) base64_decode((string)$b64enc);
+		$b64enc = (string) \base64_encode((string)$unicode_text);
+		$b64dec = (string) \base64_decode((string)$b64enc);
 		//--
 
 		//--
-		$bin2hex = (string) strtoupper(bin2hex((string)$unicode_text));
-		$hex2bin = (string) hex2bin(strtolower(trim((string)$bin2hex)));
+		$bin2hex = (string) \strtoupper(\bin2hex((string)$unicode_text));
+		$hex2bin = (string) \hex2bin(\strtolower(\trim((string)$bin2hex)));
 		//--
 
 		//--
-		$hkey = 'TestUnit // This is a test key for Crypto Cipher ...'.time().$unicode_text;
+		$hkey = 'TestUnit // This is a test key for Crypto Cipher ...'.\time().$unicode_text;
 		//--
 		$he_enc = \SmartUtils::crypto_encrypt($unicode_text, $hkey);
 		$he_dec = \SmartUtils::crypto_decrypt($he_enc, $hkey);
 		//--
-		if(((string)$he_dec != (string)$unicode_text) OR (sha1($he_dec) != \SmartHashCrypto::sha1($unicode_text))) {
+		if(((string)$he_dec != (string)$unicode_text) OR (\sha1($he_dec) != \SmartHashCrypto::sha1($unicode_text))) {
 			\Smart::raise_error('TestUnit FAILED in '.__METHOD__.'() :: Crypto Cipher test', 'TestUnit: Crypto Cipher test failed ...');
 			return;
 		} //end if
 		//--
 
 		//--
-		$bf_key = \SmartHashCrypto::sha512('TestUnit // This is a test key for Blowfish ...'.time().$unicode_text);
+		$bf_key = \SmartHashCrypto::sha512('TestUnit // This is a test key for Blowfish ...'.\time().$unicode_text);
 		$bf_enc = \SmartUtils::crypto_blowfish_encrypt($unicode_text, $bf_key);
 		$bf_dec = \SmartUtils::crypto_blowfish_decrypt($bf_enc, $bf_key);
-		if(((string)$bf_dec != (string)$unicode_text) OR (sha1($bf_dec) != sha1($unicode_text))) {
+		if(((string)$bf_dec != (string)$unicode_text) OR ((string)\sha1($bf_dec) != (string)\sha1($unicode_text))) {
 			\Smart::raise_error('TestUnit FAILED in '.__METHOD__.'() :: Crypto Blowfish test', 'TestUnit: Blowfish test failed ...');
 			return;
 		} //end if
@@ -82,7 +82,7 @@ final class TestUnitCrypto {
 		//--
 		$arch_lzs = \SmartArchiverLZS::compressToBase64($unicode_text);
 		$unarch_lzs = \SmartArchiverLZS::decompressFromBase64($arch_lzs);
-		if(((string)$unarch_lzs != (string)$unicode_text) OR (sha1($unarch_lzs) != sha1($unicode_text))) {
+		if(((string)$unarch_lzs != (string)$unicode_text) OR ((string)\sha1($unarch_lzs) != (string)\sha1($unicode_text))) {
 			\Smart::raise_error('TestUnit FAILED in '.__METHOD__.'() :: Crypto Arch-LZS test', 'TestUnit: Arch-LZS test failed ...');
 			return;
 		} //end if
@@ -91,14 +91,14 @@ final class TestUnitCrypto {
 		//--
 		$arch_bf_lzs = \SmartArchiverLZS::compressToBase64($bf_enc);
 		$unarch_bf_lzs = \SmartArchiverLZS::decompressFromBase64($arch_bf_lzs);
-		if(((string)$unarch_bf_lzs != (string)$bf_enc) OR (sha1($unarch_bf_lzs) != sha1($bf_enc))) {
+		if(((string)$unarch_bf_lzs != (string)$bf_enc) OR ((string)\sha1($unarch_bf_lzs) != (string)\sha1($bf_enc))) {
 			\Smart::raise_error('TestUnit FAILED in '.__METHOD__.'() :: Crypto Blowfish-Arch-LZS test', 'TestUnit: Blowfish-Arch-LZS test failed ...');
 			return;
 		} //end if
 		//--
 
 		//--
-		$time = 'TOTAL TIME was: '.(microtime(true) - $time);
+		$time = 'TOTAL TIME was: '.(\microtime(true) - $time);
 		//--
 
 		//--

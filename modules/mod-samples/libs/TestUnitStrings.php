@@ -9,16 +9,16 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.20190221
+ * @version 	v.20191006
  *
  */
 final class TestUnitStrings {
@@ -51,7 +51,7 @@ final class TestUnitStrings {
 	public static function testUnicode($str_php, $str_js) {
 
 		//--
-		$time = microtime(true);
+		$time = \microtime(true);
 		//--
 
 		//--
@@ -93,12 +93,12 @@ final class TestUnitStrings {
 			} //end if
 		} //end if
 		//--
-		if(defined('SMART_FRAMEWORK_SECURITY_FILTER_INPUT')) {
-			if((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT != '') {
+		if(\defined('\\SMART_FRAMEWORK_SECURITY_FILTER_INPUT')) {
+			if((string)\SMART_FRAMEWORK_SECURITY_FILTER_INPUT != '') {
 				if((string)$err == '') {
 					$the_test = 'Unicode Input Filter Regex - Smart.Framework Security';
 					$tests[] = $the_test;
-					if(preg_match((string)SMART_FRAMEWORK_SECURITY_FILTER_INPUT, (string)self::testStr())) {
+					if(\preg_match((string)\SMART_FRAMEWORK_SECURITY_FILTER_INPUT, (string)self::testStr())) {
 						$err = 'ERROR: '.$the_test.' FAILED ...';
 					} //end if
 				} //end if
@@ -116,32 +116,32 @@ final class TestUnitStrings {
 		if((string)$err == '') {
 			$the_test = 'Unicode Regex Test Positive';
 			$tests[] = $the_test;
-			if(!preg_match((string)$regex_positive.'u', (string)$unicode_text)) {
+			if(!\preg_match((string)$regex_positive.'u', (string)$unicode_text)) {
 				$err = 'ERROR: '.$the_test.' FAILED (1) ...';
-			} elseif(preg_match((string)$regex_positive, (string)$unicode_text)) {
+			} elseif(\preg_match((string)$regex_positive, (string)$unicode_text)) {
 				$err = 'ERROR: '.$the_test.' FAILED (2) ...';
 			} //end if
 		} //end if
 		if((string)$err == '') {
 			$the_test = 'Unicode Regex Test Negative';
 			$tests[] = $the_test;
-			if(preg_match((string)$regex_negative.'u', (string)$unicode_text)) {
+			if(\preg_match((string)$regex_negative.'u', (string)$unicode_text)) {
 				$err = 'ERROR: '.$the_test.' FAILED (1) ...';
-			} elseif(!preg_match((string)$regex_negative, (string)$unicode_text)) {
+			} elseif(!\preg_match((string)$regex_negative, (string)$unicode_text)) {
 				$err = 'ERROR: '.$the_test.' FAILED (2) ...';
 			} //end if
 		} //end if
 		if((string)$err == '') {
 			$the_test = 'Deaccented ISO Regex Test Positive';
 			$tests[] = $the_test;
-			if(!preg_match((string)$regex_positive, (string)\SmartUnicode::deaccent_str($unicode_text))) {
+			if(!\preg_match((string)$regex_positive, (string)\SmartUnicode::deaccent_str($unicode_text))) {
 				$err = 'ERROR: '.$the_test.' FAILED ...';
 			} //end if
 		} //end if
 		if((string)$err == '') {
 			$the_test = 'Deaccented ISO Regex Test Negative';
 			$tests[] = $the_test;
-			if(preg_match((string)$regex_negative, (string)\SmartUnicode::deaccent_str($unicode_text))) {
+			if(\preg_match((string)$regex_negative, (string)\SmartUnicode::deaccent_str($unicode_text))) {
 				$err = 'ERROR: '.$the_test.' FAILED ...';
 			} //end if
 		} //end if
@@ -299,19 +299,19 @@ final class TestUnitStrings {
 				$unicode_text => 'Unicode as Key',
 				'line3' => ['A' => 'b', 100, 'Thousand'],
 				'line4' => [1, 0.2, 3.0001],
-				'line5' => date('Y-m-d H:i:s')
+				'line5' => \date('Y-m-d H:i:s')
 			);
 			$test_yaml = (string) '# start YAML (to test also comments)'."\n".(new \SmartYamlConverter())->compose($test_arr)."\n".'# end YAML';
 			$test_parr = (new \SmartYamlConverter())->parse($test_yaml);
 			if($test_arr !== $test_parr) {
-				$err = 'ERROR: '.$the_test.' FAILED ...'.' #ORIGINAL Array ['.print_r($test_arr,1).']'."\n\n".'#YAML Array (from YAML String): '.print_r($test_parr,1)."\n\n".'#YAML String (from ORIGINAL Array): '."\n".$test_yaml;
+				$err = 'ERROR: '.$the_test.' FAILED ...'.' #ORIGINAL Array ['.\print_r($test_arr,1).']'."\n\n".'#YAML Array (from YAML String): '.\print_r($test_parr,1)."\n\n".'#YAML String (from ORIGINAL Array): '."\n".$test_yaml;
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
 			$the_test = 'XML Unicode Test: Compose ArrayToXML / Format+Validate / XMLToArray :: Simple / Extended';
-			if(class_exists('DOMDocument')) {
-				$the_test .= ', DomXML';
+			if(\class_exists('\\DOMDocument')) {
+				$the_test .= '/ DomXML';
 			} //end if
 			$tests[] = $the_test;
 			$test_arr = array(
@@ -320,43 +320,43 @@ final class TestUnitStrings {
 				'line2' => '<Unicode> ("long") \'String\': '.$unicode_text.' '.\SmartUnicode::str_toupper($unicode_text).' '.$unicode_text.' '.\SmartUnicode::str_tolower($unicode_text).' '.$unicode_text.' '.\SmartUnicode::deaccent_str($unicode_text).' '.$unicode_text,
 				'line3' => ['A' => 'b', 'c' => 'D', 'e' => '', 'F' => ['g' => 'H', 'i' => '']],
 				'line4' => '',
-				'line5' => date('Y-m-d H:i:s'),
-				'Line6' => \SmartHashCrypto::sha1((string)time()),
-				'linE7' => \SmartHashCrypto::sha256((string)time()),
-				'LiNe8' => \SmartHashCrypto::sha384((string)time()),
-				'LiNE9' => \SmartHashCrypto::sha512((string)time())
+				'line5' => \date('Y-m-d H:i:s'),
+				'Line6' => \SmartHashCrypto::sha1((string)\time()),
+				'linE7' => \SmartHashCrypto::sha256((string)\time()),
+				'LiNe8' => \SmartHashCrypto::sha384((string)\time()),
+				'LiNE9' => \SmartHashCrypto::sha512((string)\time())
 			);
 			$test_xml = (string) (new \SmartXmlComposer())->transform($test_arr, 'xml'); // array to xml
 			$test_xml = (string) (new \SmartXmlParser())->format($test_xml); // simple and extended
-			if(class_exists('DOMDocument')) {
+			if(\class_exists('\\DOMDocument')) {
 				$test_xml = (string) (new \SmartXmlParser('domxml'))->format($test_xml); // domxml
 			} //end if
 			$test_parr = (new \SmartXmlParser())->transform($test_xml); // simple : xml to array
-			if(!is_array($test_parr)) {
+			if(!\is_array($test_parr)) {
 				$test_parr = array();
 			} //end if
 			if($test_arr !== $test_parr['xml']) {
-				$err = 'ERROR: '.$the_test.' FAILED ...'.' #ORIGINAL Array ['.print_r($test_arr,1).']'."\n\n".'#XML Array (from XML String): '.print_r($test_parr['xml'],1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
+				$err = 'ERROR: '.$the_test.' FAILED ...'.' #ORIGINAL Array ['.\print_r($test_arr,1).']'."\n\n".'#XML Array (from XML String): '.\print_r($test_parr['xml'],1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
 			} //end if
 			$test_parr = (new \SmartXmlParser('extended'))->transform($test_xml); // extended : xml to array
-			if(!is_array($test_parr)) {
+			if(!\is_array($test_parr)) {
 				$test_parr = array();
 			} //end if
 			if((\Smart::array_size($test_parr['xml']) <= 0) OR (\Smart::array_size($test_parr['xml'][0]) <= 0) OR (\Smart::array_size($test_parr['xml'][0]['line2']) <= 0) OR ((string)$test_parr['xml'][0]['line2'][0] != (string)$test_arr['line2'])) {
-				$err = 'ERROR: '.$the_test.' EXTENDED FAILED ...'.'#XML Array (from XML String): '.print_r($test_parr['xml'],1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
+				$err = 'ERROR: '.$the_test.' EXTENDED FAILED ...'.'#XML Array (from XML String): '.\print_r($test_parr['xml'],1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
 			} //end if
-			if(class_exists('DOMDocument')) {
+			if(\class_exists('\\DOMDocument')) {
 				$test_parr = (new \SmartXmlParser('domxml'))->transform($test_xml); // domxml : xml to array
-				if(!is_array($test_parr)) {
+				if(!\is_array($test_parr)) {
 					$test_parr = array();
 				} //end if
 				if(((string)$test_parr['@root'] != 'xml') OR ((string)$test_parr['line2'] != (string)$test_arr['line2'])) {
-					$err = 'ERROR: '.$the_test.' EXTENDED FAILED ...'.'#XML Array (from XML String): '.print_r($test_parr,1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
+					$err = 'ERROR: '.$the_test.' EXTENDED FAILED ...'.'#XML Array (from XML String): '.\print_r($test_parr,1)."\n\n".'#XML String (from ORIGINAL Array): '."\n".$test_xml;
 				} //end if
 			} //end if
 		} //end if
 		//--
-		$the_random_unicode_text = (string) sha1($unicode_text.\Smart::random_number(1000,9999)).'-'.$unicode_text." \r\n\t".'-'.\Smart::uuid_10_num().'-'.\Smart::uuid_10_str().'-'.\Smart::uuid_10_seq();
+		$the_random_unicode_text = (string) \sha1($unicode_text.\Smart::random_number(1000,9999)).'-'.$unicode_text." \r\n\t".'-'.\Smart::uuid_10_num().'-'.\Smart::uuid_10_str().'-'.\Smart::uuid_10_seq();
 		//--
 		if((string)$err == '') {
 			$the_test = 'Data: Archive / Unarchive';
@@ -432,7 +432,7 @@ final class TestUnitStrings {
 			//--
 			foreach((array)$arr_regex as $key => $val) {
 				//--
-				if(is_array($val)) {
+				if(\is_array($val)) {
 					for($i=0; $i<\Smart::array_size($val); $i++) {
 						$the_test = 'Regex Validate Positive (#'.$i.'): '.$key.' ['.$val[$i].']';
 						$tests[] = $the_test;
@@ -440,7 +440,7 @@ final class TestUnitStrings {
 							$err = 'ERROR: '.$the_test.' FAILED ...';
 							break;
 						} //end if
-						if((stripos((string)$key, 'number-') === 0) AND (stripos((string)$key, 'number-list-') === false)) {
+						if((\stripos((string)$key, 'number-') === 0) AND (\stripos((string)$key, 'number-list-') === false)) {
 							$the_test = 'Regex Validate Numeric Positive (#'.$i.'): '.$key.' ['.$val[$i].']';
 							$tests[] = $the_test;
 							if(\SmartValidator::validate_numeric_integer_or_decimal_values($val[$i], $key) !== true) {
@@ -455,7 +455,7 @@ final class TestUnitStrings {
 					if(\SmartValidator::validate_string($val, $key) !== true) {
 						$err = 'ERROR: '.$the_test.' FAILED ...';
 					} //end if
-					if((stripos((string)$key, 'number-') === 0) AND (stripos((string)$key, 'number-list-') === false)) {
+					if((\stripos((string)$key, 'number-') === 0) AND (\stripos((string)$key, 'number-list-') === false)) {
 						$the_test = 'Regex Validate Numeric Positive: '.$key.' ['.$val.']';
 						$tests[] = $the_test;
 						if(\SmartValidator::validate_numeric_integer_or_decimal_values($val, $key) !== true) {
@@ -486,7 +486,7 @@ final class TestUnitStrings {
 			//--
 			foreach((array)$arr_regex as $key => $val) {
 				//--
-				if(is_array($val)) {
+				if(\is_array($val)) {
 					for($i=0; $i<\Smart::array_size($val); $i++) {
 						$the_test = 'Regex Validate Negative (#'.$i.'): '.$key.' ['.$val[$i].']';
 						$tests[] = $the_test;
@@ -512,7 +512,7 @@ final class TestUnitStrings {
 		} //end if
 
 		//--
-		$time = 'TOTAL TIME was: '.(microtime(true) - $time);
+		$time = 'TOTAL TIME was: '.(\microtime(true) - $time);
 		//--
 		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
 		//--
@@ -522,7 +522,7 @@ final class TestUnitStrings {
 		if((string)$err == '') {
 			$img_sign  = 'lib/framework/img/sign-info.svg';
 			$text_main = '<span style="color:#83B953;">Test OK: PHP Unicode Strings.</span>';
-			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework Unicode String <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
+			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework Unicode String <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(\implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
 			$img_sign  = 'lib/framework/img/sign-error.svg';
 			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP Unicode Strings Test FAILED !</span>';

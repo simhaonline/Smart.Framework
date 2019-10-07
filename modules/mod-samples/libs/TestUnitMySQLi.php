@@ -9,16 +9,16 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20191006
  *
  */
 final class TestUnitMySQLi {
@@ -39,7 +39,7 @@ final class TestUnitMySQLi {
 	public static function testMyServer() {
 
 		//--
-		if((!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS')) OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS !== true)) {
+		if((!\defined('\\SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS')) OR (\SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS !== true)) {
 			//--
 			return (string) \SmartComponents::operation_notice('Test Unit for MariaDB Server / MySQL is DISABLED ...');
 			//--
@@ -59,11 +59,11 @@ final class TestUnitMySQLi {
 		//--
 
 		//--
-		$time = microtime(true);
+		$time = \microtime(true);
 		//--
 
 		//--
-		$value = date('Y-m-d H:i:s');
+		$value = \date('Y-m-d H:i:s');
 		$comments = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド'.'-'.\Smart::random_number(1000,9999)."'";
 		//--
 
@@ -101,7 +101,7 @@ final class TestUnitMySQLi {
 		//--
 
 		//--
-		$variable = '"'.'Ș'."'".substr(\SmartMysqliDb::new_safe_id('uid10seq', 'variable', '_test_unit_db_server_tests'), 3, 7);
+		$variable = '"'.'Ș'."'".\substr(\SmartMysqliDb::new_safe_id('uid10seq', 'variable', '_test_unit_db_server_tests'), 3, 7);
 		//--
 
 		//--
@@ -194,7 +194,7 @@ final class TestUnitMySQLi {
 		if((string)$err == '') {
 			$tests[] = 'Read [ Non-Associative + Param Query ? ]';
 			$data = \SmartMysqliDb::read_data($quer_str, array($variable));
-			if(trim($data[0]) !== (string)$comments) {
+			if((string)\trim($data[0]) !== (string)$comments) {
 				$err = 'Read / Non-Associative Test #1 Failed, should return `'.$comments.'` but returned `'.$data[0].'`';
 			} //end if
 		} //end if
@@ -202,7 +202,7 @@ final class TestUnitMySQLi {
 			$tests[] = 'Read [ Non-Associative + Prepare Param Query $ ]';
 			$param_query = \SmartMysqliDb::prepare_param_query((string)$quer_str, [$variable]);
 			$data = \SmartMysqliDb::read_data((string)$param_query, 'Test Param Query');
-			if(trim($data[0]) !== (string)$comments) {
+			if((string)\trim($data[0]) !== (string)$comments) {
 				$err = 'Read / Non-Associative Test #2 Failed, should return `'.$comments.'` but returned `'.$data[0].'`';
 			} //end if
 		} //end if
@@ -210,7 +210,7 @@ final class TestUnitMySQLi {
 		if((string)$err == '') {
 			$tests[] = 'Read [ Associative: One-Row ]';
 			$data = \SmartMysqliDb::read_asdata($quer_str, [ $variable ]);
-			if(trim($data['comments']) !== (string)$comments) {
+			if((string)\trim($data['comments']) !== (string)$comments) {
 				$err = 'Read / Associative / One-Row Test Failed, should return `'.$comments.'` but returned `'.$data['comments'].'`';
 			} //end if
 		} //end if
@@ -218,7 +218,7 @@ final class TestUnitMySQLi {
 		if((string)$err == '') {
 			$tests[] = 'Read [ Associative: Multi-Rows ]';
 			$data = \SmartMysqliDb::read_adata($quer_str, [ $variable ]);
-			if(trim($data[0]['comments']) !== (string)$comments) {
+			if((string)\trim($data[0]['comments']) !== (string)$comments) {
 				$err = 'Read / Associative / Multi-Rows Test Failed, should return `'.$comments.'` but returned `'.$data[0]['comments'].'`';
 			} //end if
 		} //end if
@@ -273,7 +273,7 @@ final class TestUnitMySQLi {
 		//--
 
 		//--
-		$time = 'TOTAL TIME was: '.(microtime(true) - $time);
+		$time = 'TOTAL TIME was: '.(\microtime(true) - $time);
 		//--
 		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
 		//--
@@ -281,7 +281,7 @@ final class TestUnitMySQLi {
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
 			$text_main = '<span style="color:#83B953;">Test OK: PHP MySQLi.</span>';
-			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework MariaDB / MySQL Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
+			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework MariaDB / MySQL Server Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(\implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';
 			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP MySQLi Test FAILED !</span>';

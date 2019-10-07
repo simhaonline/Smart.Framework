@@ -9,16 +9,16 @@
 
 namespace SmartModExtLib\Samples;
 
-//----------------------------------------------------- PREVENT DIRECT EXECUTION
-if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
-	@http_response_code(500);
-	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
+//----------------------------------------------------- PREVENT DIRECT EXECUTION (Namespace)
+if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
+	@\http_response_code(500);
+	die('Invalid Runtime Status in PHP Script: '.@\basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 
 //=====================================================================================
-//===================================================================================== CLASS START
+//===================================================================================== CLASS START [OK: NAMESPACE]
 //=====================================================================================
 
 
@@ -28,7 +28,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  * @access 		private
  * @internal
  *
- * @version 	v.181221
+ * @version 	v.20191006
  *
  */
 final class TestUnitFileSystem {
@@ -39,7 +39,7 @@ final class TestUnitFileSystem {
 	public static function testFs() {
 
 		//--
-		if((!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS')) OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS !== true)) {
+		if((!\defined('\\SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS')) OR (\SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS !== true)) {
 			//--
 			return (string) \SmartComponents::operation_notice('Test Unit File System Tests are DISABLED ...');
 			//--
@@ -47,7 +47,7 @@ final class TestUnitFileSystem {
 		//--
 
 		//--
-		$time = microtime(true);
+		$time = \microtime(true);
 		//--
 
 		//--
@@ -56,7 +56,7 @@ final class TestUnitFileSystem {
 		//--
 
 		//--
-		if((string)DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
+		if((string)\DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
 			$tests[] = '##### FileSystem OPERATIONS / TESTS - ALL: #####';
 		} else {
 			$tests[] = '##### FileSystem OPERATIONS / TESTS *** PARTIAL SUPPORT ONLY (BY PLATFORM) ***: #####';
@@ -64,9 +64,9 @@ final class TestUnitFileSystem {
 		//--
 
 		//--
-		$test_string = '#START#'."\n".'グッド'."\n".'SmartFramework/Test/FileSystem'."\n".time()."\n".SMART_FRAMEWORK_HTACCESS_NOINDEXING.SMART_FRAMEWORK_HTACCESS_FORBIDDEN.SMART_FRAMEWORK_HTACCESS_NOEXECUTION."\n".'#END#';
+		$test_string = '#START#'."\n".'グッド'."\n".'SmartFramework/Test/FileSystem'."\n".\time()."\n".\SMART_FRAMEWORK_HTACCESS_NOINDEXING.\SMART_FRAMEWORK_HTACCESS_FORBIDDEN.\SMART_FRAMEWORK_HTACCESS_NOEXECUTION."\n".'#END#';
 		$test_str_cksum = \SmartHashCrypto::sha512($test_string);
-		$long_prefixed = \SmartFileSysUtils::prefixed_sha1_path(sha1(time()));
+		$long_prefixed = \SmartFileSysUtils::prefixed_sha1_path(\sha1(\time()));
 		$short_prefixed = \SmartFileSysUtils::prefixed_uuid10_dir(\Smart::uuid_10_seq());
 		//--
 		$the_base_folder = 'tmp/tests/';
@@ -106,7 +106,7 @@ final class TestUnitFileSystem {
 			if(
 				((string)\Smart::safe_pathname((string)$get_folder) !== (string)$get_folder) OR
 				((string)\Smart::safe_pathname((string)$the_copy_file) !== (string)$the_copy_file) OR
-				((string)\Smart::safe_pathname((string)\SmartFileSysUtils::get_dir_from_path($the_copy_file)) !== (string)rtrim($the_folder,'/')) OR
+				((string)\Smart::safe_pathname((string)\SmartFileSysUtils::get_dir_from_path($the_copy_file)) !== (string)\rtrim($the_folder,'/')) OR
 				((string)\Smart::safe_filename((string)\SmartFileSysUtils::get_file_name_from_path($the_copy_file)) !== (string)$the_base_file.$the_sufx_copy) OR
 				((string)\Smart::safe_pathname('.') !== '') OR
 				((string)\Smart::safe_filename('.') !== '') OR
@@ -322,7 +322,7 @@ final class TestUnitFileSystem {
 			} //end if
 		} //end if
 		//--
-		if((string)DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
+		if((string)\DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
 			if((string)$err == '') {
 				$the_test = 'CREATE BROKEN FILE LINK FOR DELETION (1): link_create() : as : '.$the_broken_link;
 				$tests[] = $the_test;
@@ -467,7 +467,7 @@ final class TestUnitFileSystem {
 			$the_test = 'FILE GET MTIME: get_file_mtime() / before append : '.$the_file;
 			$tests[] = $the_test;
 			$result = \SmartFileSystem::get_file_mtime($the_file);
-			if(!is_int($result) OR ((int)$result <= 0) OR ((int)$result < (int)time())) {
+			if(!\is_int($result) OR ((int)$result <= 0) OR ((int)$result < (int)\time())) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
 		} //end if
@@ -475,7 +475,7 @@ final class TestUnitFileSystem {
 			$the_test = 'FILE GET SIZE: get_file_size() / before append : '.$the_file;
 			$tests[] = $the_test;
 			$result = \SmartFileSystem::get_file_size($the_file);
-			if(!is_int($result) OR ((int)$result <= 0) OR ((int)$result != (int)strlen((string)$test_string))) {
+			if(!\is_int($result) OR ((int)$result <= 0) OR ((int)$result != (int)\strlen((string)$test_string))) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
 		} //end if
@@ -506,7 +506,7 @@ final class TestUnitFileSystem {
 		//--
 
 		//--
-		if((string)DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
+		if((string)\DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
 			if((string)$err == '') {
 				$the_test = 'FILE WRITE TO A BROKEN LINK: write() : '.$the_broken_link;
 				$tests[] = $the_test;
@@ -580,7 +580,7 @@ final class TestUnitFileSystem {
 			$the_test = 'FILE READ: read() Partial Size, First 11 bytes: '.$the_file;
 			$tests[] = $the_test;
 			$result = (string) \SmartFileSystem::read($the_file, 11);
-			if((strlen($result) !== 11) OR ((string)sha1($result) != (string)\SmartHashCrypto::sha1(substr($test_string, 0, 11)))) { // here we read bytes so substr() not \SmartUnicode::sub_str() should be used
+			if((\strlen($result) !== 11) OR ((string)\sha1($result) != (string)\SmartHashCrypto::sha1(\substr($test_string, 0, 11)))) { // here we read bytes so \substr() not \SmartUnicode::sub_str() should be used
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if
 		} //end if
@@ -667,7 +667,7 @@ final class TestUnitFileSystem {
 				$arr_diff = array();
 				$arr_diff = \SmartFileSystem::compare_folders('_scripts', $the_folder.'_scripts', true, true);
 				if(\Smart::array_size($arr_diff) > 0) {
-					$err = 'ERROR :: '.$the_test.' #DIFFERENCES='.print_r($arr_diff,1);
+					$err = 'ERROR :: '.$the_test.' #DIFFERENCES='.\print_r($arr_diff,1);
 				} //end if
 			} //end if
 			//--
@@ -701,7 +701,7 @@ final class TestUnitFileSystem {
 			$arr_diff = array();
 			$arr_diff = \SmartFileSystem::compare_folders($the_folder, $the_move_folder, true, true);
 			if(\Smart::array_size($arr_diff) > 0) {
-				$err = 'ERROR :: '.$the_test.' #DIFFERENCES='.print_r($arr_diff,1);
+				$err = 'ERROR :: '.$the_test.' #DIFFERENCES='.\print_r($arr_diff,1);
 			} //end if
 		} //end if
 		//--
@@ -726,7 +726,7 @@ final class TestUnitFileSystem {
 		//--
 
 		//--
-		$time = 'TOTAL TIME was: '.(microtime(true) - $time);
+		$time = 'TOTAL TIME was: '.(\microtime(true) - $time);
 		//--
 		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
 		//--
@@ -736,7 +736,7 @@ final class TestUnitFileSystem {
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
 			$text_main = '<span style="color:#83B953;">Test OK: PHP FileSystem Operations.</span>';
-			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework FS Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><div style="font-size:14px; white-space:nowrap;">'.\Smart::nl_2_br(\Smart::escape_html(implode("\n".'* ', $tests)."\n".$end_tests)).'</div>';
+			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework FS Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><div style="font-size:14px; white-space:nowrap;">'.\Smart::nl_2_br(\Smart::escape_html(\implode("\n".'* ', $tests)."\n".$end_tests)).'</div>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';
 			$text_main = '<span style="color:#FF5500;">An ERROR occured ... PHP FileSystem Operations Test FAILED !</span>';
