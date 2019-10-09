@@ -40,7 +40,7 @@ if(\headers_sent()) {
  * @access 		private
  * @internal
  *
- * @version 	v.20191002
+ * @version 	v.20191009
  *
  */
 final class SimpleAuthAdminsHandler {

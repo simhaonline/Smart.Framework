@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class SqAuthAdmins {
 
 	// ->
-	// v.20191002
+	// v.20191009
 
 	private $db;
 
@@ -509,42 +509,49 @@ final class SqAuthAdmins {
 		if(\Smart::array_size($check_eml) > 0) {
 			$out = -2; // duplicate email
 		} else {
-			$arr = [
-				'modif' 	=> \time(),
-				'name_f' 	=> (string) $data['name_f'],
-				'name_l' 	=> (string) $data['name_l'],
-				'email' 	=>          $data['email'] // mixed: false (NULL) or string
-			];
-			if((string)$id != (string)\SmartAuth::get_login_id()) {
-				$arr['priv'] = (array) $data['priv'];
-			} //end if
-			if(array_key_exists('priv', $arr)) {
-				$wr = $this->db->write_data(
-					'UPDATE `admins` '.$this->db->prepare_statement(
-						(array) $arr,
-						'update'
-					).' '.$this->db->prepare_param_query(
-						'WHERE ((`id` = ?) AND (`restrict` NOT LIKE ?))',
-						[
-							(string) $id,
-							(string) '%<modify>%' // {{{SYNC-EDIT-PRIVILEGES}}}
-						]
-					)
-				);
+			$test = (array) $this->getById($id);
+			if(\Smart::array_size($test) <= 0) {
+				$out = -3; // invalid account id
 			} else {
-				$wr = $this->db->write_data(
-					'UPDATE `admins` '.$this->db->prepare_statement(
-						(array) $arr,
-						'update'
-					).' '.$this->db->prepare_param_query(
-						'WHERE (`id` = ?)',
-						[
-							(string) $id
-						]
-					)
-				);
+				$arr = [
+					'modif' 	=> \time(),
+					'name_f' 	=> (string) $data['name_f'],
+					'name_l' 	=> (string) $data['name_l'],
+					'email' 	=>          $data['email'] // mixed: false (NULL) or string
+				];
+				if((string)$id != (string)\SmartAuth::get_login_id()) {
+					if(\strpos((string)$test['restrict'], '<modify>') === false) {
+						$arr['priv'] = (array) $data['priv'];
+					} //end if
+				} //end if
+				if(\array_key_exists('priv', $arr)) {
+					$wr = $this->db->write_data(
+						'UPDATE `admins` '.$this->db->prepare_statement(
+							(array) $arr,
+							'update'
+						).' '.$this->db->prepare_param_query(
+							'WHERE ((`id` = ?) AND (`restrict` NOT LIKE ?))',
+							[
+								(string) $id,
+								(string) '%<modify>%' // {{{SYNC-EDIT-PRIVILEGES}}}
+							]
+						)
+					);
+				} else {
+					$wr = $this->db->write_data(
+						'UPDATE `admins` '.$this->db->prepare_statement(
+							(array) $arr,
+							'update'
+						).' '.$this->db->prepare_param_query(
+							'WHERE (`id` = ?)',
+							[
+								(string) $id
+							]
+						)
+					);
+				} //end if else
+				$out = $wr[1];
 			} //end if else
-			$out = $wr[1];
 		} //end if else
 		//--
 		$this->db->write_data('COMMIT');

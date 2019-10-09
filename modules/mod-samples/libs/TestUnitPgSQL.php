@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191006
+ * @version 	v.20191009
  *
  */
 final class TestUnitPgSQL {
@@ -113,11 +113,58 @@ final class TestUnitPgSQL {
 			} //end if
 		} //end if
 		//--
-
+		if((string)$err == '') {
+			$tests[] = 'Write [ Insert Ignore ]';
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.\SmartPgsqlDb::prepare_statement(['variable'=>$variable, 'value'=>$value, 'comments'=>$comments], 'insert'); //.' RETURNING "value", "variable"'; // write_igdata() does not yet support RETURNING as it runs in an anonymous code block that cannot return
+			$data = \SmartPgsqlDb::write_igdata($quer_str, 'Test Write Insert');
+			if($data[1] !== 1) {
+				$err = 'Write / Insert Ignore Test Failed, should return 1 but returned: '.$data[1];
+			} //end if
+		} //end if
+		if((string)$err == '') {
+			$tests[] = 'Truncate Table';
+			$quer_str = 'TRUNCATE TABLE "public"."_test_unit_db_server_tests"';
+			$data = \SmartPgsqlDb::write_data($quer_str, 'Test Write Insert');
+			if($data[1] !== 0) {
+				$err = 'Truncate Table Test Failed, should return 0 but returned: '.$data[1];
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Write [ Insert, w. returning Data ]';
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.\SmartPgsqlDb::prepare_statement(['variable'=>$variable, 'value'=>$value, 'comments'=>$comments], 'insert').' RETURNING "variable", "value"';
+			$data = \SmartPgsqlDb::write_data($quer_str, 'Test Write Insert');
+			if($data[1] !== 1) {
+				$err = 'Write / Insert Test Failed, should return 1 but returned: '.$data[1];
+			} //end if
+			if((string)$err == '') {
+				if(\Smart::array_size($data[2]) !== 2) {
+					$err = 'Write / Insert Test Failed, returning data is invalid: '.print_r($data[2],1);
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				if((string)$data[2][0] != (string)$variable) {
+					$err = 'Write / Insert Test Failed, returning data[0] should be: '.$variable.' but is: '.$data[2][0];
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				if((string)$data[2][1] != (string)$value) {
+					$err = 'Write / Insert Test Failed, returning data[0] should be: '.$value.' but is: '.$data[2][1];
+				} //end if
+			} //end if
+		} //end if
+		if((string)$err == '') {
+			$tests[] = 'Truncate Table';
+			$quer_str = 'TRUNCATE TABLE "public"."_test_unit_db_server_tests"';
+			$data = \SmartPgsqlDb::write_data($quer_str, 'Test Write Insert');
+			if($data[1] !== 0) {
+				$err = 'Truncate Table Test Failed, should return 0 but returned: '.$data[1];
+			} //end if
+		} //end if
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Write [ Insert ]';
-			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.\SmartPgsqlDb::prepare_statement(['variable'=>$variable, 'value'=>$value, 'comments'=>$comments], 'insert');
+			$quer_str = 'INSERT INTO "public"."_test_unit_db_server_tests" '.\SmartPgsqlDb::prepare_statement(['variable'=>$variable, 'value'=>$value, 'comments'=>$comments], 'insert'); //.' RETURNING "value", "variable"';
 			$data = \SmartPgsqlDb::write_data($quer_str, 'Test Write Insert');
 			if($data[1] !== 1) {
 				$err = 'Write / Insert Test Failed, should return 1 but returned: '.$data[1];

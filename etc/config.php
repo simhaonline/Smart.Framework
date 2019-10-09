@@ -40,7 +40,7 @@ $languages = [ 'en' => '[EN]' ];											// default associative array of avail
 //---------------------------------------
 
 
-//--------------------------------------- MAIL SEND (SMTP)
+//--------------------------------------- MAIL SEND (SMTP) related configuration
 /*
 $configs['sendmail']['server-mx-domain'] 	= 'yourdomain.tld';				// mx hello domain ; this is used for smtp send validations via HELO method, can be different from the server domain
 $configs['sendmail']['server-host'] 		= 'yourdomain.tld';				// `` | SMTP Server Host (IP or Domain)
@@ -59,15 +59,16 @@ $configs['sendmail']['log-messages']		= 'no';							// `no` | `yes` :: // Log Se
 //===== NOTICE on DB Connectors:
 //
 //		The standard DB connectors includded in Smart.Framework are available to config below, in this config file:
-//			* Redis (Persistent Caching memory Server)
-// 			* MongoDB (NoSQL, BigData Server ; requires the MongoDB PHP extensions available in PECL)
+//			* Redis (Persistent Caching memory Server / Redis based sessions / KeyStore)
+// 			* MongoDB (NoSQL, BigData Server ; requires the MongoDB PHP extension available via PECL)
 // 			* PostgreSQL (SQL Server w. many advanced features incl. jsonb ... ; requires the PHP PgSQL extension)
-//			* MySQLi (popular SQL Server as MariaDB / MySQL / Percona ; requires the PHP MySQLi extension)
+//			* MySQLi (popular SQL Server as MariaDB / MySQL ; requires the PHP MySQLi extension)
 // 			* SQLite (embedded sql ; requires the PHP SQLite3 extension)
 //
 //		Other DB Connectors are available via Smart.Framework.Modules as:
 // 			* SoLR (includded separately in Smart.Framework.Modules/smart-extra-libs ; uncomment this line into modules/app/app-custom-bootstrap.inc.php # require_once('modules/smart-extra-libs/autoload.php') ; requires the PHP Solr extensions available in PECL)
 //			* Zend-DBAL (a PDO adapter for MySQL / PostgreSQL and SQLite ; includded separately in Smart.Framework.Modules/mod-dbal-zend)
+//			* RedBean-ORM (an easy to use ORM for MySQL / PostgreSQL / SQLite / CUBRID / Firebird/Interbase ; includded separately in Smart.Framework.Modules/mod-dbal-zend)
 //
 //=====
 
@@ -76,7 +77,7 @@ $configs['sqlite']['timeout'] 		= 60;									// connection timeout
 $configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugging)
 //---------------------------------------
 
-//--------------------------------------- DB Redis Server related configuration (used for Persistent Memory Cache but also for Redis Based Sessions)
+//--------------------------------------- Redis (Default) In-Memory/Key:Value-Store Server configuration (this is primary used for Persistent Memory Cache but can be also for Redis Based Sessions and more ...)
 /*
 $configs['redis']['server-host']	= '127.0.0.1';							// redis host
 $configs['redis']['server-port']	= 6379;									// redis port
@@ -87,7 +88,7 @@ $configs['redis']['slowtime']		= 0.0005;								// redis slow query time (for de
 */
 //---------------------------------------
 
-//--------------------------------------- DB MongoDB Server related configuration of Default MongoDB Server (standalone / cluster)
+//--------------------------------------- MongoDB (Default) BigData Server configuration (standalone or cluster)
 /*
 $configs['mongodb']['type'] 		= 'mongo-standalone'; 					// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
 $configs['mongodb']['server-host']	= '127.0.0.1';							// mongodb host
@@ -100,7 +101,7 @@ $configs['mongodb']['slowtime']		= 0.0035;								// mongodb slow query time (fo
 */
 //---------------------------------------
 
-//--------------------------------------- DB PostgreSQL Server related configuration of Default SQL Server
+//--------------------------------------- PostgreSQL (Default) DB Server configuration (standalone or cluster)
 /*
 $configs['pgsql']['type'] 			= 'postgresql'; 						// postgresql / pgpool2
 $configs['pgsql']['server-host'] 	= '127.0.0.1';							// postgresql host (default is 127.0.0.1)
@@ -114,10 +115,9 @@ $configs['pgsql']['transact']		= 'READ COMMITTED';						// postgresql session De
 */
 //---------------------------------------
 
-//--------------------------------------- DB MariaDB Server / MySQL / Percona related configuration of Default SQL Server
+//--------------------------------------- MariaDB/MySQL (Default) DB Server configuration (standalone or cluster)
 /*
-//-- MySQL related configuration of Default SQL Server (add this in etc/config.php)
-$configs['mysqli']['type'] 			= 'mariadb'; 							// mysql / mariadb / percona
+$configs['mysqli']['type'] 			= 'mariadb'; 							// mysql / mariadb
 $configs['mysqli']['server-host'] 	= '127.0.0.1';							// server host (default is 127.0.0.1)
 $configs['mysqli']['server-port']	= 3306;									// server port (default is 3306)
 $configs['mysqli']['dbname']		= 'smart_framework';					// database name
@@ -126,7 +126,6 @@ $configs['mysqli']['password']		= base64_encode('root');				// server Base64-Enc
 $configs['mysqli']['timeout']		= 15;									// server connection timeout (how many seconds to wait for a valid MySQL Connection)
 $configs['mysqli']['slowtime']		= 0.0050; 								// server slow query time (for debugging) 0.0025 .. 0.0090
 $configs['mysqli']['transact']		= 'REPEATABLE READ';					// session Default Transaction Level: 'REPEATABLE READ' | 'READ COMMITTED' | '' to leave it as default
-//--
 */
 //---------------------------------------
 

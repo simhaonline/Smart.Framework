@@ -71,7 +71,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20190412
+ * @version 	v.20191009
  * @package 	Database:MySQL
  *
  */
@@ -952,7 +952,7 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
  * @param RESOURCE $y_connection				:: the connection
- * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ * @return ARRAY 								:: [ 0 => 'control-message', 1 => #affected-rows, 2 => #last-inserted-id(autoincrement)|0|null ]
  */
 public static function write_data($queryval, $params_or_title='', $y_connection='DEFAULT') {
 
@@ -1060,6 +1060,8 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//--
+	$last_insert_id = null;
+	//--
 	if((string)$error != '') {
 		//--
 		$message = 'errorsqlwriteoperation: '.$error;
@@ -1068,6 +1070,8 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 		return array($message, 0);
 		//--
 	} else {
+		//--
+		$last_insert_id = (string) @mysqli_insert_id($y_connection); // may return int as string if max int overflows
 		//--
 		$message = 'oksqlwriteoperation'; // this can be extended to detect extra notices
 		//--
@@ -1081,7 +1085,7 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//--
-	return array($message, Smart::format_number_int($affected, '+'));
+	return array($message, Smart::format_number_int($affected, '+'), $last_insert_id);
 	//--
 
 } //END FUNCTION
@@ -1760,7 +1764,7 @@ die(''); // just in case
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20190412
+ * @version 	v.20191009
  * @package 	Database:MySQL
  *
  */
@@ -1949,7 +1953,7 @@ public function read_asdata($queryval, $params_or_title='') {
  *
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
- * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ * @return ARRAY 								:: [ 0 => 'control-message', 1 => #affected-rows, 2 => #last-inserted-id(autoincrement)|0|null ]
  */
 public function write_data($queryval, $params_or_title='') {
 	//--

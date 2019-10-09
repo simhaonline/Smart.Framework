@@ -68,7 +68,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20190412
+ * @version 	v.20191009
  * @package 	Database:PostgreSQL
  *
  */
@@ -1141,7 +1141,7 @@ public static function read_asdata($queryval, $params_or_title='', $y_connection
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
  * @param RESOURCE $y_connection				:: the connection
- * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ * @return ARRAY 								:: [ 0 => 'control-message', 1 => #affected-rows, 2 => returning[0,..n]|bool|null ]
  */
 public static function write_data($queryval, $params_or_title='', $y_connection='DEFAULT') {
 
@@ -1152,7 +1152,7 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//-- samples
 	// $queryval = 'BEGIN'; // start transaction
 	// $queryval = 'UPDATE "tablename" SET "field" = \'value\' WHERE ("id_field" = \'val1\')';
-	// $queryval = 'INSERT INTO "tablename" ("desiredfield1", "desiredfield2") VALUES (\'val1\', \'val2\')';
+	// $queryval = 'INSERT INTO "tablename" ("desiredfield1", "desiredfield2") VALUES (\'val1\', \'val2\')'; // RETURNING "id"
 	// $queryval = 'DELETE FROM "tablename" WHERE ("id_field" = \'val1\')';
 	// $queryval = 'COMMIT'; // commit transaction (on success)
 	// $queryval = 'ROLLBACK'; // rollback transaction (on error)
@@ -1253,6 +1253,8 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//--
+	$record = null;
+	//--
 	if((string)$error != '') {
 		//--
 		$message = 'errorsqlwriteoperation: '.$error;
@@ -1262,7 +1264,7 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 		//--
 	} else {
 		//--
-		$record = @pg_fetch_row($result);
+		$record = @pg_fetch_row($result); // bool(false) OR array( 0 => id ) when using RETURNING "id"
 		//--
 		$message = 'oksqlwriteoperation'; // this can be extended to detect extra notices
 		//--
@@ -1274,7 +1276,7 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
 	//--
 
 	//--
-	return array($message, Smart::format_number_int($affected, '+'));
+	return array($message, Smart::format_number_int($affected, '+'), $record);
 	//--
 
 } //END FUNCTION
@@ -1299,7 +1301,7 @@ public static function write_data($queryval, $params_or_title='', $y_connection=
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
  * @param RESOURCE $y_connection				:: the connection
- * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ * @return ARRAY 								:: [ 0 => 'control-message', 1 => #affected-rows ]
  */
 public static function write_igdata($queryval, $params_or_title='', $y_connection='DEFAULT') {
 
@@ -1464,6 +1466,8 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 	//--
 
 	//--
+	$record = null;
+	//--
 	if((string)$error != '') {
 		//--
 		$message = 'errorsqlwriteoperation: '.$error;
@@ -1473,7 +1477,7 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 		//--
 	} else {
 		//--
-		$record = @pg_fetch_row($result);
+	//	$record = @pg_fetch_row($result); // bool(false) OR array( 0 => id ) when using RETURNING "id" (for PostgreSQL >= 9.5) ; for the complex plpgsql procedure there is not possible to return anything !!
 		//--
 		$message = 'oksqlwriteoperation'; // this can be extended to detect extra notices
 		//--
@@ -1487,7 +1491,7 @@ public static function write_igdata($queryval, $params_or_title='', $y_connectio
 	//--
 
 	//--
-	return array($message, Smart::format_number_int($affected, '+'));
+	return array($message, Smart::format_number_int($affected, '+'), $record);
 	//--
 
 } //END FUNCTION
@@ -2318,7 +2322,7 @@ return (string) $sql;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20190412
+ * @version 	v.20191009
  * @package 	Database:PostgreSQL
  *
  */
@@ -2587,7 +2591,7 @@ public function read_asdata($queryval, $params_or_title='') {
  *
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
- * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ * @return ARRAY 								:: [ 0 => 'control-message', 1 => #affected-rows, 2 => returning[0,..n]|bool|null ]
  */
 public function write_data($queryval, $params_or_title='') {
 	//--
@@ -2612,7 +2616,7 @@ public function write_data($queryval, $params_or_title='') {
  *
  * @param STRING $queryval						:: the query
  * @param STRING $params_or_title 				:: *optional* array of parameters ($1, $2, ... $n) or query title for easy debugging
- * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ * @return ARRAY 								:: [ 0 => 'control-message', 1 => #affected-rows ]
  */
 public function write_igdata($queryval, $params_or_title='') {
 	//--

@@ -37,7 +37,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191006
+ * @version 	v.20191009
  *
  */
 final class TestUnitSQLite3Model {
@@ -1601,11 +1601,16 @@ final class TestUnitSQLite3Model {
 			]
 		);
 		$this->connection->write_data('UPDATE `sample_countries` '.$this->connection->prepare_statement($rows[0], 'update').' WHERE (`iso` IS NULL)'); // test
+		$iterator = 0;
 		foreach($rows as $key => $row) {
 			$row['uuid'] = (string) $this->connection->new_safe_id('uid10seq', 'uuid', 'sample_countries');
-			$this->connection->write_data(
+			$wr = (array) $this->connection->write_data(
 				'INSERT INTO `sample_countries` '.$this->connection->prepare_statement($row, 'insert')
 			);
+			$iterator++;
+			if($iterator != $wr[2]) {
+				\Smart::log_warning(__METHOD__.' :: Invalid LastInsertID at cycle #'.$iterator.' is: '.$wr[2]);
+			} //end if
 		} //end foreach
 		$this->connection->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->connection->prepare_statement(array('US', 7, null), 'in-select').')');
 		$this->connection->write_data('COMMIT');

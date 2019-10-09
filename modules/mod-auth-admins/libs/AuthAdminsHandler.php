@@ -57,7 +57,7 @@ if(!\defined('\\APP_AUTH_DB_SQLITE')) {
  * @access 		private
  * @internal
  *
- * @version 	v.20191002
+ * @version 	v.20191009
  *
  */
 final class AuthAdminsHandler {

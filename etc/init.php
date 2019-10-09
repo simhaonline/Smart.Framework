@@ -1,6 +1,6 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [Smart.Framework / INIT] # r.20190527
+// [Smart.Framework / INIT] # r.20191009
 // v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
@@ -72,13 +72,13 @@ define('SMART_FRAMEWORK_UPLOAD_PICTS', 				'<svg>,<png>,<gif>,<jpg>,<jpeg>,<jpe>
 define('SMART_FRAMEWORK_UPLOAD_MOVIES', 			'<webm>,<ogv>,<mp4>,<mov>');			// Uploads video type ALLOWED extensions list
 define('SMART_FRAMEWORK_UPLOAD_DOCS', 				'<txt>,<md>,<pdf>,<odt>,<ods>,<odp>,<csv>,<doc>,<rtf>,<xls>,<ppt>'); // Uploads document type ALLOWED extensions list
 define('SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS',	SMART_FRAMEWORK_UPLOAD_PICTS.','.SMART_FRAMEWORK_UPLOAD_MOVIES.','.SMART_FRAMEWORK_UPLOAD_DOCS.',<json>,<yaml>,<xml>,<eml>,<ics>,<vcf>,<7z>,<zip>,<rar>,<tar>,<tgz>,<tbz>,<gz>,<bz2>,<xz>,<ps>,<eps>,<tif>,<tiff>,<wmf>,<bmp>,<swf>'); // *OPTIONAL* The List of Allowed file extensions for Uploads ; if set and empty, will dissalow any upload by default ; if set and non-empty will only allow files with these extensions to be uploaded (if this is set the SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS will not count at all)
-define('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS', 	'<htm>,<html>,<js>,<sass>,<scss>,<css>,<shtml>,<phtml>,<php>,<sql>,<inc>,<tpl>,<twig>,<pl>,<py>,<pyc>,<pyo>,<rb>,<go>,<asp>,<jsp>,<sh>,<bash>,<bat>,<cmd>,<cgi>,<fcgi>,<fastcgi>,<scgi>,<wsgi>,<exe>,<msi>,<dll>,<dylib>,<bin>,<so>'); // The List of DENIED file extensions for Uploads ; files with these extensions will not be allowed to be uploaded by default
+define('SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS', 	'<htm>,<html>,<js>,<sass>,<scss>,<css>,<shtml>,<phtml>,<php>,<sql>,<inc>,<tpl>,<mtpl>,<twig>,<latte>,<t3fluid>,<pl>,<py>,<pyc>,<pyo>,<rb>,<go>,<asp>,<jsp>,<sh>,<bash>,<bat>,<cmd>,<cgi>,<fcgi>,<fastcgi>,<scgi>,<wsgi>,<exe>,<msi>,<dll>,<dylib>,<bin>,<so>'); // The List of DENIED file extensions for Uploads ; files with these extensions will not be allowed to be uploaded by default
 //---------------------------------------- SPECIAL .htaccess FILES CONTENT :: These are set for Apache web server. If you are using another web server you may adjust them.
 //-- .htaccess DENY EXECUTION OF SCRIPTS
 define('SMART_FRAMEWORK_HTACCESS_NOEXECUTION', '
 # Prevent Scripts or Executables
 Options -ExecCGI
-<FilesMatch "\.(html|htm|js|sass|scss|css|shtml|phtml|php|php*|sql|inc|tpl|mtpl|twig|pl|py|pyc|pyo|rb|go|asp|jsp|sh|bash|bat|cmd|cgi|fcgi|fastcgi|scgi|wsgi|exe|dll|dylib|bin|so)$">
+<FilesMatch "\.(html|htm|js|sass|scss|css|shtml|phtml|php|php*|sql|inc|tpl|mtpl|twig|latte|t3fluid|pl|py|pyc|pyo|rb|go|asp|jsp|sh|bash|bat|cmd|cgi|fcgi|fastcgi|scgi|wsgi|exe|dll|dylib|bin|so)$">
 	SetHandler none
 	ForceType text/plain
 </FilesMatch>

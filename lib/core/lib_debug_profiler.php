@@ -38,12 +38,41 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.20190107
+ * @version 	v.20191009
  *
  */
 final class SmartDebugProfiler {
 
 	// ::
+
+	private static $extraDebuggers = [];
+
+
+//==================================================================
+public static function register_extra_debug_log($class_name, $method_name) {
+
+	//--
+	if(!is_array(self::$extraDebuggers)) {
+		self::$extraDebuggers = array();
+	} //end if
+	//--
+	if(((string)trim((string)$class_name) != '') AND ((string)trim((string)$method_name) != '')) {
+		$the_key = (string) $class_name.'::'.$method_name.'()';
+		if(!array_key_exists((string)$the_key, (array)self::$extraDebuggers)) {
+			if(class_exists((string)$class_name)) {
+				if(method_exists((string)$class_name, (string)$method_name)) {
+					self::$extraDebuggers[$class_name.'::'.$method_name.'()'] = [
+						'class' 	=> (string) $class_name,
+						'method' 	=> (string) $method_name
+					];
+				} //end if
+			} //end if
+		} //end if
+	} //end if
+	//--
+
+} //END FUNCTION
+//==================================================================
 
 
 //==================================================================
@@ -121,22 +150,30 @@ public static function save_debug_info($y_area, $y_debug_token, $is_main) {
 	//--
 	if(SmartFileSystem::is_type_dir($the_dir)) {
 		if(SmartFileSystem::have_access_write($the_dir)) {
-			//--
-			$arr = array();
-			//-- generate debug info if set to show optimizations
-			SmartMarkersTemplating::registerOptimizationHintsToDebugLog();
-			//-- generate debug info if set to show internals
-			if(SmartFrameworkRuntime::ifInternalDebug()) {
-				Smart::registerInternalCacheToDebugLog();
-				SmartFrameworkRegistry::registerInternalCacheToDebugLog();
-				SmartAuth::registerInternalCacheToDebugLog();
-				SmartHashCrypto::registerInternalCacheToDebugLog();
-				SmartUtils::registerInternalCacheToDebugLog();
-				SmartMarkersTemplating::registerInternalCacheToDebugLog();
+			//-- generate extra debug info
+			if(is_array(self::$extraDebuggers)) {
+				foreach(self::$extraDebuggers as $key => $val) {
+					if(Smart::array_size($val) > 0) {
+						if((array_key_exists('class', $val)) AND (array_key_exists('method', $val))) {
+							$run_class = (string) $val['class'];
+							$run_method = (string) $val['method'];
+							if(((string)$run_class != '') AND ((string)$run_method != '')) {
+								if(class_exists((string)$run_class)) {
+									if(method_exists((string)$run_class, (string)$run_method)) {
+										$run_class::$run_method();
+									} //end if
+								} //end if
+							} //end if
+							$run_class = null;
+							$run_method = null;
+						} //end if
+					} //end if
+				} //end foreach
 			} //end if
 			//--
 			$dbg_stats = (array) SmartFrameworkRegistry::getDebugMsgs('stats');
 			//--
+			$arr = array();
 			$arr['date-time'] = date('Y-m-d H:i:s O');
 			$arr['debug-token'] = (string) $y_debug_token;
 			$arr['is-request-main'] = $is_main;

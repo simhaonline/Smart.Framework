@@ -21,7 +21,7 @@ define('SMART_APP_MODULE_AUTH', true); 		// if set to TRUE requires auth always
  */
 final class SmartAppAdminController extends SmartAbstractAppController {
 
-	// v.20190107
+	// v.20191009
 
 	public function Run() { // (OUTPUTS: HTML)
 
@@ -206,10 +206,22 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 					return;
 				} //end if
 				//--
+				$all_privs = '<superadmin>, '.APP_AUTH_PRIVILEGES;
+				//--
 				if(strpos((string)$select_user['restrict'], '<modify>') !== false) { // {{{SYNC-EDIT-PRIVILEGES}}}
-					$form_edit_priv = '<b>[You cannot edit privileges for this Restricted Account]</b>';
+					$form_edit_priv = '<b>[You cannot edit privileges for this Restricted Account]</b><br>'.SmartComponents::html_select_list_multi(
+						'priv-list', // html element ID
+						(string) $select_user['priv'], // list of selected values
+						'list',
+						(array) SmartAuth::build_arr_privileges((string)$all_privs) // array with all values
+					);;
 				} elseif((string)$select_user['id'] == (string)SmartAuth::get_login_id()) {
-					$form_edit_priv = '<b>[You cannot edit your own privileges]</b>';
+					$form_edit_priv = '<b>[You cannot edit your own privileges]</b><br>'.SmartComponents::html_select_list_multi(
+						'priv-list', // html element ID
+						(string) $select_user['priv'], // list of selected values
+						'list',
+						(array) SmartAuth::build_arr_privileges((string)$all_privs) // array with all values
+					);
 				} else {
 					$form_edit_priv = SmartComponents::html_select_list_multi(
 						'priv-list', // html element ID

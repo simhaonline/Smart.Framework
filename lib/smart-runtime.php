@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.8'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.10.07'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.10.09'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -281,18 +281,30 @@ require('etc/config.php'); // load the main configuration, after GET/POST regist
 
 //--------------------------------------- LOAD SMART-FRAMEWORK
 require('lib/framework/lib__smart_framework.php');
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+	@http_response_code(500);
+	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
+} //end if
 //--------------------------------------- REGISTER AUTO-LOAD OF PLUGINS (by dependency injection)
 require('lib/core/plugins/autoload.php');
 //--------------------------------------- LOAD SMART-COMPONENTS
 require('lib/core/lib_smart_components.php');
-//--------------------------------------- CONDITIONAL LOAD (IF DEBUG: PROFILER)
-if((string)SMART_FRAMEWORK_DEBUG_MODE == 'yes') {
+//--------------------------------------- CONDITIONAL LOAD (DEBUG: PROFILER)
+if(SmartFrameworkRuntime::ifDebug()) {
+	//-- load debug profiler
 	require('lib/core/lib_debug_profiler.php');
-} //end if
-//---------------------------------------
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
-	@http_response_code(500);
-	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
+	//-- register extra logs from framework
+	SmartDebugProfiler::register_extra_debug_log('SmartMarkersTemplating', 'registerOptimizationHintsToDebugLog');
+	//-- register extra internal logs from framework
+	if(SmartFrameworkRuntime::ifInternalDebug()) {
+		SmartDebugProfiler::register_extra_debug_log('SmartFrameworkRegistry', 'registerInternalCacheToDebugLog');
+		SmartDebugProfiler::register_extra_debug_log('Smart', 'registerInternalCacheToDebugLog');
+		SmartDebugProfiler::register_extra_debug_log('SmartHashCrypto', 'registerInternalCacheToDebugLog');
+		SmartDebugProfiler::register_extra_debug_log('SmartAuth', 'registerInternalCacheToDebugLog');
+		SmartDebugProfiler::register_extra_debug_log('SmartUtils', 'registerInternalCacheToDebugLog');
+		SmartDebugProfiler::register_extra_debug_log('SmartMarkersTemplating', 'registerInternalCacheToDebugLog');
+	} //end if
+	//--
 } //end if
 //---------------------------------------
 

@@ -1,7 +1,7 @@
 [%%%%COMMENT%%%%]
 // IMPORTANT: use only JavaScript code here, no HTML !
 [%%%%/COMMENT%%%%]
-//===== QUnit Tests.DataBase: START :: r.20190103
+//===== QUnit Tests.DataBase: START :: r.20191009
 
 (function() {
 
@@ -175,3 +175,6 @@
 
 // Smart.Framework.Modules Tests (optional)
 [@@@@SUB-TEMPLATE:?!modules/mod-dbal-zend/tests/module-test.mtpl.js.inc!@@@@]
+[@@@@SUB-TEMPLATE:?!modules/mod-db-orm-redbean/tests/module-test.mtpl.js.inc!@@@@]
+
+// #END

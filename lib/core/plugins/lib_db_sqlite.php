@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190801
+ * @version 	v.20191009
  * @package 	Database:SQLite
  *
  */
@@ -317,7 +317,7 @@ public function read_asdata($query, $qparams='', $qtitle='') {
  * @param STRING $query 						:: the SQLite Query
  * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
  * @param STRING $qtitle 						:: *optional* query title for easy debugging
- * @return ARRAY 								:: [0 => 'control-message', 1 => #affected-rows]
+ * @return ARRAY 								:: [ 0 => 'control-message', 1 => #affected-rows, 2 => #last-inserted-id(autoincrement)|0|null ]
  */
 public function write_data($query, $qparams='', $qtitle='') {
 	$this->check_opened();
@@ -483,7 +483,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20190801
+ * @version 	v.20191009
  * @package 	Database:SQLite
  *
  */
@@ -1256,15 +1256,18 @@ public static function write_data($db, $query, $qparams='', $qtitle='') {
 		//--
 	} //end if
 	//--
+	$last_insert_id = null;
+	//--
 	if(strlen($sqlite_error) > 0) {
 		$message = 'errorsqlwriteoperation: '.$sqlite_error;
 		self::error($db, 'WRITE-DATA', $sqlite_error, $query, $qparams);
 		return array($message, 0);
 	} else {
+		$last_insert_id = (string) @$db->lastInsertRowID();
 		$message = 'oksqlwriteoperation';
 	} //end if
 	//--
-	return array($message, Smart::format_number_int($affected_rows, '+'));
+	return array($message, Smart::format_number_int($affected_rows, '+'), $last_insert_id);
 	//--
 } //END FUNCTION
 //======================================================
@@ -1759,7 +1762,7 @@ die(''); // just in case
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20190801
+ * @version 	v.20191009
  * @package 	Database:SQLite
  *
  */

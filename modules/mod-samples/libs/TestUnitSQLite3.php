@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191006
+ * @version 	v.20191009
  *
  */
 final class TestUnitSQLite3 {

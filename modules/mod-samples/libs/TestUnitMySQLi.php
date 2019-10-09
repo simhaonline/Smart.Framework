@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191006
+ * @version 	v.20191009
  *
  */
 final class TestUnitMySQLi {
@@ -92,7 +92,7 @@ final class TestUnitMySQLi {
 		if(\SmartMysqliDb::check_if_table_exists('_test_unit_db_server_tests') == 1) {
 			\SmartMysqliDb::write_data('DROP TABLE `_test_unit_db_server_tests`');
 		} //end if
-		\SmartMysqliDb::write_data('CREATE TABLE `_test_unit_db_server_tests` ( `variable` varchar(100) COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 DEFAULT NULL, `comments` mediumtext CHARACTER SET utf8 NOT NULL DEFAULT \'\', PRIMARY KEY (`variable`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
+		\SmartMysqliDb::write_data('CREATE TABLE `_test_unit_db_server_tests` ( `id` int AUTO_INCREMENT, `variable` varchar(100) COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 DEFAULT NULL, `comments` mediumtext CHARACTER SET utf8 NOT NULL DEFAULT \'\', PRIMARY KEY (`id`), UNIQUE (`variable`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
 		//--
 
 		//--
@@ -116,11 +116,16 @@ final class TestUnitMySQLi {
 
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Write [ Insert ]';
+			$tests[] = 'Write [ Insert, w. check on LastInsertID ]';
 			$quer_str = 'INSERT INTO `_test_unit_db_server_tests` '.\SmartMysqliDb::prepare_statement(['variable'=>$variable, 'value'=>$time, 'comments'=>$comments], 'insert');
 			$data = \SmartMysqliDb::write_data($quer_str, 'Test Write Insert');
 			if($data[1] !== 1) {
 				$err = 'Write / Insert Test Failed, should return 1 but returned: '.$data[1];
+			} //end if
+			if((string)$err == '') {
+				if($data[2] != 1) { // test last inserted ID (as string)
+					$err = 'Write / Insert Test Failed on getting LastInsertId, should return 1 but returned: '.$data[2];
+				} //end if
 			} //end if
 		} //end if
 		//--
@@ -235,11 +240,16 @@ final class TestUnitMySQLi {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Write Ignore Duplicates [ Insert Ignore Positive ]';
+			$tests[] = 'Write Ignore Duplicates [ Insert Ignore Positive, w. check on LastInsertID ]';
 			$quer_str = 'INSERT IGNORE INTO `_test_unit_db_server_tests` '.\SmartMysqliDb::prepare_statement(array('variable'=>$variable, 'value'=>null, 'comments'=>$comments), 'insert');
 			$data = \SmartMysqliDb::write_data($quer_str);
 			if($data[1] !== 1) {
 				$err = 'Write / Insert Ignore Positive Test Failed, should return 1 but returned: '.$data[1];
+			} //end if
+			if((string)$err == '') {
+				if($data[2] != 2) { // test last inserted ID (as string)
+					$err = 'Write / Insert Ignore Positive Test Failed on getting LastInsertId, should return 2 but returned: '.$data[2];
+				} //end if
 			} //end if
 		} //end if
 		//--
