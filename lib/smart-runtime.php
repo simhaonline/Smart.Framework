@@ -981,7 +981,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR ADVANCED USE ONLY !!!
  *
  * @depends 	classes: Smart
- * @version		v.20190226
+ * @version		v.20191010
  * @package 	Application
  *
  */
@@ -1064,7 +1064,7 @@ public static function isAdminArea() {
 
 //======================================================================
 // for Advanced use Only :: this function outputs !!! the HTTP NoCache / Expire Headers
-public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
+public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1, $control='private') {
 	//--
 	if(self::$NoCacheHeadersSent !== false) {
 		@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'The No-Cache Headers (Expire='.$expiration.' ; Modified='.$modified.'), Already Set (don\'t use this function twice per execution) ...', E_USER_WARNING);
@@ -1073,6 +1073,14 @@ public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
 	//--
 	$expiration = (int) $expiration; // expire time, in seconds, since now
 	$modified   = (int) $modified;
+	switch((string)$control) {
+		case 'public':
+			$control = 'public';
+			break;
+		case 'private':
+		default:
+			$control = 'private';
+	} //end switch
 	//--
 	if(!headers_sent()) {
 		//--
@@ -1098,7 +1106,7 @@ public static function outputHttpHeadersNoCache($expiration=-1, $modified=-1) {
 			header('Expires: '.gmdate('D, d M Y H:i:s', (int)$expires).' GMT'); // HTTP 1.0
 			header('Pragma: cache'); // HTTP 1.0
 			header('Last-Modified: '.gmdate('D, d M Y H:i:s', (int)$modified).' GMT');
-			header('Cache-Control: private, max-age='.(int)$expiration); // HTTP 1.1 (private will dissalow proxies to cache the content)
+			header('Cache-Control: '.$control.', max-age='.(int)$expiration); // HTTP 1.1 (private will dissalow proxies to cache the content)
 			//--
 		} //end if else
 		//--

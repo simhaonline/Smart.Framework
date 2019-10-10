@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20190226
+ * @version     v.20191010
  * @package     Base
  *
  */
@@ -1646,11 +1646,14 @@ public static function check_dec_number_overflow_max($y_number) {
 //================================================================
 /**
  * Generates an integer random number between min and max using mt_rand() which is4x times faster than rand().
+ * It uses a random seed based on microtime using mt_srand() which uses MT_RAND_MT19937 for PHP >= 7.1
  * The min is zero. The max is limited to 2147483647 on most of the platforms.
  *
  * @return INTEGER 						:: An integer random number
  */
 public static function random_number($y_min=0, $y_max=-1) {
+	//-- seed the mt_rand() using mt_srand()
+	mt_srand((int)(microtime(true) * 10000));
 	//-- the mt_rand() is 4x times faster than rand() ; but the max is limited to 2147483647 on most of the platforms
 	if((int)$y_min < 0) {
 		$y_min = 0;
@@ -1661,6 +1664,7 @@ public static function random_number($y_min=0, $y_max=-1) {
 	if($y_min > $y_max) {
 		$y_min = $y_max;
 	} //end if
+	//--
 	return (int) mt_rand((int)$y_min, (int)$y_max);
 	//--
 } //END FUNCTION

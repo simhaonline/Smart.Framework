@@ -53,10 +53,14 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
+		//$this->PageViewResetRawHeaders();
 		$this->PageViewSetRawHeader(
 			'Z-Test-Image', 'This is an image' // just a sample dummy header entry
 		);
 		//--
+	//	$this->PageViewSetCfg('c-control', 'public'); // cache control: private | public
+	//	$this->PageViewSetCfg('expires', 3600); // set expiration in one hour in the future
+	//	$this->PageViewSetCfg('modified', time()); // set modified now
 		$this->PageViewSetCfg('rawmime', 'image/png'); // set mime type: Image / PNG
 		$this->PageViewSetCfg('rawdisp', 'inline; filename="sample-image-'.time().'.png"'); // display inline and set the file name for the image
 		//--
@@ -178,6 +182,9 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
+	//	header('Expires: '.gmdate('D, d M Y H:i:s', (int)((int)time() + 3600)) .' GMT');
+	//	header('Last-Modified: '.gmdate('D, d M Y H:i:s', time()).' GMT');
+	//	header('Cache-Control: public, max-age=3600');
 		header('Content-Type: image/jpeg');
 		header('Content-Disposition: inline; filename="sample-image-'.time().'.jpg"');
 		imagejpeg($im, null, 100); // direct echo

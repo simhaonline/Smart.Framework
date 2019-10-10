@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.3.7.8');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20190403
+ * @version		20191010
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -305,7 +305,7 @@ final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
 		//--
 		if((int)$appStatusCode < 400) {
 			if(((int)$appSettings['expires'] > 0) AND (!SmartFrameworkRuntime::ifDebug())) {
-				SmartFrameworkRuntime::outputHttpHeadersNoCache((int)$appSettings['expires'], (int)$appSettings['modified']); // headers: cache expiration control
+				SmartFrameworkRuntime::outputHttpHeadersNoCache((int)$appSettings['expires'], (int)$appSettings['modified'], (string)$appSettings['c-control']); // headers: cache expiration control
 			} else {
 				SmartFrameworkRuntime::outputHttpHeadersNoCache(); // headers: cache control, force no-cache
 			} //end if else

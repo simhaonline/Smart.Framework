@@ -71,7 +71,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						//-- ##### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE #####
 						'TITLE' => (string) $title,
 						'VIEWS-PATH' => (string) $this->ControllerGetParam('module-view-path'),
-						'NUMBER' => (rand(0,1)) ? '1' : '-1',
+						'NUMBER' => (Smart::random_number(0,1)) ? '1' : '-1',
 						'MARKER' => (string) Smart::json_encode('<a>&amp;1234567890.コアテスト·スイート.abcdefghijklmniopqrstuvwxyz:'.date('Y-m-d H:i:s').':~`!@#$%^&*()_-+={}[]|,.?</a>'),
 						'TEXTSTR' => (string) $txtstr,
 						'TEXTIFSTR' => (string) $txtstr.' : ; <####END####> ',
@@ -97,7 +97,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 							['id'=>15, 'slug'=>'o', 'name'=>'Letter O', 'is_vowel'=>true,  'arr' => [6,3,8]]
 						],
 						'DaT2' => [
-							'key1' => [ 'id' => 'val'.rand(0,1), 'name' => 'Value 1' ],
+							'key1' => [ 'id' => 'val'.Smart::random_number(0,1), 'name' => 'Value 1' ],
 							'key2' => 'val2',
 							'key3' => 'val3',
 							'key4' => 'val4',
@@ -106,7 +106,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'TEST2' => Smart::random_number(2,3),
 						'TEST3' => 3,
 						'STATUS' => (string) $test_switch_arr[(int)Smart::random_number(0,3)],
-						'TEST-NUM' => (float) rand(0,4)/4,
+						'TEST-NUM' => (float) Smart::random_number(0,4)/4,
 						'TEST-STR' => 'a-\'b\'_"c" <d>',
 						'TEST-URL' => 'http://some-url/',
 						'TEST-TXT' => 'this is line one'."\n".'this is line <two>',

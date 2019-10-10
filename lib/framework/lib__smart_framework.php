@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190307
+ * @version 	v.20191010
  * @package 	Application
  *
  */
@@ -269,7 +269,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	private $pageview; 						// will allow any key since they are markers
 	private $availsettings = [ 				// list of allowed values for page settings ; used to validate the pagesettings keys by a fixed list: look in middlewares to see complete list
 		'error', 'errhtml', 'redirect-url', // 		error message for return non 2xx/3xx codes ; optional error HTML message for return non 2xx/3xx codes ; redirect url for return 3xx codes
-		'expires', 'modified',				// 		expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now
+		'expires', 'modified', 'c-control',	// 		expires (int) in seconds from now ; last modification of the contents in seconds (int) timestamp: > 0 <= now ; cache control (private | public)
 		'template-path', 'template-file',	// 		template path (@ for self module path or a relative path) ; template filename (ex: template.htm)
 		'rawpage', 'rawmime', 'rawdisp',	// 		raw page (yes/no) ; raw mime (any valid mime type, ex: image/png) ; raw disposition (ex: inline / attachment / attachment; filename="somefile.pdf")
 		'download-packet', 'download-key', 	// 		download packet ; download key
