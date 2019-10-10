@@ -12,7 +12,7 @@ Template: templating-test-extended.mtpl.htm
 </div>
 <h2 id="qunit-test-result">...</h2>
 <div id="tpl-test">
-<!-- Test for Markers-Templating v.20190930 -->
+<!-- Test for Markers-Templating v.20191010 -->
 <!-- Test BOOL ([####TEST-NUM|html####]) : [####TEST-NUM|bool####] -->
 <!-- Test INTEGER ([####TEST-NUM|html####]) : [####TEST-NUM|int####] -->
 <!-- Test NUMERIC ([####TEST-NUM|html####]) : [####TEST-NUM|num####] -->
@@ -70,10 +70,17 @@ Template: templating-test-extended.mtpl.htm
 	[%%%%ELSE:TEST2(1)%%%%]
 		This is displayed when TEST2 is != 3 (ELSE)<br>
 	[%%%%/IF:TEST2(1)%%%%]
+[%%%%ELSE:TEST1%%%%]
+	<span style="color:#FF5500">ERROR: a condition failed (TEST1 &lt;= 3)</span>
 [%%%%/IF:TEST1%%%%]
 [%%%%IF:TEST2:==3;(2)%%%%]
 	This also appears when TEST2 is 3<br>
 [%%%%/IF:TEST2(2)%%%%]
+[%%%%IF:TEST3:>=####TEST1####;%%%%]
+	TEST3 is greater or equal than TEST1
+[%%%%ELSE:TEST3%%%%]
+	<span style="color:#FF5500">ERROR: a condition failed (TEST3 &gt;= TEST1)</span>
+[%%%%/IF:TEST3%%%%]
 <hr>
 [%%%%IF:DATA:@+0;(1)%%%%]
 <!-- Count of DATA is > 0 -->

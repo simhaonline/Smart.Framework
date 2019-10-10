@@ -36,7 +36,7 @@ When used with SQL / Non-SQL Databases and combined with In-Memory DB like Redis
 * works also with HTTPS (by example, Varnish does not)
 * caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
 This software framework is compatible, stable and actively tested with PHP 5.6 / 7.0 / 7.1 / 7.2 / 7.3 versions.
-Prefered PHP versions are: 7.1 / 7.2 which are currently LTS.
+Prefered PHP versions are: 7.2 / 7.3 which are currently LTS.
 <br>
 
 ### Benchmark Scenario:
@@ -48,11 +48,11 @@ Using a regular server as hardware platform (Supermicro):
 * 256 GB RAM, DDR4 ECC @ 2133 MHz
 * HDD 2 x 1TB SSD
 Software:
-* OS: Debian 9 Linux, 64-bit, up-to-date 2019-01-03
-* Apps: Apache 2.4.37, PHP 7.0.30 (with Zend Opcache)
+* OS: Debian 10 Linux, 64-bit, up-to-date 2019-10-10
+* Apps: Apache 2.4.38, PHP 7.3.9 (with Opcache enabled)
 
 #### Benchmark Results of tested PHP Frameworks, with a simple controller (no Caching) that Outputs: 'Hello World':
-* Smart.Framework v.3.7.8 head@2019.01.03 with MarkersTPL Templating: ~ 27.7K (27877) requests / second
-* Symfony 4.2.1 git@2019.01.03 with Twig Templating: ~ 9.1K (9173) requests / second ( 3x slower than Smart.Framework )
-* Laravel 5.7.15 git@2019.01.03 with Blade Templating ~ 6.7K (6802) requests / second ( 4x slower than Smart.Framework )
-* Zend Framework 2.4.13 git@2019.01.03 with PHP Templating: ~ 5.2K (5233) requests / second ( 5x slower than Smart.Framework )
+* Smart.Framework v.3.7.8 head@2019.10.10 with MarkersTPL Templating: ~ 28.7K (28797) requests / second
+* Symfony 4.3.5 with Twig Templating: ~ 9.2K (9252) requests / second ( 3x slower than Smart.Framework )
+* Laravel 6 with Blade Templating ~ 8.5K (8521) requests / second ( 3x slower than Smart.Framework )
+* Zend Framework 3 with PHP Templating: ~ 6.1K (6103) requests / second ( 4x slower than Smart.Framework )

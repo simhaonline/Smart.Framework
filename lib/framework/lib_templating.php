@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20190930.r2
+ * @version 	v.20191010
  * @package 	Templating:Engines
  *
  */
@@ -1011,7 +1011,7 @@ private static function escape_marker_value($crr_match, $val) {
 					} //end if else
 				} elseif((string)$escexpr == '|int') { // Integer
 					$val = (string) (int) $val;
-				} elseif(substr((string)$escexpr, 0, 4) == '|dec') {
+				} elseif((string)substr((string)$escexpr, 0, 4) == '|dec') {
 					$xnum = Smart::format_number_int((int)substr((string)$escexpr, 4), '+');
 					if($xnum < 1) {
 						$xnum = 1;
@@ -1028,14 +1028,14 @@ private static function escape_marker_value($crr_match, $val) {
 				} elseif((string)$escexpr == '|jsvar') { // JS Variable
 					$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
 				//--
-				} elseif((substr((string)$escexpr, 0, 7) == '|substr') OR (substr((string)$escexpr, 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
+				} elseif(((string)substr((string)$escexpr, 0, 7) == '|substr') OR ((string)substr((string)$escexpr, 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
 					$xnum = Smart::format_number_int((int)substr((string)$escexpr, 7), '+');
 					if($xnum < 1) {
 						$xnum = 1;
 					} elseif($xnum > 65535) {
 						$xnum = 65535;
 					} //end if
-					if(substr((string)$escexpr, 0, 7) == '|subtxt') {
+					if((string)substr((string)$escexpr, 0, 7) == '|subtxt') {
 						if($xnum < 5) {
 							$xnum = 5;
 						} //end if
@@ -1202,8 +1202,8 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 			$y_arr_context = [];
 		} //end if
 		//-- {{{SYNC-TPL-EXPR-IF}}}
-	//	$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|\!%|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // previous OK
-		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>|\>\=|%|\!%|@\=|@\!|@\+|@\-)([^\[\]]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // new
+	//	$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>\=|\>|\!%|%|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // previous OK
+		$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>\=|\>|\!%|%|@\=|@\!|@\+|@\-)([^\[\]]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // new
 		$matches = array();
 		preg_match_all((string)$pattern, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
 		//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
@@ -1258,8 +1258,10 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 					$bind_else = (string) self::process_if_syntax((string)$bind_else, (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
 				} //end if
 				//--
-				if((substr((string)$bind_value, 0, 4) == '####') AND (substr((string)$bind_value, -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
-					$bind_value = (string) strtoupper(str_replace('#', '', (string)$bind_value));
+				if(((string)substr((string)$bind_value, 0, 4) == '####') AND ((string)substr((string)$bind_value, -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
+				//	$bind_value = (string) strtoupper((string)str_replace('#', '', (string)$bind_value));
+					$bind_value = (string) strtoupper((string)trim((string)$bind_value, '#'));
+					//Smart::log_notice('Marker-TPL found IF syntax In-Marker: '.$bind_value);
 					if(array_key_exists((string)$bind_value, (array)$y_arr_context)) {
 						$bind_value = $y_arr_context[(string)$bind_value]; // exist in context arr
 					} elseif(Smart::array_test_key_by_path_exists((array)$y_arr_vars, (string)$bind_value, '.')) {
@@ -1796,18 +1798,18 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					$pfx = '';
 					$is_optional = false;
 					$is_variable = false;
-					if(((string)$y_use_caching != 'yes') AND (substr($key, 0, 1) == '?')) {
+					if(((string)$y_use_caching != 'yes') AND ((string)substr($key, 0, 1) == '?')) {
 						$key = (string) substr($key, 1);
 						$pfx = '?'; // optional sub-templates are only allowed in non-self-caching TPLs, else the results are unpredictable ; but these are not necessary except if a module may be n/a so linking with a n/a sub-tpl will raise error ; anyway, this feature was written mainly for main TPLs !
 						$is_optional = true;
 					} //end if
 					//--
-					if((substr($key, 0, 1) == '%') AND (substr($key, -1, 1) == '%')) { // variable, only can be set programatically, full path to the template file is specified
+					if(((string)substr($key, 0, 1) == '%') AND ((string)substr($key, -1, 1) == '%')) { // variable, only can be set programatically, full path to the template file is specified
 						if(SmartFileSysUtils::check_if_safe_path($val) != 1) {
 							Smart::log_warning('Invalid Markers-TPL Sub-Template Path [%] as: '.$key.' # '.$val.' detected in Template:'."\n".self::log_template($mtemplate));
 							return 'Invalid Markers-TPL Sub-Template Syntax. See the ErrorLog for Details.';
 						} //end if
-						if(substr($val, 0, 2) == '@/') { // use a path suffix relative path to parent template, starting with @/ ; otherwise the full relative path is expected
+						if((string)substr($val, 0, 2) == '@/') { // use a path suffix relative path to parent template, starting with @/ ; otherwise the full relative path is expected
 							$val = (string) SmartFileSysUtils::add_dir_last_slash((string)$y_base_path).substr($val, 2);
 						} //end if
 						$stpl_path = (string) $val;
@@ -1815,7 +1817,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 					} elseif(strpos($key, '%') !== false) { // % is not valid in other circumstances
 						Smart::log_warning('Invalid Markers-TPL Sub-Template Syntax [%] as: '.$key.' detected in Template:'."\n".self::log_template($mtemplate));
 						return 'Invalid Markers-TPL Sub-Template Syntax. See the ErrorLog for Details.';
-					} elseif((substr($key, 0, 1) == '!') AND (substr($key, -1, 1) == '!')) { // path override: use this relative path instead of parent relative referenced path ; Ex: [@@@@SUB-TEMPLATE:!etc/templates/default/js-base.inc.htm!@@@@]
+					} elseif(((string)substr($key, 0, 1) == '!') AND ((string)substr($key, -1, 1) == '!')) { // path override: use this relative path instead of parent relative referenced path ; Ex: [@@@@SUB-TEMPLATE:!etc/templates/default/js-base.inc.htm!@@@@]
 						$stpl_path = (string) substr($key, 1, -1);
 					} elseif(strpos($key, '!') !== false) { // ! is not valid in other circumstances
 						Smart::log_warning('Invalid Markers-TPL Sub-Template Syntax [!] as: '.$key.' detected in Template:'."\n".self::log_template($mtemplate));
@@ -1827,7 +1829,7 @@ private static function load_subtemplates($y_use_caching, $y_base_path, $mtempla
 						} //end if
 						if((string)$val == '@') { // use the same dir as parent
 							$val = (string) $y_base_path;
-						} elseif(substr($val, 0, 2) == '@/') { // use a path suffix relative to parent template, starting with @/
+						} elseif((string)substr($val, 0, 2) == '@/') { // use a path suffix relative to parent template, starting with @/
 							$val = (string) SmartFileSysUtils::add_dir_last_slash((string)$y_base_path).substr($val, 2);
 						} //end if
 						$stpl_path = (string) SmartFileSysUtils::add_dir_last_slash($val).$key;
