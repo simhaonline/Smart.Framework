@@ -48,11 +48,11 @@ var SmartQUnit = new function() { // START CLASS :: r.20191019
 
 	//--
 
-	this.runiFrameTest = function(url, timeoutMs, assert, testOK) {
+	this.runiFrameTest = function(url, timeoutMs, assert, testOK, elID) {
 		//--
 		var QAsyncTestDone = assert.async(); // qunit async promise
 		//--
-		elHtmlDynIFrame(url, timeoutMs, assert, QAsyncTestDone, testOK);
+		elHtmlDynIFrame(url, timeoutMs, assert, QAsyncTestDone, testOK, elID);
 		//--
 	} //END FUNCTION
 
@@ -76,14 +76,18 @@ var SmartQUnit = new function() { // START CLASS :: r.20191019
 
 	//--
 
-	var elHtmlDynIFrame = function(url, timeoutMs, assert, QAsyncTestDone, testOK) {
+	var elHtmlDynIFrame = function(url, timeoutMs, assert, QAsyncTestDone, testOK, elID) {
+		//--
+		if(!elID) {
+			elID = 'qunit-test-result';
+		} //end if
 		//--
 		var frame = jQuery('<iframe id="qu-smart-ifrm-sandbox" src="' + htmlspecialchars(url) + '" style="position:fixed; bottom:1px; right:1px; width:1px; height:1px; visibility:hidden;"></iframe>').appendTo('body'); // create a temporary iframe, make it hidden, and attach to the DOM # iFrame display:none loading jquery will throw since jquery >= 3.4.0
 		jQuery(frame).on('load', function(){ // // proceed after the iframe has loaded content
 			var html = jQuery(this).contents();
 			//console.log(html);
 			setTimeout(function() {
-				var value = html.find('#qunit-test-result').text();
+				var value = html.find('#' + elID).text();
 				html = null;
 				assert.equal(
 					value, testOK,

@@ -23,7 +23,8 @@
 				baseScript + '?page=direct-output',
 				500,
 				assert,
-				'Test OK: Smart.Framework Direct Output.'
+				'Test OK: Smart.Framework Direct Output.',
+				'qunit-test-result' // optional param ; the html element id to test ; default is: qunit-test-result as (#qunit-test-result)
 			);
 		});
 
