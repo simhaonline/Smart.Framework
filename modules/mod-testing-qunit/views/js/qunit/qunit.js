@@ -1,5 +1,5 @@
 /*!
- * QUnit 2.9.2
+ * QUnit 2.9.2 (modified by unixman r.20191019)
  * https://qunitjs.com/
  *
  * Copyright jQuery Foundation and other contributors
@@ -57,16 +57,6 @@
 		return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 	};
 
-
-
-
-
-
-
-
-
-
-
 	var classCallCheck = function (instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
 			throw new TypeError("Cannot call a class as a function");
@@ -90,45 +80,6 @@
 			return Constructor;
 		};
 	}();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	var toConsumableArray = function (arr) {
@@ -689,7 +640,12 @@
 		callbacks: {},
 
 		// The storage module to use for reordering tests
-		storage: localSessionStorage
+		storage: localSessionStorage,
+
+		//-- #unixman
+		uxmAllowRerun: true, // if set to false will not display ReRun test
+		uxmUniqueModules: false // if set to true will merge modules by name to ensure unique module names (may produce unexpected behaviour with nested modules)
+		//-- #
 	};
 
 	// take a predefined QUnit.config and extend the defaults
@@ -1154,7 +1110,21 @@
 		extend(env, testEnvironment);
 		module.testEnvironment = env;
 
-		config.modules.push(module);
+		//-- #fix by unixman (dissalow register duplicate modules)
+		var moduleFound = false;
+		if(config.uxmUniqueModules === true) {
+			for(var i=0; i<config.modules.length; i++) {
+				if(config.modules[i].name === module.name) {
+					moduleFound = true;
+					break;
+				}
+			}
+		}
+		if(!moduleFound) {
+			config.modules.push(module);
+		}
+		//-- #end fix
+
 		return module;
 	}
 
@@ -2725,23 +2695,18 @@
 		var passed = config.stats.all - config.stats.bad;
 
 		if (config.stats.all === 0) {
-
 			if (config.filter && config.filter.length) {
 				throw new Error("No tests matched the filter \"" + config.filter + "\".");
 			}
-
 			if (config.module && config.module.length) {
 				throw new Error("No tests matched the module \"" + config.module + "\".");
 			}
-
 			if (config.moduleId && config.moduleId.length) {
 				throw new Error("No tests matched the moduleId \"" + config.moduleId + "\".");
 			}
-
 			if (config.testId && config.testId.length) {
 				throw new Error("No tests matched the testId \"" + config.testId + "\".");
 			}
-
 			throw new Error("No tests were run.");
 		}
 
@@ -5158,7 +5123,9 @@
 
 			testBlock = document.createElement("li");
 			testBlock.appendChild(title);
-			testBlock.appendChild(rerunTrigger);
+			if(config.uxmAllowRerun !== false) { // fix by unixman
+				testBlock.appendChild(rerunTrigger);
+			} // #fix
 			testBlock.id = "qunit-test-output-" + testId;
 
 			assertList = document.createElement("ol");

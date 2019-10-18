@@ -1,17 +1,15 @@
 
 /*
- * SmartQUnit 1.2
+ * SmartQUnit 1.2.1
  *
  * (c) 2018-2019 unix-world.org
  * Released under the BSD license
  */
 
-var SmartQUnit = new function() { // START CLASS :: r.20190412
+var SmartQUnit = new function() { // START CLASS :: r.20191019
 
 	//--
-
 	// :: static
-
 	//--
 
 	this.runAjaxTest = function(url, method, dataType, assert, testOK, fxDone) {
@@ -98,6 +96,7 @@ var SmartQUnit = new function() { // START CLASS :: r.20190412
 		//--
 	} //END FUNCTION
 
+	//--
 
 	var htmlspecialchars = function(str) {
 		//--

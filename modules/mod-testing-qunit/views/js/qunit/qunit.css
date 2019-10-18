@@ -1,5 +1,5 @@
 /*!
- * QUnit 2.9.2
+ * QUnit 2.9.2 (modified by unixman r.20191019)
  * https://qunitjs.com/
  *
  * Copyright jQuery Foundation and other contributors
@@ -9,11 +9,9 @@
  * Date: 2019-02-21T22:49Z
  */
 
-/* modified by unixman r.20190403 */
-
 /** Font Family and Sizes */
 
-/* fix by unixman
+/* fix by unixman (comment out, needs to integrate with framework fonts)
 #qunit-tests, #qunit-header, #qunit-banner, #qunit-testrunner-toolbar, #qunit-filteredTest, #qunit-userAgent, #qunit-testresult {
 	font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
 }
