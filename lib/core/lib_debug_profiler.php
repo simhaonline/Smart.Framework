@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.20191009
+ * @version 	v.20191021
  *
  */
 final class SmartDebugProfiler {
@@ -88,7 +88,7 @@ public static function js_headers_debug($y_profiler_url) {
 	return SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/debug-profiler-head.inc.htm',
 		array(
-			'DEBUG-PROFILER-URL' => Smart::escape_js($y_profiler_url)
+			'DEBUG-PROFILER-URL' => (string) $y_profiler_url
 		),
 		'no' // no cache
 	);
@@ -318,6 +318,23 @@ public static function read_tpl_file_for_debug($y_tpl_file) {
 
 
 //==================================================================
+public static function display_debug_page($title, $content) {
+	//--
+	return (string) SmartMarkersTemplating::render_file_template(
+		'lib/core/templates/debug-profiler-util.htm',
+		[
+			'CHARSET' 	=> (string) SmartUtils::get_encoding_charset(),
+			'TITLE' 	=> (string) $title,
+			'MAIN' 		=> (string) $content
+		],
+		'no'
+	);
+	//--
+} //END FUNCTION
+//==================================================================
+
+
+//==================================================================
 // reads and display a Markers-TPL file template for debug {{{SYNC-DEBUG-TPL-FILES}}}
 public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_templates=[], $y_use_decrypt=true) {
 
@@ -346,14 +363,9 @@ public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_template
 	//--
 
 	//--
-	return (string) SmartMarkersTemplating::render_file_template(
-		'lib/core/templates/debug-profiler-util.htm',
-		[
-			'CHARSET' 	=> Smart::escape_html(SmartUtils::get_encoding_charset()),
-			'TITLE' 	=> '#### Markers-TPL #### Template Debug Profiling',
-			'MAIN' 		=> (string) $content
-		],
-		'no'
+	return (string) self::display_debug_page(
+		'#### Markers-TPL #### Template Debug Profiling',
+		(string) $content
 	);
 	//--
 

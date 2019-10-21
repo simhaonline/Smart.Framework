@@ -61,7 +61,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$title = 'Markers-TPL Templating Render Demo - Syntax';
 		//--
-		$data = [ // v.181222
+		$data = [ // v.20191019
 			//-- ### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE ; variable names will allow also - (. is reserved for separator as arr[key] is ARR.KEY)
 			'Version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
 			'heLLo__World' => '<h1>Demo: Markers-TPL Templating built-into Smart.Framework</h1>',
@@ -70,7 +70,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				array('href' => '#link2', 'caption' => 'Sample Link <2>'),
 				array('href' => '#link3', 'caption' => 'Sample Link <3>')
 			],
-			'DATE-TIME' => (string) date('Y-m-d H:i:s O'),
+			'DATE-TIME' => (string) date('Y-m-d H:i:s O')."\t"."'".date('T')."'",
 			'tbL' => [
 				['a1' => '1.1', 'a2' => '1.2', 'a3' => '1.3'],
 				['a1' => '2.1', 'a2' => '2.2', 'a3' => '2.3'],

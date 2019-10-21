@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191009
+ * @version 	v.20191021
  * @package 	Database:SQLite
  *
  */
@@ -483,7 +483,7 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191009
+ * @version 	v.20191021
  * @package 	Database:SQLite
  *
  */
@@ -526,14 +526,21 @@ public static function open($file_name, $timeout_busy_sec=60) {
 		return;
 	} //end if
 	//--
+	if(SmartFileSystem::is_type_dir((string)$file_name)) {
+		self::error((string)$file_name, 'OPEN', 'ERROR: DB path is a directory !', '', '');
+		return;
+	} //end if
+	//--
 	$dir_of_db = (string) Smart::dir_name((string)$file_name);
 	if((string)$dir_of_db == '') {
 		self::error((string)$file_name, 'OPEN', 'ERROR: DB folder not defined !', '', '');
 		return;
 	} //end if
-	if(substr((string)$dir_of_db, -1, 1) != '/') {
-		$dir_of_db .= '/';
+	if(SmartFileSysUtils::check_if_safe_path((string)$dir_of_db, 'yes', 'yes') != 1) {
+		self::error((string)$file_name, 'OPEN', 'ERROR: DB folder path is unsafe !', '', '');
+		return;
 	} //end if
+	$dir_of_db = (string) SmartFileSysUtils::add_dir_last_slash((string)$dir_of_db);
 	SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db, 'yes', 'yes'); 					// deny absolute path access ; allow protected path access (starting with #)
 	//--
 	if(!SmartFileSystem::is_type_dir($dir_of_db)) {
@@ -1762,7 +1769,7 @@ die(''); // just in case
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20191009
+ * @version 	v.20191021
  * @package 	Database:SQLite
  *
  */

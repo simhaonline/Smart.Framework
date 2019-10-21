@@ -19,6 +19,7 @@
 * Hybrid Architecture: combined Multi-Tier and Middlewares architectures to provide a flexible and smart service
 * Independent Packages: based on modules, plugins and 3rd party (vendor) libraries that can be integrated or developed
 * Full Decoupled Core Libraries: the framework core is using independent (decoupled) libraries (no 3rd party dependencies)
+* Modular Architecture: support creating reusable modules (there are also many turn-key modules available in Smart.Framework.Modules)
 * NameSpace Separation: for modules (Models, Views, Controllers) or Libraries
 * Based on a previous experience of more than 17 years of developing web projects, research and experiments using web technologies
 
@@ -52,7 +53,7 @@ Software:
 * Apps: Apache 2.4.38, PHP 7.3.9 (with Opcache enabled)
 
 #### Benchmark Results of tested PHP Frameworks, with a simple controller (no Caching) that Outputs: 'Hello World':
-* Smart.Framework v.3.7.8 head@2019.10.10 with MarkersTPL Templating: ~ 28.7K (28797) requests / second
+* Smart.Framework v.3.7.8 head@2019.10.19 with MarkersTPL Templating: ~ 28.7K (28797) requests / second
 * Symfony 4.3.5 with Twig Templating: ~ 9.2K (9252) requests / second ( 3x slower than Smart.Framework )
 * Laravel 6 with Blade Templating ~ 8.5K (8521) requests / second ( 3x slower than Smart.Framework )
 * Zend Framework 3 with PHP Templating: ~ 6.1K (6103) requests / second ( 4x slower than Smart.Framework )

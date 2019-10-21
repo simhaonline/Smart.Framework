@@ -3,6 +3,7 @@ tmp
 wpub
 modules/mod-agile
 modules/mod-cloud
+modules/mod-db-orm-redbean
 modules/mod-dbal-zend
 modules/mod-ecomm-cart
 modules/mod-js-components
@@ -13,6 +14,8 @@ modules/mod-page-builder
 modules/mod-sm-facebook
 modules/mod-sm-twitter
 modules/mod-svn
+modules/mod-tpl
+modules/mod-tpl-dust
 modules/mod-tpl-nette-latte
 modules/mod-tpl-twig
 modules/mod-tpl-typo3-fluid
@@ -21,9 +24,9 @@ modules/mod-ui-fonts
 modules/mod-ui-jqueryui
 modules/mod-ui-uikit
 modules/mod-ui-w3
+modules/mod-wflow-components
 modules/mod-xtra-bizz
 modules/mod-xtra-vanilla
-modules/mod-wflow-components
 modules/mod-zzz-tests
 modules/smart-extra-libs
 modules/vendor

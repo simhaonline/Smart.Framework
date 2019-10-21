@@ -28,7 +28,16 @@
 					* commented code in a template will not be rendered at all
 				</td>
 				<td>
-					<span class="sf__test__span__tpl__features">[%%%%|SPACE%%%%] ensures a SPACE &bbrk;<br>[%%%%|T%%%%] ensures a TAB \t<br>[%%%%|N%%%%] ensures a LINE FEED \n<br>[%%%%|R%%%%] ensures a CARRIAGE RETURN \r<br>[%%%%|R%%%%][%%%%|N%%%%] ensures a CRLF (CARRIAGE RETURN + LINE FEED) \r\n<br>[%%%%COMMENT%%%%] This text will never be displayed and will be cut off when rendering this template [%%%%/COMMENT%%%%]</span>
+					<span class="sf__test__span__tpl__features">
+						[%%%%|SB-L%%%%] ensures a LEFT SQUARE BRACKET [<br>
+						[%%%%|SB-R%%%%] ensures a RIGHT SQUARE BRACKET ]<br>
+						[%%%%|SPACE%%%%] ensures a SPACE &bbrk;<br>
+						[%%%%|T%%%%] ensures a TAB \t<br>
+						[%%%%|N%%%%] ensures a LINE FEED \n<br>
+						[%%%%|R%%%%] ensures a CARRIAGE RETURN \r<br>
+						[%%%%|R%%%%][%%%%|N%%%%] ensures a CRLF (CARRIAGE RETURN + LINE FEED) \r\n<br>
+						[%%%%COMMENT%%%%] This text will never be displayed and will be cut off when rendering this template [%%%%/COMMENT%%%%]
+					</span>
 				</td>
 			</tr>
 			<tr valign="top" title="Feature is currently supported only in PHP">
@@ -39,7 +48,7 @@
 					* conditionals are available with optional ELSE syntax
 				</td>
 				<td>
-					<span class="sf__test__span__tpl__features">[%%%%IF:VARIABLE:==|!=|&lt;|&gt;|&lt;=|&gt;=|%|!%|@=|@!|@+|@-|^~|^*|~~|~*|$~|$*|{string|number|####MARKER####};%%%%]<br> conditional IF part, display when condition is matched <br>[%%%%ELSE:VARIABLE%%%%]<br> conditional ELSE part, display otherwise <br>[%%%%/IF:VARIABLE%%%%]</span>
+					<span class="sf__test__span__tpl__features">[%%%%IF:VARIABLE:==|!=|&lt;=|&lt;|&gt;=|&gt;|%|!%|@=|@!|@+|@-|^~|^*|~~|~*|$~|$*|{string|number|####MARKER####};%%%%]<br> conditional IF part, display when condition is matched <br>[%%%%ELSE:VARIABLE%%%%]<br> conditional ELSE part, display otherwise (optional) <br>[%%%%/IF:VARIABLE%%%%]</span>
 				</td>
 			</tr>
 			<tr valign="top" title="Feature is currently supported only in PHP">
@@ -56,7 +65,7 @@
 					<br>
 					* if ARRAY-VAR is an ASSOCIATIVE ARRAY [key1=>val1,...,keyN=>valueN] can display for each key/value pair: [####ARRAY-VAR._-KEY-_|html####] = [####ARRAY-VAR._-VAL-_|trim|html####]
 					<br>
-					[%%%%/LOOP:ARRAY%%%%]</span>
+					[%%%%/LOOP:ARRAY-VAR%%%%]</span>
 				</td>
 			</tr>
 			<tr valign="top" title="Feature is currently supported only in PHP">

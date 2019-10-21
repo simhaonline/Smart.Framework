@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191010
+ * @version 	v.20191021
  * @package 	Templating:Engines
  *
  */
@@ -666,7 +666,7 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	//-- loaded sub-tpls
 	$html .= '<td align="left" colspan="2">';
 	$html .= '<table id="'.'__marker__template__analyzer-ldsubtpls_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="950" style="font-size:0.750em!important;">';
-	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:LOADED@@@@]<br><small>*** All Loaded Sub-Templates are listed below ***</small></th><th>#</th></tr>';
+	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:LOADED@@@@]<br><small>*** All Loaded Sub-Templates are listed below ***</small></th><th>#'.'&nbsp;('.(int)Smart::array_size(self::$MkTplAnalyzeLdRegDbg).')'.'</th></tr>';
 	if(Smart::array_size(self::$MkTplAnalyzeLdRegDbg) > 0) {
 		foreach(self::$MkTplAnalyzeLdRegDbg as $key => $val) {
 			$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -677,9 +677,9 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	//-- sub-tpls
 	$html .= '<td align="center">';
 	$html .= '<table id="'.'__marker__template__analyzer-subtpls_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;">';
-	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:SLOTS@LEVEL-1@@@@]<br><small>*** Only Level-1 Sub-Templates slots are listed below ***</small></th><th>#</th></tr>';
 	$arr_subtpls = (array) self::analize_extract_subtpls($y_original_mtemplate);
 	ksort($arr_subtpls);
+	$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:SLOTS@LEVEL-1@@@@]<br><small>*** Only Level-1 Sub-Templates slots are listed below ***</small></th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_subtpls).')'.'</th></tr>';
 	foreach($arr_subtpls as $key => $val) {
 		$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
 	} //end for
@@ -689,9 +689,9 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	$html .= '<tr valign="top" align="center"><td colspan="3"><hr></td></tr>';
 	$html .= '<tr valign="top" align="center">';
 	//-- marker vars
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[####MARKER-VARIABLES####]</th><th>#</th></tr>';
 	$arr_marks = (array) self::analize_extract_markers($mtemplate);
 	ksort($arr_marks);
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[####MARKER-VARIABLES####]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_marks).')'.'</th></tr>';
 	foreach($arr_marks as $key => $val) {
 		if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
 			$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -708,9 +708,9 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	} //end for
 	$html .= '</table></td>';
 	//-- loop vars
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%LOOP:VARIABLES%%%%]<br>[%%%%/LOOP:VARIABLES%%%%]</th><th>#</th></tr>';
 	$arr_loops = (array) self::analize_extract_loops($mtemplate);
 	ksort($arr_loops);
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%LOOP:VARIABLES%%%%]<br>[%%%%/LOOP:VARIABLES%%%%]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_loops).')'.'</th></tr>';
 	foreach($arr_loops as $key => $val) {
 		if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
 			$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -727,9 +727,9 @@ private static function analyze_do_debug_template($mtemplate, $y_info, $y_origin
 	} //end for
 	$html .= '</table></td>';
 	//-- if vars
-	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%IF:VARIABLES:@=;%%%%]<br>[%%%%ELSE:VARIABLES%%%%]<br>[%%%%/IF:VARIABLES%%%%]</th><th>#</th></tr>';
 	$arr_ifs = (array) self::analize_extract_ifs($mtemplate);
 	ksort($arr_ifs);
+	$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%IF:VARIABLES:@=;%%%%]<br>[%%%%ELSE:VARIABLES%%%%]<br>[%%%%/IF:VARIABLES%%%%]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_ifs).')'.'</th></tr>';
 	foreach($arr_ifs as $key => $val) {
 		if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
 			$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -1061,7 +1061,7 @@ private static function escape_marker_value($crr_match, $val) {
 				//--
 				} elseif((string)$escexpr == '|json') { // Json Data ; expects pure JSON !!!
 					$val = (string) Smart::json_encode(Smart::json_decode($val, true), false, true, true); // it MUST be JSON with HTML-Safe Options.
-					$val = trim((string)$val);
+					$val = (string) trim((string)$val);
 					if((string)$val == '') {
 						$val = 'null'; // ensure a minimal json as empty string if no expr !
 					} //end if
@@ -1099,7 +1099,7 @@ private static function process_syntax($mtemplate, $y_arr_vars) {
 	$mtemplate = (string) self::process_if_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any IF Syntax
 	//-- 2nd process loop syntax (max 3 nested levels)
 	$mtemplate = (string) self::process_loop_syntax((string)$mtemplate, (array)$y_arr_vars); // this will auto-check if the template have any LOOP Syntax
-	//-- 3rd, process special characters: \r \n \t SPACE syntax
+	//-- 3rd, process special characters: Square-Brackets(L/R) \r \n \t SPACE syntax
 	$mtemplate = (string) self::process_brntspace_syntax($mtemplate);
 	//-- 4th, finally if any garbage syntax is detected log warning
 	if(self::have_syntax((string)$mtemplate) === true) {
@@ -1394,14 +1394,14 @@ private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context=''
 						} //end if else
 						break;
 					case '%': // modulo (true/false)
-						if(((float)$tmp_the_arr % (float)$bind_value) == 0) { // if evaluate to true keep the inner content
+						if(((int)$tmp_the_arr % (int)$bind_value) == 0) { // if evaluate to true keep the inner content
 							$line .= (string) $bind_if; // if part
 						} else {
 							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 						} //end if else
 						break;
 					case '!%': // not modulo (false/true)
-						if(((float)$tmp_the_arr % (float)$bind_value) != 0) { // if evaluate to false keep the inner content
+						if(((int)$tmp_the_arr % (int)$bind_value) != 0) { // if evaluate to false keep the inner content
 							$line .= (string) $bind_if; // if part
 						} else {
 							$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !

@@ -32,6 +32,7 @@
 //===== QUnit Tests.Templating: #END
 
 // Smart.Framework.Modules Tests (optional)
-[@@@@SUB-TEMPLATE:?!modules/mod-tpl-nette-latte/tests/module-test.mtpl.js.inc!@@@@]
+[@@@@SUB-TEMPLATE:?!modules/mod-tpl-dust/tests/module-test.mtpl.js.inc!@@@@]
 [@@@@SUB-TEMPLATE:?!modules/mod-tpl-twig/tests/module-test.mtpl.js.inc!@@@@]
+[@@@@SUB-TEMPLATE:?!modules/mod-tpl-nette-latte/tests/module-test.mtpl.js.inc!@@@@]
 [@@@@SUB-TEMPLATE:?!modules/mod-tpl-typo3-fluid/tests/module-test.mtpl.js.inc!@@@@]

@@ -1,4 +1,4 @@
-<!-- #START :: SMART.FRAMEWORK / DEBUG HEAD :: v.180405 -->
+<!-- #START :: SMART.FRAMEWORK / DEBUG HEAD :: v.20191021 -->
 <style type="text/css">
 [@@@@SUB-TEMPLATE:!lib/core/css/tpl-highlight.css!@@@@]
 .smartframework_debugbar_bar {
@@ -160,7 +160,7 @@
 var smart_debug_bar_panel_visible = '';
 function SmartDebugProfilerRefreshPanel(reason) {
 	console.log('Smart.Framework.Debug :: Profiler Toolbar (Re)Load by ' + reason + ' Call ...');
-	SmartDebugAjaxLoadDivContent('SmartFramework__Debug__Profiler', '[####DEBUG-PROFILER-URL####]', 'GET', true);
+	SmartDebugAjaxLoadDivContent('SmartFramework__Debug__Profiler', '[####DEBUG-PROFILER-URL|js####]', 'GET', true);
 } //END FUNCTION
 function SmartDebugProfilerDisableActivePanel(el) {
 	if(smart_debug_bar_panel_visible !== '') {
@@ -265,7 +265,7 @@ function SmartDebugAjaxCatchCalls(open) {
 			if(this.readyState == 4) {
 				var end = new Date().getTime();
 				var time = end - start;
-				if(url != '[####DEBUG-PROFILER-URL####]') {
+				if(url != '[####DEBUG-PROFILER-URL|js####]') {
 					console.log('Smart.Framework.Debug :: Ajax.' + method + ' [' + time + ' ms] {' + this.status + '}' + ' :: ' + url);
 					var tmp_ajax_call = {
 						'url': url,

@@ -1,5 +1,8 @@
-<!-- start markers-tpl template v.20190103 -->
+<!-- start markers-tpl template v.20191019 -->
 [%%%%COMMENT%%%%] Template: templating-test.mtpl.htm [%%%%/COMMENT%%%%]<!-- comments are removed -->
+<script>
+	var jsDate = '[####DATE-TIME|js####]';
+</script>
 <div align="center">
 	<div>
 		<img src="lib/framework/img/sf-logo.svg" width="160" height="160">
@@ -15,7 +18,10 @@
 		<a href="?/page/samples.templating-test/op/viewpartialsource" target="tpl_m_view_source" data-smart="open.modal" class="ux-button ux-button-small ux-button-secondary"><i class="sfi sfi-embed2"></i> &nbsp; View Sub-TPL Source</a>
 	</div>
 	<br>
-	<div style="color:#777777;">[####DATE-TIME|html####]</div>
+	<div style="color:#777777;" id="the-dateTime">?</div>
 	[@@@@SUB-TEMPLATE:templating-test.inc.htm@@@@]
 </div>
+<script>
+	jQuery('#the-dateTime').text(jsDate);
+</script>
 <!-- end markers-tpl template -->
