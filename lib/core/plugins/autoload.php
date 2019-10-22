@@ -34,6 +34,14 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartPunycode':
 			require_once('lib/core/plugins/lib_idn_punycode.php'); 		// idn punnycode converter
 			break;
+		//-- detect
+		case 'SmartDetectImages':
+			require_once('lib/core/plugins/lib_detect_img.php');		// detect img
+			break;
+		//-- robot
+		case 'SmartRobot':
+			require_once('lib/core/plugins/lib_robot.php'); 			// smart robot
+			break;
 		//-- mail
 		case 'SmartMailerSend':
 		case 'SmartMailerSmtpClient':
@@ -50,11 +58,6 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartMailerMimeParser':
 		case 'SmartMailerUtils':
 			require_once('lib/core/plugins/lib_mail_utils.php');		// mail utils (send, verify, parse)
-			break;
-		//-- calendar
-		case 'SmartCalendarComponent':
-		case 'SmartHTMLCalendar':
-			require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
 			break;
 		//-- yaml parser and composer
 		case 'SmartYamlConverter':
@@ -100,6 +103,15 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartCaptchaImageDraw':
 		case 'SmartCaptchaFormCheck':
 			require_once('lib/core/plugins/lib_captcha.php'); 			// captcha image
+			break;
+		//-- viewhelpers
+		case 'SmartViewHtmlHelpers':
+			require_once('lib/core/plugins/lib_viewhelpers.php'); 		// viewhelpers components (html / js)
+			break;
+		//-- calendar
+		case 'SmartCalendarComponent':
+		case 'SmartHTMLCalendar':
+			require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
 			break;
 		//-- ftp client
 		case 'SmartFtpClient':

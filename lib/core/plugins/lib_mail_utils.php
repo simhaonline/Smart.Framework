@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20190403
+ * @version 	v.20191022
  * @package 	Mailer
  *
  */
@@ -580,7 +580,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 				$tmp_fake_fname = '';
 				$tmp_img_ext = ''; // extension
 				//--
-				$tmp_getimg_arr = (array) SmartUtils::load_url_img_content($tmp_imglink, 'auto');
+				$tmp_getimg_arr = (array) SmartRobot::load_url_img_content($tmp_imglink, 'auto');
 				if($tmp_getimg_arr['result'] == 1) {
 					$tmp_fcontent = (string) $tmp_getimg_arr['content'];
 					$tmp_fake_fname = (string) $tmp_getimg_arr['filename'];

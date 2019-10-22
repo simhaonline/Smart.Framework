@@ -102,7 +102,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 				$this->PageViewSetCfg('rawmime', 'text/json');
 				$this->PageViewSetCfg('rawdisp', 'inline');
 				$this->PageViewSetVar('main',
-					\SmartComponents::js_ajax_replyto_html_form(
+					\SmartViewHtmlHelpers::js_ajax_replyto_html_form(
 						'ERROR',
 						(string) ((int)$this->errcode.' '.$this->errtext),
 						'Error: Json / Page '.$this->errtext

@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.20190808
+ * @version 	v.20191022
  * @package 	Application
  *
  */
@@ -226,6 +226,7 @@ final class SmartTextTranslations {
 										} //end if
 									} //end foreach
 								} //end if
+								$configs['regional'] = (array) self::getSafeRegionalSettings(); // re-export fixed
 								self::$cache['#LANGUAGE#'] = (string) $tmp_lang;
 								$result = true;
 								if(SmartFrameworkRuntime::ifInternalDebug()) {
@@ -328,6 +329,263 @@ final class SmartTextTranslations {
 		} //end if
 		//--
 		return (object) self::$translators[(string)$translator_key];
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//================================================================
+	/**
+	 * Get the safe regional date format for Js (Javascript)
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @return 	STRING							:: The date format (ex: 'yy-mm-dd')
+	 */
+	public static function getDateFormatForJs($y_format) {
+		//-- yy = year with 4 digits, mm = month 01..12, dd = day 01..31
+		$format = 'yy-mm-dd'; // the default format
+		//--
+		switch((string)$y_format) {
+			//--
+			case 'yy.mm.dd':
+			case 'yy-mm-dd':
+			case 'yy mm dd':
+			//--
+			case 'dd.mm.yy':
+			case 'dd-mm-yy':
+			case 'dd mm yy':
+			//--
+			case 'mm.dd.yy':
+			case 'mm-dd-yy':
+			case 'mm dd yy':
+			//--
+				$format = $y_format;
+				break;
+			default:
+				// nothing
+		} //end switch
+		//--
+		return (string) $format;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Get the safe regional date format for PHP
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @return 	STRING							:: The date format (ex: 'Y-m-d')
+	 */
+	public static function getDateFormatForPhp($y_format) {
+		//-- Y = year with 4 digits, m = month 01..12, d = day 01..31
+		$format = 'Y-m-d'; // the default format
+		//--
+		switch((string)$y_format) {
+			//--
+			case 'Y.m.d':
+			case 'Y-m-d':
+			case 'Y m d':
+			//--
+			case 'd.m.Y':
+			case 'd-m-Y':
+			case 'd m Y':
+			//--
+			case 'm.d.Y':
+			case 'm-d-Y':
+			case 'm d Y':
+			//--
+				$format = $y_format;
+				break;
+			default:
+				// nothing
+		} //end switch
+		//--
+		return (string) $format;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//=====
+	/**
+	 * Get (Safe) Regional Settings
+	 * If the regional settings are wrong they will be fixed
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @return 	ARRAY							:: The updated ARRAY of Regional Settings for the Current Language
+	 */
+	public static function getSafeRegionalSettings() {
+		//--
+		$arr = Smart::get_from_config('regional');
+		if(!is_array($arr)) {
+			$arr = array();
+		} //end if
+		//--
+		$arr = (array) array_change_key_case((array)$arr, CASE_LOWER); // make all keys lower
+		//--
+		switch((string)$arr['decimal-separator']) {
+			case ',':
+				break;
+			default:
+				$arr['decimal-separator'] = '.';
+		} //end switch
+		switch((string)$arr['thousands-separator']) {
+			case '.':
+			case ' ':
+				break;
+			default:
+				$arr['thousands-separator'] = ',';
+		} //end switch
+		if((string)$arr['decimal-separator'] == (string)$arr['thousands-separator']) {
+			$arr['decimal-separator'] = '.';
+			$arr['thousands-separator'] = ',';
+		} //end if
+		$arr['calendar-week-start'] = (int) $arr['calendar-week-start'];
+		if($arr['calendar-week-start'] < 0) {
+			$arr['calendar-week-start'] = 0;
+		} elseif($arr['calendar-week-start'] > 1) {
+			$arr['calendar-week-start'] = 1;
+		} //end if else
+		$arr['calendar-date-format-client'] = (string) self::getDateFormatForJs($arr['calendar-date-format-client']);
+		$arr['calendar-date-format-server'] = (string) self::getDateFormatForPhp($arr['calendar-date-format-server']);
+		//--
+		return (array) $arr;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Format a number as a localized number (using regional settings)
+	 * The number to format must come in US format as 1234.56 or -1234.56 or 1,234.56 or 1 234.56 or -1,234.56 or -1 234.56
+	 * [-1] will place auto decimals
+	 * [-2] will place auto decimals but force as min as .0
+	 *
+	 * Use it just for display (a local formated number)
+	 * WARNING: Do not use when you do calculations, because will break calculations
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @return 	STRING							:: Formatted Local Number
+	 */
+	public static function formatAsLocalNumber($y_number, $y_decimals=-1, $y_usethousandsep=true) {
+		//--
+		$y_number = (string) trim((string)$y_number);
+		//--
+		if(!preg_match('/^[0-9\-\.\, ]+$/', (string)$y_number)) {
+			Smart::log_warning('Invalid Number to convert to local (invalid characters): '.$y_number);
+			return (string) '!'.$y_number.'!';
+		} //end if
+		//--
+		$y_decimals = Smart::format_number_int($y_decimals);
+		if($y_decimals > 4) {
+			$y_decimals = 4;
+		} elseif($y_decimals < -2) {
+			$y_decimals = -2;
+		} //end if else
+		//--
+		$separator_dec = (string) Smart::get_from_config('regional.decimal-separator');
+		$separator_thd = (string) Smart::get_from_config('regional.thousands-separator');
+		//--
+		$sign = '';
+		if((string)substr((string)$y_number, 0, 1) == '-') {
+			$sign = '-';
+		} //end if
+		//--
+		$localnum = '0';
+		//--
+		$tmp_arr = explode('.', (string)$y_number);
+		//--
+		$int_part = (string) trim(str_replace(['.', ',', ' ', '-', $separator_dec, $separator_thd], ['', '', '', '', '', ''], (string)$tmp_arr[0]));
+		$dec_part = (string) trim(str_replace(['.', ',', ' ', '-', $separator_dec, $separator_thd], ['', '', '', '', '', ''], (string)$tmp_arr[1]));
+		//--
+		$intx_part = strrev(chunk_split(strrev($int_part), 3, $separator_thd));
+		$intx_part = trim(substr($intx_part, 1));
+		//--
+		if($y_usethousandsep === false) {
+			$intx_part = (string) $int_part;
+		} //end if
+		//--
+		if(count($tmp_arr) > 2) { // invalid
+			//--
+			Smart::log_warning('Invalid Number to convert to local (have too many decimal parts): '.$y_number);
+			return (string) '!'.$y_number.'!';
+			//--
+		} else {
+			//--
+			switch((string)$y_decimals) {
+				case '0': // no decimals
+					$localnum = (string) $intx_part;
+					break;
+				case '1': // fixed number of decimal: 1
+				case '2': // fixed number of decimal: 2
+				case '3': // fixed number of decimal: 3
+				case '4': // fixed number of decimal: 4
+					$localnum = (string) $intx_part.$separator_dec.str_pad(substr((string)(int)$dec_part, 0, (int)$y_decimals), (int)$y_decimals, '0');
+					break;
+				case '-2': // auto decimals but force at least one
+					$autodec = (int) $dec_part;
+					$localnum = (string) $intx_part.$separator_dec.$autodec;
+					break;
+				case '-1': // auto decimals (zero or more)
+				default:
+					$autodec = (int) $dec_part;
+					if((int)$autodec > 0) {
+						$localnum = (string) $intx_part.$separator_dec.$autodec;
+					} else {
+						$localnum = (string) $intx_part;
+					} //end if else
+			} //end switch
+			//--
+		} //end if else
+		//--
+		return (string) $sign.$localnum;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Reverse (Inverse) the SIGN for a localized number (like localnum * -1)
+	 * The Number will be treated as STRING, as it may be huge to avoid break it
+	 *
+	 * Use it just for display (a local formated number)
+	 * WARNING: Do not use when you do calculations, because will break calculations
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @return 	STRING							:: Formatted Local Number
+	 */
+	public static function reverseSignOfLocalFormattedNumber($y_number) {
+		//--
+		$separator_dec = (string) Smart::get_from_config('regional.decimal-separator');
+		$separator_thd = (string) Smart::get_from_config('regional.thousands-separator');
+		//-- test if zero
+		$tmp_number = str_replace(['.', ',', ' ', $separator_dec, $separator_thd], ['', '', '', '', ''], (string)$y_number); // remove garbage characters
+		if((float)$tmp_number == 0) {
+			return (string) $y_number; // it is zero, so no sign should be used
+		} //end if
+		//-- inverse the sign
+		$y_number = (string) trim((string)$y_number);
+		if((string)substr($y_number, 0, 1) == '-') {
+			$y_number = (string) trim((string)substr($y_number, 1)); // remove the minus sign -
+		} else {
+			$y_number = (string) '-'.$y_number; // add the minus sign -
+		} //end if
+		//--
+		return (string) $y_number;
 		//--
 	} //END FUNCTION
 	//=====

@@ -57,7 +57,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20190401
+ * @version 	v.20191022
  * @package 	Components:Misc
  *
  */
@@ -134,14 +134,14 @@ final class SmartBarcode1D {
 		//--
 
 		//--
-		$memory_cache_url = 'memory://barcode-1d/'.$barcode_type.'/'.$barcode_format.'/'.$y_size.'/'.$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code;
-		$realm = 'barcode-1d/';
+		$realm = 'barcode-1d';
+		$cache_uuid = (string) $realm.'://'.$barcode_type.'/'.$barcode_format.'/'.$y_size.'/'.$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code;
 		//--
 
 		//--
 		if((int)$y_cachetime >= 0) {
 			//--
-			$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$memory_cache_url, '', (int)$y_cachetime); // (try to) get from cache
+			$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$cache_uuid, false, (int)$y_cachetime); // (try to) GET from cache
 			//--
 			if((string)$out != '') {
 				return $out; // if found in cache return it
@@ -190,10 +190,10 @@ final class SmartBarcode1D {
 		//--
 
 		//--
-		if((int)$y_cachetime >= 0) {
-			//--
-			$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$memory_cache_url, (string)$out, (int)$y_cachetime); // set + get from cache
-			//--
+		if((string)$out != '') { // avoid to get again if by mistake the content is empty (we want set ...)
+			if((int)$y_cachetime >= 0) {
+				$out = SmartUtils::load_cached_content((string)$barcode_format, (string)$realm, (string)$cache_uuid, (string)$out, (int)$y_cachetime); // SET & GET Back from cache
+			} //end if
 		} //end if
 		//--
 

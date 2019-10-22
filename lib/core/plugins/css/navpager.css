@@ -86,22 +86,22 @@ a.nav-arrows-link {
 div.nav-arrows-start {
 	width: 10px;
 	height: 16px;
-	background: url(img/navbox/nav-start.svg) no-repeat left top;
+	background: url(img/navpager/nav-start.svg) no-repeat left top;
 }
 div.nav-arrows-prev {
 	width: 6px;
 	height: 16px;
-	background: url(img/navbox/nav-prev.svg) no-repeat left top;
+	background: url(img/navpager/nav-prev.svg) no-repeat left top;
 }
 div.nav-arrows-next {
 	width: 6px;
 	height: 16px;
-	background: url(img/navbox/nav-next.svg) no-repeat left top;
+	background: url(img/navpager/nav-next.svg) no-repeat left top;
 }
 div.nav-arrows-end {
 	width: 10px;
 	height: 16px;
-	background: url(img/navbox/nav-end.svg) no-repeat left top;
+	background: url(img/navpager/nav-end.svg) no-repeat left top;
 }
 /* -- */
 

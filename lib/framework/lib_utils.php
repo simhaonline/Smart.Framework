@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20190401
+ * @version 	v.20191022
  * @package 	Base
  *
  */
@@ -138,111 +138,15 @@ public static function url_hex_decode($y_enc_val) {
 //================================================================
 
 
-//================================================================ Display a localized number
-// WARNING: Do not use when you do calculations, because will break calculations
-// Use it just for display (a local formated number)
-// The number to format must come in US format as 1234.56 or -1234.56 or 1,234.56 or 1 234.56 or -1,234.56 or -1 234.56
-// [-1] will place auto decimals
-// [-2] will place auto decimals but force as min as .0
-public static function local_display_number($y_number, $y_decimals=-1, $y_usethousandsep=true) {
-	//--
-	$y_number = (string) trim((string)$y_number);
-	//--
-	if(!preg_match('/^[0-9\-\.\, ]+$/', (string)$y_number)) {
-		Smart::log_warning('Invalid Number to convert to local (invalid characters): '.$y_number);
-		return (string) '!'.$y_number.'!';
-	} //end if
-	//--
-	$y_decimals = Smart::format_number_int($y_decimals);
-	if($y_decimals > 4) {
-		$y_decimals = 4;
-	} elseif($y_decimals < -2) {
-		$y_decimals = -2;
-	} //end if else
-	//--
-	$separator_dec = (string) Smart::get_from_config('regional.decimal-separator');
-	$separator_thd = (string) Smart::get_from_config('regional.thousands-separator');
-	//--
-	$sign = '';
-	if((string)substr((string)$y_number, 0, 1) == '-') {
-		$sign = '-';
-	} //end if
-	//--
-	$localnum = '0';
-	//--
-	$tmp_arr = explode('.', (string)$y_number);
-	//--
-	$int_part = (string) trim(str_replace(['.', ',', ' ', '-', $separator_dec, $separator_thd], ['', '', '', '', '', ''], (string)$tmp_arr[0]));
-	$dec_part = (string) trim(str_replace(['.', ',', ' ', '-', $separator_dec, $separator_thd], ['', '', '', '', '', ''], (string)$tmp_arr[1]));
-	//--
-	$intx_part = strrev(chunk_split(strrev($int_part), 3, $separator_thd));
-	$intx_part = trim(substr($intx_part, 1));
-	//--
-	if($y_usethousandsep === false) {
-		$intx_part = (string) $int_part;
-	} //end if
-	//--
-	if(count($tmp_arr) > 2) { // invalid
-		//--
-		Smart::log_warning('Invalid Number to convert to local (have too many decimal parts): '.$y_number);
-		return (string) '!'.$y_number.'!';
-		//--
-	} else {
-		//--
-		switch((string)$y_decimals) {
-			case '0': // no decimals
-				$localnum = (string) $intx_part;
-				break;
-			case '1': // fixed number of decimal: 1
-			case '2': // fixed number of decimal: 2
-			case '3': // fixed number of decimal: 3
-			case '4': // fixed number of decimal: 4
-				$localnum = (string) $intx_part.$separator_dec.str_pad(substr((string)(int)$dec_part, 0, (int)$y_decimals), (int)$y_decimals, '0');
-				break;
-			case '-2': // auto decimals but force at least one
-				$autodec = (int) $dec_part;
-				$localnum = (string) $intx_part.$separator_dec.$autodec;
-				break;
-			case '-1': // auto decimals (zero or more)
-			default:
-				$autodec = (int) $dec_part;
-				if((int)$autodec > 0) {
-					$localnum = (string) $intx_part.$separator_dec.$autodec;
-				} else {
-					$localnum = (string) $intx_part;
-				} //end if else
-		} //end switch
-		//--
-	} //end if else
-	//--
-	return (string) $sign.$localnum;
-	//--
-} //END FUNCTION
 //================================================================
-
-
-//================================================================
-// Reverse (Inverse) the SIGN for a localized number (like localnum * -1)
-// The Number will be treated as STRING, as it may be huge to avoid break it
-public static function local_number_sign_reverse($y_number) {
-	//--
-	$separator_dec = (string) Smart::get_from_config('regional.decimal-separator');
-	$separator_thd = (string) Smart::get_from_config('regional.thousands-separator');
-	//-- test if zero
-	$tmp_number = str_replace(['.', ',', ' ', $separator_dec, $separator_thd], ['', '', '', '', ''], (string)$y_number); // remove garbage characters
-	if((float)$tmp_number == 0) {
-		return (string) $y_number; // it is zero, so no sign should be used
-	} //end if
-	//-- inverse the sign
-	$y_number = (string) trim((string)$y_number);
-	if((string)substr($y_number, 0, 1) == '-') {
-		$y_number = (string) trim((string)substr($y_number, 1)); // remove the minus sign -
-	} else {
-		$y_number = (string) '-'.$y_number; // add the minus sign -
-	} //end if
-	//--
-	return (string) $y_number;
-	//--
+public static function check_ip_in_range($lower_range_ip_address, $upper_range_ip_address, $needle_ip_address) {
+		//-- Get the numeric reprisentation of the IP Address with IP2long
+		$min 	= ip2long($lower_range_ip_address);
+		$max 	= ip2long($upper_range_ip_address);
+		$needle = ip2long($needle_ip_address);
+		//-- Then it's as simple as checking whether the needle falls between the lower and upper ranges
+		return (($needle >= $min) AND ($needle <= $max));
+		//--
 } //END FUNCTION
 //================================================================
 
@@ -394,47 +298,6 @@ public static function data_unarchive($y_enc_data) {
 	} //end if
 	//--
 	return (string) $out;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// pre-pend a message to a log, keep max 65535 characters long
-public static function prepend_to_log($y_message, $y_log) {
-	//--
-	$y_message = trim(str_replace(array("\n", "\r"), array(' ', ' '), (string)$y_message));
-	$y_log = trim(str_replace(array("\r\n", "\r"), array("\n", "\n"), (string)$y_log));
-	//--
-	if((string)$y_message != '') {
-		//--
-		if((string)$y_log != '') {
-			$arr = (array) explode("\n", (string)$y_log);
-		} else {
-			$arr = array();
-		} //end if else
-		$y_log = ''; // reset
-		$y_log .= $y_message."\n"; // prepend message
-		//--
-		for($i=0; $i<Smart::array_size($arr); $i++) {
-			//--
-			$tmp_line = trim($arr[$i]);
-			if((string)$tmp_line != '') {
-				$tmp_line .= "\n";
-				if((strlen($y_log) + strlen($tmp_line)) <= 65535) { // size of text
-					$y_log .= $tmp_line;
-				} else {
-					break; // log reached max length
-				} //end if
-			} //end if else
-			//--
-		} //end for
-		//--
-		$y_log = trim($y_log);
-		//--
-	} //end if
-	//--
-	return (string) $y_log;
 	//--
 } //END FUNCTION
 //================================================================
@@ -711,24 +574,6 @@ public static function roman_to_number($roman) {
 
 
 //================================================================
-public static function calc_percent($number, $maxnumber) {
-	//--
-	$number = (float) $number;
-	$maxnumber = (float) $maxnumber;
-	//--
-	if($maxnumber <= 0) {
-		$out = 0 ;
-	} else {
-		$out = $number / $maxnumber * 100 ;
-	} //end if else
-	//--
-	return Smart::format_number_dec($out, 2, '.', '') ;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
 // extract HTML title (must not exceed 128 characters ; recommended is max 65) ; no changes
 public static function extract_title($ytxt, $y_limit=65, $clear_numbers=false) {
 	//--
@@ -864,54 +709,6 @@ public static function cleanup_numbers_from_text($ytxt) {
 	//--
 	$num_prefix_sufix = '(\(?\)?\-?\:?\+?#?.?)';
 	return (string) preg_replace('~'.$num_prefix_sufix.'([0-9]+)'.$num_prefix_sufix.'~i', ' ', (string)$ytxt); // remove numbers from a text
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// Used for log arrays
-public static function arr_log_last_entries($y_arr, $y_count) {
-	//--
-	if(!is_array($y_arr)) {
-		return array(); // return an empty array
-	} //end if
-	//--
-	$y_count = Smart::format_number_int($y_count);
-	//--
-	$y_arr = (array) $y_arr;
-	//--
-	$y_count = Smart::format_number_int($y_count);
-	//--
-	if($y_count < 2) {
-		$y_count = 2; // do not allow values lower than 2
-	} //end if
-	//--
-	$new_arr = array();
-	//--
-	$counter = 0;
-	//--
-	@arsort($y_arr);
-	//--
-	foreach($y_arr as $key => $val) {
-		if($counter < $y_count) {
-			$new_arr[$key] = $val;
-			$counter++;
-		} else {
-			break;
-		} //end if else
-	} //end foreach
-	//--
-	return (array) $new_arr;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================ Add leading zeros to a string
-public static function left_pad_str($y_string, $y_padnum, $y_padchar) {
-	//--
-	return str_pad($y_string, $y_padnum, $y_padchar, STR_PAD_LEFT);
 	//--
 } //END FUNCTION
 //================================================================
@@ -1085,678 +882,33 @@ public static function create_download_link($y_file, $y_ctrl_key) {
 
 
 //================================================================
-// require at least 256 bytes of an image to quick detect (or full size for GD detect) if: SVG / PNG / GIF / JPG
-public static function guess_image_extension_by_img_content($pict, $use_gd=false) {
-	//--
-	if((stripos((string)$pict, '</svg>') !== false) OR (stripos((string)$pict, '<svg') !== false)) { // use OR as it may be partial content
-		return '.svg';
-	} //end if
-	//--
-	if(($use_gd === true) AND (!function_exists('getimagesizefromstring'))) {
-		//--
-		if(SmartFrameworkRuntime::ifDebug()) {
-			Smart::log_notice(__METHOD__.'(): GD / getimagesizefromstring is not available, fall back to quick detection ...');
-		} //end if
-		//--
-		$use_gd = false;
-		//--
-	} //end if
-	//--
-	$ext = (string) self::guess_quick_image_extension(substr((string)$pict, 0, 16));
-	if($use_gd != true) {
-		return (string) $ext;
-	} //end if
-	//--
-	$arr_info = (array) @getimagesizefromstring((string)$pict);
-	//$width 	= (int) $arr_info[0]; // not used here
-	//$height 	= (int) $arr_info[1]; // not used here
-	$imgtyp 	= (int) $arr_info[2]; // image type constant
-	if($imgtyp <= 0) {
-		return ''; // invalid type detected
-	} //end if
-	$ext = (string) strtolower((string)@image_type_to_extension((int)$imgtyp, true)); // return the image extension with . (dot) prepend
-	$type = '';
-	switch((string)$ext) {
-		case '.gif':
-			$type = '.gif';
-			break;
-		case '.png':
-			$type = '.png';
-			break;
-		case '.jpg':
-		case '.jpeg':
-			$type = '.jpg';
-			break;
-		default:
-			$type = '';
-	} //end switch
-	//--
-	return (string) $type;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// require the first 16 bytes (first 16 characters - string) of an image to detect if GIF / PNG or JPG
-private static function guess_quick_image_extension($pict) {
-	//--
-	// .jpg:  FF D8 FF
-	// .png:  89 50 4E 47 0D 0A 1A 0A
-	// .gif:  GIF89a | GIF87a
-	// .tiff: 49 49 2A 00 | 4D 4D 00 2A
-	//--
-	$pict = (string) $pict;
-	if(strlen($pict) < 16) {
-		if(SmartFrameworkRuntime::ifDebug()) {
-			Smart::log_notice(__METHOD__.'(): expects the first 16 bytes for detection (but have only '.strlen($pict).' bytes) ...');
-		} //end if
-		return '';
-	} //end if
-	//--
-	$type = '';
-	if(((string)substr($pict, 0, 6) == 'GIF89a') OR ((string)substr($pict, 0, 6) == 'GIF87a')) {
-		$type = '.gif';
-	} elseif(((string)bin2hex((string)substr($pict, 0, 1)) == '89') AND ((string)substr($pict, 1, 3) == 'PNG')) {
-		$type = '.png';
-	} elseif(((string)strtolower((string)bin2hex((string)substr($pict, 0, 1))) == 'ff') AND ((string)strtolower((string)bin2hex((string)substr($pict, 1, 1))) == 'd8')) {
-		$type = '.jpg';
-	} //end if else
-	//--
-	return (string) $type;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-// guess extension from Data-URL OR HTTP-Headers
-// this function is intended to be used with headers that come from self::load_url_content() this is why it combines detection from Data-URL OR HTTP-Headers
-public static function guess_image_extension_by_url_head($y_headers) {
-	//--
-	$y_headers = (string) $y_headers;
-	//--
-	$temp_image_extension = '';
-	$temp_where_was_detected = '???';
-	//--
-	if((string)$y_headers != '') {
-		//-- {{{SYNC-DATA-IMAGE}}}
-		if(((string)strtolower((string)substr((string)$y_headers, 0, 11)) == 'data:image/') AND (stripos((string)$y_headers, ';base64,') !== false)) { // DATA-URL
-			//--
-			$temp_where_was_detected = '??? Try to guess by Data-URL as data:image/ ...';
-			//--
-			$y_headers = (string) substr($y_headers, 11);
-			$eimg = (array) explode(';base64,', $y_headers);
-			$eimg[0] = (string) strtolower((string)trim((string)$eimg[0]));
-			if((string)$eimg[0] == 'jpeg') {
-				$eimg[0] = 'jpg'; // correction
-			} //end if
-			if(((string)$eimg[0] == 'svg') OR ((string)$eimg[0] == 'png') OR ((string)$eimg[0] == 'gif') OR ((string)$eimg[0] == 'jpg')) {
-				$temp_image_extension = '.'.$eimg[0]; // add the point
-				$temp_where_was_detected = ' * Data-URL as # data:image/ + ;base64, = '.$eimg[0];
-			} //end if
-			//--
-		} else { // HTTP-HEADERS
-			//--
-			$temp_where_was_detected = '??? Try to guess by HTTP-Headers ...';
-			//-- try to get file extension by the content (strategy 1)
-			$temp_guess_ext_tmp = array();
-			preg_match('/^content\-disposition:(.*)$/mi', (string)$y_headers, $temp_guess_ext_tmp);
-			$temp_guess_extension = (string) trim((string)$temp_guess_ext_tmp[1]);
-			$temp_guess_extension = (array)  explode(' filename=', (string)$temp_guess_extension);
-			$temp_guess_extension = (string) trim((string)$temp_guess_extension[1]);
-			$temp_guess_extension = (array)  explode('"', (string)$temp_guess_extension);
-			$temp_guess_extension = (string) trim((string)$temp_guess_extension[1]);
-			$temp_guess_extension = (string) trim(strtolower(SmartFileSysUtils::get_file_extension_from_path((string)$temp_guess_extension))); // [OK]
-			$temp_guess_ext_tmp = array();
-			//-- test
-			if((string)$temp_guess_extension == 'jpeg') {
-				$temp_guess_extension = 'jpg'; // correction
-			} //end if
-			if(((string)$temp_guess_extension == 'svg') OR ((string)$temp_guess_extension == 'png') OR ((string)$temp_guess_extension == 'gif') OR ((string)$temp_guess_extension == 'jpg')) {
-				// OK, we guess it
-				$temp_where_was_detected = '[content-disposition]: \''.$temp_guess_extension.'\'';
-				$temp_image_extension = Smart::safe_validname($temp_guess_extension); // make it safe
-				if((string)$temp_image_extension != '') {
-					$temp_image_extension = '.'.strtolower($temp_image_extension); // add the point only if non-empty to avoid issues
-				} //end if
-			} else {
-				//-- try to guess by the content type (strategy 2)
-				$temp_guess_ext_tmp = array();
-				preg_match('/^content\-type:(.*)$/mi', (string)$y_headers, $temp_guess_ext_tmp);
-				$temp_guess_extension = (string) trim((string)$temp_guess_ext_tmp[1]);
-				$temp_guess_extension = (array) explode('/', (string)$temp_guess_extension);
-				$temp_guess_extension = (string) trim((string)$temp_guess_extension[1]);
-				$temp_guess_extension = (array) explode(';', (string)$temp_guess_extension);
-				$temp_guess_extension = (string) trim((string)$temp_guess_extension[0]);
-				//--
-				switch((string)$temp_guess_extension) {
-					case 'svg':
-						$temp_image_extension = '.svg';
-						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
-						break;
-					case 'png':
-						$temp_image_extension = '.png';
-						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
-						break;
-					case 'gif':
-						$temp_image_extension = '.gif';
-						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
-						break;
-					case 'jpg':
-					case 'jpeg':
-						$temp_image_extension = '.jpg';
-						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
-						break;
-					case 'html':
-						$temp_image_extension = '.htm'; // we want to avoid a wrong answer from server to be get as image
-						$temp_where_was_detected = '[content-type]: \''.$temp_image_extension.'\'';
-						break;
-					default:
-						// nothing
-						$temp_where_was_detected = '[content-type]: COULD NOT GUESS EXTENSION ! :: \''.$temp_guess_extension.'\'';
-				} //end switch
-				//--
-			} //end if else
-			//--
-		} //end if
-		//--
-	} //end if else
-	//--
-	return array('extension' => (string)$temp_image_extension, 'where-was-detected' => (string)$temp_where_was_detected);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
 /**
- * Function: get the trust reference for an URL or URL path ; works also with Data-URL (Data-Image only)
- *
- * @access 		private
- * @internal
- *
- * @param $y_url_or_path 	STRING 	:: the absolute URL or RELATIVE URL (as path)
- * @return ARRAY					:: fixed URL, reference elements
- */
-public static function get_url_or_path_trust_reference($y_url_or_path) {
-	//--
-	// v.2019-03-31
-	//--
-	// ### IMPORTANT ###
-	// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO LOAD A FILE PATH
-	// ALL FILE PATHS WILL BE CONSIDERED AS URL PATHS AND WILL BE PREFIXED WITH CURRENT BASE URL TO FORCE ACCESSING ALL FILES VIA HTTP(S) REQUESTS TO AVOID BYPASS THAT SECURITY !!!
-	// #################
-	//--
-	$y_url_or_path = (string) trim((string)$y_url_or_path);
-	//--
-	$the_url_or_path_type = '!empty!';
-	$allow_credentials = 'no';
-	$trust_headers = 'no'; // if external URL
-	//--
-	if((string)$y_url_or_path != '') {
-		//--
-		if((string)substr($y_url_or_path, 0, 10) == 'admin.php?') {
-			$y_url_or_path = (string) self::get_server_current_url().$y_url_or_path;
-			if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-				$allow_credentials = 'yes'; // send only if admin
-			} //end if
-			$trust_headers = 'yes';
-		} elseif(((string)substr($y_url_or_path, 0, strlen(self::get_server_current_url().'admin.php?')) == (string)self::get_server_current_url().'admin.php?') AND (((string)substr($y_url_or_path, 0, 7) == 'http://') OR ((string)substr($y_url_or_path, 0, 8) == 'https://'))) {
-			if(SMART_FRAMEWORK_ADMIN_AREA === true) {
-				$allow_credentials = 'yes'; // send only if admin
-			} //end if
-			$trust_headers = 'yes';
-		} elseif(((string)substr($y_url_or_path, 0, 10) == 'index.php?') OR ((string)substr($y_url_or_path, 0, 1) == '?')) {
-			$y_url_or_path = (string) self::get_server_current_url().$y_url_or_path;
-			if(SMART_FRAMEWORK_ADMIN_AREA !== true) {
-				$allow_credentials = 'yes'; // send only if not admin
-			} //end if
-			$trust_headers = 'yes';
-		} elseif(((string)substr($y_url_or_path, 0, strlen(self::get_server_current_url().'index.php?')) == (string)self::get_server_current_url().'index.php?') AND (((string)substr($y_url_or_path, 0, 7) == 'http://') OR ((string)substr($y_url_or_path, 0, 8) == 'https://'))) {
-			if(SMART_FRAMEWORK_ADMIN_AREA !== true) {
-				$allow_credentials = 'yes'; // send only if not admin
-			} //end if
-			$trust_headers = 'yes';
-		} elseif(((string)substr($y_url_or_path, 0, strlen(self::get_server_current_url().'?')) == (string)self::get_server_current_url().'?') AND (((string)substr($y_url_or_path, 0, 7) == 'http://') OR ((string)substr($y_url_or_path, 0, 8) == 'https://'))) {
-			if(SMART_FRAMEWORK_ADMIN_AREA !== true) {
-				$allow_credentials = 'yes'; // send only if not admin
-			} //end if
-			$trust_headers = 'yes';
-		} //end if
-		//--
-		$the_url_or_path_type = '!unknown!';
-		if(((string)strtolower((string)substr((string)$y_url_or_path, 0, 11)) == 'data:image/') AND (stripos((string)$y_url_or_path, ';base64,') !== false)) { // {{{SYNC-DATA-IMAGE}}}
-			$the_url_or_path_type = 'data-url'; // it is a data-url
-			$trust_headers = 'yes';
-		} elseif(((string)substr((string)$y_url_or_path, 0, 7) == 'http://') OR ((string)substr((string)$y_url_or_path, 0, 8) == 'https://')) {
-			$the_url_or_path_type = 'url'; // it is an url
-			// trust headers must be preserved as above
-		} else { // !!! it is a relative path but for the security reasons must be accessed via the local URL only since content source may be untrusted !!!
-			$y_url_or_path = (string) self::get_server_current_url().$y_url_or_path;
-			$the_url_or_path_type = 'url'; // it is an url
-			// trust headers must be preserved as above
-		} //end if
-		//--
-	} //end if else
-	//--
-	return array(
-		'url-or-file-fixed' => (string) $y_url_or_path, // fixed URL (ex: for relative URLs the current URL as prefix will be added)
-		'path-or-url-type' 	=> (string) $the_url_or_path_type, // can be URL or Data-URL
-		'allow-credentials' => (string) $allow_credentials, // yes/no (yes only for internal ...)
-		'trust-headers' 	=> (string) $trust_headers // yes/no
-	);
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Load URL IMG (svg / png / gif / jpg) Content (if relative path to a file will be prefixed with current URL for security reasons)
- *
- * @param STRING 	$y_img_link					:: relative/path/to/image (assumes current URL as prefix) | http(s)://some.url:port/path/to/image (port is optional) ; works also with Data-URL (Data-Image only)
- * @param YES/NO	$y_allow_set_credentials	:: DEFAULT IS SET to NO ; if YES must be set just for internal URLs ; if set to AUTO will try to detect if can trust based on admin.php / index.php local framework scripts ; if the $y_url_or_path to get is detected to be under current URL will send also the Unique / session IDs ; more if detected that is from admin.php and if this is set to YES will send the HTTP-BASIC Auth credentials if detected (using YES with other URLs than Smart.Framework's current URL can be a serious SECURITY ISSUE, so don't !)
- * @return ARRAY
- */
-public static function load_url_img_content($y_img_link, $y_allow_set_credentials='no') {
-	//--
-	// v.2019-03-31
-	//--
-	// ### IMPORTANT ###
-	// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO LOAD A FILE PATH
-	// ALL FILE PATHS WILL BE CONSIDERED AS URL PATHS AND WILL BE PREFIXED WITH CURRENT BASE URL TO FORCE ACCESSING ALL FILES VIA HTTP(S) REQUESTS TO AVOID BYPASS THAT SECURITY !!!
-	// #################
-	//--
-	$tmp_imglink = (string) trim((string)$y_img_link);
-	$tmp_fake_fname = '';
-	$tmp_fcontent = '';
-	//--
-	$out_arr = [
-		'log' 		=> '',
-		'result' 	=> 0,
-		'extension' => '',
-		'filename' 	=> '',
-		'content' 	=> ''
-	];
-	//--
-	if((string)$tmp_imglink != '') {
-		//-- {{{SYNC-LOAD-URL-OR-FILE-OR-IMG}}}
-		$tmp_arr_trust_reference = (array) self::get_url_or_path_trust_reference((string)$tmp_imglink);
-		$tmp_fixed_url_or_path 	= (string) $tmp_arr_trust_reference['url-or-file-fixed'];
-		$tmp_url_or_path_type 	= (string) $tmp_arr_trust_reference['path-or-url-type'];
-		$tmp_allow_credentials 	= (string) $tmp_arr_trust_reference['allow-credentials'];
-		$tmp_trust_headers 		= (string) $tmp_arr_trust_reference['trust-headers'];
-		$tmp_arr_trust_reference = null;
-		//--
-		$tmp_imglink = (string) $tmp_fixed_url_or_path;
-		//--
-		switch((string)$y_allow_set_credentials) {
-			case 'no':
-				$tmp_allow_credentials = 'no';
-				break;
-			case 'yes':
-				$tmp_trust_headers = 'yes';
-				break;
-			case 'auto':
-			default:
-				if((string)$tmp_allow_credentials == 'yes') {
-					$y_allow_set_credentials = 'yes';
-					$tmp_trust_headers = 'yes';
-				} else {
-					$y_allow_set_credentials = 'no';
-				} //end if else
-		} //end switch
-		//--
-		$is_ok = false;
-		switch((string)$tmp_url_or_path_type) {
-			case 'url':
-			case 'data-url':
-				$is_ok = true;
-				break;
-			case '!empty!':
-			case '!unknown!':
-			default:
-				$is_ok = false;
-		} //end switch
-		//--
-		$out_arr['log'] = 'INF: Type='.$tmp_url_or_path_type."\n";
-		//--
-		if($is_ok === true) {
-			//--
-			$tmp_browse_arr = (array) self::load_url_content((string)$tmp_imglink, (int)SMART_FRAMEWORK_NETSOCKET_TIMEOUT, 'GET', '', '', '', (string)$tmp_allow_credentials); // [OK]
-			$out_arr['log'] .= (string) $tmp_browse_arr['log'];
-			if($tmp_browse_arr['result'] == 1) {
-				if(((string)$tmp_browse_arr['mode'] == 'file') OR ((string)$tmp_browse_arr['mode'] == 'embedded')) {
-					$tmp_trust_headers = 'yes'; // SHOULD TRUST ALSO IF LOCAL FILE OR EMBEDDED DATAURL IMAGE
-				} //end if
-			} //end if
-			//Smart::log_notice(print_r($tmp_browse_arr,1));
-			//--
-			$guess_arr = (array) self::guess_image_extension_by_url_head((string)$tmp_browse_arr['headers']);
-			$tmp_img_ext = (string) $guess_arr['extension'];
-			$tmp_where_we_guess = (string) $guess_arr['where-was-detected'];
-			//Smart::log_notice('Guess Ext by URL Head: '.$tmp_browse_arr['headers']."\n".'### '.print_r($guess_arr,1)."\n".'#');
-			if((string)$tmp_trust_headers != 'yes') {
-				$tmp_img_ext = ''; // not trusted, try re-detect !
-			} //end if
-			//--
-			if((string)$tmp_img_ext == '') {
-				$tmp_img_ext = (string) self::guess_image_extension_by_img_content((string)$tmp_browse_arr['content'], true);
-				if((string)$tmp_img_ext != '') {
-					$tmp_where_we_guess = ' Img Content ...';
-				} //end if
-			} //end if
-			//Smart::log_notice('Guess Ext by Img Content: '.$tmp_img_ext."\n".'#');
-			if((string)$tmp_img_ext != '') {
-				$tmp_fake_fname = 'file'.$tmp_img_ext;
-			} //end if
-			//--
-			if(((string)$tmp_browse_arr['result'] == '1') AND ((string)$tmp_browse_arr['code'] == '200')) {
-				if((string)$tmp_fake_fname != '') {
-					if(((string)$tmp_img_ext == '.svg') OR ((string)$tmp_img_ext == '.png') OR ((string)$tmp_img_ext == '.gif') OR ((string)$tmp_img_ext == '.jpg')) { // using a deep detection above and is not safe unknown image extension
-						$tmp_fcontent = (string) $tmp_browse_arr['content'];
-					} //end if
-				} //end if else
-			} //end if else
-			//--
-			$tmp_browse_arr = null;
-			//--
-			if((string)$tmp_fake_fname != '') {
-				if((string)$tmp_fcontent != '') {
-					$out_arr['result']  	= 1;
-					$out_arr['extension'] 	= (string) $tmp_img_ext;
-					$out_arr['filename'] 	= (string) $tmp_fake_fname;
-					$out_arr['content'] 	= (string) $tmp_fcontent;
-				} //end if
-			} //end if
-			//--
-		} //end if
-		//--
-	} //end if else
-	//--
-	return (array) $out_arr;
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Load URL Content (if relative path to a file will be prefixed with current URL for security reasons)
- *
- * @param STRING 	$y_url_or_path				:: relative/path/to/file (assumes current URL as prefix) | http(s)://some.url:port/path (port is optional) ; works also with Data-URL (Data-Image only)
- * @param NUMBER 	$y_timeout					:: timeout in seconds
- * @param ENUM 		$y_method 					:: used only for URLs, the browsing method: GET | POST
- * @param ENUM		$y_ssl_method				:: SSL Mode: tls | sslv3 | sslv2 | ssl
- * @param STRING 	$y_auth_name				:: used only for URLs, the auth user name
- * @param STRING 	$y_auth_pass				:: used only for URLs, the auth password
- * @param YES/NO	$y_allow_set_credentials	:: DEFAULT IS SET to NO ; if YES must be set just for internal URLs ; if set to AUTO will try to detect if can trust based on admin.php / index.php local framework scripts ; if the $y_url_or_path to get is detected to be under current URL will send also the Unique / session IDs ; more if detected that is from admin.php and if this is set to YES will send the HTTP-BASIC Auth credentials if detected (using YES with other URLs than Smart.Framework's current URL can be a serious SECURITY ISSUE, so don't !)
- * @return ARRAY
- */
-public static function load_url_content($y_url_or_path, $y_timeout=30, $y_method='GET', $y_ssl_method='', $y_auth_name='', $y_auth_pass='', $y_allow_set_credentials='no') {
-	//--
-	// v.2019-03-31
-	// fixed sessionID with new Dynamic generated
-	//--
-	// ### IMPORTANT ###
-	// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO LOAD A FILE PATH
-	// ALL FILE PATHS WILL BE CONSIDERED AS URL PATHS AND WILL BE PREFIXED WITH CURRENT BASE URL TO FORCE ACCESSING ALL FILES VIA HTTP(S) REQUESTS TO AVOID BYPASS THAT SECURITY !!!
-	// #################
-	//--
-	$y_url_or_path = (string) $y_url_or_path;
-	//--
-	if((string)$y_url_or_path == '') {
-		//--
-		return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
-			'log' => 'ERROR: FILE Name is Empty ...',
-			'mode' => 'file', // DO NOT CHANGE !!
-			'result' => '0',
-			'code' => '400', // HTTP 400 BAD REQUEST
-			'headers' => '',
-			'content' => '',
-			'debuglog' => ''
-		);
-		//--
-	} //end if
-	//-- detect if file or url {{{SYNC-LOAD-URL-OR-FILE-OR-IMG}}}
-	$tmp_arr_trust_reference = (array) self::get_url_or_path_trust_reference((string)$y_url_or_path);
-	$tmp_fixed_url_or_path 	= (string) $tmp_arr_trust_reference['url-or-file-fixed'];
-	$tmp_url_or_path_type 	= (string) $tmp_arr_trust_reference['path-or-url-type'];
-	$tmp_allow_credentials 	= (string) $tmp_arr_trust_reference['allow-credentials'];
-	$tmp_trust_headers 		= (string) $tmp_arr_trust_reference['trust-headers'];
-	$tmp_arr_trust_reference = null;
-	//--
-	$y_url_or_path = (string) $tmp_fixed_url_or_path;
-	//--
-	switch((string)$y_allow_set_credentials) {
-		case 'no':
-			$tmp_allow_credentials = 'no';
-			break;
-		case 'yes':
-			$tmp_trust_headers = 'yes';
-			break;
-		case 'auto':
-		default:
-			if((string)$tmp_allow_credentials == 'yes') {
-				$y_allow_set_credentials = 'yes';
-				$tmp_trust_headers = 'yes';
-			} else {
-				$y_allow_set_credentials = 'no';
-			} //end if else
-	} //end switch
-	//--
-	switch((string)$tmp_url_or_path_type) {
-		case 'url':
-		case 'data-url':
-			break;
-		case '!empty!':
-		case '!unknown!':
-		default:
-			return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
-				'log' => 'ERROR: FILE Not Found or Invalid Path or Invalid DataURL ...',
-				'mode' => 'file', // DO NOT CHANGE !!
-				'result' => '0',
-				'code' => '404', // HTTP 404 NOT FOUND
-				'headers' => '',
-				'content' => '',
-				'debuglog' => ''
-			);
-	} //end switch
-	//--
-	if((string)$tmp_url_or_path_type == 'data-url') { // DATA-URL
-		//-- try to detect if data:image/ :: {{{SYNC-DATA-IMAGE}}}
-		if(((string)strtolower((string)substr((string)$y_url_or_path, 0, 11)) == 'data:image/') AND (stripos((string)$y_url_or_path, ';base64,') !== false)) {
-			//--
-			$eimg = (array) explode(';base64,', (string)$y_url_or_path);
-			//--
-			return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
-				'log' => 'OK ? Not sure, decoded from embedded B64 image !',
-				'mode' => 'embedded', // DO NOT CHANGE !!
-				'result' => '1',
-				'code' => '200', // HTTP 200 OK
-				'headers' => (string) SmartUnicode::sub_str($y_url_or_path, 0, 50).'...', // try to get the 1st 50 chars for trying to guess the extension
-				'content' => (string) @base64_decode((string)trim((string)$eimg[1])),
-				'debuglog' => ''
-			);
-			//--
-		} else {
-			//--
-			return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
-				'log' => 'ERROR: Invalid DataURL ...',
-				'mode' => 'file', // DO NOT CHANGE !!
-				'result' => '0',
-				'code' => '404', // HTTP 404 NOT FOUND
-				'headers' => '',
-				'content' => '',
-				'debuglog' => ''
-			);
-			//--
-		} //end if
-		//--
-	} else { // URL
-		//--
-		if((string)$y_ssl_method == '') {
-			if(defined('SMART_FRAMEWORK_SSL_MODE')) {
-				$y_ssl_method = (string) SMART_FRAMEWORK_SSL_MODE;
-			} else {
-				Smart::log_notice('NOTICE: LibUtils/Load-URL-or-File // The SSL Method not defined and SMART_FRAMEWORK_SSL_MODE was not defined. Using the `tls` as default ...');
-				$y_ssl_method = 'tls';
-			} //end if else
-		} //end if
-		//--
-		$browser = new SmartHttpClient();
-		//--
-		$y_timeout = Smart::format_number_int($y_timeout,'+');
-		if($y_timeout <= 0) {
-			$y_timeout = 30; // default value
-		} //end if
-		$browser->connect_timeout = (int) $y_timeout;
-		//--
-		if(SmartFrameworkRuntime::ifDebug()) {
-			$browser->debug = 1;
-		} //end if
-		//--
-		if((string)self::get_server_current_protocol() == 'https://') {
-			$tmp_current_protocol = 'https://';
-		} else {
-			$tmp_current_protocol = 'http://';
-		} //end if else
-		//--
-		$tmp_current_server = (string) self::get_server_current_domain_name();
-		$tmp_current_port 	= (string) self::get_server_current_port();
-		$tmp_current_path 	= (string) self::get_server_current_request_uri();
-		$tmp_current_script = (string) self::get_server_current_full_script();
-		//--
-		$tmp_test_url_arr 		= (array) Smart::url_parse($y_url_or_path);
-		$tmp_test_browser_id 	= (array) self::get_os_browser_ip();
-		//--
-		$tmp_extra_log = '';
-		if(SmartFrameworkRuntime::ifDebug()) {
-			$tmp_extra_log .= "\n".'===== # ====='."\n";
-		} //end if
-		//--
-		$cookies = array();
-		$auth_name = (string) $y_auth_name;
-		$auth_pass = (string) $y_auth_pass;
-		//--
-		if((string)$y_allow_set_credentials == 'yes') {
-			//--
-			$tmp_extra_log .= '[EXTRA]: Send Auth CREDENTIALS set to YES (will check if safe) ...'."\n";
-			//--
-			if(SmartFrameworkRuntime::ifDebug()) {
-				$tmp_extra_log .= '[EXTRA]: I will try to detect if this is my current Domain and I will check if it is safe to send my sessionID COOKIE and my Auth CREDENTIALS ...'."\n";
-			} //end if
-			//--
-			if(((string)$tmp_current_protocol == (string)$tmp_test_url_arr['protocol']) AND ((string)$tmp_current_server == (string)$tmp_test_url_arr['host']) AND ((string)$tmp_current_port == (string)$tmp_test_url_arr['port'])) {
-				//--
-				if(SmartFrameworkRuntime::ifDebug()) {
-					$tmp_extra_log .= '[EXTRA]: OK, Seems that the browsed Domain is identical with my current Domain which is: '.$tmp_current_protocol.$tmp_current_server.':'.$tmp_current_port.' and the browsed one is: '.$tmp_test_url_arr['protocol'].$tmp_test_url_arr['host'].':'.$tmp_test_url_arr['port']."\n";
-					$tmp_extra_log .= '[EXTRA]: I will also check if my current script and path are identical with the browsed ones ...'."\n";
-				} //end if
-				//--
-				if(((string)$tmp_current_script == (string)$tmp_test_url_arr['path']) AND (substr($tmp_current_path, 0, strlen($tmp_current_script)) == (string)$tmp_test_url_arr['path'])) {
-					//--
-					if(SmartFrameworkRuntime::ifDebug()) {
-						$tmp_extra_log .= '[EXTRA]: OK, Seems that the current script is identical with the browsed one :: '.'Current Path is: \''.$tmp_current_script.'\' / Browsed Path is: \''.$tmp_test_url_arr['path'].'\' !'."\n";
-						$tmp_extra_log .= '[EXTRA]: I will check if I have to send my SessionID so I will check the browserID ...'."\n";
-					} //end if
-					//--
-					$browser->useragent = (string) self::get_selfrobot_useragent_name(); // this must be set just when detected the same path and script ; it is a requirement to detect it as the self-robot [ @s# ] in order to send the credentials or the current
-					//-- {{{SYNC-SMART-UNIQUE-COOKIE}}}
-					if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME')) AND (!defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_SKIP'))) {
-						if((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME != '') {
-							if(SmartFrameworkSecurity::ValidateVariableName(strtolower((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME))) {
-								//--
-								if((string)SMART_APP_VISITOR_COOKIE != '') { // if set, then forward
-									if(SmartFrameworkRuntime::ifDebug()) {
-										$tmp_extra_log .= '[EXTRA]: OK, I will send my current Visitor Unique Cookie ID as it is set and not empty ...'."\n";
-									} //end if
-									$cookies[(string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME] = (string) SMART_APP_VISITOR_COOKIE; // this is a requirement
-								} //end if
-								//--
-							} //end if
-						} //end if
-					} //end if
-					//-- #end# sync
-					if(((string)SmartAuth::get_login_method() == 'HTTP-BASIC') AND ((string)$auth_name == '') AND ((string)$auth_pass == '') AND (strpos($tmp_current_script, '/admin.php') !== false) AND (strpos($tmp_test_url_arr['path'], '/admin.php') !== false)) {
-						//--
-						if(SmartFrameworkRuntime::ifDebug()) {
-							$tmp_extra_log .= '[EXTRA]: HTTP-BASIC Auth method detected / Allowed to pass the Credentials - as the browsed URL belongs to this ADMIN Server as I run, the Auth credentials are set but passed as empty - everything seems to be safe I will send my credentials: USERNAME = \''.SmartAuth::get_login_id().'\' ; PASS = *****'."\n";
-						} //end if
-						//--
-						$auth_name = (string) SmartAuth::get_login_id();
-						$auth_pass = (string) SmartAuth::get_login_password();
-						//--
-					} //end if
-					//--
-				} else {
-					//--
-					if(SmartFrameworkRuntime::ifDebug()) {
-						$tmp_extra_log .= '[EXTRA]: Seems that the scripts are NOT identical :: '.'Current Script is: \''.$tmp_current_script.'\' / Browsed Script is: \''.$tmp_test_url_arr['path'].'\' !'."\n";
-						$tmp_extra_log .= '[EXTRA]: This is the diff for having a comparation: '.substr($tmp_current_path, 0, strlen($tmp_current_script))."\n";
-					} //end if
-					//--
-				} //end if
-				//--
-			} //end if
-			//--
-		} //end if
-		//--
-		$browser->cookies = (array) $cookies;
-		//--
-		$data = (array) $browser->browse_url($y_url_or_path, $y_method, $y_ssl_method, $auth_name, $auth_pass); // do browse
-		//--
-		return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
-			'log' 		=> (string) $data['log'].$tmp_extra_log,
-			'mode' 		=> (string) $data['mode'], // DO NOT CHANGE !!
-			'result' 	=> (string) $data['result'],
-			'code' 		=> (string) $data['code'],
-			'headers' 	=> (string) $data['headers'],
-			'content' 	=> (string) $data['content'],
-			'debuglog' 	=> (string) $data['debuglog']
-		);
-		//--
-	} //end if else
-	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-/**
- * Load/Save a cache file from Memory or URL
+ * GET/SET a cache file on the file system ; Cached File will be saved in 'tmp/cache/{prefix}/.../'
+ * When SET will return the content back
  *
  * @param STRING 	$y_cache_file_extension		:: File Extension (example: '.ext')
- * @param STRING 	$y_cache_prefix				:: prefix dir (at least 3 chars) ended by slash (Example: 'prefix/')
- * @param STRING 	$y_load_url					:: URL to Load (Ex: http(s)://some/test.txt ; memory://some.unique.key)
- * @param STRING	$y_content					:: just for memory:// ; contents of the file to be saved into cache - [set] mode ; if this is empty will just get
+ * @param STRING 	$y_cache_prefix				:: prefix dir (at least 3 chars ; max 64 chars) ended by slash (Example: 'prefix')
+ * @param STRING 	$y_cache_unique_id			:: The Cache ID Unique Key (Ex: some.unique.key)
+ * @param STRING	$y_content					:: default is FALSE to GET the cached content if exists ; if this is a non-empty string will SET the content into the cache and will return it back
  * @param INT 		$y_cache_expire				:: 0=never ; (>0)=seconds
  * @param ENUM 		$y_encrypted				:: yes/no to encrypt the file content
  * @return STRING								:: cached contents or empty string
  */
-public static function load_cached_content($y_cache_file_extension, $y_cache_prefix, $y_load_url, $y_content='', $y_cache_expire=0, $y_encrypted='no') {
-
-	// ### IMPORTANT ###
-	// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO LOAD A FILE PATH
-	// ALL FILE PATHS WILL BE CONSIDERED AS URL PATHS AND WILL BE PREFIXED WITH CURRENT BASE URL TO FORCE ACCESSING ALL FILES VIA HTTP(S) REQUESTS TO AVOID BYPASS THAT SECURITY !!!
-	// #################
+public static function load_cached_content($y_cache_file_extension, $y_cache_prefix, $y_cache_unique_id, $y_set_content=false, $y_cache_expire=0, $y_encrypted='no') {
 
 	//--
-	$y_load_url = (string) $y_load_url;
+	$y_cache_unique_id = (string) $y_cache_unique_id;
 	//--
-	if((string)$y_load_url == '') {
+	if((string)$y_cache_unique_id == '') {
 		Smart::log_warning('Utils // Load From Cache ... Empty URL ...');
 		return '';
 	} //end if
-	//--
-
 	//--
 	$y_cache_file_extension = Smart::safe_validname($y_cache_file_extension);
 	//--
 	$y_cache_expire = Smart::format_number_int($y_cache_expire, '+');
 	//--
-	$y_cache_prefix = (string) $y_cache_prefix;
+	$y_cache_prefix = (string) Smart::safe_varname($y_cache_prefix);
 	//--
 	if((strlen($y_cache_prefix) >= 3) AND (strlen($y_cache_prefix) <= 64)) {
 		//--
@@ -1764,13 +916,14 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 		//--
 	} else {
 		//--
+		Smart::log_warning('Utils // Load From Cache ... Invalid Cache Prefix ...');
 		$y_cache_prefix = 'default/';
 		//--
 	} //end if
 	//--
 
 	//--
-	$unique_id = (string) SmartHashCrypto::sha1('@@::Smart.Framework::Content::Cache@@'.$y_load_url);
+	$unique_id = (string) SmartHashCrypto::sha1('@@::Smart.Framework::Content::Cache@@'.$y_cache_unique_id);
 	//--
 	$dir = 'tmp/cache/'.$y_cache_prefix.SmartFileSysUtils::prefixed_sha1_path($unique_id);
 	SmartFileSysUtils::raise_error_if_unsafe_path($dir);
@@ -1778,62 +931,52 @@ public static function load_cached_content($y_cache_file_extension, $y_cache_pre
 	$file = (string) $dir.$unique_id.$y_cache_file_extension;
 	SmartFileSysUtils::raise_error_if_unsafe_path($file);
 	//--
-
-	//--
 	if(!SmartFileSystem::is_type_dir($dir)) {
-		SmartFileSystem::dir_create($dir, true); // recursive
+		SmartFileSystem::dir_create($dir, true); // recursive create
+		if(!SmartFileSystem::is_type_dir($dir)) {
+			Smart::log_warning('Utils // Load From Cache ... Cannot Create Directory Structure: '.$dir);
+			return '';
+		} //end if
 	} // end if
 	//--
+	/* avoid this to avoid overload Inodes !! ('tmp/cache/' is already protected)
 	$protect_file = $dir.'index.html';
 	if(!SmartFileSystem::is_type_file($protect_file)) {
 		SmartFileSystem::write($protect_file, '');
 	} //end if
+	*/
 	//--
 
 	//-- will go through this only if cache expired or no cache
 	if((!SmartFileSystem::is_type_file($file)) OR ((SmartFileSystem::is_type_file($file)) AND ($y_cache_expire > 0) AND ((SmartFileSystem::get_file_mtime($file) + $y_cache_expire) < time()))) {
-		// \Smart::log_notice('MUST Resave to cache ... '.$y_load_url);
-		//-- read
-		if((substr($y_load_url, 0, 9) == 'memory://') AND ((string)$y_content != '')) { // Assume Memory
-			//-- set the content from memory
-			$tmp_content = (string) $y_content;
-			$tmp_result = '1';
-			$tmp_code = '200';
+		//--
+		//Smart::log_notice('MUST Resave to cache ... '.$y_cache_unique_id);
+		//-- write to cache if not empty (set)
+		if((string)$y_set_content != '') { // If Content Have been Set
 			//--
-		} elseif(substr($y_load_url, 0, 9) != 'memory://') { // Assume URL
-			//--
-			$arr = self::load_url_content($y_load_url); // [OK]
-			$tmp_result = $arr['result'];
-			$tmp_code = $arr['code'];
-			$tmp_content = $arr['content'];
-			$arr = array();
-			//--
-		} //end if else
-		//-- write to cache
-		if(((string)$tmp_result == '1') AND ((string)$tmp_code == '200')) {
-			//--
-			// \Smart::log_notice('Resave to cache ... '.$y_load_url);
+			//Smart::log_notice('Resave to cache ... '.$y_cache_unique_id);
 			//-- if required, apply encryption
 			if((string)$y_encrypted == 'yes') {
-				$tmp_content = self::crypto_blowfish_encrypt($tmp_content);
+				$y_set_content = (string) self::crypto_blowfish_encrypt($y_set_content);
 			} //end if
 			//--
-			SmartFileSystem::write($file, $tmp_content); // save file to cache (safe write is controlled via locks)
+			SmartFileSystem::write($file, $y_set_content); // save file to cache (safe write is controlled via locks)
 			//--
 		} else {
 			//--
-			$tmp_content = ''; // expired content
+			$y_set_content = ''; // expired content
 			//--
-			// SmartFileSystem::delete($file); // do not delete, simply just update
+			// do not delete file in multi concurrency, simply rewrite ...
 			//--
 		} //end if
 		//--
-		$out = (string) $tmp_content;
-		$tmp_content = ''; // free mem
+		$out = (string) $y_set_content;
+		$y_set_content = ''; // free mem
 		//--
 	} else {
 		//--
 		$out = (string) SmartFileSystem::read($file); // ccahe valid, read from cache
+		//Smart::log_notice(__METHOD__.'() read FS-Cached Content from: '.$file.' @ '.$out);
 		//--
 	} //end if
 	//--
@@ -2667,19 +1810,6 @@ public static function get_server_os() {
 	//--
 	return (string) $out;
 	//--
-} //END FUNCTION
-//================================================================
-
-
-//================================================================
-public static function check_ip_in_range($lower_range_ip_address, $upper_range_ip_address, $needle_ip_address) {
-		//-- Get the numeric reprisentation of the IP Address with IP2long
-		$min 	= ip2long($lower_range_ip_address);
-		$max 	= ip2long($upper_range_ip_address);
-		$needle = ip2long($needle_ip_address);
-		//-- Then it's as simple as checking whether the needle falls between the lower and upper ranges
-		return (($needle >= $min) AND ($needle <= $max));
-		//--
 } //END FUNCTION
 //================================================================
 

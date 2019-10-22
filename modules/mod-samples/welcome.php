@@ -54,6 +54,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		$module_area = $this->ControllerGetParam('module-area');
 		$the_lang = (string) $this->ConfigParamGet('regional.language-id');
 		$the_xlang = (string) $this->ConfigParamGet('regional.language-id'); // repeat this to check if caching works
+		$local_num = (string) SmartTextTranslations::formatAsLocalNumber('3141.59265359', -1, true);
 		//--
 		if($this->IfDebug()) {
 			$this->SetDebugData('App Domain', $this->ControllerGetParam('app-domain'));
@@ -73,10 +74,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			$this->SetDebugData('URL Page', $this->ControllerGetParam('url-page'));
 			$this->SetDebugData('URL Base Domain', $this->ControllerGetParam('url-basedomain'));
 			$this->SetDebugData('URL Domain', $this->ControllerGetParam('url-domain'));
+			$this->SetDebugData('Current (Set) Regional Settings', SmartTextTranslations::getSafeRegionalSettings());
 			$this->SetDebugData('Current (Set) Language ID', $this->ControllerGetParam('lang'));
 			$this->SetDebugData('Config Language ID', $the_lang);
 			$this->SetDebugData('Current Charset', $this->ControllerGetParam('charset'));
 			$this->SetDebugData('Current TimeZone', $this->ControllerGetParam('timezone'));
+			$this->SetDebugData('Test: Local Number Display (PI * 1000)', $local_num);
+			$this->SetDebugData('Test: Local Number Display, Reverse Sign to minus (PI * 1000)', SmartTextTranslations::reverseSignOfLocalFormattedNumber($local_num));
 		} //end if
 		//--
 

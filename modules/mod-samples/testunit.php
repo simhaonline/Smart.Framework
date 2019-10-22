@@ -158,9 +158,10 @@ class SmartAppAdminController extends SmartAbstractAppController {
 			case 'testunit.html-editor':
 				//--
 				$this->PageViewSetCfg('template-file', 'template-modal.htm');
-				$main = '<script>'.SmartComponents::js_code_init_away_page().'</script>';
-				$main .= SmartComponents::html_jsload_htmlarea();
-				$main .= SmartComponents::html_js_htmlarea('test_html_area', 'test_html_area', '', '920px', '500px');
+				$main = '<script>'.SmartViewHtmlHelpers::js_code_init_away_page().'</script>';
+				$main .= SmartViewHtmlHelpers::html_jsload_htmlarea();
+				$main .= SmartViewHtmlHelpers::html_js_htmlarea('test_html_area', 'test_html_area', '', '920px', '500px');
+				$fmcallback = SmartViewHtmlHelpers::html_js_htmlarea_fm_callback('#', false); // just for test
 				$main .= '<button class="ux-button" onClick="alert($(\'#test_html_area\').val());">Get HTML Source</button>';
 				//--
 				break;
@@ -172,9 +173,9 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				} //end if
 				//--
 				$this->PageViewSetCfg('template-file', 'template-modal.htm');
-				$main = '<script>'.SmartComponents::js_code_init_away_page('The changes will be lost !').'</script>';
-				$main .= SmartComponents::html_jsload_editarea();
-				$main .= SmartComponents::html_js_editarea('test_code_editor', 'test_code_editor', '', (string)$mode, true, '920px', '450px'); // html
+				$main = '<script>'.SmartViewHtmlHelpers::js_code_init_away_page('The changes will be lost !').'</script>';
+				$main .= SmartViewHtmlHelpers::html_jsload_editarea();
+				$main .= SmartViewHtmlHelpers::html_js_editarea('test_code_editor', 'test_code_editor', '', (string)$mode, true, '920px', '450px'); // html
 				//--
 				break;
 			case 'testunit.barcodes-qrcode':
@@ -337,7 +338,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'test.load-url':
 				//--
-				$browser = (array) SmartUtils::load_url_content('http://www.unix-world.org', 20, 'GET');
+				$browser = (array) SmartRobot::load_url_content('http://www.unix-world.org', 20, 'GET');
 				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
 					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
 					unset($browser);
@@ -350,7 +351,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'test.load-secure-url':
 				//--
-				$browser = (array) SmartUtils::load_url_content('https://www.unix-world.org', 20, 'GET', (string)SMART_FRAMEWORK_SSL_MODE);
+				$browser = (array) SmartRobot::load_url_content('https://www.unix-world.org', 20, 'GET', (string)SMART_FRAMEWORK_SSL_MODE);
 				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
 					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
 					unset($browser);

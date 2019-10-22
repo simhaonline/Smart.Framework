@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191010
+ * @version 	v.20191022
  * @package 	Application
  *
  */
@@ -441,8 +441,10 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return false;
 		} //end if
 		//--
-		if(is_array($debug_msg) OR is_object($debug_msg)) {
+		if(is_object($debug_msg)) {
 			$debug_msg = (string) print_r($debug_msg,1);
+		} else {
+			$debug_msg = (string) SmartUtils::pretty_print_var($debug_msg);
 		} //end if
 		//--
 		SmartFrameworkRegistry::setDebugMsg('modules', (string)$this->modulename, [
