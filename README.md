@@ -50,7 +50,7 @@ Using a regular server as hardware platform (Supermicro):
 * HDD 2 x 1TB SSD
 Software:
 * OS: Debian 10 Linux, 64-bit, up-to-date 2019-10-10
-* Apps: Apache 2.4.38, PHP 7.3.9 (with Opcache enabled)
+* Apps: Apache 2.4.38, PHP 7.3.10 (with Opcache enabled)
 
 #### Benchmark Results of tested PHP Frameworks, with a simple controller (no Caching) that Outputs: 'Hello World':
 * Smart.Framework v.3.7.8 head@2019.10.19 with MarkersTPL Templating: ~ 28.7K (28797) requests / second

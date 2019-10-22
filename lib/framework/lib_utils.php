@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20191022
+ * @version 	v.20191023
  * @package 	Base
  *
  */
@@ -894,7 +894,7 @@ public static function create_download_link($y_file, $y_ctrl_key) {
  * @param ENUM 		$y_encrypted				:: yes/no to encrypt the file content
  * @return STRING								:: cached contents or empty string
  */
-public static function load_cached_content($y_cache_file_extension, $y_cache_prefix, $y_cache_unique_id, $y_set_content=false, $y_cache_expire=0, $y_encrypted='no') {
+public static function load_cached_file_content($y_cache_file_extension, $y_cache_prefix, $y_cache_unique_id, $y_set_content=false, $y_cache_expire=0, $y_encrypted='no') {
 
 	//--
 	$y_cache_unique_id = (string) $y_cache_unique_id;

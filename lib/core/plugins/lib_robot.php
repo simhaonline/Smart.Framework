@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191022
+ * @version 	v.20191023
  * @package 	Components:Core
  *
  */
@@ -72,8 +72,8 @@ final class SmartRobot {
 		if((string)$tmp_imglink != '') {
 			//-- {{{SYNC-LOAD-URL-OR-FILE-OR-IMG}}}
 			$tmp_arr_trust_reference = (array) self::get_url_or_path_trust_reference((string)$tmp_imglink);
-			$tmp_fixed_url_or_path 	= (string) $tmp_arr_trust_reference['url-or-file-fixed'];
-			$tmp_url_or_path_type 	= (string) $tmp_arr_trust_reference['path-or-url-type'];
+			$tmp_fixed_url_or_path 	= (string) $tmp_arr_trust_reference['url-or-path-fixed'];
+			$tmp_url_or_path_type 	= (string) $tmp_arr_trust_reference['url-or-path-type'];
 			$tmp_allow_credentials 	= (string) $tmp_arr_trust_reference['allow-credentials'];
 			$tmp_trust_headers 		= (string) $tmp_arr_trust_reference['trust-headers'];
 			$tmp_arr_trust_reference = null;
@@ -210,8 +210,8 @@ final class SmartRobot {
 		} //end if
 		//-- detect if file or url {{{SYNC-LOAD-URL-OR-FILE-OR-IMG}}}
 		$tmp_arr_trust_reference = (array) self::get_url_or_path_trust_reference((string)$y_url_or_path);
-		$tmp_fixed_url_or_path 	= (string) $tmp_arr_trust_reference['url-or-file-fixed'];
-		$tmp_url_or_path_type 	= (string) $tmp_arr_trust_reference['path-or-url-type'];
+		$tmp_fixed_url_or_path 	= (string) $tmp_arr_trust_reference['url-or-path-fixed'];
+		$tmp_url_or_path_type 	= (string) $tmp_arr_trust_reference['url-or-path-type'];
 		$tmp_allow_credentials 	= (string) $tmp_arr_trust_reference['allow-credentials'];
 		$tmp_trust_headers 		= (string) $tmp_arr_trust_reference['trust-headers'];
 		$tmp_arr_trust_reference = null;
@@ -422,12 +422,12 @@ final class SmartRobot {
 	 * @param $y_url_or_path 	STRING 	:: the absolute URL or RELATIVE URL (as path)
 	 * @return ARRAY					:: fixed URL, reference elements
 	 */
-	public static function get_url_or_path_trust_reference($y_url_or_path) {
+	private static function get_url_or_path_trust_reference($y_url_or_path) {
 		//--
 		// v.2019-03-31
 		//--
-		// ### IMPORTANT ###
-		// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO LOAD A FILE PATH
+		// ### SECURITY: IMPORTANT !!! ###
+		// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO USE WITH A FILE SYSTEM PATH
 		// ALL FILE PATHS WILL BE CONSIDERED AS URL PATHS AND WILL BE PREFIXED WITH CURRENT BASE URL TO FORCE ACCESSING ALL FILES VIA HTTP(S) REQUESTS TO AVOID BYPASS THAT SECURITY !!!
 		// #################
 		//--
@@ -484,8 +484,8 @@ final class SmartRobot {
 		} //end if else
 		//--
 		return array(
-			'url-or-file-fixed' => (string) $y_url_or_path, // fixed URL (ex: for relative URLs the current URL as prefix will be added)
-			'path-or-url-type' 	=> (string) $the_url_or_path_type, // can be URL or Data-URL
+			'url-or-path-fixed' => (string) $y_url_or_path, // fixed URL (ex: for relative URLs the current URL as prefix will be added)
+			'url-or-path-type' 	=> (string) $the_url_or_path_type, // can be URL or Data-URL
 			'allow-credentials' => (string) $allow_credentials, // yes/no (yes only for internal ...)
 			'trust-headers' 	=> (string) $trust_headers // yes/no
 		);
