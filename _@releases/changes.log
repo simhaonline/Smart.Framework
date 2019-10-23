@@ -1,6 +1,10 @@
 
 # CHANGELOG / MIGRATION NOTES for Milestone Releases Only - SMART.FRAMEWORK #
 
+October 22, 2019 :: Version 3.7.8 # rev.191022
+	* many fixes and optimizations
+	* a bit of code refactoring
+
 February 07, 2019 :: Version 3.7.8 # rev.190207
 	* changed the license to dual-licensing (see LICENSE)
 

@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class Smart | Smart.Framework Documentation :: 2019-05-22 09:50</title>
+	<title>Class Smart | Smart.Framework Documentation :: 2019-10-23 06:42</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3687643906"></script>
+	<script src="elementlist.js?830703499"></script>
 </head>
 
 <body>
@@ -140,7 +140,7 @@ Smart::some_method_of_this_class(...);
 		<b>Package:</b> <a href="package-Base.html">Base</a><br>
 
 				<b>Version:</b>
-				v.20190226<br>
+				v.20191011<br>
 				<b>Depends:</b>
 				extensions: PHP JSON ; classes: SmartUnicode<br>
 				<b>Hints:</b>
@@ -2036,21 +2036,27 @@ maximum)<br>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_random_number">#</a>
-		<code>random_number( <span>mixed <var>$y_min</var> = <span class="php-num">0</span></span>, <span>mixed <var>$y_max</var> = -<span class="php-num">1</span></span> )</code>
+		<code>random_number( <span>mixed <var>$y_min</var> = <span class="php-num">0</span></span>, <span>mixed <var>$y_max</var> = -<span class="php-num">1</span></span>, <span>mixed <var>$y_seed</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
 <p>Generates an integer random number between min and max using mt_rand() which
-is4x times faster than rand(). The min is zero. The max is limited to 2147483647
-on most of the platforms.</p>
+is4x times faster than rand(). It may use a random seed based on microtime or
+custom using mt_srand() which uses MT_RAND_MT19937 for PHP &gt;= 7.1 NOTICE:
+using a time based seed may result in most of the calls to a random number may
+return the same number which perhaps is not what is expected !! The min is zero.
+The max is limited to 2147483647 on most of the platforms.</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
 <p>Generates an integer random number between min and max using mt_rand() which
-is4x times faster than rand(). The min is zero. The max is limited to 2147483647
-on most of the platforms.</p>
+is4x times faster than rand(). It may use a random seed based on microtime or
+custom using mt_srand() which uses MT_RAND_MT19937 for PHP &gt;= 7.1 NOTICE:
+using a time based seed may result in most of the calls to a random number may
+return the same number which perhaps is not what is expected !! The min is zero.
+The max is limited to 2147483647 on most of the platforms.</p>
 
 
 
@@ -2721,7 +2727,7 @@ safe)</dd>
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-10-23 06:42</a>
 	</div>
 </div>
 </div>

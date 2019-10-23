@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20190228.1059'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20191023.1137'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -964,7 +964,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20190228 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20191023 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1778,7 +1778,7 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	//##### Smart v.20190226
+	//##### Smart v.20191011
 
 
 	//================================================================
@@ -2162,7 +2162,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartHashCrypto v.181022
+	//##### SmartHashCrypto v.20190103
 
 
 	//==============================================================
@@ -2273,7 +2273,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.20190401
+	//##### SmartUtils v.20191023
 
 
 	//================================================================

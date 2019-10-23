@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartPersistentCache | Smart.Framework Documentation :: 2019-05-22 09:50</title>
+	<title>Class SmartPersistentCache | Smart.Framework Documentation :: 2019-10-23 06:42</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3687643906"></script>
+	<script src="elementlist.js?830703499"></script>
 </head>
 
 <body>
@@ -170,7 +170,7 @@ SmartAbstractPersistentCache
 		<b>Package:</b> <a href="package-Application.html">Application</a><br>
 
 				<b>Version:</b>
-				v.20190401<br>
+				v.20190715<br>
 				<b>Depends:</b>
 				-<br>
 				<b>Usage:</b>
@@ -346,6 +346,53 @@ Cache)<br>
 
 				<h4>Overrides</h4>
 				<div class="list"><code>SmartAbstractPersistentCache::keyExists()</code></div>
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getTtl" id="_getTtl">
+
+		<td class="attributes"><code>
+			 public static
+			INTEGER
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getTtl">#</a>
+		<code>getTtl( <span>STRING <var>$y_realm</var></span>, <span>STRING <var>$y_key</var></span> )</code>
+
+		<div class="description short">
+			
+<p>get the TTL in seconds for a key from the persistent Cache or Error code</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>get the TTL in seconds for a key from the persistent Cache or Error code</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$y_realm</var></dt>
+					<dd>The Cache Realm</dd>
+					<dt><var>$y_key</var></dt>
+					<dd>The Cache Key</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>INTEGER</code><br>number of seconds the key will expire ; -1 if the key does not expire (is
+persistent) ; -2 if the key does not exists ; -3 if N/A or ERR<br>
+				</div>
+
+
+
+				<h4>Overrides</h4>
+				<div class="list"><code>SmartAbstractPersistentCache::getTtl()</code></div>
 
 		</div>
 		</div></td>
@@ -536,7 +583,7 @@ varUncompress()
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-10-23 06:42</a>
 	</div>
 </div>
 </div>

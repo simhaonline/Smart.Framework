@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartTextTranslations
- * @version 	v.20191022
+ * @version 	v.20191023
  * @package 	Components:Core
  *
  */
@@ -465,6 +465,16 @@ final class SmartComponents {
 
 
 	//================================================================
+	/**
+	 * Return the Highlight type for a file type Highlight.Js
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @param STRING 	$path				The file path or file name (includding file extension)
+	 *
+	 * @return ARRAY						[ type, pack ]
+	 */
 	public static function get_filetype_highlightsyntax($path) {
 		//--
 		$path = (string) $path;

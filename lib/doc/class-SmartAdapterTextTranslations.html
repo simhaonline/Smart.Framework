@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Class SmartAdapterTextTranslations | Smart.Framework Documentation :: 2019-05-22 09:50</title>
+	<title>Class SmartAdapterTextTranslations | Smart.Framework Documentation :: 2019-10-23 06:42</title>
 	<link rel="stylesheet" href="resources/style.css?2361662816">
 	<script src="resources/combined.js?4174473549"></script>
-	<script src="elementlist.js?3687643906"></script>
+	<script src="elementlist.js?830703499"></script>
 </head>
 
 <body>
@@ -154,7 +154,7 @@ define('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM',
 		<b>Package:</b> <a href="package-Application.html">Application</a><br>
 
 				<b>Version:</b>
-				v.181105<br>
+				v.20190527<br>
 				<b>Depends:</b>
 				-<br>
 				<b>Usage:</b>
@@ -181,21 +181,21 @@ define('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM',
 
 		<div class="description short">
 			
-<p>Smart Parse Regional Text Parse Translation Source This function must
-implement a Text Translations parser. It can be implemented to read from one of
-the variety of sources: Arrays, INI, YAML, XML, JSON, SQLite, PostgreSQL,
-GetText, ... RETURN: an associative array as [key =&gt; value] for the specific
-translation</p>
+<p>Get Regional Text Translation from Source by: Language, Area, Subarea This
+function must implement a Text Translations parser. It can be implemented to
+read from one of the variety of sources: Arrays, INI, YAML, XML, JSON, SQLite,
+PostgreSQL, MySQL, MongoDB, GetText, ... RETURN: an associative array as [key
+=&gt; value] for the specific translation set</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>Smart Parse Regional Text Parse Translation Source This function must
-implement a Text Translations parser. It can be implemented to read from one of
-the variety of sources: Arrays, INI, YAML, XML, JSON, SQLite, PostgreSQL,
-GetText, ... RETURN: an associative array as [key =&gt; value] for the specific
-translation</p>
+<p>Get Regional Text Translation from Source by: Language, Area, Subarea This
+function must implement a Text Translations parser. It can be implemented to
+read from one of the variety of sources: Arrays, INI, YAML, XML, JSON, SQLite,
+PostgreSQL, MySQL, MongoDB, GetText, ... RETURN: an associative array as [key
+=&gt; value] for the specific translation set</p>
 
 
 
@@ -224,25 +224,25 @@ translation</p>
 
 		<div class="description short">
 			
-<p>Smart Parse Regional Text Get Latest Version This function must implement a
-way to get last version string to validate Text Translations. If a version
-cannot be provided, must return (string) date('Y-m-d') and this way the texts
-persistent cache will be re-validated daily. If a real version can be provided
-it is the best, so persistent cache would be re-validated just upon changes !
-RETURN: a non-empty string the provides the latest version string of the current
-texts translations</p>
+<p>Get Regional Text containing the Latest Version of the Translations This
+function must implement a way to get last version string to validate Text
+Translations. If a version cannot be provided, must return (string)
+date('Y-m-d') and this way the texts persistent cache will be re-validated
+daily. If a real version can be provided it is the best, so persistent cache
+would be re-validated just upon changes ! RETURN: a non-empty string the
+provides the latest version string of the current texts translations</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>Smart Parse Regional Text Get Latest Version This function must implement a
-way to get last version string to validate Text Translations. If a version
-cannot be provided, must return (string) date('Y-m-d') and this way the texts
-persistent cache will be re-validated daily. If a real version can be provided
-it is the best, so persistent cache would be re-validated just upon changes !
-RETURN: a non-empty string the provides the latest version string of the current
-texts translations</p>
+<p>Get Regional Text containing the Latest Version of the Translations This
+function must implement a way to get last version string to validate Text
+Translations. If a version cannot be provided, must return (string)
+date('Y-m-d') and this way the texts persistent cache will be re-validated
+daily. If a real version can be provided it is the best, so persistent cache
+would be re-validated just upon changes ! RETURN: a non-empty string the
+provides the latest version string of the current texts translations</p>
 
 
 
@@ -253,6 +253,57 @@ texts translations</p>
 
 				<h4>Implementation of</h4>
 				<div class="list"><code>SmartInterfaceAdapterTextTranslations::getTranslationsVersion()</code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setTranslationsKeyUsageCount" id="_setTranslationsKeyUsageCount">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setTranslationsKeyUsageCount">#</a>
+		<code>setTranslationsKeyUsageCount( <span>mixed <var>$the_lang</var></span>, <span>mixed <var>$y_area</var></span>, <span>mixed <var>$y_subarea</var></span>, <span>mixed <var>$y_textkey</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Register the usage (increment counter or register in logs) for a Regional
+Text Translation into Source or alternate source by: Language, Area, Subarea,
+Key This function must implement a way to increment or register the usage of
+every used pair of Language/Area/Subarea/Key as it was used to help the cleanup
+of unused translations. This function will operate only in DEV mode
+(SMART_ERROR_HANDLER == 'dev') and add in init.php:
+define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS', true); It can be implemented
+to write into one of the variety of sources: Text/CSV, Database, ... RETURN:
+N/A</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Register the usage (increment counter or register in logs) for a Regional
+Text Translation into Source or alternate source by: Language, Area, Subarea,
+Key This function must implement a way to increment or register the usage of
+every used pair of Language/Area/Subarea/Key as it was used to help the cleanup
+of unused translations. This function will operate only in DEV mode
+(SMART_ERROR_HANDLER == 'dev') and add in init.php:
+define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS', true); It can be implemented
+to write into one of the variety of sources: Text/CSV, Database, ... RETURN:
+N/A</p>
+
+
+
+
+
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code>SmartInterfaceAdapterTextTranslations::setTranslationsKeyUsageCount()</code></div>
 		</div>
 		</div></td>
 	</tr>
@@ -278,7 +329,7 @@ texts translations</p>
 </div>
 
 	<div id="footer">
-		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-05-22 09:50</a>
+		Documentation for PHP Classes and Functions // <a href="http://demo.unix-world.org/smart-framework/" target="_blank">Smart.Framework Documentation :: 2019-10-23 06:42</a>
 	</div>
 </div>
 </div>
