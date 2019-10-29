@@ -15,6 +15,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Markers-TPL Templating
 // DEPENDS:
 //	* Smart::
+//	* SmartUtils::
 //	* SmartUnicode::
 //	* SmartParser::
 //	* SmartFileSystem::
@@ -1025,13 +1026,11 @@ final class SmartMarkersTemplating {
 						$val = (string) (float) $val;
 					//--
 					} elseif((string)$escexpr == '|slug') { // Slug: a-zA-Z0-9_- / - / -- : -
-						$val = (string) SmartUnicode::deaccent_str((string)trim((string)$val));
-						$val = (string) preg_replace('/[^a-zA-Z0-9_\-]/', '-', (string)$val);
-						$val = (string) trim((string)preg_replace('/[\-]+/', '-', (string)$val)); // suppress multiple -
+						$val = (string) SmartUtils::create_slug((string)$val, false); // do not apply strtolower as it can be later combined with |lower flag
 					} elseif((string)$escexpr == '|htmid') { // HTML-ID: a-zA-Z0-9_-
-						$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$val));
+						$val = (string) SmartUtils::create_htmid((string)$val);
 					} elseif((string)$escexpr == '|jsvar') { // JS-Variable: a-zA-Z0-9_
-						$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
+						$val = (string) SmartUtils::create_jsvar((string)$val);
 					//--
 					} elseif(((string)substr((string)$escexpr, 0, 7) == '|substr') OR ((string)substr((string)$escexpr, 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
 						$xnum = Smart::format_number_int((int)substr((string)$escexpr, 7), '+');
