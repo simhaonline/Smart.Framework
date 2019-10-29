@@ -161,17 +161,17 @@ interface SmartInterfaceAppInfo {
  *
  *     public function Run() {
  *
- *         $op = $this->RequestVarGet('op', '', 'string'); // get variable `op` from Request GET/POST
+ *         $op = $this->RequestVarGet('op', '', 'string'); // get variable 'op' from Request GET/POST
  *
  *         $this->PageViewSetCfg('template-path', 'my-template'); 		// will be using the template in the folder: etc/templates/my-template/
  *         $this->PageViewSetCfg('template-file', 'template-one.htm');	// will be using the template file: template-one.htm (located in: etc/templates/my-template/)
  *         //$this->PageViewSetCfg('template-file', 'template-modal.htm'); // or using the modal template
  *
- *         // the template `template-one.htm` contains several markers as): `title`, `left-column`, `main`, `right-column`, so we set them as:
+ *         // the template 'template-one.htm' contains several markers as): 'title', 'left-column', 'main', 'right-column', so we set them as:
  *         $this->PageViewSetVars([
  *             'title' => 'Hello World', // this marker is like <title>[####TITLE####]</title>
  *             'left-column' => 'Some content in the left column', // the marker will be put anywhere in the template html as: [####LEFT-COLUMN####]
- *             'main' => '<h1>Some content in the main area</h1>', // the `main` area must always be defined in a template as: [####MAIN####] ; when no template this variable will be redirected to the main output in the case of RAW pages (see the below example).
+ *             'main' => '<h1>Some content in the main area</h1>', // the 'main' area must always be defined in a template as: [####MAIN####] ; when no template this variable will be redirected to the main output in the case of RAW pages (see the below example).
  *             'right-column' => 'Some content in the <b>right area</b>. Current Operation is: '.Smart::escape_html($op) // the marker will be put anywhere in the template html as: [####RIGHT-COLUMN####]
  *         ]);
  *
@@ -205,7 +205,7 @@ interface SmartInterfaceAppInfo {
  *         //$this->PageViewSetCfg('rawdisp', 'inline'); // (optional, set the content disposition ; for pdf mime type you maybe would set this to 'attachment' instead on 'inline'
  *
  *         $this->PageViewSetVar(
- *             'main' => Smart::json_encode('Hello World, this is my json string') // this case have no marker template, but there is always a `main` output variable even when no template is used
+ *             'main' => Smart::json_encode('Hello World, this is my json string') // this case have no marker template, but there is always a 'main' output variable even when no template is used
  *         );
  *
  *     } //END FUNCTION
@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191022
+ * @version 	v.20191029
  * @package 	Application
  *
  */
@@ -281,9 +281,25 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	//=====
 	/**
 	 * Class constructor.
-	 * This is marked as FINAL and cannot be customized.
+	 * This is used to construct a middleware controller service
+	 *
+	 * @param STRING $y_module_path 	:: The Relative Path (followed by a trailing slash) to the current module containing the current Controller to be served by the Middleware Service ; Ex: 'modules/mod-mytest/'
+	 * @param STRING $y_controller 		:: The Controller to serve the action for the Middleware Service ; Ex: 'mytest.some-controller', referring the file 'modules/mod-mytest/some-controller.php' as the real controller to be served
+	 * @param STRING $y_url_page 		:: The URL Parameter 'page' as it comes from URL ; Ex: 'mytest.some-controller' | 'some-controller' (if 'mytest' is set as default module) | 'mytest.some-controller.html' or anything that can refere by URL to the current controller when using Apache Rewrite
+	 * @param STRING $y_hardcoded_area 	:: *OPTIONAL* If this is provided will supply a hard-coded Area for the Middleware Service, otherwise is detected from current script.php
+	 *
 	 */
-	final public function __construct($y_area, $y_module_path, $y_url_script, $y_url_path, $y_url_addr, $y_url_page, $y_controller) {
+	final public function __construct($y_module_path, $y_controller, $y_url_page, $y_hardcoded_area='') {
+		//--
+		$y_module_path 		= (string) $y_module_path;
+		$y_controller 		= (string) $y_controller;
+		$y_url_page 		= (string) $y_url_page;
+		$y_hardcoded_area 	= (string) trim((string)$y_hardcoded_area);
+		//--
+		$param_url_script 	= (string) SmartUtils::get_server_current_script();
+		$param_area 		= (string) trim((string)Smart::base_name($param_url_script, '.php'));
+		$param_url_path 	= (string) SmartUtils::get_server_current_path();
+		$param_url_addr 	= (string) SmartUtils::get_server_current_url();
 		//--
 		if(defined('SMART_APP_MODULE_DIRECT_OUTPUT') AND (SMART_APP_MODULE_DIRECT_OUTPUT === true)) {
 			$this->directoutput = true;
@@ -291,16 +307,32 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			$this->directoutput = false;
 		} //end if else
 		//--
-		switch((string)$y_area) {
+		if(((string)$param_area == '') OR (!preg_match('/^[a-z0-9_\-]+$/', (string)$param_area))) {
+			Smart::raise_error(
+				__METHOD__.'() :: Empty or Invalid Parameter: Area: '.$param_area
+			);
+			return;
+		} //end if
+		if((string)$y_hardcoded_area != '') {
+			if((string)$y_hardcoded_area !== (string)$param_area) {
+				Smart::raise_error(
+					__METHOD__.'() :: Invalid Parameter: Area: '.$param_area.' instead of hard-coded: '.$y_hardcoded_area
+				);
+				return;
+			} //end if
+		} //end if
+		/* this is no more necessary, as it uses an optional hard-coded value to ensure a particular area ...
+		switch((string)$param_area) {
 			case 'index':
 			case 'admin':
 				break;
 			default: // invalid value
 				Smart::raise_error(
-					__METHOD__.'() :: Invalid Parameter: Area: '.$y_area
+					__METHOD__.'() :: Invalid Parameter: Area: '.$param_area
 				);
 				return;
 		} //end switch
+		*/
 		//--
 		if((string)$y_module_path == '') {
 			Smart::raise_error(
@@ -327,21 +359,21 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return;
 		} //end if
 		//--
-		if((string)$y_url_script != (string)$y_area.'.php') {
+		if((string)$param_url_script != (string)$param_area.'.php') {
 			Smart::raise_error(
-				__METHOD__.'() :: Invalid Parameter: URL-Script: '.$y_url_script
+				__METHOD__.'() :: Invalid Parameter: URL-Script: '.$param_url_script
 			);
 			return;
 		} //end switch
-		if((string)$y_url_path == '') {
+		if((string)$param_url_path == '') {
 			Smart::raise_error(
-				__METHOD__.'() :: Empty Parameter: URL-Path: '.$y_url_path
+				__METHOD__.'() :: Empty Parameter: URL-Path: '.$param_url_path
 			);
 			return;
 		} //end switch
-		if((string)$y_url_addr == '') {
+		if((string)$param_url_addr == '') {
 			Smart::raise_error(
-				__METHOD__.'() :: Empty Parameter: URL-Addr: '.$y_url_addr
+				__METHOD__.'() :: Empty Parameter: URL-Addr: '.$param_url_addr
 			);
 			return;
 		} //end switch
@@ -362,19 +394,19 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$this->appenv 			= (string) (SMART_ERROR_HANDLER === 'log') ? 'prod' : 'dev'; 				// app environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
 		$this->releasehash 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); 						// the release hash based on app framework version, framework release and modules version
-		$this->modulearea 		= (string) $y_area; 														// index | admin
+		$this->modulearea 		= (string) $param_area; 													// index | admin
 		$this->modulepath 		= (string) $y_module_path; 													// modules/mod-something/
 		$this->modulename 		= (string) Smart::base_name($y_module_path); 								// mod-something
-		$this->module 			= (string) $ctrl_arr[0]; 													// something
-		$this->action 			= (string) $ctrl_arr[1]; 													// someaction
-		$this->controller 		= (string) $y_controller; 													// something.someaction
+		$this->module 			= (string) $ctrl_arr[0]; 													// something (module name part of the controller)
+		$this->action 			= (string) $ctrl_arr[1]; 													// someaction (controller name part of the controller)
+		$this->controller 		= (string) $y_controller; 													// something.someaction (the controller)
 		$this->urlproto 		= (string) SmartUtils::get_server_current_protocol(); 						// http:// | https://
 		$this->urlbasedomain 	= (string) SmartUtils::get_server_current_basedomain_name();				// 127.0.0.1|localhost|dom.ext
 		$this->urldomain 		= (string) SmartUtils::get_server_current_domain_name(); 					// 127.0.0.1|localhost|sdom.dom.ext
 		$this->urlport 			= (string) SmartUtils::get_server_current_port(); 							// 80 | 443 | ...
-		$this->urlscript 		= (string) $y_url_script; 													// index.php | admin.php
-		$this->urlpath 			= (string) $y_url_path; 													// /frameworks/smart-framework/
-		$this->urladdr 			= (string) $y_url_addr; 													// http(s)://127.0.0.1|localhost:8008/frameworks/smart-framework/
+		$this->urlscript 		= (string) $param_url_script; 												// index.php | admin.php
+		$this->urlpath 			= (string) $param_url_path; 												// /frameworks/smart-framework/
+		$this->urladdr 			= (string) $param_url_addr; 												// http(s)://127.0.0.1|localhost:8008/frameworks/smart-framework/
 		$this->urlpage 			= (string) $y_url_page; 													// this may vary depending on semantic URL rule but can be equal with: something.someaction | someaction | something
 		$this->urlquery 		= (string) $_SERVER['QUERY_STRING'] ? '?'.$_SERVER['QUERY_STRING'] : ''; 	// the query URL if any ...
 		$this->urluri 			= (string) SmartUtils::get_server_current_request_uri(); 					// the REQUEST_URI
@@ -395,8 +427,9 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	//=====
 	/**
 	 * Class Destructor.
-	 * This is marked as FINAL and cannot be customized.
-	 * Use the ShutDown() function as destructor, it will be called after Run() safely prior to destruct this class.
+	 * This is used to destruct a middleware controller service
+	 *
+	 * NOTICE: Use the ShutDown() function as custom destructor, it will be called after Run() safely prior to destruct this class.
 	 *
 	 * The class destructors are not safe in controller instances.
 	 * See the comments from ShutDown() function in this class !
@@ -1486,14 +1519,14 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
-	 * Force Instant Flush Output (ONLY for controllers that do a direct output ... SMART_APP_MODULE_DIRECT_OUTPUT must be defined and set to TRUE).
-	 * This will do instant flush and also ob_flush if necessary and detected (for example when the output_buffering is enabled in PHP.INI).
+	 * Force Instant Flush Output, ONLY for controllers that do a direct output (Ex: SMART_APP_MODULE_DIRECT_OUTPUT must be defined and set to TRUE).
+	 * This will do instant flush and also ob_flush() if necessary and detected (for example when the output_buffering is enabled in PHP.INI).
 	 * NOTICE: be careful using this function to avoid break intermediary output bufferings !!
 	 *
 	 * @access 		private
 	 * @internal
 	 *
-	 * @return -						:: This function does not return anything
+	 * @return VOID	:: This function does not return anything
 	 */
 	final public function InstantFlush() {
 		//--
@@ -1523,7 +1556,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * The Controller Runtime - This function is required to be re-defined in all controllers
 	 *
-	 * @return 	INTEGER					:: *OPTIONAL* The HTTP Status Code: by default it does not return or it must returns 200 which is optional ; other supported HTTP Status Codes are: 202/203/208 (OK with notice/warning/error messages - used only for REST/APIs), 500 (Internal Error), 404 (Not Found), 403 (Forbidden), 401 (Authentication Required), 400 (Error) ; if the HTTP status code is not 200, an extra notification message can be set as: ##EXAMPLE: $this->PageViewSetCfg('error', 'Access to this page is restricted'); return 403; ## - to have also a detailed error message to be shown near the HTTP status code)
+	 * @return 	INTEGER					:: *OPTIONAL* The HTTP Status Code: by default it does not return or it must returns 200 which is optional ; other supported HTTP Status Codes are: 202/203/208 (OK with notice/warning/error messages - used only for REST/APIs), 301 (Permanent Redirect), 302 (Temporary Redirect), 404 (Not Found), 403 (Forbidden), 401 (Authentication Required), 400 (Error), 429 (Too many Requests), 500 (Internal Error), 502 (Bad Gateway), 503 (Service Unavailable) ; if the HTTP status code is in the range of 4xx - 5xx, an extra notification message can be set as: ##EXAMPLE: $this->PageViewSetCfg('error', 'Access to this page is restricted'); return 403; ## - to have also a detailed error message to be shown near the HTTP status code)
 	 */
 	abstract public function Run(); //END FUNCTION
 	//=====
@@ -1534,6 +1567,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * This is the pre Run() function
 	 * This function will be called before Run()
 	 *
+	 * @return VOID :: This function does not return anything
 	 */
 	public function Initialize() {
 		// *** optional*** can be redefined in a controller (as a pre-run init, if required) but is not mandatory ...
@@ -1558,6 +1592,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * This function (by replacing __destruct()) can be used if you have to cleanup a temporary folder (tmp/) after Run().
 	 * Because of the PHP Bug #31570, the __destruct() can't operate on relative paths and will produce wrong and unexpected results !!!
 	 *
+	 * @returns VOID :: This function does not return anything
 	 */
 	public function ShutDown() {
 		// *** optional*** can be redefined in a controller (as a post-run init, as safe destructor, if required) but is not mandatory ...

@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.3.7.8');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20191010
+ * @version		20191028
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -266,15 +266,14 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 			return;
 		} //end if
 		//--
-		//== PATHS
-		//--
-		$base_script = SmartUtils::get_server_current_script();
-		$base_full_path = SmartUtils::get_server_current_path();
-		$base_full_url = SmartUtils::get_server_current_url();
-		//--
 		//== RUN THE MODULE
 		//--
-		$appModule = new SmartAppAdminController('admin', $the_path_to_module, $base_script, $base_full_path, $base_full_url, $page, $the_controller_name);
+		$appModule = new SmartAppAdminController(
+			$the_path_to_module,
+			$the_controller_name,
+			$page,
+			'admin'
+		);
 		//--
 		if(!defined('SMART_APP_MODULE_DIRECT_OUTPUT') OR SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
 			ob_start();

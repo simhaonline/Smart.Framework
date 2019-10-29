@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 /**
  * Class Smart MongoDB Client (for PHP MongoDB extension v.1.1.0 or later)
- * Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1
+ * Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1 / 4.2
  *
  * <code>
  *
@@ -72,19 +72,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20190423
+ * @version 	v.20190428
  * @package 	Database:MongoDB
- *
- * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
- * @method MIXED		find($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single or multiple documents in a collection with optional filter criteria / limit
- * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single document in a collection with optional filter criteria / limit
- * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)									# add multiple documents to a collection
- * @method MIXED		insert($strCollection, $arrDoc)												# add single document to a collection
- * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# insert single or modify single or multi documents in a collection that are matching the filter criteria ; this is always non-fatal, will throw catcheable exception on error ...
- * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# modify single or many documents in a collection that are matching the filter criteria
- * @method MIXED		delete($strCollection, $arrFilter)											# delete single or many documents from a collection that are matching the filter criteria
- * @method MIXED		command($arrCmd)															# run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...
- * @method MIXED		igcommand($arrCmd)															# run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists
  *
  */
 final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to avoid break the comments !!!
@@ -100,28 +89,28 @@ private $extver;
 /** @var string */
 private $db;
 
-/** @var timeout */
+/** @var integer+ */
 private $timeout;
 
 /** @var resource */
 private $mongodbclient;
 
-/** @var $mongodb */
+/** @var object */
 private $mongodb;
 
-/** @var $collection */
+/** @var object */
 private $collection;
 
-/** @var slow_time */
+/** @var float */
 private $slow_time = 0.0035;
 
-/** @var fatal_err */
+/** @var boolean */
 private $fatal_err = true;
 
-/** @var connex_key */
+/** @var string */
 private $connex_key = '';
 
-/** @var connected */
+/** @var boolean */
 private $connected = false;
 
 
@@ -430,10 +419,21 @@ public function is_command_ok($result) {
 
 //======================================================
 /**
- * this is the Magic Call Method
+ * This is the Magic Method (Call) that maps the PHP class extra methods to MongoDB methods.
+ * It have variadic parameters mapped to MongoDB sub-calls.
  *
- * @access 		private
- * @internal
+ * @magic
+ *
+ * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
+ * @method MIXED		find($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single or multiple documents in a collection with optional filter criteria / limit
+ * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single document in a collection with optional filter criteria / limit
+ * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)									# add multiple documents to a collection
+ * @method MIXED		insert($strCollection, $arrDoc)												# add single document to a collection
+ * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# insert single or modify single or multi documents in a collection that are matching the filter criteria ; this is always non-fatal, will throw catcheable exception on error ...
+ * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# modify single or many documents in a collection that are matching the filter criteria
+ * @method MIXED		delete($strCollection, $arrFilter)											# delete single or many documents from a collection that are matching the filter criteria
+ * @method MIXED		command($arrCmd)															# run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...
+ * @method MIXED		igcommand($arrCmd)															# run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists
  *
  */
 public function __call($method, array $args) {

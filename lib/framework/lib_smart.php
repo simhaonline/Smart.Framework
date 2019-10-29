@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20191011
+ * @version     v.20191028
  * @package     Base
  *
  */
@@ -180,16 +180,23 @@ final class Smart {
 	//================================================================
 	/**
 	 * Return the FIXED basename(), in a safe way
+	 * The directory separator character is the forward slash (/), except Windows where both slash (/) and backslash (\) are considered
 	 *
 	 * @param 	STRING 	$y_path 			:: The path name from to extract basename()
+	 * @param 	STRING 	$y_suffix 			:: If the name component ends in suffix this will also be cut off
 	 *
 	 * @return 	STRING						:: The basename
 	 */
-	public static function base_name($y_path) {
+	public static function base_name($y_path, $y_suffix='') {
 		//--
-		$y_path = trim((string)$y_path);
+		$y_path = (string) trim((string)$y_path);
+		$y_suffix = (string) trim((string)$y_suffix);
 		//--
-		$base_name = (string) basename($y_path);
+		if((string)$y_suffix != '') {
+			$base_name = (string) basename($y_path, $y_suffix);
+		} else {
+			$base_name = (string) basename($y_path);
+		} //end if else
 		//--
 		return (string) $base_name;
 		//--

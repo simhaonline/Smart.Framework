@@ -48,7 +48,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20191023
+ * @version 	v.20191028
  * @package 	Components:Misc
  *
  */
@@ -512,6 +512,8 @@ final class SmartBarcode2D {
 /**
  * Class Smart BarCode 2D QRCode
  *
+ * @version 	v.20191028
+ *
  * @access 		private
  * @internal
  *
@@ -519,47 +521,46 @@ final class SmartBarcode2D {
 final class SmartBarcode2D_QRcode {
 
 	// ->
-	// v.20190207
 
 
 	// Encoding modes (characters which can be encoded in QRcode)
-	private $const_QR_BARCODE_MODE_NL = -1; 			// Encoding modes (characters which can be encoded in QRcode)
-	private $const_QR_BARCODE_MODE_NM = 0; 				// Encoding mode numeric (0-9). 3 characters are encoded to 10bit length. In theory, 7089 characters or less can be stored in a QRcode.
-	private $const_QR_BARCODE_MODE_AN = 1; 				// Encoding mode alphanumeric (0-9A-Z $%*+-./:) 45characters. 2 characters are encoded to 11bit length. In theory, 4296 characters or less can be stored in a QRcode.
-	private $const_QR_BARCODE_MODE_8B = 2; 				// Encoding mode 8bit byte data. In theory, 2953 characters or less can be stored in a QRcode.
-	private $const_QR_BARCODE_MODE_KJ = 3; 				// Encoding mode KANJI. A KANJI character (multibyte character) is encoded to 13bit length. In theory, 1817 characters or less can be stored in a QRcode.
-	private $const_QR_BARCODE_MODE_ST = 4; 				// Encoding mode STRUCTURED (currently unsupported)
+	const QR_BARCODE_MODE_NL = -1; 				// Encoding modes (characters which can be encoded in QRcode)
+	const QR_BARCODE_MODE_NM = 0; 				// Encoding mode numeric (0-9). 3 characters are encoded to 10bit length. In theory, 7089 characters or less can be stored in a QRcode.
+	const QR_BARCODE_MODE_AN = 1; 				// Encoding mode alphanumeric (0-9A-Z $%*+-./:) 45characters. 2 characters are encoded to 11bit length. In theory, 4296 characters or less can be stored in a QRcode.
+	const QR_BARCODE_MODE_8B = 2; 				// Encoding mode 8bit byte data. In theory, 2953 characters or less can be stored in a QRcode.
+	const QR_BARCODE_MODE_KJ = 3; 				// Encoding mode KANJI. A KANJI character (multibyte character) is encoded to 13bit length. In theory, 1817 characters or less can be stored in a QRcode.
+	const QR_BARCODE_MODE_ST = 4; 				// Encoding mode STRUCTURED (currently unsupported)
 
 	// Levels of error correction. QRcode has a function of an error correcting for miss reading that white is black. Error correcting is defined in 4 level as below.
-	private $const_QR_BARCODE_ECC_LEVEL_L = 0; 			// Error correction level L : About 7% or less errors can be corrected.
-	private $const_QR_BARCODE_ECC_LEVEL_M = 1; 			// Error correction level M : About 15% or less errors can be corrected.
-	private $const_QR_BARCODE_ECC_LEVEL_Q = 2; 			// Error correction level Q : About 25% or less errors can be corrected.
-	private $const_QR_BARCODE_ECC_LEVEL_H = 3; 			// Error correction level H : About 30% or less errors can be corrected.
+	const QR_BARCODE_ECC_LEVEL_L = 0; 			// Error correction level L : About 7% or less errors can be corrected.
+	const QR_BARCODE_ECC_LEVEL_M = 1; 			// Error correction level M : About 15% or less errors can be corrected.
+	const QR_BARCODE_ECC_LEVEL_Q = 2; 			// Error correction level Q : About 25% or less errors can be corrected.
+	const QR_BARCODE_ECC_LEVEL_H = 3; 			// Error correction level H : About 30% or less errors can be corrected.
 
 	// Version. Size of QRcode is defined as version from 1 to 40. Version 1 is 21*21 matrix. And 4 modules increases whenever 1 version increases. So version 40 is 177*177 matrix.
-	private $const_QR_BARCODE_SPEC_VERSION_MAX = 40; 	// Maximum QR Code version.
-	private $const_QR_BARCODE_SPEC_WIDTH_MAX = 177; 	// Maximum matrix size for maximum version (version 40 is 177*177 matrix).
+	const QR_BARCODE_SPEC_VERSION_MAX = 40; 	// Maximum QR Code version.
+	const QR_BARCODE_SPEC_WIDTH_MAX = 177; 		// Maximum matrix size for maximum version (version 40 is 177*177 matrix).
 
 	// Capacity
-	private $const_QR_BARCODE_CAP_WIDTH = 0; 			// Matrix index to get width from $capacity array.
-	private $const_QR_BARCODE_CAP_WORDS = 1; 			// Matrix index to get number of words from $capacity array.
-	private $const_QR_BARCODE_CAP_REMINDER = 2; 		// Matrix index to get remainder from $capacity array.
-	private $const_QR_BARCODE_CAP_ECC = 3; 				// Matrix index to get error correction level from $capacity array.
+	const QR_BARCODE_CAP_WIDTH = 0; 			// Matrix index to get width from $capacity array.
+	const QR_BARCODE_CAP_WORDS = 1; 			// Matrix index to get number of words from $capacity array.
+	const QR_BARCODE_CAP_REMINDER = 2; 			// Matrix index to get remainder from $capacity array.
+	const QR_BARCODE_CAP_ECC = 3; 				// Matrix index to get error correction level from $capacity array.
 
 	// Structure (currently usupported)
-	private $const_QR_BARCODE_STRUCT_HEAD_BITS =  20; 	// Number of header bits for structured mode
-	private $const_QR_BARCODE_STRUCT_MAX_SYMBOLS = 16; 	// Max number of symbols for structured mode
+	const QR_BARCODE_STRUCT_HEAD_BITS =  20; 	// Number of header bits for structured mode
+	const QR_BARCODE_STRUCT_MAX_SYMBOLS = 16; 	// Max number of symbols for structured mode
 
 	// Masks
-	private $const_QR_BARCODE_MASK_N1 = 3; 				// Down point base value for case 1 mask pattern (concatenation of same color in a line or a column)
-	private $const_QR_BARCODE_MASK_N2 = 3; 				// Down point base value for case 2 mask pattern (module block of same color)
-	private $const_QR_BARCODE_MASK_N3 = 40; 			// Down point base value for case 3 mask pattern (1:1:3:1:1(dark:bright:dark:bright:dark)pattern in a line or a column)
-	private $const_QR_BARCODE_MASK_N4 = 10; 			// Down point base value for case 4 mask pattern (ration of dark modules in whole)
+	const QR_BARCODE_MASK_N1 = 3; 				// Down point base value for case 1 mask pattern (concatenation of same color in a line or a column)
+	const QR_BARCODE_MASK_N2 = 3; 				// Down point base value for case 2 mask pattern (module block of same color)
+	const QR_BARCODE_MASK_N3 = 40; 				// Down point base value for case 3 mask pattern (1:1:3:1:1(dark:bright:dark:bright:dark)pattern in a line or a column)
+	const QR_BARCODE_MASK_N4 = 10; 				// Down point base value for case 4 mask pattern (ration of dark modules in whole)
 
 	// Optimization settings
-	private $const_QR_BARCODE_FIND_BEST_MASK = true; 	// if true, estimates best mask (spec. default, but extremally slow; set to false to significant performance boost but (propably) worst quality code
-	private $const_QR_BARCODE_FIND_FROM_RANDOM = false; // (default is 2) ; if false, checks all masks available, otherwise value tells count of masks need to be checked, mask id are got randomly
-	private $const_QR_BARCODE_FIND_DEFAULT_MASK = 2; 	// when $this->const_QR_BARCODE_FIND_BEST_MASK === false
+	const QR_BARCODE_FIND_BEST_MASK = true; 	// if true, estimates best mask (spec. default, but extremally slow; set to false to significant performance boost but (propably) worst quality code
+	const QR_BARCODE_FIND_FROM_RANDOM = false; 	// (default is 2) ; if false, checks all masks available, otherwise value tells count of masks need to be checked, mask id are got randomly
+	const QR_BARCODE_FIND_DEFAULT_MASK = 2; 	// when self::QR_BARCODE_FIND_BEST_MASK === false
 
 	/**
 	 * Barcode array to be returned which is readable by TCPDF.
@@ -872,7 +873,7 @@ final class SmartBarcode2D_QRcode {
 	/**
 	 * Array Version information pattern (BCH coded).
 	 * See Table 1 in Appendix D (pp.68) of JIS X0510:2004.
-	 * size: [$this->const_QR_BARCODE_SPEC_VERSION_MAX - 6]
+	 * size: [self::QR_BARCODE_SPEC_VERSION_MAX - 6]
 	 * @private
 	 */
 	private $versionPattern = array(
@@ -909,8 +910,8 @@ final class SmartBarcode2D_QRcode {
 	 */
 	public function __construct($code, $eclevel='L') {
 		//--
-		$this->level = $this->const_QR_BARCODE_ECC_LEVEL_L; // fix after converting class const to vars
-		$this->hint = $this->const_QR_BARCODE_MODE_8B; // fix after converting class const to vars
+		$this->level = self::QR_BARCODE_ECC_LEVEL_L; // fix after converting class const to vars
+		$this->hint = self::QR_BARCODE_MODE_8B; // fix after converting class const to vars
 		//--
 		if((is_null($code)) OR ($code == '\0') OR ((string)$code == '')) {
 			return false;
@@ -924,12 +925,12 @@ final class SmartBarcode2D_QRcode {
 		//--
 		$this->level = array_search($eclevel, array('L', 'M', 'Q', 'H')); // set error correction level
 		if($this->level === false) {
-			$this->level = $this->const_QR_BARCODE_ECC_LEVEL_L; // default is L
+			$this->level = self::QR_BARCODE_ECC_LEVEL_L; // default is L
 		} //end if
-		if(($this->hint != $this->const_QR_BARCODE_MODE_8B) AND ($this->hint != $this->const_QR_BARCODE_MODE_KJ)) {
+		if(($this->hint != self::QR_BARCODE_MODE_8B) AND ($this->hint != self::QR_BARCODE_MODE_KJ)) {
 			return false;
 		} //end if
-		if(($this->version < 0) OR ($this->version > $this->const_QR_BARCODE_SPEC_VERSION_MAX)) {
+		if(($this->version < 0) OR ($this->version > self::QR_BARCODE_SPEC_VERSION_MAX)) {
 			return false;
 		} //end if
 		//--
@@ -1046,12 +1047,12 @@ final class SmartBarcode2D_QRcode {
 			$this->setFrameAt($addr, 0x02);
 		} //end for
 		//-- masking
-		$this->runLength = array_fill(0, $this->const_QR_BARCODE_SPEC_WIDTH_MAX + 1, 0);
+		$this->runLength = array_fill(0, self::QR_BARCODE_SPEC_WIDTH_MAX + 1, 0);
 		if($mask < 0) {
-			if($this->const_QR_BARCODE_FIND_BEST_MASK) {
+			if(self::QR_BARCODE_FIND_BEST_MASK) {
 				$masked = $this->mask($this->width, $this->frame, $this->level);
 			} else {
-				$masked = $this->makeMask($this->width, $this->frame, (intval($this->const_QR_BARCODE_FIND_DEFAULT_MASK) % 8), $this->level);
+				$masked = $this->makeMask($this->width, $this->frame, (intval(self::QR_BARCODE_FIND_DEFAULT_MASK) % 8), $this->level);
 			} //end if else
 		} else {
 			$masked = $this->makeMask($this->width, $this->frame, $mask, $this->level);
@@ -1445,16 +1446,16 @@ final class SmartBarcode2D_QRcode {
 		$demerit = 0;
 		for($i=0; $i<$length; ++$i) {
 			if($this->runLength[$i] >= 5) {
-				$demerit += ($this->const_QR_BARCODE_MASK_N1 + ($this->runLength[$i] - 5));
+				$demerit += (self::QR_BARCODE_MASK_N1 + ($this->runLength[$i] - 5));
 			} //end if
 			if($i & 1) {
 				if(($i >= 3) AND ($i < ($length-2)) AND ($this->runLength[$i] % 3 == 0)) {
 					$fact = (int)($this->runLength[$i] / 3);
 					if(($this->runLength[$i-2] == $fact) AND ($this->runLength[$i-1] == $fact) AND ($this->runLength[$i+1] == $fact) AND ($this->runLength[$i+2] == $fact)) {
 						if(($this->runLength[$i-3] < 0) OR ($this->runLength[$i-3] >= (4 * $fact))) {
-							$demerit += $this->const_QR_BARCODE_MASK_N3;
+							$demerit += self::QR_BARCODE_MASK_N3;
 						} elseif ((($i+3) >= $length) OR ($this->runLength[$i+3] >= (4 * $fact))) {
-							$demerit += $this->const_QR_BARCODE_MASK_N3;
+							$demerit += self::QR_BARCODE_MASK_N3;
 						} //end if else
 					} //end if
 				} //end if
@@ -1485,7 +1486,7 @@ final class SmartBarcode2D_QRcode {
 					$b22 = ord($frameY[$x]) & ord($frameY[$x-1]) & ord($frameYM[$x]) & ord($frameYM[$x-1]);
 					$w22 = ord($frameY[$x]) | ord($frameY[$x-1]) | ord($frameYM[$x]) | ord($frameYM[$x-1]);
 					if(($b22 | ($w22 ^ 1)) & 1) {
-						$demerit += $this->const_QR_BARCODE_MASK_N2;
+						$demerit += self::QR_BARCODE_MASK_N2;
 					} //end if
 				} //end if
 				if(($x == 0) AND (ord($frameY[$x]) & 1)) {
@@ -1538,8 +1539,8 @@ final class SmartBarcode2D_QRcode {
 		$bestMaskNum = 0;
 		$bestMask = array();
 		$checked_masks = array(0, 1, 2, 3, 4, 5, 6, 7);
-		if($this->const_QR_BARCODE_FIND_FROM_RANDOM !== false) {
-			$howManuOut = 8 - ($this->const_QR_BARCODE_FIND_FROM_RANDOM % 9);
+		if(self::QR_BARCODE_FIND_FROM_RANDOM !== false) {
+			$howManuOut = 8 - (self::QR_BARCODE_FIND_FROM_RANDOM % 9);
 			for($i = 0; $i <  $howManuOut; ++$i) {
 				$remPos = rand (0, count($checked_masks)-1);
 				unset($checked_masks[$remPos]);
@@ -1554,7 +1555,7 @@ final class SmartBarcode2D_QRcode {
 			$blacks  = $this->makeMaskNo($i, $width, $frame, $mask);
 			$blacks += $this->writeFormatInformation($width, $mask, $i, $level);
 			$blacks  = (int)(100 * $blacks / ($width * $width));
-			$demerit = (int)((int)(abs($blacks - 50) / 5) * $this->const_QR_BARCODE_MASK_N4);
+			$demerit = (int)((int)(abs($blacks - 50) / 5) * self::QR_BARCODE_MASK_N4);
 			$demerit += $this->evaluateSymbol($width, $mask);
 			if($demerit < $minDemerit) {
 				$minDemerit = $demerit;
@@ -1604,23 +1605,23 @@ final class SmartBarcode2D_QRcode {
 	 */
 	 private function identifyMode($pos) {
 		if($pos >= strlen($this->dataStr)) {
-			return $this->const_QR_BARCODE_MODE_NL;
+			return self::QR_BARCODE_MODE_NL;
 		} //end if
 		$c = $this->dataStr[$pos];
 		if($this->isdigitat($this->dataStr, $pos)) {
-			return $this->const_QR_BARCODE_MODE_NM;
+			return self::QR_BARCODE_MODE_NM;
 		} elseif($this->isalnumat($this->dataStr, $pos)) {
-			return $this->const_QR_BARCODE_MODE_AN;
-		} elseif($this->hint == $this->const_QR_BARCODE_MODE_KJ) {
+			return self::QR_BARCODE_MODE_AN;
+		} elseif($this->hint == self::QR_BARCODE_MODE_KJ) {
 			if($pos+1 < strlen($this->dataStr)) {
 				$d = $this->dataStr[$pos+1];
 				$word = (ord($c) << 8) | ord($d);
 				if(($word >= 0x8140 && $word <= 0x9ffc) OR ($word >= 0xe040 && $word <= 0xebbf)) {
-					return $this->const_QR_BARCODE_MODE_KJ;
+					return self::QR_BARCODE_MODE_KJ;
 				} //end if
 			} //end if
 		} //end if else
-		return $this->const_QR_BARCODE_MODE_8B;
+		return self::QR_BARCODE_MODE_8B;
 	} //END FUNCTION
 
 
@@ -1629,14 +1630,14 @@ final class SmartBarcode2D_QRcode {
 	 * @return int run
 	 */
 	 private function eatNum() {
-		$ln = $this->lengthIndicator($this->const_QR_BARCODE_MODE_NM, $this->version);
+		$ln = $this->lengthIndicator(self::QR_BARCODE_MODE_NM, $this->version);
 		$p = 0;
 		while($this->isdigitat($this->dataStr, $p)) {
 			$p++;
 		} //end while
 		$run = $p;
 		$mode = $this->identifyMode($p);
-		if($mode == $this->const_QR_BARCODE_MODE_8B) {
+		if($mode == self::QR_BARCODE_MODE_8B) {
 			$dif = $this->estimateBitsModeNum($run) + 4 + $ln
 			+ $this->estimateBitsMode8(1)         // + 4 + l8
 			- $this->estimateBitsMode8($run + 1); // - 4 - l8
@@ -1644,7 +1645,7 @@ final class SmartBarcode2D_QRcode {
 				return $this->eat8();
 			} //end if
 		} //end if
-		if($mode == $this->const_QR_BARCODE_MODE_AN) {
+		if($mode == self::QR_BARCODE_MODE_AN) {
 			$dif = $this->estimateBitsModeNum($run) + 4 + $ln
 			+ $this->estimateBitsModeAn(1)        // + 4 + la
 			- $this->estimateBitsModeAn($run + 1);// - 4 - la
@@ -1652,7 +1653,7 @@ final class SmartBarcode2D_QRcode {
 				return $this->eatAn();
 			} //end if
 		} //end if
-		$this->items = $this->appendNewInputItem($this->items, $this->const_QR_BARCODE_MODE_NM, $run, str_split($this->dataStr));
+		$this->items = $this->appendNewInputItem($this->items, self::QR_BARCODE_MODE_NM, $run, str_split($this->dataStr));
 		return $run;
 	} //END FUNCTION
 
@@ -1662,8 +1663,8 @@ final class SmartBarcode2D_QRcode {
 	 * @return int run
 	 */
 	 private function eatAn() {
-		$la = $this->lengthIndicator($this->const_QR_BARCODE_MODE_AN,  $this->version);
-		$ln = $this->lengthIndicator($this->const_QR_BARCODE_MODE_NM, $this->version);
+		$la = $this->lengthIndicator(self::QR_BARCODE_MODE_AN,  $this->version);
+		$ln = $this->lengthIndicator(self::QR_BARCODE_MODE_NM, $this->version);
 		$p =1 ;
 		while($this->isalnumat($this->dataStr, $p)) {
 			if($this->isdigitat($this->dataStr, $p)) {
@@ -1692,7 +1693,7 @@ final class SmartBarcode2D_QRcode {
 				return $this->eat8();
 			} //end if
 		} //end if
-		$this->items = $this->appendNewInputItem($this->items, $this->const_QR_BARCODE_MODE_AN, $run, str_split($this->dataStr));
+		$this->items = $this->appendNewInputItem($this->items, self::QR_BARCODE_MODE_AN, $run, str_split($this->dataStr));
 		return $run;
 	} //END FUNCTION
 
@@ -1703,10 +1704,10 @@ final class SmartBarcode2D_QRcode {
 	 */
 	 private function eatKanji() {
 		$p = 0;
-		while($this->identifyMode($p) == $this->const_QR_BARCODE_MODE_KJ) {
+		while($this->identifyMode($p) == self::QR_BARCODE_MODE_KJ) {
 			$p += 2;
 		} //end while
-		$this->items = $this->appendNewInputItem($this->items, $this->const_QR_BARCODE_MODE_KJ, $p, str_split($this->dataStr));
+		$this->items = $this->appendNewInputItem($this->items, self::QR_BARCODE_MODE_KJ, $p, str_split($this->dataStr));
 		return $run;
 	} //END FUNCTION
 
@@ -1716,16 +1717,16 @@ final class SmartBarcode2D_QRcode {
 	 * @return int run
 	 */
 	 private function eat8() {
-		$la = $this->lengthIndicator($this->const_QR_BARCODE_MODE_AN, $this->version);
-		$ln = $this->lengthIndicator($this->const_QR_BARCODE_MODE_NM, $this->version);
+		$la = $this->lengthIndicator(self::QR_BARCODE_MODE_AN, $this->version);
+		$ln = $this->lengthIndicator(self::QR_BARCODE_MODE_NM, $this->version);
 		$p = 1;
 		$dataStrLen = strlen($this->dataStr);
 		while($p < $dataStrLen) {
 			$mode = $this->identifyMode($p);
-			if($mode == $this->const_QR_BARCODE_MODE_KJ) {
+			if($mode == self::QR_BARCODE_MODE_KJ) {
 				break;
 			} //end if
-			if($mode == $this->const_QR_BARCODE_MODE_NM) {
+			if($mode == self::QR_BARCODE_MODE_NM) {
 				$q = $p;
 				while($this->isdigitat($this->dataStr, $q)) {
 					$q++;
@@ -1738,7 +1739,7 @@ final class SmartBarcode2D_QRcode {
 				} else {
 					$p = $q;
 				} //end if else
-			} elseif($mode == $this->const_QR_BARCODE_MODE_AN) {
+			} elseif($mode == self::QR_BARCODE_MODE_AN) {
 				$q = $p;
 				while($this->isalnumat($this->dataStr, $q)) {
 					$q++;
@@ -1756,7 +1757,7 @@ final class SmartBarcode2D_QRcode {
 			} //end if else
 		} //end while
 		$run = $p;
-		$this->items = $this->appendNewInputItem($this->items, $this->const_QR_BARCODE_MODE_8B, $run, str_split($this->dataStr));
+		$this->items = $this->appendNewInputItem($this->items, self::QR_BARCODE_MODE_8B, $run, str_split($this->dataStr));
 		return $run;
 	} //END FUNCTION
 
@@ -1769,14 +1770,14 @@ final class SmartBarcode2D_QRcode {
 		while(strlen($this->dataStr) > 0) {
 			$mode = $this->identifyMode(0);
 			switch($mode) {
-				case $this->const_QR_BARCODE_MODE_NM:
+				case self::QR_BARCODE_MODE_NM:
 					$length = $this->eatNum();
 					break;
-				case $this->const_QR_BARCODE_MODE_AN:
+				case self::QR_BARCODE_MODE_AN:
 					$length = $this->eatAn();
 					break;
-				case $this->const_QR_BARCODE_MODE_KJ:
-					if($hint == $this->const_QR_BARCODE_MODE_KJ) {
+				case self::QR_BARCODE_MODE_KJ:
+					if($hint == self::QR_BARCODE_MODE_KJ) {
 						$length = $this->eatKanji();
 					} else {
 						$length = $this->eat8();
@@ -1806,7 +1807,7 @@ final class SmartBarcode2D_QRcode {
 		$p = 0;
 		while($p < $stringLen) {
 			$mode = $this->identifyMode(substr($this->dataStr, $p), $this->hint);
-			if($mode == $this->const_QR_BARCODE_MODE_KJ) {
+			if($mode == self::QR_BARCODE_MODE_KJ) {
 				$p += 2;
 			} else {
 				if((ord($this->dataStr[$p]) >= ord('a')) AND (ord($this->dataStr[$p]) <= ord('z'))) {
@@ -1858,7 +1859,7 @@ final class SmartBarcode2D_QRcode {
 		$inputitem['bstream'] = array();
 		$val = 0x1;
 		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, $val);
-		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator($this->const_QR_BARCODE_MODE_NM, $version), $inputitem['size']);
+		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator(self::QR_BARCODE_MODE_NM, $version), $inputitem['size']);
 		for($i=0; $i < $words; ++$i) {
 			$val  = (ord($inputitem['data'][$i*3  ]) - ord('0')) * 100;
 			$val += (ord($inputitem['data'][$i*3+1]) - ord('0')) * 10;
@@ -1887,7 +1888,7 @@ final class SmartBarcode2D_QRcode {
 		$words = (int)($inputitem['size'] / 2);
 		$inputitem['bstream'] = array();
 		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, 0x02);
-		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator($this->const_QR_BARCODE_MODE_AN, $version), $inputitem['size']);
+		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator(self::QR_BARCODE_MODE_AN, $version), $inputitem['size']);
 		for($i=0; $i < $words; ++$i) {
 			$val  = (int)($this->lookAnTable(ord($inputitem['data'][$i*2])) * 45);
 			$val += (int)($this->lookAnTable(ord($inputitem['data'][($i*2)+1])));
@@ -1910,7 +1911,7 @@ final class SmartBarcode2D_QRcode {
 	 private function encodeMode8($inputitem, $version) {
 		$inputitem['bstream'] = array();
 		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, 0x4);
-		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator($this->const_QR_BARCODE_MODE_8B, $version), $inputitem['size']);
+		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator(self::QR_BARCODE_MODE_8B, $version), $inputitem['size']);
 		for($i=0; $i < $inputitem['size']; ++$i) {
 			$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 8, ord($inputitem['data'][$i]));
 		} //end for
@@ -1927,7 +1928,7 @@ final class SmartBarcode2D_QRcode {
 	 private function encodeModeKanji($inputitem, $version) {
 		$inputitem['bstream'] = array();
 		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, 0x8);
-		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator($this->const_QR_BARCODE_MODE_KJ, $version), (int)($inputitem['size'] / 2));
+		$inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator(self::QR_BARCODE_MODE_KJ, $version), (int)($inputitem['size'] / 2));
 		for($i=0; $i<$inputitem['size']; $i+=2) {
 			$val = (ord($inputitem['data'][$i]) << 8) | ord($inputitem['data'][$i+1]);
 			if($val <= 0x9ffc) {
@@ -1977,19 +1978,19 @@ final class SmartBarcode2D_QRcode {
 			$inputitem['bstream'] = $this->appendBitstream($inputitem['bstream'], $st2['bstream']);
 		} else {
 			switch($inputitem['mode']) {
-				case $this->const_QR_BARCODE_MODE_NM:
+				case self::QR_BARCODE_MODE_NM:
 					$inputitem = $this->encodeModeNum($inputitem, $version);
 					break;
-				case $this->const_QR_BARCODE_MODE_AN:
+				case self::QR_BARCODE_MODE_AN:
 					$inputitem = $this->encodeModeAn($inputitem, $version);
 					break;
-				case $this->const_QR_BARCODE_MODE_8B:
+				case self::QR_BARCODE_MODE_8B:
 					$inputitem = $this->encodeMode8($inputitem, $version);
 					break;
-				case $this->const_QR_BARCODE_MODE_KJ:
+				case self::QR_BARCODE_MODE_KJ:
 					$inputitem = $this->encodeModeKanji($inputitem, $version);
 					break;
-				case $this->const_QR_BARCODE_MODE_ST:
+				case self::QR_BARCODE_MODE_ST:
 					$inputitem = $this->encodeModeStructure($inputitem);
 					break;
 				default:
@@ -2031,14 +2032,14 @@ final class SmartBarcode2D_QRcode {
 	 * @return array items
 	 */
 	 private function insertStructuredAppendHeader($items, $size, $index, $parity) {
-		if($size > $this->const_QR_BARCODE_STRUCT_MAX_SYMBOLS) {
+		if($size > self::QR_BARCODE_STRUCT_MAX_SYMBOLS) {
 			return -1;
 		} //end if
-		if(($index <= 0) OR ($index > $this->const_QR_BARCODE_STRUCT_MAX_SYMBOLS)) {
+		if(($index <= 0) OR ($index > self::QR_BARCODE_STRUCT_MAX_SYMBOLS)) {
 			return -1;
 		} //end if
 		$buf = array($size, $index, $parity);
-		$entry = $this->newInputItem($this->const_QR_BARCODE_MODE_ST, 3, buf);
+		$entry = $this->newInputItem(self::QR_BARCODE_MODE_ST, 3, buf);
 		array_unshift($items, $entry);
 		return $items;
 	} //END FUNCTION
@@ -2052,7 +2053,7 @@ final class SmartBarcode2D_QRcode {
 	 private function calcParity($items) {
 		$parity = 0;
 		foreach($items as $u => $item) {
-			if($item['mode'] != $this->const_QR_BARCODE_MODE_ST) {
+			if($item['mode'] != self::QR_BARCODE_MODE_ST) {
 				for($i=$item['size']-1; $i>=0; --$i) {
 					$parity ^= $item['data'][$i];
 				} //end for
@@ -2190,19 +2191,19 @@ final class SmartBarcode2D_QRcode {
 			return false;
 		} //end if
 		switch($mode) {
-			case $this->const_QR_BARCODE_MODE_NM:
+			case self::QR_BARCODE_MODE_NM:
 				return $this->checkModeNum($size, $data);
 				break;
-			case $this->const_QR_BARCODE_MODE_AN:
+			case self::QR_BARCODE_MODE_AN:
 				return $this->checkModeAn($size, $data);
 				break;
-			case $this->const_QR_BARCODE_MODE_KJ:
+			case self::QR_BARCODE_MODE_KJ:
 				return $this->checkModeKanji($size, $data);
 				break;
-			case $this->const_QR_BARCODE_MODE_8B:
+			case self::QR_BARCODE_MODE_8B:
 				return true;
 				break;
-			case $this->const_QR_BARCODE_MODE_ST:
+			case self::QR_BARCODE_MODE_ST:
 				return true;
 				break;
 			default:
@@ -2225,20 +2226,20 @@ final class SmartBarcode2D_QRcode {
 		} //end if
 		foreach($items as $u => $item) {
 			switch($item['mode']) {
-				case $this->const_QR_BARCODE_MODE_NM:
+				case self::QR_BARCODE_MODE_NM:
 					$bits = $this->estimateBitsModeNum($item['size']);
 					break;
-				case $this->const_QR_BARCODE_MODE_AN:
+				case self::QR_BARCODE_MODE_AN:
 					$bits = $this->estimateBitsModeAn($item['size']);
 					break;
-				case $this->const_QR_BARCODE_MODE_8B:
+				case self::QR_BARCODE_MODE_8B:
 					$bits = $this->estimateBitsMode8($item['size']);
 					break;
-				case $this->const_QR_BARCODE_MODE_KJ:
+				case self::QR_BARCODE_MODE_KJ:
 					$bits = $this->estimateBitsModeKanji($item['size']);
 					break;
-				case $this->const_QR_BARCODE_MODE_ST:
-					return $this->const_QR_BARCODE_STRUCT_HEAD_BITS;
+				case self::QR_BARCODE_MODE_ST:
+					return self::QR_BARCODE_STRUCT_HEAD_BITS;
 				default:
 					return 0;
 			} //end switch
@@ -2281,7 +2282,7 @@ final class SmartBarcode2D_QRcode {
 	 private function lengthOfCode($mode, $version, $bits) {
 		$payload = $bits - 4 - $this->lengthIndicator($mode, $version);
 		switch($mode) {
-			case $this->const_QR_BARCODE_MODE_NM:
+			case self::QR_BARCODE_MODE_NM:
 				$chunks = (int)($payload / 10);
 				$remain = $payload - $chunks * 10;
 				$size = $chunks * 3;
@@ -2291,7 +2292,7 @@ final class SmartBarcode2D_QRcode {
 					$size += 1;
 				} //end if else
 				break;
-			case $this->const_QR_BARCODE_MODE_AN:
+			case self::QR_BARCODE_MODE_AN:
 				$chunks = (int)($payload / 11);
 				$remain = $payload - $chunks * 11;
 				$size = $chunks * 2;
@@ -2299,13 +2300,13 @@ final class SmartBarcode2D_QRcode {
 					++$size;
 				} //end if
 				break;
-			case $this->const_QR_BARCODE_MODE_8B:
+			case self::QR_BARCODE_MODE_8B:
 				$size = (int)($payload / 8);
 				break;
-			case $this->const_QR_BARCODE_MODE_KJ:
+			case self::QR_BARCODE_MODE_KJ:
 				$size = (int)(($payload / 13) * 2);
 				break;
-			case $this->const_QR_BARCODE_MODE_ST:
+			case self::QR_BARCODE_MODE_ST:
 				$size = (int)($payload / 8);
 				break;
 			default:
@@ -2614,7 +2615,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return int maximum size (bytes)
 	 */
 	private function getDataLength($version, $level) {
-		return $this->capacity[$version][$this->const_QR_BARCODE_CAP_WORDS] - $this->capacity[$version][$this->const_QR_BARCODE_CAP_ECC][$level];
+		return $this->capacity[$version][self::QR_BARCODE_CAP_WORDS] - $this->capacity[$version][self::QR_BARCODE_CAP_ECC][$level];
 	} //END FUNCTION
 
 
@@ -2625,7 +2626,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return int ECC size (bytes)
 	 */
 	private function getECCLength($version, $level){
-		return $this->capacity[$version][$this->const_QR_BARCODE_CAP_ECC][$level];
+		return $this->capacity[$version][self::QR_BARCODE_CAP_ECC][$level];
 	} //END FUNCTION
 
 
@@ -2635,7 +2636,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return int width
 	 */
 	private function getWidth($version) {
-		return $this->capacity[$version][$this->const_QR_BARCODE_CAP_WIDTH];
+		return $this->capacity[$version][self::QR_BARCODE_CAP_WIDTH];
 	} //END FUNCTION
 
 
@@ -2645,7 +2646,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return int number of remainder bits
 	 */
 	private function getRemainder($version) {
-		return $this->capacity[$version][$this->const_QR_BARCODE_CAP_REMINDER];
+		return $this->capacity[$version][self::QR_BARCODE_CAP_REMINDER];
 	} //END FUNCTION
 
 
@@ -2656,8 +2657,8 @@ final class SmartBarcode2D_QRcode {
 	 * @return int version number
 	 */
 	private function getMinimumVersion($size, $level) {
-		for($i = 1; $i <= $this->const_QR_BARCODE_SPEC_VERSION_MAX; ++$i) {
-			$words = ($this->capacity[$i][$this->const_QR_BARCODE_CAP_WORDS] - $this->capacity[$i][$this->const_QR_BARCODE_CAP_ECC][$level]);
+		for($i = 1; $i <= self::QR_BARCODE_SPEC_VERSION_MAX; ++$i) {
+			$words = ($this->capacity[$i][self::QR_BARCODE_CAP_WORDS] - $this->capacity[$i][self::QR_BARCODE_CAP_ECC][$level]);
 			if($words >= $size) {
 				return $i;
 			} //end if
@@ -2674,7 +2675,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return int the size of the appropriate length indicator (bits).
 	 */
 	private function lengthIndicator($mode, $version) {
-		if($mode == $this->const_QR_BARCODE_MODE_ST) {
+		if($mode == self::QR_BARCODE_MODE_ST) {
 			return 0;
 		} //end if
 		if($version <= 9) {
@@ -2695,7 +2696,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return int the maximum length (bytes)
 	 */
 	private function maximumWords($mode, $version) {
-		if($mode == $this->const_QR_BARCODE_MODE_ST) {
+		if($mode == self::QR_BARCODE_MODE_ST) {
 			return 3;
 		} //end if
 		if($version <= 9) {
@@ -2707,7 +2708,7 @@ final class SmartBarcode2D_QRcode {
 		} //end if else
 		$bits = $this->lengthTableBits[$mode][$l];
 		$words = (1 << $bits) - 1;
-		if($mode == $this->const_QR_BARCODE_MODE_KJ) {
+		if($mode == self::QR_BARCODE_MODE_KJ) {
 			$words *= 2; // the number of bytes is required
 		} //end if
 		return $words;
@@ -2819,7 +2820,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return BCH encoded version information pattern
 	 */
 	private function getVersionPattern($version) {
-		if(($version < 7) OR ($version > $this->const_QR_BARCODE_SPEC_VERSION_MAX)) {
+		if(($version < 7) OR ($version > self::QR_BARCODE_SPEC_VERSION_MAX)) {
 			return 0;
 		} //end if
 		return $this->versionPattern[($version - 7)];
@@ -2874,7 +2875,7 @@ final class SmartBarcode2D_QRcode {
 	 */
 	private function createFrame($version) {
 		//--
-		$width = $this->capacity[$version][$this->const_QR_BARCODE_CAP_WIDTH];
+		$width = $this->capacity[$version][self::QR_BARCODE_CAP_WIDTH];
 		$frameLine = str_repeat ("\0", $width);
 		$frame = array_fill(0, $width, $frameLine);
 		//-- Finder pattern
@@ -2942,7 +2943,7 @@ final class SmartBarcode2D_QRcode {
 	 * @return Array of unsigned char.
 	 */
 	private function newFrame($version) {
-		if(($version < 1) OR ($version > $this->const_QR_BARCODE_SPEC_VERSION_MAX)) {
+		if(($version < 1) OR ($version > self::QR_BARCODE_SPEC_VERSION_MAX)) {
 			return NULL;
 		} //end if
 		if(!isset($this->frames[$version])) {
@@ -3259,6 +3260,8 @@ final class SmartBarcode2D_QRcode {
 /**
  * Class Smart BarCode 2D DataMatrix
  *
+ * @version 	v.20191028
+ *
  * @access 		private
  * @internal
  *
@@ -3266,17 +3269,55 @@ final class SmartBarcode2D_QRcode {
 final class SmartBarcode2D_DataMatrix {
 
 	// ->
-	// v.20190207
 
 
-	const SEMACODE_ENCODE_ASCII = 0; 		// ASCII encoding: ASCII character 0 to 127 (1 byte per CW)
-	const SEMACODE_ENCODE_C40 = 1; 			// C40 encoding: Upper-case alphanumeric (3/2 bytes per CW)
-	const SEMACODE_ENCODE_TXT = 2; 			// TEXT encoding: Lower-case alphanumeric (3/2 bytes per CW)
-	const SEMACODE_ENCODE_X12 = 3; 			// X12 encoding: ANSI X12 (3/2 byte per CW)
-	const SEMACODE_ENCODE_EDF = 4; 			// EDIFACT encoding: ASCII character 32 to 94 (4/3 bytes per CW)
-	const SEMACODE_ENCODE_B256 = 5; 		// BASE 256 encoding: ASCII character 0 to 255 (1 byte per CW)
-	const SEMACODE_ENCODE_EXTASCII = 6; 	// ASCII extended encoding: ASCII character 128 to 255 (1/2 byte per CW)
-	const SEMACODE_ENCODE_NUMASCII = 7; 	// ASCII number encoding: ASCII digits (2 bytes per CW)
+	/**
+	 * @const INT
+	 * ASCII encoding: ASCII character 0 to 127 (1 byte per CW)
+	 */
+	const SEMACODE_ENCODE_ASCII = 0;
+
+	/**
+	 * @const INT
+	 * C40 encoding: Upper-case alphanumeric (3/2 bytes per CW)
+	 */
+	const SEMACODE_ENCODE_C40 = 1;
+
+	/**
+	 * @const INT
+	 * TEXT encoding: Lower-case alphanumeric (3/2 bytes per CW)
+	 */
+	const SEMACODE_ENCODE_TXT = 2;
+
+	/**
+	 * @const INT
+	 * X12 encoding: ANSI X12 (3/2 byte per CW)
+	 */
+	const SEMACODE_ENCODE_X12 = 3;
+
+	/**
+	 * @const INT
+	 * EDIFACT encoding: ASCII character 32 to 94 (4/3 bytes per CW)
+	 */
+	const SEMACODE_ENCODE_EDF = 4;
+
+	/**
+	 * @const INT
+	 * BASE 256 encoding: ASCII character 0 to 255 (1 byte per CW)
+	 */
+	const SEMACODE_ENCODE_B256 = 5;
+
+	/**
+	 * @const INT
+	 * ASCII extended encoding: ASCII character 128 to 255 (1/2 byte per CW)
+	 */
+	const SEMACODE_ENCODE_EXTASCII = 6;
+
+	/**
+	 * @const INT
+	 * ASCII number encoding: ASCII digits (2 bytes per CW)
+	 */
+	const SEMACODE_ENCODE_NUMASCII = 7;
 
 
 	/**
@@ -4478,6 +4519,8 @@ final class SmartBarcode2D_DataMatrix {
 /**
  * Class Smart BarCode 2D PDF417
  *
+ * @version 	v.20191028
+ *
  * @access 		private
  * @internal
  *
@@ -4485,12 +4528,25 @@ final class SmartBarcode2D_DataMatrix {
 final class SmartBarcode2D_Pdf417 {
 
 	// ->
-	// v.20190207
 
 
-	const BCODE2D_PDF_417_ROW_HEIGHT = 4; // Row height respect X dimension of single module
-	const BCODE2D_PDF_417_QUIET_HORIZ = 2; // Horizontal quiet zone in modules
-	const BCODE2D_PDF_417_QUIET_VERT = 2; // Vertical quiet zone in modules
+	/**
+	 * @const INT
+	 * Row height respect X dimension of single module
+	 */
+	const BCODE2D_PDF_417_ROW_HEIGHT = 4;
+
+	/**
+	 * @const INT
+	 * Horizontal quiet zone in modules
+	 */
+	const BCODE2D_PDF_417_QUIET_HORIZ = 2;
+
+	/**
+	 * @const INT
+	 * Vertical quiet zone in modules
+	 */
+	const BCODE2D_PDF_417_QUIET_VERT = 2;
 
 
 	/**

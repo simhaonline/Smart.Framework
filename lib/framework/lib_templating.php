@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191021
+ * @version 	v.20191029
  * @package 	Templating:Engines
  *
  */
@@ -846,7 +846,7 @@ final class SmartMarkersTemplating {
 	// do replacements (and escapings) for one marker ; a marker can contain: A-Z 0-9 _ - (and the dot . which is reserved as array level separator)
 	/* {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}}
 	<!-- INFO: The VALID Escaping and Transformers for a Marker are all below ; If other escaping sequences are used the Marker will not be detected and replaced ... -->
-	<!-- Valid Escapings and Transformers: |bool |int |dec[1-4]{1} |num |htmid |jsvar |substr[0-9]{1,5} |subtxt[0-9]{1,5} |lower |upper |ucfirst |ucwords |trim |url |json |js |html |css |nl2br -->
+	<!-- Valid Escapings and Transformers: |bool |int |dec[1-4]{1} |num |htmid |jsvar |slug |substr[0-9]{1,5} |subtxt[0-9]{1,5} |lower |upper |ucfirst |ucwords |trim |url |json |js |html |css |nl2br -->
 	[####MARKER####]
 	[####MARKER|bool####]
 	[####MARKER|int####]
@@ -856,6 +856,7 @@ final class SmartMarkersTemplating {
 	[####MARKER|dec4####]
 	[####MARKER|num####]
 	[####MARKER|htmid####]
+	[####MARKER|slug####]
 	[####MARKER|jsvar####]
 	[####MARKER|json####]
 		[####MARKER|json|url####]
@@ -1023,9 +1024,13 @@ final class SmartMarkersTemplating {
 					} elseif((string)$escexpr == '|num') { // Number (Float / Decimal / Integer)
 						$val = (string) (float) $val;
 					//--
-					} elseif((string)$escexpr == '|htmid') { // HTML ID
+					} elseif((string)$escexpr == '|slug') { // Slug: a-zA-Z0-9_- / - / -- : -
+						$val = (string) SmartUnicode::deaccent_str((string)trim((string)$val));
+						$val = (string) preg_replace('/[^a-zA-Z0-9_\-]/', '-', (string)$val);
+						$val = (string) trim((string)preg_replace('/[\-]+/', '-', (string)$val)); // suppress multiple -
+					} elseif((string)$escexpr == '|htmid') { // HTML-ID: a-zA-Z0-9_-
 						$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$val));
-					} elseif((string)$escexpr == '|jsvar') { // JS Variable
+					} elseif((string)$escexpr == '|jsvar') { // JS-Variable: a-zA-Z0-9_
 						$val = (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$val));
 					//--
 					} elseif(((string)substr((string)$escexpr, 0, 7) == '|substr') OR ((string)substr((string)$escexpr, 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
@@ -1073,7 +1078,7 @@ final class SmartMarkersTemplating {
 					} elseif((string)$escexpr == '|css') {
 						$val = (string) Smart::escape_css((string)$val); // Escape CSS
 					} elseif((string)$escexpr == '|nl2br') {
-						$val = (string) Smart::nl_2_br((string)$val); // Escape URL
+						$val = (string) Smart::nl_2_br((string)$val); // Apply Nl2Br
 					} else {
 						Smart::log_warning('Invalid or Undefined Markers-TPL Escaping: '.$escexpr.' - detected in Replacement Key: '.$crr_match[0].' -> [Val: '.$val.']');
 					} //end if else

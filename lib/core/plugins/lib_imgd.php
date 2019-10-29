@@ -71,7 +71,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.180301.r3
+ * @version 	v.20191026
  * @package 	Converters
  *
  */
@@ -702,7 +702,7 @@ public function applyWatermark($wtistr, $gravity, $offsx=0, $offsy=0) {
  * @param STRING 	$text 				:: the text to be applied
  * @param INTEGER 	$angle 				:: *Optional* TTF angle rotation (0..180) degrees ; Default is 0 | null (for built-in or GDF fonts)
  * @param INTEGER 	$size 				:: *Optional* TTF font size ; Default is 10 | null (for built-in or GDF fonts)
- * @param ENUM 		$font 				:: *Optional* The font to be used: character's font (1..5 for built-in gd font ; path/to/font.gdf ; path/to/font.ttf) ; Default is: lib/core/plugins/fonts/source-sans-pro-regular.ttf
+ * @param ENUM 		$font 				:: *Optional* The font to be used: character's font (1..5 for built-in gd font ; path/to/font.gdf ; path/to/font.ttf) ; Default is: lib/core/plugins/fonts/typo/sans/ibm-plex-sans-regular.ttf
  *
  * @hints 								:: this works just with TTF fonts
  *
@@ -762,7 +762,7 @@ public function calculateTextBBox($text, $angle, $size, $font) {
  * @param INTEGER 	$offsy 				:: correction offset Y for text placement ; Default is 0
  * @param INTEGER 	$angle 				:: *Optional* TTF angle rotation (0..180) degrees ; Default is 0 | null (for built-in or GDF fonts)
  * @param INTEGER 	$size 				:: *Optional* TTF font size ; Default is 10 | null (for built-in or GDF fonts)
- * @param ENUM 		$font 				:: *Optional* The font to be used: character's font (1..5 for built-in gd font ; path/to/font.gdf ; path/to/font.ttf) ; Default is: lib/core/plugins/fonts/source-sans-pro-regular.ttf
+ * @param ENUM 		$font 				:: *Optional* The font to be used: character's font (1..5 for built-in gd font ; path/to/font.gdf ; path/to/font.ttf) ; Default is: lib/core/plugins/fonts/typo/sans/ibm-plex-sans-regular.ttf
  * @param ARRAY 	$color_rgb 			:: *Optional* The RGB color with optional alpha channel as Array [0..255, 0..255, 0..255, 0..127] ; Default is: [255, 255, 255, 100]
  *
  * @hints 								:: the text transparency is made by the $color_rgb alpha channel

@@ -5,6 +5,7 @@ modules/mod-agile
 modules/mod-cloud
 modules/mod-db-orm-redbean
 modules/mod-dbal-zend
+modules/mod-documentor
 modules/mod-ecomm-cart
 modules/mod-js-components
 modules/mod-lang-detect

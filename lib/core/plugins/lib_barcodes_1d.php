@@ -57,7 +57,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20191023
+ * @version 	v.20191028
  * @package 	Components:Misc
  *
  */
@@ -535,6 +535,8 @@ final class SmartBarcode1D {
 /**
  * Class Smart BarCode 1D 128
  *
+ * @version 	v.20191028
+ *
  * @access 		private
  * @internal
  *
@@ -542,7 +544,6 @@ final class SmartBarcode1D {
 final class SmartBarcode1D_128 {
 
 	// ->
-	// v.20190207
 
 	private $code = '';
 	private $mode = '';
@@ -832,6 +833,8 @@ final class SmartBarcode1D_128 {
 /**
  * Class Smart BarCode 1D 93
  *
+ * @version 	v.20191028
+ *
  * @access 		private
  * @internal
  *
@@ -839,7 +842,6 @@ final class SmartBarcode1D_128 {
 final class SmartBarcode1D_93 {
 
 	// ->
-	// v.20190207
 
 	private $code = '';
 	private $extended = true;
@@ -1105,6 +1107,8 @@ final class SmartBarcode1D_93 {
 /**
  * Class Smart BarCode 1D 39
  *
+ * @version 	v.20191028
+ *
  * @access 		private
  * @internal
  *
@@ -1112,7 +1116,6 @@ final class SmartBarcode1D_93 {
 final class SmartBarcode1D_39 {
 
 	// ->
-	// v.20190207
 
 	private $code = '';
 	private $extended = true;
@@ -1391,6 +1394,8 @@ final class SmartBarcode1D_39 {
 /**
  * Class Smart BarCode 1D RMS4CC
  *
+ * @version 	v.20191028
+ *
  * @access 		private
  * @internal
  *
@@ -1398,7 +1403,6 @@ final class SmartBarcode1D_39 {
 final class SmartBarcode1D_RMS4CC {
 
 	// ->
-	// v.20190207
 
 	private $code = '';
 	private $mode = '';

@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.8'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.10.23'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.10.29'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -578,7 +578,7 @@ public static function urlVarDecodeStr($y_urlencoded_str_var, $y_filter=true) {
  * @internal
  *
  * @depends 	-
- * @version 	v.20190226
+ * @version 	v.20191028
  * @package 	Application
  *
  */
@@ -587,6 +587,11 @@ final class SmartFrameworkRegistry {
 	// ::
 	//  This class have to be able to run before loading the Smart.Framework and must not depend on it's classes.
 
+	/**
+	 * The Registry Connections Container
+	 * IMPORTANT: This can be used for very advanced development only to set a global connection here (ex: DB server)
+	 * @var Array
+	 */
 	public static $Connections = array(); // connections registry
 
 	private static $DebugMessages = array( // debug messages registry

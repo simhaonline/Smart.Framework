@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190105
+ * @version 	v.20191028
  * @package 	Mailer
  *
  */
@@ -39,13 +39,39 @@ final class SmartMailerImap4Client {
 	// ->
 
 //=====================================================================================
-//--
-public $buffer = 1024;		// socket read buffer (default is 512)
-public $timeout = 30;		// socket timeout in seconds
-public $debug = false;		// to debug or not
-//--
-public $error = '';			// the error message
-public $log = '';			// if debug is enabled, this is the log
+
+/**
+ * @var INT
+ * socket read buffer (default is 1024)
+ */
+public $buffer = 1024;
+
+/**
+ * @var INT
+ * socket timeout in seconds (default is 30)
+ */
+public $timeout = 30;
+
+/**
+ * @var BOOLEAN
+ * debug on/off (default is FALSE)
+ */
+public $debug = false;
+
+/**
+ * @var STRING
+ * the error message(s) will be collected here
+ * do not SET a value here, but just GET the result
+ */
+public $error = '';
+
+/**
+ * @var STRING
+ * the operations log (only if debug is enabled)
+ * do not SET a value here, but just GET the result
+ */
+public $log = '';
+
 //--
 private $socket = false; 	// socket resource ID
 private $tag = '';			// unique ID Tag
@@ -60,6 +86,7 @@ private $inf_size = 0;		// store mailbox total size
 //--
 private $cafile = '';		// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
 //--
+
 //=====================================================================================
 
 
@@ -1147,7 +1174,7 @@ private function get_answer_data() { // IMAP4
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190105
+ * @version 	v.20191028
  * @package 	Mailer
  *
  */
@@ -1156,19 +1183,46 @@ final class SmartMailerPop3Client {
 	// ->
 
 //=====================================================================================
-//--
-public $buffer = 512;		// socket read buffer (default is 512)
-public $timeout = 30;		// socket timeout in seconds
-public $debug = false;		// to debug or not
-//--
-public $error = '';			// the error message
-public $log = '';			// if debug is enabled, this is the log
+
+/**
+ * @var INT
+ * socket read buffer (default is 512)
+ */
+public $buffer = 512;
+
+/**
+ * @var INT
+ * socket timeout in seconds (default is 30)
+ */
+public $timeout = 30;
+
+/**
+ * @var BOOLEAN
+ * debug on/off (default is FALSE)
+ */
+public $debug = false;
+
+/**
+ * @var STRING
+ * the error message(s) will be collected here
+ * do not SET a value here, but just GET the result
+ */
+public $error = '';
+
+/**
+ * @var STRING
+ * the operations log (only if debug is enabled)
+ * do not SET a value here, but just GET the result
+ */
+public $log = '';
+
 //--
 private $socket = false; 	// socket resource ID
 private $apop_banner = ''; 	// store the banner used for APOP Auth Method
 //--
 private $cafile = '';		// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
 //--
+
 //=====================================================================================
 
 
