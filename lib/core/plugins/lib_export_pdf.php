@@ -42,7 +42,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG', '/usr/local/bin/rsvg-convert');	
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
  * @version 	v.20191022
- * @package 	Exporters
+ * @package 	Plugins:ExportAndImport
  *
  */
 final class SmartPdfExport {

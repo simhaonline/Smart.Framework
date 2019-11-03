@@ -58,7 +58,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		PUBLIC
  * @depends 	extensions: PHP XML ; classes: Smart
  * @version 	v.181010
- * @package 	Components:Core
+ * @package 	Plugins:ViewComponents
  *
  */
 
@@ -328,6 +328,7 @@ public static function cookiename($y_form_name) {
  * @access 		private
  * @internal
  *
+ * @package 	development:Plugins
  */
 final class SmartCaptchaImageDraw {
 

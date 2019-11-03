@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.20190403
- * @package 	Parsers
+ * @package 	Plugins:ConvertersAndParsers
  *
  */
 final class SmartHtmlParser {

@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.170913
- * @package 	Network
+ * @package 	Plugins:Network
  *
  */
 final class SmartFtpClient {

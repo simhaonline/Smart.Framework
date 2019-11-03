@@ -42,7 +42,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartTextTranslations
  * @version 	v.20191023
- * @package 	Components:Core
+ * @package 	Application:ViewComponents
  *
  */
 final class SmartComponents {

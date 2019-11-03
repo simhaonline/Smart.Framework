@@ -37,7 +37,7 @@ define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based')
  * @access 		PUBLIC
  * @depends 	-
  * @version 	v.20190715
- * @package 	Application
+ * @package 	Application:Caching
  *
  */
 final class SmartPersistentCache extends SmartAbstractPersistentCache {
@@ -48,11 +48,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	private static $is_active = 0;		// Cache if Active (init to zero; then on 1st check set as TRUE or FALSE)
 
 
-	/**
-	 * Check if the persistent Cache is Active
-	 *
-	 * @return BOOLEAN	TRUE if is Active or FALSE if not
-	 */
 	public static function isActive() {
 		//--
 		global $configs;
@@ -72,12 +67,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	/**
-	 * Check if the persistent Cache is Memory Based
-	 * This function must ALWAYS be used in conjunction with isActive() as it will return TRUE just if the backend is a Memory Based one and will not check if Backed is Active or not ...
-	 *
-	 * @return BOOLEAN	TRUE if is Memory Based (Ex: Redis / Memcache / ...) or FALSE if not (Ex: File Cache)
-	 */
 	public static function isMemoryBased() {
 		//--
 		return true; // Redis is a memory based cache backend, so it is TRUE
@@ -85,11 +74,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	/**
-	 * Empty the persistent Cache by deleting all existing keys.
-	 *
-	 * @return BOOLEAN	TRUE if is success or FALSE if fail
-	 */
 	public static function clearData() {
 		//--
 		if(!self::isActive()) {
@@ -103,14 +87,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	/**
-	 * Check if a Key exists in the persistent Cache
-	 *
-	 * @param STRING	$y_realm	The Cache Realm
-	 * @param STRING	$y_key		The Cache Key
-	 *
-	 * @return BOOLEAN	TRUE if Key Exists or FALSE if not
-	 */
 	public static function keyExists($y_realm, $y_key) {
 		//--
 		if(!self::isActive()) {
@@ -135,14 +111,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	/**
-	 * get the TTL in seconds for a key from the persistent Cache or Error code
-	 *
-	 * @param STRING	$y_realm	The Cache Realm
-	 * @param STRING	$y_key		The Cache Key
-	 *
-	 * @return INTEGER	number of seconds the key will expire ; -1 if the key does not expire (is persistent) ; -2 if the key does not exists ; -3 if N/A or ERR
-	 */
 	public static function getTtl($y_realm, $y_key) {
 		//--
 		if(!self::isActive()) {
@@ -169,17 +137,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	/**
-	 * Get a Key from the persistent Cache
-	 *
-	 * By default only numbers and strings can be stored as flat values in Redis.
-	 * To retrieve complex variables like Arrays, use SmartPersistentCache::varUncompress() after using this function.
-	 *
-	 * @param STRING	$y_realm	The Cache Realm
-	 * @param STRING	$y_key		The Cache Key
-	 *
-	 * @return MIXED	The value of the stored key or NULL
-	 */
 	public static function getKey($y_realm, $y_key) {
 		//--
 		if(!self::isActive()) {
@@ -206,19 +163,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	/**
-	 * Set a Key into the persistent Cache
-	 *
-	 * By default only numbers and strings can be stored as flat values in Redis.
-	 * To store complex variables like Arrays, use SmartPersistentCache::varCompress() before using this function.
-	 *
-	 * @param STRING 	$y_realm		The Cache Realm
-	 * @param STRING 	$y_key			The Cache Key
-	 * @param MIXED 	$y_value		The value to be stored
-	 * @param INTEGER+ 	$y_expiration	Key Expiration in seconds (zero if key does not expire)
-	 *
-	 * @return BOOLEAN	Returns True if the key was set or false if not
-	 */
 	public static function setKey($y_realm, $y_key, $y_value, $y_expiration=0) {
 		//--
 		if(!self::isActive()) {
@@ -261,14 +205,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	/**
-	 * Unset a Key into the persistent Cache
-	 *
-	 * @param STRING 	$y_realm	The Cache Realm
-	 * @param STRING 	$y_key		The Cache Key ; Use * for All Keys in that Realm
-	 *
-	 * @return BOOLEAN	Returns True if the key(s) was/were unset or false if not
-	 */
 	public static function unsetKey($y_realm, $y_key) {
 		//--
 		if(!self::isActive()) {
@@ -315,6 +251,9 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 		} //end if else
 		//--
 	} //END FUNCTION
+
+
+	//##### PRIVATES
 
 
 	private static function initCacheManager() {

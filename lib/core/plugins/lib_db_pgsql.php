@@ -36,8 +36,8 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
 /**
  * Class: SmartPgsqlDb - provides a Static PostgreSQL DB Server Client that can be used just with the DEFAULT connection from configs.
  *
- * Tested and Stable on PostgreSQL versions: 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x / 9.6.x / 10.x / 11.x
- * Tested and Stable with PgPool-II versions: 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x / 3.5.x / 3.6.x / 3.7.x / 4.0.x
+ * Tested and Stable on PostgreSQL versions: 9.0.x / 9.1.x / 9.2.x / 9.3.x / 9.4.x / 9.5.x / 9.6.x / 10.x / 11.x / 12.x
+ * Tested and Stable with PgPool-II versions: 3.0.x / 3.1.x / 3.2.x / 3.3.x / 3.4.x / 3.5.x / 3.6.x / 3.7.x / 4.0.x / 4.1.x
  * Tested and Stable with PgBouncer: all versions
  *
  * This class provides an easy and convenient way to work with the PostgreSQL DEFAULT connection, as all methods are static.
@@ -69,7 +69,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
  * @version 	v.20191009
- * @package 	Database:PostgreSQL
+ * @package 	Plugins:Database:PostgreSQL
  *
  */
 final class SmartPgsqlDb {
@@ -2323,7 +2323,7 @@ return (string) $sql;
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
  * @version 	v.20191009
- * @package 	Database:PostgreSQL
+ * @package 	Plugins:Database:PostgreSQL
  *
  */
 final class SmartPgsqlExtDb {

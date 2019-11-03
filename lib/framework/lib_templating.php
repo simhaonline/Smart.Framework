@@ -15,7 +15,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Markers-TPL Templating
 // DEPENDS:
 //	* Smart::
-//	* SmartUtils::
 //	* SmartUnicode::
 //	* SmartParser::
 //	* SmartFileSystem::
@@ -58,8 +57,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191029
- * @package 	Templating:Engines
+ * @version 	v.20191103
+ * @package 	@Core:TemplatingEngine
  *
  */
 final class SmartMarkersTemplating {
@@ -1026,11 +1025,11 @@ final class SmartMarkersTemplating {
 						$val = (string) (float) $val;
 					//--
 					} elseif((string)$escexpr == '|slug') { // Slug: a-zA-Z0-9_- / - / -- : -
-						$val = (string) SmartUtils::create_slug((string)$val, false); // do not apply strtolower as it can be later combined with |lower flag
+						$val = (string) Smart::create_slug((string)$val, false); // do not apply strtolower as it can be later combined with |lower flag
 					} elseif((string)$escexpr == '|htmid') { // HTML-ID: a-zA-Z0-9_-
-						$val = (string) SmartUtils::create_htmid((string)$val);
+						$val = (string) Smart::create_htmid((string)$val);
 					} elseif((string)$escexpr == '|jsvar') { // JS-Variable: a-zA-Z0-9_
-						$val = (string) SmartUtils::create_jsvar((string)$val);
+						$val = (string) Smart::create_jsvar((string)$val);
 					//--
 					} elseif(((string)substr((string)$escexpr, 0, 7) == '|substr') OR ((string)substr((string)$escexpr, 0, 7) == '|subtxt')) { // Sub(String|Text) (0,num)
 						$xnum = Smart::format_number_int((int)substr((string)$escexpr, 7), '+');

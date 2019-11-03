@@ -61,8 +61,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191021
- * @package 	Database:SQLite
+ * @version 	v.20191101
+ * @package 	Plugins:Database:SQLite
  *
  */
 final class SmartSQliteDb {
@@ -70,11 +70,10 @@ final class SmartSQliteDb {
 // ->
 
 //-- private vars
-private $db;
-private $file;
-private $destroyed;
-private $newinstance;
-private $timeoutbusysec;
+private $db = null;
+private $file = '';
+private $opened = false;
+private $timeoutbusysec = 60;
 //--
 
 
@@ -88,6 +87,13 @@ private $timeoutbusysec;
 public function __construct($sqlite_db_file, $timeout_busy_sec=60) {
 
 	//--
+	if((string)$sqlite_db_file == '') {
+		\Smart::log_warning(__METHOD__.' SQlite File is Empty');
+		return;
+	} //end if
+	//--
+
+	//--
 	if(SmartFrameworkRuntime::ifDebug()) {
 		//--
 		SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
@@ -99,14 +105,7 @@ public function __construct($sqlite_db_file, $timeout_busy_sec=60) {
 	//--
 
 	//--
-	$this->destroyed = true;
 	$this->file = (string) $sqlite_db_file; // add SQLite Version as suffix
-	//--
-	if($this->check_exists() !== true) {
-		$this->newinstance = true;
-	} else {
-		$this->newinstance = false;
-	} //end if
 	//--
 	$this->timeoutbusysec = (int) $timeout_busy_sec;
 	if($this->timeoutbusysec < 0) {
@@ -139,8 +138,10 @@ public function __destruct() {
  * This must be called prior any other DB operations: read / write / count / ...
  */
 public function open() {
-	$this->destroyed = false;
 	$this->db = SmartSQliteUtilDb::open($this->file, $this->timeoutbusysec);
+	if($this->db) {
+		$this->opened = true;
+	} //end if
 } //END FUNCTION
 //--
 
@@ -152,9 +153,9 @@ public function open() {
  * Otherwise, it will be closed automatically on object __destruct() ...
  */
 public function close() {
-	if($this->destroyed !== true) {
+	if($this->opened === true) {
 		SmartSQliteUtilDb::close($this->db, $this->file);
-		$this->destroyed = true;
+		$this->opened = false;
 	} //end if
 } //END FUNCTION
 //--
@@ -413,20 +414,6 @@ public function get_filename() {
 
 //--
 /**
- * return the status of new instance
- *
- * @access 		private
- * @internal
- *
- */
-public function check_newinstance() {
-	return $this->newinstance;
-} //END FUNCTION
-//--
-
-
-//--
-/**
  * Returns true if the SQLite DB exists
  *
  * @access 		private
@@ -451,7 +438,7 @@ private function check_exists() {
  *
  */
 private function check_opened() {
-	if($this->destroyed !== false) {
+	if($this->opened !== true) {
 		Smart::log_notice('The DataBase: '.$this->file.' was not opened or has been already closed !');
 	} //end if
 } //END FUNCTION
@@ -483,8 +470,8 @@ private function check_opened() {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191021
- * @package 	Database:SQLite
+ * @version 	v.20191101
+ * @package 	Plugins:Database:SQLite
  *
  */
 final class SmartSQliteUtilDb {
@@ -701,7 +688,7 @@ public static function close($db, $infofile='') {
 	//-- close DB connection
 	try {
 		//--
-		if(($db instanceof SQLite3)) {
+		if($db instanceof SQLite3) {
 			//--
 			$conn = (string) self::get_connection_id($db);
 			if((string)$conn != (string)self::$invalid_conn) { // does not make sense to unset default INVALID connection !
@@ -1769,8 +1756,8 @@ die(''); // just in case
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20191021
- * @package 	Database:SQLite
+ * @version 	v.20191101
+ * @package 	Plugins:Database:SQLite
  *
  */
 final class SmartSQliteFunctions {

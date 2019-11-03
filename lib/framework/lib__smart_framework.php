@@ -229,7 +229,7 @@ interface SmartInterfaceAppInfo {
  * @access 		PUBLIC
  * @depends 	-
  * @version 	v.20191029
- * @package 	Application
+ * @package 	development:Application
  *
  */
 abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}

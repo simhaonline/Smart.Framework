@@ -39,6 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  *
  * @version 	v.20191021
+ * @package 	Application:Development
  *
  */
 final class SmartDebugProfiler {

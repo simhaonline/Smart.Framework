@@ -34,7 +34,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.20190105
- * @package 	Mailer
+ * @package 	Plugins:Mailer
  *
  */
 final class SmartMailerMimeDecode {

@@ -54,7 +54,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		PUBLIC
  * @depends 	-
  * @version 	v.20190221
- * @package 	Application
+ * @package 	@Core:Authentication
  *
  */
 final class SmartAuth {

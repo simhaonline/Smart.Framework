@@ -30,14 +30,14 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * To work with TLS / SSL (requires the PHP OpenSSL Module).
  * Implemented Methods: Standard (GET / POST / HEAD) ; Extended (PUT / DELETE / MKCOL / OPTIONS / MOVE / COPY / PROPFIND).
- * The Standard Methofs will prefere HTTP 1.0 (which provide faster access)
+ * The Standard Methods will prefere HTTP 1.0 (which provide a faster access)
  * The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additional headers that may validate for error checks ...
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.180309
- * @package 	Network
+ * @version 	v.20191101
+ * @package 	@Core:Network
  *
  */
 final class SmartHttpClient {
@@ -906,20 +906,18 @@ print_r(
  * Smart::some_method_of_this_class(...);
  * </code>
  *
- * @usage       static object: Class::method() - This class provides only STATIC methods
- * @hints       It is recommended to use the methods in this class instead of PHP native methods whenever is possible because this class will offer Long Term Support and the methods will be supported even if the behind PHP methods can change over time, so the code would be easier to maintain.
+ * @usage 		static object: Class::method() - This class provides only STATIC methods
+ * @hints 		It is recommended to use the methods in this class instead of PHP native methods whenever is possible because this class will offer Long Term Support and the methods will be supported even if the behind PHP methods can change over time, so the code would be easier to maintain.
  *
- * @access      PUBLIC
- * @depends     classes: Smart
- * @version     v.180309
- * @package 	Network
+ * @access 		PUBLIC
+ * @depends 	classes: Smart
+ * @version 	v.20191101
+ * @package 	@Core:Network
  *
  */
 final class SmartHttpUtils {
 
-
 	// ::
-
 
 	//==============================================
 	// encode a COOKIE variable ; returns the HTTP Cookie string
@@ -955,15 +953,15 @@ final class SmartHttpUtils {
 			$arrtype = Smart::array_type_test($value); // 0: not an array ; 1: non-associative ; 2:associative
 			if($arrtype === 1) { // 1: non-associative
 				for($i=0; $i<Smart::array_size($value); $i++) {
-					$out .= urlencode($varname).'[]='.rawurlencode($value[$i]).'&';
+					$out .= (string) urlencode($varname).'[]='.rawurlencode($value[$i]).'&';
 				} //end foreach
 			} else { // 2: associative
 				foreach($value as $key => $val) {
-					$out .= urlencode($varname).'['.rawurlencode($key).']='.rawurlencode($val).'&';
+					$out .= (string) urlencode($varname).'['.rawurlencode($key).']='.rawurlencode($val).'&';
 				} //end foreach
 			} //end if else
 		} else {
-			$out = urlencode($varname).'='.rawurlencode($value).'&';
+			$out = (string) urlencode($varname).'='.rawurlencode($value).'&';
 		} //end if else
 		//--
 		return (string) $out;

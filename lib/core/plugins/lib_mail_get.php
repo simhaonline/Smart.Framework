@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.20191028
- * @package 	Mailer
+ * @package 	Plugins:Mailer
  *
  */
 final class SmartMailerImap4Client {
@@ -1175,7 +1175,7 @@ private function get_answer_data() { // IMAP4
  *
  * @depends 	classes: Smart
  * @version 	v.20191028
- * @package 	Mailer
+ * @package 	Plugins:Mailer
  *
  */
 final class SmartMailerPop3Client {

@@ -12,16 +12,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 // OPTIONAL ; [REGEX-SAFE-OK]
 
-//--
-if(!is_array($configs['redis'])) {
-	Smart::raise_error(
-		'ERROR: Redis Custom Session requires the Redis server Configuration to be set in Smart.Framework ...',
-		'ERROR: Invalid Settings for App Session Handler. See the Error Log for more details ...'
-	);
-	die('');
-} //end if
-//--
-
 //=====================================================================================
 //===================================================================================== CLASS START
 //=====================================================================================
@@ -36,7 +26,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190605
+ * @version 	v.20191031
  * @package 	Application
  *
  */
@@ -66,6 +56,14 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		} //end if
 		//--
 		$redis_cfg = (array) Smart::get_from_config('redis');
+		//--
+		if(Smart::array_size($redis_cfg) <= 0) {
+			Smart::raise_error(
+				'ERROR: Redis Custom Session requires the Redis server Configuration to be set in Smart.Framework ...',
+				'ERROR: Invalid Settings for App Session Handler. See the Error Log for more details ...'
+			);
+			die('');
+		} //end if
 		//--
 		$this->redis = new SmartRedisDb(
 			(string) $redis_cfg['server-host'],

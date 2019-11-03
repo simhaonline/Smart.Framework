@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<!-- Template: Smart.Framework@Documentor v.20191031 -->
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<meta name="author" content="unix-world.org">
+	<meta name="description" content="\SmartMongoDb       final class \ SmartMongoDb    {   } -&gt;    Class Smart MongoDB Client (for PHP MongoDB extension v.1.1.0 or later) Tested and Stable on">
+	<meta name="keywords" content="smartmongodb, final, class, smartmongodb, -, smart, mongodb, client, for, php, extension, v, or, later, tested, and, stable, on, server, versions, located, at, lib core plugins lib db mongodb.php, package, plugins database mongodb, namespace, name, throws, exception, depending, how, this, it, is, constructed, may, throw, exception, raise, fatal, error, version, v, depends, extensions, v, classes, usage, dynamic, object, new, class   - method, -, provides, only, methods, summary, public, function, construct, array, y configs arr, array, boolean, y fatal err, true, throws, exception, param, y configs arr, optional, the, of, configuration, parameters, default, empty, case, which, will, get, from, config.php, if, custom, structure, should, be, identical, with, config.php, configs  mongodb  ., y fatal err, set, errors, handling, mode">
+	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartMongoDb">
+	<title>PHP Documentation for: \SmartMongoDb</title>
+	<!-- CSS and Fonts -->
+	<!-- skip fonts -->
+	<style type="text/css">
+	* {
+		font-family: sans-serif;
+		font-smooth: always;
+	}
+	/* ----- #start ----- */
+	html, body{
+		width: 96% auto;
+		/*height: 96% auto;*/
+		margin: 0px;
+		padding: 10px;
+		padding-top: 5px;
+	}
+	body {
+		background: #FFFFFF;
+		font-size: 16px;
+		line-height: 1.5;
+	}
+	div, p, ol, ul, form, fieldset, blockquote, address, dl {
+		font-size: 1rem; /* 16px */
+		line-height: 1.5;
+	}
+	li {
+		list-style-position: inside; /* bugfix for chrome */
+	}
+	table, pre, code, code * {
+		font-size: 0.9375rem; /* 15px */
+		line-height: 1.25;
+	}
+	/* ----- headings ----- */
+	h1 {
+		font-size: 2.25rem; /* 36px */
+		margin-top: 0.625rem; /* 10px */
+		margin-bottom: 0.625rem; /* 10px */
+	}
+	h2 {
+		font-size: 2rem; /* 32px */
+		margin-top: 0.5rem; /* 8px */
+		margin-bottom: 0.5rem; /* 8px */
+	}
+	h3 {
+		font-size: 1.75rem; /* 28px */
+		margin-top: 0.375rem; /* 6px */
+		margin-bottom: 0.375rem; /* 6px */
+	}
+	h4 {
+		font-size: 1.5rem; /* 24px */
+		margin-top: 0.3125rem; /* 5px */
+		margin-bottom: 0.3125rem; /* 5px */
+	}
+	h5 {
+		font-size: 1.25rem; /* 20px */
+		margin-top: 0.25rem; /* 4px */
+		margin-bottom: 0.25rem; /* 4px */
+	}
+	h6 {
+		font-size: 1.125rem; /* 18px */
+		margin-top: 0.1875rem; /* 3px */
+		margin-bottom: 0.1875rem; /* 3px */
+	}
+	/* ----- misc ----- */
+	img {
+		border: 0;
+	}
+	hr {
+		border: none 0;
+		border-top: 1px solid #BBCCDD;
+		height: 1px;
+	}
+	/* ----- tables ----- */
+	table {
+		font-weight: normal;
+		text-align:left;
+	}
+	th {
+		font-weight: bold;
+	}
+	td {
+		font-weight: normal;
+	}
+	/* ----- links ----- */
+	a, a:link, a:visited, a:hover {
+		color: #000000;
+		text-decoration: none;
+		border-bottom: 1px dotted #BBBBBB;
+	}
+	a:hover {
+		border-bottom: 1px dotted #555555;
+	}
+	/* ----- forms ----- */
+	input[type="text"],
+	input[type="password"],
+	input[type="email"],
+	input[type="url"],
+	input[type="date"],
+	input[type="month"],
+	input[type="time"],
+	input[type="datetime"],
+	input[type="datetime-local"],
+	input[type="week"],
+	input[type="number"],
+	input[type="search"],
+	input[type="tel"],
+	input[type="color"],
+	textarea,
+	select {
+		background-color: #FFFFFF;
+		color: #222222;
+		font-weight: normal;
+		font-size: 1rem;
+		padding: 3px;
+		padding: 0.5rem 0.6rem;
+		display: inline-block;
+		border: 1px solid #ccc;
+		margin-bottom: 5px;
+		margin-right: 5px;
+		border-radius: 3px;
+		vertical-align: middle;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+	}
+	input[type="text"][disabled],
+	input[type="password"][disabled],
+	input[type="email"][disabled],
+	input[type="url"][disabled],
+	input[type="date"][disabled],
+	input[type="month"][disabled],
+	input[type="time"][disabled],
+	input[type="datetime"][disabled],
+	input[type="datetime-local"][disabled],
+	input[type="week"][disabled],
+	input[type="number"][disabled],
+	input[type="search"][disabled],
+	input[type="tel"][disabled],
+	input[type="color"][disabled],
+	textarea[disabled],
+	select[disabled] {
+		cursor: not-allowed;
+		background-color: #ECECEC;
+		color: #999999;
+	}
+	input:not([type])[disabled] {
+		cursor: not-allowed;
+		background-color: #ECECEC;
+		color: #999999;
+	}
+	input[readonly],
+	select[readonly],
+	textarea[readonly] {
+		cursor: pointer;
+		background-color: #FAFAFA; /* menu hover bg color */
+		color: #777; /* menu text color */
+		border-color: #ccc;
+	}
+
+	input:focus:invalid,
+	textarea:focus:invalid,
+	select:focus:invalid {
+		color: #b94a48;
+		border-color: #e9322d;
+	}
+	input[type="file"]:focus:invalid:focus,
+	input[type="radio"]:focus:invalid:focus,
+	input[type="checkbox"]:focus:invalid:focus {
+		outline-color: #e9322d;
+	}
+	select {
+		border: 1px solid #ccc;
+		background-color: white;
+	}
+	select[multiple] {
+		height: auto;
+	}
+	label {
+		margin: 0.5rem 0 0.2rem;
+	}
+	fieldset {
+		margin: 0;
+		padding: 0.35rem 0 0.75rem;
+		border: 0;
+	}
+	legend {
+		display: block;
+		width: 100%;
+		padding: 0.3rem 0;
+		margin-bottom: 0.3rem;
+		color: #333;
+		border-bottom: 1px solid #e5e5e5;
+	}
+	.hidden,
+	[hidden] {
+		display: none !important;
+	}
+	button {
+		/* Structure */
+		display: inline-block; /* do not mark as important as it can't hide using jquery hide() */
+		padding: 7px 15px 7px 15px !important;
+		line-height: normal !important;
+		white-space: nowrap !important;
+		vertical-align: middle !important;
+		text-align: center !important;
+		font-family: inherit !important;
+		font-size: 0.9375rem !important; /* 15px */
+		font-weight: bold !important;
+		text-decoration: none !important;
+		border-radius: 3px !important;
+		border: 1px solid #DDDDDD !important;
+		background-color: #FCFCFC !important;
+		color: #317AB9 !important;
+		cursor: pointer !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		margin-bottom: 5px;
+		margin-right: 5px;
+		box-sizing: border-box !important;
+		-moz-box-sizing: border-box !important;
+		-webkit-box-sizing: border-box !important;
+		appearance: none !important;
+		-moz-appearance: none !important;
+		-webkit-appearance: none !important;
+		user-select: none !important;
+		zoom: 1 !important;
+	}
+	button:hover,
+	button:focus {
+		border: 1px solid #CCCCCC !important;
+		background-color: #F3F3F3 !important;
+		color: #2069A9 !important;
+	}
+	button:focus {
+		outline: 0 !important;
+	}
+	button[disabled],
+	button-disabled,
+	button-disabled:hover,
+	button-disabled:focus,
+	button-disabled:active {
+		background-image: none !important;
+		opacity: 0.40 !important;
+		cursor: not-allowed !important;
+		box-shadow: none !important;
+	}
+	/* ----- navbar ----- */
+	nav.ux-navbar label.toggle,
+	nav.ux-navbar input[id^=drop] {
+		display: none;
+	}
+	nav.ux-navbar {
+		margin: 0;
+		padding: 0;
+		background-color: #3f51b5;
+	}
+	nav.ux-navbar div#logo {
+		display: block;
+		padding: 0 25px;
+		float: left;
+		font-size: 20px;
+		line-height: 50px;
+		color: #FFFFFF;
+	}
+	nav::after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	nav.ux-navbar ul {
+		float: right;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		position: relative;
+	}
+	nav.ux-navbar ul li {
+		margin: 0px;
+		display: inline-block;
+		float: left;
+		background-color: #3f51b5;
+	}
+	nav.ux-navbar a {
+		display: block;
+		padding: 0 20px;
+		color: #FFFFFF;
+		font-size: 20px;
+		line-height: 50px;
+		text-decoration: none;
+	}
+	nav.ux-navbar ul li ul li:hover {
+		background-color: #2e40a4;
+	}
+	nav.ux-navbar a:hover {
+		color: #FFFFFF;
+		background-color: #1d3093;
+	}
+	nav.ux-navbar ul ul {
+		display: none;
+		position: absolute;
+		top: 50px;
+		z-index: 5555;
+	}
+	nav.ux-navbar ul li:hover > ul {
+		display: inherit;
+	}
+	nav.ux-navbar ul ul li {
+		width: 170px;
+		float: none;
+		display: list-item;
+		position: relative;
+	}
+	nav.ux-navbar ul ul ul li {
+		position: relative;
+		top: -50px;
+		left: 170px;
+	}
+	nav.ux-navbar li > a::after {
+		content: ' ▾';
+	}
+	nav.ux-navbar li > a:only-child::after {
+		content: '';
+	}
+	/* ----- navbar responsive ----- */
+	@media all and (max-width:767px) {
+		nav.ux-navbar div#logo span {
+			display: none;
+		}
+		nav.ux-navbar div#logo {
+			display: block;
+			padding: 0;
+			width: 100%;
+			text-align: center;
+			float: none;
+		}
+		nav.ux-navbar {
+			margin: 0;
+		}
+		nav.ux-navbar label.toggle + a,
+		nav.ux-navbar ul.menu {
+			display: none;
+		}
+		nav.ux-navbar label.toggle {
+			display: block;
+			background-color: #3f51b5;
+			padding: 0 20px;
+			color: #FFFFFF;
+			font-size: 20px;
+			line-height: 50px;
+			text-decoration: none;
+			border: none;
+		}
+		nav.ux-navbar label.toggle::after {
+			content: ' ▾';
+		}
+		nav.ux-navbar label.toggle:hover {
+			color: #FFFFFF;
+			background-color: #1d3093;
+		}
+		nav.ux-navbar input[id^=drop]:checked + ul {
+			display: block;
+		}
+		nav.ux-navbar ul {
+			width: 100%;
+		}
+		nav.ux-navbar ul li {
+			display: block;
+			width: 100%;
+		}
+		nav.ux-navbar ul ul .toggle,
+		nav.ux-navbar ul ul a {
+			padding: 0 40px;
+		}
+		nav.ux-navbar ul ul ul a {
+			padding: 0 80px;
+		}
+		nav.ux-navbar a:hover {
+			color: #FFFFFF;
+			background-color: #1d3093;
+		}
+		nav.ux-navbar ul ul ul a {
+			color: #FFFFFF;
+			background-color: #2e40a4;
+		}
+		nav.ux-navbar ul li ul li .toggle,
+		nav.ux-navbar ul ul a {
+			background-color: #2e40a4;
+		}
+		nav.ux-navbar ul ul {
+			float: none;
+			position: static;
+			color: #ffffff;
+		}
+		nav.ux-navbar ul ul li:hover > ul,
+		nav.ux-navbar ul li:hover > ul {
+			display: none;
+		}
+		nav.ux-navbar ul ul li {
+			display: block;
+			width: 100%;
+		}
+		nav.ux-navbar ul ul ul li {
+			position: static;
+		}
+	}
+	/* ----- #end ----- */
+	</style>
+</head>
+<body>
+<nav class="ux-navbar">
+	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
+	<label for="drop-0" class="toggle">&#9776;</label>
+	<input type="checkbox" id="drop-0">
+	<ul class="menu">
+		<li><a href="index.html#Package--PluginsDatabaseMongoDB-" title="return to Index">return to Index</a></li>
+	</ul>
+</nav>
+<!-- skip logo -->
+<!-- class r.20191103 -->
+<!-- Styles -->
+<!-- styles r.20191031 -->
+<style>
+.doc-package {
+	color: #3F51B5;
+}
+.doc-located {
+	color: #999999;
+}
+.doc-modifiers {
+	color: #FF5500;
+}
+.doc-keyword {
+	color: #333333;
+}
+.doc-name,
+.doc-param-name {
+	color: #666699;
+}
+.doc-method-name {
+	color: #111111;
+}
+.doc-method-special-name {
+	color: #003399;
+}
+.doc-method-abstract-name {
+	color: #777777;
+}
+.doc-ns,
+.doc-param-optional {
+	color: #778899;
+}
+.doc-param-value {
+	color: #3F51B5;
+}
+.doc-implements {
+	color: #72C100;
+}
+.doc-extends,
+.doc-type-class {
+	color: #20639E;
+}
+.doc-inherited,
+.doc-type-interface {
+	color: #AAAAAA;
+}
+.doc-use,
+.doc-type-trait {
+	color: #888888;
+}
+.doc-reimplemented,
+.doc-reuses {
+	color: #99AABB;
+}
+.doc-header {
+	color: #3F51B5;
+}
+div.doc-container {
+	border: 1px solid #ECECEC;
+	padding: 5px;
+	margin-bottom: 20px;
+}
+ul.doc-list,
+ul.doc-list ul {
+	padding: 10px;
+	margin: 0;
+	list-style-type: none;
+}
+ul.doc-list ul {
+	padding: 0px;
+	padding-left: 20px;
+	margin: 0;
+}
+.doc-comments {
+	background: #343C61;
+	color: #FCFCFC;
+	padding: 10px;
+	line-height: 1.75;
+}
+.doc-method-ret-params {
+	background: #FAFAFA;
+	color: #3F51B5;
+	padding: 2px;
+	font-size: 95%;
+	margin-top: 10px;
+}
+.doc-method-comments {
+	background: #ECECEC;
+	color: #333333;
+	padding: 2px;
+	font-size: 85%;
+	margin-top: 10px;
+}
+.doc-code {
+	background: #232B50;
+	color: #FFFFFF;
+	padding: 10px;
+}
+.doc-code pre {
+	padding: 5px;
+	overflow-x: auto;
+}
+div.doc-summary {
+	position: fixed;
+	bottom: 25px;
+	right: 25px;
+	padding: 10px;
+	background: #343C61;
+	color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+}
+</style>
+<!-- Headings -->
+<h1 title="PHP class: `\SmartMongoDb` @ PHP Namespace: `\`" id="Class--Summary-">
+	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartMongoDb</span><br>
+	
+	
+	{
+	
+	}&nbsp;-&gt;
+</h1>
+<!-- Description -->
+<div class="doc-comments">Class Smart MongoDB Client (for PHP MongoDB extension v.1.1.0 or later)<br>
+Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1 / 4.2</div><br>
+<!-- Metainfo -->
+<div class="doc-container">
+	<ul class="doc-list">
+		<li><span class="doc-located"><b>Located at:</b> lib/core/plugins/lib_db_mongodb.php</span></li>
+		<li><span class="doc-package"><b>Package:</b> Plugins:Database:MongoDB</span></li>
+		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
+		<li><span class="doc-name"><b>Class Name:</b> SmartMongoDb</span></li>
+		<li><b>Throws:</b> \Exception  : Depending how this class it is constructed it may throw Exception or Raise Fatal Error</li>
+		<li><b>Version:</b> v.20191103</li>
+		<li><b>Depends:</b> extensions:  PHP MongoDB (v.1.1.0 or later) ; classes: Smart</li>
+		
+		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
+		
+		
+	</ul>
+</div>
+<!-- Methods -->
+<br>
+<div class="doc-container" id="Methods--Summary-">
+	<h2 class="doc-header">Methods summary</h2>
+</div>
+<!-- methods r.20191031 -->
+<div class="doc-container" id="Method--__construct">
+	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
+	<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_configs_arr` Parameter is OPTIONAL, with the Default Value: array()">$y_configs_arr</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fatal_err` Parameter is OPTIONAL, with the Default Value: true">$y_fatal_err</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
+	
+	
+	<div class="doc-method-ret-params">@throws: {\Exception} : Depending how this class it is constructed it may throw Exception or Raise Fatal Error<br>
+@param: {$y_configs_arr} *Optional* ; The Array of Configuration parameters ; Default is Empty Array, case which will get the configuration from config.php ; if custom, the ARRAY STRUCTURE should be identical with the default config.php: $configs['mongodb'].<br>
+@param: {$y_fatal_err} *Optional* ; Set if Errors handling mode ; Default is TRUE ; if set to FALSE will throw Exception instead of Raise a Fatal Error</div>
+	<div class="doc-method-comments">Class constructor</div>
+</div><div class="doc-container" id="Method--assign_uuid">
+	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>assign_uuid</b></span>&nbsp;(
+	
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+	
+	
+	<div class="doc-method-ret-params">@return: {STRING} : UUID (base36)</div>
+	<div class="doc-method-comments">A replacement for the default MongoDB object ID, will generate a 32 characters very unique UUID</div>
+</div><div class="doc-container" id="Method--get_ext_version">
+	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_ext_version</b></span>&nbsp;(
+	
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+	
+	
+	<div class="doc-method-ret-params">@return: {STRING} : MongoDB extension version</div>
+	<div class="doc-method-comments">Get the MongoDB Extension version</div>
+</div><div class="doc-container" id="Method--get_server_version">
+	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_version</b></span>&nbsp;(
+	
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+	
+	
+	<div class="doc-method-ret-params">@return: {STRING} : MongoDB version</div>
+	<div class="doc-method-comments">Get the MongoDB server version</div>
+</div><div class="doc-container" id="Method--getFtsDictionaryByLang">
+	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getFtsDictionaryByLang</b></span>&nbsp;(
+	<span class="doc-param-name"><b><span title="`$lang` Parameter is REQUIRED">$lang</span></b></span>
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+	
+	
+	<div class="doc-method-ret-params">@return: {STRING} : dictionary name (ex: 'english' - if available or 'none' - if n/a)</div>
+	<div class="doc-method-comments">Get the MongoDB FTS Dictionary by Two Letter language code (ISO 639-1)</div>
+</div><div class="doc-container" id="Method--is_command_ok">
+	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>is_command_ok</b></span>&nbsp;(
+	<span class="doc-param-name"><b><span title="`$result` Parameter is REQUIRED">$result</span></b></span>
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;BOOLEAN
+	
+	
+	<div class="doc-method-ret-params">@return: {BOOLEAN} : TRUE / FALSE</div>
+	<div class="doc-method-comments">Test if a command output is OK compliant (will check if result[0][ok] == 1)<br>
+Notice: not all MongoDB commands will return this standard answer, but for most will work</div>
+</div><div class="doc-container" id="Method--__call">
+	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__call</b></span>&nbsp;(
+	
+	)&nbsp;{}&nbsp;<span title="* Special * Magic * Method"><b>@</b></span>&nbsp;
+	
+	
+	<div class="doc-method-ret-params">@throws: {\Exception} : Depending how this class it is constructed it may throw Exception or Raise Fatal Error<br>
+@method: {@return: MIXED} count($strCollection, $arrQuery)											# count documents in a collection<br>
+@method: {@return: MIXED} find($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single or multiple documents in a collection with optional filter criteria / limit<br>
+@method: {@return: MIXED} findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single document in a collection with optional filter criteria / limit<br>
+@method: {@return: MIXED} bulkinsert($strCollection, $arrMultiDocs)									# add multiple documents to a collection<br>
+@method: {@return: MIXED} insert($strCollection, $arrDoc)												# add single document to a collection<br>
+@method: {@return: MIXED} upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# insert single or modify single or multi documents in a collection that are matching the filter criteria ; this is always non-fatal, will throw catcheable exception on error ...<br>
+@method: {@return: MIXED} update($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# modify single or many documents in a collection that are matching the filter criteria<br>
+@method: {@return: MIXED} delete($strCollection, $arrFilter)											# delete single or many documents from a collection that are matching the filter criteria<br>
+@method: {@return: MIXED} command($arrCmd)															# run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...<br>
+@method: {@return: MIXED} igcommand($arrCmd)															# run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists</div>
+	<div class="doc-method-comments">This is the Magic Method (Call) that maps the PHP class extra methods to MongoDB methods.<br>
+It have variadic parameters mapped to MongoDB sub-calls.</div>
+</div><!-- Skip Internal-Priv Method: `disconnect()` -->
+<!-- Properties -->
+<br>
+<div class="doc-container" id="Properties--Summary-">
+	<h2 class="doc-header">Properties summary</h2>
+</div>
+<!-- properties r.20191031 -->
+
+<!-- Constants -->
+<br>
+<div class="doc-container" id="Constants--Summary-">
+	<h2 class="doc-header">Constants summary</h2>
+</div>
+<!-- constants r.20191031 -->
+
+<!-- Sample Code -->
+<br>
+<div class="doc-container" id="SAMPLE--Code-">
+	<h2 class="doc-header">Sample Code</h2>
+</div>
+<div class="doc-code">
+	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
+<span style="color: #FFFFFF">&lt;?php<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;mongo&nbsp;config<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;array();<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'type'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'mongo-standalone'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;server(s)&nbsp;type:&nbsp;'mongo-standalone'&nbsp;|&nbsp;'mongo-cluster'&nbsp;(sharding)<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-host'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'127.0.0.1'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;host<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-port'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'27017'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;port<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'dbname'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'smart_framework'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;database<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'username'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">''</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;username<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'password'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">''</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;Base64-Encoded&nbsp;password<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'timeout'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">5</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;connect&nbsp;timeout&nbsp;in&nbsp;seconds<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'slowtime'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">0.0035</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;0.0025&nbsp;..&nbsp;0.0090&nbsp;slow&nbsp;query&nbsp;time&nbsp;(for&nbsp;debugging)<br><br>&nbsp;</span><span style="color: #FFFFFF">$mongo&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;\</span><span style="color: #FFFFFF">SmartMongoDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">);<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;insert<br>&nbsp;</span><span style="color: #FFFFFF">$doc&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;[];<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'_id'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">assign_uuid</span><span style="color: #FFCC00; font-weight: bold">();<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'name'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'My&nbsp;Name'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'description'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'Some&nbsp;description&nbsp;goes&nbsp;here&nbsp;...'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$insert&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">insert</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'myTestCollection'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">var_dump</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$insert</span><span style="color: #FFCC00; font-weight: bold">);<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;find<br>&nbsp;</span><span style="color: #FFFFFF">$query&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">find</span><span style="color: #FFCC00; font-weight: bold">(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'myTestCollection'</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;</span><span style="color: #5F9CCE">'name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #5F9CCE">'My&nbsp;Name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">],&nbsp;</span><span style="color: #999999">//&nbsp;filter&nbsp;(update&nbsp;all&nbsp;except&nbsp;these)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">[&nbsp;</span><span style="color: #999999">//&nbsp;projection<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'name'</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'description'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">],<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'limit'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">1</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #999999">//&nbsp;limit<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'skip'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">0&nbsp;</span><span style="color: #999999">//&nbsp;offset<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">]<br>&nbsp;);<br>&nbsp;</span><span style="color: #FFFFFF">var_dump</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$query</span><span style="color: #FFCC00; font-weight: bold">);<br><br><br></span><span style="color: #FFFFFF">?&gt;</span>
+</span>
+</code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
+</div>
+<!-- Summary List -->
+<br>
+<!-- summary r.20191103 -->
+<script>
+// summary r.20191103
+function smartHandleDocSelector(obj) {
+	if(!obj) {
+		return;
+	}
+	var selection = '';
+	try {
+		selection = obj.options[obj.selectedIndex].value;
+	} catch(err){}
+	if(selection) {
+		self.location.hash = String(selection);
+		obj.selectedIndex = 0; // reset selection to index zero
+	} else {
+		selection = '';
+		//self.location.href = self.location.href.split('#')[0]; // because reset selection to index zero avoid refresh !
+	}
+}
+</script>
+<div class="doc-summary">
+	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
+		<option value="" selected>* Class \SmartMongoDb # Documentation Index *</option>
+		<optgroup label="Class \SmartMongoDb">
+			<option value="Class--Summary-">***** Class Definition *****</option>
+		</optgroup>
+		<optgroup label="Class Methods">
+			<option value="Methods--Summary-">*** Methods summary ***</option>
+			<option value="Method--__construct">Method: __construct()</option><option value="Method--assign_uuid">Method: assign_uuid()</option><option value="Method--get_ext_version">Method: get_ext_version()</option><option value="Method--get_server_version">Method: get_server_version()</option><option value="Method--getFtsDictionaryByLang">Method: getFtsDictionaryByLang()</option><option value="Method--is_command_ok">Method: is_command_ok()</option><option value="Method--__call">Method: __call()</option>
+		</optgroup>
+		<optgroup label="Class Properties">
+			<option value="Properties--Summary-">*** Properties summary ***</option>
+			
+		</optgroup>
+		<optgroup label="Class Constants">
+			<option value="Constants--Summary-">*** Constants summary ***</option>
+			
+		</optgroup>
+		<optgroup label="Class Sample code">
+			<option value="SAMPLE--Code-">*** Sample code ***</option>
+		</optgroup>
+	</select>
+</div>
+
+<hr>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-03 20:23:52 +0000</small>
+<hr>
+<br>
+<!-- # -->
+<div align="center">
+	<br>
+	<small style="color:#DCDCDC;">Smart.Framework &copy; 2009-2019 unix-world.org</small>
+</div>
+</body>
+</html>

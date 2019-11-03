@@ -41,8 +41,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190211
- * @package 	Mailer
+ * @version 	v.20191031
+ * @package 	Plugins:Mailer
  *
  */
 final class SmartMailerSend {
@@ -124,23 +124,23 @@ public function send($do_send, $raw_message='') {
 	//--
 	$this->mime_message = ''; // init
 	//--
-	$this->mime_message .= 'Return-Path: '.'<'.self::secure_header((string)$this->from_return).'>'."\r\n";
-	$this->mime_message .= 'From: '.self::secure_header((string)$tmp_name.' <'.$this->from.'>')."\r\n"; // [ucwords] is safe here as the name is ISO-8859-1 (1st part of email address)
+	$this->mime_message .= 'Return-Path: '.'<'.self::safe_header_str((string)$this->from_return).'>'."\r\n";
+	$this->mime_message .= 'From: '.self::safe_header_str((string)$tmp_name.' <'.$this->from.'>')."\r\n"; // [ucwords] is safe here as the name is ISO-8859-1 (1st part of email address)
 	$this->mime_message .= 'Date: '.date('D, d M Y H:i:s O')."\r\n";
-	$this->mime_message .= 'To: '.self::secure_header((string)$this->to)."\r\n";
+	$this->mime_message .= 'To: '.self::safe_header_str((string)$this->to)."\r\n";
 	//--
 	if(is_array($this->cc)) {
 		for($z=0; $z<Smart::array_size($this->cc); $z++) {
 			if((string)$this->cc[$z] != '') {
-				$this->mime_message .= 'Cc: '.self::secure_header((string)$this->cc[$z])."\r\n";
+				$this->mime_message .= 'Cc: '.self::safe_header_str((string)$this->cc[$z])."\r\n";
 			} //end if
 		} //end for
 	} elseif((string)$this->cc != '') {
-		$this->mime_message .= 'Cc: '.self::secure_header((string)$this->cc)."\r\n";
+		$this->mime_message .= 'Cc: '.self::safe_header_str((string)$this->cc)."\r\n";
 	} //end if
 	if((string)$do_send != 'yes') {
 		if((string)$this->bcc != '') {
-			$this->mime_message .= 'BCc: '.self::secure_header((string)$this->bcc)."\r\n";
+			$this->mime_message .= 'BCc: '.self::safe_header_str((string)$this->bcc)."\r\n";
 		} //end if
 	} //end if
 	//--
@@ -158,9 +158,9 @@ public function send($do_send, $raw_message='') {
 			$this->mime_message .= 'X-Priority: 3'."\r\n"; // normal
 	} //end switch
 	//--
-	$this->mime_message .= 'X-Mailer: '.'Smart.Framework Mailer ('.self::secure_header((string)SMART_FRAMEWORK_VERSION).')'."\r\n";
+	$this->mime_message .= 'X-Mailer: '.'Smart.Framework Mailer ('.self::safe_header_str((string)SMART_FRAMEWORK_VERSION).')'."\r\n";
 	$this->mime_message .= 'MIME-Version: 1.0 '.'(Smart.Framework Mime-Message v.2018.11.23)'."\r\n";
-	$this->mime_message .= 'Message-Id: '.'<ID-'.self::secure_header((string)Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain)).'>'."\r\n";
+	$this->mime_message .= 'Message-Id: '.'<ID-'.self::safe_header_str((string)Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain)).'>'."\r\n";
 	//--
 	if((string)trim((string)$this->headers) != '') {
 		$this->mime_message .= (string) trim((string)$this->headers)."\r\n"; // all lines must end with: \r\n !!! IF THIS IS MALFORMED THERE IS A RISK TO BREAK THE MIME MESSAGE !!
@@ -332,7 +332,7 @@ public function send($do_send, $raw_message='') {
 //=====================================================================================
 public function add_attachment($message, $name='', $ctype='', $disp='attachment', $cid='', $embed='no') {
 	//--
-	$cid = (string) self::secure_header((string)$cid); // content ID
+	$cid = (string) self::safe_header_str((string)$cid); // content ID
 	//--
 	switch((string)strtolower((string)$ctype)) {
 		//-- text parts
@@ -350,10 +350,10 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 			} //end if else
 			//--
 			if((string)$disp == 'inline') {
-				$charset = (string) self::secure_header((string)strtoupper((string)trim((string)$this->charset)));
+				$charset = (string) self::safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
 			} //end if
 			//--
-			$name = (string) self::secure_header((string)$name);
+			$name = (string) self::safe_header_str((string)$name);
 			$filename = '';
 			//--
 			$message = (string) SmartUnicode::fix_charset((string)$message);
@@ -374,7 +374,7 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 			$disp = 'inline';
 			//--
 			$name = 'forwarded_message_'.date('YmdHis').'_'.Smart::random_number(10000,99999).'.eml';
-			$filename = (string) self::secure_header((string)$name);
+			$filename = (string) self::safe_header_str((string)$name);
 			//--
 			$message = (string) SmartUnicode::fix_charset((string)$message);
 			//--
@@ -382,7 +382,7 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 		//-- the rest ...
 		default:
 			//--
-			$ctype = (string) self::secure_header((string)trim((string)$ctype));
+			$ctype = (string) self::safe_header_str((string)trim((string)$ctype));
 			if((string)$ctype == '') {
 				$ctype = 'application/octet-stream';
 			} //end if
@@ -396,7 +396,7 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 			//--
 			$encode = 'base64'; // force base64 in this case, can be binary data
 			//--
-			$filename = (string) self::secure_header((string)$name);
+			$filename = (string) self::safe_header_str((string)$name);
 			//--
 			// DO NOT DO UNICODE FIX ON BINARY DATA
 			//--
@@ -424,7 +424,7 @@ public function add_attachment($message, $name='', $ctype='', $disp='attachment'
 
 
 //=====================================================================================
-public function secure_header($str) {
+public function safe_header_str($str) {
 	//--
 	return (string) Smart::normalize_spaces((string)SmartUnicode::fix_charset((string)$str));
 	//--
@@ -482,9 +482,9 @@ private function cleanup() {
 //=====================================================================================
 private function prepare_subject($subject) {
 	//--
-	$subject = (string) self::secure_header((string)$subject);
+	$subject = (string) self::safe_header_str((string)$subject);
 	//--
-	$charset = (string) self::secure_header((string)strtoupper((string)trim((string)$this->charset)));
+	$charset = (string) self::safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
 	//--
 	if((string)$charset != 'ISO-8859-1') {
 		if($this->usealways_b64 === false) { // quote printable encoded subject
@@ -651,8 +651,8 @@ private function build_multipart() {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190211
- * @package 	Mailer
+ * @version 	v.20191031
+ * @package 	Plugins:Mailer
  *
  */
 final class SmartMailerSmtpClient {

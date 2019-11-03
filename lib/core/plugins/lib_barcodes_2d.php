@@ -49,7 +49,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  *
  * @depends 	Smart.Framework
  * @version 	v.20191028
- * @package 	Components:Misc
+ * @package 	Plugins:ViewComponents
  *
  */
 final class SmartBarcode2D {

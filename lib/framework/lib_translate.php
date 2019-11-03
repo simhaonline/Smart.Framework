@@ -39,8 +39,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.20191022
- * @package 	Application
+ * @version 	v.20191101
+ * @package 	@Core:Translations
  *
  */
 final class SmartTextTranslations {
@@ -287,10 +287,11 @@ final class SmartTextTranslations {
 
 	//=====
 	/**
-	 * Regional Text :: Get Translator
+	 * Regional Text :: Get the Translator object for: area, subarea and a custom language (if enforced and not using the current language)
 	 *
 	 * @param 	STRING 	$y_area 				:: The Translation Area
-	 * @param 	STRING	$y_subarea 				:: The Translation Sub-Area
+	 * @param 	STRING 	$y_subarea 				:: The Translation Sub-Area
+	 * @param 	STRING 	$y_custom_language 		:: *OPTIONAL* a language code ; default empty ; if empty will use the current language
 	 *
 	 * @return 	OBJECT							:: An Instance of SmartTextTranslator->
 	 */
@@ -931,14 +932,15 @@ final class SmartTextTranslations {
 
 
 /**
- * Class Smart Text Translator.
- * This is intended just for internal use.
- * This class may be changed or removed unattended, you should never rely on this class when coding !
+ * Class Smart Text Translator Object
  *
- * @version 	v.20190527
+ * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
+ * @hints 		Do not use this object directly by creating a new instance ; You should obtain this object as SmartTextTranslations::getTranslator($area, $subarea) for current language or as SmartTextTranslations::getTranslator($area, $subarea, $custom_language) for a custom language
  *
- * @access 		private
- * @internal
+ * @access 		PUBLIC
+ * @depends 	classes: Smart, SmartTextTranslations
+ * @version 	v.20191101
+ * @package 	@Core:Translations
  *
  */
 final class SmartTextTranslator {
@@ -950,6 +952,10 @@ final class SmartTextTranslator {
 	private $subarea = '';
 
 
+	/**
+	* @access 		private
+	* @internal
+	 */
 	public function __construct($y_language, $y_area, $y_subarea) {
 		//--
 		if((string)$y_language != '') {
@@ -976,6 +982,10 @@ final class SmartTextTranslator {
 	} //END FUNCTION
 
 
+	/**
+	* @access 		private
+	* @internal
+	 */
 	public function getinfo() {
 		//--
 		return [
@@ -987,8 +997,13 @@ final class SmartTextTranslator {
 	} //END FUNCTION
 
 
-	// texts are returned as raw, they must be escaped when used with HTML or JS
+	/**
+	* Get the Text Translation
+	* @return STRING the Translated Text or Fallback Text to Default Language
+	 */
 	public function text($y_textkey, $y_fallback_language='@default', $y_ignore_empty=false) {
+		//--
+		// texts are returned as raw, they must be escaped when used with HTML or JS
 		//--
 		if((string)$y_textkey == '') {
 			Smart::log_warning('Empty Key for Text Context Translator - Area: '.$this->area.' ; SubArea: '.$this->subarea);
@@ -1031,19 +1046,19 @@ final class SmartTextTranslator {
 
 
 /**
- * Abstract Inteface Smart Parse Regional Text
- * The extended object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE MAY NOT WORK as Expected !!!
+ * Abstract Inteface Smart Adapter Text Translations
  *
  * @access 		private
  * @internal
  *
- * @version 	v.20190527
+ * @version 	v.20191101
+ * @package 	development:@Core
  *
  */
 interface SmartInterfaceAdapterTextTranslations {
 
 	// :: INTERFACE
-
+	// The extended object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE MAY NOT WORK as Expected !!!
 
 	//=====
 	/**

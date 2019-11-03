@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
  * @version 	v.20190115.r2
- * @package 	Archivers
+ * @package 	Plugins:Archivers
  *
  */
 

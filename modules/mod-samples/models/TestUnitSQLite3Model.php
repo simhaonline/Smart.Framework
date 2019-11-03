@@ -37,7 +37,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191009
+ * @version 	v.20191101
  *
  */
 final class TestUnitSQLite3Model {
@@ -72,11 +72,11 @@ final class TestUnitSQLite3Model {
 	public function __destruct() {
 
 		//--
-		if(is_object($this->connection)) {
-			//--
-			$this->connection->close(); // clean shutdown
-			//--
+		if(!$this->connection instanceof \SmartSQliteDb) {
+			return;
 		} //end if
+		//--
+		$this->connection->close(); // clean shutdown
 		//--
 
 	} //END FUNCTION

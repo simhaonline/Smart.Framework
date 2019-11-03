@@ -47,7 +47,7 @@ if(!function_exists('hash_algos')) {
  * @access      PUBLIC
  * @depends     PHP hash_algos() / hash()
  * @version     v.20190103
- * @package     Crypto
+ * @package     @Core:Crypto
  *
  */
 final class SmartHashCrypto {
@@ -287,7 +287,7 @@ final class SmartHashCrypto {
  *
  * @depends     classes: Smart
  * @version     v.20190103
- * @package     Crypto
+ * @package     @Core:Crypto
  *
  */
 final class SmartCipherCrypto {

@@ -1,7 +1,7 @@
 [%%%%COMMENT%%%%]
 // IMPORTANT: use only JavaScript code here, no HTML !
 [%%%%/COMMENT%%%%]
-//===== QUnit Tests.DataBase: START :: r.20191009
+//===== QUnit Tests.DataBase: START :: r.20191031
 
 (function() {
 
@@ -19,7 +19,7 @@
 			testsDisabled++;
 		} //end if
 	} //end for
-	testingQUnitDisabledTests += testsDisabled;
+	smartQUnitDisabledTests += testsDisabled;
 
 	localTests.module = false;
 	for(var val in localTests) {

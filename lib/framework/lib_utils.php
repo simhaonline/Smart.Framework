@@ -49,8 +49,8 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20191029
- * @package 	Base
+ * @version 	v.20191103
+ * @package 	@Core:Extra
  *
  */
 final class SmartUtils {
@@ -876,44 +876,6 @@ final class SmartUtils {
 		);
 		//--
 		return (string) Smart::escape_url((string)trim((string)$safe_download_link));
-		//--
-	} //END FUNCTION
-	//================================================================
-
-
-	//================================================================
-	// Create a Slug
-	public static function create_slug($y_str, $y_lowercase=false) {
-		//--
-		$y_str = (string) SmartUnicode::deaccent_str((string)trim((string)$y_str));
-		$y_str = (string) preg_replace('/[^a-zA-Z0-9_\-]/', '-', (string)$y_str);
-		$y_str = (string) trim((string)preg_replace('/[\-]+/', '-', (string)$y_str)); // suppress multiple -
-		//--
-		if($y_lowercase === true) {
-			$y_str = (string) strtolower((string)$y_str);
-		} //end if
-		//--
-		return (string) $y_str;
-		//--
-	} //END FUNCTION
-	//================================================================
-
-
-	//================================================================
-	// Create a HTML-ID
-	public static function create_htmid($y_str) {
-		//--
-		return (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$y_str));
-		//--
-	} //END FUNCTION
-	//================================================================
-
-
-	//================================================================
-	// Create a Js-Var
-	public static function create_jsvar($y_str) {
-		//--
-		return (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$y_str));
 		//--
 	} //END FUNCTION
 	//================================================================

@@ -58,7 +58,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  *
  * @depends 	Smart.Framework
  * @version 	v.20191028
- * @package 	Components:Misc
+ * @package 	Plugins:ViewComponents
  *
  */
 final class SmartBarcode1D {

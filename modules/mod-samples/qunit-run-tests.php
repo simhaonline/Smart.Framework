@@ -1,7 +1,7 @@
 <?php
 // [@[#[!SF.DEV-ONLY!]#]@]
-// Controller: RunTests/TestingQUnit
-// Route: ?page=testing-qunit.run-tests
+// Controller: Samples/QunitRunTests
+// Route: ?page=samples.qunit-run-tests
 // (c) 2006-2019 unix-world.org - all rights reserved
 // v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
 
@@ -41,7 +41,12 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$this->PageViewSetCfg('template-path', 'modules/mod-testing-qunit/templates/'); // set template path to this module
+		if(!SmartAppInfo::TestIfModuleExists('mod-qunit')) {
+			$this->PageViewSetErrorStatus(500, 'ERROR: mod-qunit is required and not found ...');
+			return;
+		} //end if
+		//--
+		$this->PageViewSetCfg('template-path', 'modules/mod-qunit/templates/'); // set template path to this module
 		$this->PageViewSetCfg('template-file', 'template-qunit.htm'); // the default template
 		//--
 
@@ -51,8 +56,8 @@ class SmartAppAdminController extends SmartAbstractAppController {
 
 		//--
 		$this->PageViewSetVars([
-			'title' 	=> 'QUnit TestEngine :: Smart.Framework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
-			'semaphore' => (string) 'Javascript@jQuery/PHP@v.'.phpversion(),
+			'title' 	=> 'QUnit Engine - Sample Testing :: jQuery@JavaScript/PHP',
+			'semaphore' => 'Smart.Framework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
 			'main' 		=> SmartMarkersTemplating::render_file_template(
 				$this->ControllerGetParam('module-view-path').'qunit-run-tests.mtpl.js.inc',
 				[

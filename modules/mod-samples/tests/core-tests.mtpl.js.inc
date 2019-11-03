@@ -1,7 +1,7 @@
 [%%%%COMMENT%%%%]
 // IMPORTANT: use only JavaScript code here, no HTML !
 [%%%%/COMMENT%%%%]
-//===== QUnit Tests.Core: START :: r.20190103
+//===== QUnit Tests.Core: START :: r.20191031
 
 (function() {
 
@@ -14,7 +14,7 @@
 			testsDisabled++;
 		} //end if
 	} //end for
-	testingQUnitDisabledTests += testsDisabled;
+	smartQUnitDisabledTests += testsDisabled;
 
 	QUnit.module('Core', function(){
 

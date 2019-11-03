@@ -65,7 +65,7 @@ if(!function_exists('session_start')) {
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
  * @version 	v.20190605
- * @package 	Application
+ * @package 	Application:Session
  *
  */
 final class SmartSession {
@@ -418,15 +418,14 @@ public static function start() {
 
 /**
  * Abstract Class Smart Custom Session
+ * This is the abstract for extending the class SmartCustomSession
  *
- * @access 		private
- * @internal
- *
+ * @version 	v.20190605
+ * @package 	development:Application
  */
 abstract class SmartAbstractCustomSession {
 
 	// -> ABSTRACT
-	// v.20190605
 
 	// NOTICE: This object MUST NOT CONTAIN OTHER FUNCTIONS BECAUSE WILL NOT WORK !!!
 

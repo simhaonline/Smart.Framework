@@ -37,8 +37,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20191022
- * @package 	Mailer
+ * @version 	v.20191031
+ * @package 	Plugins:Mailer
  *
  */
 final class SmartMailerUtils {
@@ -517,23 +517,23 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 	//-- Extra Mail Headers
 	$mail->headers = '';
 	//-- Errors Reporting Header
-	$mail->headers .= 'Errors-To: '.$mail->secure_header($send_from_addr)."\r\n";
+	$mail->headers .= 'Errors-To: '.$mail->safe_header_str($send_from_addr)."\r\n";
 	//-- In-Reply-To Header
 	if((string)$inreplyto != '') {
-		$mail->headers .= 'In-Reply-To: '.$mail->secure_header($inreplyto)."\r\n";
+		$mail->headers .= 'In-Reply-To: '.$mail->safe_header_str($inreplyto)."\r\n";
 	} //end if else
 	//-- Reply-To Header
 	if((string)$replytoaddr != '') {
-		$mail->headers .= 'Reply-To: '.$mail->secure_header($replytoaddr)."\r\n";
+		$mail->headers .= 'Reply-To: '.$mail->safe_header_str($replytoaddr)."\r\n";
 	} //end if
 	//-- antiSPAM Header
 	if(defined('SMART_SOFTWARE_MAILSEND_SAFE_RULES')) {
 		if(SMART_SOFTWARE_MAILSEND_SAFE_RULES === true) {
 			$mail->headers .= 'X-AntiAbuse: This header was added to track abuse, please include it with any abuse report'."\r\n";
-			$mail->headers .= 'X-AntiAbuse: Primary Hostname - '.$mail->secure_header($server_helo)."\r\n";
-			$mail->headers .= 'X-AntiAbuse: Original Domain - '.$mail->secure_header($server_helo)."\r\n";
-			$mail->headers .= 'X-AntiAbuse: Originator/Caller UID/GID - ['.$mail->secure_header($tmp_my_pid).' 48880] / ['.$mail->secure_header($tmp_my_uid).' '.$mail->secure_header($tmp_my_gid).']'."\r\n";
-			$mail->headers .= 'X-AntiAbuse: Sender Address Domain - '.$mail->secure_header($tmp_domain)."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Primary Hostname - '.$mail->safe_header_str($server_helo)."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Original Domain - '.$mail->safe_header_str($server_helo)."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Originator/Caller UID/GID - ['.$mail->safe_header_str($tmp_my_pid).' 48880] / ['.$mail->safe_header_str($tmp_my_uid).' '.$mail->safe_header_str($tmp_my_gid).']'."\r\n";
+			$mail->headers .= 'X-AntiAbuse: Sender Address Domain - '.$mail->safe_header_str($tmp_domain)."\r\n";
 		} //end if
 	} //end if
 	//--
@@ -779,8 +779,8 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.20190403
- * @package 	Mailer
+ * @version 	v.20191031
+ * @package 	Plugins:Mailer
  *
  */
 final class SmartMailerMimeParser {

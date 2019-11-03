@@ -48,7 +48,7 @@ if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
  * @access 		PUBLIC
  * @depends 	-
  * @version 	v.20190401
- * @package 	Application
+ * @package 	@Core
  *
  */
 final class SmartCache {
@@ -216,7 +216,7 @@ final class SmartCache {
  *
  * @depends 	-
  * @version 	v.20190715
- * @package 	Application
+ * @package 	development:Application
  *
  */
 abstract class SmartAbstractPersistentCache {

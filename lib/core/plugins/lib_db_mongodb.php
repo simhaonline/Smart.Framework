@@ -72,8 +72,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20190428
- * @package 	Database:MongoDB
+ * @version 	v.20191103
+ * @package 	Plugins:Database:MongoDB
+ *
+ * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
  *
  */
 final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to avoid break the comments !!!
@@ -118,8 +120,10 @@ private $connected = false;
 /**
  * Class constructor
  *
- * @param 	STRING 	$col 				:: MongoDB Collection
- * @param 	ARRAY 	$y_configs_arr 		:: The Array of Configuration parameters - the ARRAY STRUCTURE should be identical with the default config.php: $configs['mongodb'].
+ * @throws 	\Exception 	Depending how this class it is constructed it may throw Exception or Raise Fatal Error
+ *
+ * @param 	ARRAY 		$y_configs_arr 		:: *Optional* ; The Array of Configuration parameters ; Default is Empty Array, case which will get the configuration from config.php ; if custom, the ARRAY STRUCTURE should be identical with the default config.php: $configs['mongodb'].
+ * @param 	BOOLEAN 	$y_fatal_err 		:: *Optional* ; Set if Errors handling mode ; Default is TRUE ; if set to FALSE will throw Exception instead of Raise a Fatal Error
  *
  */
 public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
@@ -421,6 +425,8 @@ public function is_command_ok($result) {
 /**
  * This is the Magic Method (Call) that maps the PHP class extra methods to MongoDB methods.
  * It have variadic parameters mapped to MongoDB sub-calls.
+ *
+ * @throws 	\Exception 	Depending how this class it is constructed it may throw Exception or Raise Fatal Error
  *
  * @magic
  *

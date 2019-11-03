@@ -74,8 +74,8 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20191028
- * @package     Base
+ * @version     v.20191103
+ * @package     @Core
  *
  */
 final class Smart {
@@ -1577,6 +1577,63 @@ final class Smart {
 		$y_name = (string) trim($y_name);
 		//--
 		return (string) self::safe_fix_invalid_filesys_names($y_name);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Creates a Slug (URL safe slug) from a string
+	 *
+	 * @param STRING 		$y_str			:: The string to be processed
+	 * @param BOOLEAN 		$y_lowercase 	:: *OPTIONAL* If TRUE will return the slug with enforced lowercase characters ; DEFAULT is FALSE
+	 *
+	 * @return STRING 						:: The slug which will contain only: a-z 0-9 _ - (A-Z will be converted to a-z if lowercase is enforced)
+	 */
+	public static function create_slug($y_str, $y_lowercase=false) {
+		//--
+		$y_str = (string) SmartUnicode::deaccent_str((string)trim((string)$y_str));
+		$y_str = (string) preg_replace('/[^a-zA-Z0-9_\-]/', '-', (string)$y_str);
+		$y_str = (string) trim((string)preg_replace('/[\-]+/', '-', (string)$y_str)); // suppress multiple -
+		//--
+		if($y_lowercase === true) {
+			$y_str = (string) strtolower((string)$y_str);
+		} //end if
+		//--
+		return (string) $y_str;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Creates a compliant HTML-ID (HTML ID used for HTML elements) from a string
+	 *
+	 * @param STRING 		$y_str			:: The string to be processed
+	 *
+	 * @return STRING 						:: The HTML-ID which will contain only: a-z A-Z 0-9 _ -
+	 */
+	public static function create_htmid($y_str) {
+		//--
+		return (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$y_str));
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Creates a compliant Js-Var (JavaScript Variable Name) from a string
+	 *
+	 * @param STRING 		$y_str			:: The string to be processed
+	 *
+	 * @return STRING 						:: The Js-Var which will contain only: a-z A-Z 0-9 _
+	 */
+	public static function create_jsvar($y_str) {
+		//--
+		return (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$y_str));
 		//--
 	} //END FUNCTION
 	//================================================================

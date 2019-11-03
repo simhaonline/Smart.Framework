@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
  * @version     v.20191023
- * @package     Base
+ * @package     @Core:Extra
  *
  */
 final class SmartParser {
@@ -193,7 +193,7 @@ final class SmartParser {
  * @access      PUBLIC
  * @depends     classes: Smart, SmartUnicode
  * @version     v.170927
- * @package     Base
+ * @package     @Core:Extra
  *
  */
 final class SmartValidator {

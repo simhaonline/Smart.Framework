@@ -52,7 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
  * @version 	v.20191028
- * @package 	Database:Redis
+ * @package 	Plugins:Database:Redis
  *
  */
 final class SmartRedisDb {

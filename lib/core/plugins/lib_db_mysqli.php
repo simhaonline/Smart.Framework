@@ -72,7 +72,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
  * @version 	v.20191009
- * @package 	Database:MySQL
+ * @package 	Plugins:Database:MySQL
  *
  */
 final class SmartMysqliDb {
@@ -1765,7 +1765,7 @@ die(''); // just in case
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
  * @version 	v.20191009
- * @package 	Database:MySQL
+ * @package 	Plugins:Database:MySQL
  *
  */
 final class SmartMysqliExtDb {

@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @depends 	classes: Smart
  * @version 	v.20190221
- * @package 	Filesystem
+ * @package 	@Core:FileSystem
  *
  */
 final class SmartFileSysUtils {
@@ -1279,7 +1279,7 @@ final class SmartFileSysUtils {
  *
  * @depends 	classes: Smart
  * @version 	v.20190221
- * @package 	Filesystem
+ * @package 	@Core:FileSystem
  *
  */
 final class SmartFileSystem {
@@ -3124,7 +3124,7 @@ final class SmartFileSystem {
  *
  * @depends 	classes: Smart
  * @version 	v.20190221
- * @package 	Filesystem
+ * @package 	@Core:FileSystem
  *
  */
 final class SmartGetFileSystem {

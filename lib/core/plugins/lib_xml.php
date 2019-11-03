@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
  * @version     v.20190219
- * @package     Parsers
+ * @package     Plugins:ConvertersAndParsers
  *
  */
 final class SmartXmlParser {
@@ -676,7 +676,7 @@ private function FixSimpleXmlRoot($xml_str) {
  * @access      PUBLIC
  * @depends     classes: Smart
  * @version     v.20190607
- * @package     Parsers
+ * @package     Plugins:ConvertersAndParsers
  *
  */
 final class SmartXmlComposer {
