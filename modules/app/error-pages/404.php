@@ -25,13 +25,10 @@ function custom_http_message_404_notfound($y_message, $y_html_message='') {
 	*/
 	//-- This is a more advanced implementation
 	$controller = new \CustomErr404(
-		'index',
 		'modules/mod-samples/',
-		'index.php',
-		(string) SmartUtils::get_server_current_path(),
-		(string) SmartUtils::get_server_current_url(),
 		'samples.404',
-		'samples.404'
+		'samples.404',
+		(SMART_FRAMEWORK_ADMIN_AREA === true) ? 'admin' : 'index' // if not admin, hardcoded to index
 	);
 	//--
 	return $controller->outputErrorPage($y_message, $y_html_message);
