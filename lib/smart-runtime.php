@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.8'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.11.04'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.11.05'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -987,8 +987,8 @@ final class SmartFrameworkRegistry {
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
- * @depends 	classes: Smart
- * @version		v.20191101
+ * @depends 	classes: Smart, SmartUtils
+ * @version		v.20191105
  * @package 	Application
  *
  */
@@ -1465,6 +1465,38 @@ final class SmartFrameworkRuntime {
 		} //end if
 		//--
 		return (string) self::$AppReleaseHash;
+		//--
+	} //END FUNCTION
+	//======================================================================
+
+
+	//======================================================================
+	// this will set the app language by sub-domain (this is a special case because by default the language is set by URL Parameter or Cookie)
+	// if en is the default languages will result something like: (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
+	// the default language will be mapped by default to www sub-domain ; the rest of available languages will be mapped as language code as sub-domain
+	public static function AppSetLanguageBySubdomain() { // r.20190117
+		//--
+		$sdom = (string) SmartUtils::get_server_current_domain_name();
+		if((string)SmartValidator::validate_filter_ip_address($sdom) != '') {
+			return; // if no domain but only IP, stop
+		} //end if
+		//--
+		$dom = (string) SmartUtils::get_server_current_basedomain_name();
+		if((string)$dom == (string)$sdom) {
+			return; // if not using sub-domain of domain, stop
+		} //end if
+		//--
+		$pdom = (string) substr($sdom, 0, (strlen($sdom)-strlen($dom)-1));
+		//--
+		SmartTextTranslations::setLanguage((string)SmartTextTranslations::getDefaultLanguage()); // EN
+		if((string)$pdom != 'www') {
+			if(SmartTextTranslations::validateLanguage($pdom)) {
+				SmartTextTranslations::setLanguage($pdom); // set only other languages if valid: RO, DE, ...
+			} else {
+				http_response_code(301); // permanent redirect if the language code is not valid
+				header('Location: '.SmartUtils::get_server_current_protocol().'www.'.SmartUtils::get_server_current_basedomain_name()); // force redirect
+			} //end if
+		} //end if else
 		//--
 	} //END FUNCTION
 	//======================================================================

@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavFileSystem {
 
 	// ::
-	// v.20191007
+	// v.20191105
 
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	public static function methodOptions() { // 200
@@ -90,7 +90,7 @@ final class DavFileSystem {
 				$display_etag = true;
 			} //end if
 			if($display_etag === true) {
-				\header('ETag: "'.(string)\md5_file((string)$dav_vfs_path).'"');
+				\header('ETag: "'.(string)\SmartFileSystem::get_file_md5_checksum((string)$dav_vfs_path).'"');
 			} //end if
 			//--
 		} else { // unknown media type
@@ -505,7 +505,7 @@ final class DavFileSystem {
 		//--
 		\http_response_code(201); // HTTP/1.1 201 Created
 		\header('Content-length: 0');
-		\header('ETag: "'.(string)\md5_file((string)$dav_vfs_path).'"');
+		\header('ETag: "'.(string)\SmartFileSystem::get_file_md5_checksum((string)$dav_vfs_path).'"');
 		\header('Z-Cloud-DAV-Put-FileSize: '.$fsize);
 		return 201;
 		//--
@@ -984,7 +984,7 @@ final class DavFileSystem {
 			$display_etag = true;
 		} //end if
 		if($display_etag === true) {
-			$etag_file = (string) \md5_file((string)$dav_vfs_path);
+			$etag_file = (string) \SmartFileSystem::get_file_md5_checksum((string)$dav_vfs_path);
 		} //end if
 		//--
 		return array(

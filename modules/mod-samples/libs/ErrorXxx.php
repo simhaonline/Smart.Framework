@@ -27,12 +27,12 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191004
+ * @version 	v.20191105
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {
 
-	protected $errcode = 000;
+	protected $errcode = 501;
 	protected $errtext = '???';
 
 	private $tpldir = 'modules/mod-samples/libs/views/';
@@ -81,6 +81,7 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 			case 'jpg':
 			case 'gif':
 			case 'png':
+			case 'webp':
 				$this->PageViewResetVars();
 				$this->PageViewSetCfg('rawpage', true);
 				$this->PageViewSetCfg('rawmime', 'image/'.$lext);
@@ -102,14 +103,15 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 				$this->PageViewSetCfg('rawmime', 'text/json');
 				$this->PageViewSetCfg('rawdisp', 'inline');
 				$this->PageViewSetVar('main',
-					\SmartViewHtmlHelpers::js_ajax_replyto_html_form(
-						'ERROR',
-						(string) ((int)$this->errcode.' '.$this->errtext),
-						'Error: Json / Page '.$this->errtext
-					)
+					(string)\Smart::json_encode([
+						'status' => 'ERROR',
+						'message' => (string) ((int)$this->errcode.' '.$this->errtext),
+						'details' => (string) 'Error: Json / Page '.$this->errtext
+					])
 				);
 				return;
 				break;
+			case 'wsdl':
 			case 'xml':
 				$this->PageViewResetVars();
 				$this->PageViewSetCfg('rawpage', true);

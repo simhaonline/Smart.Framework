@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavServer {
 
 	// ::
-	// v.20191007
+	// v.20191105
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
@@ -88,10 +88,10 @@ final class DavServer {
 		//--
 		$base_url = (string) \SmartUtils::get_server_current_url().\SmartUtils::get_server_current_script();
 		//--
-		if(\strpos((string)$url, $base_url) !== 0) {
+		if(\strpos((string)$url, (string)$base_url) !== 0) {
 			return ''; // URL must start with the current server base URL ; this is important to avoid wrong path extract if /~ occurs before php script !!!
 		} //end if
-		$url_path = \substr($url, \strlen($base_url));
+		$url_path = (string) \substr($url, \strlen($base_url));
 		//--
 		$sem_path_pos = \strpos((string)$url_path, '/~');
 		if($sem_path_pos !== false) {

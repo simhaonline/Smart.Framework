@@ -31,11 +31,11 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //======================================================
 
 //-- defines the modules version (required for AppReleaseHash and modules identification)
-define('SMART_APP_MODULES_RELEASE', 'm.sf.2019-11-04'); // this can be used for tracking changes to custom app modules
+define('SMART_APP_MODULES_RELEASE', 'm.sf.2019-11-05'); // this can be used for tracking changes to custom app modules
 //--
 
 //-- checks the minimum version of the Smart.Framework to run on
-define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.8.r.2019.11.04'); // this must be used to validate the required minimum framework version
+define('SMART_APP_MODULES_MIN_FRAMEWORK_VER', 'v.3.7.8.r.2019.11.05'); // this must be used to validate the required minimum framework version
 if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION, (string)SMART_APP_MODULES_MIN_FRAMEWORK_VER) < 0) {
 	@http_response_code(500);
 	die('The Custom App Modules require the Smart.Framework '.SMART_APP_MODULES_MIN_FRAMEWORK_VER.' or later !');
@@ -51,42 +51,17 @@ if(version_compare((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAM
 //require_once(__DIR__.'/../../../vendor/autoload.php'); // PSR standard namespace/class loader(s), from vendor/ directory, outside of app root
 
 // # Below is a sample code to handle languages by subdomains (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
-/*
 //--
 // Note that the default language (en) will be mapped by default to www ; all the rest of available languages like ro, de, ... will be mapped to each subdomain as above
 // The language codes must be enabled as needed in etc/config.php prior to be used
 //--
+/*
 if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // Handles the Language Detection by SubDomain (just for index, not for admin)
-	AppSetLanguageBySubdomain();
+	SmartFrameworkRuntime::AppSetLanguageBySubdomain();
 } //end if
-//--
-function AppSetLanguageBySubdomain() { // r.20190117
-	//--
-	$sdom = (string) \SmartUtils::get_server_current_domain_name();
-	if((string)\SmartValidator::validate_filter_ip_address($sdom) != '') {
-		return; // if no domain but only IP, stop
-	} //end if
-	//--
-	$dom = (string) \SmartUtils::get_server_current_basedomain_name();
-	if((string)$dom == (string)$sdom) {
-		return; // if not using sub-domain of domain, stop
-	} //end if
-	//--
-	$pdom = (string) substr($sdom, 0, (strlen($sdom)-strlen($dom)-1));
-	//--
-	\SmartTextTranslations::setLanguage((string)\SmartTextTranslations::getDefaultLanguage()); // EN
-	if((string)$pdom != 'www') {
-		if(\SmartTextTranslations::validateLanguage($pdom)) {
-			\SmartTextTranslations::setLanguage($pdom); // set only other languages if valid: RO, DE, ...
-		} else {
-			http_response_code(301); // permanent redirect if the language code is not valid
-			header('Location: '.\SmartUtils::get_server_current_protocol().'www.'.\SmartUtils::get_server_current_basedomain_name()); // force redirect
-		} //end if
-	} //end if else
-	//--
-} //END FUNCTION
-//--
 */
+//--
+
 
 // end of php code
 ?>

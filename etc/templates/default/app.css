@@ -1,5 +1,5 @@
 
-/* -- CSS Start :: Smart.Framework / App :: r.20190223 -- */
+/* -- CSS Start :: Smart.Framework / App :: r.20191105 -- */
 
 /* ----------------------------- */
 
@@ -35,9 +35,9 @@
 
 @import url("../../../lib/core/plugins/css/email.css");
 
-@import url("../../../lib/core/plugins/css/captcha.css");
-
 @import url("../../../lib/core/plugins/css/navpager.css");
+
+@import url("../../../lib/core/plugins/css/captcha.css");
 
 /* ----------------------------- */
 

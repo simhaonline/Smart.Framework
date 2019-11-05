@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190221
+ * @version 	v.20191105
  * @package 	@Core:FileSystem
  *
  */
@@ -881,6 +881,10 @@ final class SmartFileSysUtils {
 				$type = 'image/jpeg';
 				$disp = 'inline';
 				break;
+			case 'webp':
+				$type = 'image/webp';
+				$disp = 'inline';
+				break;
 			//-------------- other images
 			case 'tif':
 			case 'tiff':
@@ -1278,7 +1282,7 @@ final class SmartFileSysUtils {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.20190221
+ * @version 	v.20191105
  * @package 	@Core:FileSystem
  *
  */
@@ -1445,6 +1449,33 @@ final class SmartFileSystem {
 		} //end if
 		//--
 		return (int) @filemtime((string)$file_name); // should return INTEGER as some comparisons may fail if casted type
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * GET the File MD5 Checksum. If invalid file or not file or broken link will return empty string.
+	 * This provides a safe way to get the md5_file checksum (works also with symlinks) ...
+	 *
+	 * @param 	STRING 	$file_name 					:: The relative path to the file name to get the last modification timestamp for (file or symlink)
+	 *
+	 * @return 	STRING								:: empty string if file does not exists or invalid file type ; the file md5 checksum for the rest of cases
+	 */
+	public static function get_file_md5_checksum($file_name) {
+		//--
+		$file_name = (string) $file_name;
+		//--
+		if((string)trim((string)$file_name) == '') {
+			Smart::log_warning(__METHOD__.'() // Skip: Empty FileName');
+			return '';
+		} //end if
+		if(!self::path_real_exists($file_name)) {
+			return '';
+		} //end if
+		//--
+		return (string) @md5_file((string)$file_name); // should return STRING
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -3104,7 +3135,7 @@ final class SmartFileSystem {
 
 
 /**
- * Class: SmartGetFileSystem - provides the File System Get functions.
+ * Class: SmartGetFileSystem - provides the File System Get/Scan functions.
  *
  * This class enforces the use of RELATIVE PATHS to force using correct path access in a web environment application.
  * Relative paths must be relative to the web application folder as folder: `some-folder/` or file: `some-folder/my-file.txt`.
@@ -3123,7 +3154,7 @@ final class SmartFileSystem {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.20190221
+ * @version 	v.20191105
  * @package 	@Core:FileSystem
  *
  */
