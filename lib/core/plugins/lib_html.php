@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20190403
+ * @version 	v.20191106
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -491,7 +491,7 @@ private function clean_html($y_comments, $y_extra_tags_remove=array(), $y_extra_
 			$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
 			$dom->strictErrorChecking = false; 	// do not throw errors
 			$dom->preserveWhiteSpace = false; 	// set this to false in order to real format HTML ...
-			$dom->formatOutput = true; 			// try to format pretty-print the code (but will work just partial as the preserve white space is true ...)
+			$dom->formatOutput = true; 			// try to format pretty-print the code (will work just partial as the preserve white space is true ...)
 			$dom->resolveExternals = false; 	// disable load external entities from a doctype declaration
 			$dom->validateOnParse = false; 		// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
 			//--

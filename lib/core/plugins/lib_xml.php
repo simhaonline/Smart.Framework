@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.20190219
+ * @version     v.20191106
  * @package     Plugins:ConvertersAndParsers
  *
  */
@@ -125,8 +125,8 @@ public function format($xml_str, $preserve_whitespace=false, $log_parse_err_warn
 		$dom = new DOMDocument('1.0', (string)SMART_FRAMEWORK_CHARSET);
 		$dom->encoding = (string) SMART_FRAMEWORK_CHARSET;
 		$dom->strictErrorChecking = false; 							// do not throw errors
-		$dom->preserveWhiteSpace = (bool) $preserve_whitespace; 	// do not remove redundant white space
-		$dom->formatOutput = true; 									// do not try to format pretty-print the code
+		$dom->preserveWhiteSpace = (bool) $preserve_whitespace; 	// remove or not redundant white space
+		$dom->formatOutput = true; 									// try to format pretty-print the code (will work just partial as the preserve white space is true ...)
 		$dom->resolveExternals = false; 							// disable load external entities from a doctype declaration
 		$dom->validateOnParse = false; 								// this must be explicit disabled as if set to true it may try to download the DTD and after to validate (insecure ...)
 		//--
@@ -675,7 +675,7 @@ private function FixSimpleXmlRoot($xml_str) {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.20190607
+ * @version     v.20191106
  * @package     Plugins:ConvertersAndParsers
  *
  */
