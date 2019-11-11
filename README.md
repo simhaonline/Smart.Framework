@@ -1,4 +1,4 @@
-# Smart.Framework: a practical, modern and high performance PHP / Javascript Framework for Web featuring Middlewares + MVC
+# Smart.Framework: a practical, modern and high performance PHP / JavaScript Framework for Web featuring Middlewares + MVC
 ## Dual-licensed: under BSD license or GPLv3 license (at your choice)
 ### This software project is open source.
 #### You must choose which license to use depending on your use case: BSD license or GPLv3 license
@@ -31,7 +31,7 @@
 **The primary goal of Smart.Framework is to provide a very practical, fast and secure web framework.**
 Following this philosophy Smart.Framework provides an optimal balance between acceptable coding skills and performance delivered.
 
-It is a **lightweight but feature reach** PHP / Javascript web framework, **mature and stable**, it is being **proactively used and tested** in several high-end web projects **that can really serve many millions of page views per month with a single physical server** !
+It is a **lightweight but feature reach** PHP / JavaScript web framework, **mature and stable**, it is being **proactively used and tested** in several high-end web projects **that can really serve many millions of page views per month with a single physical server** !
 The original software architecture of this web framework allows it to deliver a paradox:
 * it have more default built-in features in the code base than the well-known frameworks compared with Symfony, Laravel or Zend Framework
 * it delivers much more performance being between 3x to 4x faster (as HTTP Requests / second) compared with Symfony, Laravel or Zend Framework

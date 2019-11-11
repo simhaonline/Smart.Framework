@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180327
+ * @version 	v.20191111
  * @package 	Plugins:ViewComponents
  *
  */
@@ -40,96 +40,96 @@ final class SmartCalendarComponent {
 	// ::
 
 
-//================================================================
-public static function display_html_minicalendar($y_sel_date='', $y_width='150', $y_highlight_selected=true, $y_events_arr=array()) {
-	//--
-	return (string) self::display_calendar('small', (string)$y_sel_date, (string)$y_width, (bool)$y_highlight_selected, (array)$y_events_arr);
-	//--
-} //END FUNCTION
-//================================================================
+	//================================================================
+	public static function display_html_minicalendar($y_sel_date='', $y_width='150', $y_highlight_selected=true, $y_events_arr=array()) {
+		//--
+		return (string) self::display_calendar('small', (string)$y_sel_date, (string)$y_width, (bool)$y_highlight_selected, (array)$y_events_arr);
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
-//================================================================
-public static function display_html_calendar($y_sel_date='', $y_width='100%', $y_highlight_selected=true, $y_events_arr=array()) {
-	//--
-	return (string) self::display_calendar('', (string)$y_sel_date, (string)$y_width, (bool)$y_highlight_selected, (array)$y_events_arr);
-	//--
-} //END FUNCTION
-//================================================================
+	//================================================================
+	public static function display_html_calendar($y_sel_date='', $y_width='100%', $y_highlight_selected=true, $y_events_arr=array()) {
+		//--
+		return (string) self::display_calendar('', (string)$y_sel_date, (string)$y_width, (bool)$y_highlight_selected, (array)$y_events_arr);
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
-//================================================================
-private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_highlight_selected, $y_events_arr) {
-	//--
-	global $configs;
-	//--
-	if($configs['regional']['calendar-week-start'] == 1) {
-		$the_first_day = 1; // Calendar Start on Monday
-	} else {
-		$the_first_day = 0; // Calendar Start on Sunday
-	} //end if else
-	//--
-	if((string)$y_sel_date == '') {
-		$y_sel_date = date('Y-m-d');
-	} //end if
-	//--
-	$translator_core_calendar = SmartTextTranslations::getTranslator('@core', 'calendar');
-	//--
-	$calendar = new SmartHTMLCalendar(date('Y-m-d', @strtotime($y_sel_date)), $y_highlight_selected, $y_width, (string)$y_mode);
-	//-- set months
-	$calendar->setMonthNames(array(
-		'01' => $translator_core_calendar->text('m_01'),
-		'02' => $translator_core_calendar->text('m_02'),
-		'03' => $translator_core_calendar->text('m_03'),
-		'04' => $translator_core_calendar->text('m_04'),
-		'05' => $translator_core_calendar->text('m_05'),
-		'06' => $translator_core_calendar->text('m_06'),
-		'07' => $translator_core_calendar->text('m_07'),
-		'08' => $translator_core_calendar->text('m_08'),
-		'09' => $translator_core_calendar->text('m_09'),
-		'10' => $translator_core_calendar->text('m_10'),
-		'11' => $translator_core_calendar->text('m_11'),
-		'12' => $translator_core_calendar->text('m_12')
-	));
-	//-- set days
-	if((string)$y_mode == 'small') { // short day names
-		$calendar->setDayNames(array(
-			0 => SmartUnicode::sub_str($translator_core_calendar->text('w_1'), 0, 2),
-			1 => SmartUnicode::sub_str($translator_core_calendar->text('w_2'), 0, 2),
-			2 => SmartUnicode::sub_str($translator_core_calendar->text('w_3'), 0, 2),
-			3 => SmartUnicode::sub_str($translator_core_calendar->text('w_4'), 0, 2),
-			4 => SmartUnicode::sub_str($translator_core_calendar->text('w_5'), 0, 2),
-			5 => SmartUnicode::sub_str($translator_core_calendar->text('w_6'), 0, 2),
-			6 => SmartUnicode::sub_str($translator_core_calendar->text('w_7'), 0, 2)
+	//================================================================
+	private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_highlight_selected, $y_events_arr) {
+		//--
+		global $configs;
+		//--
+		if($configs['regional']['calendar-week-start'] == 1) {
+			$the_first_day = 1; // Calendar Start on Monday
+		} else {
+			$the_first_day = 0; // Calendar Start on Sunday
+		} //end if else
+		//--
+		if((string)$y_sel_date == '') {
+			$y_sel_date = date('Y-m-d');
+		} //end if
+		//--
+		$translator_core_calendar = SmartTextTranslations::getTranslator('@core', 'calendar');
+		//--
+		$calendar = new SmartHTMLCalendar(date('Y-m-d', @strtotime($y_sel_date)), $y_highlight_selected, $y_width, (string)$y_mode);
+		//-- set months
+		$calendar->setMonthNames(array(
+			'01' => $translator_core_calendar->text('m_01'),
+			'02' => $translator_core_calendar->text('m_02'),
+			'03' => $translator_core_calendar->text('m_03'),
+			'04' => $translator_core_calendar->text('m_04'),
+			'05' => $translator_core_calendar->text('m_05'),
+			'06' => $translator_core_calendar->text('m_06'),
+			'07' => $translator_core_calendar->text('m_07'),
+			'08' => $translator_core_calendar->text('m_08'),
+			'09' => $translator_core_calendar->text('m_09'),
+			'10' => $translator_core_calendar->text('m_10'),
+			'11' => $translator_core_calendar->text('m_11'),
+			'12' => $translator_core_calendar->text('m_12')
 		));
-	} else { // full day names
-		$calendar->setDayNames(array(
-			0 => $translator_core_calendar->text('w_1'),
-			1 => $translator_core_calendar->text('w_2'),
-			2 => $translator_core_calendar->text('w_3'),
-			3 => $translator_core_calendar->text('w_4'),
-			4 => $translator_core_calendar->text('w_5'),
-			5 => $translator_core_calendar->text('w_6'),
-			6 => $translator_core_calendar->text('w_7'),
-		));
-	} //end if else
-	//-- set start on
-	$calendar->setStartOfWeek($the_first_day);
-	//--
-	if(Smart::array_size($y_events_arr) > 0) {
-		for($i=0; $i<count($y_events_arr); $i++) {
-			if($y_events_arr[$i]['date-end'] === false) {
-				$calendar->addDayEvent((string)$y_events_arr[$i]['event-html'], date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-start'])), false);
-			} else {
-				$calendar->addDayEvent((string)$y_events_arr[$i]['event-html'], date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-start'])), date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-end'])));
-			} //end if else
-		} //end for
-	} //end if
-	//-- draw
-	return '<div title="'.Smart::escape_html(date('Y-m', @strtotime((string)$y_sel_date))).'">'.$calendar->draw().'</div>';
-	//--
-} //END FUNCTION
-//================================================================
+		//-- set days
+		if((string)$y_mode == 'small') { // short day names
+			$calendar->setDayNames(array(
+				0 => SmartUnicode::sub_str($translator_core_calendar->text('w_1'), 0, 2),
+				1 => SmartUnicode::sub_str($translator_core_calendar->text('w_2'), 0, 2),
+				2 => SmartUnicode::sub_str($translator_core_calendar->text('w_3'), 0, 2),
+				3 => SmartUnicode::sub_str($translator_core_calendar->text('w_4'), 0, 2),
+				4 => SmartUnicode::sub_str($translator_core_calendar->text('w_5'), 0, 2),
+				5 => SmartUnicode::sub_str($translator_core_calendar->text('w_6'), 0, 2),
+				6 => SmartUnicode::sub_str($translator_core_calendar->text('w_7'), 0, 2)
+			));
+		} else { // full day names
+			$calendar->setDayNames(array(
+				0 => $translator_core_calendar->text('w_1'),
+				1 => $translator_core_calendar->text('w_2'),
+				2 => $translator_core_calendar->text('w_3'),
+				3 => $translator_core_calendar->text('w_4'),
+				4 => $translator_core_calendar->text('w_5'),
+				5 => $translator_core_calendar->text('w_6'),
+				6 => $translator_core_calendar->text('w_7'),
+			));
+		} //end if else
+		//-- set start on
+		$calendar->setStartOfWeek($the_first_day);
+		//--
+		if(Smart::array_size($y_events_arr) > 0) {
+			for($i=0; $i<count($y_events_arr); $i++) {
+				if($y_events_arr[$i]['date-end'] === false) {
+					$calendar->addDayEvent((string)$y_events_arr[$i]['event-html'], date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-start'])), false);
+				} else {
+					$calendar->addDayEvent((string)$y_events_arr[$i]['event-html'], date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-start'])), date('Y-m-d', @strtotime((string)$y_events_arr[$i]['date-end'])));
+				} //end if else
+			} //end for
+		} //end if
+		//-- draw
+		return '<div title="'.Smart::escape_html(date('Y-m', @strtotime((string)$y_sel_date))).'">'.$calendar->draw().'</div>';
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
 } //END CLASS
@@ -154,7 +154,7 @@ private static function display_calendar($y_mode, $y_sel_date, $y_width, $y_high
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.180327
+ * @version 	v.20191111
  * @package 	Plugins:ViewComponents
  *
  */

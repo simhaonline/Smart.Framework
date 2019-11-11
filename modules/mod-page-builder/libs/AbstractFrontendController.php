@@ -333,9 +333,9 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 		//--
 
 		//--
+		$segment_code = (string) \SmartMarkersTemplating::prepare_nosyntax_content($segment_code); // Safe Fix: comment out any of: [###*###] [%%%*%%%] [@@@*@@@]
+		//--
 		if((\Smart::array_size($markers) > 0) AND (\strpos((string)$segment_code, '{{=#') !== false)) { // if we provide express markers for replacing
-			//--
-			$segment_code = (string) \SmartMarkersTemplating::prepare_nosyntax_content($segment_code); // Safe Fix: comment out any of: [###*###] [%%%*%%%] [@@@*@@@]
 			//--
 			$segment_code = (string) \str_replace( // Pre-Render: replace {{=#MARKER|escapings#=}} with [###MARKER|escapings###]
 				[

@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: SmartUnicode
- * @version 	v.160930
+ * @version 	v.20191111
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -48,6 +48,7 @@ final class SmartPunycode {
 	// ->
 
 	// This class is based on: https://raw.githubusercontent.com/true/php-punycode ; License: BSD
+
 
 	/**
 	 * Bootstring parameter values
@@ -62,6 +63,7 @@ final class SmartPunycode {
 	private $const_INITIAL_N    = 128;
 	private $const_PREFIX       = 'xn--';
 	private $const_DELIMITER    = '-';
+
 
 	/**
 	 * Encode table
