@@ -1069,29 +1069,33 @@ final class SmartFrameworkRuntime {
 	//======================================================================
 
 
+	//======================================================================
 	// security: use this instead of header() which cannot contain \r \n \t \x0B \0 \f
 	public static function outputHttpSafeHeader($value) {
-		//--
-		if(headers_sent()) {
-			@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Trying to set header but Headers Already Sent with value of: '.$value, E_USER_WARNING);
-			return;
-		} //end if
 		//--
 		$value = (string) trim((string)$value);
 		//--
 		if((string)$value != '') {
 			//--
-			$value = (string) Smart::normalize_spaces((string)$value); // security fix: avoid newline in header
 			$value = (string) SmartFrameworkSecurity::FilterUnsafeString((string)$value); // variables from PathInfo are already URL Decoded, so must be ONLY Filtered !
+			$value = (string) Smart::normalize_spaces((string)$value); // security fix: avoid newline in header
 			$value = (string) trim((string)$value);
 			//--
 			if((string)$value != '') {
-				header((string)$value); // safe
+				//--
+				if(headers_sent()) {
+					@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Trying to set header but Headers Already Sent with value of: '.$value, E_USER_WARNING);
+					return;
+				} //end if
+				//--
+				header((string)$value);
+				//--
 			} //end if
 			//--
 		} //end if
 		//--
 	} //END FUNCTION
+	//======================================================================
 
 
 	//======================================================================
