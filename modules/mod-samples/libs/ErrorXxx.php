@@ -27,7 +27,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20191111
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {
@@ -190,8 +190,8 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 		if(!\headers_sent()) {
 			\SmartFrameworkRuntime::outputHttpHeadersNoCache();
 			if($this->isRawPage()) {
-				\header('Content-Type: '.$cfgs['rawmime']);
-				\header('Content-Disposition: '.$cfgs['rawdisp']);
+				\SmartFrameworkRuntime::outputHttpSafeHeader('Content-Type: '.$cfgs['rawmime']);
+				\SmartFrameworkRuntime::outputHttpSafeHeader('Content-Disposition: '.$cfgs['rawdisp']);
 				return (string) $vars['main'];
 			} //end if
 		} //end if

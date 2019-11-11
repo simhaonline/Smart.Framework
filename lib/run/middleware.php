@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20191110
+ * @version		20191111
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -74,7 +74,7 @@ abstract class SmartAbstractAppMiddleware {
 				//--
 				if(((string)$key != '') AND ((string)$val != '')) {
 					$hdr = (string) trim((string)$key.': '.(string)$val);
-					header((string)$hdr); // set raw header key => value
+					SmartFrameworkRuntime::outputHttpSafeHeader((string)$hdr); // set raw header key => value
 				} //end if
 				//--
 			} //end foreach
@@ -391,9 +391,9 @@ abstract class SmartAbstractAppMiddleware {
 							//--
 							// cache headers are presumed to be sent by runtime before of this step
 							//--
-							header('Content-Type: '.$mime_type);
-							header('Content-Disposition: '.$mime_disp);
-							header('Content-Length: '.$fsize);
+							SmartFrameworkRuntime::outputHttpSafeHeader('Content-Type: '.$mime_type);
+							SmartFrameworkRuntime::outputHttpSafeHeader('Content-Disposition: '.$mime_disp);
+							SmartFrameworkRuntime::outputHttpSafeHeader('Content-Length: '.$fsize);
 							//--
 							@readfile((string)$filepath); // output without reading all in memory
 							//--

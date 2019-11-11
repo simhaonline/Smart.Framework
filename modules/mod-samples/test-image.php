@@ -152,7 +152,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-		header('Z-Test-Image: This is an image'); // just a sample dummy header entry
+		SmartFrameworkRuntime::outputHttpSafeHeader('Z-Test-Image: This is an image'); // just a sample dummy header entry
 		//--
 		ob_start(); // avoid echo warnings or errors !
 		if(function_exists('imagecreatetruecolor')) {
@@ -182,11 +182,11 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
-	//	header('Expires: '.gmdate('D, d M Y H:i:s', (int)((int)time() + 3600)) .' GMT');
-	//	header('Last-Modified: '.gmdate('D, d M Y H:i:s', time()).' GMT');
-	//	header('Cache-Control: public, max-age=3600');
-		header('Content-Type: image/jpeg');
-		header('Content-Disposition: inline; filename="sample-image-'.time().'.jpg"');
+	//	SmartFrameworkRuntime::outputHttpSafeHeader('Expires: '.gmdate('D, d M Y H:i:s', (int)((int)time() + 3600)) .' GMT');
+	//	SmartFrameworkRuntime::outputHttpSafeHeader('Last-Modified: '.gmdate('D, d M Y H:i:s', time()).' GMT');
+	//	SmartFrameworkRuntime::outputHttpSafeHeader('Cache-Control: public, max-age=3600');
+		SmartFrameworkRuntime::outputHttpSafeHeader('Content-Type: image/jpeg');
+		SmartFrameworkRuntime::outputHttpSafeHeader('Content-Disposition: inline; filename="sample-image-'.time().'.jpg"');
 		imagejpeg($im, null, 100); // direct echo
 		//--
 		ob_start(); // avoid echo warnings or errors !

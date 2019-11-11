@@ -55,7 +55,7 @@ if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
 	die('A required RUNTIME constant has not been defined: SMART_FRAMEWORK_ADMIN_AREA');
 } //end if
 //--
-if(!headers_sent()) {
+if(!headers_sent()) { // safe
 	header('X-Powered-By: '.'Smart.Framework PHP/Javascript :: '.SMART_FRAMEWORK_RELEASE_TAGVERSION.'-'.SMART_FRAMEWORK_RELEASE_VERSION.' @ '.((SMART_FRAMEWORK_ADMIN_AREA === true) ? '[A]' : '[I]'));
 } //end if
 //--
@@ -403,7 +403,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	-
- * @version 	v.20191101
+ * @version 	v.20191111
  * @package 	Application
  *
  */
@@ -580,7 +580,7 @@ final class SmartFrameworkSecurity {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	-
- * @version 	v.20191101
+ * @version 	v.20191111
  * @package 	Application
  *
  */
@@ -988,7 +988,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20191105
+ * @version		v.20191111
  * @package 	Application
  *
  */
@@ -1067,6 +1067,31 @@ final class SmartFrameworkRuntime {
 		//--
 	} //END FUNCTION
 	//======================================================================
+
+
+	// security: use this instead of header() which cannot contain \r \n \t \x0B \0 \f
+	public static function outputHttpSafeHeader($value) {
+		//--
+		if(headers_sent()) {
+			@trigger_error(__CLASS__.'::'.__FUNCTION__.'() :: '.'Trying to set header but Headers Already Sent with value of: '.$value, E_USER_WARNING);
+			return;
+		} //end if
+		//--
+		$value = (string) trim((string)$value);
+		//--
+		if((string)$value != '') {
+			//--
+			$value = (string) Smart::normalize_spaces((string)$value); // security fix: avoid newline in header
+			$value = (string) SmartFrameworkSecurity::FilterUnsafeString((string)$value); // variables from PathInfo are already URL Decoded, so must be ONLY Filtered !
+			$value = (string) trim((string)$value);
+			//--
+			if((string)$value != '') {
+				header((string)$value); // safe
+			} //end if
+			//--
+		} //end if
+		//--
+	} //END FUNCTION
 
 
 	//======================================================================
@@ -1255,7 +1280,7 @@ final class SmartFrameworkRuntime {
 		} //end if
 		//--
 		if(strlen($semantic_url) > 65535) { // limit according with Firefox standard which is 65535 ; Apache standard is much lower as 8192
-			$semantic_url = substr($semantic_url, 0, 65535);
+			$semantic_url = (string) substr($semantic_url, 0, 65535);
 		} //end if
 		//--
 		if(strpos($semantic_url, '?/') === false) {
@@ -1494,7 +1519,7 @@ final class SmartFrameworkRuntime {
 				SmartTextTranslations::setLanguage($pdom); // set only other languages if valid: RO, DE, ...
 			} else {
 				http_response_code(301); // permanent redirect if the language code is not valid
-				header('Location: '.SmartUtils::get_server_current_protocol().'www.'.SmartUtils::get_server_current_basedomain_name()); // force redirect
+				self::outputHttpSafeHeader('Location: '.SmartUtils::get_server_current_protocol().'www.'.SmartUtils::get_server_current_basedomain_name()); // force redirect
 			} //end if
 		} //end if else
 		//--
@@ -1815,7 +1840,7 @@ final class SmartFrameworkRuntime {
 			//--
 			if(!headers_sent()) {
 				http_response_code(301); // permanent redirect
-				header('Location: '.$url_redirect); // force redirect
+				self::outputHttpSafeHeader('Location: '.$url_redirect); // force redirect
 			} //end if
 			die((string)$gopage);
 			return;

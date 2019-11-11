@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[I]@v.5.2.7');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20191110
+ * @version		20191111
  *
  */
 final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
@@ -368,7 +368,7 @@ final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
 						$the_redirect_text = 'Found'; // temporary redirect for HTTP 1.0 / HTTP 1.1
 						http_response_code(302);
 					} //end if else
-					header('Location: '.SmartFrameworkSecurity::FilterUnsafeString((string)$appSettings['redirect-url']));
+					SmartFrameworkRuntime::outputHttpSafeHeader('Location: '.$appSettings['redirect-url']);
 					echo '<h1>'.Smart::escape_html($the_redirect_text).'</h1>'.'<br>'.'If the page redirection fails, click on the below link:'.'<br>'.$the_redirect_link;
 					return; // break stop
 				} else {
@@ -463,12 +463,12 @@ final class SmartAppIndexMiddleware extends SmartAbstractAppMiddleware {
 			} //end if
 			//--
 			if((string)$rawmime != '') {
-				header('Content-Type: '.$rawmime);
+				SmartFrameworkRuntime::outputHttpSafeHeader('Content-Type: '.$rawmime);
 			} //end if
 			if((string)$rawdisp != '') {
-				header('Content-Disposition: '.$rawdisp);
+				SmartFrameworkRuntime::outputHttpSafeHeader('Content-Disposition: '.$rawdisp);
 			} //end if
-			header('Content-Length: '.((int)strlen((string)$appData['main']))); // must be strlen NOT SmartUnicode::str_len as it must get number of bytes not characters
+			SmartFrameworkRuntime::outputHttpSafeHeader('Content-Length: '.((int)strlen((string)$appData['main']))); // must be strlen NOT SmartUnicode::str_len as it must get number of bytes not characters
 			echo (string) $appData['main'];
 			return; // break stop
 			//--

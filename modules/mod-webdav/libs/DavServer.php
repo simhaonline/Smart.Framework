@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavServer {
 
 	// ::
-	// v.20191110
+	// v.20191111
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';
@@ -138,7 +138,7 @@ final class DavServer {
 		} else {
 				\http_response_code((int)$http_status);
 				\header('Content-type: text/xml; charset="utf-8"');
-				\header('Content-length: '.\strlen($xml));
+				\header('Content-length: '.(int)\strlen($xml));
 				echo((string)$xml);
 		} //end if else
 		//--
@@ -224,7 +224,7 @@ final class DavServer {
 		} else {
 				\http_response_code((int)$http_status);
 				\header('Content-type: text/xml; charset="utf-8"');
-				\header('Content-length: '.\strlen($xml));
+				\header('Content-length: '.(int)\strlen($xml));
 				echo((string)$xml);
 		} //end if else
 		//--
