@@ -1,12 +1,12 @@
-[%%%%COMMENT%%%%]
+[%%%COMMENT%%%]
 // IMPORTANT: use only JavaScript code here, no HTML !
-[%%%%/COMMENT%%%%]
-//===== QUnit Tests.Core: START :: r.20191031
+[%%%/COMMENT%%%]
+//===== QUnit Tests.Core: START :: r.20191109
 
 (function() {
 
 	var localTests = {};
-	localTests.FileSystemOps = [####TEST-FILESYSTEM|bool####];
+	localTests.FileSystemOps = [###TEST-FILESYSTEM|bool###];
 
 	var testsDisabled = 0;
 	for(var val in localTests) {

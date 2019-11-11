@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Samples / Test FileSystem]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 // Class: \SmartModExtLib\Samples\TestUnitFileSystem
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191006
+ * @version 	v.20191110
  *
  */
 final class TestUnitFileSystem {
@@ -57,9 +57,9 @@ final class TestUnitFileSystem {
 
 		//--
 		if((string)\DIRECTORY_SEPARATOR != '\\') { // broken links do not work on Windows !
-			$tests[] = '##### FileSystem OPERATIONS / TESTS - ALL: #####';
+			$tests[] = '===== FileSystem OPERATIONS / TESTS - ALL: =====';
 		} else {
-			$tests[] = '##### FileSystem OPERATIONS / TESTS *** PARTIAL SUPPORT ONLY (BY PLATFORM) ***: #####';
+			$tests[] = '===== FileSystem OPERATIONS / TESTS *** PARTIAL SUPPORT ONLY (BY PLATFORM) ***: =====';
 		} //end if else
 		//--
 
@@ -728,7 +728,7 @@ final class TestUnitFileSystem {
 		//--
 		$time = 'TOTAL TIME was: '.(\microtime(true) - $time);
 		//--
-		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
+		$end_tests = '===== END TESTS ... '.$time.' sec. =====';
 		//--
 
 		//--

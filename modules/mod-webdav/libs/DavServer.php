@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Webdav / Library Admin DavServer]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 // Module Lib: \SmartModExtLib\Webdav\DavServer
 // Type: Module Library
@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavServer {
 
 	// ::
-	// v.20191105
+	// v.20191110
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';

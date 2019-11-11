@@ -1,4 +1,4 @@
-<!-- AuthAdmins Login # v.20190115 -->
+<!-- AuthAdmins Login # v.20191110 -->
 <style>
 body {
 	background-color: #FFFFFF !important;
@@ -29,7 +29,7 @@ a#special {
 	var AuthAdmins_LogURL = "";
 	function AuthAdmins_Login() {
 		if((typeof AuthAdmins_LogURL != "undefined") && (AuthAdmins_LogURL != "") && (AuthAdmins_LogURL != null)) {
-			var AuthAdmins_LogZURL = SmartJS_CryptoBlowfish.decrypt(String(AuthAdmins_LogURL), String(SmartJS_Archiver_LZS.decompressFromBase64(String(SmartJS_CoreUtils.hex2bin('[####SECRET|js####]'))))); if(AuthAdmins_LogZURL) { SmartJS_BrowserUtils.RedirectToURL(String(AuthAdmins_LogZURL)); }
+			var AuthAdmins_LogZURL = SmartJS_CryptoBlowfish.decrypt(String(AuthAdmins_LogURL), String(SmartJS_Archiver_LZS.decompressFromBase64(String(SmartJS_CoreUtils.hex2bin('[###SECRET|js###]'))))); if(AuthAdmins_LogZURL) { SmartJS_BrowserUtils.RedirectToURL(String(AuthAdmins_LogZURL)); }
 		} //end if
 	} //END FUNCTION
 </script>
@@ -53,9 +53,9 @@ a#special {
 					<div title="Select here the Login NameSpace and Click the Login link below ...">
 						<font size="4"><b>Select the Login NameSpace:</b>&nbsp;&nbsp;&nbsp;</font>
 						<select title="Available Login Namespaces" name="NorthICE_LOGIN" id="auth-admins-title-login" size="1" style="max-width:300px!important; " onChange="AuthAdmins_TitleLogin();">
-							[%%%%LOOP:LOGIN-NSPACES%%%%]
-							<option value="[####LOGIN-NSPACES._-VAL-_|html####]">[####LOGIN-NSPACES._-KEY-_|html####]</option>
-							[%%%%/LOOP:LOGIN-NSPACES%%%%]
+							[%%%LOOP:LOGIN-NSPACES%%%]
+							<option value="[###LOGIN-NSPACES._-VAL-_|html###]">[###LOGIN-NSPACES._-KEY-_|html###]</option>
+							[%%%/LOOP:LOGIN-NSPACES%%%]
 						</select>
 						<script type="text/javascript">
 						if(typeof SmartJS_BrowserUIUtils != 'undefined') {
@@ -75,10 +75,10 @@ a#special {
 						<a id="special" href="javascript:void(0)" onClick="javascript:AuthAdmins_Login();"><font color="#7BC043" size="5"><b>Login to :// <span id="AuthAdmins_TitleLogin">[NameSpace]</span></b></font></a>
 					</div>
 					<div style="cursor:help;">
-						<img border="0" width="160" height="160" src="[####MOD-IMG-PATH|html####]globe.svg" style="opacity:0.55;" alt="AuthAdmins module for Smart.Framework" title="AuthAdmins module for Smart.Framework">
+						<img border="0" width="160" height="160" src="[###MOD-IMG-PATH|html###]globe.svg" style="opacity:0.55;" alt="AuthAdmins module for Smart.Framework" title="AuthAdmins module for Smart.Framework">
 					</div>
 					<div title="Click here to Logout ...">
-						<a id="special" href="[####LOGOUT-URL|html####]"><font color="#666699" size="4"><b>Logout from :// All NameSpaces</b></font></a>
+						<a id="special" href="[###LOGOUT-URL|html###]"><font color="#666699" size="4"><b>Logout from :// All NameSpaces</b></font></a>
 					</div>
 				</td>
 			</tr>
@@ -94,8 +94,8 @@ a#special {
 	</script>
 	<br>
 	<div align="center">
-		[####POWERED-HTML####]
+		[###POWERED-HTML###]
 	</div>
-	<a data-smart="open.modal" href="http://www.unix-world.org" target="unix_world_org" id="copyright"><b>&copy;&nbsp;2006-[####CRR-YEAR|html####]&nbsp;unix-world.org</b></a>
+	<a data-smart="open.modal" href="http://www.unix-world.org" target="unix_world_org" id="copyright"><b>&copy;&nbsp;2006-[###CRR-YEAR|html###]&nbsp;unix-world.org</b></a>
 </div>
 <!-- # AuthAdmins Login -->

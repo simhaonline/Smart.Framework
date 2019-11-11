@@ -10,7 +10,7 @@
 			</td>
 		</tr>
 	</table>
-	[%%%%IF:TPL-ALT-AVAIL:==yes;%%%%]
+	[%%%IF:TPL-ALT-AVAIL:==yes;%%%]
 	<table width="100%" cellpadding="0" cellspacing="0" class="ux-reflow-table">
 		<tr>
 			<td>
@@ -30,26 +30,26 @@
 			</td>
 			<td> &nbsp;&nbsp;&nbsp; </td>
 			<td align="right">
-				[%%%%IF:TPL-DUST-AVAIL:==yes;%%%%]
+				[%%%IF:TPL-DUST-AVAIL:==yes;%%%]
 				<a href="?/page/tpl-dust.test" target="testunit_dust_test" data-smart="open.modal" class="ux-button ux-button-dark" title="Dust Templating Engine (by LinkedIn) is available as an extra module for Smart.Framework and can be used as an alternative to the Markers-TPL Templating Engine"><i class="sfi sfi-stack"></i> &nbsp; Dust Templating Demo (extra modules)</a>
 				<br>
-				[%%%%/IF:TPL-DUST-AVAIL%%%%]
-				[%%%%IF:TPL-TWIG-AVAIL:==yes;%%%%]
+				[%%%/IF:TPL-DUST-AVAIL%%%]
+				[%%%IF:TPL-TWIG-AVAIL:==yes;%%%]
 				<a href="?/page/tpl-twig.test" target="testunit_twig_test" data-smart="open.modal" class="ux-button ux-button-regular" title="Twig Templating Engine is available as an extra module for Smart.Framework and can be used as an alternative to the Markers-TPL Templating Engine"><i class="sfi sfi-stack"></i> &nbsp; Twig Templating Demo (extra modules)</a>
 				<br>
-				[%%%%/IF:TPL-TWIG-AVAIL%%%%]
-				[%%%%IF:TPL-LATTE-AVAIL:==yes;%%%%]
+				[%%%/IF:TPL-TWIG-AVAIL%%%]
+				[%%%IF:TPL-LATTE-AVAIL:==yes;%%%]
 				<a href="?/page/tpl-nette-latte.test" target="testunit_latte_test" data-smart="open.modal" class="ux-button ux-button-info" title="Latte Templating Engine (by Nette) is available as an extra module for Smart.Framework and can be used as an alternative to the Markers-TPL Templating Engine"><i class="sfi sfi-stack"></i> &nbsp; Nette-Latte Templating Demo (extra modules)</a>
 				<br>
-				[%%%%/IF:TPL-LATTE-AVAIL%%%%]
-				[%%%%IF:TPL-TYPO3FLUID-AVAIL:==yes;%%%%]
+				[%%%/IF:TPL-LATTE-AVAIL%%%]
+				[%%%IF:TPL-TYPO3FLUID-AVAIL:==yes;%%%]
 				<a href="?/page/tpl-typo3-fluid.test" target="testunit_typo3fluid_test" data-smart="open.modal" class="ux-button ux-button-highlight" title="Typo3-Fluid Templating Engine is available as an extra module for Smart.Framework and can be used as an alternative to the Markers-TPL or Twig Templating Engine"><i class="sfi sfi-stack"></i> &nbsp; Typo3-Fluid Templating Demo (extra modules)</a>
 				<br>
-				[%%%%/IF:TPL-TYPO3FLUID-AVAIL%%%%]
+				[%%%/IF:TPL-TYPO3FLUID-AVAIL%%%]
 			</td>
 		</tr>
 	</table>
-	[%%%%/IF:TPL-ALT-AVAIL%%%%]
+	[%%%/IF:TPL-ALT-AVAIL%%%]
 	<div>
 	<p class="txt-columns-count-2">
 		<b>Markers-TPL Templating Engine is a very fast and <span class="sf__test__notice" style="color:#333333; cursor:help;" title="If used correctly and all escapes are applied as required ...">100% secure<sup> [*] </sup></span> PHP Templating Engine</b> and is available for both PHP and Javascript<sup> [**] </sup> languages.<br><b><i>Because the Markers-TPL Templating is rendering the Views by injecting plain strings and data arrays directly into these Views (no re-interpreted PHP/Javascript code) there are NO SECURITY RISKS like injecting malicious code into the Views</i></b> like in the case of using the <a class="ux-link" target="twig_reference_tpl" data-smart="open.popup" href="https://twig.sensiolabs.org">Twig Templating for PHP</a> or <a class="ux-link" target="smarty_reference_tpl" data-smart="open.popup" href="http://www.smarty.net">Smarty Templating for PHP</a>. The original concept of <b>Markers-TPL Templating</b> was inspired by <a class="ux-link" href="https://docs.typo3.org/typo3cms/TemplatingTutorial/7.6/Tasks/WorkingHTML/HtmlTemplate/Index.html" target="typo3_reference_markers" data-smart="open.popup">simplistic mark(er)s used in templates by Typo3 CMS</a>. Thereafter, a full new concept was developed from the scratch into Smart.Framework based on this idea as a brand new TPL engine: Markers-TPL.<br>
@@ -57,7 +57,7 @@
 		Currently the <b>TPL Marker Syntax Templating Engine for PHP (and TPL Marker Syntax Templating Engine for Javascript [**])</b> is a mature project, fully developed and maintained inside the code base of Smart.Framework. It is heavily tested in production on web servers serving million+ page views / day.
 	</p>
 	<br>
-	[####HTML-SYNTAX-DESCR####]
+	[###HTML-SYNTAX-DESCR###]
 	</div>
 	<br>
 	<div align="center">
@@ -67,38 +67,38 @@
 					TPL Render Test: Markers-TPL Templating - Basic Syntax
 				</th>
 			</tr>
-		[%%%%LOOP:LOOPTEST-VAR1%%%%]
-			[%%%%IF:IF2TEST:!=5;%%%%]
-			<tr style="background:[%%%%IF:IFTEST:==1;%%%%]#666699[%%%%ELSE:IFTEST%%%%]#003366[%%%%/IF:IFTEST%%%%]; color:#FFFFFF;" title="This line is displayed conditional using a templating IF syntax ; Values = [[####IFTEST|html####]] / [[####IF2TEST|html####]] ...">
-			[%%%%ELSE:IF2TEST%%%%]
-			<tr style="background:#FFCC00; color:#000000;" title="This line is displayed conditional using a templating IF syntax ; Values = [[####IFTEST|html####]] / [[####IF2TEST|html####]] ...">
-			[%%%%/IF:IF2TEST%%%%]
-				<td width="33%">[####LOOPTEST-VAR1.D1|html####]</td>
-				<td width="33%">[####LOOPTEST-VAR1.D2|html####]</td>
-				<td width="33%">[####LOOPTEST-VAR1.D3|html####]</td>
+		[%%%LOOP:LOOPTEST-VAR1%%%]
+			[%%%IF:IF2TEST:!=5;%%%]
+			<tr style="background:[%%%IF:IFTEST:==1;%%%]#666699[%%%ELSE:IFTEST%%%]#003366[%%%/IF:IFTEST%%%]; color:#FFFFFF;" title="This line is displayed conditional using a templating IF syntax ; Values = [[###IFTEST|html###]] / [[###IF2TEST|html###]] ...">
+			[%%%ELSE:IF2TEST%%%]
+			<tr style="background:#FFCC00; color:#000000;" title="This line is displayed conditional using a templating IF syntax ; Values = [[###IFTEST|html###]] / [[###IF2TEST|html###]] ...">
+			[%%%/IF:IF2TEST%%%]
+				<td width="33%">[###LOOPTEST-VAR1.D1|html###]</td>
+				<td width="33%">[###LOOPTEST-VAR1.D2|html###]</td>
+				<td width="33%">[###LOOPTEST-VAR1.D3|html###]</td>
 			</tr>
-		[%%%%/LOOP:LOOPTEST-VAR1%%%%]
+		[%%%/LOOP:LOOPTEST-VAR1%%%]
 		</table>
 		<table class="ux-table ux-table-striped ux-reflow-table" style="width:595px;">
-		[%%%%LOOP:LOOPTEST-VAR2%%%%]
+		[%%%LOOP:LOOPTEST-VAR2%%%]
 			<tr>
-				[%%%%IF:LOOPTEST-VAR2.C2:==a;%%%%]
-					[%%%%IF:LOOPTEST-VAR2.C1:<1;%%%%]
-						<td width="33%" style="color:#FF3300;">[####LOOPTEST-VAR2.C1|html####] [ &lt; 1 ; C2 = a ]</td>
-					[%%%%ELSE:LOOPTEST-VAR2.C1%%%%]
-						<td width="33%" style="color:#003399;">[####LOOPTEST-VAR2.C1|html####] [ &gt;= 1 ; C2 = a ]</td>
-					[%%%%/IF:LOOPTEST-VAR2.C1%%%%]
-				[%%%%ELSE:LOOPTEST-VAR2.C2%%%%]
-					<td width="33%">[####LOOPTEST-VAR2.C1|html####]</td>
-				[%%%%/IF:LOOPTEST-VAR2.C2%%%%]
-				<td width="33%">[####LOOPTEST-VAR2.C2|js|html####]</td>
-				<td width="33%">[####LOOPTEST-VAR2.C3|url|html####]</td>
+				[%%%IF:LOOPTEST-VAR2.C2:==a;%%%]
+					[%%%IF:LOOPTEST-VAR2.C1:<1;%%%]
+						<td width="33%" style="color:#FF3300;">[###LOOPTEST-VAR2.C1|html###] [ &lt; 1 ; C2 = a ]</td>
+					[%%%ELSE:LOOPTEST-VAR2.C1%%%]
+						<td width="33%" style="color:#003399;">[###LOOPTEST-VAR2.C1|html###] [ &gt;= 1 ; C2 = a ]</td>
+					[%%%/IF:LOOPTEST-VAR2.C1%%%]
+				[%%%ELSE:LOOPTEST-VAR2.C2%%%]
+					<td width="33%">[###LOOPTEST-VAR2.C1|html###]</td>
+				[%%%/IF:LOOPTEST-VAR2.C2%%%]
+				<td width="33%">[###LOOPTEST-VAR2.C2|js|html###]</td>
+				<td width="33%">[###LOOPTEST-VAR2.C3|url|html###]</td>
 			</tr>
-		[%%%%/LOOP:LOOPTEST-VAR2%%%%]
+		[%%%/LOOP:LOOPTEST-VAR2%%%]
 		</table>
 		<table class="ux-table ux-reflow-table" style="width:595px;">
 			<tr align="center">
-				<td>[####STR-NUM|num####] * [####NUM-NUM|num####] (Numeric Escape)</td>
+				<td>[###STR-NUM|num###] * [###NUM-NUM|num###] (Numeric Escape)</td>
 			</tr>
 		</table>
 	</div>

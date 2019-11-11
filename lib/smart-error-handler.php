@@ -1,7 +1,7 @@
 <?php
 // [Smart.Framework / ERRORS Management]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -20,9 +20,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 // ALL ERRORS WILL BE LOGGED TO A LOG FILE: SMART_ERROR_LOGDIR/SMART_ERROR_LOGFILE defined below
 
-//##### WARNING: #####
+//===== WARNING: =====
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
-//####################
+//====================
 
 //--
 if(!defined('SMART_FRAMEWORK_CHARSET')) {

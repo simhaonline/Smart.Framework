@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Smart Components]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the f
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartTextTranslations
- * @version 	v.20191023
+ * @version 	v.20191109
  * @package 	Application:ViewComponents
  *
  */

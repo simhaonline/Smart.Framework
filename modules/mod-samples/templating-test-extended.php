@@ -3,7 +3,7 @@
 // Controller: Samples/TemplatingTestExtended
 // Route: ?/page/samples.templating-test-extended (?page=samples.templating-test-extended)
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -68,13 +68,13 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			'main' => SmartMarkersTemplating::render_file_template(
 					(string) $tpl, // the TPL view
 					[
-						//-- ##### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE #####
+						//-- ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE --
 						'TITLE' => (string) $title,
 						'VIEWS-PATH' => (string) $this->ControllerGetParam('module-view-path'),
 						'NUMBER' => (Smart::random_number(0,1)) ? '1' : '-1',
 						'MARKER' => (string) Smart::json_encode('<a>&amp;1234567890.コアテスト·スイート.abcdefghijklmniopqrstuvwxyz:'.date('Y-m-d H:i:s').':~`!@#$%^&*()_-+={}[]|,.?</a>'),
 						'TEXTSTR' => (string) $txtstr,
-						'TEXTIFSTR' => (string) $txtstr.' : ; <####END####> ',
+						'TEXTIFSTR' => (string) $txtstr.' : ; <###END###> ',
 						'MARK-AREA' => 'php',
 						'TEST-COMPARE' => 'a',
 						'DATA' => [

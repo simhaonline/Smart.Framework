@@ -1,9 +1,9 @@
 <!-- View: admins-list -->
-<link rel="stylesheet" type="text/css" href="lib/js/jquery/pager/simplePagination.css?[####RELEASE-HASH|url|html####]">
-<script type="text/javascript" src="lib/js/jquery/pager/jquery.simplePagination.js?[####RELEASE-HASH|url|html####]"></script>
-<script type="text/javascript" src="lib/js/jquery/jquery.event.drag.js?[####RELEASE-HASH|url|html####]"></script>
-<script type="text/javascript" src="lib/js/jquery/jquery.event.drop.js?[####RELEASE-HASH|url|html####]"></script>
-<script type="text/javascript" src="lib/js/jquery/jquery.simulate.js?[####RELEASE-HASH|url|html####]"></script>
+<link rel="stylesheet" type="text/css" href="lib/js/jquery/pager/simplePagination.css?[###RELEASE-HASH|url|html###]">
+<script type="text/javascript" src="lib/js/jquery/pager/jquery.simplePagination.js?[###RELEASE-HASH|url|html###]"></script>
+<script type="text/javascript" src="lib/js/jquery/jquery.event.drag.js?[###RELEASE-HASH|url|html###]"></script>
+<script type="text/javascript" src="lib/js/jquery/jquery.event.drop.js?[###RELEASE-HASH|url|html###]"></script>
+<script type="text/javascript" src="lib/js/jquery/jquery.simulate.js?[###RELEASE-HASH|url|html###]"></script>
 <style>
 	.smartGrid_AlignCenter {
 		text-align: center;
@@ -19,14 +19,14 @@
 		font-weight: bold;
 	}
 </style>
-<link rel="stylesheet" type="text/css" href="lib/js/jquery/slickgrid/slick.grid.css?[####RELEASE-HASH|url|html####]">
-<link rel="stylesheet" type="text/css" href="lib/js/jquery/slickgrid/slick.grid-fixes.css?[####RELEASE-HASH|url|html####]">
-<script type="text/javascript" src="lib/js/jquery/slickgrid/slick.grid.js?[####RELEASE-HASH|url|html####]"></script>
-<script type="text/javascript" src="lib/js/jquery/slickgrid/slick.editors.js?[####RELEASE-HASH|url|html####]"></script>
-<script type="text/javascript" src="lib/js/jquery/slickgrid/smart-grid.js?[####RELEASE-HASH|url|html####]"></script>
+<link rel="stylesheet" type="text/css" href="lib/js/jquery/slickgrid/slick.grid.css?[###RELEASE-HASH|url|html###]">
+<link rel="stylesheet" type="text/css" href="lib/js/jquery/slickgrid/slick.grid-fixes.css?[###RELEASE-HASH|url|html###]">
+<script type="text/javascript" src="lib/js/jquery/slickgrid/slick.grid.js?[###RELEASE-HASH|url|html###]"></script>
+<script type="text/javascript" src="lib/js/jquery/slickgrid/slick.editors.js?[###RELEASE-HASH|url|html###]"></script>
+<script type="text/javascript" src="lib/js/jquery/slickgrid/smart-grid.js?[###RELEASE-HASH|url|html###]"></script>
 <script type="text/javascript">
 	//--
-	var itemURL = '[####ACTIONS-URL|js####]';
+	var itemURL = '[###ACTIONS-URL|js###]';
 	var IdOfGrid = 'AdminsListGrid';
 	var TheGrid = new Smart_Grid(IdOfGrid, 'infoTotalRows', itemURL+'list', 'auth_admins_list_tbl', 'id', 'ASC', '', 'filtering');
 	//--
@@ -40,7 +40,7 @@
 	</span>
 	<button type="button" class="ux-button ux-button-special" onClick="TheGrid.loadGridData(0);">Filter &nbsp; <i class="sfi sfi-search"></i></button>
 	<button type="button" class="ux-button ux-button-regular" onClick="TheGrid.resetGrid(); TheGrid.loadGridData(0);">Reset &nbsp; <i class="sfi sfi-history"></i></button>
-	<button type="button" class="ux-button ux-button-primary" style="margin-left:50px;" onClick="SmartJS_BrowserUtils.PopUpLink('[####ACTIONS-URL|js|html####]new-form', 'auth_admins_list_mod'); return false;"> Add new &nbsp; <i class="sfi sfi-user-plus"></i></button>
+	<button type="button" class="ux-button ux-button-primary" style="margin-left:50px;" onClick="SmartJS_BrowserUtils.PopUpLink('[###ACTIONS-URL|js|html###]new-form', 'auth_admins_list_mod'); return false;"> Add new &nbsp; <i class="sfi sfi-user-plus"></i></button>
 </form>
 <br>
 <div id="AdminsListNavPager"></div>
@@ -77,7 +77,7 @@ $(function() {
 
 	// Column Updaters
 	function updateCellData(url_segment_update) {
-		SmartJS_BrowserUtils.Submit_Form_By_Ajax('', '[####ACTIONS-URL|js|html####]edit-cell' + url_segment_update, 'yes', 'TheGrid.loadGridData(TheGrid.getOffset());', 'TheGrid.loadGridData(TheGrid.getOffset());');
+		SmartJS_BrowserUtils.Submit_Form_By_Ajax('', '[###ACTIONS-URL|js|html###]edit-cell' + url_segment_update, 'yes', 'TheGrid.loadGridData(TheGrid.getOffset());', 'TheGrid.loadGridData(TheGrid.getOffset());');
 	}
 
 	// Grid Data Defs

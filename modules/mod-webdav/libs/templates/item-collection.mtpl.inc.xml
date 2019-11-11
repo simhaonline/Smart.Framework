@@ -1,20 +1,20 @@
 	<d:response>
 		<s:info>
 			Type: DAV/MultiStatus
-			Method: [####DAV-METHOD|html####]
-			Path: [####DAV-REQ-PATH|html####]
+			Method: [###DAV-METHOD|html###]
+			Path: [###DAV-REQ-PATH|html###]
 			Item: DAV / item type collection
-			V: r.20191105
+			V: r.20191110
 		</s:info>
-		<d:href>[####ITEM.DAV-REQUEST-PATH|html####]</d:href>
+		<d:href>[###ITEM.DAV-REQUEST-PATH|html###]</d:href>
 		<d:propstat>
 			<d:prop>
-				<d:resourcetype>[####ITEM.C-XML-RESOURCE-TYPE####]</d:resourcetype>
-				<d:getlastmodified xmlns:b="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882/" b:dt="dateTime.rfc1123">[####ITEM.DATE-MODIFIED|html####]</d:getlastmodified>
-				<d:getcontenttype>[####ITEM.MIME-TYPE|html####]</d:getcontenttype>
+				<d:resourcetype>[###ITEM.C-XML-RESOURCE-TYPE###]</d:resourcetype>
+				<d:getlastmodified xmlns:b="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882/" b:dt="dateTime.rfc1123">[###ITEM.DATE-MODIFIED|html###]</d:getlastmodified>
+				<d:getcontenttype>[###ITEM.MIME-TYPE|html###]</d:getcontenttype>
 				<d:getcontentlength/>
-				<d:quota-used-bytes>[####QUOTA-USED|int####]</d:quota-used-bytes>
-				<d:quota-available-bytes>[####QUOTA-FREE|int####]</d:quota-available-bytes>[%%%%IF:ITEM.C-XML-DATA:!=;%%%%][%%%%|N%%%%][####ITEM.C-XML-DATA####][%%%%/IF:ITEM.C-XML-DATA%%%%]
+				<d:quota-used-bytes>[###QUOTA-USED|int###]</d:quota-used-bytes>
+				<d:quota-available-bytes>[###QUOTA-FREE|int###]</d:quota-available-bytes>[%%%IF:ITEM.C-XML-DATA:!=;%%%][%%%|N%%%][###ITEM.C-XML-DATA###][%%%/IF:ITEM.C-XML-DATA%%%]
 			</d:prop>
 			<d:status>HTTP/1.1 200 OK</d:status>
 		</d:propstat>

@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Samples / Test Persistent Cache]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 // Class: \SmartModExtLib\Samples\TestUnitPCache
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191006
+ * @version 	v.20191110
  *
  */
 final class TestUnitPCache {
@@ -73,7 +73,7 @@ final class TestUnitPCache {
 		//--
 		$tests = array();
 		$tests[] = '***** Persistent Cache Backend: ['.\SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND.'] *****';
-		$tests[] = '##### Persistent Cache / TESTS with a huge size Variable (String/Json) Key-Size of 2x'.\SmartUtils::pretty_print_bytes(\strlen($pcache_test_arch_content), 2).' : #####';
+		$tests[] = '===== Persistent Cache / TESTS with a huge size Variable (String/Json) Key-Size of 2x'.\SmartUtils::pretty_print_bytes(\strlen($pcache_test_arch_content), 2).' : =====';
 		//--
 		$err = '';
 		//--
@@ -213,7 +213,7 @@ final class TestUnitPCache {
 		//--
 		$time = 'TOTAL TIME (Except building the test archive) was: '.(\microtime(true) - $time); // substract the 3 seconds waiting time for Persistent Cache Key to expire
 		//--
-		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
+		$end_tests = '===== END TESTS ... '.$time.' sec. =====';
 		//--
 		if(stripos((string)\SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND, 'redis:') === 0) {
 			$img_check = 'lib/core/img/db/redis-logo.svg';

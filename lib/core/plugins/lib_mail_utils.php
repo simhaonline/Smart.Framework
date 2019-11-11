@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / Mail Utils]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20191031
+ * @version 	v.20191109
  * @package 	Plugins:Mailer
  *
  */
@@ -702,7 +702,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
 					if(((string)$mail->method == 'mail') OR ((string)$mail->method == 'smtp')) {
 						$err = $mail->send('yes');
 						if(SmartFrameworkRuntime::ifDebug()) {
-							SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', '[##### Send eMail Log #'.($i+1).': '.date('Y-m-d H:i:s').' #####]');
+							SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', '[----- Send eMail Log #'.($i+1).': '.date('Y-m-d H:i:s').' -----]');
 						} //end if
 					} else {
 						$err = 'WARNING: SMTP Server or Mail Method IS NOT SET in CONFIG. Send eMail - Operation ABORTED !';
@@ -779,7 +779,7 @@ public static function send_extended_email($y_server_settings, $y_mode, $to, $cc
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.20191031
+ * @version 	v.20191109
  * @package 	Plugins:Mailer
  *
  */

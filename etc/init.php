@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
-// [Smart.Framework / INIT] # r.20191105
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// [Smart.Framework / INIT]
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -125,11 +125,11 @@ define('SMART_FRAMEWORK_LANGUAGES_CACHE_DIR', 			'modules/app/translations/');		
 //define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS'	true); 														// If this is set will register the Translation usage for every: Language, Area, Subarea, Key ; (only will operate in DEV mode (SMART_ERROR_HANDLER == 'dev')
 //----------------------------------------
 
-//############################################################
+//============================================================
 
-//##### WARNING: #####
+//===== WARNING: =====
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
-//####################
+//====================
 
 //---------------------------------------- Set TimeZone in Global Mode per Application
 date_default_timezone_set((string)SMART_FRAMEWORK_TIMEZONE);

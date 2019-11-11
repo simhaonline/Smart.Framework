@@ -1,7 +1,7 @@
 <?php
 // AppCodeUnPack - Deploy Manager: NetArchive UnPacker
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //##############################################################################
 //############### RUNTIME: DO NOT MODIFY CODE BELOW !!!
@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20191023.1137'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20191110.1457'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -841,7 +841,7 @@ return (string) $tpl;
 abstract class AppCodePackAbstractUpgrade {
 
 	// ::
-	// v.181023
+	// v.20191110
 
 
 	// exec a command and return the exit status
@@ -964,7 +964,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20191023 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20191110 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1778,7 +1778,7 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	//##### Smart v.20191011
+	//##### Smart v.20191103
 
 
 	//================================================================
@@ -2273,7 +2273,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.20191023
+	//##### SmartUtils v.20191103
 
 
 	//================================================================
@@ -2426,7 +2426,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20190221
+	//##### SmartFileSysUtils v.20191105
 
 
 	//================================================================
@@ -2736,7 +2736,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20190221
+	//##### SmartFileSystem v.20191105
 
 
 	//================================================================

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<!-- Smart.Framework::DAV @ UserInfo: [DAV-FsMount] # [####INFO-ROOT|html####] # r.20191105 -->
+<!-- Smart.Framework::DAV @ UserInfo: [DAV-FsMount] # [###INFO-ROOT|html###] # r.20191110 -->
 <html>
 <head>
-	<meta charset="[####CHARSET|html####]">
-	<meta http-equiv="Content-Type" content="text/html; charset=[####CHARSET|html####]">
+	<meta charset="[###CHARSET|html###]">
+	<meta http-equiv="Content-Type" content="text/html; charset=[###CHARSET|html###]">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="generator" content="Smart.Framework WebDAV Module">
-	<title>[####INFO-TITLE|html####]</title>
-	<link rel="stylesheet" type="text/css" href="[####BASE-URL|html####]lib/core/plugins/fonts/typo/sans/ibm-plex-sans.css">
+	<title>[###INFO-TITLE|html###]</title>
+	<link rel="stylesheet" type="text/css" href="[###BASE-URL|html###]lib/core/plugins/fonts/typo/sans/ibm-plex-sans.css">
 	<style type="text/css">
 	* {
 		font-family: 'IBM Plex Sans', arial, sans-serif;
@@ -98,16 +98,16 @@
 <body>
 <div id="top">
 	<h1 style="display:inline-block;">
-[%%%%IF:LINK-WELCOME:!=;%%%%]
-	<a href="[####LINK-WELCOME|html####]" title="[####TEXT-WELCOME|html####]" style="margin-right:8px;">
-[%%%%/IF:LINK-WELCOME%%%%]
-		<img height="48" src="[####BASE-URL|html####][####IMG-SVG-LOGO|html####]" align="left">
-[%%%%IF:LINK-WELCOME:!=;%%%%]
+[%%%IF:LINK-WELCOME:!=;%%%]
+	<a href="[###LINK-WELCOME|html###]" title="[###TEXT-WELCOME|html###]" style="margin-right:8px;">
+[%%%/IF:LINK-WELCOME%%%]
+		<img height="48" src="[###BASE-URL|html###][###IMG-SVG-LOGO|html###]" align="left">
+[%%%IF:LINK-WELCOME:!=;%%%]
 	</a>
-[%%%%ELSE:LINK-WELCOME%%%%]
+[%%%ELSE:LINK-WELCOME%%%]
 &nbsp;
-[%%%%/IF:LINK-WELCOME%%%%]
-	[####INFO-HEADING|html####] &nbsp; </h1><h4 style="display:inline-block;"><span style="color:#FF3300;">{[####INFO-AUTHNAME|html####]}:</span>&nbsp;<span style="color:#778899;">&lt;[####CRR-PATH|html####]&gt;</span></h4>
+[%%%/IF:LINK-WELCOME%%%]
+	[###INFO-HEADING|html###] &nbsp; </h1><h4 style="display:inline-block;"><span style="color:#FF3300;">{[###INFO-AUTHNAME|html###]}:</span>&nbsp;<span style="color:#778899;">&lt;[###CRR-PATH|html###]&gt;</span></h4>
 </div>
 <br>
 <div id="lst">
@@ -121,51 +121,51 @@
 	<tr>
 		<td colspan="4" style="background:#FFFFFF!important;"><hr size="1"></td>
 	</tr>
-[%%%%IF:IS-ROOT:!=yes;%%%%]
+[%%%IF:IS-ROOT:!=yes;%%%]
 	<tr>
-		<td colspan="4" style="background:#FFFFFF!important;"><b><a href="[####BACK-PATH|html####]" title="Go to Parent Directory: [####BACK-PATH|html####]">..^..</a></b></td>
+		<td colspan="4" style="background:#FFFFFF!important;"><b><a href="[###BACK-PATH|html###]" title="Go to Parent Directory: [###BACK-PATH|html###]">..^..</a></b></td>
 	</tr>
-[%%%%/IF:IS-ROOT%%%%]
-[%%%%LOOP:LIST-DIRS%%%%]
+[%%%/IF:IS-ROOT%%%]
+[%%%LOOP:LIST-DIRS%%%]
 	<tr>
-		<td style="color:#437700;"><b><a href="[####LIST-DIRS.LINK|html####]" style="color:#437700;">[####LIST-DIRS.NAME|html####]</a></b></td>
-		<td style="color:#437700; text-align:center;">[####LIST-DIRS.TYPE|html####]</td>
-		<td style="color:#778899;"><b>[####LIST-DIRS.SIZE|html####]</b></td>
-		<td style="color:#778899; text-align:right;">[####LIST-DIRS.MODIF|html####]</td>
+		<td style="color:#437700;"><b><a href="[###LIST-DIRS.LINK|html###]" style="color:#437700;">[###LIST-DIRS.NAME|html###]</a></b></td>
+		<td style="color:#437700; text-align:center;">[###LIST-DIRS.TYPE|html###]</td>
+		<td style="color:#778899;"><b>[###LIST-DIRS.SIZE|html###]</b></td>
+		<td style="color:#778899; text-align:right;">[###LIST-DIRS.MODIF|html###]</td>
 	</tr>
-[%%%%/LOOP:LIST-DIRS%%%%]
-[%%%%LOOP:LIST-FILES%%%%]
+[%%%/LOOP:LIST-DIRS%%%]
+[%%%LOOP:LIST-FILES%%%]
 	<tr>
-		<td style="color:#003399;"><b><a href="[####LIST-FILES.LINK|html####]" style="color:#003399;">[####LIST-FILES.NAME|html####]</a></b></td>
-		<td style="color:#003399; text-align:center;">[####LIST-FILES.TYPE|html####]</td>
-		<td style="color:#778899;"><b>[####LIST-FILES.SIZE|html####]</b></td>
-		<td style="color:#778899; text-align:right;">[####LIST-FILES.MODIF|html####]</td>
+		<td style="color:#003399;"><b><a href="[###LIST-FILES.LINK|html###]" style="color:#003399;">[###LIST-FILES.NAME|html###]</a></b></td>
+		<td style="color:#003399; text-align:center;">[###LIST-FILES.TYPE|html###]</td>
+		<td style="color:#778899;"><b>[###LIST-FILES.SIZE|html###]</b></td>
+		<td style="color:#778899; text-align:right;">[###LIST-FILES.MODIF|html###]</td>
 	</tr>
-[%%%%/LOOP:LIST-FILES%%%%]
+[%%%/LOOP:LIST-FILES%%%]
 	</tbody></table>
 </div>
 <hr>
 <div>
 <div style="color:#AAAAAA; text-align:center; font-size:11px;font-weight:bold;">
-	!storage!:&lt;[####CRR-PATH|html####]&gt;:{current.statistics} : Dirs:&nbsp;[####NUM-CRR-DIRS|int####] ; Files:&nbsp;[####NUM-CRR-FILES|int####]
+	!storage!:&lt;[###CRR-PATH|html###]&gt;:{current.statistics} : Dirs:&nbsp;[###NUM-CRR-DIRS|int###] ; Files:&nbsp;[###NUM-CRR-FILES|int###]
 </div>
 <div style="color:#CCCCCC; text-align:center; font-size:11px;font-weight:bold;">
-[%%%%IF:DISPLAY-QUOTA:==yes;%%%%]
-	!storage!:&lt;DAV&gt;:{overall.statistics} : Dirs:&nbsp;[####NUM-DIRS|int####] ; Files:&nbsp;[####NUM-FILES|int####] ; UsedSpace:&nbsp;[####QUOTA-USED|html####] ; FreeSpace:&nbsp;[####QUOTA-FREE|html####] ; QuotaSpace:&nbsp;[####QUOTA-SPACE|html####]
-[%%%%ELSE:DISPLAY-QUOTA%%%%]
+[%%%IF:DISPLAY-QUOTA:==yes;%%%]
+	!storage!:&lt;DAV&gt;:{overall.statistics} : Dirs:&nbsp;[###NUM-DIRS|int###] ; Files:&nbsp;[###NUM-FILES|int###] ; UsedSpace:&nbsp;[###QUOTA-USED|html###] ; FreeSpace:&nbsp;[###QUOTA-FREE|html###] ; QuotaSpace:&nbsp;[###QUOTA-SPACE|html###]
+[%%%ELSE:DISPLAY-QUOTA%%%]
 	!storage!:&lt;DAV&gt;:{overall.statistics} : N/A
-[%%%%/IF:DISPLAY-QUOTA%%%%]
+[%%%/IF:DISPLAY-QUOTA%%%]
 </div>
 </div>
 <hr>
-<div align="right"><address><font color="#778899"><small>[####INFO-SIGNATURE|html####]</small></font></address></div>
+<div align="right"><address><font color="#778899"><small>[###INFO-SIGNATURE|html###]</small></font></address></div>
 <br>
 <br>
-[%%%%IF:SHOW-POST-FORM:==yes;%%%%]
+[%%%IF:SHOW-POST-FORM:==yes;%%%]
 <div style="position:fixed; top:5px; right:10px; border: 1px solid #CCCCCC; background: #ECECEC; opacity: 0.95; border-radius: 5px; padding: 4px;"> <!-- onmouseover="this.style.opacity=0.95;" onmouseout="this.style.opacity=0.55;" -->
 	<table border="0" cellpadding="0">
 		<tr valign="middle">
-			<td title="[####DIR-NEW-INFO|html####]" style="cursor:help;"><h5 style="display:inline;">New Folder</h5></td>
+			<td title="[###DIR-NEW-INFO|html###]" style="cursor:help;"><h5 style="display:inline;">New Folder</h5></td>
 			<td>&nbsp;&nbsp;</td>
 			<td>
 				<form method="post" action="">
@@ -179,7 +179,7 @@
 			</td>
 		</tr>
 		<tr valign="middle">
-			<td title="[####MAX-UPLOAD-INFO|html####]" style="cursor:help;"><h5 style="display:inline;">New File</h5></td>
+			<td title="[###MAX-UPLOAD-INFO|html###]" style="cursor:help;"><h5 style="display:inline;">New File</h5></td>
 			<td>&nbsp;&nbsp;</td>
 			<td>
 				<form method="post" action="" enctype="multipart/form-data">
@@ -194,7 +194,7 @@
 		</tr>
 	</table>
 </div>
-[%%%%/IF:SHOW-POST-FORM%%%%]
-<!-- Smart.Framework::DAV @ Version: [[####INFO-VERSION|html####]] -->
+[%%%/IF:SHOW-POST-FORM%%%]
+<!-- Smart.Framework::DAV @ Version: [[###INFO-VERSION|html###]] -->
 </body>
 </html>

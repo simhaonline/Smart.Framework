@@ -1,7 +1,7 @@
 <?php
 // AppCodePack - Release Manager: a PHP, JS and CSS Optimizer + NetArchive Packer
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //===== CODE OPTIMIZATIONS INFO:
 // The AppCodePack optimize will process the following type of source code (php/js/css):
@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20191023.1137'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20191110.1457'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -715,7 +715,7 @@ function RunApp() {
 final class AppCodeOptimizer {
 
 	// ->
-	// v.171005
+	// v.20191110
 
 	private $log;
 	private $err;
@@ -1273,7 +1273,7 @@ final class AppCodeOptimizer {
 final class PhpOptimizer {
 
 	// ::
-	// v.181225
+	// v.20191110
 
 	private static $strip_autoloaded = false;
 
@@ -1384,7 +1384,7 @@ public static function lint_code($y_script_path) {
 final class JsOptimizer {
 
 	// ::
-	// v.181225
+	// v.20191110
 
 	private static $strip_autoloaded = false;
 
@@ -1568,7 +1568,7 @@ public static function lint_code($y_script_path) {
 final class CssOptimizer {
 
 	// ::
-	// v.181225
+	// v.20191110
 
 	private static $strip_autoloaded = false;
 
@@ -1728,7 +1728,7 @@ public static function minify_code($y_stylesheet_path) {
 final class AppNetPackager {
 
 	// ->
-	// v.171005
+	// v.20191110
 
 //=====================================================================================
 //--
@@ -2196,7 +2196,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20191023 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20191110 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3010,7 +3010,7 @@ Options -Indexes
 	} //END FUNCTION
 
 
-	//##### Smart v.20191011
+	//##### Smart v.20191103
 
 
 	//================================================================
@@ -3505,7 +3505,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.20191023
+	//##### SmartUtils v.20191103
 
 
 	//================================================================
@@ -3658,7 +3658,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20190221
+	//##### SmartFileSysUtils v.20191105
 
 
 	//================================================================
@@ -3968,7 +3968,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20190221
+	//##### SmartFileSystem v.20191105
 
 
 	//================================================================

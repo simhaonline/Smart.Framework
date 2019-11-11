@@ -1,7 +1,7 @@
 <?php
 // [Smart.Framework / App Runtime]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -22,9 +22,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 // [REGEX-SAFE-OK]
 
-//##### WARNING: #####
+//===== WARNING: =====
 // DO NOT CHANGE the code below (it may lead to severe disrupts in the execution of this software), but of course you can do it on your own risk !!!
-//####################
+//====================
 
 //--
 if(version_compare((string)phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.6 as minimum ; prefer PHP 7.x instead of 5.6
@@ -46,8 +46,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.3.7.8'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.11.07'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.2.7'); 	// tag version
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.11.11'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -281,7 +281,7 @@ require('etc/config.php'); // load the main configuration, after GET/POST regist
 
 //--------------------------------------- LOAD SMART-FRAMEWORK
 require('lib/framework/lib__smart_framework.php');
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -371,15 +371,15 @@ if(!is_subclass_of('SmartAppBootstrap', 'SmartInterfaceAppBootstrap', true)) {
 } //end if
 //---------------------------------------
 
-//######################### MONITOR: REDIRECTION CONTROLLER
+//========================= MONITOR: REDIRECTION CONTROLLER
 SmartFrameworkRuntime::Redirection_Monitor();
-//######################### REGISTER UNIQUE ID COOKIE (required before run)
+//========================= REGISTER UNIQUE ID COOKIE (required before run)
 SmartFrameworkRuntime::SetVisitorEntropyIDCookie(); // will define the constant SMART_APP_VISITOR_COOKIE ; cookie will be set only if SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME is non empty
-//######################### APP.BOOTSTRAP: RUN
+//========================= APP.BOOTSTRAP: RUN
 SmartAppBootstrap::Run();
-//#########################
+//=========================
 SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISITOR_COOKIE);
-//#########################
+//=========================
 
 
 //==================================================================================
@@ -611,7 +611,7 @@ final class SmartFrameworkRegistry {
 	private static $CookieVars  = array();  // cookie registry
 
 
-	//##### Public Methods
+	//===== Public Methods
 
 
 	public static function setRequestPath($value) {
@@ -827,7 +827,7 @@ final class SmartFrameworkRegistry {
 	} //END FUNCTION
 
 
-	//##### Internal Lock Control
+	//===== Internal Lock Control
 
 
 	/**
@@ -843,7 +843,7 @@ final class SmartFrameworkRegistry {
 	} //END FUNCTION
 
 
-	//##### Debugging
+	//===== Debugging
 
 
 	/**
@@ -1326,7 +1326,7 @@ final class SmartFrameworkRuntime {
 
 		//--
 		if(self::ifDebug()) {
-			self::DebugRequestLog('######################### FILTER REQUEST:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'##### RAW REQUEST VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
+			self::DebugRequestLog('========================= FILTER REQUEST:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'===== RAW REQUEST VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
 		} //end if
 		//--
 
@@ -1374,7 +1374,7 @@ final class SmartFrameworkRuntime {
 
 		//--
 		if(self::ifDebug()) {
-			self::DebugRequestLog('########## END REQUEST FILTER ##########'."\n\n");
+			self::DebugRequestLog('========== #END REQUEST FILTER =========='."\n\n");
 		} //end if
 		//--
 
@@ -1402,7 +1402,7 @@ final class SmartFrameworkRuntime {
 
 		//--
 		if(self::ifDebug()) {
-			self::DebugRequestLog('######################### FILTER COOKIES:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'##### RAW COOKIE VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
+			self::DebugRequestLog('========================= FILTER COOKIES:'."\n".date('Y-m-d H:i:s O')."\n".$_SERVER['REQUEST_URI']."\n\n".'===== RAW COOKIE VARS:'."\n".'['.$filter_____info.']'."\n".print_r($filter_____arr, 1)."\n");
 		} //end if
 		//--
 
@@ -1445,7 +1445,7 @@ final class SmartFrameworkRuntime {
 
 		//--
 		if(self::ifDebug()) {
-			self::DebugRequestLog('########## END COOKIES FILTER ##########'."\n\n");
+			self::DebugRequestLog('========== #END COOKIES FILTER =========='."\n\n");
 		} //end if
 		//--
 
@@ -1875,7 +1875,7 @@ final class SmartFrameworkRuntime {
 	//======================================================================
 
 
-	#####
+	//=====
 
 
 	//======================================================================
@@ -1909,7 +1909,7 @@ final class SmartFrameworkRuntime {
 //==================================================================================
 
 
-//#########################
+//=========================
 //==
 if(defined('SMART_FRAMEWORK_APP_RUNTIME')) {
 	@http_response_code(500);
@@ -1918,7 +1918,7 @@ if(defined('SMART_FRAMEWORK_APP_RUNTIME')) {
 //==
 define('SMART_FRAMEWORK_APP_RUNTIME', 'SET');
 //==
-//#########################
+//=========================
 
 
 //end of php code

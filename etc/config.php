@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [Smart.Framework / CFG - SETTINGS]
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -11,7 +11,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 
-//######################################### Testing-ONLY Settings (Samples)
+//========================================= Testing-ONLY Settings (Samples)
 // !!! REMOVE these Testing-ONLY Settings when using this config in real production environments !!!
 // ... They are required just for Samples / Testing / Development purposes ...
 define('SMART_FRAMEWORK_TEST_MODE', true);
@@ -19,7 +19,7 @@ define('SMART_FRAMEWORK_TEST_MODE', true);
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', true); // redis
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS', true);
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_WEBDAV_TESTS', true);
-//######################################### END Testing-ONLY Settings
+//========================================= END Testing-ONLY Settings
 
 
 //--------------------------------------- Info URL

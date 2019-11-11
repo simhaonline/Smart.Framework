@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Markers-TPL Templating]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -29,7 +29,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
-//##### INFO:
+//===== INFO:
 // Markers-TPL Templating Engine is a very fast and 100% secure [*] PHP Templating Engine.
 // Because the Markers-TPL Templating is rendering the Views by injecting plain strings and data arrays directly into these Views (no PHP code, no re-interpreted PHP code) there is NO SECURITY RISK by injecting malicious PHP code into the Views
 // It does support: MARKERS, IF/ELSE, LOOP, INCLUDE syntax.
@@ -43,13 +43,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // 		_-VAL-_				The current loop value ; Available also in LOOP / IF
 // 		_-KEY-_				The current loop key ; Available *ONLY* for associative arrays ; Available also in LOOP / IF
 // Thus, this limitation must be compensated from the design of input variables.
-//##### TECHNICAL REFERENCE:
+//===== TECHNICAL REFERENCE:
 // Because the recursion patterns are un-predictable, as a template can be rendered in other template in controllers or libs,
 // the str_replace() is used internally instead of strtr()
 // but with a fix: will replace all values before assign as:
-// [#### => ⁅####- ; ####] => -####⁆ ; [%%%% => ⁅%%%%+/- ; %%%%] => -/+%%%%⁆ ; [@@@@ -> ⁅@@@@+/- ; @@@@] -> -/+@@@@⁆
+// [### => ⁅###¦ ; ###] => ¦###⁆ ; [%%% => ⁅%%%¦ ; %%%] => ¦%%%⁆ ; [@@@ -> ⁅@@@¦ ; @@@] -> ¦@@@⁆
 // in order to protect against unwanted or un-predictable recursions / replacements
-//#####
+//=====
 
 /**
  * Class: SmartMarkersTemplating - provides a very fast and low footprint templating system: Markers-TPL
@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191103
+ * @version 	v.20191111
  * @package 	@Core:TemplatingEngine
  *
  */
@@ -110,19 +110,19 @@ final class SmartMarkersTemplating {
 		$y_file_path = (string) $y_file_path;
 		//--
 		if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
-			return '<h1>{#### ERROR: Invalid Markers-TPL File Path ['.Smart::escape_html($y_file_path).'] ####}</h1>';
+			return '<h1>{### ERROR: Invalid Markers-TPL File Path ['.Smart::escape_html($y_file_path).'] ###}</h1>';
 		} //end if
 		if(!SmartFileSystem::is_type_file($y_file_path)) {
-			return '<h1>{#### ERROR: Invalid Markers-TPL File Type ['.Smart::escape_html($y_file_path).'] ####}</h1>';
+			return '<h1>{### ERROR: Invalid Markers-TPL File Type ['.Smart::escape_html($y_file_path).'] ###}</h1>';
 		} //end if
 		//--
 		$y_arr_sub_templates = (array) $y_arr_sub_templates;
 		//--
-		$mtemplate = (string) SmartFileSystem::read((string)$y_file_path);
+		$mtemplate = (string) self::do_read_template_file_from_fs((string)$y_file_path);
 		$original_mtemplate = (string) $mtemplate;
 		//-- add TPL START/END to see where it starts load
 		$matches = array();
-		preg_match_all('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$mtemplate, $matches, PREG_SET_ORDER, 0); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
+		preg_match_all('{\[@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]+)@@@\]}', (string)$mtemplate, $matches, PREG_SET_ORDER, 0); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + %
 		//die('<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>');
 		for($i=0; $i<Smart::array_size($matches); $i++) {
 			$mtemplate = (string) str_replace((string)$matches[$i][0], '[****SUB-TEMPLATE:'.(string)$matches[$i][1].'(*****INCLUDE:START{*****)****]'.(string)$matches[$i][0].'[****SUB-TEMPLATE:'.(string)$matches[$i][1].'(*****}INCLUDE:END*****)****]', (string)$mtemplate);
@@ -140,7 +140,7 @@ final class SmartMarkersTemplating {
 		if(Smart::array_size($arr_sub_templates) > 0) {
 			$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
 			$mtemplate = (string) self::load_subtemplates('no', $tpl_basepath, $mtemplate, $arr_sub_templates); // load sub-templates before template processing and use caching also for sub-templates if set
-			$mtemplate = str_replace(array('⁅@@@@-', '-@@@@⁆'), array('[@@@@', '@@@@]'), (string)$mtemplate); // FIX: revert protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+			$mtemplate = str_replace(array('⁅@@@¦', '¦@@@⁆'), array('[@@@', '@@@]'), (string)$mtemplate); // FIX: revert protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 		} //end if
 		$arr_sub_templates = array();
 		//--
@@ -157,7 +157,7 @@ final class SmartMarkersTemplating {
 	 * Escape a Marker Template (String Template ; no sub-templates are allowed as this function is intended to pass a template to be rendered via javascript ...)
 	 * NOTICE: This kind of escaped templates can be rendered by client-side javascript from a javascript variable in a HTML page using SmartJS_CoreUtils.renderMarkersTpl() function (not all features of the server-side Marker Templating are supported, see the SmartJS_CoreUtils documentation ...)
 	 *
-	 * @param 	STRING 		$mtemplate 						:: The Markers-TPL string (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+	 * @param 	STRING 		$mtemplate 						:: The Markers-TPL string (partial text/html + markers) ; Ex: '<span>[###MARKER1###]<br>[###MARKER2###], ...</span>'
 	 * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if Markers-TPL is empty ; 'no' will add a warning (default)
 	 *
 	 * @return 	STRING										:: The escaped template (it can be embedded in a javascript variable in a MTPL template to avoid conflicts with existing markers/syntax)
@@ -172,7 +172,7 @@ final class SmartMarkersTemplating {
 		if(((string)$y_ignore_if_empty != 'yes') AND ((string)$mtemplate == '')) {
 			//--
 			Smart::log_warning('Empty Markers-TPL Escape Content !');
-			$mtemplate = '{#### Empty Markers-TPL Escape Content. See the ErrorLog for Details. ####}';
+			$mtemplate = '{### Empty Markers-TPL Escape Content. See the ErrorLog for Details. ###}';
 			//--
 		} //end if
 		//--
@@ -186,7 +186,7 @@ final class SmartMarkersTemplating {
 	/**
 	 * Render Marker Template (String Template ; no sub-templates are allowed as there is no possibility to set a relative path from where to get them)
 	 *
-	 * @param 	STRING 		$mtemplate 						:: The Markers-TPL string (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+	 * @param 	STRING 		$mtemplate 						:: The Markers-TPL string (partial text/html + markers) ; Ex: '<span>[###MARKER1###]<br>[###MARKER2###], ...</span>'
 	 * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
 	 * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if Markers-TPL is empty ; 'no' will add a warning (default)
 	 *
@@ -202,7 +202,7 @@ final class SmartMarkersTemplating {
 		if(((string)$y_ignore_if_empty != 'yes') AND ((string)$mtemplate == '')) {
 			//--
 			Smart::log_warning('Empty Markers-TPL Content: '.print_r($y_arr_vars,1));
-			return '{#### Empty Markers-TPL Content. See the ErrorLog for Details. ####}';
+			return '{### Empty Markers-TPL Content. See the ErrorLog for Details. ###}';
 			//--
 		} //end if
 		//--
@@ -234,7 +234,7 @@ final class SmartMarkersTemplating {
 	/**
 	 * Render Marker File Template (incl. Sub-Templates from Files if any)
 	 *
-	 * @param 	STRING 		$y_file_path 					:: The relative path to the file Markers-TPL (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+	 * @param 	STRING 		$y_file_path 					:: The relative path to the file Markers-TPL (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[###MARKER1###]<br>[###MARKER2###], ...</span>'
 	 * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
 	 * @param 	ENUM 		$y_use_caching 					:: 'yes' will cache the template (incl. sub-templates if any) into memory to avoid re-read them from file system (to be used if a template is used more than once per execution) ; 'no' means no caching is used (default)
 	 *
@@ -251,11 +251,11 @@ final class SmartMarkersTemplating {
 		//--
 		if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
 			Smart::log_warning('Invalid Markers-TPL File Path: '.$y_file_path);
-			return '{#### Invalid Markers-TPL File Path. See the ErrorLog for Details. ####}';
+			return '{### Invalid Markers-TPL File Path. See the ErrorLog for Details. ###}';
 		} //end if
 		if(!SmartFileSystem::is_type_file($y_file_path)) {
 			Smart::log_warning('Invalid Markers-TPL File Type: '.$y_file_path);
-			return '{#### Invalid Markers-TPL File Type. See the ErrorLog for Details. ####}';
+			return '{### Invalid Markers-TPL File Type. See the ErrorLog for Details. ###}';
 		} //end if
 		//--
 		if(!is_array($y_arr_vars)) {
@@ -270,7 +270,7 @@ final class SmartMarkersTemplating {
 		$mtemplate = (string) self::read_template_or_subtemplate_file((string)$y_file_path, (string)$y_use_caching);
 		if((string)$mtemplate == '') {
 			Smart::log_warning('Empty or Un-Readable Markers-TPL File: '.$y_file_path);
-			return '{#### Empty Markers-TPL File. See the ErrorLog for Details. ####}';
+			return '{### Empty Markers-TPL File. See the ErrorLog for Details. ###}';
 		} //end if
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
@@ -317,7 +317,7 @@ final class SmartMarkersTemplating {
 	 * @access 		private
 	 * @internal
 	 *
-	 * @param 	STRING 		$mtemplate 						:: The Markers-TPL (partial text/html + markers) ; Ex: '<span>[####MARKER1####]<br>[####MARKER2####], ...</span>'
+	 * @param 	STRING 		$mtemplate 						:: The Markers-TPL (partial text/html + markers) ; Ex: '<span>[###MARKER1###]<br>[###MARKER2###], ...</span>'
 	 * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
 	 * @param 	STRING 		$y_sub_templates_base_path 		:: The (relative) base path of sub-templates files if they are used (required to be non-empty)
 	 * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if Markers-TPL is empty ; 'no' will add a warning (default)
@@ -338,7 +338,7 @@ final class SmartMarkersTemplating {
 		if(((string)$y_ignore_if_empty != 'yes') AND ((string)$mtemplate == '')) {
 			//--
 			Smart::log_warning('Empty Mixed Markers-TPL Content: '.print_r($y_arr_vars,1));
-			return '{#### Empty Mixed Markers-TPL Content. See the ErrorLog for Details. ####}';
+			return '{### Empty Mixed Markers-TPL Content. See the ErrorLog for Details. ###}';
 			//--
 		} //end if
 		//--
@@ -349,7 +349,7 @@ final class SmartMarkersTemplating {
 		//--
 		if((string)$y_sub_templates_base_path == '') {
 			Smart::log_warning('Empty Base Path for Mixed Markers-TPL Content: '.$mtemplate);
-			return '{#### Empty Base Path for Mixed Markers-TPL Content. See the ErrorLog for Details. ####}';
+			return '{### Empty Base Path for Mixed Markers-TPL Content. See the ErrorLog for Details. ###}';
 		} //end if
 		//-- make all keys upper
 		$y_arr_vars = (array) array_change_key_case((array)$y_arr_vars, CASE_UPPER); // make all keys upper (only 1st level, not nested)
@@ -424,6 +424,62 @@ final class SmartMarkersTemplating {
 
 	//================================================================
 	/**
+	 * Prepare a value or a template by escaping syntax
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 * @param 	STRING 		$val 							:: The template or value to be escaped
+	 *
+	 * @return 	STRING										:: The escaped string
+	 *
+	 */
+	public static function prepare_nosyntax_content($val) {
+		//--
+		if((string)$val != '') { // protect against replace reccurence if val is non-empty
+			//--
+			$arr_fix_safe = [];
+			$arr_fix_dbg = [];
+			//--
+			if(self::have_marker((string)$val)) {
+				$arr_fix_safe['[###'] = '⁅###';
+				$arr_fix_safe['###]'] = '###⁆';
+				$arr_fix_dbg[] = 'Markers';
+			} //end if
+			if(self::have_syntax((string)$val)) {
+				$arr_fix_safe['[%%%'] = '⁅%%%';
+				$arr_fix_safe['%%%]'] = '%%%⁆';
+				$arr_fix_dbg[] = 'Marker Syntax';
+			} //end if
+			if(self::have_subtemplate((string)$val)) {
+				$arr_fix_safe['[@@@'] = '⁅@@@';
+				$arr_fix_safe['@@@]'] = '@@@⁆';
+				$arr_fix_dbg[] = 'Marker Sub-Templates';
+			} //end if
+			//--
+			if(Smart::array_size($arr_fix_safe) > 0) {
+				if(SmartFrameworkRuntime::ifDebug()) {
+					// this notice is too complex to fix in all situations, thus make it show just on Debug !
+					// because many times the values come from variable sources: user input, database, ... this notice make non-sense anymore !!
+					Smart::log_notice('Invalid or Undefined Markers-TPL: '.implode(', ', (array)$arr_fix_dbg).' - detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
+				} //end if
+				$val = (string) str_replace(
+					(array) array_keys($arr_fix_safe), // dissalowed markers / syntax / sub-tpls
+					(array) array_values($arr_fix_safe), // fixed content, marked with +
+					(string) $val
+				); // protect against cascade / recursion / undefined variables - for content injections of: variables / syntax / sub-templates
+			} //end if
+			//--
+		} //end if
+		//--
+		return (string) $val;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
 	 * Prepare a HTML template for display in no-conflict mode: no syntax / markers will be parsed
 	 * To keep the markers and syntax as-is but avoiding conflicting with real markers / syntax it will encode as HTML Entities the following syntax patterns: [ ] # % @
 	 * !!! This is intended for very special usage ... !!!
@@ -463,30 +519,30 @@ final class SmartMarkersTemplating {
 			} //end if else
 			//--
 			$arr_fix_src = [
-				'[####',
-				'####]',
-				'[%%%%',
-				'%%%%]',
-				'[@@@@',
-				'@@@@]'
+				'[###',
+				'###]',
+				'[%%%',
+				'%%%]',
+				'[@@@',
+				'@@@]'
 			];
 			//--
 			$arr_fix_dst = [
-				'<span'.$arr_repls[0].'>&lbrack;&num;&num;&num;&num;</span>',
-				'<span'.$arr_repls[1].'>&num;&num;&num;&num;&rbrack;</span>',
-				'<span'.$arr_repls[2].'>&lbrack;&percnt;&percnt;&percnt;&percnt;</span>',
-				'<span'.$arr_repls[3].'>&percnt;&percnt;&percnt;&percnt;&rbrack;</span>',
-				'<span'.$arr_repls[4].'>&lbrack;&commat;&commat;&commat;&commat;</span>',
-				'<span'.$arr_repls[5].'>&commat;&commat;&commat;&commat;&rbrack;</span>'
+				'<span'.$arr_repls[0].'>&lbrack;###</span>',
+				'<span'.$arr_repls[1].'>###&rbrack;</span>',
+				'<span'.$arr_repls[2].'>&lbrack;%%%</span>',
+				'<span'.$arr_repls[3].'>%%%&rbrack;</span>',
+				'<span'.$arr_repls[4].'>&lbrack;@@@</span>',
+				'<span'.$arr_repls[5].'>@@@&rbrack;</span>'
 			];
 			//--
 			if($analyze_dbg === true) {
 				//--
-				$arr_fix_src[] = '[****';
-				$arr_fix_src[] = '****]';
+				$arr_fix_src[] = '[***';
+				$arr_fix_src[] = '***]';
 				//--
-				$arr_fix_dst[] = '<span'.$arr_repls[4].'>&lbrack;&commat;&commat;&commat;&commat;</span>';
-				$arr_fix_dst[] = '<span'.$arr_repls[5].'>&commat;&commat;&commat;&commat;&rbrack;</span>';
+				$arr_fix_dst[] = '<span'.$arr_repls[4].'>&lbrack;@@@</span>';
+				$arr_fix_dst[] = '<span'.$arr_repls[5].'>@@@&rbrack;</span>';
 				//--
 			} //end if else
 			//--
@@ -504,7 +560,7 @@ final class SmartMarkersTemplating {
 	//================================================================
 
 
-	//##### PRIVATES
+	//===== PRIVATES
 
 
 	//================================================================
@@ -552,7 +608,7 @@ final class SmartMarkersTemplating {
 	 */
 	private static function analize_extract_markers($mtemplate) {
 		//--
-		return (array) self::analize_parts_extract('/####([A-Z0-9_\-\.]+)/', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-MARKER}}} :: start part only :: - [ - ] (can be in IF statement) ; uppercase
+		return (array) self::analize_parts_extract('/###([A-Z0-9_\-\.]+)/', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-MARKER}}} :: start part only :: - [ - ] (can be in IF statement) ; uppercase
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -570,7 +626,7 @@ final class SmartMarkersTemplating {
 	 */
 	private static function analize_extract_ifs($mtemplate) {
 		//--
-		return (array) self::analize_parts_extract('{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-IF}}} :: start part only ; uppercase
+		return (array) self::analize_parts_extract('{\[%%%IF\:([a-zA-Z0-9_\-\.]+)\:}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-IF}}} :: start part only ; uppercase
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -588,7 +644,7 @@ final class SmartMarkersTemplating {
 	 */
 	private static function analize_extract_loops($mtemplate) {
 		//--
-		return (array) self::analize_parts_extract('{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\]}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-LOOP}}} ; uppercase
+		return (array) self::analize_parts_extract('{\[%%%LOOP\:([a-zA-Z0-9_\-\.]+)((\([0-9]+\))?%%)%%\]}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-LOOP}}} ; uppercase
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -606,7 +662,7 @@ final class SmartMarkersTemplating {
 	 */
 	private static function analize_extract_specials($mtemplate) {
 		//--
-		return (array) self::analize_parts_extract('{\[%%%%\|?([a-zA-Z0-9_\-\.]+)%%%%\]}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-SPECIALS}}} ; uppercase
+		return (array) self::analize_parts_extract('{\[%%%\|?([a-zA-Z0-9_\-\.]+)%%%\]}sU', (string)$mtemplate, true); // {{{SYNC-TPL-EXPR-SPECIALS}}} ; uppercase
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -624,7 +680,7 @@ final class SmartMarkersTemplating {
 	 */
 	private static function analize_extract_subtpls($mtemplate) {
 		//--
-		return (array) self::analize_parts_extract('{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}', (string)$mtemplate, false); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + % ; preserve case
+		return (array) self::analize_parts_extract('{\[@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]+)@@@\]}', (string)$mtemplate, false); // FIX: add an extra % to parse also SUB-TPL %vars% # {{{SYNC-TPL-EXPR-SUBTPL}}} :: + % ; preserve case
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -666,7 +722,7 @@ final class SmartMarkersTemplating {
 		//-- loaded sub-tpls
 		$html .= '<td align="left" colspan="2">';
 		$html .= '<table id="'.'__marker__template__analyzer-ldsubtpls_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="950" style="font-size:0.750em!important;">';
-		$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:LOADED@@@@]<br><small>*** All Loaded Sub-Templates are listed below ***</small></th><th>#'.'&nbsp;('.(int)Smart::array_size(self::$MkTplAnalyzeLdRegDbg).')'.'</th></tr>';
+		$html .= '<tr align="center"><th>[@@@SUB-TEMPLATES:LOADED@@@]<br><small>*** All Loaded Sub-Templates are listed below ***</small></th><th>#'.'&nbsp;('.(int)Smart::array_size(self::$MkTplAnalyzeLdRegDbg).')'.'</th></tr>';
 		if(Smart::array_size(self::$MkTplAnalyzeLdRegDbg) > 0) {
 			foreach(self::$MkTplAnalyzeLdRegDbg as $key => $val) {
 				$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -679,7 +735,7 @@ final class SmartMarkersTemplating {
 		$html .= '<table id="'.'__marker__template__analyzer-subtpls_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;">';
 		$arr_subtpls = (array) self::analize_extract_subtpls($y_original_mtemplate);
 		ksort($arr_subtpls);
-		$html .= '<tr align="center"><th>[@@@@SUB-TEMPLATES:SLOTS@LEVEL-1@@@@]<br><small>*** Only Level-1 Sub-Templates slots are listed below ***</small></th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_subtpls).')'.'</th></tr>';
+		$html .= '<tr align="center"><th>[@@@SUB-TEMPLATES:SLOTS@LEVEL-1@@@]<br><small>*** Only Level-1 Sub-Templates slots are listed below ***</small></th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_subtpls).')'.'</th></tr>';
 		foreach($arr_subtpls as $key => $val) {
 			$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
 		} //end for
@@ -691,7 +747,7 @@ final class SmartMarkersTemplating {
 		//-- marker vars
 		$arr_marks = (array) self::analize_extract_markers($mtemplate);
 		ksort($arr_marks);
-		$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[####MARKER-VARIABLES####]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_marks).')'.'</th></tr>';
+		$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-markers_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[###MARKER-VARIABLES###]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_marks).')'.'</th></tr>';
 		foreach($arr_marks as $key => $val) {
 			if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
 				$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -710,7 +766,7 @@ final class SmartMarkersTemplating {
 		//-- loop vars
 		$arr_loops = (array) self::analize_extract_loops($mtemplate);
 		ksort($arr_loops);
-		$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%LOOP:VARIABLES%%%%]<br>[%%%%/LOOP:VARIABLES%%%%]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_loops).')'.'</th></tr>';
+		$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-loopvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%LOOP:VARIABLES%%%]<br>[%%%/LOOP:VARIABLES%%%]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_loops).')'.'</th></tr>';
 		foreach($arr_loops as $key => $val) {
 			if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
 				$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -729,7 +785,7 @@ final class SmartMarkersTemplating {
 		//-- if vars
 		$arr_ifs = (array) self::analize_extract_ifs($mtemplate);
 		ksort($arr_ifs);
-		$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%%IF:VARIABLES:@=;%%%%]<br>[%%%%ELSE:VARIABLES%%%%]<br>[%%%%/IF:VARIABLES%%%%]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_ifs).')'.'</th></tr>';
+		$html .= '<td width="33%"><table id="'.'__marker__template__analyzer-ifvars_'.Smart::escape_html($hash).'" class="debug-table debug-table-striped" cellspacing="0" cellpadding="4" width="525" style="font-size:0.750em!important;"><tr align="center"><th>[%%%IF:VARIABLES:{condition};%%%]<br>[%%%ELSE:VARIABLES%%%]<br>[%%%/IF:VARIABLES%%%]</th><th>#'.'&nbsp;('.(int)Smart::array_size($arr_ifs).')'.'</th></tr>';
 		foreach($arr_ifs as $key => $val) {
 			if((strpos((string)$key, '.-_') === false) AND (strpos((string)$key, '_-') === false)) { // {{{SYNC-VARS-RESERVED-KEYS}}}
 				$html .= '<tr><td align="left">'.Smart::escape_html((string)$key).'</td><td align="right">'.Smart::escape_html((string)$val).'</td></tr>';
@@ -783,7 +839,7 @@ final class SmartMarkersTemplating {
 		if(self::have_marker((string)$mtemplate) === true) {
 			$arr_marks = (array) self::analize_extract_markers($mtemplate);
 			Smart::log_notice('Invalid or Undefined Markers-TPL: Markers detected in Template:'."\n".'MARKERS:'.print_r($arr_marks,1)."\n".self::log_template($mtemplate));
-			$mtemplate = (string) str_replace(array('[####', '####]'), array('⁅####-', '-####⁆'), (string)$mtemplate); // finally protect against undefined variables
+			$mtemplate = (string) str_replace(array('[###', '###]'), array('⁅###¦', '¦###⁆'), (string)$mtemplate); // finally protect against undefined variables
 		} //end if
 		//-- debug end
 		if(SmartFrameworkRuntime::ifDebug()) {
@@ -804,7 +860,7 @@ final class SmartMarkersTemplating {
 	// test if the template have at least one marker
 	private static function have_marker($mtemplate) {
 		//--
-		if(strpos((string)$mtemplate, '[####') !== false) {
+		if(strpos((string)$mtemplate, '[###') !== false) {
 			return true;
 		} else {
 			return false;
@@ -818,7 +874,7 @@ final class SmartMarkersTemplating {
 	// test if the template have at least one syntax
 	private static function have_syntax($mtemplate) {
 		//--
-		if(strpos((string)$mtemplate, '[%%%%') !== false) {
+		if(strpos((string)$mtemplate, '[%%%') !== false) {
 			return true;
 		} else {
 			return false;
@@ -832,7 +888,7 @@ final class SmartMarkersTemplating {
 	// test if the template have at least one sub-template
 	private static function have_subtemplate($mtemplate) {
 		//--
-		if(strpos((string)$mtemplate, '[@@@@') !== false) {
+		if(strpos((string)$mtemplate, '[@@@') !== false) {
 			return true;
 		} else {
 			return false;
@@ -847,85 +903,51 @@ final class SmartMarkersTemplating {
 	/* {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}}
 	<!-- INFO: The VALID Escaping and Transformers for a Marker are all below ; If other escaping sequences are used the Marker will not be detected and replaced ... -->
 	<!-- Valid Escapings and Transformers: |bool |int |dec[1-4]{1} |num |htmid |jsvar |slug |substr[0-9]{1,5} |subtxt[0-9]{1,5} |lower |upper |ucfirst |ucwords |trim |url |json |js |html |css |nl2br -->
-	[####MARKER####]
-	[####MARKER|bool####]
-	[####MARKER|int####]
-	[####MARKER|dec1####]
-	[####MARKER|dec2####]
-	[####MARKER|dec3####]
-	[####MARKER|dec4####]
-	[####MARKER|num####]
-	[####MARKER|htmid####]
-	[####MARKER|slug####]
-	[####MARKER|jsvar####]
-	[####MARKER|json####]
-		[####MARKER|json|url####]
-		[####MARKER|json|js####] 			** not necessary unless special purpose **
-		[####MARKER|json|html####]
-		[####MARKER|json|url|js####]
-		[####MARKER|json|url|html####]
-		[####MARKER|json|js|html####] 		** not necessary unless special purpose **
-		[####MARKER|json|url|js|html####] 	** not necessary unless special purpose **
-	[####MARKER|lower|html####]
-	[####MARKER|upper|html####]
-	[####MARKER|ucfirst|html####]
-	[####MARKER|ucwords|html####]
-	[####MARKER|trim|html####]
-	[####MARKER|substr1|html####]
-	[####MARKER|subtxt65535|html####]
-	[####MARKER|url####]
-	[####MARKER|url|js####]
-	[####MARKER|url|html####]
-	[####MARKER|url|js|html####] 			** not necessary unless special purpose **
-	[####MARKER|js####]
-	[####MARKER|js|html####] 				** not necessary unless special purpose **
-	[####MARKER|html####]
-	[####MARKER|html|nl2br####]
-	[####MARKER|html|nl2br|url|js####]
-	[####MARKER|html|nl2br|js|url####]
-	[####MARKER|css####]
+	[###MARKER###]
+	[###MARKER|bool###]
+	[###MARKER|int###]
+	[###MARKER|dec1###]
+	[###MARKER|dec2###]
+	[###MARKER|dec3###]
+	[###MARKER|dec4###]
+	[###MARKER|num###]
+	[###MARKER|htmid###]
+	[###MARKER|slug###]
+	[###MARKER|jsvar###]
+	[###MARKER|json###]
+		[###MARKER|json|url###]
+		[###MARKER|json|js###] 			** not necessary unless special purpose **
+		[###MARKER|json|html###]
+		[###MARKER|json|url|js###]
+		[###MARKER|json|url|html###]
+		[###MARKER|json|js|html###] 		** not necessary unless special purpose **
+		[###MARKER|json|url|js|html###] 	** not necessary unless special purpose **
+	[###MARKER|lower|html###]
+	[###MARKER|upper|html###]
+	[###MARKER|ucfirst|html###]
+	[###MARKER|ucwords|html###]
+	[###MARKER|trim|html###]
+	[###MARKER|substr1|html###]
+	[###MARKER|subtxt65535|html###]
+	[###MARKER|url###]
+	[###MARKER|url|js###]
+	[###MARKER|url|html###]
+	[###MARKER|url|js|html###] 			** not necessary unless special purpose **
+	[###MARKER|js###]
+	[###MARKER|js|html###] 				** not necessary unless special purpose **
+	[###MARKER|html###]
+	[###MARKER|html|nl2br###]
+	[###MARKER|html|nl2br|url|js###]
+	[###MARKER|html|nl2br|js|url###]
+	[###MARKER|css###]
 	*/
-	private static function replace_marker($mtemplate, $key, $val) { // v.181211
+	private static function replace_marker($mtemplate, $key, $val) { // v.20191109
 		//-- {{{SYNC-TPL-EXPR-MARKER}}}
-		if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[####'.$key) !== false)) {
+		if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[###'.$key) !== false)) {
 			//--
-			$regex = '/\[####'.preg_quote((string)$key, '/').'((\|[a-z0-9]+)*)'.'####\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
+			$regex = '/\[###'.preg_quote((string)$key, '/').'((\|[a-z0-9]+)*)'.'###\]/'; // {{{SYNC-REGEX-MARKER-TEMPLATES}}}
 			//--
-			if((string)$val != '') { // protect against replace reccurence if val is non-empty
-				//--
-				$arr_fix_safe = array();
-				$arr_fix_dbg = array();
-				//--
-				if(self::have_marker((string)$val)) {
-					$arr_fix_safe['[####'] = '⁅####+';
-					$arr_fix_safe['####]'] = '+####⁆';
-					$arr_fix_dbg[] = 'Markers';
-				} //end if
-				if(self::have_syntax((string)$val)) {
-					$arr_fix_safe['[%%%%'] = '⁅%%%%+';
-					$arr_fix_safe['%%%%]'] = '+%%%%⁆';
-					$arr_fix_dbg[] = 'Marker Syntax';
-				} //end if
-				if(self::have_subtemplate((string)$val)) {
-					$arr_fix_safe['[@@@@'] = '⁅@@@@+';
-					$arr_fix_safe['@@@@]'] = '+@@@@⁆';
-					$arr_fix_dbg[] = 'Marker Sub-Templates';
-				} //end if
-				//--
-				if(Smart::array_size($arr_fix_safe) > 0) {
-					if(SmartFrameworkRuntime::ifDebug()) {
-						// this notice is too complex to fix in all situations, thus make it show just on Debug !
-						// because many times the values come from variable sources: user input, database, ... this notice make non-sense anymore !!
-						Smart::log_notice('Invalid or Undefined Markers-TPL: '.implode(', ', (array)$arr_fix_dbg).' - detected in Replacement Key: '.$key.' -> [Val: '.$val.'] for Template:'."\n".self::log_template($mtemplate));
-					} //end if
-					$val = (string) str_replace(
-						(array) array_keys($arr_fix_safe), // dissalowed markers / syntax / sub-tpls
-						(array) array_values($arr_fix_safe), // fixed content, marked with +
-						(string) $val
-					); // protect against cascade / recursion / undefined variables - for content injections of: variables / syntax / sub-templates
-				} //end if
-				//--
-			} //end if
+			$val = (string) self::prepare_nosyntax_content($val);
 			//--
 			$matches = array();
 			preg_match_all((string)$regex, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
@@ -1125,7 +1147,7 @@ final class SmartMarkersTemplating {
 				$arr_specials = '';
 			} //end if else
 			Smart::log_notice('Invalid or Undefined Markers-TPL: Marker Syntax detected in Template:'.$arr_ifs.$arr_loops.$arr_specials."\n".self::log_template($mtemplate));
-			$mtemplate = (string) str_replace(array('[%%%%', '%%%%]'), array('⁅%%%%-', '-%%%%⁆'), (string)$mtemplate); // finally protect against invalid loops (may have not bind to an existing var or invalid syntax)
+			$mtemplate = (string) str_replace(array('[%%%', '%%%]'), array('⁅%%%¦', '¦%%%⁆'), (string)$mtemplate); // finally protect against invalid loops (may have not bind to an existing var or invalid syntax)
 		} //end if
 		//--
 		return (string) $mtemplate;
@@ -1138,10 +1160,10 @@ final class SmartMarkersTemplating {
 	// process the template COMMENT syntax
 	private static function process_comments_syntax($mtemplate) {
 		//--
-		if(strpos((string)$mtemplate, '[%%%%COMMENT') !== false) {
+		if(strpos((string)$mtemplate, '[%%%COMMENT') !== false) {
 			//--
-			//$pattern = '{\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]}sU';
-			$pattern = '{\s?\[%%%%COMMENT%%%%\](.*)?\[%%%%\/COMMENT%%%%\]\s?}sU'; // Fix: trim parts
+			//$pattern = '{\[%%%COMMENT%%%\](.*)?\[%%%\/COMMENT%%%\]}sU';
+			$pattern = '{\s?\[%%%COMMENT%%%\](.*)?\[%%%\/COMMENT%%%\]\s?}sU'; // Fix: trim parts
 			$mtemplate = (string) preg_replace($pattern, '', (string)$mtemplate);
 			//--
 		} //end if
@@ -1156,16 +1178,16 @@ final class SmartMarkersTemplating {
 	// process the template special syntax to preserve special characters if required: Square-Brackets(L/R), \r, \n, \t, SPACE
 	private static function process_brntspace_syntax($mtemplate) {
 		//--
-		if(strpos((string)$mtemplate, '[%%%%|') !== false) {
+		if(strpos((string)$mtemplate, '[%%%|') !== false) {
 			//--
 			$mtemplate = (string) str_replace(
 				[
-					'[%%%%|SB-L%%%%]', // left square bracket
-					'[%%%%|SB-R%%%%]', // right square bracket
-					'[%%%%|R%%%%]',
-					'[%%%%|N%%%%]',
-					'[%%%%|T%%%%]',
-					'[%%%%|SPACE%%%%]'
+					'[%%%|SB-L%%%]', // left square bracket
+					'[%%%|SB-R%%%]', // right square bracket
+					'[%%%|R%%%]',
+					'[%%%|N%%%]',
+					'[%%%|T%%%]',
+					'[%%%|SPACE%%%]'
 				],
 				[
 					'［',
@@ -1187,11 +1209,11 @@ final class SmartMarkersTemplating {
 
 
 	//================================================================
-	// process the template IF syntax, nested ... on n+ levels ; compare values are compared as binary (not unicode as the regex is bind to binary mode) ; if more than these # a-z A-Z 0-9 _ - . | have to be used, it can use a ####COMPARISON-MARKER#### instead
+	// process the template IF syntax, nested ... on n+ levels ; compare values are compared as binary (not unicode as the regex is bind to binary mode) ; if more than these # a-z A-Z 0-9 _ - . | have to be used, it can use a ###COMPARISON-MARKER### instead
 	// values in $y_arr_vars have precedence over values in $y_arr_context ; to use $y_arr_context a non-empty $y_context is required ; $y_arr_context will hold contextual values for the current loop
 	private static function process_if_syntax($mtemplate, $y_arr_vars, $y_context='', $y_arr_context=[]) {
 		//--
-		if(strpos((string)$mtemplate, '[%%%%IF:') !== false) {
+		if(strpos((string)$mtemplate, '[%%%IF:') !== false) {
 			//--
 			if(!is_array($y_arr_vars)) {
 				Smart::log_warning('Marker Template LOOP: Invalid Array Passed ...');
@@ -1205,8 +1227,8 @@ final class SmartMarkersTemplating {
 				$y_arr_context = [];
 			} //end if
 			//-- {{{SYNC-TPL-EXPR-IF}}}
-		//	$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>\=|\>|\!%|%|@\=|@\!|@\+|@\-)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // previous OK
-			$pattern = '{\[%%%%IF\:([a-zA-Z0-9_\-\.]*)\:(\^~|\^\*|~~|~\*|\$~|\$\*|\=\=|\!\=|\<\=|\<|\>\=|\>|\!%|%|@\=|@\!|@\+|@\-)([^\[\]]*);((\([0-9]*\))?)%%%%\](.*)?(\[%%%%ELSE\:\1\4%%%%\](.*)?)?\[%%%%\/IF\:\1\4%%%%\]}sU'; // new
+		//	$pattern = '{\[%%%IF\:([a-zA-Z0-9_\-\.]*)\:(@\=\=|@\!\=|@\<\=|@\<|@\>\=|@\>|\=\=|\!\=|\<\=|\<|\>\=|\>|\!%|%|\!\?|\?|\^~|\^\*|&~|&\*|\$~|\$\*)([#a-zA-Z0-9_\-\.\|]*);((\([0-9]*\))?)%%%\](.*)?(\[%%%ELSE\:\1\4%%%\](.*)?)?\[%%%\/IF\:\1\4%%%\]}sU'; // previous OK
+			$pattern = '{\[%%%IF\:([a-zA-Z0-9_\-\.]+)\:(@\=\=|@\!\=|@\<\=|@\<|@\>\=|@\>|\=\=|\!\=|\<\=|\<|\>\=|\>|\!%|%|\!\?|\?|\^~|\^\*|&~|&\*|\$~|\$\*)([^\[\]]*);((\([0-9]+\))?)%%%\](.*)?(\[%%%ELSE\:\1\4%%%\](.*)?)?\[%%%\/IF\:\1\4%%%\]}sU'; // new
 			$matches = array();
 			preg_match_all((string)$pattern, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
 			//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
@@ -1254,14 +1276,14 @@ final class SmartMarkersTemplating {
 					$bind_if 	= (string) trim((string)$bind_if,   "\t\n\r\0\x0B");
 					$bind_else 	= (string) trim((string)$bind_else, "\t\n\r\0\x0B");
 					//-- recursive process if in pieces of if or else
-					if(strpos((string)$bind_if, '[%%%%IF:') !== false) {
+					if(strpos((string)$bind_if, '[%%%IF:') !== false) {
 						$bind_if = (string) self::process_if_syntax((string)$bind_if, (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
 					} //end if
-					if(strpos((string)$bind_else, '[%%%%IF:') !== false) {
+					if(strpos((string)$bind_else, '[%%%IF:') !== false) {
 						$bind_else = (string) self::process_if_syntax((string)$bind_else, (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
 					} //end if
 					//--
-					if(((string)substr((string)$bind_value, 0, 4) == '####') AND ((string)substr((string)$bind_value, -4, 4) == '####')) { // compare with a comparison marker (from a variable) instead of static value
+					if(((string)substr((string)$bind_value, 0, 3) == '###') AND ((string)substr((string)$bind_value, -3, 3) == '###')) { // compare with a comparison marker (from a variable) instead of static value
 					//	$bind_value = (string) strtoupper((string)str_replace('#', '', (string)$bind_value));
 						$bind_value = (string) strtoupper((string)trim((string)$bind_value, '#'));
 						//Smart::log_notice('Marker-TPL found IF syntax In-Marker: '.$bind_value);
@@ -1280,21 +1302,51 @@ final class SmartMarkersTemplating {
 						$tmp_the_arr = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$bind_var_key, '.'); // mixed
 					} //end if else
 					switch((string)$part_sign) {
-						case '@+': // array count >
+						//--
+						case '@==': // array count ==
+							if(Smart::array_size($tmp_the_arr) == (int)$bind_value) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '@!=': // array count !=
+							if(Smart::array_size($tmp_the_arr) != (int)$bind_value) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '@>=': // array count >=
+							if(Smart::array_size($tmp_the_arr) >= (int)$bind_value) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '@>': // array count >
 							if(Smart::array_size($tmp_the_arr) > (int)$bind_value) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
 							} else {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
-						case '@-': // array count <
+						case '@<=': // array count <=
+							if(Smart::array_size($tmp_the_arr) <= (int)$bind_value) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '@<': // array count <
 							if(Smart::array_size($tmp_the_arr) < (int)$bind_value) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
 							} else {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
-						case '@=': // in array
+							//--
+						case '?': // in list (elements separed by |)
 							$tmp_compare_arr = (array) explode('|', (string)$bind_value);
 							if(in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
@@ -1303,7 +1355,7 @@ final class SmartMarkersTemplating {
 							} //end if else
 							$tmp_compare_arr = array();
 							break;
-						case '@!': // not in array
+						case '!?': // not in list (elements separed by |)
 							$tmp_compare_arr = (array) explode('|', (string)$bind_value);
 							if(!in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
@@ -1326,14 +1378,14 @@ final class SmartMarkersTemplating {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
-						case '~~': // if variable contains part, case sensitive
+						case '&~': // if variable contains part, case sensitive
 							if(SmartUnicode::str_contains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
 							} else {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
-						case '~*': // if variable contains part, case insensitive
+						case '&*': // if variable contains part, case insensitive
 							if(SmartUnicode::str_icontains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
 							} else {
@@ -1439,14 +1491,14 @@ final class SmartMarkersTemplating {
 			return (string) $mtemplate;
 		} //end if
 		//--
-		if(strpos((string)$mtemplate, '[%%%%LOOP:') !== false) {
+		if(strpos((string)$mtemplate, '[%%%LOOP:') !== false) {
 			//--
 			if(!is_array($y_arr_vars)) {
 				Smart::log_warning('Marker Template LOOP: Invalid Array Passed ...');
 				$y_arr_vars = [];
 			} //end if
 			//--
-			$pattern = '{\[%%%%LOOP\:([a-zA-Z0-9_\-\.]*)((\([0-9]*\))?%%)%%\](.*)?\[%%%%\/LOOP\:\1\2%%\]}sU'; // {{{SYNC-TPL-EXPR-LOOP}}}
+			$pattern = '{\[%%%LOOP\:([a-zA-Z0-9_\-\.]+)((\([0-9]\))?%)%%\](.*)?\[%%%\/LOOP\:\1\2%%\]}sU'; // {{{SYNC-TPL-EXPR-LOOP}}}
 			$matches = array();
 			preg_match_all((string)$pattern, (string)$mtemplate, $matches, PREG_SET_ORDER, 0);
 			//echo '<pre>'.Smart::escape_html(print_r($matches,1)).'</pre>'; die();
@@ -1487,7 +1539,7 @@ final class SmartMarkersTemplating {
 							//-- operate on a copy of original
 							$mks_line = (string) $loop_orig;
 							//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
-							if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
+							if(strpos((string)$mks_line, '[%%%IF:') !== false) {
 								$tmp_arr_context = array(); // init
 								$tmp_arr_context[(string)$bind_var_key.'.'.'_-MAXCOUNT-_'] = (string) $mxcnt;
 								$tmp_arr_context[(string)$bind_var_key.'.'.'_-ITERATOR-_'] = (string) $j;
@@ -1508,9 +1560,9 @@ final class SmartMarkersTemplating {
 								$tmp_arr_context = array(); // reset
 							} //end if
 							//-- process 2nd Level LOOP inside LOOP for non-Associative Array
-							if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($y_arr_vars[(string)$bind_var_key][$j]))) {
+							if((strpos((string)$mks_line, '[%%%LOOP:') !== false) AND (is_array($y_arr_vars[(string)$bind_var_key][$j]))) {
 								foreach($y_arr_vars[(string)$bind_var_key][$j] as $qk => $qv) {
-									if(((strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$qk).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$qk).'(') !== false)) AND (is_array($qv))) {
+									if(((strpos((string)$mks_line, '[%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$qk).'%') !== false) OR (strpos((string)$mks_line, '[%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$qk).'(') !== false)) AND (is_array($qv))) {
 										//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$qk).'] = '.print_r($qv,1)."\n\n";
 										$mks_line = (string) self::process_loop_syntax(
 											(string) $mks_line,
@@ -1579,7 +1631,7 @@ final class SmartMarkersTemplating {
 							$ziterator = $j;
 							$j++;
 							//-- process IF inside LOOP for this context (the global context is evaluated prior as this function is called after process_if_syntax() in process_syntax() via render_template()
-							if(strpos((string)$mks_line, '[%%%%IF:') !== false) {
+							if(strpos((string)$mks_line, '[%%%IF:') !== false) {
 								$tmp_arr_context = array(); // init
 								$tmp_arr_context[(string)$bind_var_key.'.'.'_-MAXCOUNT-_'] = (string) $mxcnt;
 								$tmp_arr_context[(string)$bind_var_key.'.'.'_-ITERATOR-_'] = (string) $ziterator;
@@ -1603,8 +1655,8 @@ final class SmartMarkersTemplating {
 								$tmp_arr_context = array(); // reset
 							} //end if
 							//-- process 2nd Level LOOP inside LOOP for Associative Array
-							if((strpos((string)$mks_line, '[%%%%LOOP:') !== false) AND (is_array($zval))) {
-								if(((strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$zkey).'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$zkey).'(') !== false)) AND (is_array($zval))) {
+							if((strpos((string)$mks_line, '[%%%LOOP:') !== false) AND (is_array($zval))) {
+								if(((strpos((string)$mks_line, '[%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$zkey).'%') !== false) OR (strpos((string)$mks_line, '[%%%LOOP:'.(string)$bind_var_key.'.'.strtoupper((string)$zkey).'(') !== false)) AND (is_array($zval))) {
 									//echo '***** ['.$bind_var_key.'.'.strtoupper((string)$zkey).'] = '.print_r($zval,1)."\n\n";
 									$mks_line = (string) self::process_loop_syntax(
 										(string) $mks_line,
@@ -1613,7 +1665,7 @@ final class SmartMarkersTemplating {
 									);
 								} //end if
 								if($level > 0) { // uxm-extra: process also _-VAL-_
-									if(((strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.'_-VAL-_'.'%') !== false) OR (strpos((string)$mks_line, '[%%%%LOOP:'.(string)$bind_var_key.'.'.'_-VAL-_'.'(') !== false)) AND (is_array($zval))) {
+									if(((strpos((string)$mks_line, '[%%%LOOP:'.(string)$bind_var_key.'.'.'_-VAL-_'.'%') !== false) OR (strpos((string)$mks_line, '[%%%LOOP:'.(string)$bind_var_key.'.'.'_-VAL-_'.'(') !== false)) AND (is_array($zval))) {
 										//echo '***** ['.$bind_var_key.'.'.'_-VAL-_'.'] = '.print_r($zval,1)."\n\n";
 										$mks_line = (string) self::process_loop_syntax(
 											(string) $mks_line,
@@ -1703,9 +1755,9 @@ final class SmartMarkersTemplating {
 			} //end if
 			//--
 			if(self::$MkTplAnalyzeLdDbg === true) {
-				$regex = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]*)@@@@\]}';
+				$regex = '{\[@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?%]+)@@@\]}';
 			} else {
-				$regex = '{\[@@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?]*)@@@@\]}';
+				$regex = '{\[@@@SUB\-TEMPLATE:([a-zA-Z0-9_\-\.\/\!\?]+)@@@\]}';
 			} //end if else
 			//--
 			$matches = array();
@@ -1784,7 +1836,7 @@ final class SmartMarkersTemplating {
 					if((string)$val == '') {
 						//--
 						$mtemplate = str_replace(
-							'[@@@@SUB-TEMPLATE:'.$key.'@@@@]',
+							'[@@@SUB-TEMPLATE:'.$key.'@@@]',
 							'', // clear (this is required for the cases the sub-templates must not includded in some cases: a kind of IF syntax)
 							(string) $mtemplate
 						);
@@ -1820,7 +1872,7 @@ final class SmartMarkersTemplating {
 						} elseif(strpos($key, '%') !== false) { // % is not valid in other circumstances
 							Smart::log_warning('Invalid Markers-TPL Sub-Template Syntax [%] as: '.$key.' detected in Template:'."\n".self::log_template($mtemplate));
 							return 'Invalid Markers-TPL Sub-Template Syntax. See the ErrorLog for Details.';
-						} elseif(((string)substr($key, 0, 1) == '!') AND ((string)substr($key, -1, 1) == '!')) { // path override: use this relative path instead of parent relative referenced path ; Ex: [@@@@SUB-TEMPLATE:!etc/templates/default/js-base.inc.htm!@@@@]
+						} elseif(((string)substr($key, 0, 1) == '!') AND ((string)substr($key, -1, 1) == '!')) { // path override: use this relative path instead of parent relative referenced path ; Ex: [@@@SUB-TEMPLATE:!etc/templates/default/js-base.inc.htm!@@@]
 							$stpl_path = (string) substr($key, 1, -1);
 						} elseif(strpos($key, '!') !== false) { // ! is not valid in other circumstances
 							Smart::log_warning('Invalid Markers-TPL Sub-Template Syntax [!] as: '.$key.' detected in Template:'."\n".self::log_template($mtemplate));
@@ -1868,13 +1920,13 @@ final class SmartMarkersTemplating {
 							} //end if
 						} //end if
 						if(self::have_subtemplate((string)$stemplate) === true) {
-							if(self::$MkTplAnalyzeLdDbg !== true) { // if analyze TPL don't log to notice (because the [@@@@SUB-TEMPLATE:%variable@@@@] may not load always the variable replacements !!!
+							if(self::$MkTplAnalyzeLdDbg !== true) { // if analyze TPL don't log to notice (because the [@@@SUB-TEMPLATE:%variable@@@] may not load always the variable replacements !!!
 								$arr_subtpls = (array) self::analize_extract_subtpls($stemplate);
 								Smart::log_notice('Invalid or Undefined Markers-TPL: Marker Sub-Templates detected in Template:'."\n".'SUB-TEMPLATES:'.print_r($arr_subtpls,1)."\n".self::log_template($stemplate));
 							} //end if
-							$stemplate = str_replace(array('[@@@@', '@@@@]'), array('⁅@@@@-', '-@@@@⁆'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+							$stemplate = str_replace(array('[@@@', '@@@]'), array('⁅@@@¦', '¦@@@⁆'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 						} //end if
-						$mtemplate = str_replace('[@@@@SUB-TEMPLATE:'.$pfx.$key.'@@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
+						$mtemplate = str_replace('[@@@SUB-TEMPLATE:'.$pfx.$key.'@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
 						$arr_sub_sub_templates = array();
 						$num_sub_sub_templates = 0;
 						//--
@@ -1914,11 +1966,11 @@ final class SmartMarkersTemplating {
 		} //end if
 		//--
 		if(self::have_subtemplate((string)$mtemplate) === true) {
-			if(self::$MkTplAnalyzeLdDbg !== true) { // if analyze TPL don't log to notice (because the [@@@@SUB-TEMPLATE:%variable@@@@] may not load always the variable replacements !!!
+			if(self::$MkTplAnalyzeLdDbg !== true) { // if analyze TPL don't log to notice (because the [@@@SUB-TEMPLATE:%variable@@@] may not load always the variable replacements !!!
 				$arr_subtpls = (array) self::analize_extract_subtpls($mtemplate);
 				Smart::log_notice('Invalid or Undefined Markers-TPL: Marker Sub-Templates detected in Template:'."\n".'SUB-TEMPLATES:'.print_r($arr_subtpls,1)."\n".self::log_template($mtemplate));
 			} //end if
-			$mtemplate = str_replace(array('[@@@@', '@@@@]'), array('⁅@@@@-', '-@@@@⁆'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+			$mtemplate = str_replace(array('[@@@', '@@@]'), array('⁅@@@¦', '¦@@@⁆'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 		} //end if
 		//--
 		return (string) $mtemplate;
@@ -1973,7 +2025,7 @@ final class SmartMarkersTemplating {
 			} //end if
 		} //end if
 		//--
-		$tpl = (string) SmartFileSystem::read((string)$y_file_path);
+		$tpl = (string) self::do_read_template_file_from_fs((string)$y_file_path);
 		//--
 		if((string)$the_cache_key != '') {
 			if((string)$tpl != '') {
@@ -2058,6 +2110,19 @@ final class SmartMarkersTemplating {
 
 
 	//================================================================
+	private static function do_read_template_file_from_fs($y_file_path) {
+		//--
+		if((substr((string)$y_file_path, -4, 4) == '.php') OR (strpos((string)$y_file_path, '.php.') !== false)) {
+			return '{### ERROR: Invalid Markers-TPL File Path (@PHP) ###}';
+		} //end if
+		//--
+		return (string) SmartFileSystem::read((string)$y_file_path);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
 	private static function log_template($mtemplate) {
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
@@ -2070,7 +2135,7 @@ final class SmartMarkersTemplating {
 	//================================================================
 
 
-	//##### DEBUG ONLY
+	//===== DEBUG ONLY
 
 
 	//================================================================

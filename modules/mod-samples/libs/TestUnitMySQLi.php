@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Samples / Test MariaDB Server / MySQL]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 // Class: \SmartModExtLib\Samples\TestUnitMySQLi
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191009
+ * @version 	v.20191110
  *
  */
 final class TestUnitMySQLi {
@@ -69,7 +69,7 @@ final class TestUnitMySQLi {
 
 		//--
 		$tests = array();
-		$tests[] = '##### MariaDB Server / MySQL / TESTS: #####';
+		$tests[] = '===== MariaDB Server / MySQL / TESTS: =====';
 		//--
 		$err = '';
 		//--
@@ -285,7 +285,7 @@ final class TestUnitMySQLi {
 		//--
 		$time = 'TOTAL TIME was: '.(\microtime(true) - $time);
 		//--
-		$end_tests = '##### END TESTS ... '.$time.' sec. #####';
+		$end_tests = '===== END TESTS ... '.$time.' sec. =====';
 		//--
 		$img_check = 'lib/core/img/db/mysql-logo.svg';
 		if((string)$err == '') {

@@ -2,7 +2,7 @@
 // Controller: AuthAdmins/Manager
 // Route: admin.php?page=auth-admins.manager.stml
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT S EXECUTION
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -21,7 +21,7 @@ define('SMART_APP_MODULE_AUTH', true); 		// if set to TRUE requires auth always
  */
 final class SmartAppAdminController extends SmartAbstractAppController {
 
-	// v.20191022
+	// v.20191110
 
 	public function Run() { // (OUTPUTS: HTML)
 

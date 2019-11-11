@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Debug Profiler]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the f
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.20191021
+ * @version 	v.20191109
  * @package 	Application:Development
  *
  */
@@ -365,7 +365,7 @@ public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_template
 
 	//--
 	return (string) self::display_debug_page(
-		'#### Markers-TPL #### Template Debug Profiling',
+		'### Markers-TPL ### Template Debug Profiling',
 		(string) $content
 	);
 	//--
@@ -546,7 +546,7 @@ public static function print_debug_info($y_area, $y_debug_token) {
 //==================================================================
 
 
-//##### PRIVATES
+//===== PRIVATES
 
 
 //==================================================================
@@ -601,7 +601,7 @@ private static function print_log_mail($log_mail_arr) {
 			$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Operation: <b>'.strtoupper((string)$key).'</b></div>';
 			$log .= '<div class="smartframework_debugbar_inforow" style="font-size:11px; color:#000000;">';
 			if(is_array($val)) {
-				$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)implode("\n\n##########\n\n", $val)))), true).'</pre>';
+				$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)implode("\n\n==========\n\n", $val)))), true).'</pre>';
 			} else {
 				$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), trim((string)SmartUtils::pretty_print_var($val)))), true).'</pre>';
 			} //end if else

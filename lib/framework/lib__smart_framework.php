@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -12,7 +12,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 
 //======================================================
-// Smart-Framework v.3.7
+// Smart-Framework v.5.2
 //======================================================
 // Requires PHP 5.6 or later
 //======================================================
@@ -22,13 +22,13 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // [REGEX-SAFE-OK]
 
 //--------------------------------------------------
-define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.3.7'); // required for framework to function
+define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.5.2'); // required for framework to function
 //--------------------------------------------------
 
 
-//#####################################################################################
+//=====================================================================================
 // LOAD FRAMEWORK LIBS 						!!! DO NOT CHANGE THE ORDER OF THE LIBS !!!
-//#####################################################################################
+//=====================================================================================
 //----------------------------------------------------
 require('lib/framework/lib_unicode.php'); 		// smart unicode (support)
 require('lib/framework/lib_smart.php'); 		// smart (base) core
@@ -42,7 +42,7 @@ require('lib/framework/lib_templating.php');	// smart templating
 require('lib/framework/lib_auth.php');			// smart authentication
 require('lib/framework/lib_utils.php');			// smart utils
 //----------------------------------------------------
-//#####################################################################################
+//=====================================================================================
 
 
 //=====================================================================================
@@ -57,7 +57,7 @@ require('lib/framework/lib_utils.php');			// smart utils
  * @access 		private
  * @internal
  *
- * @version 	v.170928
+ * @version 	v.20191110
  *
  */
 interface SmartInterfaceAppBootstrap {
@@ -106,7 +106,7 @@ interface SmartInterfaceAppBootstrap {
  * @access 		private
  * @internal
  *
- * @version 	v.170928
+ * @version 	v.20191110
  *
  */
 interface SmartInterfaceAppInfo {
@@ -169,10 +169,10 @@ interface SmartInterfaceAppInfo {
  *
  *         // the template 'template-one.htm' contains several markers as): 'title', 'left-column', 'main', 'right-column', so we set them as:
  *         $this->PageViewSetVars([
- *             'title' => 'Hello World', // this marker is like <title>[####TITLE####]</title>
- *             'left-column' => 'Some content in the left column', // the marker will be put anywhere in the template html as: [####LEFT-COLUMN####]
- *             'main' => '<h1>Some content in the main area</h1>', // the 'main' area must always be defined in a template as: [####MAIN####] ; when no template this variable will be redirected to the main output in the case of RAW pages (see the below example).
- *             'right-column' => 'Some content in the <b>right area</b>. Current Operation is: '.Smart::escape_html($op) // the marker will be put anywhere in the template html as: [####RIGHT-COLUMN####]
+ *             'title' => 'Hello World', // this marker is like <title>[###TITLE|html###]</title>
+ *             'left-column' => 'Some content in the left column', // the marker will be put anywhere in the template html as: [###LEFT-COLUMN###]
+ *             'main' => '<h1>Some content in the main area</h1>', // the 'main' area must always be defined in a template as: [###MAIN###] ; when no template this variable will be redirected to the main output in the case of RAW pages (see the below example).
+ *             'right-column' => 'Some content in the <b>right area</b>. Current Operation is: '.Smart::escape_html($op) // the marker will be put anywhere in the template html as: [###RIGHT-COLUMN###]
  *         ]);
  *
  *         // HINT - Escaping HTML:
@@ -181,7 +181,7 @@ interface SmartInterfaceAppInfo {
  *         // if using htmlspecialchars($var); with no extra parameters is not safe for unicode environments
  *
  *         // HINT - Escaping JS (Safe exchanging variables between PHP and Javascript in HTML templates):
- *         // when you have to pass a javascript variable, in a marker like <script>my_js_var = '[####JS-VAR####]';</script>
+ *         // when you have to pass a javascript variable, in a marker like <script>my_js_var = '[###JS-VAR|js###]';</script>
  *         // use: Smart::escape_js('a value exchanged between PHP and Javascript in a safe mode');
  *
  *     } //END FUNCTION
@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191029
+ * @version 	v.20191110
  * @package 	development:Application
  *
  */

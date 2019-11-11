@@ -31,16 +31,16 @@
 <div>
 <h2>Markers-TPL</h2>
 <pre><code class="markerstpl">
-This is a line [####VAR1|html####]
-This is a URL: https://test.dom/test/v=[####VAR1|url####]
+This is a line [###VAR1|html###]
+This is a URL: https://test.dom/test/v=[###VAR1|url###]
 &lt;a id=&quot;test&quot;&gt;This is a link&lt;/a&gt;
-[%%%%IF:VAR3:==yes;%%%%]
-	[%%%%LOOP:VAR4%%%%]
-		[####VAR4.NAME|html####], [####VAR4.PNAME|html####]
-	[%%%%/LOOP:VAR4%%%%]
-[%%%%ELSE:VAR3%%%%]
+[%%%IF:VAR3:==yes;%%%]
+	[%%%LOOP:VAR4%%%]
+		[###VAR4.NAME|html###], [###VAR4.PNAME|html###]
+	[%%%/LOOP:VAR4%%%]
+[%%%ELSE:VAR3%%%]
 	No Data
-[%%%%/IF:VAR3%%%%]
+[%%%/IF:VAR3%%%]
 </code></pre>
 </div>
 

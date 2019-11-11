@@ -1,17 +1,17 @@
-[%%%%COMMENT%%%%]
+[%%%COMMENT%%%]
 // IMPORTANT: use only JavaScript code here, no HTML !
-[%%%%/COMMENT%%%%]
-//===== QUnit Tests.DataBase: START :: r.20191031
+[%%%/COMMENT%%%]
+//===== QUnit Tests.DataBase: START :: r.20191109
 
 (function() {
 
 	var localTests = {};
 
-	localTests.SQLite 		= [####TEST-DB-SQLITE|bool####];
-	localTests.PCache 		= [####TEST-DB-PCACHE|bool####];
-	localTests.MongoDB 		= [####TEST-DB-MONGO|bool####];
-	localTests.PostgreSQL 	= [####TEST-DB-PGSQL|bool####];
-	localTests.MySQL 		= [####TEST-DB-MYSQL|bool####];
+	localTests.SQLite 		= [###TEST-DB-SQLITE|bool###];
+	localTests.PCache 		= [###TEST-DB-PCACHE|bool###];
+	localTests.MongoDB 		= [###TEST-DB-MONGO|bool###];
+	localTests.PostgreSQL 	= [###TEST-DB-PGSQL|bool###];
+	localTests.MySQL 		= [###TEST-DB-MYSQL|bool###];
 
 	var testsDisabled = 0;
 	for(var val in localTests) {
@@ -61,7 +61,7 @@
 			} //end if else
 
 			if(localTests.PCache) {
-				QUnit.test('Persistent Cache ([####NAME-DB-PCACHE|js####]) Test: PHP :: ajax', function(assert) {
+				QUnit.test('Persistent Cache ([###NAME-DB-PCACHE|js###]) Test: PHP :: ajax', function(assert) {
 					SmartQUnit.runAjaxTest(
 						baseScript + '?page=samples.testunit&op=testunit.pcache-test',
 						'GET',
@@ -174,7 +174,7 @@
 
 
 // Smart.Framework.Modules Tests (optional)
-[@@@@SUB-TEMPLATE:?!modules/mod-dbal-zend/tests/module-test.mtpl.js.inc!@@@@]
-[@@@@SUB-TEMPLATE:?!modules/mod-db-orm-redbean/tests/module-test.mtpl.js.inc!@@@@]
+[@@@SUB-TEMPLATE:?!modules/mod-dbal-zend/tests/module-test.mtpl.js.inc!@@@]
+[@@@SUB-TEMPLATE:?!modules/mod-db-orm-redbean/tests/module-test.mtpl.js.inc!@@@]
 
 // #END

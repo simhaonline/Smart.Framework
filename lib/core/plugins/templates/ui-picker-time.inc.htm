@@ -1,14 +1,14 @@
 <!-- Partial Template: Core.UIPickerTime -->
-<span id="time-area-[####THE-ID|htmid|html####]" title="[####TEXT-SELECT|html####] [HH:ii]">
-<input type="text" name="[####THE-VAR|html####]" id="[####THE-ID|htmid|html####]" maxlength="5" value="[####THE-VALUE|html####]" readonly="readonly" class="ux-field datetime_Field_TimePicker" style="[####STYLE-SIZE|html####]" autocomplete="off">
+<span id="time-area-[###THE-ID|htmid|html###]" title="[###TEXT-SELECT|html###] [HH:ii]">
+<input type="text" name="[###THE-VAR|html###]" id="[###THE-ID|htmid|html###]" maxlength="5" value="[###THE-VALUE|html###]" readonly="readonly" class="ux-field datetime_Field_TimePicker" style="[###STYLE-SIZE|html###]" autocomplete="off">
 </span>
 <script type="text/javascript">
 if(typeof SmartJS_BrowserUIUtils != 'undefined') {
 	(function() {
 		try {
-			SmartJS_BrowserUIUtils.Time_Picker_Init('[####THE-ID|htmid|js####]', [####H-START|int####], [####H-END|int####], [####MIN-START|int####], [####MIN-END|int####], [####MIN-INTERVAL|int####], [####DISPLAY-ROWS|int####], '[####EVAL-JS|js####]');
-			jQuery('#[####THE-ID|htmid|js####]').on('click', function(e){
-				setTimeout(function(){ SmartJS_BrowserUIUtils.Time_Picker_Display('[####THE-ID|htmid|js####]'); }, 200);
+			SmartJS_BrowserUIUtils.Time_Picker_Init('[###THE-ID|htmid|js###]', [###H-START|int###], [###H-END|int###], [###MIN-START|int###], [###MIN-END|int###], [###MIN-INTERVAL|int###], [###DISPLAY-ROWS|int###], '[###EVAL-JS|js###]');
+			jQuery('#[###THE-ID|htmid|js###]').on('click', function(e){
+				setTimeout(function(){ SmartJS_BrowserUIUtils.Time_Picker_Display('[###THE-ID|htmid|js###]'); }, 200);
 			}).on('dblclick doubletap', function(e){
 				jQuery(this).val('');
 			});

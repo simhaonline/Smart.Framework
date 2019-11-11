@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / PDF Export]
 // (c) 2006-2019 unix-world.org - all rights reserved
-// v.3.7.8 r.2019.01.03 / smart.framework.v.3.7
+// r.5.2.7 / smart.framework.v.5.2
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.3.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -41,7 +41,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG', '/usr/local/bin/rsvg-convert');	
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.20191022
+ * @version 	v.20191109
  * @package 	Plugins:ExportAndImport
  *
  */
@@ -296,7 +296,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_all
 				} //end if
 				//--
 				if(SmartFrameworkRuntime::ifDebug()) { // if debug, append information to log
-					SmartFileSystem::write($logfile, '####################'."\n".'#################### [FILE # '.$i.' = \''.$tmp_img_src.'\']'."\n\n".'=== [GUESS EXTENSION] :: '.$tmp_img_ext."\n\n".'=== LOG: '.$tmp_getimg_arr['log']."\n\n".'###################'."\n\n\n\n", 'a');
+					SmartFileSystem::write($logfile, '=========='."\n".'========== [FILE # '.$i.' = \''.$tmp_img_src.'\']'."\n\n".'=== [GUESS EXTENSION] :: '.$tmp_img_ext."\n\n".'=== LOG: '.$tmp_getimg_arr['log']."\n\n".'=========='."\n\n\n\n", 'a');
 				} //end if
 				//--
 				$tmp_getimg_arr = null;
@@ -409,7 +409,7 @@ public static function generate($y_html_content, $y_orientation='normal', $y_all
 //=====================================================================
 
 
-//############### PRIVATES
+//===== PRIVATES
 
 
 //=====================================================================

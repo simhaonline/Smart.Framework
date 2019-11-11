@@ -1,12 +1,15 @@
 
+// r.5.2.7 / smart.framework.v.5.2
+
 /*
  * SmartQUnit 1.2.1
+ * @version 20191110
  *
  * (c) 2018-2019 unix-world.org
  * Released under the BSD license
  */
 
-var SmartQUnit = new function() { // START CLASS :: r.20191019
+var SmartQUnit = new function() { // START CLASS
 
 	//--
 	// :: static

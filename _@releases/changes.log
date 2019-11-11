@@ -1,11 +1,41 @@
 
-# CHANGELOG / MIGRATION NOTES for Milestone Releases Only - SMART.FRAMEWORK #
+# CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
+## This apply onlt for for Milestone Releases
 
-October 22, 2019 :: Version 3.7.8 # rev.191022
-	* many fixes and optimizations
+November 09, 2019 :: Version 5.2.7
+	* Migrate Markers-TPL from v3 to v5 (stable)
+		# MarkersTemplating VARIABLES syntax breaking changes
+			- [#### =>	[###
+			- ####] =>	###]
+		# MarkersTemplating SUB-TEMPLATE syntax breaking changes
+			- [@@@@ =>	[@@@
+			- @@@@] =>	@@@]
+		# MarkersTemplating LOOP, COMMENTS, SPECIALS syntax breaking changes
+			- [%%%% =>	[%%%
+			- %%%%] =>	%%%]
+		# MarkersTemplating IF syntax breaking changes
+			- [%%%% =>	[%%%
+			- %%%%] =>	%%%]
+			- '~~'	=>	'&~'
+			- '~*'	=>	'&*'
+			- '@='	=>	'?'
+			- '@!'	=>	'!?'
+			- '@+'	=>	'@>'
+			- '@-'	=>	'@<'
+		# MarkersTemplating IF syntax new features (operators)
+			- '@=='
+			- '@!='
+			- '@<='
+			- '@>='
+
+
+October 22, 2019 :: Version 3.7.8 # rev.2019.10.22
+	* fixes and optimizations
 	* a bit of code refactoring
+	* new classes in lib/core/plugins
+	* compliant with PHP 5.6 / 7.0 / 7.1 / 7.2 / 7.3 / 7.4
 
-February 07, 2019 :: Version 3.7.8 # rev.190207
+February 07, 2019 :: Version 3.7.8 # rev.2019.02.07
 	* changed the license to dual-licensing (see LICENSE)
 
 January 03, 2019 :: Version 3.7.8
@@ -18,7 +48,7 @@ January 03, 2019 :: Version 3.7.8
 	* added SmartJS_DateUtils to lib/js/framework
 
 October 10, 2018 :: Version 3.7.7
-	* many optimizations for controllers, translators
+	* optimizations for controllers, translators
 	* some bug fixes
 	* improved support for simplify settings for cookie domains to take easy in development
 	* other code optimizations in many areas
@@ -27,16 +57,16 @@ October 10, 2018 :: Version 3.7.7
 	* added lib mysqli to base from modules
 
 March 09, 2018 :: Version 3.7.5
-	* many optimizations for DB drivers
+	* optimizations for DB drivers
 	* new feature: MongoDB library that works with PHP 5.6 / 7.0 / 7.1 / 7.2 and MongoDB servers 2.4 / 2.6 / 3.0 / 3.2 / 3.4 / 3.6
 	* new feature: built-in DAV server (as module) that features: WebDAV / CalDAV / CardDAV
-	* many fixes and improvements (libHTTPCli, libUtils, LibFileSys*, ...)
+	* fixes and improvements (libHTTPCli, libUtils, LibFileSys*, ...)
 
 Sep 27, 2017 :: Version 3.5.7
 	* middleware optimizations
 	* feature: controller raw headers
-	* many fixes in the Javascript code (ex: String() instead of .toString())
-	* many fixes in the PHP code
+	* fixes in the Javascript code (ex: String() instead of .toString())
+	* fixes in the PHP code
 	* rework and rename of some functions (see documentation)
 
 May 12, 2017 :: Version 3.5.1

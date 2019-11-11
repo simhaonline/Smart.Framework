@@ -1,44 +1,44 @@
-<!-- start markers-tpl partial / sub-template v.20191019 -->
-	[%%%%COMMENT%%%%] Partial / Sub-Template: templating-test.inc.htm [%%%%/COMMENT%%%%]<!-- comments are removed -->
-	<h5 id="qunit-test-result">Markers-TPL w. Sub-Template Render (Table with #[####TCOUNT|int####] columns):</h5>
+<!-- start markers-tpl partial / sub-template v.20191109 -->
+	[%%%COMMENT%%%] Partial / Sub-Template: templating-test.inc.htm [%%%/COMMENT%%%]<!-- comments are removed -->
+	<h5 id="qunit-test-result">Markers-TPL w. Sub-Template Render (Table with #[###TCOUNT|int###] columns):</h5>
 	<table style="border: 1px solid #ECECEC; width: 550px;" id="qunit-test-el">
 	<tr>
 		<th>Column 1<th>
 		<th>Column 2<th>
 		<th>Column 3<th>
 	</tr>
-	[%%%%LOOP:TBL%%%%]
+	[%%%LOOP:TBL%%%]
 	<tr>
-		<td>cell [####TBL.A1|html####]<td>
-		<td>cell [####TBL.A2|html####]<td>
-		<td>cell [####TBL.A3|html####]<td>
+		<td>cell [###TBL.A1|html###]<td>
+		<td>cell [###TBL.A2|html###]<td>
+		<td>cell [###TBL.A3|html###]<td>
 	</tr>
-	[%%%%/LOOP:TBL%%%%]
+	[%%%/LOOP:TBL%%%]
 	</table>
 	<ul>
-	[%%%%LOOP:NAVIGATION%%%%]
-		<li><a href="[####NAVIGATION.HREF|html####]" title="maxsize=[####NAVIGATION.-_MAXSIZE_-|html####] ; maxcount=[####NAVIGATION._-MAXCOUNT-_|html####]">[####NAVIGATION.-_INDEX_-|html####]. [####NAVIGATION.CAPTION|html####] ([####NAVIGATION._-ITERATOR-_|html####])</a></li>[%%%%|N%%%%]
-	[%%%%/LOOP:NAVIGATION%%%%]
+	[%%%LOOP:NAVIGATION%%%]
+		<li><a href="[###NAVIGATION.HREF|html###]" title="maxsize=[###NAVIGATION.-_MAXSIZE_-|html###] ; maxcount=[###NAVIGATION._-MAXCOUNT-_|html###]">[###NAVIGATION.-_INDEX_-|html###]. [###NAVIGATION.CAPTION|html###] ([###NAVIGATION._-ITERATOR-_|html###])</a></li>[%%%|N%%%]
+	[%%%/LOOP:NAVIGATION%%%]
 	</ul>
 	Test Condition#1:
-	[%%%%IF:A:==Test-1;%%%%]
+	[%%%IF:A:==Test-1;%%%]
 		<b>OK</b>
-	[%%%%ELSE:A%%%%]
+	[%%%ELSE:A%%%]
 		<span style="color:#FF3300;"><b>NOT OK</b></span>
-	[%%%%/IF:A%%%%]
+	[%%%/IF:A%%%]
 	<br>
 	Test Condition#2:
-	[%%%%IF:B:==####A####;(1)%%%%]
+	[%%%IF:B:==###A###;(1)%%%]
 		<span style="color:#FF3300;"><b>NOT OK</b></span>
-	[%%%%ELSE:B(1)%%%%]
-		[%%%%IF:B:==Test-1;(2)%%%%]
+	[%%%ELSE:B(1)%%%]
+		[%%%IF:B:==Test-1;(2)%%%]
 			<span style="color:#FF3300;"><b>NOT OK</b></span>
-		[%%%%ELSE:B(2)%%%%]
-			[%%%%IF:A:!=Test-1;%%%%]
+		[%%%ELSE:B(2)%%%]
+			[%%%IF:A:!=Test-1;%%%]
 				<span style="color:#FF3300;"><b>NOT OK</b></span>
-			[%%%%ELSE:A%%%%]
+			[%%%ELSE:A%%%]
 				<b>OK</b>
-			[%%%%/IF:A%%%%]
-		[%%%%/IF:B(2)%%%%]
-	[%%%%/IF:B(1)%%%%]
+			[%%%/IF:A%%%]
+		[%%%/IF:B(2)%%%]
+	[%%%/IF:B(1)%%%]
 <!-- end markers-tpl partial / sub-template -->
