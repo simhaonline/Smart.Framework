@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191110
+ * @version 	v.20191112
  * @package 	development:Application
  *
  */
@@ -687,6 +687,20 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	final public function RequestPathGet() {
 		//--
 		return (string) SmartFrameworkRegistry::getRequestPath(); // string
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get all the Request Variables from (GET/POST) in a controller
+	 *
+	 * @return 	ARRAY					:: Associative Array of Request Variables
+	 */
+	final public function RequestVarsGet() {
+		//--
+		return (array) SmartFrameworkRegistry::getRequestVars(); // array
 		//--
 	} //END FUNCTION
 	//=====
