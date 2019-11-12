@@ -64,7 +64,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.20191111
+ * @version 	v.20191112
  * @package 	Application:Session
  *
  */
@@ -213,11 +213,7 @@ final class SmartSession {
 			Smart::log_warning('WARNING: Session Name must have a length between 10 and 25 characters :: SMART_FRAMEWORK_SESSION_NAME');
 			return;
 		} //end if
-		if(!preg_match('/^[_A-Za-z0-9]+$/', (string)SMART_FRAMEWORK_SESSION_NAME)) {
-			Smart::log_warning('WARNING: Session Name contains invalid characters :: SMART_FRAMEWORK_SESSION_NAME');
-			return;
-		} //end if
-		if(!SmartFrameworkSecurity::ValidateVariableName(strtolower(SMART_FRAMEWORK_SESSION_NAME))) {
+		if(!SmartFrameworkSecurity::ValidateVariableName((string)SMART_FRAMEWORK_SESSION_NAME, true)) {
 			Smart::log_warning('WARNING: Session Name have an invalid value :: SMART_FRAMEWORK_SESSION_NAME');
 			return;
 		} //end if

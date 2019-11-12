@@ -403,7 +403,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	-
- * @version 	v.20191111
+ * @version 	v.20191112
  * @package 	Application
  *
  */
@@ -417,16 +417,19 @@ final class SmartFrameworkSecurity {
 	// Validate variable names (by default allow to register ONLY lowercase variables to avoid interfere with PHP reserved variables !! security fix !! ; allow camel case or upper is optional)
 	public static function ValidateVariableName($y_varname, $y_allow_upper_camelcase=false) {
 
-		// VALIDATE INPUT VARIABLE NAMES v.190226
+		// VALIDATE INPUT VARIABLE NAMES v.20190226
 
 		//--
 		$y_varname = (string) $y_varname; // force string
 		//--
-		$regex_only_number = '/^[0-9_]+$/'; // not allowed as first character, especially the _ because $_ have a very special purpose in PHP
+
+		//--
+		$regex_only_number = '/^[0-9_]+$/'; 		// not allowed as first character, especially the _ because $_ have a very special purpose in PHP
+		//--
 		if($y_allow_upper_camelcase === true) {
-			$regex_var_name = '/^[a-zA-Z0-9_]+$/'; // allowed characters in a variable name (only small letters, upper letters, numbers and _ ; in PHP upper letters for variables are reserved)
+			$regex_var_name = '/^[a-zA-Z0-9_]+$/'; 	// allowed characters in a variable name (only small letters, upper letters, numbers and _ ; in PHP upper letters for variables are reserved)
 		} else {
-			$regex_var_name = '/^[a-z0-9_]+$/'; // allowed characters in a variable name (only small letters, numbers and _ ; in PHP upper letters for variables are reserved)
+			$regex_var_name = '/^[a-z0-9_]+$/'; 	// allowed characters in a variable name (only small letters, numbers and _ ; in PHP upper letters for variables are reserved)
 		} //end if else
 		//--
 
@@ -580,7 +583,7 @@ final class SmartFrameworkSecurity {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	-
- * @version 	v.20191111
+ * @version 	v.20191112
  * @package 	Application
  *
  */
@@ -640,8 +643,8 @@ final class SmartFrameworkRegistry {
 			return false; // request registry is locked
 		} //end if
 		//--
-		$key = (string) strtolower((string)trim((string)$key)); // {{{SYNC-REQVARS-LOWER-KEYS}}}
-		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key))) {
+		$key = (string) trim((string)$key);
+		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key, true))) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
 			return false;
 		} //end if
 		//--
@@ -654,8 +657,8 @@ final class SmartFrameworkRegistry {
 
 	public static function issetRequestVar($key) {
 		//--
-		$key = (string) strtolower((string)trim((string)$key)); // {{{SYNC-REQVARS-LOWER-KEYS}}}
-		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key))) {
+		$key = (string) trim((string)$key);
+		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key, true))) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
 			return false;
 		} //end if
 		//--
@@ -670,8 +673,8 @@ final class SmartFrameworkRegistry {
 
 	public static function getRequestVar($key, $defval=null, $type='') { // {{{SYNC-REQUEST-DEF-PARAMS}}}
 		//--
-		$key = (string) strtolower((string)trim((string)$key)); // {{{SYNC-REQVARS-LOWER-KEYS}}}
-		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key))) {
+		$key = (string) trim((string)$key);
+		if(((string)$key == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$key, true))) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
 			return null;
 		} //end if
 		//--
@@ -988,7 +991,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20191111
+ * @version		v.20191112
  * @package 	Application
  *
  */
@@ -1340,7 +1343,7 @@ final class SmartFrameworkRuntime {
 	// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 	public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $filter_____info) {
 
-		// FILTER INPUT GET/POST VARIABLES v.180218 (with collision fix and private space check)
+		// FILTER INPUT GET/POST VARIABLES v.20191112 (with collision fix and private space check)
 		// This no more limits the input variables as it is handled via prior checks to PHP.INI: max_input_vars and max_input_nesting_level
 		// If any of: GET / POST overflow the max_input_vars and max_input_nesting_level a PHP warning is issued !!
 		// The max_input_vars applies separately to each of the input variables, includding array(s) keys
@@ -1368,13 +1371,14 @@ final class SmartFrameworkRuntime {
 				//--
 				if(substr($filter_____key, 0, 11) != 'filter_____') { // avoid collisions with the variables in this function
 					//--
-					if(((string)trim((string)$filter_____key) != '') AND (SmartFrameworkSecurity::ValidateVariableName($filter_____key))) {
+					if(((string)trim((string)$filter_____key) != '') AND (SmartFrameworkSecurity::ValidateVariableName($filter_____key, true))) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
 						//--
 						if(is_array($filter_____val)) { // array
 							//--
 							if(self::ifDebug()) {
 								self::DebugRequestLog('#EXTRACT-FILTER-REQUEST-VAR-ARRAY:'."\n".$filter_____key.'='.print_r($filter_____val,1)."\n");
 							} //end if
+							//--
 							SmartFrameworkRegistry::setRequestVar(
 								(string) $filter_____key,
 								(array) SmartFrameworkSecurity::FilterGetPostCookieVars($filter_____val)
@@ -1385,6 +1389,7 @@ final class SmartFrameworkRuntime {
 							if(self::ifDebug()) {
 								self::DebugRequestLog('#EXTRACT-FILTER-REQUEST-VAR-STRING:'."\n".$filter_____key.'='.$filter_____val."\n");
 							} //end if
+							//--
 							SmartFrameworkRegistry::setRequestVar(
 								(string) $filter_____key,
 								(string) SmartFrameworkSecurity::FilterGetPostCookieVars($filter_____val)
@@ -1875,9 +1880,8 @@ final class SmartFrameworkRuntime {
 		//-- {{{SYNC-SMART-UNIQUE-COOKIE}}}
 		if((defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME')) AND (!defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_SKIP'))) {
 			if((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME != '') {
-				if(SmartFrameworkSecurity::ValidateVariableName(strtolower((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME))) {
-					//--
-					$cookie = (string) trim(strtolower(SmartFrameworkSecurity::FilterUnsafeString((string)$_COOKIE[(string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME])));
+				if(SmartFrameworkSecurity::ValidateVariableName((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, true)) {
+					$cookie = (string) trim((string)strtolower((string)SmartFrameworkSecurity::FilterUnsafeString((string)$_COOKIE[(string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME])));
 					if(((string)$cookie == '') OR (strlen((string)$cookie) != 40) OR (!preg_match('/^[a-f0-9]+$/', (string)$cookie))) {
 						$expire = 0;
 						if(defined('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_LIFETIME')) {
@@ -1893,7 +1897,11 @@ final class SmartFrameworkRuntime {
 						SmartUtils::set_cookie((string)SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME, (string)$entropy, (int)$expire, '/', '@');
 						$cookie = (string) $entropy;
 					} //end if
-					//--
+				} else {
+					Smart::raise_error(
+						'#SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME#'."\n".'Invalid Value for constant: '.SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME,
+						'App Init ERROR :: (See Error Log for More Details)'
+					);
 				} //end if
 			} //end if
 		} //end if
