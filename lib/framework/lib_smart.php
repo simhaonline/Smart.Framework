@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20191103
+ * @version     v.20191112
  * @package     @Core
  *
  */
@@ -228,13 +228,13 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Create a semantic URL like: (script.php)?/param1/value1/param2/value2
+	 * Create a semantic URL like: (script.php)?/param1/value1/Param2/Value2
 	 *
-	 * @param 	STRING 	$y_url 				:: The standard URL in RFC3986 format as: (script.php)?param1=value1&param2=value2
+	 * @param 	STRING 	$y_url 				:: The standard URL in RFC3986 format as: (script.php)?param1=value1&Param2=Value2
 	 *
 	 * @return 	STRING						:: The semantic URL
 	 */
-	public static function url_make_semantic($y_url) { // v.180411
+	public static function url_make_semantic($y_url) { // v.20191112
 		//--
 		$y_url = (string) trim((string)$y_url);
 		if((string)$y_url == '') {
@@ -261,7 +261,7 @@ final class Smart {
 		//--
 		$semantic_separator = '?/';
 		//--
-		if(strpos((string)$y_url, $semantic_separator) !== false) {
+		if(strpos((string)$y_url, (string)$semantic_separator) !== false) {
 			return (string) $y_url; // it is already semantic or at least appear to be ...
 		} // end if
 		//--
@@ -282,28 +282,28 @@ final class Smart {
 		//--
 		if((string)$arr['host'] != '') {
 			if((string)$arr['scheme'] != '') {
-				$semantic_url .= $arr['scheme'].':';
+				$semantic_url .= (string) $arr['scheme'].':';
 			} //end if
-			$semantic_url .= '//'.$arr['host'];
+			$semantic_url .= (string) '//'.$arr['host'];
 			if(((string)$arr['port'] != '') AND ((string)$arr['port'] != '80') AND ((string)$arr['port'] != '443')) {
-				$semantic_url .= ':'.$arr['port'];
+				$semantic_url .= (string) ':'.$arr['port'];
 			} //end if
 		} //end if
 		//--
 		if((string)$ignore_script != '') {
-			$len = strlen($ignore_script);
-			if($len > 0) {
+			$len = (int) strlen((string)$ignore_script);
+			if((int)$len > 0) {
 				if((string)$arr['path'] == (string)$ignore_script) {
 					$arr['path'] = '';
-				} elseif(substr($arr['path'], (-1*$len), $len) == (string)$ignore_script) {
-					$len = strlen($arr['path']) - $len;
+				} elseif((string)substr((string)$arr['path'], (-1*(int)$len), (int)$len) == (string)$ignore_script) {
+					$len = (int)strlen((string)$arr['path']) - (int)$len;
 					if($len > 0) {
-						$arr['path'] = substr($arr['path'], 0, $len);
+						$arr['path'] = (string) substr((string)$arr['path'], 0, (int)$len);
 					} //end if
 				} //end if
 			} //end if
 		} //end if
-		$semantic_url .= $arr['path'];
+		$semantic_url .= (string) $arr['path'];
 		//--
 		$use_rewrite = false;
 		$use_rfc_params = false;
@@ -324,12 +324,12 @@ final class Smart {
 			//--
 			$pair = explode('=', $vars[$i]);
 			//--
-			if(((string)$pair[0] == '') OR (!preg_match('/^[a-z0-9_]+$/', (string)$pair[0])) OR ((string)$pair[1] == '')) {
+			if(((string)$pair[0] == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$pair[0], true)) OR ((string)$pair[1] == '')) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
 				$parsing_ok = false;
 				break;
 			} //end if
 			//--
-			if((string)$pair[0] == 'page') {
+			if((string)$pair[0] === 'page') {
 				$detected_page = (string) $pair[1];
 			} else {
 				$asvars[(string)$pair[0]] = (string) $pair[1];
@@ -373,18 +373,18 @@ final class Smart {
 				$pg_link .= (string) $the_pg_mod.'.'.$the_pg_ctrl;
 			} //end if
 			//--
-			if(($use_rewrite === true) AND (((string)$semantic_url == '') OR (substr($semantic_url, -1, 1) == '/'))) { // PAGE (with REWRITE)
+			if(($use_rewrite === true) AND (((string)$semantic_url == '') OR ((string)substr((string)$semantic_url, -1, 1) == '/'))) { // PAGE (with REWRITE)
 				//--
 				if((string)$the_pg_ext == '') {
 					$the_pg_ext = 'html';
 				} //end if
 				//--
 				$page_rewrite_ok = true;
-				$semantic_suffix .= $pg_link.'.'.$the_pg_ext;
+				$semantic_suffix .= (string) $pg_link.'.'.$the_pg_ext;
 				//--
 			} else {
 				//--
-				$semantic_suffix .= $semantic_separator.'page'.'/'.$pg_link.'/';
+				$semantic_suffix .= (string) $semantic_separator.'page'.'/'.$pg_link.'/';
 				$have_semantic_separator = true;
 				//--
 			} //end if else
@@ -397,18 +397,18 @@ final class Smart {
 				//--
 				if(($page_rewrite_ok === true) AND ($use_rfc_params === true)) {
 					//--
-					$semantic_suffix = self::url_add_suffix($semantic_suffix, $key.'='.$val);
+					$semantic_suffix = (string) self::url_add_suffix((string)$semantic_suffix, (string)$key.'='.$val);
 					//--
 				} else {
 					//--
-					$val = str_replace('/', self::escape_url('/'), $val);
-					$val = str_replace(self::escape_url('/'), self::escape_url(self::escape_url('/')), $val); // needs double encode the / character for semantic URLs to avoid conflict with param/value
+					$val = (string) str_replace('/', (string)self::escape_url('/'), (string)$val);
+					$val = (string) str_replace((string)self::escape_url('/'), (string)self::escape_url((string)self::escape_url('/')), (string)$val); // needs double encode the / character for semantic URLs to avoid conflict with param/value
 					//--
 					if($have_semantic_separator !== true) {
-						$semantic_suffix .= $semantic_separator;
+						$semantic_suffix .= (string) $semantic_separator;
 						$have_semantic_separator = true;
 					} //end if
-					$semantic_suffix .= $key.'/'.$val.'/';
+					$semantic_suffix .= (string) $key.'/'.$val.'/';
 					//--
 				} //end if else
 				//--
@@ -433,7 +433,7 @@ final class Smart {
 	 * Add URL Params (Build a standard RFC3986 URL from script and parameters) as: script.xyz?a=b&param1=value1&param2=value2
 	 *
 	 * @param 	STRING 		$y_url				:: The base URL like: script.php or script.php?a=b or empty
-	 * @param 	ARRAY		$y_params 			:: Associative array as [param1 => value1, param2 => value2]
+	 * @param 	ARRAY		$y_params 			:: Associative array as [param1 => value1, Param2 => Value2]
 	 *
 	 * @return 	STRING							:: The prepared URL in the standard RFC3986 format (all values are escaped using rawurlencode() to be Unicode full compliant
 	 */
@@ -444,18 +444,18 @@ final class Smart {
 		if(is_array($y_params)) {
 			foreach($y_params as $key => $val) {
 				if((string)$key != '') {
-					if(preg_match('/^[a-z0-9_]+$/', (string)$key)) {
+					if(SmartFrameworkSecurity::ValidateVariableName((string)$key, true)) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
 						if((string)$val != '') {
 							$suffix = (string) $key.'=';
 							if((substr((string)$val, 0, 3) == '{{{') AND (substr((string)$val, -3, 3) == '}}}')) { // this is {{{param}}}
-								$tmp_val = substr((string)$val, 3);
-								$tmp_val = substr((string)$tmp_val, 0, strlen($tmp_val)-3);
-								$suffix .= '{{{'.self::escape_url((string)$tmp_val).'}}}';
+								$tmp_val = (string) substr((string)$val, 3);
+								$tmp_val = (string) substr((string)$tmp_val, 0, (int)strlen((string)$tmp_val)-3);
+								$suffix .= (string) '{{{'.self::escape_url((string)$tmp_val).'}}}';
 								$tmp_val = '';
 							} else {
-								$suffix .= self::escape_url((string)$val);
+								$suffix .= (string) self::escape_url((string)$val);
 							} //end if else
-							$url = self::url_add_suffix($url, $suffix);
+							$url = (string) self::url_add_suffix((string)$url, (string)$suffix);
 						} //end if
 					} //end if
 				} //end if
@@ -472,17 +472,17 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Add URL Suffix (to a standard RFC3986 URL) as: script.php?a=b&c=d&e=%20d
+	 * Add URL Suffix (to a standard RFC3986 URL) as: script.php?a=b&C=D&e=%20d
 	 *
 	 * @param 	STRING 		$y_url				:: The base URL to use as prefix like: script.php or script.php?a=b&c=d or empty
-	 * @param 	STRING		$y_suffix 			:: A RFC3986 URL segment like: a=b or e=%20d (without ? or not starting with & as they will be detected if need append ? or &; variable values must be encoded using rawurlencode() RFC3986)
+	 * @param 	STRING		$y_suffix 			:: A RFC3986 URL segment like: a=b or E=%20d (without ? or not starting with & as they will be detected if need append ? or &; variable values must be encoded using rawurlencode() RFC3986)
 	 *
 	 * @return 	STRING							:: The prepared URL in the standard RFC3986 format (all values are escaped using rawurlencode() to be Unicode full compliant
 	 */
 	public static function url_add_suffix($y_url, $y_suffix) {
 		//--
-		$y_url = trim((string)$y_url);
-		$y_suffix = trim((string)$y_suffix);
+		$y_url = (string) trim((string)$y_url);
+		$y_suffix = (string) trim((string)$y_suffix);
 		//--
 		if(((string)$y_suffix == '') OR ((string)$y_suffix == '?') OR ((string)$y_suffix == '&')) {
 			if((string)$y_url != '') {
@@ -490,20 +490,20 @@ final class Smart {
 			} //end if
 		} //end if
 		//--
-		if((substr($y_suffix, 0, 1) == '?') OR (substr($y_suffix, 0, 1) == '&')) {
-			$y_suffix = (string) substr($y_suffix, 1);
+		if(((string)substr((string)$y_suffix, 0, 1) == '?') OR ((string)substr((string)$y_suffix, 0, 1) == '&')) {
+			$y_suffix = (string) substr((string)$y_suffix, 1);
 		} //end if
 		//--
-		if((strpos($y_suffix, '?') !== false) OR (substr($y_suffix, 0, 1) == '&')) {
+		if((strpos((string)$y_suffix, '?') !== false) OR ((string)substr((string)$y_suffix, 0, 1) == '&')) {
 			self::log_notice('[URL Add Suffix] WARNING: The URL Suffix should not contain ? or start with & :: [URL: '.$y_url.' :: Suffix: '.$y_suffix.']');
 		} //end if
 		//--
-		if((substr($y_url, -1, 1) == '?') OR (substr($y_url, -1, 1) == '&')) {
-			$url = $y_url.$y_suffix;
-		} elseif(strpos($y_url, '?') === false) {
-			$url = $y_url.'?'.$y_suffix;
+		if(((string)substr((string)$y_url, -1, 1) == '?') OR ((string)substr((string)$y_url, -1, 1) == '&')) {
+			$url = (string) $y_url.$y_suffix;
+		} elseif(strpos((string)$y_url, '?') === false) {
+			$url = (string) $y_url.'?'.$y_suffix;
 		} else {
-			$url = $y_url.'&'.$y_suffix;
+			$url = (string) $y_url.'&'.$y_suffix;
 		} //end if else
 		//--
 		return (string) $url;
@@ -514,7 +514,7 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Add URL Anchor (to a standard RFC3986 URL) as: script.php?a=b&c=d&e=%20d
+	 * Add URL Anchor (to a standard RFC3986 URL) as: script.php?a=b&C=D&e=%20d
 	 *
 	 * @param 	STRING 		$y_url				:: The base URL to use as prefix like: script.php or script.php?a=b&c=d or empty
 	 * @param 	STRING		$y_anchor 			:: A RFC3986 URL anchor like: myAnchor
@@ -530,15 +530,15 @@ final class Smart {
 			return (string) $y_url.$y_anchor;
 		} //end if
 		//--
-		if(substr($y_anchor, 0, 1) == '#') {
-			$y_anchor = (string) substr($y_anchor, 1);
+		if((string)substr((string)$y_anchor, 0, 1) == '#') {
+			$y_anchor = (string) substr((string)$y_anchor, 1);
 		} //end if
 		//--
-		if(strpos($y_suffix, '#') !== false) {
+		if(strpos((string)$y_suffix, '#') !== false) {
 			self::log_notice('[URL Add Anchor] WARNING: The URL Anchor should not contain # :: [URL: '.$y_url.' :: Suffix: '.$y_anchor.']');
 		} //end if
 		//--
-		return (string) $y_url.'#'.self::escape_url($y_anchor);
+		return (string) $y_url.'#'.self::escape_url((string)$y_anchor);
 		//--
 	} //END FUNCTION
 	//================================================================
