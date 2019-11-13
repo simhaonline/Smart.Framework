@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.20191101
+ * @version 	v.20191113
  * @package 	@Core:Network
  *
  */
@@ -139,7 +139,9 @@ final class SmartHttpClient {
 		//--
 		$this->cafile = '';
 		if(SmartFileSysUtils::check_if_safe_path((string)$cafile) == '1') {
-			$this->cafile = (string) $cafile;
+			if(SmartFileSystem::is_type_file((string)$cafile)) {
+				$this->cafile = (string) $cafile;
+			} //end if
 		} //end if
 		//--
 	} //END FUNCTION
@@ -159,6 +161,7 @@ final class SmartHttpClient {
 			'method' 		=> (string) $this->method,
 			'url' 			=> (string) $url,
 			'ssl'			=> (string) $ssl_version,
+			'ssl-ca' 		=> (string) ($this->cafile ? $this->cafile : (defined('SMART_FRAMEWORK_SSL_CA_FILE') ? SMART_FRAMEWORK_SSL_CA_FILE : '')),
 			'auth-user' 	=> (string) $user,
 			'cookies-len' 	=> (int)    Smart::array_size($this->cookies),
 			'post-vars-len' => (int)    Smart::array_size($this->postvars),

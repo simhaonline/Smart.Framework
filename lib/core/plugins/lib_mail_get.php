@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191113
  * @package 	Plugins:Mailer
  *
  */
@@ -115,10 +115,15 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC] :: set the SSL/TLS Certificate Authority File
+	// [PUBLIC] :: set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
 	public function set_ssl_tls_ca_file($cafile) {
 		//--
-		$this->cafile = (string) $cafile;
+		$this->cafile = '';
+		if(SmartFileSysUtils::check_if_safe_path((string)$cafile) == '1') {
+			if(SmartFileSystem::is_type_file((string)$cafile)) {
+				$this->cafile = (string) $cafile;
+			} //end if
+		} //end if
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1171,7 +1176,7 @@ final class SmartMailerImap4Client {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191113
  * @package 	Plugins:Mailer
  *
  */
@@ -1244,10 +1249,15 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC] :: set the SSL/TLS Certificate Authority File
+	// [PUBLIC] :: set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
 	public function set_ssl_tls_ca_file($cafile) {
 		//--
-		$this->cafile = (string) $cafile;
+		$this->cafile = '';
+		if(SmartFileSysUtils::check_if_safe_path((string)$cafile) == '1') {
+			if(SmartFileSystem::is_type_file((string)$cafile)) {
+				$this->cafile = (string) $cafile;
+			} //end if
+		} //end if
 		//--
 	} //END FUNCTION
 	//=====================================================================================
