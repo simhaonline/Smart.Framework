@@ -32,7 +32,7 @@ define('SMART_FRAMEWORK_SECURITY_KEY', 		'private-key#0987654321'); 						// ***
 //--------------------------------------- URLS
 define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT', 'index.php');							// Semantic URL Rewriter Skip Script (just for index.php) ; This can be set to: `index.php` or `` empty (admin.php have no support for this)
 define('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE', 'samples');								// Default Module for Shortening the semantic URLs or the URL rewriter from module.controller.html to just controller.html ; just for index.php (admin.php have no support for this)
-define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', '');										// URL Rewrite Mode: `` | `standard` | `semantic` :: Use (Apache like) rewrite rules (must be enabled in .htaccess) and the SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT must be set to `index.php` ; semantic URLS must be not disabled ; just for index.php (admin.php have no support for this)
+//define('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE', 'standard');							// URL Rewrite Mode (requires Apache Rewrite): `standard` | `semantic` :: Apache like rewrite rules (must be enabled in .htaccess) and the SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT must be set to `index.php` ; semantic URLS must be not disabled ; just for index.php (admin.php have no support for this)
 //define('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE', 	true); 									// *Optional: if defined, this will DISABLE the semantic URLs for index.php and admin.php ; Example: http(s)://domain.ext/?/page/sample.action instead of http(s)://domain.ext/?page=sample.action
 //--------------------------------------- COOKIES
 define('SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME', 'SmartFramework__UID');						// The UniqueID Cookie Name (it is recommended to be customized)

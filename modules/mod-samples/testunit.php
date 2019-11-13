@@ -268,6 +268,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				//--
 				if(((string)$is_modal != 'yes') AND ((string)$is_printable != 'yes')) {
 					if($this->IfDebug()) {
+						$this->SetDebugData('TestUnit.Main.Request', $this->RequestVarsGet());
 						$this->SetDebugData('TestUnit.Main', 'Loading all staticload libs at once for test purposes ...');
 					} //end if
 				} //end if

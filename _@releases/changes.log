@@ -27,7 +27,9 @@ November 09, 2019 :: Version 5.2.7
 			- '@!='
 			- '@<='
 			- '@>='
-
+	* Refactoring: Smart::url_make_semantic() -> SmartUtils::create_semantic_url()
+	* Speed Optimization for Smart::array_type_test()
+	* Allow CamelCase URL Parameters
 
 October 22, 2019 :: Version 3.7.8 # rev.2019.10.22
 	* fixes and optimizations

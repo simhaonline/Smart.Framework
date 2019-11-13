@@ -134,10 +134,11 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			$this->ControllerGetParam('url-script'),
 			array(
 				'page' => 'samples.testunit',
-				'tab' => 0
+				'tab' => 0,
+				'CamelCase' => 'Test'
 			)
 		); // will generate: index.php?page=samples.testunit OR admin.php?page=samples.testunit
-		$url_test_unit = Smart::url_make_semantic($url_test_unit); // convert the above to a pretty URL as: ?/page/samples.testunit (in this case index.php is ignored) OR admin.php?/page/samples.testunit
+		$url_test_unit = (string) SmartUtils::create_semantic_url($url_test_unit); // convert the above to a pretty URL as: ?/page/(samples.)testunit (in this case index.php is ignored) OR admin.php?/page/samples.testunit
 		//--
 
 		//-- building a regular URL
@@ -154,7 +155,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 				'page' => (string) $page_benchmark
 			)
 		);
-		$url_benchmark = Smart::url_make_semantic($url_benchmark);
+		$url_benchmark = (string) SmartUtils::create_semantic_url($url_benchmark);
 		//--
 
 		//--

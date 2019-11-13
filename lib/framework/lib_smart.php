@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20191112
+ * @version     v.20191113
  * @package     @Core
  *
  */
@@ -221,208 +221,6 @@ final class Smart {
 		$path_info['dirname'] = (string) self::fix_path_separator((string)$path_info['dirname']);
 		//--
 		return (array) $path_info;
-		//--
-	} //END FUNCTION
-	//================================================================
-
-
-	//================================================================
-	/**
-	 * Create a semantic URL like: (script.php)?/param1/value1/Param2/Value2
-	 *
-	 * @param 	STRING 	$y_url 				:: The standard URL in RFC3986 format as: (script.php)?param1=value1&Param2=Value2
-	 *
-	 * @return 	STRING						:: The semantic URL
-	 */
-	public static function url_make_semantic($y_url) { // v.20191112
-		//--
-		$y_url = (string) trim((string)$y_url);
-		if((string)$y_url == '') {
-			return ''; // if URL is empty nothing to do ...
-		} //end if
-		//--
-		if(defined('SMART_FRAMEWORK_SEMANTIC_URL_DISABLE') AND (SMART_FRAMEWORK_SEMANTIC_URL_DISABLE === true)) {
-			return (string) $y_url;
-		} //end if
-		if(!defined('SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE')) {
-			return (string) $y_url;
-		} //end if
-		//--
-		$ignore_script = '';
-		$ignore_module = '';
-		if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // not for admin !
-			if(defined('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT')) {
-				$ignore_script = (string) trim((string)SMART_FRAMEWORK_SEMANTIC_URL_SKIP_SCRIPT);
-			} //end if
-			if(defined('SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE')) {
-				$ignore_module = (string) trim((string)SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE);
-			} //end if
-		} //end if
-		//--
-		$semantic_separator = '?/';
-		//--
-		if(strpos((string)$y_url, (string)$semantic_separator) !== false) {
-			return (string) $y_url; // it is already semantic or at least appear to be ...
-		} // end if
-		//--
-		$arr = (array) self::url_parse((string)$y_url);
-		//print_r($arr); die();
-		//--
-		$arr['scheme'] 	= (string) trim((string)$arr['scheme']); 	// http / https
-		$arr['host'] 	= (string) trim((string)$arr['host']); 		// 127.0.0.1
-		$arr['port'] 	= (string) trim((string)$arr['port']); 		// 80 / 443 / 8088 ...
-		$arr['path'] 	= (string) trim((string)$arr['path']); 		// /some/path
-		$arr['query'] 	= (string) trim((string)$arr['query']);		// page=some&op=other
-		//--
-		if((string)$arr['query'] == '') {
-			return (string) $y_url; // there is no query string to format as semantic
-		} //end if
-		//--
-		$semantic_url = '';
-		//--
-		if((string)$arr['host'] != '') {
-			if((string)$arr['scheme'] != '') {
-				$semantic_url .= (string) $arr['scheme'].':';
-			} //end if
-			$semantic_url .= (string) '//'.$arr['host'];
-			if(((string)$arr['port'] != '') AND ((string)$arr['port'] != '80') AND ((string)$arr['port'] != '443')) {
-				$semantic_url .= (string) ':'.$arr['port'];
-			} //end if
-		} //end if
-		//--
-		if((string)$ignore_script != '') {
-			$len = (int) strlen((string)$ignore_script);
-			if((int)$len > 0) {
-				if((string)$arr['path'] == (string)$ignore_script) {
-					$arr['path'] = '';
-				} elseif((string)substr((string)$arr['path'], (-1*(int)$len), (int)$len) == (string)$ignore_script) {
-					$len = (int)strlen((string)$arr['path']) - (int)$len;
-					if($len > 0) {
-						$arr['path'] = (string) substr((string)$arr['path'], 0, (int)$len);
-					} //end if
-				} //end if
-			} //end if
-		} //end if
-		$semantic_url .= (string) $arr['path'];
-		//--
-		$use_rewrite = false;
-		$use_rfc_params = false;
-		if(SMART_FRAMEWORK_ADMIN_AREA !== true) { // not for admin !
-			if((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'semantic') {
-				$use_rewrite = true;
-			} elseif((string)SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE == 'standard') {
-				$use_rewrite = true;
-				$use_rfc_params = true;
-			} //end switch
-		} //end if
-		//--
-		$vars = explode('&', $arr['query']);
-		$asvars = array(); // store params except page
-		$detected_page = ''; // store page if found
-		$parsing_ok = true;
-		for($i=0; $i<self::array_size($vars); $i++) {
-			//--
-			$pair = explode('=', $vars[$i]);
-			//--
-			if(((string)$pair[0] == '') OR (!SmartFrameworkSecurity::ValidateVariableName((string)$pair[0], true)) OR ((string)$pair[1] == '')) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
-				$parsing_ok = false;
-				break;
-			} //end if
-			//--
-			if((string)$pair[0] === 'page') {
-				$detected_page = (string) $pair[1];
-			} else {
-				$asvars[(string)$pair[0]] = (string) $pair[1];
-			} //end if else
-			//--
-		} //end for
-		$vars = array();
-		//--
-		if($parsing_ok !== true) {
-			return (string) $y_url; // there is something wrong with the URL
-		} //end if
-		//--
-		if(self::array_size($asvars) > 0) {
-			$have_params = true;
-		} else {
-			$have_params = false;
-		} //end if else
-		//--
-		$semantic_suffix = '';
-		$have_semantic_separator = false;
-		$page_rewrite_ok = false;
-		//--
-		if((string)$detected_page != '') {
-			//--
-			if(strpos((string)$detected_page, '.') !== false) {
-				$arr_pg = explode('.', (string)$detected_page);
-				$the_pg_mod = trim((string)$arr_pg[0]); 	// no controller, use the default one
-				$the_pg_ctrl = trim((string)$arr_pg[1]); 	// page controller
-				$the_pg_ext = trim((string)$arr_pg[2]); 	// page extension **OPTIONAL**
-				$arr_pg = array();
-			} else {
-				$the_pg_mod = ''; 						// no controller, use the default one
-				$the_pg_ctrl = (string) $detected_page; // page controller
-				$the_pg_ext = ''; 						// page extension
-			} //end if else
-			//--
-			$pg_link = '';
-			if(((string)$the_pg_mod == '') OR ((string)$the_pg_mod == (string)$ignore_module)) {
-				$pg_link .= (string) $the_pg_ctrl;
-			} else {
-				$pg_link .= (string) $the_pg_mod.'.'.$the_pg_ctrl;
-			} //end if
-			//--
-			if(($use_rewrite === true) AND (((string)$semantic_url == '') OR ((string)substr((string)$semantic_url, -1, 1) == '/'))) { // PAGE (with REWRITE)
-				//--
-				if((string)$the_pg_ext == '') {
-					$the_pg_ext = 'html';
-				} //end if
-				//--
-				$page_rewrite_ok = true;
-				$semantic_suffix .= (string) $pg_link.'.'.$the_pg_ext;
-				//--
-			} else {
-				//--
-				$semantic_suffix .= (string) $semantic_separator.'page'.'/'.$pg_link.'/';
-				$have_semantic_separator = true;
-				//--
-			} //end if else
-			//--
-		} //end if
-		//--
-		if($have_params === true) {
-			//--
-			foreach($asvars as $key => $val) {
-				//--
-				if(($page_rewrite_ok === true) AND ($use_rfc_params === true)) {
-					//--
-					$semantic_suffix = (string) self::url_add_suffix((string)$semantic_suffix, (string)$key.'='.$val);
-					//--
-				} else {
-					//--
-					$val = (string) str_replace('/', (string)self::escape_url('/'), (string)$val);
-					$val = (string) str_replace((string)self::escape_url('/'), (string)self::escape_url((string)self::escape_url('/')), (string)$val); // needs double encode the / character for semantic URLs to avoid conflict with param/value
-					//--
-					if($have_semantic_separator !== true) {
-						$semantic_suffix .= (string) $semantic_separator;
-						$have_semantic_separator = true;
-					} //end if
-					$semantic_suffix .= (string) $key.'/'.$val.'/';
-					//--
-				} //end if else
-				//--
-			} //end foreach
-			//--
-		} //end if
-		//--
-		if((string)$semantic_suffix == '') {
-			return (string) $y_url; // something get wrong with the conversion, maybe the URL query is formatted in a different way that could not be understood
-		} //end if
-		//--
-		$semantic_url .= (string) $semantic_suffix;
-		//--
-		return (string) $semantic_url;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1018,11 +816,11 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Test if the Array Type
+	 * Test if the Array Type for being associative or non-associative sequential (0..n)
 	 *
 	 * @param ARRAY 		$y_arr			:: The array to test
 	 *
-	 * @return ENUM 						:: The array type as: 0 = not an array ; 1 = non-associative (sequential) array ; 2 = associative array
+	 * @return ENUM 						:: The array type as: 0 = not an array ; 1 = non-associative (sequential) array or empty array ; 2 = associative array or non-sequential, must be non-empty
 	 */
 	public static function array_type_test($y_arr) {
 		//--
@@ -1030,9 +828,13 @@ final class Smart {
 			return 0; // not an array
 		} //end if
 		//--
-		$a = (array) array_keys($y_arr);
-		if($a === array_keys($a)) { // memory-optimized
-		//if(array_values($y_arr) === $y_arr) { // speed-optimized
+	//	$c = (int) count($y_arr);
+	//	if(((int)$c <= 0) OR ((array)array_keys($y_arr) === (array)range(0, ((int)$c - 1)))) { // most elegant, but slow
+		//--
+	//	$a = (array) array_keys((array)$y_arr);
+	//	if((array)$a === (array)array_keys((array)$a)) { // memory-optimized (prev OK)
+		//--
+		if((array)array_values((array)$y_arr) === (array)$y_arr) { // speed-optimized, 10x faster with non-associative large arrays, tested in all scenarios with large or small arrays
 			return 1; // non-associative
 		} else {
 			return 2; // associative

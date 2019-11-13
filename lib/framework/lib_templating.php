@@ -57,7 +57,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191111
+ * @version 	v.20191113
  * @package 	@Core:TemplatingEngine
  *
  */
@@ -707,7 +707,7 @@ final class SmartMarkersTemplating {
 			$y_original_mtemplate = (string) $mtemplate;
 		} //end if
 		//-- calculate hash
-		$hash = (string) sha1($y_info.$mtemplate);
+		$hash = (string) sha1((string)$y_info.$mtemplate);
 		//-- inits
 		$html = '<!-- START: Markers-TPL Debug Analysis @ '.Smart::escape_html($hash).' # -->'."\n";
 		$html .= '<div align="left">';
@@ -990,7 +990,7 @@ final class SmartMarkersTemplating {
 			} //end for
 			//--
 			if(Smart::array_size($arr_repls) > 0) {
-				$mtemplate = (string) str_replace(array_keys($arr_repls), array_values($arr_repls), (string)$mtemplate);
+				$mtemplate = (string) str_replace((array)array_keys((array)$arr_repls), (array)array_values((array)$arr_repls), (string)$mtemplate);
 			} //end if
 			//--
 		} //end if
@@ -1024,7 +1024,7 @@ final class SmartMarkersTemplating {
 				//--
 				for($i=0; $i<$maxescapes; $i++) {
 					//--
-					$escexpr = '|'.$escapes[$i];
+					$escexpr = (string) '|'.$escapes[$i];
 					//--
 					if((string)$escexpr == '|bool') { // Boolean
 						if($val) {
@@ -1190,8 +1190,8 @@ final class SmartMarkersTemplating {
 					'[%%%|SPACE%%%]'
 				],
 				[
-					'［',
-					'］',
+					'［', // a special replacement for [
+					'］', // a special replacement for ]
 					"\r",
 					"\n",
 					"\t",
@@ -1241,10 +1241,10 @@ final class SmartMarkersTemplating {
 				$part_var 		= (string) $matches[$i][1];
 				$part_sign 		= (string) $matches[$i][2];
 				$part_value 	= (string) $matches[$i][3];
-			//	$part_uniqid 	= (string) $matches[$i][4];
-			//	$part_uniqix 	= (string) $matches[$i][5];
+			//	$part_uniqid 	= (string) $matches[$i][4]; // not used
+			//	$part_uniqix 	= (string) $matches[$i][5]; // not used
 				$part_if 		= (string) $matches[$i][6];
-			//	$part_tag_else 	= (string) $matches[$i][7];
+			//	$part_tag_else 	= (string) $matches[$i][7]; // not used
 				$part_else 		= (string) $matches[$i][8];
 				//--
 				$matches[$i] = null; // free mem
@@ -1302,7 +1302,7 @@ final class SmartMarkersTemplating {
 						$tmp_the_arr = Smart::array_get_by_key_path((array)$y_arr_vars, (string)$bind_var_key, '.'); // mixed
 					} //end if else
 					switch((string)$part_sign) {
-						//--
+						//-- arrays
 						case '@==': // array count ==
 							if(Smart::array_size($tmp_the_arr) == (int)$bind_value) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
@@ -1312,20 +1312,6 @@ final class SmartMarkersTemplating {
 							break;
 						case '@!=': // array count !=
 							if(Smart::array_size($tmp_the_arr) != (int)$bind_value) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							break;
-						case '@>=': // array count >=
-							if(Smart::array_size($tmp_the_arr) >= (int)$bind_value) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							break;
-						case '@>': // array count >
-							if(Smart::array_size($tmp_the_arr) > (int)$bind_value) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
 							} else {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
@@ -1345,67 +1331,21 @@ final class SmartMarkersTemplating {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
-							//--
-						case '?': // in list (elements separed by |)
-							$tmp_compare_arr = (array) explode('|', (string)$bind_value);
-							if(in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							$tmp_compare_arr = array();
-							break;
-						case '!?': // not in list (elements separed by |)
-							$tmp_compare_arr = (array) explode('|', (string)$bind_value);
-							if(!in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							$tmp_compare_arr = array();
-							break;
-						case '^~': // if variable starts with part, case sensitive
-							if(SmartUnicode::str_pos((string)$tmp_the_arr, (string)$bind_value) === 0) { // if evaluate to true keep the inner content
+						case '@>=': // array count >=
+							if(Smart::array_size($tmp_the_arr) >= (int)$bind_value) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
 							} else {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
-						case '^*': // if variable starts with part, case insensitive
-							if(SmartUnicode::str_ipos((string)$tmp_the_arr, (string)$bind_value) === 0) { // if evaluate to true keep the inner content
+						case '@>': // array count >
+							if(Smart::array_size($tmp_the_arr) > (int)$bind_value) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
 							} else {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
-						case '&~': // if variable contains part, case sensitive
-							if(SmartUnicode::str_contains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							break;
-						case '&*': // if variable contains part, case insensitive
-							if(SmartUnicode::str_icontains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							break;
-						case '$~': // if variable ends with part, case sensitive
-							if(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len((string)$bind_value)), SmartUnicode::str_len((string)$bind_value)) == (string)$bind_value) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							break;
-						case '$*': // if variable ends with part, case insensitive ### !!! Expensive in Execution !!! ###
-							if((SmartUnicode::str_tolower(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_tolower((string)$bind_value))), SmartUnicode::str_len(SmartUnicode::str_tolower((string)$bind_value)))) == (string)SmartUnicode::str_tolower((string)$bind_value)) OR (SmartUnicode::str_toupper(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_toupper((string)$bind_value))), SmartUnicode::str_len(SmartUnicode::str_toupper((string)$bind_value)))) == (string)SmartUnicode::str_toupper((string)$bind_value))) { // if evaluate to true keep the inner content
-								$line .= (string) $bind_if; // if part
-							} else {
-								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
-							} //end if else
-							break;
+						//-- numbers
 						case '==':
 							if((string)$tmp_the_arr == (string)$bind_value) { // if evaluate to true keep the inner content
 								$line .= (string) $bind_if; // if part
@@ -1462,6 +1402,69 @@ final class SmartMarkersTemplating {
 								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
 							} //end if else
 							break;
+						//-- string lists
+						case '?': // in list (elements separed by |)
+							$tmp_compare_arr = (array) explode('|', (string)$bind_value);
+							if(in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							$tmp_compare_arr = array();
+							break;
+						case '!?': // not in list (elements separed by |)
+							$tmp_compare_arr = (array) explode('|', (string)$bind_value);
+							if(!in_array((string)$tmp_the_arr, (array)$tmp_compare_arr)) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							$tmp_compare_arr = array();
+							break;
+						//-- strings
+						case '^~': // if variable starts with part, case sensitive
+							if(SmartUnicode::str_pos((string)$tmp_the_arr, (string)$bind_value) === 0) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '^*': // if variable starts with part, case insensitive
+							if(SmartUnicode::str_ipos((string)$tmp_the_arr, (string)$bind_value) === 0) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '&~': // if variable contains part, case sensitive
+							if(SmartUnicode::str_contains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '&*': // if variable contains part, case insensitive
+							if(SmartUnicode::str_icontains((string)$tmp_the_arr, (string)$bind_value)) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '$~': // if variable ends with part, case sensitive
+							if(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len((string)$bind_value)), SmartUnicode::str_len((string)$bind_value)) == (string)$bind_value) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						case '$*': // if variable ends with part, case insensitive ### !!! Expensive in Execution !!! ###
+							if((SmartUnicode::str_tolower(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_tolower((string)$bind_value))), SmartUnicode::str_len(SmartUnicode::str_tolower((string)$bind_value)))) == (string)SmartUnicode::str_tolower((string)$bind_value)) OR (SmartUnicode::str_toupper(SmartUnicode::sub_str((string)$tmp_the_arr, (-1 * SmartUnicode::str_len(SmartUnicode::str_toupper((string)$bind_value))), SmartUnicode::str_len(SmartUnicode::str_toupper((string)$bind_value)))) == (string)SmartUnicode::str_toupper((string)$bind_value))) { // if evaluate to true keep the inner content
+								$line .= (string) $bind_if; // if part
+							} else {
+								$line .= (string) $bind_else; // else part ; if else not present will don't add = remove it !
+							} //end if else
+							break;
+						//--
 						default:
 							// invalid syntax
 							Smart::log_warning('Invalid Marker Template IF Syntax: ['.$part_sign.'] / Template: '.$mtemplate);
@@ -1509,8 +1512,8 @@ final class SmartMarkersTemplating {
 				//--
 				$part_orig 		= (string) $matches[$i][0];
 				$part_var 		= (string) $matches[$i][1];
-			//	$part_uniqid 	= (string) $matches[$i][2];
-			//	$part_uniqix 	= (string) $matches[$i][3];
+			//	$part_uniqid 	= (string) $matches[$i][2]; // not used
+			//	$part_uniqix 	= (string) $matches[$i][3]; // not used
 				$part_loop 		= (string) $matches[$i][4];
 				//--
 				$matches[$i] = null; // free mem
@@ -2112,7 +2115,7 @@ final class SmartMarkersTemplating {
 	//================================================================
 	private static function do_read_template_file_from_fs($y_file_path) {
 		//--
-		if((substr((string)$y_file_path, -4, 4) == '.php') OR (strpos((string)$y_file_path, '.php.') !== false)) {
+		if((strpos((string)$y_file_path, '.php.') !== false) OR (substr((string)$y_file_path, -4, 4) == '.php')) {
 			return '{### ERROR: Invalid Markers-TPL File Path (@PHP) ###}';
 		} //end if
 		//--
