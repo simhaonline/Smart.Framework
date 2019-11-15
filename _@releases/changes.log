@@ -2,8 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
-November 13, 2019 :: Version 5.2.7 rev.191113
+November 15, 2019 :: Version 5.2.7 rev.191115
 	* Security Fix: Safe Set CA File in several Client Libs
+	* Markers-TPL: add support for escape or no syntax parsing of includded sub-templates
 
 November 09, 2019 :: Version 5.2.7
 	* Migrate Markers-TPL from v3 to v5 (stable)

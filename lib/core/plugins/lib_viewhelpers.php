@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191022
+ * @version 	v.20191115
  * @package 	Plugins:ViewComponents
  *
  */
@@ -239,7 +239,7 @@ final class SmartViewHtmlHelpers {
 		//--
 
 		//--
-		$tmp_dimens = (array) explode('/', trim((string)$y_dimensions));
+		$tmp_dimens = (array) explode('/', (string)trim((string)$y_dimensions));
 		//--
 		$the_width = (int) $tmp_dimens[0];
 		$the_height = (int) $tmp_dimens[1];
@@ -253,7 +253,7 @@ final class SmartViewHtmlHelpers {
 		//--
 
 		//--
-		$element_id = Smart::escape_html(trim($y_id));
+		$element_id = (string) Smart::escape_html((string)Smart::create_htmid((string)trim((string)$y_id)));
 		//--
 
 		//--
@@ -341,15 +341,15 @@ final class SmartViewHtmlHelpers {
 				} //end if
 				//--
 				if((string)$y_raw == 'yes') {
-					$tmp_desc_val = $yarr_data[$i_val];
+					$tmp_desc_val = (string) $yarr_data[$i_val];
 				} else {
-					$tmp_desc_val = Smart::escape_html($yarr_data[$i_val]);
+					$tmp_desc_val = (string) SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_val]));
 				} //end if else
 				//--
 				if(strpos((string)$yarr_data[$i_key], '#OPTGROUP#') === 0) {
 					$out .= '<optgroup label="'.$tmp_desc_val.'">'."\n"; // the optgroup
 				} else {
-					$out .= '<option value="'.Smart::escape_html($yarr_data[$i_key]).'"'.$tmp_sel.'>'.$tmp_desc_val.'</option>'."\n";
+					$out .= '<option value="'.SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_key])).'"'.$tmp_sel.'>'.$tmp_desc_val.'</option>'."\n";
 				} //end if else
 				//--
 			} else {
@@ -357,9 +357,9 @@ final class SmartViewHtmlHelpers {
 				if(((string)$yarr_data[$i_val] != '') AND ((string)$y_selected_value == (string)$yarr_data[$i_key])) {
 					//-- single ID
 					if((string)$y_raw == 'yes') {
-						$out .= $yarr_data[$i_val]."\n";
+						$out .= (string) $yarr_data[$i_val]."\n";
 					} else {
-						$out .= Smart::escape_html($yarr_data[$i_val])."\n";
+						$out .= (string) SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_val]))."\n";
 					} //end if else
 					//--
 					$found += 1;
@@ -374,13 +374,13 @@ final class SmartViewHtmlHelpers {
 			//--
 			$out .= '</select>'."\n";
 			//--
-			$out .= $js."\n";
+			$out .= (string) $js."\n";
 			//--
 		} else {
 			//--
-			if($found == 0) {
+			if($found <= 0) {
 				if($y_allowblank != 'yes') {
-					$out .= Smart::escape_html($y_selected_value).'<sup>?</sup>'."\n";
+					$out .= (string) SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html((string)$y_selected_value)).'<sup>?</sup>'."\n";
 				} //end if
 			} //end if
 			//--
@@ -388,7 +388,7 @@ final class SmartViewHtmlHelpers {
 		//--
 
 		//--
-		return $out;
+		return (string) $out;
 		//--
 
 	} //END FUNCTION
@@ -438,7 +438,7 @@ final class SmartViewHtmlHelpers {
 		//--
 
 		//--
-		$tmp_dimens = (array) explode('/', trim((string)$y_dimensions));
+		$tmp_dimens = (array) explode('/', (string)trim((string)$y_dimensions));
 		$the_width = (int) $tmp_dimens[0];
 		$the_height = (int) $tmp_dimens[1];
 		//--
@@ -451,7 +451,7 @@ final class SmartViewHtmlHelpers {
 		//--
 
 		//--
-		$element_id = Smart::escape_html($y_id);
+		$element_id = (string) Smart::escape_html((string)Smart::create_htmid((string)trim((string)$y_id)));
 		//--
 
 		//--
@@ -571,20 +571,20 @@ final class SmartViewHtmlHelpers {
 				if((string)$y_draw == 'checkboxes') { // checkboxes
 					//--
 					if((string)$y_sync_values == 'yes') {
-						$tmp_onclick = ' onClick="SmartJS_BrowserUtils.checkAll_CkBoxes(this.form.name, \''.Smart::escape_html($tmp_el_id).'\', this.checked);"';
+						$tmp_onclick = ' onClick="SmartJS_BrowserUtils.checkAll_CkBoxes(this.form.name, \''.Smart::escape_html(Smart::escape_js($tmp_el_id)).'\', this.checked);"';
 					} else {
 						$tmp_onclick = '';
 					} //end if else
 					//--
-					$out .= '<input type="checkbox" name="'.$y_varname.'" id="'.Smart::escape_html($tmp_el_id).'" value="'.Smart::escape_html($yarr_data[$i_key]).'"'.$tmp_checked.$tmp_onclick.'>';
-					$out .= ' &nbsp; '.Smart::escape_html($yarr_data[$i_val]).'<br>';
+					$out .= '<input type="checkbox" name="'.$y_varname.'" id="'.Smart::escape_html($tmp_el_id).'" value="'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($yarr_data[$i_key])).'"'.$tmp_checked.$tmp_onclick.'>';
+					$out .= ' &nbsp; '.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($yarr_data[$i_val])).'<br>';
 					//--
 				} else { // list
 					//--
 					if(strpos((string)$yarr_data[$i_key], '#OPTGROUP#') === 0) {
-						$out .= '<optgroup label="'.Smart::escape_html($yarr_data[$i_val]).'">'."\n"; // the optgroup
+						$out .= '<optgroup label="'.SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_val])).'">'."\n"; // the optgroup
 					} else {
-						$out .= '<option value="'.Smart::escape_html($yarr_data[$i_key]).'"'.$tmp_sel.'>&nbsp;'.Smart::escape_html($yarr_data[$i_val]).'</option>'."\n";
+						$out .= '<option value="'.SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_key])).'"'.$tmp_sel.'>&nbsp;'.SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_val])).'</option>'."\n";
 					} //end if else
 					//--
 				} //end if else
@@ -595,7 +595,7 @@ final class SmartViewHtmlHelpers {
 					//--
 					if(in_array($yarr_data[$i_key], $y_selected_value)) {
 						//--
-						$out .= '&middot;&nbsp;'.Smart::escape_html($yarr_data[$i_val]).'<br>'."\n";
+						$out .= '&middot;&nbsp;'.SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_val])).'<br>'."\n";
 						//--
 					} //end if
 					//--
@@ -603,7 +603,7 @@ final class SmartViewHtmlHelpers {
 					//--
 					if(SmartUnicode::str_icontains($y_selected_value, '<'.$yarr_data[$i_key].'>')) {
 						//-- multiple categs as <id1>,<id2>
-						$out .= '&middot;&nbsp;'.Smart::escape_html($yarr_data[$i_val]).'<br>'."\n";
+						$out .= '&middot;&nbsp;'.SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html($yarr_data[$i_val])).'<br>'."\n";
 						//--
 					} // end if
 					//--
@@ -626,7 +626,7 @@ final class SmartViewHtmlHelpers {
 		//--
 
 		//--
-		return $out;
+		return (string) $out;
 		//--
 
 	} //END FUNCTION
@@ -1102,25 +1102,25 @@ final class SmartViewHtmlHelpers {
 		} //end if
 		//--
 		if($y_rawval != 'yes') {
-			$y_var_value = Smart::escape_html($y_var_value);
+			$y_var_value = (string) SmartMarkersTemplating::prepare_nosyntax_html_template((string)Smart::escape_html((string)$y_var_value));
 		} //end if
 		//--
 		if((string)$y_field_id != '') {
 			$field = (string) $y_field_id;
 		} else { //  no ID, generate a hash
-			$fldhash = sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'_'.Smart::uuid_10_str();
-			$field = '__Fld_TEXTAREA__'.$fldhash.'__NO_Id__';
+			$fldhash = (string) sha1('Limited Text Area :: '.$y_var_name.' @@ '.$y_limit.' #').'_'.Smart::uuid_10_str();
+			$field = (string) '__Fld_TEXTAREA__'.$fldhash.'__NO_Id__';
 		} //end if else
 		//--
 		$placeholder = '';
 		if((string)$y_placeholder != '') {
-			$placeholder = ' placeholder="'.Smart::escape_html($y_placeholder).'"';
+			$placeholder = (string) ' placeholder="'.Smart::escape_html((string)$y_placeholder).'"';
 		} //end if
 		//--
 		return (string) SmartMarkersTemplating::render_file_template(
 			'lib/core/plugins/templates/limited-text-area.inc.htm',
 			[
-				'LIMIT-CHARS' 		=> (int) $y_limit,
+				'LIMIT-CHARS' 		=> (int)    $y_limit,
 				'ID-AREA' 			=> (string) $field,
 				'VAR-AREA' 			=> (string) $y_var_name,
 				'VAL-AREA-HTML' 	=> (string) $y_var_value, // this is pre-escaped if not raw

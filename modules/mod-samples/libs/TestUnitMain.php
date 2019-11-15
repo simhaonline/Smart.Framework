@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20191115
  *
  */
 final class TestUnitMain {
@@ -164,8 +164,8 @@ final class TestUnitMain {
 			'modules/mod-samples/libs/templates/testunit/test-unit.mtpl.htm',
 			[
 				'@SUB-TEMPLATES@' => [
-					'test-unit-tab-tests.inc.htm' 			=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// dir with trailing slash
-					'test-unit-tab-interractions.inc.htm' 	=> (string) $tpl_path, 													// dir without trailing slash
+					'test-unit-tab-tests.inc.htm' 			=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// directory with trailing slash
+					'test-unit-tab-interractions.inc.htm' 	=> (string) $tpl_path, 													// directory without trailing slash
 					'test-unit-tab-forms.inc.htm' 			=> '@', 																// @ (self) path, assumes the same dir
 					'%test-unit-tab-templating%'			=> '@/test-unit-tab-templating.inc.htm'									// variable, with full path, using self @/sub-dir/ instead of $tpl_path/test-unit-tab-misc.htm
 				],

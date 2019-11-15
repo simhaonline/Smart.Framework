@@ -36,6 +36,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
+		$stpl = (string) $this->ControllerGetParam('module-path').'views/templating-test-highlight-syntax.mtpl.htm';
+		//--
 		$tpl = (string) $this->ControllerGetParam('module-view-path').'templating-test.mtpl.htm';
 		$ptpl = (string) $this->ControllerGetParam('module-view-path').'templating-test.inc.htm';
 		//--
@@ -47,12 +49,38 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		if((string)$op == 'viewsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Markers-TPL Template Source:<br><i>'.Smart::escape_html($tpl).'</i></h1><hr><pre style="background:#FAFAFA; margin:0px; padding:0px; width:98vw; height:75vh; overflow:hidden;"><code class="markerstpl" style="margin:0px; padding:0px; width:100%; height:100%; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$tpl))).'</code></pre><hr><br>');
+			$this->PageViewSetVar(
+				'main',
+				(string) SmartMarkersTemplating::render_file_template(
+					(string) $stpl,
+					[
+						'@SUB-TEMPLATES@' => [
+							'%the-tpl%|html' => '@/'.SmartFileSysUtils::get_file_name_from_path($tpl)
+						],
+						'HTML-HIGHLIGHT' 	=> (string) SmartComponents::js_code_highlightsyntax('body', ['web','tpl']),
+						'TPL-PATH' 			=> (string) $tpl,
+						'TPL-TYPE' 			=> 'Template'
+					]
+				)
+			);
 			return;
 			//--
 		} elseif((string)$op == 'viewpartialsource') {
 			//--
-			$this->PageViewSetVar('main', SmartComponents::js_code_highlightsyntax('body', ['web','tpl']).'<h1>Markers-TPL Sub-Template Source:<br><i>'.Smart::escape_html($ptpl).'</i></h1><hr><pre style="background:#FAFAFA; margin:0px; padding:0px; width:98vw; height:75vh; overflow:hidden;"><code class="markerstpl" style="margin:0px; padding:0px; width:100%; height:100%; overflow:auto;">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)SmartFileSystem::read((string)$ptpl))).'</code></pre><hr><br>');
+			$this->PageViewSetVar(
+				'main',
+				(string) SmartMarkersTemplating::render_file_template(
+					(string) $stpl,
+					[
+						'@SUB-TEMPLATES@' => [
+							'%the-tpl%|html' => '@/'.SmartFileSysUtils::get_file_name_from_path($ptpl)
+						],
+						'HTML-HIGHLIGHT' 	=> (string) SmartComponents::js_code_highlightsyntax('body', ['web','tpl']),
+						'TPL-PATH' 			=> (string) $ptpl,
+						'TPL-TYPE' 			=> 'Sub-Template'
+					]
+				)
+			);
 			return;
 			//--
 		} //end if
@@ -61,7 +89,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$title = 'Markers-TPL Templating Render Demo - Syntax';
 		//--
-		$data = [ // v.20191019
+		$data = [ // v.20191115
 			//-- ### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE ; variable names will allow also - (. is reserved for separator as arr[key] is ARR.KEY)
 			'Version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
 			'heLLo__World' => '<h1>Demo: Markers-TPL Templating built-into Smart.Framework</h1>',
