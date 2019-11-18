@@ -37,10 +37,8 @@ if(\headers_sent()) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD (must be set in set in config-admin.php)
  * Optional constants: APP_AUTH_PRIVILEGES (set in set in config-admin.php)
  *
- * @access 		private
- * @internal
- *
  * @version 	v.20191111
+ * @package 	development:modules:AuthAdmins
  *
  */
 final class SimpleAuthAdminsHandler {

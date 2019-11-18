@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartSQliteDb">
 	<title>PHP Documentation for: \SmartSQliteDb</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsDatabaseSQLite-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -559,7 +592,7 @@ Tested and Stable on SQLite versions: 3.x</div><br>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartSQliteDb</span></li>
 		
-		<li><b>Version:</b> v.20191101</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> extensions:  PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -572,204 +605,285 @@ Tested and Stable on SQLite versions: 3.x</div><br>
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$sqlite_db_file` Parameter is REQUIRED">$sqlite_db_file</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$timeout_busy_sec` Parameter is OPTIONAL, with the Default Value: 60">$timeout_busy_sec</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>60</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$sqlite_db_file` Parameter is REQUIRED">$sqlite_db_file</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$timeout_busy_sec` Parameter is OPTIONAL, with the Default Value: 60">$timeout_busy_sec</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>60</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@param: {$sqlite_db_file} The path to the SQLite Database File :: Example: 'tmp/test.sqlite3' ; (if DB does not exist, will create it)</div>
-	<div class="doc-method-comments">Class constructor</div>
+			<div class="doc-method-ret-params">@param: {$sqlite_db_file} The path to the SQLite Database File :: Example: 'tmp/test.sqlite3' ; (if DB does not exist, will create it)</div>
+	
+			<div class="doc-method-comments">Class constructor</div>
+	
 </div><div class="doc-container" id="Method--__destruct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__destruct</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
 	
-	<div class="doc-method-comments">Class Destructor<br>
+			<div class="doc-method-comments">Class Destructor<br>
 This will automatically close the current DB of this class (if not closed explicit before).</div>
+	
 </div><div class="doc-container" id="Method--open">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>open</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
 	
-	<div class="doc-method-comments">Opens the current SQLite DB (similar to server connect).<br>
+			<div class="doc-method-comments">Opens the current SQLite DB (similar to server connect).<br>
 This must be called prior any other DB operations: read / write / count / ...</div>
+	
 </div><div class="doc-container" id="Method--close">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>close</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
 	
-	<div class="doc-method-comments">Manually Closes the current SQLite DB (similar to server disconnect).<br>
+			<div class="doc-method-comments">Manually Closes the current SQLite DB (similar to server disconnect).<br>
 This is for safety and should be used when coding to explicit close the DB after ending operations to avoid DB corruption in high-load environments.<br>
 Otherwise, it will be closed automatically on object __destruct() ...</div>
+	
 </div><div class="doc-container" id="Method--quote_likes">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>quote_likes</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_string` Parameter is REQUIRED">$y_string</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_string` Parameter is REQUIRED">$y_string</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@param: {$y_string} A String or a Number to be Quoted for LIKES</div>
-	<div class="doc-method-comments">Fix a string to be compliant with SQLite LIKE / SIMILAR syntax.<br>
+			<div class="doc-method-ret-params">@param: {$y_string} A String or a Number to be Quoted for LIKES</div>
+	
+			<div class="doc-method-comments">Fix a string to be compliant with SQLite LIKE / SIMILAR syntax.<br>
 It will use special quotes for the LIKE / SIMILAR special characters: % _<br>
 This function IS NOT INTENDED TO ESCAPE AGAINST SQL INJECTIONS ; USE IT ONLY WITH PREPARED PARAMS OR USE escape_str() with mode 'likes'</div>
+	
 </div><div class="doc-container" id="Method--escape_str">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>escape_str</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$string` Parameter is REQUIRED">$string</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$string` Parameter is REQUIRED">$string</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The Escaped String / Number<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The Escaped String / Number<br>
 @param: {$string} A String or a Number to be Escaped<br>
 @param: {$y_mode} '' = default ; 'likes' = Escape LIKE Syntax (% _)</div>
-	<div class="doc-method-comments">Escape a string to be compliant and Safe (against SQL Injection) with SQLite standards.<br>
+	
+			<div class="doc-method-comments">Escape a string to be compliant and Safe (against SQL Injection) with SQLite standards.<br>
 This function will not add the (single) quotes arround the string, but just will just escape it to be safe.</div>
+	
 </div><div class="doc-container" id="Method--json_encode">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>json_encode</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$mixed_content` Parameter is REQUIRED">$mixed_content</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$mixed_content` Parameter is REQUIRED">$mixed_content</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : JSON string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : JSON string<br>
 @param: {$mixed_content} A mixed variable</div>
-	<div class="doc-method-comments">SQlite compliant and Safe Json Encode.<br>
+	
+			<div class="doc-method-comments">SQlite compliant and Safe Json Encode.<br>
 This should be used with SQlite json fields.</div>
+	
 </div><div class="doc-container" id="Method--register_sql_function">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>register_sql_function</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$func` Parameter is REQUIRED">$func</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$argnum` Parameter is REQUIRED">$argnum</span></b></span>, <span class="doc-param-name"><b><span title="`$sqlname` Parameter is REQUIRED">$sqlname</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$func` Parameter is REQUIRED">$func</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$argnum` Parameter is REQUIRED">$argnum</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$sqlname` Parameter is REQUIRED">$sqlname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@param: {$func} A PHP or custom Function Name (will be registered with `custom_fx_` as prefix<br>
+			<div class="doc-method-ret-params">@param: {$func} A PHP or custom Function Name (will be registered with `custom_fx_` as prefix<br>
 @param: {$argnum} The number of required args ; If this parameter is -1, then the SQL function may take any number of arguments</div>
-	<div class="doc-method-comments">Registers a PHP function for use as an SQL scalar function with SQLite.</div>
+	
+			<div class="doc-method-comments">Registers a PHP function for use as an SQL scalar function with SQLite.</div>
+	
 </div><div class="doc-container" id="Method--check_if_table_exists">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>check_if_table_exists</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$table_name` Parameter is REQUIRED">$table_name</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$table_name` Parameter is REQUIRED">$table_name</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;BOOLEAN
 	
 	
-	<div class="doc-method-ret-params">@return: {BOOLEAN} : TRUE if exists, FALSE if not<br>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} : TRUE if exists, FALSE if not<br>
 @param: {$table_name} The Table Name</div>
-	<div class="doc-method-comments">Check if a Table exists in the current SQLite DataBase</div>
+	
+			<div class="doc-method-comments">Check if a Table exists in the current SQLite DataBase</div>
+	
 </div><div class="doc-container" id="Method--count_data">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>count_data</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : the result of COUNT()<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : the result of COUNT()<br>
 @param: {$query} the SQLite Query<br>
 @param: {$qparams} *optional* array of parameters (?, ?, ... ?)<br>
 @param: {$qtitle} *optional* query title for easy debugging</div>
-	<div class="doc-method-comments">SQLite Query -&gt; Count<br>
+	
+			<div class="doc-method-comments">SQLite Query -&gt; Count<br>
 This function is intended to be used for count type queries: SELECT COUNT().</div>
+	
 </div><div class="doc-container" id="Method--read_data">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>read_data</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')<br>
+			<div class="doc-method-ret-params">@return: {ARRAY} : (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')<br>
 @param: {$query} the SQLite Query<br>
 @param: {$qparams} *optional* array of parameters (?, ?, ... ?)<br>
 @param: {$qtitle} *optional* query title for easy debugging</div>
-	<div class="doc-method-comments">SQLite Query -&gt; Read (Non-Associative) one or multiple rows.<br>
+	
+			<div class="doc-method-comments">SQLite Query -&gt; Read (Non-Associative) one or multiple rows.<br>
 This function is intended to be used for read type queries: SELECT.</div>
+	
 </div><div class="doc-container" id="Method--read_adata">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>read_adata</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : (asociative) of results		:: array(0 =&gt; array('column1', 'column2', ... 'column-n'), 1 =&gt; array('column1', 'column2', ... 'column-n'), ..., m =&gt; array('column1', 'column2', ... 'column-n'))<br>
+			<div class="doc-method-ret-params">@return: {ARRAY} : (asociative) of results		:: array(0 =&gt; array('column1', 'column2', ... 'column-n'), 1 =&gt; array('column1', 'column2', ... 'column-n'), ..., m =&gt; array('column1', 'column2', ... 'column-n'))<br>
 @param: {$query} the SQLite Query<br>
 @param: {$qparams} *optional* array of parameters (?, ?, ... ?)<br>
 @param: {$qtitle} *optional* query title for easy debugging</div>
-	<div class="doc-method-comments">SQLite Query -&gt; Read (Associative) one or multiple rows.<br>
+	
+			<div class="doc-method-comments">SQLite Query -&gt; Read (Associative) one or multiple rows.<br>
 This function is intended to be used for read type queries: SELECT.</div>
+	
 </div><div class="doc-container" id="Method--read_asdata">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>read_asdata</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')<br>
+			<div class="doc-method-ret-params">@hints: ALWAYS  use a LIMIT 1 OFFSET 0 with all queries using this function to avoid situations that will return more than 1 rows and will raise ERROR with this function.<br>
+@return: {ARRAY} : (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')<br>
 @param: {$query} the SQLite Query<br>
 @param: {$qparams} *optional* array of parameters (?, ?, ... ?)<br>
 @param: {$qtitle} *optional* query title for easy debugging</div>
-	<div class="doc-method-comments">SQLite Query -&gt; Read (Associative) - Single Row (just for 1 row, to easy the use of data from queries).<br>
+	
+			<div class="doc-method-comments">SQLite Query -&gt; Read (Associative) - Single Row (just for 1 row, to easy the use of data from queries).<br>
 !!! This will raise an error if more than one row(s) are returned !!!<br>
 This function does not support multiple rows because the associative data is structured without row iterator.<br>
 For queries that return more than one row use: read_adata() or read_data().<br>
 This function is intended to be used for read type queries: SELECT.</div>
+	
 </div><div class="doc-container" id="Method--write_data">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>write_data</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qparams` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qparams</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$qtitle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$qtitle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : [ 0 =&gt; 'control-message', 1 =&gt; #affected-rows, 2 =&gt; #last-inserted-id(autoincrement)|0|null ]<br>
+			<div class="doc-method-ret-params">@return: {ARRAY} : [ 0 =&gt; 'control-message', 1 =&gt; #affected-rows, 2 =&gt; #last-inserted-id(autoincrement)|0|null ]<br>
 @param: {$query} the SQLite Query<br>
 @param: {$qparams} *optional* array of parameters (?, ?, ... ?)<br>
 @param: {$qtitle} *optional* query title for easy debugging</div>
-	<div class="doc-method-comments">SQLite Query -&gt; Write.<br>
+	
+			<div class="doc-method-comments">SQLite Query -&gt; Write.<br>
 This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; UPDATE ; CREATE SCHEMAS ; CALLING STORED PROCEDURES ...</div>
+	
 </div><div class="doc-container" id="Method--prepare_statement">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>prepare_statement</b></span>&nbsp;(
-	<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$mode` Parameter is REQUIRED">$mode</span></b></span>
+				<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$mode` Parameter is REQUIRED">$mode</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The SQL partial Statement<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The SQL partial Statement<br>
 @param: {$arrdata} associative array: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100; | non-associative array $arr[] = 'some value'; $arr[] = 'other-value', ...<br>
 @param: {$mode} mode: 'insert' | 'update' | 'in-select'</div>
-	<div class="doc-method-comments">Create Escaped Write SQL Statements from Data - to be used with SQLite for: INSERT ; UPDATE ; IN-SELECT<br>
+	
+			<div class="doc-method-comments">Create Escaped Write SQL Statements from Data - to be used with SQLite for: INSERT ; UPDATE ; IN-SELECT<br>
 Can be used with: write_data() to build INSERT / UPDATE queries from an associative array<br>
 or can be used with read_data(), read_adata(), read_asdata(), count_data() to build IN-SELECT queries from a non-associative array</div>
+	
 </div><div class="doc-container" id="Method--prepare_param_query">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>prepare_param_query</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, <i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, 
+			<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The SQL processed (partial/full) Statement<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The SQL processed (partial/full) Statement<br>
 @param: {$query} SQL Statement to process like '   WHERE (id = ?)'<br>
 @param: {$arrdata} The non-associative array as of: $arr=array('a');</div>
-	<div class="doc-method-comments">Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)<br>
+	
+			<div class="doc-method-comments">Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)<br>
 This can be used for a full SQL statement or just for a part.<br>
 The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !</div>
+	
 </div><div class="doc-container" id="Method--new_safe_id">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>new_safe_id</b></span>&nbsp;(
-	<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$mode` Parameter is REQUIRED">$mode</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$id_field` Parameter is REQUIRED">$id_field</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$table_name` Parameter is REQUIRED">$table_name</span></b></span>
+				<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$mode` Parameter is REQUIRED">$mode</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$id_field` Parameter is REQUIRED">$id_field</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$table_name` Parameter is REQUIRED">$table_name</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : the generated Unique ID<br>
+			<div class="doc-method-ret-params">@return: {STRING} : the generated Unique ID<br>
 @param: {$mode} mode: uid10str | uid10num<br>
 @param: {$id_field} the field name<br>
 @param: {$table_name} the table name</div>
-	<div class="doc-method-comments">Get A UNIQUE (SAFE) ID for DB Tables / Schema</div>
+	
+			<div class="doc-method-comments">Get A UNIQUE (SAFE) ID for DB Tables / Schema</div>
+	
 </div><!-- Skip Internal-Priv Method: `create_table()` --><!-- Skip Internal-Priv Method: `get_filename()` -->
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -778,15 +892,15 @@ The statement must not contain any Single Quotes to prevent SQL injections which
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;IMPORTANT:&nbsp;https://sqlite.org/lang_keywords.html<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;SQLIte3&nbsp;uses&nbsp;by&nbsp;default&nbsp;'&nbsp;(single&nbsp;quotes)&nbsp;to&nbsp;quote&nbsp;strings&nbsp;and&nbsp;`&nbsp;(backticks)&nbsp;or&nbsp;nothing&nbsp;to&nbsp;quote&nbsp;identifiers&nbsp;(table&nbsp;names&nbsp;/&nbsp;field&nbsp;names)<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;It&nbsp;is&nbsp;recommended&nbsp;to&nbsp;quote&nbsp;identifiers&nbsp;(table&nbsp;names&nbsp;/&nbsp;field&nbsp;names)&nbsp;using&nbsp;`&nbsp;(backtick)&nbsp;instead&nbsp;of&nbsp;not&nbsp;quoting&nbsp;at&nbsp;all&nbsp;to&nbsp;avoid&nbsp;confusion&nbsp;with&nbsp;SQL&nbsp;reserved&nbsp;syntax<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Using&nbsp;`&nbsp;(backticks)&nbsp;is&nbsp;prefered&nbsp;as&nbsp;SELECT&nbsp;`field1`&nbsp;FROM&nbsp;`table1`&nbsp;is&nbsp;a&nbsp;strict&nbsp;syntax&nbsp;in&nbsp;SQLite3&nbsp;and&nbsp;will&nbsp;throw&nbsp;error&nbsp;if&nbsp;either&nbsp;table1&nbsp;or&nbsp;field1&nbsp;do&nbsp;not&nbsp;exists<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Using&nbsp;"&nbsp;(double&nbsp;quote)&nbsp;for&nbsp;quoting&nbsp;identifiers&nbsp;may&nbsp;result&nbsp;in&nbsp;unexpected&nbsp;results&nbsp;as&nbsp;SELECT&nbsp;"field1"&nbsp;FROM&nbsp;"table1"&nbsp;will&nbsp;not&nbsp;throw&nbsp;exception&nbsp;if&nbsp;field1&nbsp;/&nbsp;table1&nbsp;do&nbsp;not&nbsp;exists<br><br>&nbsp;//Sample&nbsp;Usage<br>&nbsp;</span><span style="color: #FFFFFF">$db&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartSQliteDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'tmp/testunit.sqlite'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">open</span><span style="color: #FFCC00; font-weight: bold">();<br>&nbsp;</span><span style="color: #FFFFFF">$sq_rd&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(array)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">read_asdata</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">"SELECT&nbsp;`description`&nbsp;FROM&nbsp;`mytable`&nbsp;WHERE&nbsp;(`id`&nbsp;=&nbsp;'"</span><span style="color: #FFCC00; font-weight: bold">.</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">escape_str</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$my_id</span><span style="color: #FFCC00; font-weight: bold">).</span><span style="color: #5F9CCE">"')&nbsp;LIMIT&nbsp;1&nbsp;OFFSET&nbsp;0"</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$sq_cnt&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(int)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">count_data</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">"SELECT&nbsp;COUNT(1)&nbsp;FROM&nbsp;mytable&nbsp;WHERE&nbsp;(score&nbsp;&gt;&nbsp;?)"</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;array(</span><span style="color: #FFFFFF">100</span><span style="color: #FFCC00; font-weight: bold">));<br>&nbsp;</span><span style="color: #FFFFFF">$arr_insert&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;array(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'id'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">100</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'active'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">1</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #5F9CCE">'Test&nbsp;Record'<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$sq_ins&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(array)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">write_data</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'INSERT&nbsp;INTO&nbsp;other_table&nbsp;'</span><span style="color: #FFCC00; font-weight: bold">.</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">prepare_statement</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$arr_insert</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'insert'</span><span style="color: #FFCC00; font-weight: bold">));<br>&nbsp;</span><span style="color: #FFFFFF">$sq_upd&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(array)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">write_data</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'UPDATE&nbsp;other_table&nbsp;SET&nbsp;active&nbsp;=&nbsp;0&nbsp;WHERE&nbsp;(id&nbsp;=&nbsp;?)'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;array(</span><span style="color: #FFFFFF">100</span><span style="color: #FFCC00; font-weight: bold">));<br>&nbsp;</span><span style="color: #FFFFFF">$prepared_sql&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">prepare_param_query</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'SELECT&nbsp;*&nbsp;FROM&nbsp;table&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;?'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;[</span><span style="color: #FFFFFF">99</span><span style="color: #FFCC00; font-weight: bold">]);<br>&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">close</span><span style="color: #FFCC00; font-weight: bold">();&nbsp;</span><span style="color: #999999">//&nbsp;optional,&nbsp;but&nbsp;safe<br><br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;IMPORTANT:&nbsp;https://sqlite.org/lang_keywords.html<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;SQLIte3&nbsp;uses&nbsp;by&nbsp;default&nbsp;'&nbsp;(single&nbsp;quotes)&nbsp;to&nbsp;quote&nbsp;strings&nbsp;and&nbsp;`&nbsp;(backticks)&nbsp;or&nbsp;nothing&nbsp;to&nbsp;quote&nbsp;identifiers&nbsp;(table&nbsp;names&nbsp;/&nbsp;field&nbsp;names)<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;It&nbsp;is&nbsp;recommended&nbsp;to&nbsp;quote&nbsp;identifiers&nbsp;(table&nbsp;names&nbsp;/&nbsp;field&nbsp;names)&nbsp;using&nbsp;`&nbsp;(backtick)&nbsp;instead&nbsp;of&nbsp;not&nbsp;quoting&nbsp;at&nbsp;all&nbsp;to&nbsp;avoid&nbsp;confusion&nbsp;with&nbsp;SQL&nbsp;reserved&nbsp;syntax<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Using&nbsp;`&nbsp;(backticks)&nbsp;is&nbsp;prefered&nbsp;as&nbsp;SELECT&nbsp;`field1`&nbsp;FROM&nbsp;`table1`&nbsp;is&nbsp;a&nbsp;strict&nbsp;syntax&nbsp;in&nbsp;SQLite3&nbsp;and&nbsp;will&nbsp;throw&nbsp;error&nbsp;if&nbsp;either&nbsp;table1&nbsp;or&nbsp;field1&nbsp;do&nbsp;not&nbsp;exists<br>&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Using&nbsp;"&nbsp;(double&nbsp;quote)&nbsp;for&nbsp;quoting&nbsp;identifiers&nbsp;may&nbsp;result&nbsp;in&nbsp;unexpected&nbsp;results&nbsp;as&nbsp;SELECT&nbsp;"field1"&nbsp;FROM&nbsp;"table1"&nbsp;will&nbsp;not&nbsp;throw&nbsp;exception&nbsp;if&nbsp;field1&nbsp;/&nbsp;table1&nbsp;do&nbsp;not&nbsp;exists<br><br>&nbsp;//Sample&nbsp;Usage<br>&nbsp;</span><span style="color: #FFFFFF">$db&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartSQliteDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'tmp/testunit.sqlite'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">open</span><span style="color: #FFCC00; font-weight: bold">();<br>&nbsp;</span><span style="color: #FFFFFF">$sq_rd&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(array)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">read_asdata</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">"SELECT&nbsp;`description`&nbsp;FROM&nbsp;`mytable`&nbsp;WHERE&nbsp;(`id`&nbsp;=&nbsp;'"</span><span style="color: #FFCC00; font-weight: bold">.</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">escape_str</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$my_id</span><span style="color: #FFCC00; font-weight: bold">).</span><span style="color: #5F9CCE">"')&nbsp;LIMIT&nbsp;1&nbsp;OFFSET&nbsp;0"</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$sq_cnt&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(int)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">count_data</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">"SELECT&nbsp;COUNT(1)&nbsp;FROM&nbsp;mytable&nbsp;WHERE&nbsp;(score&nbsp;&gt;&nbsp;?)"</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;array(</span><span style="color: #FFFFFF">100</span><span style="color: #FFCC00; font-weight: bold">));<br>&nbsp;</span><span style="color: #FFFFFF">$arr_insert&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;array(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'id'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">100</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'active'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">1</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #5F9CCE">'Test&nbsp;Record'<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$sq_ins&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(array)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">write_data</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'INSERT&nbsp;INTO&nbsp;other_table&nbsp;'</span><span style="color: #FFCC00; font-weight: bold">.</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">prepare_statement</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$arr_insert</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'insert'</span><span style="color: #FFCC00; font-weight: bold">));<br>&nbsp;</span><span style="color: #FFFFFF">$sq_upd&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(array)&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">write_data</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'UPDATE&nbsp;other_table&nbsp;SET&nbsp;active&nbsp;=&nbsp;0&nbsp;WHERE&nbsp;(id&nbsp;=&nbsp;?)'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;array(</span><span style="color: #FFFFFF">100</span><span style="color: #FFCC00; font-weight: bold">));<br>&nbsp;</span><span style="color: #FFFFFF">$prepared_sql&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">prepare_param_query</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'SELECT&nbsp;*&nbsp;FROM&nbsp;table&nbsp;WHERE&nbsp;id&nbsp;=&nbsp;?'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;[</span><span style="color: #FFFFFF">99</span><span style="color: #FFCC00; font-weight: bold">]);<br>&nbsp;</span><span style="color: #FFFFFF">$db</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">close</span><span style="color: #FFCC00; font-weight: bold">();&nbsp;</span><span style="color: #999999">//&nbsp;optional,&nbsp;but&nbsp;safe<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -812,7 +926,43 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--__destruct">Method: __destruct()</option><option value="Method--open">Method: open()</option><option value="Method--close">Method: close()</option><option value="Method--quote_likes">Method: quote_likes()</option><option value="Method--escape_str">Method: escape_str()</option><option value="Method--json_encode">Method: json_encode()</option><option value="Method--register_sql_function">Method: register_sql_function()</option><option value="Method--check_if_table_exists">Method: check_if_table_exists()</option><option value="Method--count_data">Method: count_data()</option><option value="Method--read_data">Method: read_data()</option><option value="Method--read_adata">Method: read_adata()</option><option value="Method--read_asdata">Method: read_asdata()</option><option value="Method--write_data">Method: write_data()</option><option value="Method--prepare_statement">Method: prepare_statement()</option><option value="Method--prepare_param_query">Method: prepare_param_query()</option><option value="Method--new_safe_id">Method: new_safe_id()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--__destruct">Method: __destruct()</option>
+			
+									<option value="Method--open">Method: open()</option>
+			
+									<option value="Method--close">Method: close()</option>
+			
+									<option value="Method--quote_likes">Method: quote_likes()</option>
+			
+									<option value="Method--escape_str">Method: escape_str()</option>
+			
+									<option value="Method--json_encode">Method: json_encode()</option>
+			
+									<option value="Method--register_sql_function">Method: register_sql_function()</option>
+			
+									<option value="Method--check_if_table_exists">Method: check_if_table_exists()</option>
+			
+									<option value="Method--count_data">Method: count_data()</option>
+			
+									<option value="Method--read_data">Method: read_data()</option>
+			
+									<option value="Method--read_adata">Method: read_adata()</option>
+			
+									<option value="Method--read_asdata">Method: read_asdata()</option>
+			
+									<option value="Method--write_data">Method: write_data()</option>
+			
+									<option value="Method--prepare_statement">Method: prepare_statement()</option>
+			
+									<option value="Method--prepare_param_query">Method: prepare_param_query()</option>
+			
+									<option value="Method--new_safe_id">Method: new_safe_id()</option>
+			
+						
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -822,14 +972,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:04 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:12 +0000</small>
 <hr>
 <br>
 <!-- # -->

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartMongoDb">
 	<title>PHP Documentation for: \SmartMongoDb</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsDatabaseMongoDB-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -559,7 +592,7 @@ Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1 / 4.2<
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartMongoDb</span></li>
 		<li><b>Throws:</b> \Exception  : Depending how this class it is constructed it may throw Exception or Raise Fatal Error</li>
-		<li><b>Version:</b> v.20191103</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> extensions:  PHP MongoDB (v.1.1.0 or later) ; classes: Smart</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -572,65 +605,87 @@ Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1 / 4.2<
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
-	<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_configs_arr` Parameter is OPTIONAL, with the Default Value: array()">$y_configs_arr</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fatal_err` Parameter is OPTIONAL, with the Default Value: true">$y_fatal_err</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+				<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_configs_arr` Parameter is OPTIONAL, with the Default Value: array()">$y_configs_arr</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fatal_err` Parameter is OPTIONAL, with the Default Value: true">$y_fatal_err</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@throws: {\Exception} : Depending how this class it is constructed it may throw Exception or Raise Fatal Error<br>
+			<div class="doc-method-ret-params">@throws: {\Exception} : Depending how this class it is constructed it may throw Exception or Raise Fatal Error<br>
 @param: {$y_configs_arr} *Optional* ; The Array of Configuration parameters ; Default is Empty Array, case which will get the configuration from config.php ; if custom, the ARRAY STRUCTURE should be identical with the default config.php: $configs['mongodb'].<br>
 @param: {$y_fatal_err} *Optional* ; Set if Errors handling mode ; Default is TRUE ; if set to FALSE will throw Exception instead of Raise a Fatal Error</div>
-	<div class="doc-method-comments">Class constructor</div>
+	
+			<div class="doc-method-comments">Class constructor</div>
+	
 </div><div class="doc-container" id="Method--assign_uuid">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>assign_uuid</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : UUID (base36)</div>
-	<div class="doc-method-comments">A replacement for the default MongoDB object ID, will generate a 32 characters very unique UUID</div>
+			<div class="doc-method-ret-params">@return: {STRING} : UUID (base36)</div>
+	
+			<div class="doc-method-comments">A replacement for the default MongoDB object ID, will generate a 32 characters very unique UUID</div>
+	
 </div><div class="doc-container" id="Method--get_ext_version">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_ext_version</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : MongoDB extension version</div>
-	<div class="doc-method-comments">Get the MongoDB Extension version</div>
+			<div class="doc-method-ret-params">@return: {STRING} : MongoDB extension version</div>
+	
+			<div class="doc-method-comments">Get the MongoDB Extension version</div>
+	
 </div><div class="doc-container" id="Method--get_server_version">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_version</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : MongoDB version</div>
-	<div class="doc-method-comments">Get the MongoDB server version</div>
+			<div class="doc-method-ret-params">@return: {STRING} : MongoDB version</div>
+	
+			<div class="doc-method-comments">Get the MongoDB server version</div>
+	
 </div><div class="doc-container" id="Method--getFtsDictionaryByLang">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getFtsDictionaryByLang</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$lang` Parameter is REQUIRED">$lang</span></b></span>
+				<span class="doc-param-name"><b><span title="`$lang` Parameter is REQUIRED">$lang</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : dictionary name (ex: 'english' - if available or 'none' - if n/a)</div>
-	<div class="doc-method-comments">Get the MongoDB FTS Dictionary by Two Letter language code (ISO 639-1)</div>
+			<div class="doc-method-ret-params">@return: {STRING} : dictionary name (ex: 'english' - if available or 'none' - if n/a)</div>
+	
+			<div class="doc-method-comments">Get the MongoDB FTS Dictionary by Two Letter language code (ISO 639-1)</div>
+	
 </div><div class="doc-container" id="Method--is_command_ok">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>is_command_ok</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$result` Parameter is REQUIRED">$result</span></b></span>
+				<span class="doc-param-name"><b><span title="`$result` Parameter is REQUIRED">$result</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;BOOLEAN
 	
 	
-	<div class="doc-method-ret-params">@return: {BOOLEAN} : TRUE / FALSE</div>
-	<div class="doc-method-comments">Test if a command output is OK compliant (will check if result[0][ok] == 1)<br>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} : TRUE / FALSE</div>
+	
+			<div class="doc-method-comments">Test if a command output is OK compliant (will check if result[0][ok] == 1)<br>
 Notice: not all MongoDB commands will return this standard answer, but for most will work</div>
+	
 </div><div class="doc-container" id="Method--__call">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__call</b></span>&nbsp;(
 	
 	)&nbsp;{}&nbsp;<span title="* Special * Magic * Method"><b>@</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@throws: {\Exception} : Depending how this class it is constructed it may throw Exception or Raise Fatal Error<br>
+			<div class="doc-method-ret-params">@throws: {\Exception} : Depending how this class it is constructed it may throw Exception or Raise Fatal Error<br>
 @method: {@return: MIXED} count($strCollection, $arrQuery)											# count documents in a collection<br>
 @method: {@return: MIXED} find($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single or multiple documents in a collection with optional filter criteria / limit<br>
 @method: {@return: MIXED} findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single document in a collection with optional filter criteria / limit<br>
@@ -641,22 +696,24 @@ Notice: not all MongoDB commands will return this standard answer, but for most 
 @method: {@return: MIXED} delete($strCollection, $arrFilter)											# delete single or many documents from a collection that are matching the filter criteria<br>
 @method: {@return: MIXED} command($arrCmd)															# run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...<br>
 @method: {@return: MIXED} igcommand($arrCmd)															# run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists</div>
-	<div class="doc-method-comments">This is the Magic Method (Call) that maps the PHP class extra methods to MongoDB methods.<br>
+	
+			<div class="doc-method-comments">This is the Magic Method (Call) that maps the PHP class extra methods to MongoDB methods.<br>
 It have variadic parameters mapped to MongoDB sub-calls.</div>
+	
 </div><!-- Skip Internal-Priv Method: `disconnect()` -->
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -665,15 +722,15 @@ It have variadic parameters mapped to MongoDB sub-calls.</div>
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;mongo&nbsp;config<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;array();<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'type'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'mongo-standalone'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;server(s)&nbsp;type:&nbsp;'mongo-standalone'&nbsp;|&nbsp;'mongo-cluster'&nbsp;(sharding)<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-host'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'127.0.0.1'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;host<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-port'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'27017'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;port<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'dbname'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'smart_framework'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;database<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'username'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">''</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;username<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'password'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">''</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;Base64-Encoded&nbsp;password<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'timeout'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">5</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;connect&nbsp;timeout&nbsp;in&nbsp;seconds<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'slowtime'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">0.0035</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;0.0025&nbsp;..&nbsp;0.0090&nbsp;slow&nbsp;query&nbsp;time&nbsp;(for&nbsp;debugging)<br><br>&nbsp;</span><span style="color: #FFFFFF">$mongo&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;\</span><span style="color: #FFFFFF">SmartMongoDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">);<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;insert<br>&nbsp;</span><span style="color: #FFFFFF">$doc&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;[];<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'_id'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">assign_uuid</span><span style="color: #FFCC00; font-weight: bold">();<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'name'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'My&nbsp;Name'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'description'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'Some&nbsp;description&nbsp;goes&nbsp;here&nbsp;...'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$insert&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">insert</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'myTestCollection'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">var_dump</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$insert</span><span style="color: #FFCC00; font-weight: bold">);<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;find<br>&nbsp;</span><span style="color: #FFFFFF">$query&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">find</span><span style="color: #FFCC00; font-weight: bold">(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'myTestCollection'</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;</span><span style="color: #5F9CCE">'name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #5F9CCE">'My&nbsp;Name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">],&nbsp;</span><span style="color: #999999">//&nbsp;filter&nbsp;(update&nbsp;all&nbsp;except&nbsp;these)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">[&nbsp;</span><span style="color: #999999">//&nbsp;projection<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'name'</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'description'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">],<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'limit'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">1</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #999999">//&nbsp;limit<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'skip'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">0&nbsp;</span><span style="color: #999999">//&nbsp;offset<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">]<br>&nbsp;);<br>&nbsp;</span><span style="color: #FFFFFF">var_dump</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$query</span><span style="color: #FFCC00; font-weight: bold">);<br><br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;sample&nbsp;mongo&nbsp;config<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;array();<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'type'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'mongo-standalone'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;server(s)&nbsp;type:&nbsp;'mongo-standalone'&nbsp;|&nbsp;'mongo-cluster'&nbsp;(sharding)<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-host'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'127.0.0.1'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;host<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-port'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'27017'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;port<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'dbname'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'smart_framework'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;database<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'username'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">''</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;username<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'password'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">''</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;Base64-Encoded&nbsp;password<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'timeout'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">5</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mongodb&nbsp;connect&nbsp;timeout&nbsp;in&nbsp;seconds<br>&nbsp;</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'slowtime'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">0.0035</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;0.0025&nbsp;..&nbsp;0.0090&nbsp;slow&nbsp;query&nbsp;time&nbsp;(for&nbsp;debugging)<br><br>&nbsp;</span><span style="color: #FFFFFF">$mongo&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;\</span><span style="color: #FFFFFF">SmartMongoDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$cfg_mongo</span><span style="color: #FFCC00; font-weight: bold">);<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;insert<br>&nbsp;</span><span style="color: #FFFFFF">$doc&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;[];<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'_id'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">assign_uuid</span><span style="color: #FFCC00; font-weight: bold">();<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'name'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'My&nbsp;Name'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'description'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'Some&nbsp;description&nbsp;goes&nbsp;here&nbsp;...'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$insert&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">insert</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'myTestCollection'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">$doc</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">var_dump</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$insert</span><span style="color: #FFCC00; font-weight: bold">);<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;sample&nbsp;find<br>&nbsp;</span><span style="color: #FFFFFF">$query&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$mongo</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">find</span><span style="color: #FFCC00; font-weight: bold">(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'myTestCollection'</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;</span><span style="color: #5F9CCE">'name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #5F9CCE">'My&nbsp;Name'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">],&nbsp;</span><span style="color: #999999">//&nbsp;filter&nbsp;(update&nbsp;all&nbsp;except&nbsp;these)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">[&nbsp;</span><span style="color: #999999">//&nbsp;projection<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'name'</span><span style="color: #FFCC00; font-weight: bold">,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'description'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">],<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'limit'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">1</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #999999">//&nbsp;limit<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #5F9CCE">'skip'&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&gt;&nbsp;</span><span style="color: #FFFFFF">0&nbsp;</span><span style="color: #999999">//&nbsp;offset<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">]<br>&nbsp;);<br>&nbsp;</span><span style="color: #FFFFFF">var_dump</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$query</span><span style="color: #FFCC00; font-weight: bold">);<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -699,7 +756,22 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--assign_uuid">Method: assign_uuid()</option><option value="Method--get_ext_version">Method: get_ext_version()</option><option value="Method--get_server_version">Method: get_server_version()</option><option value="Method--getFtsDictionaryByLang">Method: getFtsDictionaryByLang()</option><option value="Method--is_command_ok">Method: is_command_ok()</option><option value="Method--__call">Method: __call()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--assign_uuid">Method: assign_uuid()</option>
+			
+									<option value="Method--get_ext_version">Method: get_ext_version()</option>
+			
+									<option value="Method--get_server_version">Method: get_server_version()</option>
+			
+									<option value="Method--getFtsDictionaryByLang">Method: getFtsDictionaryByLang()</option>
+			
+									<option value="Method--is_command_ok">Method: is_command_ok()</option>
+			
+									<option value="Method--__call">Method: __call()</option>
+			
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -709,14 +781,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:04 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:12 +0000</small>
 <hr>
 <br>
 <!-- # -->

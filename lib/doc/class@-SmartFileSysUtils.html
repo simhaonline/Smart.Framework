@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartFileSysUtils">
 	<title>PHP Documentation for: \SmartFileSysUtils</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--CoreFileSystem-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -565,7 +598,7 @@ To handle this in an easy and safe manner, use the function SmartFileSysUtils::a
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartFileSysUtils</span></li>
 		
-		<li><b>Version:</b> v.20190221</li>
+		<li><b>Version:</b> v.20191105</li>
 		<li><b>Depends:</b> classes:  Smart</li>
 		
 		<li><b>Usage:</b> static  object: Class::method() - This class provides only STATIC methods</li>
@@ -578,188 +611,255 @@ To handle this in an easy and safe manner, use the function SmartFileSysUtils::a
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--max_upload_size">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>max_upload_size</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : the Max Upload Size in Bytes</div>
-	<div class="doc-method-comments">Return the MAXIMUM allowed Upload Size</div>
+			<div class="doc-method-ret-params">@return: {INTEGER} : the Max Upload Size in Bytes</div>
+	
+			<div class="doc-method-comments">Return the MAXIMUM allowed Upload Size</div>
+	
 </div><div class="doc-container" id="Method--check_if_safe_file_or_dir_name">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>check_if_safe_file_or_dir_name</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_fname` Parameter is REQUIRED">$y_fname</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_fname` Parameter is REQUIRED">$y_fname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;0/1
 	
 	
-	<div class="doc-method-ret-params">@return: {0/1} : returns 1 if VALID ; 0 if INVALID<br>
+			<div class="doc-method-ret-params">@return: {0/1} : returns 1 if VALID ; 0 if INVALID<br>
 @param: {$y_fname} The dirname or filename, (not path containing /) to validate</div>
-	<div class="doc-method-comments">Check a Name of a File or Directory (not a path containing /) if contain valid characters (to avoid filesystem path security injections)<br>
+	
+			<div class="doc-method-comments">Check a Name of a File or Directory (not a path containing /) if contain valid characters (to avoid filesystem path security injections)<br>
 Security: provides check if unsafe filenames or dirnames are accessed.</div>
+	
 </div><div class="doc-container" id="Method--check_if_safe_path">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>check_if_safe_path</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>, <i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_deny_absolute_path` Parameter is OPTIONAL, with the Default Value: &quot;yes&quot;">$y_deny_absolute_path</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;yes&quot;</b></span>, <i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allow_protected_relative_paths` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_allow_protected_relative_paths</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>, 
+			<i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_deny_absolute_path` Parameter is OPTIONAL, with the Default Value: &quot;yes&quot;">$y_deny_absolute_path</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;yes&quot;</b></span>, 
+			<i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allow_protected_relative_paths` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_allow_protected_relative_paths</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;0/1
 	
 	
-	<div class="doc-method-ret-params">@return: {0/1} : returns 1 if VALID ; 0 if INVALID<br>
+			<div class="doc-method-ret-params">@return: {0/1} : returns 1 if VALID ; 0 if INVALID<br>
 @param: {$y_path} The path (dir or file) to validate<br>
 @param: {$y_deny_absolute_path} *Optional* If YES will dissalow absolute paths<br>
 @param: {$y_allow_protected_relative_paths} *Optional* ! This is for very special case usage only so don't set it to YES except if you know what you are really doing ! If set to YES will allow access to special protected paths of this framework which may have impact on security ... ; this parameter is intended just for relative paths only (not absolute paths) as: #dir/.../file.ext ; #file.ext</div>
-	<div class="doc-method-comments">Check a Path (to a Directory or to a File) if contain valid characters (to avoid filesystem path security injections)<br>
+	
+			<div class="doc-method-comments">Check a Path (to a Directory or to a File) if contain valid characters (to avoid filesystem path security injections)<br>
 Security: provides check if unsafe paths are accessed.</div>
+	
 </div><!-- Skip Internal-Priv Method: `raise_error_if_unsafe_path()` --><div class="doc-container" id="Method--add_dir_last_slash">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>add_dir_last_slash</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The fixed path with a trailing<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The fixed path with a trailing<br>
 @param: {$y_path} The path to add the trailing slash to</div>
-	<div class="doc-method-comments">Safe add a trailing slash to a path if not already have it, with safe detection and avoid root access.<br>
+	
+			<div class="doc-method-comments">Safe add a trailing slash to a path if not already have it, with safe detection and avoid root access.<br>
 Adding a trailing slash to a path is not a simple task as if path is empty, adding the trailing slash will result in accessing the root file system as will be: /.<br>
 Otherwise it have to detect if the trailing slash exists already to avoid double slash.</div>
+	
 </div><div class="doc-container" id="Method--version_stdmtime">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>version_stdmtime</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The version as string to be used with version add</div>
-	<div class="doc-method-comments">Generates a Standard File Version based on Microtime Float to use with version add<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The version as string to be used with version add</div>
+	
+			<div class="doc-method-comments">Generates a Standard File Version based on Microtime Float to use with version add<br>
 Ex: 1517576620.6128</div>
+	
 </div><div class="doc-container" id="Method--version_remove">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>version_remove</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The fixed file name without the version<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The fixed file name without the version<br>
 @param: {$file} The file name (with version or not) to be processed</div>
-	<div class="doc-method-comments">Remove the version from a file name<br>
+	
+			<div class="doc-method-comments">Remove the version from a file name<br>
 Ex: myfile.@1505240360@.ext will become: myfile.ext</div>
+	
 </div><div class="doc-container" id="Method--version_add">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>version_add</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$version` Parameter is REQUIRED">$version</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$version` Parameter is REQUIRED">$version</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The fixed file name with a version<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The fixed file name with a version<br>
 @param: {$file} The file name (with version or not) to be processed ; if version detected will be preserved<br>
 @param: {$version} The version to be added</div>
-	<div class="doc-method-comments">Add the version to a file name.<br>
+	
+			<div class="doc-method-comments">Add the version to a file name.<br>
 Ex: myfile.ext will become: myfile.@1505240360@.ext</div>
+	
 </div><div class="doc-container" id="Method--version_get">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>version_get</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The version from filename or ''<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The version from filename or ''<br>
 @param: {$file} The file name to be processed</div>
-	<div class="doc-method-comments">Get the version from a file name.</div>
+	
+			<div class="doc-method-comments">Get the version from a file name.</div>
+	
 </div><div class="doc-container" id="Method--version_check">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>version_check</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$version` Parameter is REQUIRED">$version</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$file` Parameter is REQUIRED">$file</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$version` Parameter is REQUIRED">$version</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;0/1
 	
 	
-	<div class="doc-method-ret-params">@return: {0/1} : returns 1 if the version is detected ; otherwise returns 0 if version not detected<br>
+			<div class="doc-method-ret-params">@return: {0/1} : returns 1 if the version is detected ; otherwise returns 0 if version not detected<br>
 @param: {$file} The file name to be checked<br>
 @param: {$version} The version to be checked</div>
-	<div class="doc-method-comments">Check the version from a file name.</div>
+	
+			<div class="doc-method-comments">Check the version from a file name.</div>
+	
 </div><div class="doc-container" id="Method--get_dir_from_path">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_dir_from_path</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+				<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : a directory path [FOLDER NAME]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : a directory path [FOLDER NAME]<br>
 @param: {$ypath} the path (dir or file)</div>
-	<div class="doc-method-comments">Return the folder name from a path (except last trailing slash: /)</div>
+	
+			<div class="doc-method-comments">Return the folder name from a path (except last trailing slash: /)</div>
+	
 </div><div class="doc-container" id="Method--get_file_name_from_path">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_file_name_from_path</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+				<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [FILE NAME]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [FILE NAME]<br>
 @param: {$ypath} path or file</div>
-	<div class="doc-method-comments">Return the file name (includding extension) from path<br>
+	
+			<div class="doc-method-comments">Return the file name (includding extension) from path<br>
 WARNING: path_info('c:\\file.php') will not work correct on unix, but on windows will work correct both: path_info('c:\\file.php') and path_info('path/file.php'</div>
+	
 </div><div class="doc-container" id="Method--get_noext_file_name_from_path">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_noext_file_name_from_path</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+				<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [FILE NAME]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [FILE NAME]<br>
 @param: {$ypath} path or file</div>
-	<div class="doc-method-comments">Return the file name (WITHOUT extension) from path</div>
+	
+			<div class="doc-method-comments">Return the file name (WITHOUT extension) from path</div>
+	
 </div><div class="doc-container" id="Method--get_file_extension_from_path">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_file_extension_from_path</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+				<span class="doc-param-name"><b><span title="`$y_path` Parameter is REQUIRED">$y_path</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [FILE EXTENSION]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [FILE EXTENSION]<br>
 @param: {$ypath} path or file</div>
-	<div class="doc-method-comments">Return the file extension (without .) from path</div>
+	
+			<div class="doc-method-comments">Return the file extension (without .) from path</div>
+	
 </div><div class="doc-container" id="Method--prefixed_uuid10_dir">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>prefixed_uuid10_dir</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : Prefixed Path<br>
+			<div class="doc-method-ret-params">@return: {STRING} : Prefixed Path<br>
 @param: {$y_id} 10 chars id (uuid10)</div>
-	<div class="doc-method-comments">Generate a prefixed dir from a base36 UUID, 10 chars length : [0-9A-Z].<br>
+	
+			<div class="doc-method-comments">Generate a prefixed dir from a base36 UUID, 10 chars length : [0-9A-Z].<br>
 It does include also the UUID as final folder segment.<br>
 Example: for ID ABCDEFGHIJ09 will return: 9T/5B/0B/9M/9T5B0B9M8M/ as the generated prefixed path.<br>
 This have to be used for large folder storage structure to avoid limitations on some filesystems (ext3 / ntfs) where max sub-dirs per dir is 32k.<br>
 The prefixed path will be grouped by each 2 characters (max sub-folders per folder: 36 x 36 = 1296).<br>
 If a lower length than 10 chars is provided will pad with 0 on the left.<br>
 If a higher length or an invalid ID is provided will reset the ID to 000000..00 (10 chars) for the given length, but also drop a warning.</div>
+	
 </div><div class="doc-container" id="Method--prefixed_sha1_path">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>prefixed_sha1_path</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : Prefixed Path<br>
+			<div class="doc-method-ret-params">@return: {STRING} : Prefixed Path<br>
 @param: {$y_id} 40 chars id (sha1)</div>
-	<div class="doc-method-comments">Generate a prefixed dir from a base16 UUID (sha1), 40 chars length : [0-9a-f].<br>
+	
+			<div class="doc-method-comments">Generate a prefixed dir from a base16 UUID (sha1), 40 chars length : [0-9a-f].<br>
 It does NOT include the ID final folder.<br>
 Example: for ID df3a808b2bf20aaab4419c43d9f3a6143bd6b4bb will return: d/f3a/808/b2b/f20/aaa/b44/19c/43d/9f3/a61/43b/d6b/ as the generated prefixed path.<br>
 This have to be used for large folder storage structure to avoid limitations on some filesystems (ext3 / ntfs) where max sub-dirs per dir is 32k.<br>
 The prefixed folder will be grouped by each 3 characters (max sub-folders per folder: 16 x 16 x 16 = 4096).<br>
 If a lower length than 40 chars is provided will pad with 0 on the left.<br>
 If a higher length than 40 chars or an invalid ID is provided will reset the ID to 000000..00 (40 chars) for the given length, but also drop a warning.</div>
+	
 </div><div class="doc-container" id="Method--mime_eval">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>mime_eval</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yfile` Parameter is REQUIRED">$yfile</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ydisposition` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$ydisposition</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yfile` Parameter is REQUIRED">$yfile</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ydisposition` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$ydisposition</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;MIXED
 	
 	
-	<div class="doc-method-ret-params">@return: {MIXED} : ARRAY [ 0 =&gt; mime type ; 1 =&gt; inline/attachment; filename=&quot;file.ext&quot; ; 2 =&gt; inline/attachment ] ; IF $ydisposition == FALSE will return STRING: mime type<br>
+			<div class="doc-method-ret-params">@return: {MIXED} : ARRAY [ 0 =&gt; mime type ; 1 =&gt; inline/attachment; filename=&quot;file.ext&quot; ; 2 =&gt; inline/attachment ] ; IF $ydisposition == FALSE will return STRING: mime type<br>
 @param: {$yfile} the file name (includding file extension) ; Ex: file.ext<br>
 @param: {$ydisposition} STRING: '' to leave as is ; attachment | inline to force a type ; BOOLEAN: FALSE to get just Mime Type</div>
-	<div class="doc-method-comments">Evaluate and return the File MimeType (and *Optional* the Disposition by File Extension).</div>
+	
+			<div class="doc-method-comments">Evaluate and return the File MimeType (and *Optional* the Disposition by File Extension).</div>
+	
 </div>
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -768,15 +868,15 @@ If a higher length than 40 chars or an invalid ID is provided will reset the ID 
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">SmartFileSysUtils</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">some_method_of_this_class</span><span style="color: #FFCC00; font-weight: bold">(...);<br><br>&nbsp;&nbsp;</span><span style="color: #999999">//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;SAFE&nbsp;REPLACEMENTS:<br>&nbsp;&nbsp;//&nbsp;In&nbsp;order&nbsp;to&nbsp;supply&nbsp;a&nbsp;common&nbsp;framework&nbsp;for&nbsp;Unix&nbsp;/&nbsp;Linux&nbsp;but&nbsp;also&nbsp;on&nbsp;Windows,<br>&nbsp;&nbsp;//&nbsp;because&nbsp;on&nbsp;Windows&nbsp;dir&nbsp;separator&nbsp;is&nbsp;\&nbsp;instead&nbsp;of&nbsp;/&nbsp;the&nbsp;following&nbsp;functions&nbsp;must&nbsp;be&nbsp;used&nbsp;as&nbsp;replacements:<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;Smart::real_path()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead&nbsp;of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;realpath()<br>&nbsp;&nbsp;//&nbsp;Smart::dir_name()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead&nbsp;of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dirname()<br>&nbsp;&nbsp;//&nbsp;Smart::path_info()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead&nbsp;of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pathinfo()<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;Also,&nbsp;when&nbsp;folders&nbsp;are&nbsp;get&nbsp;from&nbsp;external&nbsp;environments&nbsp;and&nbsp;are&nbsp;not&nbsp;certified&nbsp;if&nbsp;they&nbsp;have<br>&nbsp;&nbsp;//&nbsp;been&nbsp;converted&nbsp;from&nbsp;\&nbsp;to&nbsp;/&nbsp;on&nbsp;Windows,&nbsp;those&nbsp;paths&nbsp;have&nbsp;to&nbsp;be&nbsp;fixed&nbsp;using:&nbsp;Smart::fix_path_separator()<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br><br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">SmartFileSysUtils</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">some_method_of_this_class</span><span style="color: #FFCC00; font-weight: bold">(...);<br><br>&nbsp;&nbsp;</span><span style="color: #999999">//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;SAFE&nbsp;REPLACEMENTS:<br>&nbsp;&nbsp;//&nbsp;In&nbsp;order&nbsp;to&nbsp;supply&nbsp;a&nbsp;common&nbsp;framework&nbsp;for&nbsp;Unix&nbsp;/&nbsp;Linux&nbsp;but&nbsp;also&nbsp;on&nbsp;Windows,<br>&nbsp;&nbsp;//&nbsp;because&nbsp;on&nbsp;Windows&nbsp;dir&nbsp;separator&nbsp;is&nbsp;\&nbsp;instead&nbsp;of&nbsp;/&nbsp;the&nbsp;following&nbsp;functions&nbsp;must&nbsp;be&nbsp;used&nbsp;as&nbsp;replacements:<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;Smart::real_path()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead&nbsp;of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;realpath()<br>&nbsp;&nbsp;//&nbsp;Smart::dir_name()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead&nbsp;of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dirname()<br>&nbsp;&nbsp;//&nbsp;Smart::path_info()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead&nbsp;of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pathinfo()<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;Also,&nbsp;when&nbsp;folders&nbsp;are&nbsp;get&nbsp;from&nbsp;external&nbsp;environments&nbsp;and&nbsp;are&nbsp;not&nbsp;certified&nbsp;if&nbsp;they&nbsp;have<br>&nbsp;&nbsp;//&nbsp;been&nbsp;converted&nbsp;from&nbsp;\&nbsp;to&nbsp;/&nbsp;on&nbsp;Windows,&nbsp;those&nbsp;paths&nbsp;have&nbsp;to&nbsp;be&nbsp;fixed&nbsp;using:&nbsp;Smart::fix_path_separator()<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -802,7 +902,40 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--max_upload_size">Method: max_upload_size()</option><option value="Method--check_if_safe_file_or_dir_name">Method: check_if_safe_file_or_dir_name()</option><option value="Method--check_if_safe_path">Method: check_if_safe_path()</option><option value="Method--add_dir_last_slash">Method: add_dir_last_slash()</option><option value="Method--version_stdmtime">Method: version_stdmtime()</option><option value="Method--version_remove">Method: version_remove()</option><option value="Method--version_add">Method: version_add()</option><option value="Method--version_get">Method: version_get()</option><option value="Method--version_check">Method: version_check()</option><option value="Method--get_dir_from_path">Method: get_dir_from_path()</option><option value="Method--get_file_name_from_path">Method: get_file_name_from_path()</option><option value="Method--get_noext_file_name_from_path">Method: get_noext_file_name_from_path()</option><option value="Method--get_file_extension_from_path">Method: get_file_extension_from_path()</option><option value="Method--prefixed_uuid10_dir">Method: prefixed_uuid10_dir()</option><option value="Method--prefixed_sha1_path">Method: prefixed_sha1_path()</option><option value="Method--mime_eval">Method: mime_eval()</option>
+									<option value="Method--max_upload_size">Method: max_upload_size()</option>
+			
+									<option value="Method--check_if_safe_file_or_dir_name">Method: check_if_safe_file_or_dir_name()</option>
+			
+									<option value="Method--check_if_safe_path">Method: check_if_safe_path()</option>
+			
+						
+									<option value="Method--add_dir_last_slash">Method: add_dir_last_slash()</option>
+			
+									<option value="Method--version_stdmtime">Method: version_stdmtime()</option>
+			
+									<option value="Method--version_remove">Method: version_remove()</option>
+			
+									<option value="Method--version_add">Method: version_add()</option>
+			
+									<option value="Method--version_get">Method: version_get()</option>
+			
+									<option value="Method--version_check">Method: version_check()</option>
+			
+									<option value="Method--get_dir_from_path">Method: get_dir_from_path()</option>
+			
+									<option value="Method--get_file_name_from_path">Method: get_file_name_from_path()</option>
+			
+									<option value="Method--get_noext_file_name_from_path">Method: get_noext_file_name_from_path()</option>
+			
+									<option value="Method--get_file_extension_from_path">Method: get_file_extension_from_path()</option>
+			
+									<option value="Method--prefixed_uuid10_dir">Method: prefixed_uuid10_dir()</option>
+			
+									<option value="Method--prefixed_sha1_path">Method: prefixed_sha1_path()</option>
+			
+									<option value="Method--mime_eval">Method: mime_eval()</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -812,14 +945,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:01 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:09 +0000</small>
 <hr>
 <br>
 <!-- # -->

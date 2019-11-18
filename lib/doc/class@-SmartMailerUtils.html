@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartMailerUtils">
 	<title>PHP Documentation for: \SmartMailerUtils</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsMailer-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -558,7 +591,7 @@ div.doc-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartMailerUtils</span></li>
 		
-		<li><b>Version:</b> v.20191031</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> classes:  Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend</li>
 		
 		<li><b>Usage:</b> static  object: Class::method() - This class provides only STATIC methods</li>
@@ -571,39 +604,65 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--check_email_address">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>check_email_address</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$email` Parameter is REQUIRED">$email</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ycheckdomain` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$ycheckdomain</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$helo` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$helo</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>NUMBER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_smtp_port` Parameter is OPTIONAL, with the Default Value: &quot;25&quot;">$y_smtp_port</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;25&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$email` Parameter is REQUIRED">$email</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ycheckdomain` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$ycheckdomain</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$helo` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$helo</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>NUMBER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_smtp_port` Parameter is OPTIONAL, with the Default Value: &quot;25&quot;">$y_smtp_port</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;25&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} :<br>
+			<div class="doc-method-ret-params">@return: {STRING} :<br>
 @param: {$email} eMail Address<br>
 @param: {$ycheckdomain} 'no' = only validate if email address is in the form of text@texte.xt | 'yes' = check email with MX + SMTP validation<br>
 @param: {$helo} SMTP HELO (if check MX + Domain will be used, cannot be empty)<br>
 @param: {$y_smtp_port} SMTP Port (normal is '25')</div>
-	<div class="doc-method-comments">Check eMail Address<br>
+	
+			<div class="doc-method-comments">Check eMail Address<br>
 [PUBLIC]</div>
+	
 </div><div class="doc-container" id="Method--validate_mx_email_address">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>validate_mx_email_address</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$helo` Parameter is REQUIRED">$helo</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$email` Parameter is REQUIRED">$email</span></b></span>, <i>NUMBER</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_smtp_port` Parameter is REQUIRED">$y_smtp_port</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$helo` Parameter is REQUIRED">$helo</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$email` Parameter is REQUIRED">$email</span></b></span>, 
+			<i>NUMBER</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_smtp_port` Parameter is REQUIRED">$y_smtp_port</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} :<br>
+			<div class="doc-method-ret-params">@return: {STRING} :<br>
 @param: {$helo} SMTP HELO<br>
 @param: {$email} eMail Address<br>
 @param: {$y_smtp_port} SMTP Port (normal is '25')</div>
-	<div class="doc-method-comments">Does the MX Check of eMail / Domain<br>
+	
+			<div class="doc-method-comments">Does the MX Check of eMail / Domain<br>
 [PRIVATE]</div>
+	
 </div><div class="doc-container" id="Method--send_email">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>send_email</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$logsend_dir` Parameter is REQUIRED">$logsend_dir</span></b></span>, <i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$to` Parameter is REQUIRED">$to</span></b></span>, <i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$cc` Parameter is REQUIRED">$cc</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$bcc` Parameter is REQUIRED">$bcc</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$subj` Parameter is REQUIRED">$subj</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$message` Parameter is REQUIRED">$message</span></b></span>, <i>TRUE/FALSE</i>&nbsp;<span class="doc-param-name"><b><span title="`$is_html` Parameter is REQUIRED">$is_html</span></b></span>, <i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$attachments` Parameter is OPTIONAL, with the Default Value: array()">$attachments</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$replytoaddr` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$replytoaddr</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$inreplyto` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$inreplyto</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$priority` Parameter is OPTIONAL, with the Default Value: &quot;3&quot;">$priority</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;3&quot;</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$charset` Parameter is OPTIONAL, with the Default Value: &quot;UTF-8&quot;">$charset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;UTF-8&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$logsend_dir` Parameter is REQUIRED">$logsend_dir</span></b></span>, 
+			<i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$to` Parameter is REQUIRED">$to</span></b></span>, 
+			<i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$cc` Parameter is REQUIRED">$cc</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$bcc` Parameter is REQUIRED">$bcc</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$subj` Parameter is REQUIRED">$subj</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$message` Parameter is REQUIRED">$message</span></b></span>, 
+			<i>TRUE/FALSE</i>&nbsp;<span class="doc-param-name"><b><span title="`$is_html` Parameter is REQUIRED">$is_html</span></b></span>, 
+			<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$attachments` Parameter is OPTIONAL, with the Default Value: array()">$attachments</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$replytoaddr` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$replytoaddr</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$inreplyto` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$inreplyto</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$priority` Parameter is OPTIONAL, with the Default Value: &quot;3&quot;">$priority</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;3&quot;</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$charset` Parameter is OPTIONAL, with the Default Value: &quot;UTF-8&quot;">$charset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;UTF-8&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;TRUE/FALSE
 	
 	
-	<div class="doc-method-ret-params">@return: {TRUE/FALSE} : OPERATION RESULT [1 = OK ; 0 = send error ; -1 = error, empty config ]<br>
+			<div class="doc-method-ret-params">@return: {TRUE/FALSE} : OPERATION RESULT [1 = OK ; 0 = send error ; -1 = error, empty config ]<br>
 @param: {$logsend_dir} A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'<br>
 @param: {$to} To: to@addr | [ 'to1@addr', 'to2@addr', ... ]<br>
 @param: {$cc} Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]<br>
@@ -616,15 +675,31 @@ div.doc-summary {
 @param: {$inreplyto} * In Reply To: '' | the ID of message that is replying to :: default is ''<br>
 @param: {$priority} * Priority: 1=High ; 3=Normal ; 5=Low :: default is 3<br>
 @param: {$charset} * charset :: default is UTF-8</div>
-	<div class="doc-method-comments">Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory<br>
+	
+			<div class="doc-method-comments">Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory<br>
 It will use the default server settings from configs: $configs['sendmail'][]</div>
+	
 </div><div class="doc-container" id="Method--send_custom_email">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>send_custom_email</b></span>&nbsp;(
-	<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$mail_config` Parameter is REQUIRED">$mail_config</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$logsend_dir` Parameter is REQUIRED">$logsend_dir</span></b></span>, <i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$to` Parameter is REQUIRED">$to</span></b></span>, <i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$cc` Parameter is REQUIRED">$cc</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$bcc` Parameter is REQUIRED">$bcc</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$subj` Parameter is REQUIRED">$subj</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$message` Parameter is REQUIRED">$message</span></b></span>, <i>TRUE/FALSE</i>&nbsp;<span class="doc-param-name"><b><span title="`$is_html` Parameter is REQUIRED">$is_html</span></b></span>, <i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$attachments` Parameter is OPTIONAL, with the Default Value: array()">$attachments</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$replytoaddr` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$replytoaddr</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$inreplyto` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$inreplyto</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$priority` Parameter is OPTIONAL, with the Default Value: &quot;3&quot;">$priority</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;3&quot;</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$charset` Parameter is OPTIONAL, with the Default Value: &quot;UTF-8&quot;">$charset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;UTF-8&quot;</b></span>
+				<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$mail_config` Parameter is REQUIRED">$mail_config</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$logsend_dir` Parameter is REQUIRED">$logsend_dir</span></b></span>, 
+			<i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$to` Parameter is REQUIRED">$to</span></b></span>, 
+			<i>STRING/ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$cc` Parameter is REQUIRED">$cc</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$bcc` Parameter is REQUIRED">$bcc</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$subj` Parameter is REQUIRED">$subj</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$message` Parameter is REQUIRED">$message</span></b></span>, 
+			<i>TRUE/FALSE</i>&nbsp;<span class="doc-param-name"><b><span title="`$is_html` Parameter is REQUIRED">$is_html</span></b></span>, 
+			<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$attachments` Parameter is OPTIONAL, with the Default Value: array()">$attachments</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$replytoaddr` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$replytoaddr</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$inreplyto` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$inreplyto</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$priority` Parameter is OPTIONAL, with the Default Value: &quot;3&quot;">$priority</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;3&quot;</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$charset` Parameter is OPTIONAL, with the Default Value: &quot;UTF-8&quot;">$charset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;UTF-8&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : [ 'result' =&gt; 'Operation RESULT', 'error' =&gt; 'ERROR Message if any', 'log' =&gt; 'Send LOG', 'message' =&gt; 'The Mime MESSAGE' ]<br>
+			<div class="doc-method-ret-params">@return: {ARRAY} : [ 'result' =&gt; 'Operation RESULT', 'error' =&gt; 'ERROR Message if any', 'log' =&gt; 'Send LOG', 'message' =&gt; 'The Mime MESSAGE' ]<br>
 @param: {$mail_config} config array: [ server-mx-domain, server-host, server-port, server-ssl, server-cafile, auth-user, auth-password, from-address, from-name, use-qp-encoding ]<br>
 @param: {$logsend_dir} A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'<br>
 @param: {$to} To: to@addr | [ 'to1@addr', 'to2@addr', ... ]<br>
@@ -638,30 +713,32 @@ It will use the default server settings from configs: $configs['sendmail'][]</di
 @param: {$inreplyto} * In Reply To: '' | the ID of message that is replying to :: default is ''<br>
 @param: {$priority} * Priority: 1=High ; 3=Normal ; 5=Low :: default is 3<br>
 @param: {$charset} * charset :: default is UTF-8</div>
-	<div class="doc-method-comments">Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory<br>
+	
+			<div class="doc-method-comments">Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory<br>
 It will use custom server settings as 1st parameter: $mail_config</div>
+	
 </div><!-- Skip Internal-Priv Method: `send_extended_email()` -->
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -687,7 +764,16 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--check_email_address">Method: check_email_address()</option><option value="Method--validate_mx_email_address">Method: validate_mx_email_address()</option><option value="Method--send_email">Method: send_email()</option><option value="Method--send_custom_email">Method: send_custom_email()</option>
+									<option value="Method--check_email_address">Method: check_email_address()</option>
+			
+									<option value="Method--validate_mx_email_address">Method: validate_mx_email_address()</option>
+			
+									<option value="Method--send_email">Method: send_email()</option>
+			
+									<option value="Method--send_custom_email">Method: send_custom_email()</option>
+			
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -702,7 +788,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:02 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:10 +0000</small>
 <hr>
 <br>
 <!-- # -->

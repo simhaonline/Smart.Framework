@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderBackend {
 
 	// ::
-	// v.20191109
+	// v.20191115
 
 
 	private static $db = null;
@@ -572,6 +572,8 @@ final class PageBuilderBackend {
 			return -3; // data must not contain the ID which cannot be changed on edit
 		} //end if
 		//--
+		self::clearObjectFromPCache((string)$y_id);
+		//--
 		self::startTransaction();
 		//--
 		$rd = (array) self::getRecordIdsById((string)$y_id);
@@ -784,6 +786,8 @@ final class PageBuilderBackend {
 			return -1; // empty ID
 		} //end if
 		//--
+		self::clearObjectFromPCache((string)$y_id);
+		//--
 		self::startTransaction();
 		//--
 		$chk_ref = (array) self::getRecordDetailsById((string)$y_id);
@@ -978,6 +982,27 @@ final class PageBuilderBackend {
 
 
 	//===== PRIVATES
+
+
+	private static function clearObjectFromPCache($y_id) {
+		//--
+		$y_id = (string) \trim((string)$y_id);
+		if((string)$y_id == '') {
+			return false;
+		} //end if
+		//--
+		if(\SmartPersistentCache::isActive() !== true) {
+			return true;
+		} //end if
+		//-- {{{SYNC-PAGEBUILDER-PCACHE-ID}}}
+		$the_pcache_key = (string) $y_id.'@'.\SmartTextTranslations::getLanguage();
+		//--
+		return (bool) \SmartPersistentCache::unsetKey(
+			(string) 'smart-pg-builder',
+			(string) \SmartPersistentCache::safeKey((string)$the_pcache_key)
+		);
+		//--
+	} //END FUNCTION
 
 
 	private static function buildListWhereCondition($y_xsrc, $y_src) {

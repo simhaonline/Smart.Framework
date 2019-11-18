@@ -49,7 +49,7 @@ $administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Specia
  * @access 		private
  * @internal
  *
- * @version 	v.20191111
+ * @version 	v.20191116
  * @package 	PageBuilder
  *
  */
@@ -413,7 +413,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 			//--
 			$extra_form_start = '<form class="ux-form" name="page_form_props" id="page_form_props" method="post" action="#" onsubmit="return false;"><input type="hidden" name="frm[form_mode]" value="props">';
 			$extra_form_end = '</form>';
-			$extra_scripts = '<script type="text/javascript">SmartJS_BrowserUtils_PageAway = false;</script>';
+			$extra_scripts = '<script type="text/javascript">SmartJS_BrowserUtils.param_PageAway = false;</script>';
 			$extra_scripts .= '<script>SmartJS_BrowserUIUtils.Tabs_Activate("tabs", false);</script>';
 			$extra_scripts .= '<script type="text/javascript">SmartJS_BrowserUtils.RefreshParent();</script>';
 			//--
@@ -451,7 +451,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 			//--
 			$extra_form_start = '';
 			$extra_form_end = '';
-			$extra_scripts = '<script>SmartJS_BrowserUtils_PageAway = true;</script>';
+			$extra_scripts = '<script>SmartJS_BrowserUtils.param_PageAway = true;</script>';
 			$extra_scripts .= '<script>SmartJS_BrowserUIUtils.Tabs_Activate("tabs", true);</script>';
 			//--
 		} //end if else
@@ -656,7 +656,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 						$out .= '<font size="4" color="#666699"><b>&lt;/<i>html5</i>&gt;</b></font>';
 					} //end if else
 					$out .= '</div>'."\n";
-					$out .= '<script>SmartJS_BrowserUtils_PageAway = false;</script>';
+					$out .= '<script>SmartJS_BrowserUtils.param_PageAway = false;</script>';
 					$out .= '<script>SmartJS_BrowserUIUtils.Tabs_Activate("tabs", false);</script>';
 					$out .= '<script type="text/javascript">SmartJS_BrowserUtils.RefreshParent();</script>'; // not necessary
 					//--
@@ -752,7 +752,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 						$out .= '<font size="4"><b>&lt;/html5&gt;</b></font>';
 					} //end if else
 					$out .= '</div>'."\n";
-					$out .= '<script>SmartJS_BrowserUtils_PageAway = true; SmartJS_BrowserUIUtils.Tabs_Activate("tabs", true);</script>';
+					$out .= '<script>SmartJS_BrowserUtils.param_PageAway = true; SmartJS_BrowserUIUtils.Tabs_Activate("tabs", true);</script>';
 					//--
 				} //end if else
 				//--
@@ -807,7 +807,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 				$out .= \SmartViewHtmlHelpers::html_js_editarea('record_sytx_yaml', 'frm[data]', $query['data'], 'yaml', true, '885px', '70vh'); // OK.new
 				$out .= "\n".'</form>'."\n";
 				$out .= '<div align="left"><font size="4" color="#003399"><b>&lt;/<i>yaml</i>&gt;</b></font></div>'."\n";
-				$out .= '<script>SmartJS_BrowserUtils_PageAway = false;</script>';
+				$out .= '<script>SmartJS_BrowserUtils.param_PageAway = false;</script>';
 				$out .= '<script>SmartJS_BrowserUIUtils.Tabs_Activate("tabs", false);</script>';
 				$out .= '<script type="text/javascript">SmartJS_BrowserUtils.RefreshParent();</script>'; // not necessary
 				//--
@@ -858,7 +858,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 					$out .= \SmartViewHtmlHelpers::html_js_editarea('record_sytx_yaml', '', $query['data'], 'yaml', false, '885px', '70vh'); // OK.new
 				} //end if else
 				$out .= '<div align="left"><font size="4"><b>&lt;/yaml&gt;</b></font></div>'."\n";
-				$out .= '<script>SmartJS_BrowserUtils_PageAway = true; SmartJS_BrowserUIUtils.Tabs_Activate("tabs", true);</script>';
+				$out .= '<script>SmartJS_BrowserUtils.param_PageAway = true; SmartJS_BrowserUIUtils.Tabs_Activate("tabs", true);</script>';
 				//--
 			} //end if else
 			//--
@@ -1749,238 +1749,6 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 	//==================================================================
 
 
-	//=== PRIVATES ===
-
-
-	//==================================================================
-	private static function composeUrl($y_suffix) {
-		//--
-		return (string) \Smart::url_add_suffix(
-			(string) self::$ModuleScript.'?/'.\Smart::escape_url(self::$ModulePageURLParam).'/'.\Smart::escape_url(self::$ModulePageURLId),
-			(string) $y_suffix
-		);
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function testIsSegmentPage($y_id) {
-		//--
-		$out = 0;
-		//--
-		if((string)\substr((string)$y_id, 0, 1) == '#') {
-			$out = 1;
-		} //endd if
-		//--
-		return (int) $out;
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function getPreviewButtons($id) {
-		//--
-		$out = '';
-		//--
-		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		//--
-		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		$out .= '<img src="'.self::$ModulePath.'libs/views/manager/img/op-preview-code.svg'.'" alt="'.self::text('pw_code').'" title="'.self::text('pw_code').'" style="cursor:pointer;" onClick="SmartJS_BrowserUtils.PopUpLink(\''.\Smart::escape_js(self::composeUrl('op=record-view-highlight-code&id='.\Smart::escape_url($id))).'\', \'page-builder-pw\', null, null, 1); return false;">';
-		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		$out .= '<img src="'.self::$ModulePath.'libs/views/manager/img/op-preview-data.svg'.'" alt="'.self::text('pw_data').'" title="'.self::text('pw_data').'" style="cursor:pointer;" onClick="SmartJS_BrowserUtils.PopUpLink(\''.\Smart::escape_js(self::composeUrl('op=record-view-highlight-data&id='.\Smart::escape_url($id))).'\', \'page-builder-pw\', null, null, 1); return false;">';
-		//--
-		return (string) $out;
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function getImgForPageType($y_id) {
-		//--
-		if(self::testIsSegmentPage($y_id)) { // segment
-			$img = self::$ModulePath.'libs/views/manager/img/type-segment.svg';
-		} else { // page
-			$img = self::$ModulePath.'libs/views/manager/img/type-page.svg';
-		} //end if else
-		//--
-		return (string) $img;
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function getImgForRef($y_ref) {
-		//--
-		$y_ref = (string) \trim((string)$y_ref);
-		//--
-		if((string)$y_ref == '') {
-			return '';
-		} //end if
-		//--
-		if((string)$y_ref == '-') {
-			return '<img height="16" src="'.self::$ModulePath.'libs/views/manager/img/ref-n-a.svg'.'" alt="-" title="-">'; // for pages that cannot be assigned with a ref (ex: website menu)
-		} //end if
-		//--
-		return '<img height="16" src="'.self::$ModulePath.'libs/views/manager/img/ref-parent.svg'.'" alt="'.\Smart::escape_html($y_ref).'" title="'.\Smart::escape_html($y_ref).'">';
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	public static function getImgForCodeType($y_id, $y_type) {
-		//--
-		$ttl = '[Unknown] Page';
-		$img = self::$ModulePath.'libs/views/manager/img/syntax-unknown.svg';
-		//--
-		if(self::testIsSegmentPage($y_id)) {
-			switch((string)$y_type) {
-				case 'settings':
-					$ttl = 'SETTINGS Segment';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-settings.svg';
-					break;
-				case 'text':
-					$ttl = 'TEXT Segment';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-text.svg';
-					break;
-				case 'markdown':
-					$ttl = 'MARKDOWN Segment';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-markdown.svg';
-					break;
-				case 'html':
-					$ttl = 'HTML Segment';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-html.svg';
-					break;
-				default:
-					// unknown
-			} //end switch
-		} else {
-			switch((string)$y_type) {
-				case 'raw':
-					$ttl = 'RAW Page';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-raw.svg';
-					break;
-				case 'text':
-					$ttl = 'TEXT Page';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-text.svg';
-					break;
-				case 'markdown':
-					$ttl = 'MARKDOWN Page';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-markdown.svg';
-					break;
-				case 'html':
-					$ttl = 'HTML Page';
-					$img = self::$ModulePath.'libs/views/manager/img/syntax-html.svg';
-				default:
-					// unknown
-			} //end switch
-		} //end if else
-		//--
-		return '<img height="16" src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function getImgForRestrictionsStatus($y_id, $y_status) {
-		//--
-		if(self::testIsSegmentPage($y_id)) {
-			$img = self::$ModulePath.'libs/views/manager/img/restr-private.svg';
-			$ttl = self::text('restr_acc');
-		} elseif($y_status == 1) {
-			$img = self::$ModulePath.'libs/views/manager/img/restr-login.svg';
-			$ttl = self::text('login_acc');
-		} else {
-			$img = self::$ModulePath.'libs/views/manager/img/restr-public.svg';
-			$ttl = self::text('free_acc');
-		} //end if else
-		//--
-		return '<img height="16" src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function getImgForActiveStatus($y_id, $y_status) {
-		//--
-		if(self::testIsSegmentPage($y_id)) {
-			return '';
-		} else {
-			switch((string)$y_status) {
-				case '1':
-					$img = self::$ModulePath.'libs/views/manager/img/status-active.svg';
-					$ttl = self::text('yes');
-					break;
-				case '0':
-				default:
-					$img = self::$ModulePath.'libs/views/manager/img/status-inactive.svg';
-					$ttl = self::text('no');
-			} //end switch
-		} //end if else
-		//--
-		return '<img src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function getImgForSpecialStatus($y_status) {
-		//--
-		switch((string)$y_status) {
-			case '1':
-				$img = self::$ModulePath.'libs/views/manager/img/admin-special.svg';
-				$ttl = self::text('yes');
-				break;
-			case '0':
-			default:
-				$img = self::$ModulePath.'libs/views/manager/img/admin-default.svg';
-				$ttl = self::text('no');
-		} //end switch
-		//--
-		return '<img src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function drawFieldCtrl($y_id, $y_issubsegment, $y_mode, $y_var='', $y_width='65') {
-		//--
-		if((string)$y_mode == 'form') {
-			if($y_issubsegment === true) {
-				$prop_placeholder = 'Controller Name (N/A)';
-				$prop_readonly = ' readonly disabled';
-			} else {
-				$prop_placeholder = 'Controller Name';
-				$prop_readonly = '';
-			} //end if else
-			return (string) '<input type="text" name="'.\Smart::escape_html((string)$y_var).'" value="'.\Smart::escape_html((string)$y_id).'" size="'.\Smart::format_number_int($y_width,'+').'" maxlength="128" autocomplete="off" placeholder="'.\Smart::escape_html($prop_placeholder).'"'.$prop_readonly.'>';
-		} else {
-			return (string) \Smart::escape_html($y_id);
-		} //end if else
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function drawFieldLayoutPages($y_mode, $y_listmode, $y_value, $y_htmlvar='') {
-		// TO BE DONE ...
-		//--
-		return \SmartViewHtmlHelpers::html_select_list_single('', $y_value, $y_listmode, (array)\SmartModExtLib\PageBuilder\Utils::getAvailableLayouts(), $y_htmlvar, '250', '', 'no', 'no');
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
 	//==================================================================
 	public static function ViewDisplayTree($y_tpl, $srcby, $src) {
 		//--
@@ -2586,6 +2354,238 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 				'DATA-ARR' 			=> (array)  $arr_xdata
 			]
 		);
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//=== PRIVATES ===
+
+
+	//==================================================================
+	private static function composeUrl($y_suffix) {
+		//--
+		return (string) \Smart::url_add_suffix(
+			(string) self::$ModuleScript.'?/'.\Smart::escape_url(self::$ModulePageURLParam).'/'.\Smart::escape_url(self::$ModulePageURLId),
+			(string) $y_suffix
+		);
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function testIsSegmentPage($y_id) {
+		//--
+		$out = 0;
+		//--
+		if((string)\substr((string)$y_id, 0, 1) == '#') {
+			$out = 1;
+		} //endd if
+		//--
+		return (int) $out;
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function getPreviewButtons($id) {
+		//--
+		$out = '';
+		//--
+		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		//--
+		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		$out .= '<img src="'.self::$ModulePath.'libs/views/manager/img/op-preview-code.svg'.'" alt="'.self::text('pw_code').'" title="'.self::text('pw_code').'" style="cursor:pointer;" onClick="SmartJS_BrowserUtils.PopUpLink(\''.\Smart::escape_js(self::composeUrl('op=record-view-highlight-code&id='.\Smart::escape_url($id))).'\', \'page-builder-pw\', null, null, 1); return false;">';
+		$out .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		$out .= '<img src="'.self::$ModulePath.'libs/views/manager/img/op-preview-data.svg'.'" alt="'.self::text('pw_data').'" title="'.self::text('pw_data').'" style="cursor:pointer;" onClick="SmartJS_BrowserUtils.PopUpLink(\''.\Smart::escape_js(self::composeUrl('op=record-view-highlight-data&id='.\Smart::escape_url($id))).'\', \'page-builder-pw\', null, null, 1); return false;">';
+		//--
+		return (string) $out;
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function getImgForPageType($y_id) {
+		//--
+		if(self::testIsSegmentPage($y_id)) { // segment
+			$img = self::$ModulePath.'libs/views/manager/img/type-segment.svg';
+		} else { // page
+			$img = self::$ModulePath.'libs/views/manager/img/type-page.svg';
+		} //end if else
+		//--
+		return (string) $img;
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function getImgForRef($y_ref) {
+		//--
+		$y_ref = (string) \trim((string)$y_ref);
+		//--
+		if((string)$y_ref == '') {
+			return '';
+		} //end if
+		//--
+		if((string)$y_ref == '-') {
+			return '<img height="16" src="'.self::$ModulePath.'libs/views/manager/img/ref-n-a.svg'.'" alt="-" title="-">'; // for pages that cannot be assigned with a ref (ex: website menu)
+		} //end if
+		//--
+		return '<img height="16" src="'.self::$ModulePath.'libs/views/manager/img/ref-parent.svg'.'" alt="'.\Smart::escape_html($y_ref).'" title="'.\Smart::escape_html($y_ref).'">';
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function getImgForCodeType($y_id, $y_type) {
+		//--
+		$ttl = '[Unknown] Page';
+		$img = self::$ModulePath.'libs/views/manager/img/syntax-unknown.svg';
+		//--
+		if(self::testIsSegmentPage($y_id)) {
+			switch((string)$y_type) {
+				case 'settings':
+					$ttl = 'SETTINGS Segment';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-settings.svg';
+					break;
+				case 'text':
+					$ttl = 'TEXT Segment';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-text.svg';
+					break;
+				case 'markdown':
+					$ttl = 'MARKDOWN Segment';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-markdown.svg';
+					break;
+				case 'html':
+					$ttl = 'HTML Segment';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-html.svg';
+					break;
+				default:
+					// unknown
+			} //end switch
+		} else {
+			switch((string)$y_type) {
+				case 'raw':
+					$ttl = 'RAW Page';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-raw.svg';
+					break;
+				case 'text':
+					$ttl = 'TEXT Page';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-text.svg';
+					break;
+				case 'markdown':
+					$ttl = 'MARKDOWN Page';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-markdown.svg';
+					break;
+				case 'html':
+					$ttl = 'HTML Page';
+					$img = self::$ModulePath.'libs/views/manager/img/syntax-html.svg';
+				default:
+					// unknown
+			} //end switch
+		} //end if else
+		//--
+		return '<img height="16" src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function getImgForRestrictionsStatus($y_id, $y_status) {
+		//--
+		if(self::testIsSegmentPage($y_id)) {
+			$img = self::$ModulePath.'libs/views/manager/img/restr-private.svg';
+			$ttl = self::text('restr_acc');
+		} elseif($y_status == 1) {
+			$img = self::$ModulePath.'libs/views/manager/img/restr-login.svg';
+			$ttl = self::text('login_acc');
+		} else {
+			$img = self::$ModulePath.'libs/views/manager/img/restr-public.svg';
+			$ttl = self::text('free_acc');
+		} //end if else
+		//--
+		return '<img height="16" src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function getImgForActiveStatus($y_id, $y_status) {
+		//--
+		if(self::testIsSegmentPage($y_id)) {
+			return '';
+		} else {
+			switch((string)$y_status) {
+				case '1':
+					$img = self::$ModulePath.'libs/views/manager/img/status-active.svg';
+					$ttl = self::text('yes');
+					break;
+				case '0':
+				default:
+					$img = self::$ModulePath.'libs/views/manager/img/status-inactive.svg';
+					$ttl = self::text('no');
+			} //end switch
+		} //end if else
+		//--
+		return '<img src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function getImgForSpecialStatus($y_status) {
+		//--
+		switch((string)$y_status) {
+			case '1':
+				$img = self::$ModulePath.'libs/views/manager/img/admin-special.svg';
+				$ttl = self::text('yes');
+				break;
+			case '0':
+			default:
+				$img = self::$ModulePath.'libs/views/manager/img/admin-default.svg';
+				$ttl = self::text('no');
+		} //end switch
+		//--
+		return '<img src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function drawFieldCtrl($y_id, $y_issubsegment, $y_mode, $y_var='', $y_width='65') {
+		//--
+		if((string)$y_mode == 'form') {
+			if($y_issubsegment === true) {
+				$prop_placeholder = 'Controller Name (N/A)';
+				$prop_readonly = ' readonly disabled';
+			} else {
+				$prop_placeholder = 'Controller Name';
+				$prop_readonly = '';
+			} //end if else
+			return (string) '<input type="text" name="'.\Smart::escape_html((string)$y_var).'" value="'.\Smart::escape_html((string)$y_id).'" size="'.\Smart::format_number_int($y_width,'+').'" maxlength="128" autocomplete="off" placeholder="'.\Smart::escape_html($prop_placeholder).'"'.$prop_readonly.'>';
+		} else {
+			return (string) \Smart::escape_html($y_id);
+		} //end if else
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function drawFieldLayoutPages($y_mode, $y_listmode, $y_value, $y_htmlvar='') {
+		// TO BE DONE ...
+		//--
+		return \SmartViewHtmlHelpers::html_select_list_single('', $y_value, $y_listmode, (array)\SmartModExtLib\PageBuilder\Utils::getAvailableLayouts(), $y_htmlvar, '250', '', 'no', 'no');
 		//--
 	} //END FUNCTION
 	//==================================================================

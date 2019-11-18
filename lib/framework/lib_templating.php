@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191115
+ * @version 	v.20191117
  * @package 	@Core:TemplatingEngine
  *
  */
@@ -142,7 +142,7 @@ final class SmartMarkersTemplating {
 		if(Smart::array_size($arr_sub_templates) > 0) {
 			$tpl_basepath = (string) SmartFileSysUtils::add_dir_last_slash(SmartFileSysUtils::get_dir_from_path($y_file_path));
 			$mtemplate = (string) self::load_subtemplates('no', $tpl_basepath, $mtemplate, $arr_sub_templates); // load sub-templates before template processing and use caching also for sub-templates if set
-			$mtemplate = str_replace(array('⁅@@@¦', '¦@@@⁆'), array('[@@@', '@@@]'), (string)$mtemplate); // FIX: revert protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+			$mtemplate = (string) str_replace(array('⁅@@@¦', '¦@@@⁆'), array('[@@@', '@@@]'), (string)$mtemplate); // FIX: revert protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 		} //end if
 		$arr_sub_templates = array();
 		//--
@@ -158,6 +158,9 @@ final class SmartMarkersTemplating {
 	/**
 	 * Escape a Marker Template (String Template ; no sub-templates are allowed as this function is intended to pass a template to be rendered via javascript ...)
 	 * NOTICE: This kind of escaped templates can be rendered by client-side javascript from a javascript variable in a HTML page using SmartJS_CoreUtils.renderMarkersTpl() function (not all features of the server-side Marker Templating are supported, see the SmartJS_CoreUtils documentation ...)
+	 *
+	 * @access 		private
+	 * @internal
 	 *
 	 * @param 	STRING 		$mtemplate 						:: The Markers-TPL string (partial text/html + markers) ; Ex: '<span>[###MARKER1###]<br>[###MARKER2###], ...</span>'
 	 * @param 	ENUM 		$y_ignore_if_empty 				:: 'yes' will ignore if Markers-TPL is empty ; 'no' will add a warning (default)
@@ -225,6 +228,7 @@ final class SmartMarkersTemplating {
 		if(array_key_exists('@SUB-TEMPLATES@', (array)$y_arr_vars)) {
 			unset($y_arr_vars['@SUB-TEMPLATES@']);
 		} //end if
+		$mtemplate = (string) str_replace(array('[@@@', '@@@]'), array('⁅@@@¦', '¦@@@⁆'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 		//--
 		return (string) self::template_renderer((string)$mtemplate, (array)$y_arr_vars);
 		//--
@@ -362,7 +366,7 @@ final class SmartMarkersTemplating {
 				'data' => 'Content SubStr[0-'.(int)self::debug_tpl_length().']: '."\n".self::debug_tpl_cut_by_limit($mtemplate)
 			]);
 		} //end if
-		//-- dissalow the use of sub-templates array
+		//-- dissalow the use of sub-templates array here or later in this context
 		if(array_key_exists('@SUB-TEMPLATES@', (array)$y_arr_vars)) {
 			unset($y_arr_vars['@SUB-TEMPLATES@']);
 		} //end if
@@ -372,10 +376,6 @@ final class SmartMarkersTemplating {
 			$mtemplate = (string) self::load_subtemplates((string)$y_use_caching, (string)$y_sub_templates_base_path, (string)$mtemplate, (array)$arr_sub_templates); // load sub-templates before template processing
 		} //end if
 		$arr_sub_templates = array();
-		//-- avoid use the sub-templates array later than this point ... not needed and safer to unset
-		if(array_key_exists('@SUB-TEMPLATES@', (array)$y_arr_vars)) {
-			unset($y_arr_vars['@SUB-TEMPLATES@']);
-		} //end if
 		//--
 		return (string) self::template_renderer((string)$mtemplate, (array)$y_arr_vars);
 		//--
@@ -1050,7 +1050,7 @@ final class SmartMarkersTemplating {
 					'Too much recursion for Markers-TPL Escapings - detected in Replacement Key: '.$crr_match[0].' -> [Val: '.$val.']',
 					'Markers-TPL Fatal Error: Too much recursion' // msg to display
 				);
-				return '';
+				return ''; // OK empty
 			} //end if
 			//--
 			if($maxescapes > 0) {
@@ -1309,9 +1309,9 @@ final class SmartMarkersTemplating {
 					} //end if
 					//--
 					$line = '';
-					//-- Fix: trim parts
-					$bind_if 	= (string) trim((string)$bind_if,   "\t\n\r\0\x0B");
-					$bind_else 	= (string) trim((string)$bind_else, "\t\n\r\0\x0B");
+					//-- Fix: trim parts {{{SYNC-TPL-FIX-TRIM-PARTS}}}
+					$bind_if 	= (string) trim((string)$bind_if,   "\n\r\0\x0B");
+					$bind_else 	= (string) trim((string)$bind_else, "\n\r\0\x0B");
 					//-- recursive process if in pieces of if or else
 					if(strpos((string)$bind_if, '[%%%IF:') !== false) {
 						$bind_if = (string) self::process_if_syntax((string)$bind_if, (array)$y_arr_vars, (string)$y_context, (array)$y_arr_context);
@@ -1564,7 +1564,7 @@ final class SmartMarkersTemplating {
 					} //end if
 					//--
 					//$loop_orig = (string) rtrim((string)$part_loop);
-					$loop_orig = (string) trim((string)$part_loop, "\t\n\r\0\x0B"); // Fix: trim parts
+					$loop_orig = (string) trim((string)$part_loop, "\n\r\0\x0B"); // Fix: trim parts {{{SYNC-TPL-FIX-TRIM-PARTS}}}
 					//--
 					$line = '';
 					//--
@@ -1847,10 +1847,10 @@ final class SmartMarkersTemplating {
 	 *
 	 * <code>
 	 * // [@@@SUB-TEMPLATE:path/to/tpl.htm@@@] :: relative to template
-	 * // [@@@SUB-TEMPLATE:?path/to/tpl.htm@@@] :: relative to template, optional, if exists ; no caching allowed, it could produce unexpected results if variable paths used
+	 * // [@@@SUB-TEMPLATE:?path/to/tpl.htm@@@] :: relative to template, optional, if exists
 	 * // [@@@SUB-TEMPLATE:!etc/path/to/tpl.htm!@@@] :: using exact this path
-	 * // [@@@SUB-TEMPLATE:?!if-exists/path/to/tpl.htm!@@@] :: using exact this path, optional, if exists ; no caching allowed, it could produce unexpected results if variable paths used
-	 * // [@@@SUB-TEMPLATE:{tpl}|{escapes}@@@] :: apply escapes: |syntax, |syntaxhtml, |html, |css, |js ; ; no caching allowed, it could produce unexpected results if vary load by escape (which does not load sub-templates) with non-escape which expects sub-templates to be loaded
+	 * // [@@@SUB-TEMPLATE:?!if-exists/path/to/tpl.htm!@@@] :: using exact this path, optional, if exists
+	 * // [@@@SUB-TEMPLATE:{tpl}|{escapes}@@@] :: apply escapes: |syntax, |syntaxhtml, |html, |js, |js-tpl-encode
 	 * // [@@@SUB-TEMPLATE:%variable%@@@] :: works only with $y_arr_vars_sub_templates mappings
 	 * </code>
 	 *
@@ -1892,7 +1892,7 @@ final class SmartMarkersTemplating {
 					//--
 					if((string)$val == '') {
 						//--
-						$mtemplate = str_replace(
+						$mtemplate = (string) str_replace(
 							'[@@@SUB-TEMPLATE:'.$key.'@@@]',
 							'', // clear (this is required for the cases the sub-templates must not includded in some cases: a kind of IF syntax)
 							(string) $mtemplate
@@ -1917,12 +1917,14 @@ final class SmartMarkersTemplating {
 							$pfx = '?';
 							$is_optional = true;
 						} //end if
+						/* not necessary as TPL is being cached at read in raw format
 						if((string)$pfx != '') {
 							if((string)$y_use_caching == 'yes') {
 								Smart::raise_error('Invalid Markers-TPL Optional Sub-Template (optional sub-templates cannot be rendered with caching enabled) for key: `'.$key.'` # `'.$stpl_path.'` '.'['.$y_base_path.']'.' detected in Template:'."\n".self::log_template($mtemplate));
 								return (string) 'ERROR: (702) in '.__CLASS__;
 							} //end if
 						} //end if
+						*/
 						//--
 						if((string)substr($key, -7, 7) == '|syntax') {
 							$key = (string) substr($key, 0, -7);
@@ -1933,18 +1935,20 @@ final class SmartMarkersTemplating {
 						} elseif((string)substr($key, -5, 5) == '|html') {
 							$key = (string) substr($key, 0, -5);
 							$sfx = '|html';
-						} elseif((string)substr($key, -4, 4) == '|css') {
-							$key = (string) substr($key, 0, -4);
-							$sfx = '|css';
 						} elseif((string)substr($key, -3, 3) == '|js') {
 							$key = (string) substr($key, 0, -3);
 							$sfx = '|js';
+						} elseif((string)substr($key, -14, 14) == '|js-tpl-encode') {
+							$key = (string) substr($key, 0, -14);
+							$sfx = '|js-tpl-encode';
 						} //end if
 						if((string)$sfx != '') {
+							/* not necessary as TPL is being cached at read in raw format
 							if((string)$y_use_caching == 'yes') {
 								Smart::raise_error('Invalid Markers-TPL Sub-Template Escapings (escaped sub-templates cannot be rendered with caching enabled) for key: `'.$key.'` # `'.$stpl_path.'` '.'['.$y_base_path.']'.' detected in Template:'."\n".self::log_template($mtemplate));
 								return (string) 'ERROR: (703) in '.__CLASS__;
 							} //end if
+							*/
 							$process_sub_sub_templates = false; // no syntax parsed if escaped ; must not load sub-templates because it is considered a flat string not a template that must be escaped somehow
 						} //end if
 						//--
@@ -2016,11 +2020,11 @@ final class SmartMarkersTemplating {
 						} elseif((string)$sfx == '|html') {
 							$stemplate = (string) Smart::escape_html((string)$stemplate);
 							$stemplate = (string) self::prepare_nosyntax_html_template((string)$stemplate); // fix after
-						} elseif((string)$sfx == '|css') {
+						} elseif((string)$sfx == '|js') { // this is used to pass a tpl to a javascript string
 							$stemplate = (string) self::prepare_nosyntax_content((string)$stemplate); // fix before
-							$stemplate = (string) Smart::escape_css((string)$stemplate);
-						} elseif((string)$sfx == '|js') {
-							$stemplate = (string) self::prepare_nosyntax_content((string)$stemplate); // fix before
+							$stemplate = (string) Smart::escape_js((string)$stemplate);
+						} elseif((string)$sfx == '|js-tpl-encode') { // this is used to pass a tpl to js for render in js
+							$stemplate = (string) self::escape_template((string)$stemplate, 'yes'); // fix here ; no need to fix before or after as encode (url escape) will escape all sequences to avoid conflicts
 							$stemplate = (string) Smart::escape_js((string)$stemplate);
 						} //end if
 						//-- fix unattended syntax
@@ -2031,7 +2035,7 @@ final class SmartMarkersTemplating {
 							} //end if
 							$stemplate = (string) str_replace(array('[@@@', '@@@]'), array('⁅@@@¦', '¦@@@⁆'), (string)$stemplate); // protect against cascade recursion or undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 						} //end if
-						$mtemplate = str_replace('[@@@SUB-TEMPLATE:'.$pfx.$key.$sfx.'@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
+						$mtemplate = (string) str_replace('[@@@SUB-TEMPLATE:'.$pfx.$key.$sfx.'@@@]', (string)$stemplate, (string)$mtemplate); // do replacements
 						$arr_sub_sub_templates = array();
 						$num_sub_sub_templates = 0;
 						//--
@@ -2075,7 +2079,7 @@ final class SmartMarkersTemplating {
 				$arr_subtpls = (array) self::analize_extract_subtpls($mtemplate);
 				Smart::log_notice('Invalid or Undefined Markers-TPL: Marker Sub-Templates detected in Template:'."\n".'SUB-TEMPLATES:'.print_r($arr_subtpls,1)."\n".self::log_template($mtemplate));
 			} //end if
-			$mtemplate = str_replace(array('[@@@', '@@@]'), array('⁅@@@¦', '¦@@@⁆'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
+			$mtemplate = (string) str_replace(array('[@@@', '@@@]'), array('⁅@@@¦', '¦@@@⁆'), (string)$mtemplate); // finally protect against undefined sub-templates {{{SYNC-SUBTPL-PROTECT}}}
 		} //end if
 		//--
 		return (string) $mtemplate;
@@ -2093,7 +2097,7 @@ final class SmartMarkersTemplating {
 		//--
 		if(SmartFileSysUtils::check_if_safe_path($y_file_path) != 1) {
 			Smart::log_warning('Invalid Path for Markers-TPL Read TPL File: '.$y_file_path);
-			return '';
+			return ''; // OK empty
 		} //end if
 		//--
 		$use_pcache = false;

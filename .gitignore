@@ -7,6 +7,7 @@ modules/mod-db-orm-redbean
 modules/mod-dbal-zend
 modules/mod-documentor
 modules/mod-ecomm-cart
+modules/mod-highlight-syntax
 modules/mod-js-components
 modules/mod-lang-detect
 modules/mod-maps-cache

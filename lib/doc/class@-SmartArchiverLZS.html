@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
 	<meta name="description" content="\SmartArchiverLZS       final class \ SmartArchiverLZS    {   } ::    Class: SmartArchiverLZS - Compress or Decompress a LZS archive.     Located at:">
-	<meta name="keywords" content="smartarchiverlzs, final, class, smartarchiverlzs, class, -, compress, or, decompress, a, lzs, archive., located, at, lib core plugins lib archlzs.php, package, plugins archivers, namespace, name, version, v, depends, extensions, php, mbstring, classes, smart, smarthashcrypto, usage, static, object, class  method, this, provides, only, methods, summary, public, function, compresstobas, string, input, return, string, the, bas, compressed, param, input, uncompressed">
+	<meta name="keywords" content="smartarchiverlzs, final, class, smartarchiverlzs, class, -, compress, or, decompress, a, lzs, archive., located, at, lib core plugins lib archlzs.php, package, plugins archivers, namespace, name, version, v, depends, extensions, php, mbstring, classes, smart, smarthashcrypto, usage, static, object, class  method, this, provides, only, methods, summary, public, function, compresstobas, string, input, return, string, the, bas, compressed, param, input">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartArchiverLZS">
 	<title>PHP Documentation for: \SmartArchiverLZS</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsArchivers-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -558,7 +591,7 @@ div.doc-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartArchiverLZS</span></li>
 		
-		<li><b>Version:</b> v.20190115.r2</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> extensions:  PHP MBString ; classes: Smart, SmartHashCrypto</li>
 		
 		<li><b>Usage:</b> static  object: Class::method() - This class provides only STATIC methods</li>
@@ -571,39 +604,47 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--compressToBase64">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>compressToBase64</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The Base64 LZS Compressed String<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The Base64 LZS Compressed String<br>
 @param: {$input} The uncompressed string</div>
-	<div class="doc-method-comments">Compress a string to LZS + Base64</div>
+	
+			<div class="doc-method-comments">Compress a string to LZS + Base64</div>
+	
 </div><div class="doc-container" id="Method--decompressFromBase64">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>decompressFromBase64</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The uncompressed string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The uncompressed string<br>
 @param: {$input} The Base64 LZS Compressed String</div>
-	<div class="doc-method-comments">Decompress a Base64 + LZS compressed string</div>
+	
+			<div class="doc-method-comments">Decompress a Base64 + LZS compressed string</div>
+	
 </div><!-- Skip Internal-Priv Method: `compressRawLZS()` --><!-- Skip Internal-Priv Method: `decompressRawLZS()` -->
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -612,15 +653,15 @@ div.doc-summary {
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br>&nbsp;</span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">$myString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #5F9CCE">'Some&nbsp;string&nbsp;to&nbsp;archive&nbsp;as&nbsp;LZS'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$archString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">SmartArchiverLZS</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">compressToBase64</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$myString</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;archive&nbsp;the&nbsp;string<br>&nbsp;</span><span style="color: #FFFFFF">$unarchString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">SmartArchiverLZS</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">decompressFromBase64</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$archString</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;unarchive&nbsp;it&nbsp;back<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">if((string)</span><span style="color: #FFFFFF">$unarchString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">!==&nbsp;(string)</span><span style="color: #FFFFFF">$myString</span><span style="color: #FFCC00; font-weight: bold">)&nbsp;{&nbsp;</span><span style="color: #999999">//&nbsp;Test:&nbsp;check&nbsp;if&nbsp;unarchive&nbsp;is&nbsp;the&nbsp;same&nbsp;as&nbsp;archive<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">@</span><span style="color: #FFFFFF">http_response_code</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">500</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;die(</span><span style="color: #5F9CCE">'LZS&nbsp;Archive&nbsp;test&nbsp;Failed&nbsp;!'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;}&nbsp;</span><span style="color: #999999">//end&nbsp;if<br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">$myString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #5F9CCE">'Some&nbsp;string&nbsp;to&nbsp;archive&nbsp;as&nbsp;LZS'</span><span style="color: #FFCC00; font-weight: bold">;<br>&nbsp;</span><span style="color: #FFFFFF">$archString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">SmartArchiverLZS</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">compressToBase64</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$myString</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;archive&nbsp;the&nbsp;string<br>&nbsp;</span><span style="color: #FFFFFF">$unarchString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">SmartArchiverLZS</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">decompressFromBase64</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$archString</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;unarchive&nbsp;it&nbsp;back<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">if((string)</span><span style="color: #FFFFFF">$unarchString&nbsp;</span><span style="color: #FFCC00; font-weight: bold">!==&nbsp;(string)</span><span style="color: #FFFFFF">$myString</span><span style="color: #FFCC00; font-weight: bold">)&nbsp;{&nbsp;</span><span style="color: #999999">//&nbsp;Test:&nbsp;check&nbsp;if&nbsp;unarchive&nbsp;is&nbsp;the&nbsp;same&nbsp;as&nbsp;archive<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">@</span><span style="color: #FFFFFF">http_response_code</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">500</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;die(</span><span style="color: #5F9CCE">'LZS&nbsp;Archive&nbsp;test&nbsp;Failed&nbsp;!'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;}&nbsp;</span><span style="color: #999999">//end&nbsp;if<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -646,7 +687,13 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--compressToBase64">Method: compressToBase64()</option><option value="Method--decompressFromBase64">Method: decompressFromBase64()</option>
+									<option value="Method--compressToBase64">Method: compressToBase64()</option>
+			
+									<option value="Method--decompressFromBase64">Method: decompressFromBase64()</option>
+			
+						
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -656,14 +703,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:03 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
 <hr>
 <br>
 <!-- # -->

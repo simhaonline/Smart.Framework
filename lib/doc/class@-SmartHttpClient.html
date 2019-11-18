@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartHttpClient">
 	<title>PHP Documentation for: \SmartHttpClient</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--CoreNetwork-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -562,7 +595,7 @@ The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additi
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartHttpClient</span></li>
 		
-		<li><b>Version:</b> v.20191101</li>
+		<li><b>Version:</b> v.20191113</li>
 		<li><b>Depends:</b> extensions:  PHP OpenSSL (optional, just for HTTPS) ; classes: Smart</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -575,10 +608,12 @@ The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additi
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span class="doc-param-optional" title="`$http_protocol` Parameter is OPTIONAL, with the Default Value: &quot;1.0&quot;">$http_protocol</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;1.0&quot;</b></span>
+				<span class="doc-param-name"><b><span class="doc-param-optional" title="`$http_protocol` Parameter is OPTIONAL, with the Default Value: &quot;1.0&quot;">$http_protocol</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;1.0&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
@@ -586,7 +621,9 @@ The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additi
 	
 </div><div class="doc-container" id="Method--set_ssl_tls_ca_file">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>set_ssl_tls_ca_file</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$cafile` Parameter is REQUIRED">$cafile</span></b></span>
+				<span class="doc-param-name"><b><span title="`$cafile` Parameter is REQUIRED">$cafile</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -594,7 +631,13 @@ The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additi
 	
 </div><div class="doc-container" id="Method--browse_url">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>browse_url</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$url` Parameter is REQUIRED">$url</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$method` Parameter is OPTIONAL, with the Default Value: &quot;GET&quot;">$method</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;GET&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$ssl_version` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$ssl_version</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$user` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$user</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$pwd` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$pwd</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<span class="doc-param-name"><b><span title="`$url` Parameter is REQUIRED">$url</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$method` Parameter is OPTIONAL, with the Default Value: &quot;GET&quot;">$method</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;GET&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ssl_version` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$ssl_version</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$user` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$user</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$pwd` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$pwd</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -606,7 +649,7 @@ The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additi
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 <div class="doc-container" id="Property--useragent">
 	<span class="doc-modifiers">public</span> <b>$useragent</b>&nbsp;<span title="Object Property"><b>-&gt;</b></span>
 	
@@ -646,15 +689,15 @@ The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additi
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -680,11 +723,39 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--set_ssl_tls_ca_file">Method: set_ssl_tls_ca_file()</option><option value="Method--browse_url">Method: browse_url()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--set_ssl_tls_ca_file">Method: set_ssl_tls_ca_file()</option>
+			
+									<option value="Method--browse_url">Method: browse_url()</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
-			<option value="Property--useragent">Property: $useragent</option><option value="Property--connect_timeout">Property: $connect_timeout</option><option value="Property--rawheaders">Property: $rawheaders</option><option value="Property--cookies">Property: $cookies</option><option value="Property--postvars">Property: $postvars</option><option value="Property--poststring">Property: $poststring</option><option value="Property--putbodymode">Property: $putbodymode</option><option value="Property--putbodyres">Property: $putbodyres</option><option value="Property--skipcontentif401">Property: $skipcontentif401</option><option value="Property--skip100continue">Property: $skip100continue</option><option value="Property--debug">Property: $debug</option>
+									<option value="Property--useragent">Property: $useragent</option>
+			
+									<option value="Property--connect_timeout">Property: $connect_timeout</option>
+			
+									<option value="Property--rawheaders">Property: $rawheaders</option>
+			
+									<option value="Property--cookies">Property: $cookies</option>
+			
+									<option value="Property--postvars">Property: $postvars</option>
+			
+									<option value="Property--poststring">Property: $poststring</option>
+			
+									<option value="Property--putbodymode">Property: $putbodymode</option>
+			
+									<option value="Property--putbodyres">Property: $putbodyres</option>
+			
+									<option value="Property--skipcontentif401">Property: $skipcontentif401</option>
+			
+									<option value="Property--skip100continue">Property: $skip100continue</option>
+			
+									<option value="Property--debug">Property: $debug</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Constants">
 			<option value="Constants--Summary-">*** Constants summary ***</option>
@@ -695,7 +766,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:01 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:09 +0000</small>
 <hr>
 <br>
 <!-- # -->

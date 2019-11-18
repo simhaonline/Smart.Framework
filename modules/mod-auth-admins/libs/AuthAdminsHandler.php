@@ -54,10 +54,8 @@ if(!\defined('\\APP_AUTH_DB_SQLITE')) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD, APP_AUTH_PRIVILEGES (must be set in set in config-admin.php)
  * Required configuration: $configs['app-auth']['adm-namespaces'][ 'Admins Manager' => 'admin.php?page=auth-admins.manager.stml', ... ] (must be set in set in config-admin.php)
  *
- * @access 		private
- * @internal
- *
  * @version 	v.20191111
+ * @package 	development:modules:AuthAdmins
  *
  */
 final class AuthAdminsHandler {

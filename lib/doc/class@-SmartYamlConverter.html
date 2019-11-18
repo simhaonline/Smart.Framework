@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
 	<meta name="description" content="\SmartYamlConverter       final class \ SmartYamlConverter    {   } -&gt;    Class: SmartYamlConverter - provides a YAML Converter (Parser and Composer). It">
-	<meta name="keywords" content="smartyamlconverter, final, class, smartyamlconverter, -, class, -, provides, a, yaml, converter, parser, and, composer ., it, will, parse, to, php, array, also, compose, from, array., located, at, lib core plugins lib yaml.php, package, plugins convertersandparsers, namespace, name, version, v, depends, classes, smart, usage, dynamic, object, new, class   - method, this, only, methods, summary, public, function, construct, log errors, true, geterror, string, input, return, array, param, input, create">
+	<meta name="keywords" content="smartyamlconverter, final, class, smartyamlconverter, -, class, -, provides, a, yaml, converter, parser, and, composer ., it, will, parse, to, php, array, also, compose, from, array., located, at, lib core plugins lib yaml.php, package, plugins convertersandparsers, namespace, name, version, v, depends, classes, smart, usage, dynamic, object, new, class   - method, this, only, methods, summary, public, function, construct, log errors, true, geterror, string, input, return, array, param, input">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartYamlConverter">
 	<title>PHP Documentation for: \SmartYamlConverter</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsConvertersAndParsers-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -559,7 +592,7 @@ It will parse YAML to a PHP array, and also will compose YAML from a PHP array.<
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartYamlConverter</span></li>
 		
-		<li><b>Version:</b> v.20190302</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> classes:  Smart</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -572,10 +605,12 @@ It will parse YAML to a PHP array, and also will compose YAML from a PHP array.<
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span class="doc-param-optional" title="`$log_errors` Parameter is OPTIONAL, with the Default Value: true">$log_errors</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+				<span class="doc-param-name"><b><span class="doc-param-optional" title="`$log_errors` Parameter is OPTIONAL, with the Default Value: true">$log_errors</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
@@ -583,6 +618,7 @@ It will parse YAML to a PHP array, and also will compose YAML from a PHP array.<
 	
 </div><div class="doc-container" id="Method--getError">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getError</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
@@ -591,23 +627,31 @@ It will parse YAML to a PHP array, and also will compose YAML from a PHP array.<
 	
 </div><div class="doc-container" id="Method--parse">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>parse</b></span>&nbsp;(
-	<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+				<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;array
 	
 	
-	<div class="doc-method-ret-params">@return: {array} :<br>
+			<div class="doc-method-ret-params">@return: {array} :<br>
 @param: {$input}</div>
-	<div class="doc-method-comments">Create a PHP array from YAML string</div>
+	
+			<div class="doc-method-comments">Create a PHP array from YAML string</div>
+	
 </div><div class="doc-container" id="Method--compose">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>compose</b></span>&nbsp;(
-	<i>array</i>&nbsp;<span class="doc-param-name"><b><span title="`$array` Parameter is REQUIRED">$array</span></b></span>, <i>int</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$indent` Parameter is OPTIONAL, with the Default Value: 2">$indent</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>2</b></span>
+				<i>array</i>&nbsp;<span class="doc-param-name"><b><span title="`$array` Parameter is REQUIRED">$array</span></b></span>, 
+			<i>int</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$indent` Parameter is OPTIONAL, with the Default Value: 2">$indent</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>2</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;string
 	
 	
-	<div class="doc-method-ret-params">@return: {string} : YAML<br>
+			<div class="doc-method-ret-params">@return: {string} : YAML<br>
 @param: {$array} PHP array<br>
 @param: {$indent} Pass in false to use the default, which is 2</div>
-	<div class="doc-method-comments">Create YAML from PHP array<br>
+	
+			<div class="doc-method-comments">Create YAML from PHP array<br>
 The dump method, when supplied with an array, will do its best<br>
 to convert the array into friendly YAML.  Pretty simple.  Feel free to<br>
 save the returned string as tasteful.yaml and pass it around.<br>
@@ -616,9 +660,13 @@ for folding is.  Pretty cool -- just pass in 'false' for either if<br>
 you want to use the default.<br>
 Indent's default is 2 spaces, wordwrap's default is 40 characters.  And<br>
 you can turn off wordwrap by passing in 0.</div>
+	
 </div><div class="doc-container" id="Method--revertLiteralYamlPlaceHolder">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>revertLiteralYamlPlaceHolder</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$lineArray` Parameter is REQUIRED">$lineArray</span></b></span>, <span class="doc-param-name"><b><span title="`$literalBlock` Parameter is REQUIRED">$literalBlock</span></b></span>
+				<span class="doc-param-name"><b><span title="`$lineArray` Parameter is REQUIRED">$lineArray</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$literalBlock` Parameter is REQUIRED">$literalBlock</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -630,7 +678,7 @@ you can turn off wordwrap by passing in 0.</div>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 <div class="doc-container" id="Property--setting_dump_force_quotes">
 	<span class="doc-modifiers">public</span> <b>$setting_dump_force_quotes</b>&nbsp;<span title="Object Property"><b>-&gt;</b></span>
 	
@@ -640,15 +688,15 @@ you can turn off wordwrap by passing in 0.</div>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -674,11 +722,23 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--getError">Method: getError()</option><option value="Method--parse">Method: parse()</option><option value="Method--compose">Method: compose()</option><option value="Method--revertLiteralYamlPlaceHolder">Method: revertLiteralYamlPlaceHolder()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--getError">Method: getError()</option>
+			
+									<option value="Method--parse">Method: parse()</option>
+			
+									<option value="Method--compose">Method: compose()</option>
+			
+									<option value="Method--revertLiteralYamlPlaceHolder">Method: revertLiteralYamlPlaceHolder()</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
-			<option value="Property--setting_dump_force_quotes">Property: $setting_dump_force_quotes</option>
+									<option value="Property--setting_dump_force_quotes">Property: $setting_dump_force_quotes</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Constants">
 			<option value="Constants--Summary-">*** Constants summary ***</option>
@@ -689,7 +749,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:03 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:10 +0000</small>
 <hr>
 <br>
 <!-- # -->

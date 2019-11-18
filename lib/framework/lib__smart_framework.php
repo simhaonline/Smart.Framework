@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191112
+ * @version 	v.20191115
  * @package 	development:Application
  *
  */
@@ -1500,7 +1500,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return false;
 		} //end if
 		//--
-		return SmartPersistentCache::setKey(
+		return (bool) SmartPersistentCache::setKey(
 			(string) $storage_namespace,
 			(string) $unique_key,
 			(string) $cache,
@@ -1522,7 +1522,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function PageUnsetFromCache($storage_namespace, $unique_key) {
 		//--
-		return SmartPersistentCache::unsetKey(
+		return (bool) SmartPersistentCache::unsetKey(
 			(string) $storage_namespace,
 			(string) $unique_key
 		);

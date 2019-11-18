@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartRedisDb">
 	<title>PHP Documentation for: \SmartRedisDb</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsDatabaseRedis-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -560,7 +593,7 @@ Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x</
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartRedisDb</span></li>
 		
-		<li><b>Version:</b> v.20191028</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> extensions:  PHP Sockets ; classes: Smart</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -573,28 +606,39 @@ Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x</
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$host` Parameter is REQUIRED">$host</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$port` Parameter is REQUIRED">$port</span></b></span>, <i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span title="`$db` Parameter is REQUIRED">$db</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$password` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$password</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$timeout` Parameter is OPTIONAL, with the Default Value: 5">$timeout</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>5</b></span>, <i>FLOAT</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_debug_exch_slowtime` Parameter is OPTIONAL, with the Default Value: 0.0005">$y_debug_exch_slowtime</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0.0005</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_description` Parameter is OPTIONAL, with the Default Value: &quot;DEFAULT&quot;">$y_description</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;DEFAULT&quot;</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fatal_err` Parameter is OPTIONAL, with the Default Value: false">$y_fatal_err</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$host` Parameter is REQUIRED">$host</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$port` Parameter is REQUIRED">$port</span></b></span>, 
+			<i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span title="`$db` Parameter is REQUIRED">$db</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$password` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$password</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$timeout` Parameter is OPTIONAL, with the Default Value: 5">$timeout</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>5</b></span>, 
+			<i>FLOAT</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_debug_exch_slowtime` Parameter is OPTIONAL, with the Default Value: 0.0005">$y_debug_exch_slowtime</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0.0005</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_description` Parameter is OPTIONAL, with the Default Value: &quot;DEFAULT&quot;">$y_description</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;DEFAULT&quot;</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fatal_err` Parameter is OPTIONAL, with the Default Value: false">$y_fatal_err</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@param: {$host} The Redis Server Host (Ex: '127.0.0.1')<br>
+			<div class="doc-method-ret-params">@param: {$host} The Redis Server Host (Ex: '127.0.0.1')<br>
 @param: {$port} The Redis Server Port (Ex: 6379)<br>
 @param: {$db} The Redis Server DB Number (Ex: 0) ; By Default min: 0 and max: 15 (16 databases) ; if redis.conf specify more than 16, can be a larger number, min: 0 ; max 255<br>
 @param: {$password} *OPTIONAL* The Redis Auth Password ; Default is Empty String<br>
 @param: {$y_debug_exch_slowtime} *OPTIONAL* The Debug Slow Time in microseconds to Record slow Queries<br>
 @param: {$y_description} *OPTIONAL* The description of the Redis connection to make easy debug and log errors<br>
 @param: {$y_fatal_err} *OPTIONAL* If Errors are Fatal or Not ... ; Set this parameter to TRUE if you want to Raise a fatal error on Redis errors ; otherwise default is FALSE and will ignore Redis errors but just log them as warnings (this is the wanted behaviour on a production server ...)</div>
-	<div class="doc-method-comments">Object Constructor</div>
+	
+			<div class="doc-method-comments">Object Constructor</div>
+	
 </div><!-- Skip Internal-Priv Method: `setRecvBuf()` --><div class="doc-container" id="Method--__call">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__call</b></span>&nbsp;(
 	
 	)&nbsp;{}&nbsp;<span title="* Special * Magic * Method"><b>@</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@method: {@return: STRING} ping()										# Ping the Redis server ; returns: the test answer which is always PONG<br>
+			<div class="doc-method-ret-params">@method: {@return: STRING} ping()										# Ping the Redis server ; returns: the test answer which is always PONG<br>
 @method: {@return: MIXED} get(STRING $key) 							# Get a Redis Key ; returns: the value of key as STRING or NULL if not exists<br>
 @method: {@return: MIXED} set(STRING $key, STRING $value)				# Set a Redis Key ; returns: OK on success or NULL on failure<br>
 @method: {@return: MIXED} append(STRING $key, STRING $value)			# Append a Redis Key ; returns: OK on success or NULL on failure<br>
@@ -611,23 +655,25 @@ Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x</
 @method: {@return: STRING} info()										# Returns information and statistics about the server<br>
 @method: {@return: INT} dbsize()									# Return the number of keys in the currently-selected database<br>
 @method: {@return: STRING} flushdb()									# Remove all keys from the selected database ; This command never fails ; Returns OK</div>
-	<div class="doc-method-comments">This is the Magic Method (Call) that maps the PHP class extra methods to Redis methods.<br>
+	
+			<div class="doc-method-comments">This is the Magic Method (Call) that maps the PHP class extra methods to Redis methods.<br>
 It have variadic parameters mapped to Redis sub-calls.<br>
 The most common Redis methods are documented here. For the rest of the Redis methods see: https://redis.io/commands</div>
+	
 </div>
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 <!-- Skip Internal-Priv Property: `$recvbuf` -->
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -636,15 +682,15 @@ The most common Redis methods are documented here. For the rest of the Redis met
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;Redis&nbsp;Client&nbsp;usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">$redis&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartRedisDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'localhost'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'6379'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">3</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;connects&nbsp;at&nbsp;the&nbsp;database&nbsp;no.&nbsp;3<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list1:key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value2'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$value1&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;if(</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">exists</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">))&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFFFFF">$value2&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list5:key7'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;}&nbsp;</span><span style="color: #999999">//end&nbsp;if<br><br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;Redis&nbsp;Client&nbsp;usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">$redis&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartRedisDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'localhost'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'6379'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">3</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;connects&nbsp;at&nbsp;the&nbsp;database&nbsp;no.&nbsp;3<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list1:key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value2'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$value1&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;if(</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">exists</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">))&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFFFFF">$value2&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list5:key7'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;}&nbsp;</span><span style="color: #999999">//end&nbsp;if<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -670,24 +716,31 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--__call">Method: __call()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+						
+									<option value="Method--__call">Method: __call()</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
+						
 			
 		</optgroup>
 		<optgroup label="Class Constants">
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:04 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
 <hr>
 <br>
 <!-- # -->

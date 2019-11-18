@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartUnicode">
 	<title>PHP Documentation for: \SmartUnicode</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--Core-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -573,262 +606,383 @@ Take a look at the replacement table below.</div><br>
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--str_len">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_len</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ytext` Parameter is REQUIRED">$ytext</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ytext` Parameter is REQUIRED">$ytext</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : The number of characters in a string<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : The number of characters in a string<br>
 @param: {$ytext} The string</div>
-	<div class="doc-method-comments">Unicode Safe strlen()	:: Get string length as number of characters in the string, which may differ from number of bytes in a string if Unicode (Multibyte) string is used</div>
+	
+			<div class="doc-method-comments">Unicode Safe strlen()	:: Get string length as number of characters in the string, which may differ from number of bytes in a string if Unicode (Multibyte) string is used</div>
+	
 </div><div class="doc-container" id="Method--sub_str">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>sub_str</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystart` Parameter is REQUIRED">$ystart</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ylen` Parameter is OPTIONAL, with the Default Value: null">$ylen</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>null</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystart` Parameter is REQUIRED">$ystart</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ylen` Parameter is OPTIONAL, with the Default Value: null">$ylen</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>null</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The sub-string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The sub-string<br>
 @param: {$ystr} The string<br>
 @param: {$ystart} The start offset<br>
 @param: {$ylen} OPTIONAL	:: The number of characters to use, starting from start offset</div>
-	<div class="doc-method-comments">Unicode Safe substr()			:: Get part of string</div>
+	
+			<div class="doc-method-comments">Unicode Safe substr()			:: Get part of string</div>
+	
 </div><div class="doc-container" id="Method--substr_count">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>substr_count</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : The number of times the piece sub-string occurs in the string being checked<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : The number of times the piece sub-string occurs in the string being checked<br>
 @param: {$ystr} The string being checked<br>
 @param: {$ypiece} The string to be found</div>
-	<div class="doc-method-comments">Unicode Safe substr_count()	:: Count the number of substring occurrences</div>
+	
+			<div class="doc-method-comments">Unicode Safe substr_count()	:: Count the number of substring occurrences</div>
+	
 </div><div class="doc-container" id="Method--str_limit_replace">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_limit_replace</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$needle` Parameter is REQUIRED">$needle</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$replace` Parameter is REQUIRED">$replace</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$haystack` Parameter is REQUIRED">$haystack</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$count` Parameter is REQUIRED">$count</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$needle` Parameter is REQUIRED">$needle</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$replace` Parameter is REQUIRED">$replace</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$haystack` Parameter is REQUIRED">$haystack</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span title="`$count` Parameter is REQUIRED">$count</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string with replacements if the needle is found<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string with replacements if the needle is found<br>
 @param: {$needle} The sub-string being searched for<br>
 @param: {$replace} The replacement value that replaces found search values<br>
 @param: {$haystack} The string on which to make the replacements<br>
 @param: {$count} The number of replacements to operate</div>
-	<div class="doc-method-comments">Unicode Safe str_replace() with Limit 	:: Replace a fixed (by count) number of occurrences of the search string with the replacement string</div>
+	
+			<div class="doc-method-comments">Unicode Safe str_replace() with Limit 	:: Replace a fixed (by count) number of occurrences of the search string with the replacement string</div>
+	
 </div><div class="doc-container" id="Method--str_pos">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_pos</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the first occurrence of piece in the string. If not found, it returns FALSE<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the first occurrence of piece in the string. If not found, it returns FALSE<br>
 @param: {$ystr} The string to search in<br>
 @param: {$ypiece} The sub-string to be found<br>
 @param: {$offset} The search offset. If it is not specified, 0 is used</div>
-	<div class="doc-method-comments">Unicode Safe strpos()		:: Find position of first occurrence of string in a string, Case Sensitive</div>
+	
+			<div class="doc-method-comments">Unicode Safe strpos()		:: Find position of first occurrence of string in a string, Case Sensitive</div>
+	
 </div><div class="doc-container" id="Method--str_ipos">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_ipos</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the first occurrence of piece in the string. If not found, it returns FALSE<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the first occurrence of piece in the string. If not found, it returns FALSE<br>
 @param: {$ystr} The string to search in<br>
 @param: {$ypiece} The sub-string to be found<br>
 @param: {$offset} The search offset. If it is not specified, 0 is used</div>
-	<div class="doc-method-comments">Unicode Safe stripos()		:: Find position of first occurrence of string in a string, Case Insensitive</div>
+	
+			<div class="doc-method-comments">Unicode Safe stripos()		:: Find position of first occurrence of string in a string, Case Insensitive</div>
+	
 </div><div class="doc-container" id="Method--str_rpos">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_rpos</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the last occurrence of piece in the string. If not found, it returns FALSE<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the last occurrence of piece in the string. If not found, it returns FALSE<br>
 @param: {$ystr} The string to search in<br>
 @param: {$ypiece} The sub-string to be found<br>
 @param: {$offset} The search offset. If it is not specified, 0 is used</div>
-	<div class="doc-method-comments">Unicode Safe strrpos()		:: Find position of last occurrence of string in a string, Case Sensitive</div>
+	
+			<div class="doc-method-comments">Unicode Safe strrpos()		:: Find position of last occurrence of string in a string, Case Sensitive</div>
+	
 </div><div class="doc-container" id="Method--str_ripos">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_ripos</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypiece` Parameter is REQUIRED">$ypiece</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$offset` Parameter is OPTIONAL, with the Default Value: 0">$offset</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>0</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the last occurrence of piece in the string or FALSE if not found<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : / FALSE		:: The numeric position of the last occurrence of piece in the string or FALSE if not found<br>
 @param: {$ystr} The string to search in<br>
 @param: {$ypiece} The sub-string to be found<br>
 @param: {$offset} The search offset. If it is not specified, 0 is used</div>
-	<div class="doc-method-comments">Unicode Safe strripos()		:: Find position of last occurrence of string in a string, Case Insensitive</div>
+	
+			<div class="doc-method-comments">Unicode Safe strripos()		:: Find position of last occurrence of string in a string, Case Insensitive</div>
+	
 </div><div class="doc-container" id="Method--str_str">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_str</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$ybefore_needle` Parameter is OPTIONAL, with the Default Value: false">$ybefore_needle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ybefore_needle` Parameter is OPTIONAL, with the Default Value: false">$ybefore_needle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : / FALSE		:: Returns the portion of string starting with first match or FALSE if not found<br>
+			<div class="doc-method-ret-params">@return: {STRING} : / FALSE		:: Returns the portion of string starting with first match or FALSE if not found<br>
 @param: {$ystring} The string to search in<br>
 @param: {$ypart} The sub-string to search for in the string</div>
-	<div class="doc-method-comments">Unicode Safe strstr() 		:: Finds first occurrence of a string within another, Case Sensitive</div>
+	
+			<div class="doc-method-comments">Unicode Safe strstr() 		:: Finds first occurrence of a string within another, Case Sensitive</div>
+	
 </div><div class="doc-container" id="Method--stri_str">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>stri_str</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$ybefore_needle` Parameter is OPTIONAL, with the Default Value: false">$ybefore_needle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ybefore_needle` Parameter is OPTIONAL, with the Default Value: false">$ybefore_needle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : / FALSE		:: Returns the portion of string starting with first match or FALSE if not found<br>
+			<div class="doc-method-ret-params">@return: {STRING} : / FALSE		:: Returns the portion of string starting with first match or FALSE if not found<br>
 @param: {$ystring} The string to search in<br>
 @param: {$ypart} The sub-string to search for in the string</div>
-	<div class="doc-method-comments">Unicode Safe stristr() 		:: Finds first occurrence of a string within another, Case Insensitive</div>
+	
+			<div class="doc-method-comments">Unicode Safe stristr() 		:: Finds first occurrence of a string within another, Case Insensitive</div>
+	
 </div><div class="doc-container" id="Method--str_contains">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_contains</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;BOOLEAN
 	
 	
-	<div class="doc-method-ret-params">@return: {BOOLEAN} : Returns TRUE if found or FALSE if not found<br>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} : Returns TRUE if found or FALSE if not found<br>
 @param: {$ystring} The string to check<br>
 @param: {$ypart} The sub-string to search for in the string</div>
-	<div class="doc-method-comments">Unicode Safe 				:: Check if a string contains another, Case Sensitive</div>
+	
+			<div class="doc-method-comments">Unicode Safe 				:: Check if a string contains another, Case Sensitive</div>
+	
 </div><div class="doc-container" id="Method--str_icontains">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_icontains</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystring` Parameter is REQUIRED">$ystring</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ypart` Parameter is REQUIRED">$ypart</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;BOOLEAN
 	
 	
-	<div class="doc-method-ret-params">@return: {BOOLEAN} : Returns TRUE if found or FALSE if not found<br>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} : Returns TRUE if found or FALSE if not found<br>
 @param: {$ystring} The string to check<br>
 @param: {$ypart} The sub-string to search for in the string</div>
-	<div class="doc-method-comments">Unicode ~ Safe * 			:: Check if a string contains another, Case Insensitive</div>
+	
+			<div class="doc-method-comments">Unicode ~ Safe * 			:: Check if a string contains another, Case Insensitive</div>
+	
 </div><div class="doc-container" id="Method--str_wordcount">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_wordcount</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : Returns the number of words found<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : Returns the number of words found<br>
 @param: {$str} The string to find words into</div>
-	<div class="doc-method-comments">Unicode ~ Safe * 			:: Find the aproximative number of words in an unicode string</div>
+	
+			<div class="doc-method-comments">Unicode ~ Safe * 			:: Find the aproximative number of words in an unicode string</div>
+	
 </div><!-- Skip Internal-Priv Method: `detect_encoding()` --><div class="doc-container" id="Method--str_tolower">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_tolower</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string as lowercase string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string as lowercase string<br>
 @param: {$ystr} The string</div>
-	<div class="doc-method-comments">Unicode Safe strtolower() 	:: Make a Unicode string lowercase ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2</div>
+	
+			<div class="doc-method-comments">Unicode Safe strtolower() 	:: Make a Unicode string lowercase ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2</div>
+	
 </div><div class="doc-container" id="Method--uc_first">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>uc_first</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string as uppercase of first character string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string as uppercase of first character string<br>
 @param: {$ystr} The string</div>
-	<div class="doc-method-comments">Unicode Safe ucfirst() 		:: Make a Unicode string uppercase on first character ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2</div>
+	
+			<div class="doc-method-comments">Unicode Safe ucfirst() 		:: Make a Unicode string uppercase on first character ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2</div>
+	
 </div><div class="doc-container" id="Method--uc_words">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>uc_words</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string as uppercase on each word<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string as uppercase on each word<br>
 @param: {$ystr} The string</div>
-	<div class="doc-method-comments">Unicode Safe ucwords() 		:: Make a Unicode string uppercase on each word ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2<br>
+	
+			<div class="doc-method-comments">Unicode Safe ucwords() 		:: Make a Unicode string uppercase on each word ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2<br>
 Notice: this is only partial compatible with PHP ucwords() as it makes first letter of each word Upper while force lowercase on the rest of the word letters as it complies with MB_CASE_TITLE</div>
+	
 </div><div class="doc-container" id="Method--str_toupper">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>str_toupper</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string as uppercase string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string as uppercase string<br>
 @param: {$ystr} The string</div>
-	<div class="doc-method-comments">Unicode Safe strtoupper() 	:: Make a Unicode string uppercase ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2</div>
+	
+			<div class="doc-method-comments">Unicode Safe strtoupper() 	:: Make a Unicode string uppercase ; works with any of these encodings: UTF-8, ISO-8859-1, ISO-8859-2</div>
+	
 </div><div class="doc-container" id="Method--convert_charset">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>convert_charset</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_charset_from` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_charset_from</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_charset_to` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_charset_to</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$normalize` Parameter is OPTIONAL, with the Default Value: true">$normalize</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$ystr` Parameter is REQUIRED">$ystr</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_charset_from` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_charset_from</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_charset_to` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_charset_to</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$normalize` Parameter is OPTIONAL, with the Default Value: true">$normalize</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
 @param: {$ystr} The string<br>
 @param: {$ychar_from} Empty to detect / Select one of the: UTF-8, ISO-8859-1, ISO-8859-15, ISO-8859-2, ISO-8859-9, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-16, UTF-7, ASCII, SJIS, EUC-JP, JIS, ISO-2022-JP, EUC-CN, ISO-2022-KR, KOI8-R, KOI8-U<br>
 @param: {$ychar_to} Empty to use the framework internal charset defined in SMART_FRAMEWORK_CHARSET / Select one of the: UTF-8, HTML-ENTITIES or another valid charset<br>
 @param: {$normalize} Normalize (Default is TRUE) - will normalize the string into the default framework charset else the string will be incompatible with the current encoding ... ; Using this to false must be use with very much attention !!!</div>
-	<div class="doc-method-comments">Convert the CharSet Encoding of a String<br>
+	
+			<div class="doc-method-comments">Convert the CharSet Encoding of a String<br>
 NOTICE: If the charset to is different than UTF-8 (unicode) if using the string in this framework it must be re-converted<br>
 NOTICE: If used to convert to HTML-ENTITIES charset this function will consume a lot of memory and may run out of memory for large strings &gt; 10% of memory_limit set in init.php</div>
+	
 </div><div class="doc-container" id="Method--fix_charset">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>fix_charset</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The fixed string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The fixed string<br>
 @param: {$str} The string</div>
-	<div class="doc-method-comments">Safe Fix the string to contain only current charset.<br>
+	
+			<div class="doc-method-comments">Safe Fix the string to contain only current charset.<br>
 All the unsafe characters will be replaced by: ?<br>
 This is not necessary after SmartUnicode::convert_charset() as it will already fix it</div>
+	
 </div><div class="doc-container" id="Method--utf8_to_iso">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>utf8_to_iso</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$normalize` Parameter is OPTIONAL, with the Default Value: true">$normalize</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$normalize` Parameter is OPTIONAL, with the Default Value: true">$normalize</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
 @param: {$str} The string<br>
 @param: {$normalize} Normalize (Default is TRUE) - will normalize the string into the default framework charset else the string will be incompatible with the current encoding ... ; Using this to false must be use with very much attention !!!</div>
-	<div class="doc-method-comments">Safe Convert UTF-8 to Unicode ISO.<br>
+	
+			<div class="doc-method-comments">Safe Convert UTF-8 to Unicode ISO.<br>
 It will remove all invalid characters except latin1.<br>
 NOTICE: It converts the string back to unicode since all the strings in the framework are unicode (UTF-8) to avoid breaking the regex with \u over those strings !!!<br>
 Never use just single utf8_decode() when the framework is in UTF-8 mode, else the regex \u will fail over those strings ...</div>
+	
 </div><div class="doc-container" id="Method--deaccent_str">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>deaccent_str</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$normalize` Parameter is OPTIONAL, with the Default Value: true">$normalize</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$normalize` Parameter is OPTIONAL, with the Default Value: true">$normalize</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
 @param: {$str} The string<br>
 @param: {$normalize} Normalize (Default is TRUE) - will normalize the string by forcing the ISO-8859-1 character set</div>
-	<div class="doc-method-comments">De-Accent a latin-based Unicode string 	:: will convert all accented characters in UTF-8 / ISO-8859-* with their unnaccented versions into ISO-8859-1</div>
+	
+			<div class="doc-method-comments">De-Accent a latin-based Unicode string 	:: will convert all accented characters in UTF-8 / ISO-8859-* with their unnaccented versions into ISO-8859-1</div>
+	
 </div><div class="doc-container" id="Method--html_entities">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_entities</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
 @param: {$str} The string</div>
-	<div class="doc-method-comments">Convert the Unicode Accented Characters to Safe HTML Entities</div>
+	
+			<div class="doc-method-comments">Convert the Unicode Accented Characters to Safe HTML Entities</div>
+	
 </div><div class="doc-container" id="Method--word_wrap">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>word_wrap</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>, <i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$width` Parameter is OPTIONAL, with the Default Value: 75">$width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>75</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$break` Parameter is OPTIONAL, with the Default Value: &quot;\n&quot;">$break</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;\n&quot;</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$cut` Parameter is OPTIONAL, with the Default Value: false">$cut</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$visualbreak` Parameter is OPTIONAL, with the Default Value: &quot;¬&quot;">$visualbreak</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;¬&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>, 
+			<i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$width` Parameter is OPTIONAL, with the Default Value: 75">$width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>75</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$break` Parameter is OPTIONAL, with the Default Value: &quot;\n&quot;">$break</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;\n&quot;</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$cut` Parameter is OPTIONAL, with the Default Value: false">$cut</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$visualbreak` Parameter is OPTIONAL, with the Default Value: &quot;¬&quot;">$visualbreak</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;¬&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The processed string<br>
 @param: {$str} The string to be wrapped<br>
 @param: {$width} The number of characters at which the string will be wrapped<br>
 @param: {$break} OPTIONAL	:: The line is broken using the optional break parameter ; Default is: \n ; will also add the optional visual break by default '¬'<br>
 @param: {$cut} OPTIONAL	:: If the cut is set to TRUE, the string is always wrapped at or before the specified width ; When FALSE the function dose not split the word until the end of the word even if the width is smaller than the word width. Default is FALSE.</div>
-	<div class="doc-method-comments">Unicode Safe wordwrap() 				:: Wraps a string to a given number of characters</div>
+	
+			<div class="doc-method-comments">Unicode Safe wordwrap() 				:: Wraps a string to a given number of characters</div>
+	
 </div><!-- Skip Internal-Priv Method: `mailsend()` --><!-- Skip Internal-Priv Method: `accented_chars()` --><!-- Skip Internal-Priv Method: `accented_html_entities()` -->
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -837,15 +991,15 @@ Never use just single utf8_decode() when the framework is in UTF-8 mode, else th
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br><br>&nbsp;</span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">SmartUnicode</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">some_method_of_this_class</span><span style="color: #FFCC00; font-weight: bold">(...);<br><br>&nbsp;&nbsp;</span><span style="color: #999999">//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;SAFE&nbsp;/&nbsp;MultiByte&nbsp;functions&nbsp;Reference&nbsp;with&nbsp;Replacements&nbsp;(Smart.Framework&nbsp;UTF-8)<br>&nbsp;&nbsp;//&nbsp;MORE&nbsp;INFO&nbsp;AT:&nbsp;http://www.phpwact.org/php/i18n/utf-8<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;FUNCTION&nbsp;NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BETTER&nbsp;/&nbsp;SAFER&nbsp;REPLACEMENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STATUS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTICE<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//(int)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::format_number_int()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;replacement&nbsp;function&nbsp;have&nbsp;a&nbsp;second&nbsp;parameter&nbsp;to&nbsp;allow&nbsp;also&nbsp;unsigned&nbsp;integers<br>&nbsp;&nbsp;//number_format()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::format_number_dec()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;easier&nbsp;to&nbsp;use&nbsp;and&nbsp;rely&nbsp;on&nbsp;framework<br>&nbsp;&nbsp;//htmlspecialchars()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::escape_html()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;replacement&nbsp;function&nbsp;will&nbsp;take&nbsp;in&nbsp;count&nbsp;if&nbsp;unicode&nbsp;strings&nbsp;or&nbsp;not&nbsp;are&nbsp;used<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//mail()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::mailsend()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;PHP&nbsp;mail()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//split()&nbsp;/&nbsp;str_split()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;explode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;the&nbsp;explode()&nbsp;function&nbsp;;&nbsp;avoid&nbsp;to&nbsp;use&nbsp;split()&nbsp;or&nbsp;str_split()&nbsp;because&nbsp;they&nbsp;are&nbsp;not&nbsp;binary&nbsp;safe&nbsp;an&nbsp;can&nbsp;break&nbsp;unicode&nbsp;strings<br>&nbsp;&nbsp;//join()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;join()&nbsp;is&nbsp;deprecated&nbsp;and&nbsp;alias&nbsp;to&nbsp;implode()<br>&nbsp;&nbsp;//substr_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;str_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;not&nbsp;certified&nbsp;to&nbsp;be&nbsp;safe&nbsp;100%&nbsp;with&nbsp;unicode&nbsp;strings&nbsp;;&nbsp;try&nbsp;to&nbsp;use&nbsp;the&nbsp;the&nbsp;replacement&nbsp;function<br>&nbsp;&nbsp;//str_ireplace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;str_ireplace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;fail&nbsp;if&nbsp;try&nbsp;to&nbsp;replace&nbsp;unicode&nbsp;accented&nbsp;characters&nbsp;if&nbsp;case&nbsp;differs&nbsp;(lower&nbsp;vs.&nbsp;upper)<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//substr_count()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::substr_count()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;substr_count()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strlen()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_len()&nbsp;/&nbsp;strlen()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strlen()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe&nbsp;;&nbsp;but&nbsp;for&nbsp;counting&nbsp;bytes&nbsp;in&nbsp;a&nbsp;string&nbsp;use&nbsp;always&nbsp;the&nbsp;strlen()&nbsp;;&nbsp;for&nbsp;counting&nbsp;characters&nbsp;in&nbsp;a&nbsp;string&nbsp;always&nbsp;use&nbsp;SmartUnicode::str_len()&nbsp;in&nbsp;an&nbsp;unicode&nbsp;environment<br>&nbsp;&nbsp;//substr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::sub_str()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;substr()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strstr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_str()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strstr()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//stristr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::stri_str()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;stristr()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strpos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_pos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strpos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//stripos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_ipos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;stripos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strrpos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_rpos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strrpos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strripos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_ripos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strripos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strtolower()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_tolower()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strtolower()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe&nbsp;and&nbsp;will&nbsp;not&nbsp;make&nbsp;lower&nbsp;case&nbsp;the&nbsp;accented&nbsp;characters<br>&nbsp;&nbsp;//strtoupper()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_toupper()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strtoupper()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe&nbsp;and&nbsp;will&nbsp;not&nbsp;make&nbsp;upper&nbsp;case&nbsp;the&nbsp;accented&nbsp;characters<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//utf8_decode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::utf8_to_iso()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;utf8_decode()&nbsp;breaks&nbsp;strings&nbsp;that&nbsp;are&nbsp;used&nbsp;in&nbsp;unicode&nbsp;environments&nbsp;thus&nbsp;the&nbsp;strings&nbsp;need&nbsp;to&nbsp;be&nbsp;re-encoded&nbsp;;&nbsp;if&nbsp;not&nbsp;re-encoded&nbsp;back&nbsp;to&nbsp;unicode&nbsp;the&nbsp;regex&nbsp;\u&nbsp;will&nbsp;fail&nbsp;in&nbsp;strange&nbsp;modes&nbsp;...<br>&nbsp;&nbsp;//utf8_encode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;there&nbsp;is&nbsp;a&nbsp;risk&nbsp;to&nbsp;double&nbsp;encode&nbsp;the&nbsp;string&nbsp;and&nbsp;break&nbsp;it&nbsp;!!&nbsp;;&nbsp;Fix:&nbsp;avoid&nbsp;do&nbsp;utf8&nbsp;encode&nbsp;on&nbsp;an&nbsp;empty&nbsp;string&nbsp;(some&nbsp;PHP&nbsp;versions&nbsp;have&nbsp;a&nbsp;bug&nbsp;with&nbsp;exhaust&nbsp;memory)<br>&nbsp;&nbsp;//wordwrap()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::word_wrap()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;wordwrap()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strip_tags()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::striptags()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strip_tags()&nbsp;will&nbsp;not&nbsp;replace&nbsp;some&nbsp;extra&nbsp;things&nbsp;like&nbsp;&amp;nbsp;&nbsp;and&nbsp;much&nbsp;other&nbsp;html&nbsp;entities<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//printf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;printf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//sprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;sprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//vsprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;vsprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//strcasecmp()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;strcasecmp()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//strcspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;strcspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//strspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;strspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strtr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;only&nbsp;with&nbsp;non-unicode&nbsp;characters,&nbsp;will&nbsp;break&nbsp;the&nbsp;unicode&nbsp;strings&nbsp;if&nbsp;unicode&nbsp;characters&nbsp;are&nbsp;multibyte<br>&nbsp;&nbsp;//strrev()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;only&nbsp;with&nbsp;non-unicode&nbsp;characters,&nbsp;will&nbsp;break&nbsp;the&nbsp;unicode&nbsp;strings&nbsp;if&nbsp;unicode&nbsp;characters&nbsp;are&nbsp;multibyte<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//chunk_split()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!-]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;really&nbsp;breaks&nbsp;unicode&nbsp;strings&nbsp;...&nbsp;Use&nbsp;only&nbsp;with&nbsp;non-unicode&nbsp;characters,&nbsp;will&nbsp;break&nbsp;the&nbsp;unicode&nbsp;strings&nbsp;if&nbsp;unicode&nbsp;characters&nbsp;are&nbsp;multibyte<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//---------------&nbsp;&nbsp;&nbsp;DEPRECATED&nbsp;Functions,&nbsp;AVOID&nbsp;TO&nbsp;USE&nbsp;THEM&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------<br>&nbsp;&nbsp;//---------------&nbsp;&nbsp;&nbsp;They&nbsp;are&nbsp;not&nbsp;binary&nbsp;safe&nbsp;and&nbsp;will&nbsp;be&nbsp;OFF&nbsp;since&nbsp;PHP7&nbsp;---------------<br>&nbsp;&nbsp;//&nbsp;Replacement&nbsp;hint:&nbsp;ereg("^(5|6)$",&nbsp;'some&nbsp;value')&nbsp;[=]&nbsp;preg_match("/^(5|6)$/",&nbsp;'some&nbsp;value')<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//ereg()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_match*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//eregi()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_match*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//ereg_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_replace*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//eregi_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_replace*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br><br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">SmartUnicode</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">some_method_of_this_class</span><span style="color: #FFCC00; font-weight: bold">(...);<br><br>&nbsp;&nbsp;</span><span style="color: #999999">//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;SAFE&nbsp;/&nbsp;MultiByte&nbsp;functions&nbsp;Reference&nbsp;with&nbsp;Replacements&nbsp;(Smart.Framework&nbsp;UTF-8)<br>&nbsp;&nbsp;//&nbsp;MORE&nbsp;INFO&nbsp;AT:&nbsp;http://www.phpwact.org/php/i18n/utf-8<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//&nbsp;FUNCTION&nbsp;NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BETTER&nbsp;/&nbsp;SAFER&nbsp;REPLACEMENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STATUS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTICE<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//(int)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::format_number_int()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;replacement&nbsp;function&nbsp;have&nbsp;a&nbsp;second&nbsp;parameter&nbsp;to&nbsp;allow&nbsp;also&nbsp;unsigned&nbsp;integers<br>&nbsp;&nbsp;//number_format()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::format_number_dec()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;easier&nbsp;to&nbsp;use&nbsp;and&nbsp;rely&nbsp;on&nbsp;framework<br>&nbsp;&nbsp;//htmlspecialchars()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::escape_html()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;replacement&nbsp;function&nbsp;will&nbsp;take&nbsp;in&nbsp;count&nbsp;if&nbsp;unicode&nbsp;strings&nbsp;or&nbsp;not&nbsp;are&nbsp;used<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//mail()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::mailsend()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;PHP&nbsp;mail()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//split()&nbsp;/&nbsp;str_split()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;explode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;the&nbsp;explode()&nbsp;function&nbsp;;&nbsp;avoid&nbsp;to&nbsp;use&nbsp;split()&nbsp;or&nbsp;str_split()&nbsp;because&nbsp;they&nbsp;are&nbsp;not&nbsp;binary&nbsp;safe&nbsp;an&nbsp;can&nbsp;break&nbsp;unicode&nbsp;strings<br>&nbsp;&nbsp;//join()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;join()&nbsp;is&nbsp;deprecated&nbsp;and&nbsp;alias&nbsp;to&nbsp;implode()<br>&nbsp;&nbsp;//substr_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;str_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;is&nbsp;not&nbsp;certified&nbsp;to&nbsp;be&nbsp;safe&nbsp;100%&nbsp;with&nbsp;unicode&nbsp;strings&nbsp;;&nbsp;try&nbsp;to&nbsp;use&nbsp;the&nbsp;the&nbsp;replacement&nbsp;function<br>&nbsp;&nbsp;//str_ireplace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;str_ireplace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;fail&nbsp;if&nbsp;try&nbsp;to&nbsp;replace&nbsp;unicode&nbsp;accented&nbsp;characters&nbsp;if&nbsp;case&nbsp;differs&nbsp;(lower&nbsp;vs.&nbsp;upper)<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//substr_count()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::substr_count()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;substr_count()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strlen()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_len()&nbsp;/&nbsp;strlen()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strlen()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe&nbsp;;&nbsp;but&nbsp;for&nbsp;counting&nbsp;bytes&nbsp;in&nbsp;a&nbsp;string&nbsp;use&nbsp;always&nbsp;the&nbsp;strlen()&nbsp;;&nbsp;for&nbsp;counting&nbsp;characters&nbsp;in&nbsp;a&nbsp;string&nbsp;always&nbsp;use&nbsp;SmartUnicode::str_len()&nbsp;in&nbsp;an&nbsp;unicode&nbsp;environment<br>&nbsp;&nbsp;//substr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::sub_str()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;substr()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strstr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_str()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strstr()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//stristr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::stri_str()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;stristr()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strpos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_pos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strpos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//stripos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_ipos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;stripos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strrpos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_rpos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strrpos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strripos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_ripos()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strripos()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strtolower()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_tolower()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strtolower()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe&nbsp;and&nbsp;will&nbsp;not&nbsp;make&nbsp;lower&nbsp;case&nbsp;the&nbsp;accented&nbsp;characters<br>&nbsp;&nbsp;//strtoupper()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::str_toupper()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strtoupper()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe&nbsp;and&nbsp;will&nbsp;not&nbsp;make&nbsp;upper&nbsp;case&nbsp;the&nbsp;accented&nbsp;characters<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//utf8_decode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::utf8_to_iso()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;utf8_decode()&nbsp;breaks&nbsp;strings&nbsp;that&nbsp;are&nbsp;used&nbsp;in&nbsp;unicode&nbsp;environments&nbsp;thus&nbsp;the&nbsp;strings&nbsp;need&nbsp;to&nbsp;be&nbsp;re-encoded&nbsp;;&nbsp;if&nbsp;not&nbsp;re-encoded&nbsp;back&nbsp;to&nbsp;unicode&nbsp;the&nbsp;regex&nbsp;\u&nbsp;will&nbsp;fail&nbsp;in&nbsp;strange&nbsp;modes&nbsp;...<br>&nbsp;&nbsp;//utf8_encode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;there&nbsp;is&nbsp;a&nbsp;risk&nbsp;to&nbsp;double&nbsp;encode&nbsp;the&nbsp;string&nbsp;and&nbsp;break&nbsp;it&nbsp;!!&nbsp;;&nbsp;Fix:&nbsp;avoid&nbsp;do&nbsp;utf8&nbsp;encode&nbsp;on&nbsp;an&nbsp;empty&nbsp;string&nbsp;(some&nbsp;PHP&nbsp;versions&nbsp;have&nbsp;a&nbsp;bug&nbsp;with&nbsp;exhaust&nbsp;memory)<br>&nbsp;&nbsp;//wordwrap()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SmartUnicode::word_wrap()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;wordwrap()&nbsp;is&nbsp;not&nbsp;unicode&nbsp;safe<br>&nbsp;&nbsp;//strip_tags()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smart::striptags()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;PHP&nbsp;strip_tags()&nbsp;will&nbsp;not&nbsp;replace&nbsp;some&nbsp;extra&nbsp;things&nbsp;like&nbsp;&amp;nbsp;&nbsp;and&nbsp;much&nbsp;other&nbsp;html&nbsp;entities<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//printf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;printf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//sprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;sprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//vsprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;vsprintf()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//strcasecmp()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;strcasecmp()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//strcspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;strcspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//strspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;strspn()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!+]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;not&nbsp;take&nbsp;care&nbsp;of&nbsp;real&nbsp;multibyte&nbsp;string&nbsp;length&nbsp;and&nbsp;may&nbsp;return&nbsp;unexpected&nbsp;results<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//strtr()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;only&nbsp;with&nbsp;non-unicode&nbsp;characters,&nbsp;will&nbsp;break&nbsp;the&nbsp;unicode&nbsp;strings&nbsp;if&nbsp;unicode&nbsp;characters&nbsp;are&nbsp;multibyte<br>&nbsp;&nbsp;//strrev()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use&nbsp;only&nbsp;with&nbsp;non-unicode&nbsp;characters,&nbsp;will&nbsp;break&nbsp;the&nbsp;unicode&nbsp;strings&nbsp;if&nbsp;unicode&nbsp;characters&nbsp;are&nbsp;multibyte<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//chunk_split()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[!!-]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;really&nbsp;breaks&nbsp;unicode&nbsp;strings&nbsp;...&nbsp;Use&nbsp;only&nbsp;with&nbsp;non-unicode&nbsp;characters,&nbsp;will&nbsp;break&nbsp;the&nbsp;unicode&nbsp;strings&nbsp;if&nbsp;unicode&nbsp;characters&nbsp;are&nbsp;multibyte<br>&nbsp;&nbsp;//--<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//---------------&nbsp;&nbsp;&nbsp;DEPRECATED&nbsp;Functions,&nbsp;AVOID&nbsp;TO&nbsp;USE&nbsp;THEM&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------<br>&nbsp;&nbsp;//---------------&nbsp;&nbsp;&nbsp;They&nbsp;are&nbsp;not&nbsp;binary&nbsp;safe&nbsp;and&nbsp;will&nbsp;be&nbsp;OFF&nbsp;since&nbsp;PHP7&nbsp;---------------<br>&nbsp;&nbsp;//&nbsp;Replacement&nbsp;hint:&nbsp;ereg("^(5|6)$",&nbsp;'some&nbsp;value')&nbsp;[=]&nbsp;preg_match("/^(5|6)$/",&nbsp;'some&nbsp;value')<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//ereg()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_match*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//eregi()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_match*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//ereg_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_replace*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//eregi_replace()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preg_replace*()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ok]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Will&nbsp;work&nbsp;after&nbsp;regex&nbsp;pattern&nbsp;conversion&nbsp;;&nbsp;If&nbsp;String&nbsp;is&nbsp;unicode,&nbsp;then&nbsp;using&nbsp;\u&nbsp;regex&nbsp;modifier&nbsp;is&nbsp;required<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br>&nbsp;&nbsp;//-----------------------------------------------------------------------------------------------------<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -871,7 +1025,57 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--str_len">Method: str_len()</option><option value="Method--sub_str">Method: sub_str()</option><option value="Method--substr_count">Method: substr_count()</option><option value="Method--str_limit_replace">Method: str_limit_replace()</option><option value="Method--str_pos">Method: str_pos()</option><option value="Method--str_ipos">Method: str_ipos()</option><option value="Method--str_rpos">Method: str_rpos()</option><option value="Method--str_ripos">Method: str_ripos()</option><option value="Method--str_str">Method: str_str()</option><option value="Method--stri_str">Method: stri_str()</option><option value="Method--str_contains">Method: str_contains()</option><option value="Method--str_icontains">Method: str_icontains()</option><option value="Method--str_wordcount">Method: str_wordcount()</option><option value="Method--str_tolower">Method: str_tolower()</option><option value="Method--uc_first">Method: uc_first()</option><option value="Method--uc_words">Method: uc_words()</option><option value="Method--str_toupper">Method: str_toupper()</option><option value="Method--convert_charset">Method: convert_charset()</option><option value="Method--fix_charset">Method: fix_charset()</option><option value="Method--utf8_to_iso">Method: utf8_to_iso()</option><option value="Method--deaccent_str">Method: deaccent_str()</option><option value="Method--html_entities">Method: html_entities()</option><option value="Method--word_wrap">Method: word_wrap()</option>
+									<option value="Method--str_len">Method: str_len()</option>
+			
+									<option value="Method--sub_str">Method: sub_str()</option>
+			
+									<option value="Method--substr_count">Method: substr_count()</option>
+			
+									<option value="Method--str_limit_replace">Method: str_limit_replace()</option>
+			
+									<option value="Method--str_pos">Method: str_pos()</option>
+			
+									<option value="Method--str_ipos">Method: str_ipos()</option>
+			
+									<option value="Method--str_rpos">Method: str_rpos()</option>
+			
+									<option value="Method--str_ripos">Method: str_ripos()</option>
+			
+									<option value="Method--str_str">Method: str_str()</option>
+			
+									<option value="Method--stri_str">Method: stri_str()</option>
+			
+									<option value="Method--str_contains">Method: str_contains()</option>
+			
+									<option value="Method--str_icontains">Method: str_icontains()</option>
+			
+									<option value="Method--str_wordcount">Method: str_wordcount()</option>
+			
+						
+									<option value="Method--str_tolower">Method: str_tolower()</option>
+			
+									<option value="Method--uc_first">Method: uc_first()</option>
+			
+									<option value="Method--uc_words">Method: uc_words()</option>
+			
+									<option value="Method--str_toupper">Method: str_toupper()</option>
+			
+									<option value="Method--convert_charset">Method: convert_charset()</option>
+			
+									<option value="Method--fix_charset">Method: fix_charset()</option>
+			
+									<option value="Method--utf8_to_iso">Method: utf8_to_iso()</option>
+			
+									<option value="Method--deaccent_str">Method: deaccent_str()</option>
+			
+									<option value="Method--html_entities">Method: html_entities()</option>
+			
+									<option value="Method--word_wrap">Method: word_wrap()</option>
+			
+						
+						
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -881,14 +1085,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:01 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:08 +0000</small>
 <hr>
 <br>
 <!-- # -->

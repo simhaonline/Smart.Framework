@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartMysqliExtDb">
 	<title>PHP Documentation for: \SmartMysqliExtDb</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsDatabaseMySQL-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -562,7 +595,7 @@ Tested and Stable with Percona Server versions: 5.5.x / 5.6.x</div><br>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartMysqliExtDb</span></li>
 		
-		<li><b>Version:</b> v.20191009</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> extensions:  PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents</li>
 		<li><b>Hints:</b> This  class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !</li>
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -575,160 +608,221 @@ Tested and Stable with Percona Server versions: 5.5.x / 5.6.x</div><br>
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
-	<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_configs_arr` Parameter is REQUIRED">$y_configs_arr</span></b></span>
+				<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_configs_arr` Parameter is REQUIRED">$y_configs_arr</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@param: {$y_configs_arr} The Array of Configuration parameters - the ARRAY STRUCTURE should be identical with the default config.php: $configs['mysqli'].</div>
-	<div class="doc-method-comments">Class Constructor - will initiate also the custom connection for a MariaDB Server / MySQL specified as parameters of this function.</div>
+			<div class="doc-method-ret-params">@param: {$y_configs_arr} The Array of Configuration parameters - the ARRAY STRUCTURE should be identical with the default config.php: $configs['mysqli'].</div>
+	
+			<div class="doc-method-comments">Class Constructor - will initiate also the custom connection for a MariaDB Server / MySQL specified as parameters of this function.</div>
+	
 </div><div class="doc-container" id="Method--getConnection">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getConnection</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
 	
-	<div class="doc-method-comments">Returns the connection resource of the current MariaDB Server / MySQL.</div>
+			<div class="doc-method-comments">Returns the connection resource of the current MariaDB Server / MySQL.</div>
+	
 </div><div class="doc-container" id="Method--quote_likes">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>quote_likes</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_string` Parameter is REQUIRED">$y_string</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_string` Parameter is REQUIRED">$y_string</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@param: {$y_string} A String or a Number to be Quoted for LIKES</div>
-	<div class="doc-method-comments">Fix a string to be compliant with MySQL LIKE / SIMILAR syntax.<br>
+			<div class="doc-method-ret-params">@param: {$y_string} A String or a Number to be Quoted for LIKES</div>
+	
+			<div class="doc-method-comments">Fix a string to be compliant with MySQL LIKE / SIMILAR syntax.<br>
 It will use special quotes for the LIKE / SIMILAR special characters: % _<br>
 This function IS NOT INTENDED TO ESCAPE AGAINST SQL INJECTIONS ; USE IT ONLY WITH PREPARED PARAMS OR USE escape_str() with mode 'likes'</div>
+	
 </div><div class="doc-container" id="Method--escape_str">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>escape_str</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_string` Parameter is REQUIRED">$y_string</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_string` Parameter is REQUIRED">$y_string</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The Escaped String / Number<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The Escaped String / Number<br>
 @param: {$y_string} A String or a Number to be Escaped<br>
 @param: {$y_mode} '' = default ; 'likes' = Escape LIKE Syntax (% _)</div>
-	<div class="doc-method-comments">Escape a string to be compliant and Safe (against SQL Injection) with MySQL standards.<br>
+	
+			<div class="doc-method-comments">Escape a string to be compliant and Safe (against SQL Injection) with MySQL standards.<br>
 This function WILL NOT ADD the SINGLE QUOTES (') arround the string, but just will just escape it to be safe.</div>
+	
 </div><div class="doc-container" id="Method--check_if_table_exists">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>check_if_table_exists</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_table` Parameter is REQUIRED">$y_table</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_table` Parameter is REQUIRED">$y_table</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;0/1
 	
 	
-	<div class="doc-method-ret-params">@return: {0/1} : 1 if exists ; 0 if not<br>
+			<div class="doc-method-ret-params">@return: {0/1} : 1 if exists ; 0 if not<br>
 @param: {$y_table} The Table Name</div>
-	<div class="doc-method-comments">Check if a Table Exists in the current Database.</div>
+	
+			<div class="doc-method-comments">Check if a Table Exists in the current Database.</div>
+	
 </div><div class="doc-container" id="Method--count_data">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>count_data</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INTEGER
 	
 	
-	<div class="doc-method-ret-params">@return: {INTEGER} : the result of COUNT()<br>
+			<div class="doc-method-ret-params">@return: {INTEGER} : the result of COUNT()<br>
 @param: {$queryval} the query<br>
 @param: {$params_or_title} *optional* array of parameters or query title for easy debugging</div>
-	<div class="doc-method-comments">MySQL Query :: Count<br>
+	
+			<div class="doc-method-comments">MySQL Query :: Count<br>
 This function is intended to be used for count type queries: SELECT COUNT().</div>
+	
 </div><div class="doc-container" id="Method--read_data">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>read_data</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')<br>
+			<div class="doc-method-ret-params">@return: {ARRAY} : (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')<br>
 @param: {$queryval} the query<br>
 @param: {$params_or_title} *optional* array of parameters or query title for easy debugging</div>
-	<div class="doc-method-comments">MySQL Query :: Read (Non-Associative) one or multiple rows.<br>
+	
+			<div class="doc-method-comments">MySQL Query :: Read (Non-Associative) one or multiple rows.<br>
 This function is intended to be used for read type queries: SELECT.</div>
+	
 </div><div class="doc-container" id="Method--read_adata">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>read_adata</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : (asociative) of results		:: array(0 =&gt; array('column1', 'column2', ... 'column-n'), 1 =&gt; array('column1', 'column2', ... 'column-n'), ..., m =&gt; array('column1', 'column2', ... 'column-n'))<br>
+			<div class="doc-method-ret-params">@return: {ARRAY} : (asociative) of results		:: array(0 =&gt; array('column1', 'column2', ... 'column-n'), 1 =&gt; array('column1', 'column2', ... 'column-n'), ..., m =&gt; array('column1', 'column2', ... 'column-n'))<br>
 @param: {$queryval} the query<br>
 @param: {$params_or_title} *optional* array of parameters or query title for easy debugging</div>
-	<div class="doc-method-comments">MySQL Query :: Read (Associative) one or multiple rows.<br>
+	
+			<div class="doc-method-comments">MySQL Query :: Read (Associative) one or multiple rows.<br>
 This function is intended to be used for read type queries: SELECT.</div>
+	
 </div><div class="doc-container" id="Method--read_asdata">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>read_asdata</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')<br>
+			<div class="doc-method-ret-params">@hints: ALWAYS  use a LIMIT 1 OFFSET 0 with all queries using this function to avoid situations that will return more than 1 rows and will raise ERROR with this function.<br>
+@return: {ARRAY} : (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')<br>
 @param: {$queryval} the query<br>
 @param: {$params_or_title} *optional* array of parameters or query title for easy debugging</div>
-	<div class="doc-method-comments">MySQL Query :: Read (Associative) - Single Row (just for 1 row, to easy the use of data from queries).<br>
+	
+			<div class="doc-method-comments">MySQL Query :: Read (Associative) - Single Row (just for 1 row, to easy the use of data from queries).<br>
 !!! This will raise an error if more than one row(s) are returned !!!<br>
 This function does not support multiple rows because the associative data is structured without row iterator.<br>
 For queries that return more than one row use: read_adata() or read_data().<br>
 This function is intended to be used for read type queries: SELECT.</div>
+	
 </div><div class="doc-container" id="Method--write_data">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>write_data</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$queryval` Parameter is REQUIRED">$queryval</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$params_or_title` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$params_or_title</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;ARRAY
 	
 	
-	<div class="doc-method-ret-params">@return: {ARRAY} : [ 0 =&gt; 'control-message', 1 =&gt; #affected-rows, 2 =&gt; #last-inserted-id(autoincrement)|0|null ]<br>
+			<div class="doc-method-ret-params">@return: {ARRAY} : [ 0 =&gt; 'control-message', 1 =&gt; #affected-rows, 2 =&gt; #last-inserted-id(autoincrement)|0|null ]<br>
 @param: {$queryval} the query<br>
 @param: {$params_or_title} *optional* array of parameters or query title for easy debugging</div>
-	<div class="doc-method-comments">MySQL Query :: Write.<br>
+	
+			<div class="doc-method-comments">MySQL Query :: Write.<br>
 This function is intended to be used for write type queries: BEGIN (TRANSACTION) ; COMMIT ; ROLLBACK ; INSERT ; INSERT IGNORE ; REPLACE ; UPDATE ; CREATE SCHEMAS ; CALLING STORED PROCEDURES ...</div>
+	
 </div><div class="doc-container" id="Method--prepare_statement">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>prepare_statement</b></span>&nbsp;(
-	<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$mode` Parameter is REQUIRED">$mode</span></b></span>
+				<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$mode` Parameter is REQUIRED">$mode</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The SQL partial Statement<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The SQL partial Statement<br>
 @param: {$arrdata} associative array: array of form data as $arr=array(); $arr['field1'] = 'a string'; $arr['field2'] = 100; | non-associative array $arr[] = 'some value'; $arr[] = 'other-value', ...<br>
 @param: {$mode} mode: 'insert' | 'update' | 'in-select'</div>
-	<div class="doc-method-comments">Create Escaped Write SQL Statements from Data - to be used with MySQL for: INSERT ; UPDATE ; IN-SELECT<br>
+	
+			<div class="doc-method-comments">Create Escaped Write SQL Statements from Data - to be used with MySQL for: INSERT ; UPDATE ; IN-SELECT<br>
 Can be used with: write_data() to build INSERT / UPDATE queries from an associative array<br>
 or can be used with read_data(), read_adata(), read_asdata(), count_data() to build IN-SELECT queries from a non-associative array</div>
+	
 </div><div class="doc-container" id="Method--prepare_param_query">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>prepare_param_query</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, <i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$query` Parameter is REQUIRED">$query</span></b></span>, 
+			<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$arrdata` Parameter is REQUIRED">$arrdata</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : The SQL processed (partial/full) Statement<br>
+			<div class="doc-method-ret-params">@return: {STRING} : The SQL processed (partial/full) Statement<br>
 @param: {$query} SQL Statement to process like '   WHERE (&quot;id&quot; = ?)'<br>
 @param: {$arrdata} The non-associative array as of: $arr=array('a');</div>
-	<div class="doc-method-comments">Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)<br>
+	
+			<div class="doc-method-comments">Create Escaped SQL Statements from Parameters and Array of Data by replacing ? (question marks)<br>
 This can be used for a full SQL statement or just for a part.<br>
 The statement must not contain any Single Quotes to prevent SQL injections which are unpredictable if mixing several statements at once !</div>
+	
 </div><div class="doc-container" id="Method--new_safe_id">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>new_safe_id</b></span>&nbsp;(
-	<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, <span class="doc-param-name"><b><span title="`$y_id_field` Parameter is REQUIRED">$y_id_field</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_table_name` Parameter is REQUIRED">$y_table_name</span></b></span>
+				<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_id_field` Parameter is REQUIRED">$y_id_field</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_table_name` Parameter is REQUIRED">$y_table_name</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : the generated Unique ID<br>
+			<div class="doc-method-ret-params">@return: {STRING} : the generated Unique ID<br>
 @param: {$y_mode} mode: uid10str | uid10num | uid36 | uid45<br>
 @param: {$y_field_name} the field name<br>
 @param: {$y_table_name} the table name</div>
-	<div class="doc-method-comments">Get A UNIQUE (SAFE) ID for DB Tables</div>
+	
+			<div class="doc-method-comments">Get A UNIQUE (SAFE) ID for DB Tables</div>
+	
 </div><!-- Skip Internal-Priv Method: `check_server_version()` -->
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -737,15 +831,15 @@ The statement must not contain any Single Quotes to prevent SQL injections which
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br>&nbsp;</span><span style="color: #999999">//&nbsp;Sample&nbsp;config&nbsp;array&nbsp;for&nbsp;this&nbsp;class&nbsp;constructor:<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;array();<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'type'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'mysql'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mysql&nbsp;/&nbsp;mariadb&nbsp;/&nbsp;percona<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-host'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'127.0.0.1'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;database&nbsp;host&nbsp;(default&nbsp;is&nbsp;127.0.0.1)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-port'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'3306'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;database&nbsp;port&nbsp;(default&nbsp;is&nbsp;3306)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'dbname'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'smart_framework'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;database&nbsp;name<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'username'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'root'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;sql&nbsp;server&nbsp;user&nbsp;name<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'password'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">base64_encode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'root'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;sql&nbsp;server&nbsp;Base64-Encoded&nbsp;password&nbsp;for&nbsp;that&nbsp;user&nbsp;name&nbsp;B64<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'timeout'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">30</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;connection&nbsp;timeout&nbsp;(how&nbsp;many&nbsp;seconds&nbsp;to&nbsp;wait&nbsp;for&nbsp;a&nbsp;valid&nbsp;MySQL&nbsp;Connection)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'slowtime'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">0.0050</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;0.0025&nbsp;..&nbsp;0.0090&nbsp;slow&nbsp;query&nbsp;time&nbsp;(for&nbsp;debugging)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'transact'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'REPEATABLE&nbsp;READ'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;Default&nbsp;Transaction&nbsp;Level:&nbsp;'REPEATABLE&nbsp;READ'&nbsp;|&nbsp;'READ&nbsp;COMMITTED'&nbsp;|&nbsp;''&nbsp;to&nbsp;leave&nbsp;it&nbsp;as&nbsp;default<br>&nbsp;//&nbsp;sample&nbsp;usage:<br>&nbsp;</span><span style="color: #FFFFFF">$mysql&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartMysqliExtDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$mysql</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">read_adata</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'SELECT&nbsp;*&nbsp;FROM&nbsp;`my_table`&nbsp;LIMIT&nbsp;100&nbsp;OFFSET&nbsp;0'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #999999">//...&nbsp;for&nbsp;other&nbsp;hints&nbsp;look&nbsp;to&nbsp;the&nbsp;samples&nbsp;of&nbsp;the&nbsp;class:&nbsp;SmartMysqliDb::*<br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;Sample&nbsp;config&nbsp;array&nbsp;for&nbsp;this&nbsp;class&nbsp;constructor:<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;array();<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'type'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'mysql'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;mysql&nbsp;/&nbsp;mariadb&nbsp;/&nbsp;percona<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-host'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'127.0.0.1'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;database&nbsp;host&nbsp;(default&nbsp;is&nbsp;127.0.0.1)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'server-port'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'3306'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;database&nbsp;port&nbsp;(default&nbsp;is&nbsp;3306)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'dbname'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'smart_framework'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;database&nbsp;name<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'username'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'root'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;sql&nbsp;server&nbsp;user&nbsp;name<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'password'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">base64_encode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'root'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;sql&nbsp;server&nbsp;Base64-Encoded&nbsp;password&nbsp;for&nbsp;that&nbsp;user&nbsp;name&nbsp;B64<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'timeout'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">30</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;connection&nbsp;timeout&nbsp;(how&nbsp;many&nbsp;seconds&nbsp;to&nbsp;wait&nbsp;for&nbsp;a&nbsp;valid&nbsp;MySQL&nbsp;Connection)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'slowtime'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #FFFFFF">0.0050</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;0.0025&nbsp;..&nbsp;0.0090&nbsp;slow&nbsp;query&nbsp;time&nbsp;(for&nbsp;debugging)<br>&nbsp;</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">[</span><span style="color: #5F9CCE">'transact'</span><span style="color: #FFCC00; font-weight: bold">]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;</span><span style="color: #5F9CCE">'REPEATABLE&nbsp;READ'</span><span style="color: #FFCC00; font-weight: bold">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #999999">//&nbsp;Default&nbsp;Transaction&nbsp;Level:&nbsp;'REPEATABLE&nbsp;READ'&nbsp;|&nbsp;'READ&nbsp;COMMITTED'&nbsp;|&nbsp;''&nbsp;to&nbsp;leave&nbsp;it&nbsp;as&nbsp;default<br>&nbsp;//&nbsp;sample&nbsp;usage:<br>&nbsp;</span><span style="color: #FFFFFF">$mysql&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartMysqliExtDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #FFFFFF">$custom_mysql</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$mysql</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">read_adata</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'SELECT&nbsp;*&nbsp;FROM&nbsp;`my_table`&nbsp;LIMIT&nbsp;100&nbsp;OFFSET&nbsp;0'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #999999">//...&nbsp;for&nbsp;other&nbsp;hints&nbsp;look&nbsp;to&nbsp;the&nbsp;samples&nbsp;of&nbsp;the&nbsp;class:&nbsp;SmartMysqliDb::*<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -771,7 +865,34 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--getConnection">Method: getConnection()</option><option value="Method--quote_likes">Method: quote_likes()</option><option value="Method--escape_str">Method: escape_str()</option><option value="Method--check_if_table_exists">Method: check_if_table_exists()</option><option value="Method--count_data">Method: count_data()</option><option value="Method--read_data">Method: read_data()</option><option value="Method--read_adata">Method: read_adata()</option><option value="Method--read_asdata">Method: read_asdata()</option><option value="Method--write_data">Method: write_data()</option><option value="Method--prepare_statement">Method: prepare_statement()</option><option value="Method--prepare_param_query">Method: prepare_param_query()</option><option value="Method--new_safe_id">Method: new_safe_id()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--getConnection">Method: getConnection()</option>
+			
+									<option value="Method--quote_likes">Method: quote_likes()</option>
+			
+									<option value="Method--escape_str">Method: escape_str()</option>
+			
+									<option value="Method--check_if_table_exists">Method: check_if_table_exists()</option>
+			
+									<option value="Method--count_data">Method: count_data()</option>
+			
+									<option value="Method--read_data">Method: read_data()</option>
+			
+									<option value="Method--read_adata">Method: read_adata()</option>
+			
+									<option value="Method--read_asdata">Method: read_asdata()</option>
+			
+									<option value="Method--write_data">Method: write_data()</option>
+			
+									<option value="Method--prepare_statement">Method: prepare_statement()</option>
+			
+									<option value="Method--prepare_param_query">Method: prepare_param_query()</option>
+			
+									<option value="Method--new_safe_id">Method: new_safe_id()</option>
+			
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -781,14 +902,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:04 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
 <hr>
 <br>
 <!-- # -->

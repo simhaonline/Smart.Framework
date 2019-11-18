@@ -1,6 +1,6 @@
 <!-- start markers-tpl extended syntax template -->
 [%%%COMMENT%%%]
-Template: templating-test-extended.mtpl.htm # v.20191115
+Template: templating-test-extended.mtpl.htm # v.20191116
 [%%%/COMMENT%%%]<!-- comments are removed -->
 <h1 style="display:inline-block;">[###TITLE###]</h1>
 <div>
@@ -158,26 +158,27 @@ Template: templating-test-extended.mtpl.htm # v.20191115
 <br>
 <div style="font-weight:bold; font-size:16px; background:#ECECEC;"> PHP Test for Marker escaping :: VALID Escaping Sequences for a Marker (below):<br>[###MARKER|html###]</div>
 [@@@SUB-TEMPLATE:partials/templating-test-extended.inc.htm@@@]
+<br>
+<div style="font-weight:bold; font-size:16px; background:#ECECEC;"> JS Test for Marker escaping :: VALID Escaping Sequences for a Marker (below):<br>[###MARKER|html###]</div>
+</div>
+<hr>
+<h1>#END Test</h1>
+<br>
 <script>
-var sub_tpl_path = "[###VIEWS-PATH|js###]partials/templating-test-extended.inc.htm";
 var the_marker = '[###MARKER|js###]';
 var the_textstr = '[###TEXTSTR|js###]';
 var the_number = [###NUMBER|num###];
 var the_unistr = '[###TEST-UNISTR|js###]';
 var the_strtotrim = '[###TEST-STRTOTRIM|js###]';
 var the_emptystr = '[###TEST-EMPTY|js###]';
+var tpl_src = '[@@@SUB-TEMPLATE:partials/templating-test-extended.inc.htm|js-tpl-encode@@@]';
 </script>
 <script>
-jQuery.ajax({
-	async: true,
-	cache: false,
-	timeout: 0,
-	type: 'GET',
-	url: sub_tpl_path,
+(function(){
 	//--
-	success: function(msg) {
-		//-- load tpl
-		var tpl = SmartJS_CoreUtils.renderMarkersTpl(msg, {
+	tpl = SmartJS_CoreUtils.renderMarkersTpl(
+		String(tpl_src),
+		{
 			'MARKER': the_marker,
 			'TEXTSTR' : the_textstr,
 			'NUMBER': the_number,
@@ -185,48 +186,40 @@ jQuery.ajax({
 			'TEST-UNISTR': the_unistr,
 			'TEST-STRTOTRIM': the_strtotrim,
 			'TEST-EMPTY': the_emptystr
-		});
-		//console.log('JS-TPL Renderer [' + the_marker + ']:\n' + tpl);
-		jQuery('#tpl-test').append(tpl); // apend it to body
-		//--
-		var the_tpl_php = jQuery('#test-markers-area-php').text();
-		//console.log('PHP-TPL Renderer [' + the_marker + ']:\n' + the_tpl_php);
-		var errors = 0;
-		if(the_tpl_php == '') {
-			errors++;
-			console.error('WARNING: PHP-TPL: Cannot get value !');
-		} //end if
-		var the_tpl_js = jQuery('#test-markers-area-js').text();
-		if(the_tpl_js == '') {
-			errors++;
-			console.error('WARNING: JS-TPL: Cannot get value !');
-		} //end if
-		if(the_tpl_php != the_tpl_js) {
-			errors++;
-			console.error('WARNING: JS-TPL Renderer differs from PHP-TPL Renderer (1) !');
-		} //end if
-		if(SmartJS_CoreUtils.stringTrim(the_tpl_php) != SmartJS_CoreUtils.stringTrim(jQuery('<div/>').html(tpl).text())) {
-			errors++;
-			console.log('WARNING: HTML Normalized TPL from JS' + SmartJS_CoreUtils.stringTrim(jQuery('<div/>').html(tpl).text()));
-			console.error('WARNING: JS-TPL Renderer differs from PHP-TPL Renderer (2) !');
-		} //end if
-		//--
-		if(!errors) {
-			jQuery('#qunit-test-result').attr('style', 'color: #33CC33 !important;').text('Test OK: JS/PHP Render comparison for Markers-TPL.');
-		} else {
-			jQuery('#qunit-test-result').attr('style', 'background: #FF3300 !important; color: #FFFFFF !important;').text('Test FAILED: JS/PHP Render comparison for Markers-TPL !!!');
-		} //end if
-		//--
-	},
-	error: function(msg) {
-		console.error('ERROR: Could not load the TPL Sub-Template: ' + sub_tpl_path, '' + msg.responseText);
-	}
-});
+		},
+		true
+	);
+	//console.log('JS-TPL Renderer [' + the_marker + ']:\n' + tpl);
+	jQuery('#tpl-test').append(tpl); // apend it to body
+	//--
+	var the_tpl_php = jQuery('#test-markers-area-php').text();
+	//console.log('PHP-TPL Renderer [' + the_marker + ']:\n' + the_tpl_php);
+	var errors = 0;
+	if(the_tpl_php == '') {
+		errors++;
+		console.error('WARNING: PHP-TPL: Cannot get value !');
+	} //end if
+	var the_tpl_js = jQuery('#test-markers-area-js').text();
+	if(the_tpl_js == '') {
+		errors++;
+		console.error('WARNING: JS-TPL: Cannot get value !');
+	} //end if
+	if(the_tpl_php != the_tpl_js) {
+		errors++;
+		console.error('WARNING: JS-TPL Renderer differs from PHP-TPL Renderer (1) !');
+	} //end if
+	if(SmartJS_CoreUtils.stringTrim(the_tpl_php) != SmartJS_CoreUtils.stringTrim(jQuery('<div/>').html(tpl).text())) {
+		errors++;
+		console.log('WARNING: HTML Normalized TPL from JS' + SmartJS_CoreUtils.stringTrim(jQuery('<div/>').html(tpl).text()));
+		console.error('WARNING: JS-TPL Renderer differs from PHP-TPL Renderer (2) !');
+	} //end if
+	//--
+	if(!errors) {
+		jQuery('#qunit-test-result').attr('style', 'color: #33CC33 !important;').text('Test OK: JS/PHP Render comparison for Markers-TPL.');
+	} else {
+		jQuery('#qunit-test-result').attr('style', 'background: #FF3300 !important; color: #FFFFFF !important;').text('Test FAILED: JS/PHP Render comparison for Markers-TPL !!!');
+	} //end if
+	//--
+})();
 </script>
-<br>
-<div style="font-weight:bold; font-size:16px; background:#ECECEC;"> JS Test for Marker escaping :: VALID Escaping Sequences for a Marker (below):<br>[###MARKER|html###]</div>
-</div>
-<hr>
-<h1>#END Test</h1>
-<br>
 <!-- end markers-tpl extended syntax template -->

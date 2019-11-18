@@ -1,4 +1,4 @@
-<!-- start markers-tpl partial / sub-template v.20191115 -->
+<!-- start markers-tpl partial / sub-template v.20191116 -->
 	[%%%COMMENT%%%] Partial / Sub-Template: templating-test.inc.htm [%%%/COMMENT%%%]<!-- comments are removed -->
 	<h5 id="qunit-test-result">Markers-TPL w. Sub-Template Render (Table with #[###TCOUNT|int###] columns):</h5>
 	<table style="border: 1px solid #ECECEC; width: 550px;" id="qunit-test-el">
@@ -21,7 +21,7 @@
 		<li><a href="[###NAVIGATION.HREF|html###]" title="maxsize=[###NAVIGATION.-_MAXSIZE_-|html###] ; maxcount=[###NAVIGATION._-MAXCOUNT-_|html###]">[###NAVIGATION.-_INDEX_-|html###]. [###NAVIGATION.CAPTION|html###] ([###NAVIGATION._-ITERATOR-_|html###])</a></li>[%%%|N%%%]
 		[%%%/LOOP:NAVIGATION%%%]
 	[%%%ELSE:NAVIGATION%%%]
-		<span style="color:#FF3300;"><b>NOT OK</b></span>
+		<li><span style="color:#FF3300;"><b>NOT OK</b></span></li>
 	[%%%/IF:NAVIGATION%%%]
 	</ul>
 	Test Condition#1:

@@ -1,14 +1,14 @@
-<!-- JS-SETTINGS :: r.20191110 -->
+<!-- JS-SETTINGS :: r.20191117 -->
 <script type="text/javascript">
-	SmartJS_BrowserUtils_LanguageId = '[###LANG|js###]';
-	SmartJS_BrowserUtils_CookieName = '[###CLIENT-UID-COOKIE-NAME|js###]';
-	SmartJS_BrowserUtils_CookieDomain = '[###CLIENT-UID-COOKIE-DOMAIN|js###]';
-	SmartJS_BrowserUtils_TemplatePath = '[###TEMPLATE-PATH|js###]';
-	if(Test_Browser_Compliance.checkIsMobileDevice()) { SmartJS_BrowserUtils_Use_iFModalBox_Active = 0; } else { SmartJS_BrowserUtils_Use_iFModalBox_Active = 1; SmartJS_BrowserUtils.Control_ModalCascading(); } // force popup instead of modal for mobile devices ; for desktop keep modal with cascading control
+	SmartJS_BrowserUtils.param_LanguageId = '[###LANG|js###]';
+	SmartJS_BrowserUtils.param_CookieName = '[###CLIENT-UID-COOKIE-NAME|js###]';
+	SmartJS_BrowserUtils.param_CookieDomain = '[###CLIENT-UID-COOKIE-DOMAIN|js###]';
+	SmartJS_BrowserUtils.param_TemplatePath = '[###TEMPLATE-PATH|js###]';
+	if(Test_Browser_Compliance.checkIsMobileDevice()) { SmartJS_BrowserUtils.param_Use_iFModalBox_Active = 0; } else { SmartJS_BrowserUtils.param_Use_iFModalBox_Active = 1; SmartJS_BrowserUtils.Control_ModalCascading(); } // force popup instead of modal for mobile devices ; for desktop keep modal with cascading control
 [%%%IF:APP-REALM:==ADM;%%%]
-	SmartJS_BrowserUtils_Use_iFModalBox_Protection = 1; // use modal protection for admin area
+	SmartJS_BrowserUtils.param_Use_iFModalBox_Protection = 1; // use modal protection for admin area
 [%%%ELSE:APP-REALM%%%]
-	SmartJS_BrowserUtils_Use_iFModalBox_Protection = 0; // use no modal protection for index area
+	SmartJS_BrowserUtils.param_Use_iFModalBox_Protection = 0; // use no modal protection for index area
 [%%%/IF:APP-REALM%%%]
 </script>
 <!-- # -->

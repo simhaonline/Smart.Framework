@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartCaptchaFormCheck">
 	<title>PHP Documentation for: \SmartCaptchaFormCheck</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsViewComponents-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -558,7 +591,7 @@ div.doc-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartCaptchaFormCheck</span></li>
 		
-		<li><b>Version:</b> v.181010</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> extensions:  PHP XML ; classes: Smart</li>
 		<li><b>Hints:</b> To  render captcha, SmartCaptchaFormCheck::captcha_form() and SmartCaptchaFormCheck::captcha_image() are required. To verify, use SmartCaptchaFormCheck::verify() ; SmartCaptchaFormCheck::clear() is optional, depending how SmartCaptchaFormCheck::verify() is called</li>
 		<li><b>Usage:</b> static  object: Class::method() - This class provides only STATIC methods</li>
@@ -571,10 +604,27 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--captcha_image">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>captcha_image</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>, <span class="doc-param-name"><b><span title="`$y_store` Parameter is REQUIRED">$y_store</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;hashed&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;hashed&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_pool` Parameter is OPTIONAL, with the Default Value: &quot;0123456789&quot;">$y_pool</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;0123456789&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_noise` Parameter is OPTIONAL, with the Default Value: 300">$y_noise</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>300</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_chars` Parameter is OPTIONAL, with the Default Value: 5">$y_chars</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>5</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_width` Parameter is OPTIONAL, with the Default Value: 175">$y_width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>175</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_height` Parameter is OPTIONAL, with the Default Value: 50">$y_height</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>50</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_format` Parameter is OPTIONAL, with the Default Value: &quot;png&quot;">$y_format</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;png&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_font_file` Parameter is OPTIONAL, with the Default Value: &quot;lib/core/plugins/fonts/captcha/barrio.ttf&quot;">$y_font_file</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;lib/core/plugins/fonts/captcha/barrio.ttf&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_font_size` Parameter is OPTIONAL, with the Default Value: 24">$y_font_size</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>24</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_space` Parameter is OPTIONAL, with the Default Value: 20">$y_char_space</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>20</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_xvar` Parameter is OPTIONAL, with the Default Value: 15">$y_char_xvar</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>15</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_yvar` Parameter is OPTIONAL, with the Default Value: 7">$y_char_yvar</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>7</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_colors` Parameter is OPTIONAL, with the Default Value: array(0 =&gt; 1118481, 1 =&gt; 3355443, 2 =&gt; 7833753, 3 =&gt; 6710937, 4 =&gt; 13158, 5 =&gt; 6723942, 6 =&gt; 26112, 7 =&gt; 16724736)">$y_char_colors</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array(0 =&gt; 1118481, 1 =&gt; 3355443, 2 =&gt; 7833753, 3 =&gt; 6710937, 4 =&gt; 13158, 5 =&gt; 6723942, 6 =&gt; 26112, 7 =&gt; 16724736)</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_noise_colors` Parameter is OPTIONAL, with the Default Value: array(0 =&gt; 8947848, 1 =&gt; 10066329, 2 =&gt; 11184810, 3 =&gt; 12303291, 4 =&gt; 13421772, 5 =&gt; 14540253, 6 =&gt; 15658734, 7 =&gt; 8421568)">$y_noise_colors</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array(0 =&gt; 8947848, 1 =&gt; 10066329, 2 =&gt; 11184810, 3 =&gt; 12303291, 4 =&gt; 13421772, 5 =&gt; 14540253, 6 =&gt; 15658734, 7 =&gt; 8421568)</b></span>
+				<span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_store` Parameter is REQUIRED">$y_store</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;hashed&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;hashed&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_pool` Parameter is OPTIONAL, with the Default Value: &quot;0123456789&quot;">$y_pool</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;0123456789&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_noise` Parameter is OPTIONAL, with the Default Value: 300">$y_noise</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>300</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_chars` Parameter is OPTIONAL, with the Default Value: 5">$y_chars</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>5</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_width` Parameter is OPTIONAL, with the Default Value: 175">$y_width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>175</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_height` Parameter is OPTIONAL, with the Default Value: 50">$y_height</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>50</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_format` Parameter is OPTIONAL, with the Default Value: &quot;png&quot;">$y_format</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;png&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_font_file` Parameter is OPTIONAL, with the Default Value: &quot;lib/core/plugins/fonts/captcha/barrio.ttf&quot;">$y_font_file</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;lib/core/plugins/fonts/captcha/barrio.ttf&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_font_size` Parameter is OPTIONAL, with the Default Value: 24">$y_font_size</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>24</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_space` Parameter is OPTIONAL, with the Default Value: 20">$y_char_space</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>20</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_xvar` Parameter is OPTIONAL, with the Default Value: 15">$y_char_xvar</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>15</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_yvar` Parameter is OPTIONAL, with the Default Value: 7">$y_char_yvar</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>7</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_char_colors` Parameter is OPTIONAL, with the Default Value: array(0 =&gt; 1118481, 1 =&gt; 3355443, 2 =&gt; 7833753, 3 =&gt; 6710937, 4 =&gt; 13158, 5 =&gt; 6723942, 6 =&gt; 26112, 7 =&gt; 16724736)">$y_char_colors</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array(0 =&gt; 1118481, 1 =&gt; 3355443, 2 =&gt; 7833753, 3 =&gt; 6710937, 4 =&gt; 13158, 5 =&gt; 6723942, 6 =&gt; 26112, 7 =&gt; 16724736)</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_noise_colors` Parameter is OPTIONAL, with the Default Value: array(0 =&gt; 8947848, 1 =&gt; 10066329, 2 =&gt; 11184810, 3 =&gt; 12303291, 4 =&gt; 13421772, 5 =&gt; 14540253, 6 =&gt; 15658734, 7 =&gt; 8421568)">$y_noise_colors</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array(0 =&gt; 8947848, 1 =&gt; 10066329, 2 =&gt; 11184810, 3 =&gt; 12303291, 4 =&gt; 13421772, 5 =&gt; 14540253, 6 =&gt; 15658734, 7 =&gt; 8421568)</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
 	
 	
@@ -582,7 +632,10 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--captcha_form">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>captcha_form</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_captcha_image_url` Parameter is REQUIRED">$y_captcha_image_url</span></b></span>, <span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>
+				<span class="doc-param-name"><b><span title="`$y_captcha_image_url` Parameter is REQUIRED">$y_captcha_image_url</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
 	
 	
@@ -590,7 +643,11 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--verify">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>verify</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>, <span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_clear` Parameter is OPTIONAL, with the Default Value: true">$y_clear</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+				<span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_clear` Parameter is OPTIONAL, with the Default Value: true">$y_clear</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
 	
 	
@@ -598,7 +655,10 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--clear">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>clear</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>, <span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>
+				<span class="doc-param-name"><b><span title="`$y_form_name` Parameter is REQUIRED">$y_form_name</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
 	
 	
@@ -610,14 +670,14 @@ div.doc-summary {
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -626,15 +686,15 @@ div.doc-summary {
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br>&nbsp;</span><span style="color: #999999">//==<br>&nbsp;//--&nbsp;captcha&nbsp;image&nbsp;(generate)<br>&nbsp;</span><span style="color: #FFFFFF">header</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">"Content-type:&nbsp;image/png"</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;by&nbsp;default&nbsp;outputs&nbsp;PNG&nbsp;;&nbsp;this&nbsp;can&nbsp;be&nbsp;changed&nbsp;to&nbsp;GIF&nbsp;or&nbsp;JPG<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">echo&nbsp;</span><span style="color: #FFFFFF">SmartCaptchaFormCheck</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">captcha_image</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'form_name'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'session'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'hashed'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'0123456789ABCDEF'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'200'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;this&nbsp;controller&nbsp;should&nbsp;output&nbsp;a&nbsp;raw&nbsp;image<br>&nbsp;//--&nbsp;captcha&nbsp;form&nbsp;(draw)<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">echo&nbsp;</span><span style="color: #FFFFFF">SmartCaptchaFormCheck</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">captcha_form</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'index.php?page=mymodule.mycaptcha-image'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'form_name'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'300'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;this&nbsp;controller&nbsp;should&nbsp;output&nbsp;HTML&nbsp;code&nbsp;to&nbsp;render&nbsp;the&nbsp;form<br>&nbsp;//--&nbsp;captcha&nbsp;check&nbsp;(verify)<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">echo&nbsp;</span><span style="color: #FFFFFF">$check&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">SmartCaptchaFormCheck</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">verify</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'form_name'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'session'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">true</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;and&nbsp;this&nbsp;is&nbsp;the&nbsp;way&nbsp;you&nbsp;verify&nbsp;the&nbsp;captcha&nbsp;(1&nbsp;=&nbsp;ok&nbsp;;&nbsp;0&nbsp;=&nbsp;not&nbsp;ok)<br>&nbsp;//--&nbsp;some&nbsp;more&nbsp;info&nbsp;on&nbsp;verify()<br>&nbsp;//&nbsp;captcha&nbsp;will&nbsp;reset&nbsp;(clear)&nbsp;by&nbsp;default&nbsp;upon&nbsp;each&nbsp;SmartCaptchaFormCheck::verify()<br>&nbsp;//&nbsp;to&nbsp;avoid&nbsp;this&nbsp;(default)&nbsp;behaviour,&nbsp;you&nbsp;can&nbsp;set&nbsp;the&nbsp;3rd&nbsp;parameters&nbsp;of&nbsp;verify()&nbsp;to&nbsp;FALSE<br>&nbsp;//&nbsp;but&nbsp;if&nbsp;you&nbsp;do&nbsp;so,&nbsp;don't&nbsp;forget&nbsp;to&nbsp;manually&nbsp;clear&nbsp;by&nbsp;calling&nbsp;SmartCaptchaFormCheck::clear()&nbsp;at&nbsp;the&nbsp;end&nbsp;!!!<br>&nbsp;//--<br>&nbsp;//==<br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//==<br>&nbsp;//--&nbsp;captcha&nbsp;image&nbsp;(generate)<br>&nbsp;</span><span style="color: #FFFFFF">header</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">"Content-type:&nbsp;image/png"</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;by&nbsp;default&nbsp;outputs&nbsp;PNG&nbsp;;&nbsp;this&nbsp;can&nbsp;be&nbsp;changed&nbsp;to&nbsp;GIF&nbsp;or&nbsp;JPG<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">echo&nbsp;</span><span style="color: #FFFFFF">SmartCaptchaFormCheck</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">captcha_image</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'form_name'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'session'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'hashed'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'0123456789ABCDEF'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'200'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;this&nbsp;controller&nbsp;should&nbsp;output&nbsp;a&nbsp;raw&nbsp;image<br>&nbsp;//--&nbsp;captcha&nbsp;form&nbsp;(draw)<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">echo&nbsp;</span><span style="color: #FFFFFF">SmartCaptchaFormCheck</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">captcha_form</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'index.php?page=mymodule.mycaptcha-image'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'form_name'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'300'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;this&nbsp;controller&nbsp;should&nbsp;output&nbsp;HTML&nbsp;code&nbsp;to&nbsp;render&nbsp;the&nbsp;form<br>&nbsp;//--&nbsp;captcha&nbsp;check&nbsp;(verify)<br>&nbsp;</span><span style="color: #FFCC00; font-weight: bold">echo&nbsp;</span><span style="color: #FFFFFF">$check&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">SmartCaptchaFormCheck</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">verify</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'form_name'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'session'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">true</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;and&nbsp;this&nbsp;is&nbsp;the&nbsp;way&nbsp;you&nbsp;verify&nbsp;the&nbsp;captcha&nbsp;(1&nbsp;=&nbsp;ok&nbsp;;&nbsp;0&nbsp;=&nbsp;not&nbsp;ok)<br>&nbsp;//--&nbsp;some&nbsp;more&nbsp;info&nbsp;on&nbsp;verify()<br>&nbsp;//&nbsp;captcha&nbsp;will&nbsp;reset&nbsp;(clear)&nbsp;by&nbsp;default&nbsp;upon&nbsp;each&nbsp;SmartCaptchaFormCheck::verify()<br>&nbsp;//&nbsp;to&nbsp;avoid&nbsp;this&nbsp;(default)&nbsp;behaviour,&nbsp;you&nbsp;can&nbsp;set&nbsp;the&nbsp;3rd&nbsp;parameters&nbsp;of&nbsp;verify()&nbsp;to&nbsp;FALSE<br>&nbsp;//&nbsp;but&nbsp;if&nbsp;you&nbsp;do&nbsp;so,&nbsp;don't&nbsp;forget&nbsp;to&nbsp;manually&nbsp;clear&nbsp;by&nbsp;calling&nbsp;SmartCaptchaFormCheck::clear()&nbsp;at&nbsp;the&nbsp;end&nbsp;!!!<br>&nbsp;//--<br>&nbsp;//==<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -660,7 +720,20 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--captcha_image">Method: captcha_image()</option><option value="Method--captcha_form">Method: captcha_form()</option><option value="Method--verify">Method: verify()</option><option value="Method--clear">Method: clear()</option>
+									<option value="Method--captcha_image">Method: captcha_image()</option>
+			
+									<option value="Method--captcha_form">Method: captcha_form()</option>
+			
+									<option value="Method--verify">Method: verify()</option>
+			
+									<option value="Method--clear">Method: clear()</option>
+			
+						
+						
+						
+						
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -670,14 +743,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:03 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
 <hr>
 <br>
 <!-- # -->

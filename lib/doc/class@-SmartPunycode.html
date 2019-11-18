@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
 	<meta name="description" content="\SmartPunycode       final class \ SmartPunycode    {   } -&gt;    Class: SmartPunycode - provides a IDN Converter using the Punycode implementation as">
-	<meta name="keywords" content="smartpunycode, final, class, smartpunycode, -, class, -, provides, a, idn, converter, using, the, punycode, implementation, as, described, in, rfc, http   tools.ietf.org html rf ., located, at, lib core plugins lib idn punycode.php, package, plugins convertersandparsers, namespace, name, version, v, depends, classes, smartunicode, usage, dynamic, object, new, class   - method, this, only, methods, summary, public, function, construct, param, encoding, character, encoding, constructor, encode, string, input">
+	<meta name="keywords" content="smartpunycode, final, class, smartpunycode, -, class, -, provides, a, idn, converter, using, the, punycode, implementation, as, described, in, rfc, http   tools.ietf.org html rf ., located, at, lib core plugins lib idn punycode.php, package, plugins convertersandparsers, namespace, name, version, v, depends, classes, smartunicode, usage, dynamic, object, new, class   - method, this, only, methods, summary, public, function, construct, param, encoding, character, encoding, constructor, encode">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartPunycode">
 	<title>PHP Documentation for: \SmartPunycode</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsConvertersAndParsers-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -558,7 +591,7 @@ div.doc-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartPunycode</span></li>
 		
-		<li><b>Version:</b> v.160930</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> classes:  SmartUnicode</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -571,47 +604,58 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
-	<div class="doc-method-ret-params">@param: {$encoding} Character encoding</div>
-	<div class="doc-method-comments">Constructor</div>
+			<div class="doc-method-ret-params">@param: {$encoding} Character encoding</div>
+	
+			<div class="doc-method-comments">Constructor</div>
+	
 </div><div class="doc-container" id="Method--encode">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>encode</b></span>&nbsp;(
-	<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+				<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;string
 	
 	
-	<div class="doc-method-ret-params">@return: {string} : Punycode representation in ASCII<br>
+			<div class="doc-method-ret-params">@return: {string} : Punycode representation in ASCII<br>
 @param: {$input} Domain name in Unicode to be encoded</div>
-	<div class="doc-method-comments">Encode a domain name or email address to its Punycode version</div>
+	
+			<div class="doc-method-comments">Encode a domain name or email address to its Punycode version</div>
+	
 </div><div class="doc-container" id="Method--decode">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>decode</b></span>&nbsp;(
-	<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+				<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$input` Parameter is REQUIRED">$input</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;string
 	
 	
-	<div class="doc-method-ret-params">@return: {string} : Unicode domain name<br>
+			<div class="doc-method-ret-params">@return: {string} : Unicode domain name<br>
 @param: {$input} Domain name in Punycode</div>
-	<div class="doc-method-comments">Decode a Punycode domain name or email address to its Unicode counterpart</div>
+	
+			<div class="doc-method-comments">Decode a Punycode domain name or email address to its Unicode counterpart</div>
+	
 </div>
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
@@ -620,15 +664,15 @@ div.doc-summary {
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br><br>&nbsp;$domain_iso&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">encode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'j&ouml;sefsson.t&szlig;st123.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;xn--jsefsson-n4a.xn--tst123-bta.org<br>&nbsp;</span><span style="color: #FFFFFF">$domain_unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">decode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'xn--jsefsson-n4a.xn--tst123-bta.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;j&ouml;sefsson.t&szlig;st123.org<br><br>&nbsp;</span><span style="color: #FFFFFF">$email_iso&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">encode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'r&auml;ksm&ouml;rg&aring;s@j&ouml;sefsson.t&szlig;st123.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;xn--rksmrgs@jsefsson-vnbx43ag.xn--tst123-bta.org<br>&nbsp;</span><span style="color: #FFFFFF">$email_unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">decode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'xn--rksmrgs@jsefsson-vnbx43ag.xn--tst123-bta.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;r&auml;ksm&ouml;rg&aring;s@j&ouml;sefsson.t&szlig;st123.org<br><br><br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br>$domain_iso&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">encode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'j&ouml;sefsson.t&szlig;st123.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;xn--jsefsson-n4a.xn--tst123-bta.org<br>&nbsp;</span><span style="color: #FFFFFF">$domain_unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">decode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'xn--jsefsson-n4a.xn--tst123-bta.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;j&ouml;sefsson.t&szlig;st123.org<br><br>&nbsp;</span><span style="color: #FFFFFF">$email_iso&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">encode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'r&auml;ksm&ouml;rg&aring;s@j&ouml;sefsson.t&szlig;st123.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;xn--rksmrgs@jsefsson-vnbx43ag.xn--tst123-bta.org<br>&nbsp;</span><span style="color: #FFFFFF">$email_unicode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;(string)&nbsp;(new&nbsp;</span><span style="color: #FFFFFF">SmartPunycode</span><span style="color: #FFCC00; font-weight: bold">())-&gt;</span><span style="color: #FFFFFF">decode</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'xn--rksmrgs@jsefsson-vnbx43ag.xn--tst123-bta.org'</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;outputs:&nbsp;r&auml;ksm&ouml;rg&aring;s@j&ouml;sefsson.t&szlig;st123.org<br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -654,7 +698,13 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--encode">Method: encode()</option><option value="Method--decode">Method: decode()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--encode">Method: encode()</option>
+			
+									<option value="Method--decode">Method: decode()</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -664,14 +714,15 @@ function smartHandleDocSelector(obj) {
 			<option value="Constants--Summary-">*** Constants summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Sample code">
+				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
+		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:02 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:10 +0000</small>
 <hr>
 <br>
 <!-- # -->

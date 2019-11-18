@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartFtpClient">
 	<title>PHP Documentation for: \SmartFtpClient</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsNetwork-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -558,7 +591,7 @@ div.doc-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartFtpClient</span></li>
 		
-		<li><b>Version:</b> v.170913</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> classes:  Smart</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -571,10 +604,14 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span class="doc-param-optional" title="`$debug` Parameter is OPTIONAL, with the Default Value: false">$debug</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$timeout` Parameter is OPTIONAL, with the Default Value: 30">$timeout</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>30</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$umask` Parameter is OPTIONAL, with the Default Value: 18">$umask</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>18</b></span>
+				<span class="doc-param-name"><b><span class="doc-param-optional" title="`$debug` Parameter is OPTIONAL, with the Default Value: false">$debug</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$timeout` Parameter is OPTIONAL, with the Default Value: 30">$timeout</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>30</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$umask` Parameter is OPTIONAL, with the Default Value: 18">$umask</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>18</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
@@ -582,7 +619,10 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_connect">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_connect</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$server` Parameter is REQUIRED">$server</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$port` Parameter is OPTIONAL, with the Default Value: 21">$port</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>21</b></span>
+				<span class="doc-param-name"><b><span title="`$server` Parameter is REQUIRED">$server</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$port` Parameter is OPTIONAL, with the Default Value: 21">$port</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>21</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -590,7 +630,10 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_login">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_login</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$user` Parameter is REQUIRED">$user</span></b></span>, <span class="doc-param-name"><b><span title="`$pass` Parameter is REQUIRED">$pass</span></b></span>
+				<span class="doc-param-name"><b><span title="`$user` Parameter is REQUIRED">$user</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$pass` Parameter is REQUIRED">$pass</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -598,6 +641,7 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_pwd">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_pwd</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
@@ -606,7 +650,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_size">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_size</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+				<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -614,7 +660,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_mdtm">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_mdtm</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+				<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -622,6 +670,7 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_systype">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_systype</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
@@ -630,6 +679,7 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_cdup">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_cdup</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
@@ -638,7 +688,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_chdir">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_chdir</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+				<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -646,7 +698,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_delete">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_delete</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+				<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -654,7 +708,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_rmdir">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_rmdir</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+				<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -662,7 +718,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_mkdir">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_mkdir</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+				<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -670,7 +728,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_file_exists">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_file_exists</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+				<span class="doc-param-name"><b><span title="`$pathname` Parameter is REQUIRED">$pathname</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -678,7 +738,10 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_rename">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_rename</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$from` Parameter is REQUIRED">$from</span></b></span>, <span class="doc-param-name"><b><span title="`$to` Parameter is REQUIRED">$to</span></b></span>
+				<span class="doc-param-name"><b><span title="`$from` Parameter is REQUIRED">$from</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$to` Parameter is REQUIRED">$to</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -686,7 +749,10 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_nlist">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_nlist</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span class="doc-param-optional" title="`$arg` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$arg</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$pathname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$pathname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<span class="doc-param-name"><b><span class="doc-param-optional" title="`$arg` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$arg</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$pathname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$pathname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -694,7 +760,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_rawlist">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_rawlist</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span class="doc-param-optional" title="`$pathname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$pathname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<span class="doc-param-name"><b><span class="doc-param-optional" title="`$pathname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$pathname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -702,7 +770,11 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_get">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_get</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$localfile` Parameter is REQUIRED">$localfile</span></b></span>, <span class="doc-param-name"><b><span title="`$remotefile` Parameter is REQUIRED">$remotefile</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$mode` Parameter is OPTIONAL, with the Default Value: 1">$mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>1</b></span>
+				<span class="doc-param-name"><b><span title="`$localfile` Parameter is REQUIRED">$localfile</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$remotefile` Parameter is REQUIRED">$remotefile</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$mode` Parameter is OPTIONAL, with the Default Value: 1">$mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>1</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -710,7 +782,11 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_put">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_put</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$remotefile` Parameter is REQUIRED">$remotefile</span></b></span>, <span class="doc-param-name"><b><span title="`$localfile` Parameter is REQUIRED">$localfile</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$mode` Parameter is OPTIONAL, with the Default Value: 1">$mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>1</b></span>
+				<span class="doc-param-name"><b><span title="`$remotefile` Parameter is REQUIRED">$remotefile</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$localfile` Parameter is REQUIRED">$localfile</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$mode` Parameter is OPTIONAL, with the Default Value: 1">$mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>1</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -718,7 +794,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_site">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_site</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$command` Parameter is REQUIRED">$command</span></b></span>
+				<span class="doc-param-name"><b><span title="`$command` Parameter is REQUIRED">$command</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -726,7 +804,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_extcmd">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_extcmd</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$command` Parameter is REQUIRED">$command</span></b></span>
+				<span class="doc-param-name"><b><span title="`$command` Parameter is REQUIRED">$command</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -734,7 +814,9 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_extcmdx">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_extcmdx</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$command` Parameter is REQUIRED">$command</span></b></span>
+				<span class="doc-param-name"><b><span title="`$command` Parameter is REQUIRED">$command</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -742,6 +824,7 @@ div.doc-summary {
 	
 </div><div class="doc-container" id="Method--ftp_quit">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>ftp_quit</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
@@ -754,7 +837,7 @@ div.doc-summary {
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 <div class="doc-container" id="Property--error_msg">
 	<span class="doc-modifiers">public</span> <b>$error_msg</b>&nbsp;<span title="Object Property"><b>-&gt;</b></span>
 	
@@ -779,15 +862,15 @@ div.doc-summary {
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -813,11 +896,67 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--ftp_connect">Method: ftp_connect()</option><option value="Method--ftp_login">Method: ftp_login()</option><option value="Method--ftp_pwd">Method: ftp_pwd()</option><option value="Method--ftp_size">Method: ftp_size()</option><option value="Method--ftp_mdtm">Method: ftp_mdtm()</option><option value="Method--ftp_systype">Method: ftp_systype()</option><option value="Method--ftp_cdup">Method: ftp_cdup()</option><option value="Method--ftp_chdir">Method: ftp_chdir()</option><option value="Method--ftp_delete">Method: ftp_delete()</option><option value="Method--ftp_rmdir">Method: ftp_rmdir()</option><option value="Method--ftp_mkdir">Method: ftp_mkdir()</option><option value="Method--ftp_file_exists">Method: ftp_file_exists()</option><option value="Method--ftp_rename">Method: ftp_rename()</option><option value="Method--ftp_nlist">Method: ftp_nlist()</option><option value="Method--ftp_rawlist">Method: ftp_rawlist()</option><option value="Method--ftp_get">Method: ftp_get()</option><option value="Method--ftp_put">Method: ftp_put()</option><option value="Method--ftp_site">Method: ftp_site()</option><option value="Method--ftp_extcmd">Method: ftp_extcmd()</option><option value="Method--ftp_extcmdx">Method: ftp_extcmdx()</option><option value="Method--ftp_quit">Method: ftp_quit()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--ftp_connect">Method: ftp_connect()</option>
+			
+									<option value="Method--ftp_login">Method: ftp_login()</option>
+			
+									<option value="Method--ftp_pwd">Method: ftp_pwd()</option>
+			
+									<option value="Method--ftp_size">Method: ftp_size()</option>
+			
+									<option value="Method--ftp_mdtm">Method: ftp_mdtm()</option>
+			
+									<option value="Method--ftp_systype">Method: ftp_systype()</option>
+			
+									<option value="Method--ftp_cdup">Method: ftp_cdup()</option>
+			
+									<option value="Method--ftp_chdir">Method: ftp_chdir()</option>
+			
+									<option value="Method--ftp_delete">Method: ftp_delete()</option>
+			
+									<option value="Method--ftp_rmdir">Method: ftp_rmdir()</option>
+			
+									<option value="Method--ftp_mkdir">Method: ftp_mkdir()</option>
+			
+									<option value="Method--ftp_file_exists">Method: ftp_file_exists()</option>
+			
+									<option value="Method--ftp_rename">Method: ftp_rename()</option>
+			
+									<option value="Method--ftp_nlist">Method: ftp_nlist()</option>
+			
+									<option value="Method--ftp_rawlist">Method: ftp_rawlist()</option>
+			
+									<option value="Method--ftp_get">Method: ftp_get()</option>
+			
+									<option value="Method--ftp_put">Method: ftp_put()</option>
+			
+									<option value="Method--ftp_site">Method: ftp_site()</option>
+			
+									<option value="Method--ftp_extcmd">Method: ftp_extcmd()</option>
+			
+									<option value="Method--ftp_extcmdx">Method: ftp_extcmdx()</option>
+			
+									<option value="Method--ftp_quit">Method: ftp_quit()</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
-			<option value="Property--error_msg">Property: $error_msg</option><option value="Property--debug">Property: $debug</option><option value="Property--debug_level">Property: $debug_level</option><option value="Property--debug_msg">Property: $debug_msg</option><option value="Property--timeout">Property: $timeout</option><option value="Property--umask">Property: $umask</option>
+									<option value="Property--error_msg">Property: $error_msg</option>
+			
+									<option value="Property--debug">Property: $debug</option>
+			
+									<option value="Property--debug_level">Property: $debug_level</option>
+			
+									<option value="Property--debug_msg">Property: $debug_msg</option>
+			
+									<option value="Property--timeout">Property: $timeout</option>
+			
+									<option value="Property--umask">Property: $umask</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Constants">
 			<option value="Constants--Summary-">*** Constants summary ***</option>
@@ -828,7 +967,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:03 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
 <hr>
 <br>
 <!-- # -->

@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartTextTranslations
- * @version 	v.20191109
+ * @version 	v.20191117
  * @package 	Application:ViewComponents
  *
  */
@@ -689,6 +689,7 @@ final class SmartComponents {
 			case 'googlecode':
 			case 'grayscale':
 			case 'ocean':
+			case 'tomorrow-night-blue':
 			case 'xcode':
 			case 'zenburn':
 				$theme = (string) $theme;

@@ -2,9 +2,21 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
-November 15, 2019 :: Version 5.2.7 rev.191115
+November 16, 2019 :: Version 5.2.7 rev.191116
 	* Security Fix: Safe Set CA File in several Client Libs
 	* Markers-TPL: add support for escape or no syntax parsing of includded sub-templates
+		# General Purposes
+			- |syntax
+		# HTML Context
+			- |syntaxhtml
+			- |html
+		# JavaScript Context
+			- |js
+			- |js-tpl-encode
+	* Js Refactoring:
+		# SmartJS_BrowserUtils
+			* SmartJS_BrowserUtils_* -> SmartJS_BrowserUtils.param_*
+			* SmartJS_ModalBox_* -> SmartJS_ModalBox.param_*
 
 November 09, 2019 :: Version 5.2.7
 	* Migrate Markers-TPL from v3 to v5 (stable)
@@ -34,6 +46,7 @@ November 09, 2019 :: Version 5.2.7
 	* Refactoring: Smart::url_make_semantic() -> SmartUtils::create_semantic_url()
 	* Speed Optimization for Smart::array_type_test()
 	* Allow CamelCase URL Parameters
+	* Add SafeHeader to check against \r\n in header() values :: security
 
 October 22, 2019 :: Version 3.7.8 # rev.2019.10.22
 	* fixes and optimizations

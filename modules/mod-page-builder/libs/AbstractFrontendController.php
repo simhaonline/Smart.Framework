@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20191111
+ * @version 	v.20191115
  * @package 	development:modules:PageBuilder
  *
  */
@@ -122,7 +122,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 		//--
 		$arr = array();
-		//--
+		//-- {{{SYNC-PAGEBUILDER-PCACHE-ID}}}
 		$the_pcache_key = (string) $page_id.'@'.\SmartTextTranslations::getLanguage(); // .'__d'.(int)$this->max_depth.'__m-'.\sha1((string)\implode(';', $this->page_markers))
 		//--
 		if($this->PageCacheisActive()) {
@@ -252,7 +252,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 		//--
 		$arr = array();
-		//--
+		//-- {{{SYNC-PAGEBUILDER-PCACHE-ID}}}
 		$the_pcache_key = (string) $segment_id.'@'.\SmartTextTranslations::getLanguage(); // .'__d'.(int)$this->max_depth
 		//--
 		if($this->PageCacheisActive()) {

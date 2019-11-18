@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartViewHtmlHelpers">
 	<title>PHP Documentation for: \SmartViewHtmlHelpers</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsViewComponents-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -558,7 +591,7 @@ div.doc-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartViewHtmlHelpers</span></li>
 		
-		<li><b>Version:</b> v.20191022</li>
+		<li><b>Version:</b> v.20191115</li>
 		<li><b>Depends:</b> classes:  Smart</li>
 		
 		<li><b>Usage:</b> static  object: Class::method() - This class provides only STATIC methods</li>
@@ -571,14 +604,23 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--html_js_date_field">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_date_field</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, <i>DATE</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvalue` Parameter is REQUIRED">$yvalue</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_text_select` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_text_select</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>JS-Date</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yjs_mindate` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yjs_mindate</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>JS-Date</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yjs_maxdate` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yjs_maxdate</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extra_options` Parameter is OPTIONAL, with the Default Value: array()">$y_extra_options</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, <i>JS-Code</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, 
+			<i>DATE</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvalue` Parameter is REQUIRED">$yvalue</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_text_select` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_text_select</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>JS-Date</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yjs_mindate` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yjs_mindate</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>JS-Date</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yjs_maxdate` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yjs_maxdate</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extra_options` Parameter is OPTIONAL, with the Default Value: array()">$y_extra_options</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, 
+			<i>JS-Code</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
 @param: {$y_id} [HTML page ID for field (unique) ; used foor JavaScript]<br>
 @param: {$y_var} [HTML Variable Name or empty if no necessary]<br>
 @param: {$yvalue} [DATE, empty or formated as YYYY-MM-DD]<br>
@@ -587,14 +629,29 @@ div.doc-summary {
 @param: {$yjs_maxdate} [JS Expression, Max Date] :: new Date(2037, 12 - 1, 31) or '1y 1m 1d'<br>
 @param: {$y_extra_options} [Options Array[width, ...] for for datePicker]<br>
 @param: {$y_js_evcode} [JS Code to execute on Select(date)]</div>
-	<div class="doc-method-comments">Draws a HTML JS-UI Date Selector Field</div>
+	
+			<div class="doc-method-comments">Draws a HTML JS-UI Date Selector Field</div>
+	
 </div><div class="doc-container" id="Method--html_js_time_field">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_time_field</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, <i>HH:ii</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvalue` Parameter is REQUIRED">$yvalue</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_text_select` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_text_select</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>0..22</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_h_st` Parameter is OPTIONAL, with the Default Value: &quot;0&quot;">$y_h_st</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;0&quot;</b></span>, <i>1..23</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_h_end` Parameter is OPTIONAL, with the Default Value: &quot;23&quot;">$y_h_end</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;23&quot;</b></span>, <i>0..58</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_i_st` Parameter is OPTIONAL, with the Default Value: &quot;0&quot;">$y_i_st</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;0&quot;</b></span>, <i>1..59</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_i_end` Parameter is OPTIONAL, with the Default Value: &quot;55&quot;">$y_i_end</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;55&quot;</b></span>, <i>1..30</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_i_step` Parameter is OPTIONAL, with the Default Value: &quot;5&quot;">$y_i_step</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;5&quot;</b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_rows` Parameter is OPTIONAL, with the Default Value: &quot;2&quot;">$y_rows</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;2&quot;</b></span>, <i>JS-Code</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extra_options` Parameter is OPTIONAL, with the Default Value: array()">$y_extra_options</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, <i>JS-Code</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, 
+			<i>HH:ii</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvalue` Parameter is REQUIRED">$yvalue</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_text_select` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_text_select</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>0..22</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_h_st` Parameter is OPTIONAL, with the Default Value: &quot;0&quot;">$y_h_st</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;0&quot;</b></span>, 
+			<i>1..23</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_h_end` Parameter is OPTIONAL, with the Default Value: &quot;23&quot;">$y_h_end</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;23&quot;</b></span>, 
+			<i>0..58</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_i_st` Parameter is OPTIONAL, with the Default Value: &quot;0&quot;">$y_i_st</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;0&quot;</b></span>, 
+			<i>1..59</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_i_end` Parameter is OPTIONAL, with the Default Value: &quot;55&quot;">$y_i_end</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;55&quot;</b></span>, 
+			<i>1..30</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_i_step` Parameter is OPTIONAL, with the Default Value: &quot;5&quot;">$y_i_step</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;5&quot;</b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_rows` Parameter is OPTIONAL, with the Default Value: &quot;2&quot;">$y_rows</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;2&quot;</b></span>, 
+			<i>JS-Code</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extra_options` Parameter is OPTIONAL, with the Default Value: array()">$y_extra_options</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>, 
+			<i>JS-Code</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
 @param: {$y_id} [HTML page ID for field (unique) ; used foor JavaScript]<br>
 @param: {$y_var} [HTML Variable Name]<br>
 @param: {$yvalue} [TIME, pre-definned value, formated as 24h HH:ii]<br>
@@ -607,14 +664,27 @@ div.doc-summary {
 @param: {$y_rows} [Default is 2]<br>
 @param: {$y_extra_options} [Options Array[width, ...] for timePicker]<br>
 @param: {$y_js_evcode} [JS Code to execute on Select(time)]</div>
-	<div class="doc-method-comments">Draws a HTML JS-UI Time Selector Field</div>
+	
+			<div class="doc-method-comments">Draws a HTML JS-UI Time Selector Field</div>
+	
 </div><div class="doc-container" id="Method--html_select_list_single">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_select_list_single</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_selected_value` Parameter is REQUIRED">$y_selected_value</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, <i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$yarr_data` Parameter is REQUIRED">$yarr_data</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_varname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_varname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_dimensions` Parameter is OPTIONAL, with the Default Value: &quot;150/0&quot;">$y_dimensions</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;150/0&quot;</b></span>, <i>CODE</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_custom_js` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_custom_js</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_raw` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_raw</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>, <i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allowblank` Parameter is OPTIONAL, with the Default Value: &quot;yes&quot;">$y_allowblank</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;yes&quot;</b></span>, <i>CSS/#JS-UI#</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extrastyle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_extrastyle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_selected_value` Parameter is REQUIRED">$y_selected_value</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, 
+			<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$yarr_data` Parameter is REQUIRED">$yarr_data</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_varname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_varname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_dimensions` Parameter is OPTIONAL, with the Default Value: &quot;150/0&quot;">$y_dimensions</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;150/0&quot;</b></span>, 
+			<i>CODE</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_custom_js` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_custom_js</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_raw` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_raw</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>, 
+			<i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allowblank` Parameter is OPTIONAL, with the Default Value: &quot;yes&quot;">$y_allowblank</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;yes&quot;</b></span>, 
+			<i>CSS/#JS-UI#</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extrastyle` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_extrastyle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
 @param: {$y_id} the HTML element ID<br>
 @param: {$y_selected_value} selected value of the list<br>
 @param: {$y_mode} 'form' = display form | 'list' = display list<br>
@@ -625,14 +695,27 @@ div.doc-summary {
 @param: {$y_raw} If Yes, the description values will not apply html special chars<br>
 @param: {$y_allowblank} If Yes, a blank value is allowed in list<br>
 @param: {$y_extrastyle} Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'</div>
-	<div class="doc-method-comments">Manage a SINGLE Selection HTML List Element for Edit or Display data :: v.20141212</div>
+	
+			<div class="doc-method-comments">Manage a SINGLE Selection HTML List Element for Edit or Display data :: v.20141212</div>
+	
 </div><div class="doc-container" id="Method--html_select_list_multi">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_select_list_multi</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_selected_value` Parameter is REQUIRED">$y_selected_value</span></b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, <i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$yarr_data` Parameter is REQUIRED">$yarr_data</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_varname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_varname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_draw` Parameter is OPTIONAL, with the Default Value: &quot;list&quot;">$y_draw</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;list&quot;</b></span>, <i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_sync_values` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_sync_values</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_dimensions` Parameter is OPTIONAL, with the Default Value: &quot;300/0&quot;">$y_dimensions</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;300/0&quot;</b></span>, <i>CODE</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_custom_js` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_custom_js</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>SPECIAL</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extrastyle` Parameter is OPTIONAL, with the Default Value: &quot;#JS-UI-FILTER#&quot;">$y_extrastyle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;#JS-UI-FILTER#&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_selected_value` Parameter is REQUIRED">$y_selected_value</span></b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_mode` Parameter is REQUIRED">$y_mode</span></b></span>, 
+			<i>ARRAY</i>&nbsp;<span class="doc-param-name"><b><span title="`$yarr_data` Parameter is REQUIRED">$yarr_data</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_varname` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_varname</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_draw` Parameter is OPTIONAL, with the Default Value: &quot;list&quot;">$y_draw</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;list&quot;</b></span>, 
+			<i>YES/NO</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_sync_values` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_sync_values</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_dimensions` Parameter is OPTIONAL, with the Default Value: &quot;300/0&quot;">$y_dimensions</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;300/0&quot;</b></span>, 
+			<i>CODE</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_custom_js` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_custom_js</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>SPECIAL</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_extrastyle` Parameter is OPTIONAL, with the Default Value: &quot;#JS-UI-FILTER#&quot;">$y_extrastyle</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;#JS-UI-FILTER#&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
 @param: {$y_id} the HTML element ID<br>
 @param: {$y_selected_value} selected value(s) data as ARRAY or STRING list as: '&lt;id1&gt;,&lt;id2&gt;'<br>
 @param: {$y_mode} 'form' = display form | checkboxes | 'list' = display list<br>
@@ -643,59 +726,105 @@ div.doc-summary {
 @param: {$y_dimensions} dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')<br>
 @param: {$y_custom_js} custom js code (Ex: submit on change)<br>
 @param: {$y_extrastyle} Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'</div>
-	<div class="doc-method-comments">Generate a MULTIPLE (many selections) View/Edit List to manage ID Selections</div>
+	
+			<div class="doc-method-comments">Generate a MULTIPLE (many selections) View/Edit List to manage ID Selections</div>
+	
 </div><div class="doc-container" id="Method--html_navpager">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_navpager</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$link` Parameter is REQUIRED">$link</span></b></span>, <span class="doc-param-name"><b><span title="`$total` Parameter is REQUIRED">$total</span></b></span>, <span class="doc-param-name"><b><span title="`$limit` Parameter is REQUIRED">$limit</span></b></span>, <span class="doc-param-name"><b><span title="`$current` Parameter is REQUIRED">$current</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$display_if_empty` Parameter is OPTIONAL, with the Default Value: false">$display_if_empty</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$adjacents` Parameter is OPTIONAL, with the Default Value: 3">$adjacents</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>3</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$options` Parameter is OPTIONAL, with the Default Value: array()">$options</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>
+				<span class="doc-param-name"><b><span title="`$link` Parameter is REQUIRED">$link</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$total` Parameter is REQUIRED">$total</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$limit` Parameter is REQUIRED">$limit</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$current` Parameter is REQUIRED">$current</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$display_if_empty` Parameter is OPTIONAL, with the Default Value: false">$display_if_empty</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$adjacents` Parameter is OPTIONAL, with the Default Value: 3">$adjacents</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>3</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$options` Parameter is OPTIONAL, with the Default Value: array()">$options</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]</div>
-	<div class="doc-method-comments">Creates a navigation pager<br>
+			<div class="doc-method-ret-params">@hints: $link  = 'some-script.php?ofs={{{offset}}}';<br>
+@return: {STRING} : [HTML Code]</div>
+	
+			<div class="doc-method-comments">Creates a navigation pager<br>
 The style of the pager can be set overall in: $configs['nav']['pager'], and can be: arrows or numeric</div>
+	
 </div><div class="doc-container" id="Method--html_js_limited_text_area">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_limited_text_area</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_field_id` Parameter is REQUIRED">$y_field_id</span></b></span>, <span class="doc-param-name"><b><span title="`$y_var_name` Parameter is REQUIRED">$y_var_name</span></b></span>, <span class="doc-param-name"><b><span title="`$y_var_value` Parameter is REQUIRED">$y_var_value</span></b></span>, <span class="doc-param-name"><b><span title="`$y_limit` Parameter is REQUIRED">$y_limit</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_css_w` Parameter is OPTIONAL, with the Default Value: &quot;125px&quot;">$y_css_w</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;125px&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_css_h` Parameter is OPTIONAL, with the Default Value: &quot;50px&quot;">$y_css_h</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;50px&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_placeholder` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_placeholder</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_wrap` Parameter is OPTIONAL, with the Default Value: &quot;physical&quot;">$y_wrap</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;physical&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_rawval` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_rawval</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>
+				<span class="doc-param-name"><b><span title="`$y_field_id` Parameter is REQUIRED">$y_field_id</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_var_name` Parameter is REQUIRED">$y_var_name</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_var_value` Parameter is REQUIRED">$y_var_value</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_limit` Parameter is REQUIRED">$y_limit</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_css_w` Parameter is OPTIONAL, with the Default Value: &quot;125px&quot;">$y_css_w</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;125px&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_css_h` Parameter is OPTIONAL, with the Default Value: &quot;50px&quot;">$y_css_h</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;50px&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_placeholder` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_placeholder</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_wrap` Parameter is OPTIONAL, with the Default Value: &quot;physical&quot;">$y_wrap</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;physical&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_rawval` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$y_rawval</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
 	
 	
 	
-	<div class="doc-method-comments">Function: Draw Limited Text Area</div>
+			<div class="doc-method-comments">Function: Draw Limited Text Area</div>
+	
 </div><div class="doc-container" id="Method--html_selector_true_false">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_selector_true_false</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_val` Parameter is REQUIRED">$y_val</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_val` Parameter is REQUIRED">$y_val</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
 @param: {$y_var} HTML Var Name<br>
 @param: {$y_val} '' | '0' | '1'</div>
-	<div class="doc-method-comments">HTML Selector: TRUE / FALSE<br>
+	
+			<div class="doc-method-comments">HTML Selector: TRUE / FALSE<br>
 Display True=1/False=0 Selector</div>
+	
 </div><div class="doc-container" id="Method--html_selector_yes_no">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_selector_yes_no</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_val` Parameter is REQUIRED">$y_val</span></b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_val` Parameter is REQUIRED">$y_val</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
 @param: {$y_var} HTML Var Name<br>
 @param: {$y_val} '' | 'y' | 'n'</div>
-	<div class="doc-method-comments">HTML Selector: YES / NO<br>
+	
+			<div class="doc-method-comments">HTML Selector: YES / NO<br>
 Display Yes=y/No=n Selector</div>
+	
 </div><div class="doc-container" id="Method--html_hidden_formvars">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_hidden_formvars</b></span>&nbsp;(
-	<i>MIXED</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_html_var` Parameter is REQUIRED">$y_html_var</span></b></span>
+				<i>MIXED</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_html_var` Parameter is REQUIRED">$y_html_var</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
 @param: {$y_var} ARRAY or STRING :: PHP variable<br>
 @param: {$y_html_var} HTML Variable Name</div>
-	<div class="doc-method-comments">Function: HTML Form Vars</div>
+	
+			<div class="doc-method-comments">Function: HTML Form Vars</div>
+	
 </div><div class="doc-container" id="Method--html_js_preview_iframe">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_preview_iframe</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$yid` Parameter is REQUIRED">$yid</span></b></span>, <span class="doc-param-name"><b><span title="`$y_contents` Parameter is REQUIRED">$y_contents</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_width` Parameter is OPTIONAL, with the Default Value: &quot;720px&quot;">$y_width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;720px&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_height` Parameter is OPTIONAL, with the Default Value: &quot;300px&quot;">$y_height</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;300px&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_maximized` Parameter is OPTIONAL, with the Default Value: false">$y_maximized</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_sandbox` Parameter is OPTIONAL, with the Default Value: &quot;allow-popups&quot;">$y_sandbox</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;allow-popups&quot;</b></span>
+				<span class="doc-param-name"><b><span title="`$yid` Parameter is REQUIRED">$yid</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_contents` Parameter is REQUIRED">$y_contents</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_width` Parameter is OPTIONAL, with the Default Value: &quot;720px&quot;">$y_width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;720px&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_height` Parameter is OPTIONAL, with the Default Value: &quot;300px&quot;">$y_height</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;300px&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_maximized` Parameter is OPTIONAL, with the Default Value: false">$y_maximized</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_sandbox` Parameter is OPTIONAL, with the Default Value: &quot;allow-popups&quot;">$y_sandbox</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;allow-popups&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
 	
 	
@@ -703,20 +832,32 @@ Display Yes=y/No=n Selector</div>
 	
 </div><div class="doc-container" id="Method--html_jsload_editarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_jsload_editarea</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]</div>
-	<div class="doc-method-comments">Return the HTML / Javascript code to Load the required Javascripts for the Code Editor (Edit Area).<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]</div>
+	
+			<div class="doc-method-comments">Return the HTML / Javascript code to Load the required Javascripts for the Code Editor (Edit Area).<br>
 Should be called just once, before calling one or many ::html_js_editarea()</div>
+	
 </div><div class="doc-container" id="Method--html_js_editarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_editarea</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yid` Parameter is REQUIRED">$yid</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvarname` Parameter is REQUIRED">$yvarname</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yvalue` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yvalue</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;text&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;text&quot;</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_editable` Parameter is OPTIONAL, with the Default Value: true">$y_editable</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_width` Parameter is OPTIONAL, with the Default Value: &quot;720px&quot;">$y_width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;720px&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_height` Parameter is OPTIONAL, with the Default Value: &quot;300px&quot;">$y_height</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;300px&quot;</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_line_numbers` Parameter is OPTIONAL, with the Default Value: true">$y_line_numbers</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yid` Parameter is REQUIRED">$yid</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvarname` Parameter is REQUIRED">$yvarname</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yvalue` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yvalue</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_mode` Parameter is OPTIONAL, with the Default Value: &quot;text&quot;">$y_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;text&quot;</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_editable` Parameter is OPTIONAL, with the Default Value: true">$y_editable</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_width` Parameter is OPTIONAL, with the Default Value: &quot;720px&quot;">$y_width</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;720px&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_height` Parameter is OPTIONAL, with the Default Value: &quot;300px&quot;">$y_height</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;300px&quot;</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_line_numbers` Parameter is OPTIONAL, with the Default Value: true">$y_line_numbers</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>true</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
 @param: {$yid} [Unique HTML Page Element ID]<br>
 @param: {$yvarname} [HTML Form Variable Name]<br>
 @param: {$yvalue} [HTML Data]<br>
@@ -725,23 +866,40 @@ Should be called just once, before calling one or many ::html_js_editarea()</div
 @param: {$ywidth} [Area Width: (Example) 720px or 75%]<br>
 @param: {$yheight} [Area Height (Example) 480px or 50%]<br>
 @param: {$y_line_numbers} [Display line numbers: true ; Hide line numbersL false]</div>
-	<div class="doc-method-comments">Return the HTML / Javascript code with a special TextArea with a built-in javascript Code Editor (Edit Area).<br>
+	
+			<div class="doc-method-comments">Return the HTML / Javascript code with a special TextArea with a built-in javascript Code Editor (Edit Area).<br>
 Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL, PHP, Text (default).</div>
+	
 </div><div class="doc-container" id="Method--html_jsload_htmlarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_jsload_htmlarea</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_filebrowser_link` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_filebrowser_link</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_filebrowser_link` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_filebrowser_link</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]</div>
-	<div class="doc-method-comments">Outputs the HTML Code to init the HTML (wysiwyg) Editor</div>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]</div>
+	
+			<div class="doc-method-comments">Outputs the HTML Code to init the HTML (wysiwyg) Editor</div>
+	
 </div><div class="doc-container" id="Method--html_js_htmlarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_htmlarea</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yid` Parameter is REQUIRED">$yid</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvarname` Parameter is REQUIRED">$yvarname</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yvalue` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yvalue</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ywidth` Parameter is OPTIONAL, with the Default Value: &quot;720px&quot;">$ywidth</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;720px&quot;</b></span>, <i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yheight` Parameter is OPTIONAL, with the Default Value: &quot;480px&quot;">$yheight</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;480px&quot;</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allow_scripts` Parameter is OPTIONAL, with the Default Value: false">$y_allow_scripts</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allow_script_src` Parameter is OPTIONAL, with the Default Value: false">$y_allow_script_src</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, <i>MIXED</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_cleaner_deftags` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_cleaner_deftags</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_cleaner_mode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_cleaner_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_toolbar_ctrls` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_toolbar_ctrls</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yid` Parameter is REQUIRED">$yid</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yvarname` Parameter is REQUIRED">$yvarname</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yvalue` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$yvalue</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ywidth` Parameter is OPTIONAL, with the Default Value: &quot;720px&quot;">$ywidth</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;720px&quot;</b></span>, 
+			<i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$yheight` Parameter is OPTIONAL, with the Default Value: &quot;480px&quot;">$yheight</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;480px&quot;</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allow_scripts` Parameter is OPTIONAL, with the Default Value: false">$y_allow_scripts</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_allow_script_src` Parameter is OPTIONAL, with the Default Value: false">$y_allow_script_src</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>, 
+			<i>MIXED</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_cleaner_deftags` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_cleaner_deftags</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_cleaner_mode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_cleaner_mode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_toolbar_ctrls` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_toolbar_ctrls</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
 @param: {$yid} [Unique HTML Page Element ID]<br>
 @param: {$yvarname} [HTML Form Variable Name]<br>
 @param: {$yvalue} [HTML Data]<br>
@@ -752,114 +910,164 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 @param: {$y_cleaner_deftags} ['' or array of HTML Tags to be allowed / dissalowed by the cleaner ... see HTML Cleaner Documentation]<br>
 @param: {$y_cleaner_mode} [HTML Cleaner mode for defined tags: ALLOW / DISALLOW]<br>
 @param: {$y_toolbar_ctrls} [Toolbar Controls: ... see CLEditor Documentation]</div>
-	<div class="doc-method-comments">Draw a TextArea with a built-in javascript HTML (wysiwyg) Editor</div>
+	
+			<div class="doc-method-comments">Draw a TextArea with a built-in javascript HTML (wysiwyg) Editor</div>
+	
 </div><div class="doc-container" id="Method--html_js_htmlarea_fm_callback">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_htmlarea_fm_callback</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yurl` Parameter is REQUIRED">$yurl</span></b></span>, <i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$is_popup` Parameter is OPTIONAL, with the Default Value: false">$is_popup</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$yurl` Parameter is REQUIRED">$yurl</span></b></span>, 
+			<i>BOOLEAN</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$is_popup` Parameter is OPTIONAL, with the Default Value: false">$is_popup</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [JS Code]<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [JS Code]<br>
 @param: {$yurl} The Callback URL<br>
 @param: {$is_popup} Set to True if Popup (incl. Modal)</div>
-	<div class="doc-method-comments">Returns HTML / JS code for CallBack Mapping for HTML (wysiwyg) Editor - FileBrowser Integration</div>
+	
+			<div class="doc-method-comments">Returns HTML / JS code for CallBack Mapping for HTML (wysiwyg) Editor - FileBrowser Integration</div>
+	
 </div><div class="doc-container" id="Method--js_code_wnd_redirect">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_wnd_redirect</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_redir_url` Parameter is REQUIRED">$y_redir_url</span></b></span>, <i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$delay` Parameter is OPTIONAL, with the Default Value: -1">$delay</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>-1</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_redir_url` Parameter is REQUIRED">$y_redir_url</span></b></span>, 
+			<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$delay` Parameter is OPTIONAL, with the Default Value: -1">$delay</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>-1</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
 @param: {$y_redir_url} URL to redirect page to<br>
 @param: {$delay} *optional* ; if &gt; 0 will use Delayed Redirect, otherwise Instant Redirect</div>
-	<div class="doc-method-comments">Redirect to URL</div>
+	
+			<div class="doc-method-comments">Redirect to URL</div>
+	
 </div><div class="doc-container" id="Method--js_code_wnd_refresh_parent">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_wnd_refresh_parent</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_redir_url` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_redir_url</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_redir_url` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_redir_url</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
 @param: {$y_redir_url} *optional* URL to redirect by refresh page to</div>
-	<div class="doc-method-comments">Refresh Parent</div>
+	
+			<div class="doc-method-comments">Refresh Parent</div>
+	
 </div><div class="doc-container" id="Method--js_code_wnd_close_modal_popup">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_wnd_close_modal_popup</b></span>&nbsp;(
-	<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_delay` Parameter is OPTIONAL, with the Default Value: -1">$y_delay</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>-1</b></span>
+				<i>INTEGER</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_delay` Parameter is OPTIONAL, with the Default Value: -1">$y_delay</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>-1</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
 @param: {$y_delay} *optional* ; if &gt; 0 will use Delayed Close, otherwise Instant Close</div>
-	<div class="doc-method-comments">(Delayed) close Pop-Up / Modal</div>
+	
+			<div class="doc-method-comments">(Delayed) close Pop-Up / Modal</div>
+	
 </div><div class="doc-container" id="Method--js_code_notification_add">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_notification_add</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_title` Parameter is REQUIRED">$y_title</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_text` Parameter is REQUIRED">$y_text</span></b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_image` Parameter is REQUIRED">$y_image</span></b></span>, <i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_time` Parameter is OPTIONAL, with the Default Value: 5000">$y_time</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>5000</b></span>, <i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_sticky` Parameter is OPTIONAL, with the Default Value: &quot;false&quot;">$y_sticky</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;false&quot;</b></span>, <i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_class` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_class</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_title` Parameter is REQUIRED">$y_title</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_text` Parameter is REQUIRED">$y_text</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_image` Parameter is REQUIRED">$y_image</span></b></span>, 
+			<i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_time` Parameter is OPTIONAL, with the Default Value: 5000">$y_time</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>5000</b></span>, 
+			<i>ENUM</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_sticky` Parameter is OPTIONAL, with the Default Value: &quot;false&quot;">$y_sticky</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;false&quot;</b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_class` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_class</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
 @param: {$y_title} The Growl Title<br>
 @param: {$y_text} The Growl Text<br>
 @param: {$y_image} The Growl Image (can be empty)<br>
 @param: {$y_time} *optional* ; default is 5000 (5 seconds) ; The Display Time in microseconds<br>
 @param: {$y_sticky} *optional* ; default is 'false' ; If set to 'false' will be not sticky ; if set to 'true' will be sticky<br>
 @param: {$y_class} *optional* the CSS class</div>
-	<div class="doc-method-comments">Returns the JS Code to add (raise) a Growl Notification (sticky or not)<br>
+	
+			<div class="doc-method-comments">Returns the JS Code to add (raise) a Growl Notification (sticky or not)<br>
 Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/script&gt; html tag or can be used for a JS action (ex: onClick=&quot;...&quot;)</div>
+	
 </div><div class="doc-container" id="Method--js_code_notification_remove">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_notification_remove</b></span>&nbsp;(
-	<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_id` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_id</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_id` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_id</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
+			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
 @param: {$y_id} *optional* the Growl ID ; default is '' ; if non empty will remove just the Growl that match the ID ; otherwise will remove ALL Growl instances</div>
-	<div class="doc-method-comments">Returns the JS Code to remove a Growl Notification (sticky or not)<br>
+	
+			<div class="doc-method-comments">Returns the JS Code to remove a Growl Notification (sticky or not)<br>
 Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/script&gt; html tag or can be used for a JS action (ex: onClick=&quot;...&quot;)</div>
+	
 </div><!-- Skip Internal-Priv Method: `js_code_ui_confirm_dialog()` --><!-- Skip Internal-Priv Method: `js_code_ui_alert_dialog()` --><div class="doc-container" id="Method--js_ajax_submit_html_form">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_ajax_submit_html_form</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_form_id` Parameter is REQUIRED">$y_form_id</span></b></span>, <span class="doc-param-name"><b><span title="`$y_script_url` Parameter is REQUIRED">$y_script_url</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_confirm_question` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_confirm_question</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<span class="doc-param-name"><b><span title="`$y_form_id` Parameter is REQUIRED">$y_form_id</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_script_url` Parameter is REQUIRED">$y_script_url</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_confirm_question` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_confirm_question</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [javascript code]</div>
-	<div class="doc-method-comments">Return the JS Code to Submit a HTML Form by Ajax<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [javascript code]</div>
+	
+			<div class="doc-method-comments">Return the JS Code to Submit a HTML Form by Ajax<br>
 Expects a standardized (json) reply created with SmartViewHtmlHelpers::js_ajax_replyto_html_form()<br>
 Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/script&gt; html tag or can be used for a JS action (ex: onClick=&quot;...&quot;)</div>
+	
 </div><div class="doc-container" id="Method--js_ajax_replyto_html_form">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_ajax_replyto_html_form</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$y_status` Parameter is REQUIRED">$y_status</span></b></span>, <span class="doc-param-name"><b><span title="`$y_title` Parameter is REQUIRED">$y_title</span></b></span>, <span class="doc-param-name"><b><span title="`$y_message` Parameter is REQUIRED">$y_message</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_redirect_url` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_redirect_url</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_replace_div` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_replace_div</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_replace_html` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_replace_html</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<span class="doc-param-name"><b><span title="`$y_status` Parameter is REQUIRED">$y_status</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_title` Parameter is REQUIRED">$y_title</span></b></span>, 
+			<span class="doc-param-name"><b><span title="`$y_message` Parameter is REQUIRED">$y_message</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_redirect_url` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_redirect_url</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_replace_div` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_replace_div</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_replace_html` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_replace_html</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_js_evcode` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_js_evcode</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-	<div class="doc-method-ret-params">@return: {STRING} : [JSON data string]</div>
-	<div class="doc-method-comments">Reply back to the HTML Form submited by Ajax by returning a Json answer<br>
+			<div class="doc-method-ret-params">@return: {STRING} : [JSON data string]</div>
+	
+			<div class="doc-method-comments">Reply back to the HTML Form submited by Ajax by returning a Json answer<br>
 Creates a standardized (json) reply for SmartViewHtmlHelpers::js_ajax_submit_html_form()<br>
 NOTICE:<br>
 - if OK: and redirect URL have been provided, the replace div is not handled<br>
 - if ERROR: no replace div or redirect is handled</div>
+	
 </div><!-- Skip Internal-Priv Method: `js_code_confirm_form_submit()` --><!-- Skip Internal-Priv Method: `js_code_init_away_page()` --><!-- Skip Internal-Priv Method: `js_code_init_select_autocomplete_single()` --><!-- Skip Internal-Priv Method: `js_code_init_select_autocomplete_multi()` --><!-- Skip Internal-Priv Method: `js_code_uitabs_init()` --><!-- Skip Internal-Priv Method: `js_code_uitabs_activate()` -->
 <!-- Properties -->
 <br>
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -885,7 +1093,59 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--html_js_date_field">Method: html_js_date_field()</option><option value="Method--html_js_time_field">Method: html_js_time_field()</option><option value="Method--html_select_list_single">Method: html_select_list_single()</option><option value="Method--html_select_list_multi">Method: html_select_list_multi()</option><option value="Method--html_navpager">Method: html_navpager()</option><option value="Method--html_js_limited_text_area">Method: html_js_limited_text_area()</option><option value="Method--html_selector_true_false">Method: html_selector_true_false()</option><option value="Method--html_selector_yes_no">Method: html_selector_yes_no()</option><option value="Method--html_hidden_formvars">Method: html_hidden_formvars()</option><option value="Method--html_js_preview_iframe">Method: html_js_preview_iframe()</option><option value="Method--html_jsload_editarea">Method: html_jsload_editarea()</option><option value="Method--html_js_editarea">Method: html_js_editarea()</option><option value="Method--html_jsload_htmlarea">Method: html_jsload_htmlarea()</option><option value="Method--html_js_htmlarea">Method: html_js_htmlarea()</option><option value="Method--html_js_htmlarea_fm_callback">Method: html_js_htmlarea_fm_callback()</option><option value="Method--js_code_wnd_redirect">Method: js_code_wnd_redirect()</option><option value="Method--js_code_wnd_refresh_parent">Method: js_code_wnd_refresh_parent()</option><option value="Method--js_code_wnd_close_modal_popup">Method: js_code_wnd_close_modal_popup()</option><option value="Method--js_code_notification_add">Method: js_code_notification_add()</option><option value="Method--js_code_notification_remove">Method: js_code_notification_remove()</option><option value="Method--js_ajax_submit_html_form">Method: js_ajax_submit_html_form()</option><option value="Method--js_ajax_replyto_html_form">Method: js_ajax_replyto_html_form()</option>
+									<option value="Method--html_js_date_field">Method: html_js_date_field()</option>
+			
+									<option value="Method--html_js_time_field">Method: html_js_time_field()</option>
+			
+									<option value="Method--html_select_list_single">Method: html_select_list_single()</option>
+			
+									<option value="Method--html_select_list_multi">Method: html_select_list_multi()</option>
+			
+									<option value="Method--html_navpager">Method: html_navpager()</option>
+			
+									<option value="Method--html_js_limited_text_area">Method: html_js_limited_text_area()</option>
+			
+									<option value="Method--html_selector_true_false">Method: html_selector_true_false()</option>
+			
+									<option value="Method--html_selector_yes_no">Method: html_selector_yes_no()</option>
+			
+									<option value="Method--html_hidden_formvars">Method: html_hidden_formvars()</option>
+			
+									<option value="Method--html_js_preview_iframe">Method: html_js_preview_iframe()</option>
+			
+									<option value="Method--html_jsload_editarea">Method: html_jsload_editarea()</option>
+			
+									<option value="Method--html_js_editarea">Method: html_js_editarea()</option>
+			
+									<option value="Method--html_jsload_htmlarea">Method: html_jsload_htmlarea()</option>
+			
+									<option value="Method--html_js_htmlarea">Method: html_js_htmlarea()</option>
+			
+									<option value="Method--html_js_htmlarea_fm_callback">Method: html_js_htmlarea_fm_callback()</option>
+			
+									<option value="Method--js_code_wnd_redirect">Method: js_code_wnd_redirect()</option>
+			
+									<option value="Method--js_code_wnd_refresh_parent">Method: js_code_wnd_refresh_parent()</option>
+			
+									<option value="Method--js_code_wnd_close_modal_popup">Method: js_code_wnd_close_modal_popup()</option>
+			
+									<option value="Method--js_code_notification_add">Method: js_code_notification_add()</option>
+			
+									<option value="Method--js_code_notification_remove">Method: js_code_notification_remove()</option>
+			
+						
+						
+									<option value="Method--js_ajax_submit_html_form">Method: js_ajax_submit_html_form()</option>
+			
+									<option value="Method--js_ajax_replyto_html_form">Method: js_ajax_replyto_html_form()</option>
+			
+						
+						
+						
+						
+						
+						
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
@@ -900,7 +1160,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:03 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
 <hr>
 <br>
 <!-- # -->

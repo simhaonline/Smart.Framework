@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191104 -->
+<!-- Template: Smart.Framework@Documentor v.20191118 -->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,7 +10,8 @@
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartMailerSend">
 	<title>PHP Documentation for: \SmartMailerSend</title>
 	<!-- CSS and Fonts -->
-	<!-- skip fonts -->
+		<!-- skip fonts -->
+	
 	<style type="text/css">
 	* {
 		font-family: sans-serif;
@@ -415,21 +416,52 @@
 	}
 	/* ----- #end ----- */
 	</style>
+	<style type="text/css">
+		
+/* -- CSS Start :: Smart.Framework / Debug / TPL Highlight :: r.5.2.7 / smart.framework.v.5.2 -- */
+
+/* ----------------------------- */
+
+.sf__tpl__highlight__marker {
+	background: #DDEEFF !important;
+	color: #333333 !important;
+}
+.sf__tpl__highlight__syntax {
+	background: #B3FF80 !important;
+	color: #222222 !important;
+}
+.sf__tpl__highlight__subtpl {
+	background: #FDE223 !important;
+	color: #111111 !important;
+}
+
+.sf__tpl__highlight__marker, .sf__tpl__highlight__syntax, .sf__tpl__highlight__subtpl {
+	cursor: context-menu !important;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------- */
+
+/* -- CSS End -- */
+
+	</style>
 </head>
 <body>
 <nav class="ux-navbar">
 	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
-	<ul class="menu">
+		<ul class="menu">
 		<li><a href="index.html#Package--PluginsMailer-" title="return to Index">return to Index</a></li>
 	</ul>
+	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191103 -->
+<!-- class r.20191109 -->
 <!-- Styles -->
-<!-- styles r.20191031 -->
-<style>
+<!-- styles r.20191118 -->
+<style type="text/css">
 .doc-package {
 	color: #3F51B5;
 }
@@ -523,7 +555,8 @@ ul.doc-list ul {
 .doc-code {
 	background: #232B50;
 	color: #FFFFFF;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 .doc-code pre {
 	padding: 5px;
@@ -562,7 +595,7 @@ To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUti
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartMailerSend</span></li>
 		
-		<li><b>Version:</b> v.20191031</li>
+		<li><b>Version:</b> v.20191111</li>
 		<li><b>Depends:</b> classes:  Smart</li>
 		
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -575,9 +608,10 @@ To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUti
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191031 -->
+<!-- methods r.20191109 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
+		
 	
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
@@ -586,7 +620,10 @@ To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUti
 	
 </div><div class="doc-container" id="Method--send">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>send</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$do_send` Parameter is REQUIRED">$do_send</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$raw_message` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$raw_message</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+				<span class="doc-param-name"><b><span title="`$do_send` Parameter is REQUIRED">$do_send</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$raw_message` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$raw_message</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -594,7 +631,14 @@ To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUti
 	
 </div><div class="doc-container" id="Method--add_attachment">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>add_attachment</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$message` Parameter is REQUIRED">$message</span></b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$name` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$name</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$ctype` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$ctype</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$disp` Parameter is OPTIONAL, with the Default Value: &quot;attachment&quot;">$disp</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;attachment&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$cid` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$cid</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, <span class="doc-param-name"><b><span class="doc-param-optional" title="`$embed` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$embed</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>
+				<span class="doc-param-name"><b><span title="`$message` Parameter is REQUIRED">$message</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$name` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$name</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$ctype` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$ctype</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$disp` Parameter is OPTIONAL, with the Default Value: &quot;attachment&quot;">$disp</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;attachment&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$cid` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$cid</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$embed` Parameter is OPTIONAL, with the Default Value: &quot;no&quot;">$embed</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;no&quot;</b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -602,7 +646,9 @@ To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUti
 	
 </div><div class="doc-container" id="Method--safe_header_str">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>safe_header_str</b></span>&nbsp;(
-	<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+				<span class="doc-param-name"><b><span title="`$str` Parameter is REQUIRED">$str</span></b></span>
+	
+	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
 	
 	
@@ -614,7 +660,7 @@ To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUti
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191031 -->
+<!-- properties r.20191109 -->
 <div class="doc-container" id="Property--error">
 	<span class="doc-modifiers">public</span> <b>$error</b>&nbsp;<span title="Object Property"><b>-&gt;</b></span>
 	
@@ -705,15 +751,15 @@ To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUti
 <div class="doc-container" id="Constants--Summary-">
 	<h2 class="doc-header">Constants summary</h2>
 </div>
-<!-- constants r.20191031 -->
+<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191103 -->
+<!-- summary r.20191109 -->
 <script>
-// summary r.20191103
+// summary r.20191109
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -739,11 +785,75 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-			<option value="Method--__construct">Method: __construct()</option><option value="Method--send">Method: send()</option><option value="Method--add_attachment">Method: add_attachment()</option><option value="Method--safe_header_str">Method: safe_header_str()</option>
+									<option value="Method--__construct">Method: __construct()</option>
+			
+									<option value="Method--send">Method: send()</option>
+			
+									<option value="Method--add_attachment">Method: add_attachment()</option>
+			
+									<option value="Method--safe_header_str">Method: safe_header_str()</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
-			<option value="Property--error">Property: $error</option><option value="Property--log">Property: $log</option><option value="Property--mime_message">Property: $mime_message</option><option value="Property--debuglevel">Property: $debuglevel</option><option value="Property--usealways_b64">Property: $usealways_b64</option><option value="Property--method">Property: $method</option><option value="Property--from_return">Property: $from_return</option><option value="Property--namefrom">Property: $namefrom</option><option value="Property--from">Property: $from</option><option value="Property--to">Property: $to</option><option value="Property--cc">Property: $cc</option><option value="Property--bcc">Property: $bcc</option><option value="Property--priority">Property: $priority</option><option value="Property--subject">Property: $subject</option><option value="Property--body">Property: $body</option><option value="Property--headers">Property: $headers</option><option value="Property--is_html">Property: $is_html</option><option value="Property--is_related">Property: $is_related</option><option value="Property--charset">Property: $charset</option><option value="Property--smtp_helo">Property: $smtp_helo</option><option value="Property--smtp_server">Property: $smtp_server</option><option value="Property--smtp_port">Property: $smtp_port</option><option value="Property--smtp_ssl">Property: $smtp_ssl</option><option value="Property--smtp_cafile">Property: $smtp_cafile</option><option value="Property--smtp_timeout">Property: $smtp_timeout</option><option value="Property--smtp_login">Property: $smtp_login</option><option value="Property--smtp_user">Property: $smtp_user</option><option value="Property--smtp_password">Property: $smtp_password</option>
+									<option value="Property--error">Property: $error</option>
+			
+									<option value="Property--log">Property: $log</option>
+			
+									<option value="Property--mime_message">Property: $mime_message</option>
+			
+									<option value="Property--debuglevel">Property: $debuglevel</option>
+			
+									<option value="Property--usealways_b64">Property: $usealways_b64</option>
+			
+									<option value="Property--method">Property: $method</option>
+			
+									<option value="Property--from_return">Property: $from_return</option>
+			
+									<option value="Property--namefrom">Property: $namefrom</option>
+			
+									<option value="Property--from">Property: $from</option>
+			
+									<option value="Property--to">Property: $to</option>
+			
+									<option value="Property--cc">Property: $cc</option>
+			
+									<option value="Property--bcc">Property: $bcc</option>
+			
+									<option value="Property--priority">Property: $priority</option>
+			
+									<option value="Property--subject">Property: $subject</option>
+			
+									<option value="Property--body">Property: $body</option>
+			
+									<option value="Property--headers">Property: $headers</option>
+			
+									<option value="Property--is_html">Property: $is_html</option>
+			
+									<option value="Property--is_related">Property: $is_related</option>
+			
+									<option value="Property--charset">Property: $charset</option>
+			
+									<option value="Property--smtp_helo">Property: $smtp_helo</option>
+			
+									<option value="Property--smtp_server">Property: $smtp_server</option>
+			
+									<option value="Property--smtp_port">Property: $smtp_port</option>
+			
+									<option value="Property--smtp_ssl">Property: $smtp_ssl</option>
+			
+									<option value="Property--smtp_cafile">Property: $smtp_cafile</option>
+			
+									<option value="Property--smtp_timeout">Property: $smtp_timeout</option>
+			
+									<option value="Property--smtp_login">Property: $smtp_login</option>
+			
+									<option value="Property--smtp_user">Property: $smtp_user</option>
+			
+									<option value="Property--smtp_password">Property: $smtp_password</option>
+			
+			
 		</optgroup>
 		<optgroup label="Class Constants">
 			<option value="Constants--Summary-">*** Constants summary ***</option>
@@ -754,7 +864,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-04 08:23:03 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:10 +0000</small>
 <hr>
 <br>
 <!-- # -->

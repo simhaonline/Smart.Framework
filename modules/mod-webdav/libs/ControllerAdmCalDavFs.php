@@ -20,12 +20,20 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 //=====================================================================================
 
 /**
- * Dav Adm Controller CalDAV-Fs
- * @ignore
+ * DAV / CalDAV FileSystem :: Admin Controller
+ *
+ * It supports only the Admin area (admin.php) so it can be used only to implement SmartAppAdminController
+ * It does a direct output so it needs to set in controller: SMART_APP_MODULE_DIRECT_OUTPUT = TRUE
+ *
+ * @hint This abstract controller can be used to build a DAV Service / CalDAV over the Admin Middleware service
+ *
+ * @version		20191110
+ * @package 	development:modules:Webdav
+ *
  */
 abstract class ControllerAdmCalDavFs extends \SmartAbstractAppController {
 
-	// v.20191110
+	// ->
 
 	private $dav_author = 'unknown';
 	private $dav_uri = '';
