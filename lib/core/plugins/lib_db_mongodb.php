@@ -31,39 +31,17 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * // sample mongo config
  * $cfg_mongo = array();
- * $cfg_mongo['type'] 		= 'mongo-standalone'; 					// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
- * $cfg_mongo['server-host']	= '127.0.0.1';						// mongodb host
- * $cfg_mongo['server-port']	= '27017';						// mongodb port
- * $cfg_mongo['dbname']		= 'smart_framework';					// mongodb database
- * $cfg_mongo['username'] 		= '';							// mongodb username
- * $cfg_mongo['password'] 		= '';							// mongodb Base64-Encoded password
- * $cfg_mongo['timeout']		= 5;							// mongodb connect timeout in seconds
- * $cfg_mongo['slowtime']		= 0.0035;						// 0.0025 .. 0.0090 slow query time (for debugging)
+ * $cfg_mongo['type'] 		= 'mongo-standalone'; 				// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
+ * $cfg_mongo['server-host']	= '127.0.0.1';							// mongodb host
+ * $cfg_mongo['server-port']	= '27017';									// mongodb port
+ * $cfg_mongo['dbname']		= 'smart_framework';			// mongodb database
+ * $cfg_mongo['username'] 		= '';											// mongodb username
+ * $cfg_mongo['password'] 		= '';											// mongodb Base64-Encoded password
+ * $cfg_mongo['timeout']		= 5;												// mongodb connect timeout in seconds
+ * $cfg_mongo['slowtime']		= 0.0035;									// 0.0025 .. 0.0090 slow query time (for debugging)
  *
+ * // sample mongo connect
  * $mongo = new \SmartMongoDb($cfg_mongo);
- *
- * // sample insert
- * $doc = [];
- * $doc['_id']  = $mongo->assign_uuid();
- * $doc['name'] = 'My Name';
- * $doc['description'] = 'Some description goes here ...';
- * $insert = $mongo->insert('myTestCollection', $doc);
- * var_dump($insert);
- *
- * // sample find
- * $query = $mongo->find(
- * 	'myTestCollection',
- * 	[ 'name' => 'My Name' ], // filter (update all except these)
- * 	[ // projection
- * 		'name',
- * 		'description'
- * 	],
- * 	[
- * 		'limit' => 1, // limit
- * 		'skip' => 0 // offset
- * 	]
- * );
- * var_dump($query);
  *
  * </code>
  *
@@ -72,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191119
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -324,7 +302,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 
 	//======================================================
 	/**
-	 * Get the MongoDB FTS Dictionary by Two Letter language code (ISO 639-1)
+	 * Get the MongoDB FTS (Full Text Search) Dictionary by Two Letter language code (ISO 639-1)
 	 *
 	 * @return 	STRING						:: dictionary name (ex: 'english' - if available or 'none' - if n/a)
 	 */
@@ -393,7 +371,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	//======================================================
 	/**
 	 * Test if a command output is OK compliant (will check if result[0][ok] == 1)
-	 * Notice: not all MongoDB commands will return this standard answer, but for most will work
+	 * Notice: not all MongoDB commands will return this standard answer, but majority
 	 *
 	 * @param MIXED result							:: result output from a mongodb command
 	 *
@@ -430,16 +408,145 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 *
 	 * @magic
 	 *
-	 * @method MIXED		count($strCollection, $arrQuery)											# count documents in a collection
-	 * @method MIXED		find($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single or multiple documents in a collection with optional filter criteria / limit
-	 * @method MIXED		findone($strCollection, $arrQuery, $arrProjFields, $arrOptions)				# find single document in a collection with optional filter criteria / limit
-	 * @method MIXED		bulkinsert($strCollection, $arrMultiDocs)									# add multiple documents to a collection
-	 * @method MIXED		insert($strCollection, $arrDoc)												# add single document to a collection
-	 * @method MIXED		upsert($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# insert single or modify single or multi documents in a collection that are matching the filter criteria ; this is always non-fatal, will throw catcheable exception on error ...
-	 * @method MIXED		update($strCollection, $arrFilter, $strUpdOp, $arrUpd)						# modify single or many documents in a collection that are matching the filter criteria
-	 * @method MIXED		delete($strCollection, $arrFilter)											# delete single or many documents from a collection that are matching the filter criteria
-	 * @method MIXED		command($arrCmd)															# run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...
-	 * @method MIXED		igcommand($arrCmd)															# run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists
+	 * @method MIXED		count(STRING $strCollection, ARRAY $arrQuery)												:: count documents in a collection
+	 * @method MIXED		find(STRING $strCollection, ARRAY $arrQuery, ARRAY $arrProjFields, ARRAY *$arrOptions)		:: find single or multiple documents in a collection with optional filter criteria / limit
+	 * @method MIXED		findone(STRING $strCollection, ARRAY $arrQuery, ARRAY $arrProjFields, ARRAY *$arrOptions)	:: find single document in a collection with optional filter criteria / limit
+	 * @method MIXED		bulkinsert(STRING $strCollection, ARRAY $arrMultiDocs)										:: add multiple documents to a collection
+	 * @method MIXED		insert(STRING $strCollection, ARRAY $arrDoc)												:: add single document to a collection
+	 * @method MIXED		upsert(STRING $strCollection, ARRAY $arrFilter, STRING $strUpdOp, ARRAY $arrUpd)			:: insert single or modify single or multi documents in a collection that are matching the filter criteria ; this is always non-fatal, will throw catcheable exception on error ...
+	 * @method MIXED		update(STRING $strCollection, ARRAY $arrFilter, STRING $strUpdOp, ARRAY $arrUpd)			:: modify single or many documents in a collection that are matching the filter criteria
+	 * @method MIXED		delete(STRING $strCollection, ARRAY $arrFilter)												:: delete single or many documents from a collection that are matching the filter criteria
+	 * @method MIXED		command($arrCmd)																			:: run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...
+	 * @method MIXED		igcommand($arrCmd)																			:: run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists
+	 *
+	 * <code>
+	 * // Sample Count Records
+	 * $count = $mongo->count(
+	 * 		'myTestCollection',
+	 * 		[ 'name' => [ '$eq' => 'Test:!' ] ] // filter
+	 * );
+	 * var_dump($count);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Find One
+	 * $find = $mongo->findone(
+	 * 		'myTestCollection',
+	 * 		[ 'cost' => 7 ] // filter
+	 * );
+	 * var_dump($find);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Find Many
+	 * $mfind = $mongo->find(
+	 * 		'myTestCollection',
+	 * 		[ 'name' => 'John' ], // filter
+	 * 		[ // projection
+	 * 			'name',
+	 * 			'description'
+	 * 		],
+	 * 		[
+	 * 			'limit' => 10, // limit
+	 * 			'skip' => 0 // offset
+	 * 		]
+	 * );
+	 * var_dump($mfind);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Insert
+	 * $doc = [];
+	 * $doc['id']  = $mongo->assign_uuid();
+	 * $doc['name'] = 'My Name';
+	 * $doc['description'] = 'Some description goes here ...';
+	 * $insert = $mongo->insert('myTestCollection', (array)$doc);
+	 * $doc = [];
+	 * var_dump($insert);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Bulk Insert (10 Documents)
+	 * $docs = array();
+	 * for($i=0; $i<10; $i++) {
+	 * 	$docs[] = [
+	 * 		'id'  => $mongo->assign_uuid(),
+	 * 		'name' => 'Document #'.$i,
+	 * 		'cost' => ($i+1),
+	 * 		'data' => [
+	 * 			'description' => 'This is the document #'.$i,
+	 * 			'date_time' => (string) date('Y-m-d H:i:s'),
+	 * 			'rating' => \Smart::random_number(1,9) / 100
+	 * 		]
+	 * 	];
+	 * } //end for
+	 * $insert = $mongo->bulkinsert('myTestCollection', (array)$docs);
+	 * $docs = array();
+	 * var_dump($insert);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Update
+	 * $doc = [];
+	 * $doc['name'] = 'My New Name';
+	 * $doc['description'] = 'Some description goes here ...';
+	 * $update = $mongo->update(
+	 * 		'myTestCollection',
+	 * 		[ 'id' => 'XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX' ], 			// filter (update only this)
+	 * 		'$set', 														// increment operation
+	 * 		(array) $doc												// update array
+	 * 	);
+	 * $doc = [];
+	 * var_dump($update);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Upsert
+	 * $doc = [];
+	 * $doc['id']  = 'XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX'; // comes from $mongo->assign_uuid();
+	 * $doc['name'] = 'My Newest Name';
+	 * $doc['description'] = 'Some description goes here ...';
+	 * try {
+	 * 		$upsert = $mongo->upsert(
+	 * 			'myTestCollection',
+	 * 			[ 'id' => $doc['id'] ], 	// filter (update only this)
+	 * 			'$set', 					// increment operation
+	 * 			(array) $doc			// update array
+	 * 		);
+	 * } catch(\Exception $err) {
+	 * 		// if upsert goes wrong ...
+	 * }
+	 * $doc = [];
+	 * var_dump($upsert);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Delete
+	 * $delete = $mongo->delete(
+	 * 		'myTestCollection',
+	 * 		[ 'name' => 'An Item', 'cost' => 8 ] // filter
+	 * );
+	 * var_dump($delete);
+	 * </code>
+	 *
+	 * <code>
+	 * // Search Distinct with Filter
+	 * $filter = $mongo->command(
+	 * 		[
+	 * 			'distinct' => 'myTestCollection',
+	 * 			'key' => 'cost',
+	 * 			'query' => [ 'cost' => [ '$gte' => 5 ] ] // find distinct where cost > 5
+	 * 		]
+	 * );
+	 * if(!$mongo->is_command_ok($filter) {
+	 * 		// command failed ...
+	 * }
+	 * var_dump($filter);
+	 * </code>
+	 *
+	 * <code>
+	 * // ... see more usage samples: modules/mod-samples/libs/TestUnitMongoDB.php
+	 * </code>
 	 *
 	 */
 	public function __call($method, array $args) {

@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191111
+ * @version 	v.20191119
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -262,7 +262,7 @@ final class SmartSQliteDb {
 	 * @param STRING $query 						:: the SQLite Query
 	 * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
 	 * @param STRING $qtitle 						:: *optional* query title for easy debugging
-	 * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
+	 * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', null, ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
 	 */
 	public function read_data($query, $qparams='', $qtitle='') {
 		$this->check_opened();
@@ -279,7 +279,7 @@ final class SmartSQliteDb {
 	 * @param STRING $query 						:: the SQLite Query
 	 * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
 	 * @param STRING $qtitle 						:: *optional* query title for easy debugging
-	 * @return ARRAY (asociative) of results		:: array(0 => array('column1', 'column2', ... 'column-n'), 1 => array('column1', 'column2', ... 'column-n'), ..., m => array('column1', 'column2', ... 'column-n'))
+	 * @return ARRAY (asociative) of results		:: array(0 => array('column1' => 'val1', 'column2' => null, ... 'column-n' => 't'), 1 => array('column1' => 'val2', 'column2' => 'val2', ... 'column-n' => 'f'), ..., m => array('column1' => 'valM', 'column2' => 'xyz', ... 'column-n' => 't'))
 	 */
 	public function read_adata($query, $qparams='', $qtitle='') {
 		$this->check_opened();
@@ -301,7 +301,7 @@ final class SmartSQliteDb {
 	 * @param STRING $query 						:: the SQLite Query
 	 * @param STRING $qparams 						:: *optional* array of parameters (?, ?, ... ?)
 	 * @param STRING $qtitle 						:: *optional* query title for easy debugging
-	 * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')
+	 * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1' => 'val1', 'column2' => null, ... 'column-n' => 't')
 	 */
 	public function read_asdata($query, $qparams='', $qtitle='') {
 		$this->check_opened();
@@ -470,7 +470,7 @@ final class SmartSQliteDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191111
+ * @version 	v.20191119
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -946,7 +946,11 @@ final class SmartSQliteUtilDb {
 						//--
 						$number_of_fields++;
 						//--
-						$arr_data[] = (string) $res[$i]; // force string
+						if($res[$i] === null) {
+							$arr_data[] = null; // preserve null
+						} else {
+							$arr_data[] = (string) $res[$i]; // force string
+						} //end if else
 						//--
 					} //end for
 					//--
@@ -1038,7 +1042,11 @@ final class SmartSQliteUtilDb {
 						//--
 						$number_of_fields++;
 						//--
-						$tmp_datarow[$key] = (string) $val; // force string
+						if($val === null) {
+							$tmp_datarow[(string)$key] = null; // preserve null
+						} else {
+							$tmp_datarow[(string)$key] = (string) $val; // force string
+						} //end if else
 						//--
 					} //end foreach
 					//--
@@ -1135,7 +1143,11 @@ final class SmartSQliteUtilDb {
 							//--
 							$number_of_fields++;
 							//--
-							$arr_data[$key] = (string) $val; // force string
+							if($val === null) {
+								$arr_data[(string)$key] = null; // preserve null
+							} else {
+								$arr_data[(string)$key] = (string) $val; // force string
+							} //end if else
 							//--
 						} else {
 							//--
@@ -1756,7 +1768,7 @@ final class SmartSQliteUtilDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20191111
+ * @version 	v.20191119
  * @package 	Plugins:Database:SQLite
  *
  */

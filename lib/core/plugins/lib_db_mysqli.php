@@ -71,7 +71,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20191111
+ * @version 	v.20191120
  * @package 	Plugins:Database:MySQL
  *
  */
@@ -451,6 +451,10 @@ final class SmartMysqliDb {
 		if($chk !== 0) {
 			$error = 'Query FAILED: '.$err;
 		} //end if else
+		if(!is_object($result)) {
+			//$error = 'Query is INVALID (Returns No Data) for this context: '.__FUNCTION__.'()';
+			return 0;
+		} //end if else
 		//--
 
 		//--
@@ -525,7 +529,7 @@ final class SmartMysqliDb {
 	 * @param STRING $queryval						:: the query
 	 * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
 	 * @param RESOURCE $y_connection				:: the connection
-	 * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
+	 * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', null, ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
 	 */
 	public static function read_data($queryval, $params_or_title='', $y_connection='DEFAULT') {
 
@@ -568,6 +572,10 @@ final class SmartMysqliDb {
 		$error = '';
 		if($chk !== 0) {
 			$error = 'Query FAILED:'."\n".$err;
+		} //end if else
+		if(!is_object($result)) {
+			//$error = 'Query is INVALID (Returns No Data) for this context: '.__FUNCTION__.'()';
+			return array();
 		} //end if else
 		//--
 
@@ -628,7 +636,11 @@ final class SmartMysqliDb {
 				$record = @mysqli_fetch_row($result);
 				//--
 				for($ii=0; $ii<$number_of_fields; $ii++) {
-					$mysql_result_arr[] = (string) $record[$ii]; // force string
+					if($record[$ii] === null) {
+						$mysql_result_arr[] = null; // preserve null
+					} else {
+						$mysql_result_arr[] = (string) $record[$ii]; // force string
+					} //end if else
 				} // end for
 				//--
 			} //end for
@@ -658,7 +670,7 @@ final class SmartMysqliDb {
 	 * @param STRING $queryval						:: the query
 	 * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
 	 * @param RESOURCE $y_connection				:: the connection
-	 * @return ARRAY (asociative) of results		:: array(0 => array('column1', 'column2', ... 'column-n'), 1 => array('column1', 'column2', ... 'column-n'), ..., m => array('column1', 'column2', ... 'column-n'))
+	 * @return ARRAY (asociative) of results		:: array(0 => array('column1' => 'val1', 'column2' => null, ... 'column-n' => 't'), 1 => array('column1' => 'val2', 'column2' => 'val2', ... 'column-n' => 'f'), ..., m => array('column1' => 'valM', 'column2' => 'xyz', ... 'column-n' => 't'))
 	 */
 	public static function read_adata($queryval, $params_or_title='', $y_connection='DEFAULT') {
 
@@ -701,6 +713,10 @@ final class SmartMysqliDb {
 		$error = '';
 		if($chk !== 0) {
 			$error = 'Query FAILED:'."\n".$err;
+		} //end if else
+		if(!is_object($result)) {
+			//$error = 'Query is INVALID (Returns No Data) for this context: '.__FUNCTION__.'()';
+			return array();
 		} //end if else
 		//--
 
@@ -767,7 +783,11 @@ final class SmartMysqliDb {
 						$tmp_datarow = array();
 						//--
 						foreach($record as $key => $val) {
-							$tmp_datarow[$key] = (string) $val; // force string
+							if($val === null) {
+								$tmp_datarow[(string)$key] = null; // preserve null
+							} else {
+								$tmp_datarow[(string)$key] = (string) $val; // force string
+							} //end if
 						} //end foreach
 						//--
 						$mysql_result_arr[] = (array) $tmp_datarow;
@@ -810,7 +830,7 @@ final class SmartMysqliDb {
 	 * @param STRING $queryval						:: the query
 	 * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
 	 * @param RESOURCE $y_connection				:: the connection
-	 * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')
+	 * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1' => 'val1', 'column2' => null, ... 'column-n' => 't')
 	 */
 	public static function read_asdata($queryval, $params_or_title='', $y_connection='DEFAULT') {
 
@@ -853,6 +873,10 @@ final class SmartMysqliDb {
 		$error = '';
 		if($chk !== 0) {
 			$error = 'Query FAILED:'."\n".$err;
+		} //end if else
+		if(!is_object($result)) {
+			//$error = 'Query is INVALID (Returns No Data) for this context: '.__FUNCTION__.'()';
+			return array();
 		} //end if else
 		//--
 
@@ -914,7 +938,11 @@ final class SmartMysqliDb {
 				//--
 				if(is_array($record)) {
 					foreach($record as $key => $val) {
-						$mysql_result_arr[$key] = (string) $val; // force string
+						if($val === null) {
+							$mysql_result_arr[(string)$key] = null; // preserve null
+						} else {
+							$mysql_result_arr[(string)$key] = (string) $val; // force string
+						} //end if else
 					} //end foreach
 				} //end if
 				//--
@@ -1764,7 +1792,7 @@ final class SmartMysqliDb {
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20191111
+ * @version 	v.20191120
  * @package 	Plugins:Database:MySQL
  *
  */
@@ -1903,7 +1931,7 @@ final class SmartMysqliExtDb {
 	 *
 	 * @param STRING $queryval						:: the query
 	 * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
-	 * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
+	 * @return ARRAY (non-asociative) of results	:: array('column-0-0', 'column-0-1', null, ..., 'column-0-n', 'column-1-0', 'column-1-1', ... 'column-1-n', ..., 'column-m-0', 'column-m-1', ..., 'column-m-n')
 	 */
 	public function read_data($queryval, $params_or_title='') {
 		//--
@@ -1918,7 +1946,7 @@ final class SmartMysqliExtDb {
 	 *
 	 * @param STRING $queryval						:: the query
 	 * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
-	 * @return ARRAY (asociative) of results		:: array(0 => array('column1', 'column2', ... 'column-n'), 1 => array('column1', 'column2', ... 'column-n'), ..., m => array('column1', 'column2', ... 'column-n'))
+	 * @return ARRAY (asociative) of results		:: array(0 => array('column1' => 'val1', 'column2' => null, ... 'column-n' => 't'), 1 => array('column1' => 'val2', 'column2' => 'val2', ... 'column-n' => 'f'), ..., m => array('column1' => 'valM', 'column2' => 'xyz', ... 'column-n' => 't'))
 	 */
 	public function read_adata($queryval, $params_or_title='') {
 		//--
@@ -1938,7 +1966,7 @@ final class SmartMysqliExtDb {
 	 *
 	 * @param STRING $queryval						:: the query
 	 * @param STRING $params_or_title 				:: *optional* array of parameters or query title for easy debugging
-	 * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1', 'column2', ... 'column-n')
+	 * @return ARRAY (asociative) of results		:: Returns just a SINGLE ROW as: array('column1' => 'val1', 'column2' => null, ... 'column-n' => 't')
 	 */
 	public function read_asdata($queryval, $params_or_title='') {
 		//--

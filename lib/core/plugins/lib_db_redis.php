@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191119
  * @package 	Plugins:Database:Redis
  *
  */
@@ -206,23 +206,23 @@ final class SmartRedisDb {
 	 *
 	 * @magic
 	 *
-	 * @method	STRING		ping()										# Ping the Redis server ; returns: the test answer which is always PONG
-	 * @method	MIXED		get(STRING $key) 							# Get a Redis Key ; returns: the value of key as STRING or NULL if not exists
-	 * @method	MIXED	 	set(STRING $key, STRING $value)				# Set a Redis Key ; returns: OK on success or NULL on failure
-	 * @method	MIXED		append(STRING $key, STRING $value)			# Append a Redis Key ; returns: OK on success or NULL on failure
-	 * @method	INT			del(STRING $key) 							# Delete a Redis Key ; returns: 0 if not successful or 1 if successful
-	 * @method	INT			expire(STRING $key, INT $expireinseconds)	# Set the Expiration time for a Redis Key in seconds ; returns: 0 if not successful or 1 if successful
-	 * @method	INT			expireat(STRING $key, INT $expirationtime)	# Set the Expiration time for a Redis Key at unixtimestamp ; returns: 0 if not successful or 1 if successful
-	 * @method	INT			persist(STRING $key)						# Remove the existing expiration timeout on a key ; returns: 0 if not successful or 1 if successful
-	 * @method	INT			exists(STRING $key)							# Determine if a key exists ; returns 1 if the key exists or 0 if does not exists
-	 * @method	STRING		type(STRING $key) 							# Returns the string representation of the type of the value stored at key (string, list, set, zset, hash and stream)
-	 * @method	INT			strlen(STRING $key) 						# Returns the length of the string value stored at key. An error is returned when key holds a non-string value
-	 * @method	MIXED		keys(STRING $pattern)						# Get all keys matching a pattern ; return array of all keys matching a pattern or null if no key
-	 * @method	MIXED		randomkey()									# Return a random key from the currently selected database ; if no key exist, returns NULL
-	 * @method	STRING		rename(STRING $key, STRING $newkey) 		# Renames key to newkey. It returns an error when key does not exist. If newkey already exists it is overwritten
-	 * @method	STRING		info()										# Returns information and statistics about the server
-	 * @method	INT			dbsize()									# Return the number of keys in the currently-selected database
-	 * @method	STRING		flushdb()									# Remove all keys from the selected database ; This command never fails ; Returns OK
+	 * @method	STRING		ping()										:: Ping the Redis server ; returns: the test answer which is always PONG
+	 * @method	MIXED		get(STRING $key) 							:: Get a Redis Key ; returns: the value of key as STRING or NULL if not exists
+	 * @method	MIXED	 	set(STRING $key, STRING $value)				:: Set a Redis Key ; returns: OK on success or NULL on failure
+	 * @method	MIXED		append(STRING $key, STRING $value)			:: Append a Redis Key ; returns: OK on success or NULL on failure
+	 * @method	INT			del(STRING $key) 							:: Delete a Redis Key ; returns: 0 if not successful or 1 if successful
+	 * @method	INT			expire(STRING $key, INT $expireinseconds)	:: Set the Expiration time for a Redis Key in seconds ; returns: 0 if not successful or 1 if successful
+	 * @method	INT			expireat(STRING $key, INT $expirationtime)	:: Set the Expiration time for a Redis Key at unixtimestamp ; returns: 0 if not successful or 1 if successful
+	 * @method	INT			persist(STRING $key)						:: Remove the existing expiration timeout on a key ; returns: 0 if not successful or 1 if successful
+	 * @method	INT			exists(STRING $key)							:: Determine if a key exists ; returns 1 if the key exists or 0 if does not exists
+	 * @method	STRING		type(STRING $key) 							:: Returns the string representation of the type of the value stored at key (string, list, set, zset, hash and stream)
+	 * @method	INT			strlen(STRING $key) 						:: Returns the length of the string value stored at key. An error is returned when key holds a non-string value
+	 * @method	MIXED		keys(STRING $pattern)						:: Get all keys matching a pattern ; return array of all keys matching a pattern or null if no key
+	 * @method	MIXED		randomkey()									:: Return a random key from the currently selected database ; if no key exist, returns NULL
+	 * @method	STRING		rename(STRING $key, STRING $newkey) 		:: Renames key to newkey. It returns an error when key does not exist. If newkey already exists it is overwritten
+	 * @method	STRING		info()										:: Returns information and statistics about the server
+	 * @method	INT			dbsize()									:: Return the number of keys in the currently-selected database
+	 * @method	STRING		flushdb()									:: Remove all keys from the selected database ; This command never fails ; Returns OK
 	 */
 	public function __call($method, array $args) {
 		//--

@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191120
  * @package 	Plugins:Mailer
  *
  */
@@ -652,7 +652,7 @@ final class SmartMailerSend {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191113
+ * @version 	v.20191120
  * @package 	Plugins:Mailer
  *
  */
@@ -663,17 +663,52 @@ final class SmartMailerSmtpClient {
 
 	//===============================================
 	//--
-	public $socket = false; 	// socket resource ID
+	/**
+	 * @var INTEGER+
+	 * @default 30
+	 * socket timeout in seconds
+	 */
+	public $timeout = 30;
 	//--
-	public $timeout = 30;		// socket timeout in seconds
+	/**
+	 * @var BOOLEAN
+	 * @default FALSE
+	 * to debug or not
+	 */
+	public $debug = false;
+	/**
+	 * @var ENUM
+	 * @default 1
+	 * debug level (1 or 2)
+	 */
+	public $dbglevel = 1;
 	//--
-	public $debug = false;		// to debug or not
-	public $dbglevel = 1;		// debug level (1 or 2)
+	/**
+	 * @var STRING
+	 * @default ''
+	 * collects the error message(s)
+	 */
+	public $error = '';
+	/**
+	 * @var STRING
+	 * @default ''
+	 * if debug is enabled will collect the send log(s)
+	 */
+	public $log = '';
 	//--
-	public $error = '';			// the error message
-	public $log = '';			// if debug is enabled, this is the log
-	//--
-	private $cafile = '';		// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
+	//===============================================
+	/**
+	 * @var STRING
+	 * @default ''
+	 * Certificate Authority File Path (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE it can use another CaFile)
+	 */
+	private $cafile = '';
+	/**
+	 * @var RESOURCE
+	 * @default FALSE
+	 * socket resource ID or FALSE if not connected
+	 */
+	private $socket = false;
 	//--
 	//===============================================
 

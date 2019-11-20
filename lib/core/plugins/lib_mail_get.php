@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191113
+ * @version 	v.20191120
  * @package 	Plugins:Mailer
  *
  */
@@ -41,24 +41,28 @@ final class SmartMailerImap4Client {
 
 	/**
 	 * @var INT
-	 * socket read buffer (default is 1024)
+	 * @default 1024
+	 * socket read buffer
 	 */
 	public $buffer = 1024;
 
 	/**
 	 * @var INT
-	 * socket timeout in seconds (default is 30)
+	 * @default 30
+	 * socket timeout in seconds
 	 */
 	public $timeout = 30;
 
 	/**
 	 * @var BOOLEAN
-	 * debug on/off (default is FALSE)
+	 * @default FALSE
+	 * debug on/off
 	 */
 	public $debug = false;
 
 	/**
 	 * @var STRING
+	 * @default ''
 	 * the error message(s) will be collected here
 	 * do not SET a value here, but just GET the result
 	 */
@@ -66,6 +70,7 @@ final class SmartMailerImap4Client {
 
 	/**
 	 * @var STRING
+	 * @default ''
 	 * the operations log (only if debug is enabled)
 	 * do not SET a value here, but just GET the result
 	 */
@@ -1176,7 +1181,7 @@ final class SmartMailerImap4Client {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191113
+ * @version 	v.20191120
  * @package 	Plugins:Mailer
  *
  */
@@ -1187,24 +1192,28 @@ final class SmartMailerPop3Client {
 
 	/**
 	 * @var INT
-	 * socket read buffer (default is 512)
+	 * @default 512
+	 * socket read buffer
 	 */
 	public $buffer = 512;
 
 	/**
 	 * @var INT
-	 * socket timeout in seconds (default is 30)
+	 * @default 30
+	 * socket timeout in seconds
 	 */
 	public $timeout = 30;
 
 	/**
 	 * @var BOOLEAN
-	 * debug on/off (default is FALSE)
+	 * @default FALSE
+	 * debug on/off
 	 */
 	public $debug = false;
 
 	/**
 	 * @var STRING
+	 * @default ''
 	 * the error message(s) will be collected here
 	 * do not SET a value here, but just GET the result
 	 */
@@ -1212,6 +1221,7 @@ final class SmartMailerPop3Client {
 
 	/**
 	 * @var STRING
+	 * @default ''
 	 * the operations log (only if debug is enabled)
 	 * do not SET a value here, but just GET the result
 	 */

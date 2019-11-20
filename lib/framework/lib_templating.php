@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191117
+ * @version 	v.20191119
  * @package 	@Core:TemplatingEngine
  *
  */
@@ -239,6 +239,40 @@ final class SmartMarkersTemplating {
 	//================================================================
 	/**
 	 * Render Marker File Template (incl. Sub-Templates from Files if any)
+	 *
+	 * <code>
+	 * // [###MARKER###]											:: marker with no escapes
+	 * // [###MARKER|{escapes}] 									:: marker with escapes (one or many of): |bool |int |dec[1-4]{1} |num |htmid |jsvar |slug |substr[0-9]{1,5} |subtxt[0-9]{1,5} |lower |upper |ucfirst |ucwords |trim |url |json |js |html |css |nl2br |syntaxhtml
+	 * // [@@@SUB-TEMPLATE:path/to/tpl.htm@@@] 				:: sub-template with relative path to template
+	 * // [@@@SUB-TEMPLATE:?path/to/tpl.htm@@@] 				:: sub-template with relative path to template, optional, if exists
+	 * // [@@@SUB-TEMPLATE:!etc/path/to/tpl.htm!@@@] 		:: sub-template with relative path to framework, using exact this path
+	 * // [@@@SUB-TEMPLATE:?!if-exists/path/to/tpl.htm!@@@] 	:: sub-template with relative path to framework, using exact this path, optional, if exists
+	 * // [@@@SUB-TEMPLATE:{tpl}|{escape}@@@] 				:: sub-template (using any kind of path from above), apply escape (any of): |syntax |syntaxhtml |html |js |js-tpl-encode
+	 * // [@@@SUB-TEMPLATE:%variable%@@@] 					:: variable sub-template ; must be defined in $y_arr_vars['@SUB-TEMPLATES@'] array as key (variable) => value (path)
+	 * // [%%%IF:TEST-VARIABLE:@==|@!=|@<=|@<|@>=|@>|==|!=|<=|<|>=|>|!%|%|!?|?|^~|^*|&~|&*|$~|$*{string/number/a|list|with|elements/###MARKER###};%%%] conditional IF part, display when condition is matched [%%%ELSE:TEST-VARIABLE%%%] conditional ELSE part, display otherwise (optional) [%%%/IF:TEST-VARIABLE%%%]
+	 * // [%%%LOOP:ARR-VARIABLE%%%] [###ARR-VARIABLE.ID|int###]. [###ARR-VARIABLE.NAME|html###] [%%%/LOOP:ARR-VARIABLE%%%]
+	 * // [%%%COMMENT%%%] This is a comment in template that will not be displayed [%%%/COMMENT%%%]
+	 * // And some special characters:
+	 * //		[%%%|SB-L%%%] ensures a LEFT SQUARE BRACKET [
+	 * //		[%%%|SB-R%%%] ensures a RIGHT SQUARE BRACKET ]
+	 * //		[%%%|SPACE%%%] ensures a SPACE
+	 * //		[%%%|T%%%] ensures a TAB \t
+	 * //		[%%%|N%%%] ensures a LINE FEED \n
+	 * //		[%%%|R%%%] ensures a CARRIAGE RETURN \r
+	 *
+	 * SmartMarkersTemplating::render_file_template(
+	 * 		'views/my-template.mtpl.htm',
+	 * 		[
+	 * 			'MARKER' 				=> 'something ...',
+	 * 			'TEST-VARIABLE' 		=> 'another thing !',
+	 * 			'ARR-VARIABLE' 		=> [
+	 * 				[ 'id' => 1, 'name' => 'One' ],
+	 * 				[ 'id' => 2, 'name' => 'Two' ],
+	 * 				[ 'id' => 3, 'name' => 'Three' ]
+	 * 			]
+	 * 		]
+	 * );
+	 * </code>
 	 *
 	 * @param 	STRING 		$y_file_path 					:: The relative path to the file Markers-TPL (partial text/html + markers + *sub-templates*) ; if sub-templates are used, they will use the base path from this (main template) file ; Ex: views/my-template.inc.htm ; (partial text/html + markers) ; Ex (file content): '<span>[###MARKER1###]<br>[###MARKER2###], ...</span>'
 	 * @param 	ARRAY 		$y_arr_vars 					:: The associative array with the template variables ; mapping the array keys to template markers is case insensitive ; Ex: [ 'MARKER1' => 'Value1', 'marker2' => 'Value2', ..., 'MarkerN' => 100 ]
@@ -935,7 +969,7 @@ final class SmartMarkersTemplating {
 	// do replacements (and escapings) for one marker ; a marker can contain: A-Z 0-9 _ - (and the dot . which is reserved as array level separator)
 	/* {{{SYNC-MARKER-ALL-TEST-SEQUENCES}}}
 	<!-- INFO: The VALID Escaping and Transformers for a Marker are all below ; If other escaping sequences are used the Marker will not be detected and replaced ... -->
-	<!-- Valid Escapings and Transformers: |bool |int |dec[1-4]{1} |num |htmid |jsvar |slug |substr[0-9]{1,5} |subtxt[0-9]{1,5} |lower |upper |ucfirst |ucwords |trim |url |json |js |html |css |nl2br -->
+	<!-- Valid Escapings and Transformers: |bool |int |dec[1-4]{1} |num |htmid |jsvar |slug |substr[0-9]{1,5} |subtxt[0-9]{1,5} |lower |upper |ucfirst |ucwords |trim |url |json |js |html |css |nl2br |syntaxhtml -->
 	[###MARKER###]
 	[###MARKER|bool###]
 	[###MARKER|int###]
@@ -1844,15 +1878,6 @@ final class SmartMarkersTemplating {
 	/*
 	 * Inject marker sub-templates
 	 * Limits: max 3 levels: template -> sub-template -> sub-sub-template ; max 127 cycles overall: template + sub-templates + sub-sub-templates)
-	 *
-	 * <code>
-	 * // [@@@SUB-TEMPLATE:path/to/tpl.htm@@@] :: relative to template
-	 * // [@@@SUB-TEMPLATE:?path/to/tpl.htm@@@] :: relative to template, optional, if exists
-	 * // [@@@SUB-TEMPLATE:!etc/path/to/tpl.htm!@@@] :: using exact this path
-	 * // [@@@SUB-TEMPLATE:?!if-exists/path/to/tpl.htm!@@@] :: using exact this path, optional, if exists
-	 * // [@@@SUB-TEMPLATE:{tpl}|{escapes}@@@] :: apply escapes: |syntax, |syntaxhtml, |html, |js, |js-tpl-encode
-	 * // [@@@SUB-TEMPLATE:%variable%@@@] :: works only with $y_arr_vars_sub_templates mappings
-	 * </code>
 	 *
 	 * @throws			Smart::raise_error()
 	 *

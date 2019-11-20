@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20191119
  *
  */
 final class TestUnitMySQLi {
@@ -92,7 +92,7 @@ final class TestUnitMySQLi {
 		if(\SmartMysqliDb::check_if_table_exists('_test_unit_db_server_tests') == 1) {
 			\SmartMysqliDb::write_data('DROP TABLE `_test_unit_db_server_tests`');
 		} //end if
-		\SmartMysqliDb::write_data('CREATE TABLE `_test_unit_db_server_tests` ( `id` int AUTO_INCREMENT, `variable` varchar(100) COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 DEFAULT NULL, `comments` mediumtext CHARACTER SET utf8 NOT NULL DEFAULT \'\', PRIMARY KEY (`id`), UNIQUE (`variable`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
+		\SmartMysqliDb::write_data('CREATE TABLE `_test_unit_db_server_tests` ( `id` int AUTO_INCREMENT, `variable` varchar(100) COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 DEFAULT NULL, `comments` mediumtext CHARACTER SET utf8 NOT NULL DEFAULT \'\', `a_null_column` text NULL, PRIMARY KEY (`id`), UNIQUE (`variable`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
 		//--
 
 		//--
@@ -194,13 +194,23 @@ final class TestUnitMySQLi {
 		//--
 
 		//--
-		$quer_str = 'SELECT `comments` FROM `_test_unit_db_server_tests` WHERE (`variable` = ?) LIMIT 1 OFFSET 0';
+		$quer_str = 'SELECT `comments`, `a_null_column` FROM `_test_unit_db_server_tests` WHERE (`variable` = ?) LIMIT 1 OFFSET 0';
 		//--
 		if((string)$err == '') {
 			$tests[] = 'Read [ Non-Associative + Param Query ? ]';
 			$data = \SmartMysqliDb::read_data($quer_str, array($variable));
 			if((string)\trim($data[0]) !== (string)$comments) {
 				$err = 'Read / Non-Associative Test #1 Failed, should return `'.$comments.'` but returned `'.$data[0].'`';
+			} //end if
+			if((string)$err == '') {
+				if(!\array_key_exists('1', (array)$data)) {
+					$err = 'Read / Non-Associative Test #1 Failed by testing null field column';
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				if($data[1] !== null) {
+					$err = 'Read / Non-Associative Test #1 Failed by testing null field column value';
+				} //end if
 			} //end if
 		} //end if
 		if((string)$err == '') {
@@ -218,6 +228,16 @@ final class TestUnitMySQLi {
 			if((string)\trim($data['comments']) !== (string)$comments) {
 				$err = 'Read / Associative / One-Row Test Failed, should return `'.$comments.'` but returned `'.$data['comments'].'`';
 			} //end if
+			if((string)$err == '') {
+				if(!\array_key_exists('a_null_column', (array)$data)) {
+					$err = 'Read / Associative / One-Row Test Failed by testing null field column';
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				if($data['a_null_column'] !== null) {
+					$err = 'Read / Associative / One-Row Test Failed by testing null field column value';
+				} //end if
+			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
@@ -225,6 +245,21 @@ final class TestUnitMySQLi {
 			$data = \SmartMysqliDb::read_adata($quer_str, [ $variable ]);
 			if((string)\trim($data[0]['comments']) !== (string)$comments) {
 				$err = 'Read / Associative / Multi-Rows Test Failed, should return `'.$comments.'` but returned `'.$data[0]['comments'].'`';
+			} //end if
+			if((string)$err == '') {
+				if(!\array_key_exists('0', (array)$data)) {
+					$err = 'Read / Associative / Multi-Rows Test Failed by testing 1st line';
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				if(!\array_key_exists('a_null_column', (array)$data[0])) {
+					$err = 'Read / Associative / Multi-Rows Test Failed by testing null field column';
+				} //end if
+			} //end if
+			if((string)$err == '') {
+				if($data[0]['a_null_column'] !== null) {
+					$err = 'Read / Associative / Multi-Rows Test Failed by testing null field column value';
+				} //end if
 			} //end if
 		} //end if
 		//--

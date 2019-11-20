@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20191119
  *
  */
 final class TestUnitMongoDB {
@@ -382,7 +382,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->count(
 				'myTestCollection',
-				[ 'name' => [ '$ne' => 'Test:'.$comments ] ] // filter (update all except these)
+				[ 'name' => [ '$ne' => 'Test:'.$comments ] ] // filter
 			);
 			if($result != 10) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 10 but is: '.\print_r($result,1);
@@ -396,7 +396,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->count(
 				'myTestCollection',
-				[ 'name' => [ '$eq' => 'Test:'.$comments ] ] // filter (update all except these)
+				[ 'name' => [ '$eq' => 'Test:'.$comments ] ] // filter
 			);
 			if($result != 1) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 1 but is: '.\print_r($result,1);
@@ -410,7 +410,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->count(
 				'myTestCollection',
-				[ 'name' => [ '$eq' => 'Test:!' ] ] // filter (update all except these)
+				[ 'name' => [ '$eq' => 'Test:!' ] ] // filter
 			);
 			if($result !== 0) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of integer should be 0 but is: '.\print_r($result,1);
@@ -424,7 +424,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->findone(
 				'myTestCollection',
-				[ 'cost' => 7 ], // filter (update all except these)
+				[ 'cost' => 7 ], // find filter
 				[ // projection
 					'id' => 1,
 					'name' => 1,
@@ -446,7 +446,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->find(
 				'myTestCollection',
-				[ 'cost' => 7 ], // filter (update all except these)
+				[ 'cost' => 7 ], // filter
 				[ // projection
 					'id',
 					'cost'
@@ -468,7 +468,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->find(
 				'myTestCollection',
-				[ 'cost' => 7 ], // filter (update all except these)
+				[ 'cost' => 7 ], // filter
 				[], // no projection
 				[
 					'limit' => 1
@@ -486,7 +486,7 @@ final class TestUnitMongoDB {
 			$tests[] = (string) $tst;
 			$result = $mongo->find(
 				'myTestCollection',
-				[ 'cost' => [ '$gt' => 5 ] ], // filter (update all except these)
+				[ 'cost' => [ '$gt' => 5 ] ], // filter
 				[ // projection
 					'id' => 1,
 					'name' => 1,
