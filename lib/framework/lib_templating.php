@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // 		-_INDEX_- 			The current array index: 1..arraysize ; Available *ONLY* in LOOP
 // 		_-ITERATOR-_		The current array iterator: 0..(arraysize-1) ; Available also in LOOP / IF
 // 		_-VAL-_				The current loop value ; Available also in LOOP / IF
-// 		_-KEY-_				The current loop key ; Available *ONLY* for associative arrays ; Available also in LOOP / IF
+// 		_-KEY-_				The current loop key ; Available also in LOOP / IF
 // Thus, this limitation must be compensated from the design of input variables.
 //===== TECHNICAL REFERENCE:
 // Because the recursion patterns are un-predictable, as a template can be rendered in other template in controllers or libs,
@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20191119
+ * @version 	v.20191122
  * @package 	@Core:TemplatingEngine
  *
  */
@@ -1617,6 +1617,7 @@ final class SmartMarkersTemplating {
 								$tmp_arr_context = array(); // init
 								$tmp_arr_context[(string)$bind_var_key.'.'.'_-MAXCOUNT-_'] = (string) $mxcnt;
 								$tmp_arr_context[(string)$bind_var_key.'.'.'_-ITERATOR-_'] = (string) $j;
+								$tmp_arr_context[(string)$bind_var_key.'.'.'_-KEY-_'] = (string) $j;
 								if(is_array($y_arr_vars[(string)$bind_var_key][$j])) {
 									$tmp_arr_context[(string)$bind_var_key.'.'.'_-VAL-_'] = (array) $y_arr_vars[(string)$bind_var_key][$j];
 									foreach($y_arr_vars[(string)$bind_var_key][$j] as $key => $val) { // expects associative array
@@ -1665,6 +1666,11 @@ final class SmartMarkersTemplating {
 							$mks_line = (string) self::replace_marker(
 								(string) $mks_line,
 								(string) $bind_var_key.'.'.'_-ITERATOR-_',
+								(string) $j
+							);
+							$mks_line = (string) self::replace_marker(
+								(string) $mks_line,
+								(string) $bind_var_key.'.'.'_-KEY-_',
 								(string) $j
 							);
 							if(is_array($y_arr_vars[(string)$bind_var_key][$j]) AND (Smart::array_type_test($y_arr_vars[(string)$bind_var_key][$j]) === 2)) {

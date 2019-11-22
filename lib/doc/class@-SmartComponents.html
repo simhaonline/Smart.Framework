@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191118 -->
+<!-- Template: Smart.Framework@Documentor v.20191122 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartComponents       final class \ SmartComponents    {   } ::    Class: SmartComponents - provides various components for Smart.Framework     Located">
-	<meta name="keywords" content="smartcomponents, final, class, smartcomponents, class, -, provides, various, components, for, smart.framework, located, at, lib core lib smart components.php, package, application viewcomponents, namespace, name, version, v, depends, classes, smart, smartutils, smartfilesystem, smarttexttranslations, usage, static, object, class  method, this, only, methods, summary, public, function, http message badrequest, y message, y html message">
+	<meta name="description" content="\SmartComponents        final class \ SmartComponents    {   } ::    Class: SmartComponents - provides various components for Smart.Framework">
+	<meta name="keywords" content="smartcomponents, final, class, smartcomponents, class, -, provides, various, components, for, smart.framework, language, php, located, at, lib core lib smart components.php, package, application viewcomponents, namespace, name, version, v, depends, classes, smart, smartutils, smartfilesystem, smarttexttranslations, usage, static, object, class  method, this, only, methods, summary, public, function, http message badrequest, y message, y html message">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartComponents">
 	<title>PHP Documentation for: \SmartComponents</title>
 	<!-- CSS and Fonts -->
@@ -458,9 +458,9 @@
 	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191109 -->
+<!-- class r.20191122 -->
 <!-- Styles -->
-<!-- styles r.20191118 -->
+<!-- styles r.20191122 -->
 <style type="text/css">
 .doc-package {
 	color: #3F51B5;
@@ -481,6 +481,9 @@
 .doc-method-name {
 	color: #111111;
 }
+.doc-method-sub-name {
+	color: #555555;
+}
 .doc-method-special-name {
 	color: #003399;
 }
@@ -497,6 +500,9 @@
 .doc-implements {
 	color: #72C100;
 }
+.doc-language {
+	color: #92981b;
+}
 .doc-extends,
 .doc-type-class {
 	color: #20639E;
@@ -512,6 +518,9 @@
 .doc-reimplemented,
 .doc-reuses {
 	color: #99AABB;
+}
+.doc-throws {
+	color: #FF0000;
 }
 .doc-header {
 	color: #3F51B5;
@@ -572,6 +581,88 @@ div.doc-summary {
 	border: 1px solid #CCCCCC;
 }
 </style>
+<style type="text/css">
+/*
+// css/atelier-sulphurpool-dark.css
+// HighlightJs: v.9.13.1
+*/
+
+/* modified by unixman - changed color for comment */
+/* Base16 Atelier Sulphurpool Dark - Theme */
+/* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/sulphurpool) */
+/* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
+
+/* Atelier-Sulphurpool Comment */
+.hljs-comment {
+	color: #777777;
+}
+.hljs-quote {
+	color: #898ea4;
+}
+
+/* Atelier-Sulphurpool Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: #c94922;
+}
+
+/* Atelier-Sulphurpool Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+	color: #c76b29;
+}
+
+/* Atelier-Sulphurpool Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+	color: #ac9739;
+}
+
+/* Atelier-Sulphurpool Blue */
+.hljs-title,
+.hljs-section {
+	color: #3d8fd1;
+}
+
+/* Atelier-Sulphurpool Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #6679cc;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	background: #202746;
+	color: #979db4;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+
+/* END */
+
+</style>
 <!-- Headings -->
 <h1 title="PHP class: `\SmartComponents` @ PHP Namespace: `\`" id="Class--Summary-">
 	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartComponents</span><br>
@@ -586,6 +677,7 @@ div.doc-summary {
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
+		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
 		<li><span class="doc-located"><b>Located at:</b> lib/core/lib_smart_components.php</span></li>
 		<li><span class="doc-package"><b>Package:</b> Application:ViewComponents</span></li>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
@@ -604,7 +696,7 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191109 -->
+<!-- methods r.20191122 -->
 <!-- Skip Internal-Priv Method: `app_error_message()` --><!-- Skip Internal-Priv Method: `http_status_message()` --><!-- Skip Internal-Priv Method: `http_error_message()` --><div class="doc-container" id="Method--http_message_400_badrequest">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>http_message_400_badrequest</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_message` Parameter is REQUIRED">$y_message</span></b></span>, 
@@ -612,6 +704,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -627,6 +721,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--http_message_403_forbidden">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>http_message_403_forbidden</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_message` Parameter is REQUIRED">$y_message</span></b></span>, 
@@ -634,6 +730,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -649,6 +747,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--http_message_429_toomanyrequests">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>http_message_429_toomanyrequests</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_message` Parameter is REQUIRED">$y_message</span></b></span>, 
@@ -656,6 +756,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -671,6 +773,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--http_message_502_badgateway">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>http_message_502_badgateway</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_message` Parameter is REQUIRED">$y_message</span></b></span>, 
@@ -678,6 +782,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -693,6 +799,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--http_message_504_gatewaytimeout">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>http_message_504_gatewaytimeout</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_message` Parameter is REQUIRED">$y_message</span></b></span>, 
@@ -700,6 +808,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -715,6 +825,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--operation_notice">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>operation_notice</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_html` Parameter is REQUIRED">$y_html</span></b></span>, 
@@ -722,6 +834,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -737,6 +851,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--operation_warn">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>operation_warn</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_html` Parameter is REQUIRED">$y_html</span></b></span>, 
@@ -744,6 +860,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -759,12 +877,16 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><!-- Skip Internal-Priv Method: `get_filetype_highlightsyntax()` --><!-- Skip Internal-Priv Method: `js_code_highlightsyntax()` --><!-- Skip Internal-Priv Method: `app_powered_info()` --><div class="doc-container" id="Method--set_app_template_conform_metavars">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>set_app_template_conform_metavars</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span class="doc-param-optional" title="`$arr_data` Parameter is OPTIONAL, with the Default Value: array()">$arr_data</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -781,28 +903,20 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><!-- Skip Internal-Priv Method: `get_imgdesc_by_bw_id()` --><!-- Skip Internal-Priv Method: `get_imgdesc_by_os_id()` -->
 <!-- Properties -->
-<br>
-<div class="doc-container" id="Properties--Summary-">
-	<h2 class="doc-header">Properties summary</h2>
-</div>
-<!-- properties r.20191109 -->
 
 <!-- Constants -->
-<br>
-<div class="doc-container" id="Constants--Summary-">
-	<h2 class="doc-header">Constants summary</h2>
-</div>
-<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191109 -->
+<!-- summary r.20191122 -->
 <script>
-// summary r.20191109
+// summary r.20191122
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -822,68 +936,86 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* Class \SmartComponents # Documentation Index *</option>
+		<option value="" selected>* PHP Class \SmartComponents # Documentation Index *</option>
 		<optgroup label="Class \SmartComponents">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
 						
+			
 						
+			
 						
+			
 									<option value="Method--http_message_400_badrequest">Method: http_message_400_badrequest()</option>
+			
 			
 									<option value="Method--http_message_401_unauthorized">Method: http_message_401_unauthorized()</option>
 			
+			
 									<option value="Method--http_message_403_forbidden">Method: http_message_403_forbidden()</option>
+			
 			
 									<option value="Method--http_message_404_notfound">Method: http_message_404_notfound()</option>
 			
+			
 									<option value="Method--http_message_429_toomanyrequests">Method: http_message_429_toomanyrequests()</option>
+			
 			
 									<option value="Method--http_message_500_internalerror">Method: http_message_500_internalerror()</option>
 			
+			
 									<option value="Method--http_message_502_badgateway">Method: http_message_502_badgateway()</option>
+			
 			
 									<option value="Method--http_message_503_serviceunavailable">Method: http_message_503_serviceunavailable()</option>
 			
+			
 									<option value="Method--http_message_504_gatewaytimeout">Method: http_message_504_gatewaytimeout()</option>
+			
 			
 									<option value="Method--operation_question">Method: operation_question()</option>
 			
+			
 									<option value="Method--operation_notice">Method: operation_notice()</option>
+			
 			
 									<option value="Method--operation_ok">Method: operation_ok()</option>
 			
+			
 									<option value="Method--operation_warn">Method: operation_warn()</option>
+			
 			
 									<option value="Method--operation_error">Method: operation_error()</option>
 			
+			
 						
+			
 						
+			
 						
+			
 									<option value="Method--set_app_template_conform_metavars">Method: set_app_template_conform_metavars()</option>
+			
 			
 									<option value="Method--render_app_template">Method: render_app_template()</option>
 			
+			
 						
+			
 						
 			
-		</optgroup>
-		<optgroup label="Class Properties">
-			<option value="Properties--Summary-">*** Properties summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Constants">
-			<option value="Constants--Summary-">*** Constants summary ***</option>
-			
-		</optgroup>
+		
+		
 		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:10 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:40 +0000</small>
 <hr>
 <br>
 <!-- # -->

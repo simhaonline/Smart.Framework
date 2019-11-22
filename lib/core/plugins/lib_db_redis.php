@@ -47,11 +47,11 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * </code>
  *
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
- * @hint 		for the rest of supported methods take a look at the SmartRedisDb class magic __call method ; Visit: http://redis.io/commands ; Most of the base methods are implemented.
+ * @hints 		for the rest of supported methods take a look at the SmartRedisDb class magic __call method ; Visit: http://redis.io/commands ; Most of the base methods are implemented.
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.20191119
+ * @version 	v.20191121
  * @package 	Plugins:Database:Redis
  *
  */

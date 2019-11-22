@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191118 -->
+<!-- Template: Smart.Framework@Documentor v.20191122 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartRedisDb       final class \ SmartRedisDb    {   } -&gt;    Class: SmartRedisDb - provides a Client for Redis (Data Structure / Caching) Server. By">
-	<meta name="keywords" content="smartredisdb, final, class, smartredisdb, -, class, -, provides, a, client, for, redis, data, structure, caching, server., by, default, this, will, just, log, the, errors., tested, and, stable, on, versions, x, x, x, x, x, x, located, at, lib core plugins lib db redis.php, package, plugins database redis, namespace, name, version, v, depends, extensions, php, sockets, classes, smart, usage, dynamic, object, new, class   - method, only, methods, summary, public, function, construct, string, host, integer, port, integer, db, password, timeout, float, y debug exch slowtime, y description, default, boolean, y fatal err, false, param, host, server, host, ex, port, port, db, db, number, min, max, databases, if, redis.conf, specify, more, than, can, be, larger">
+	<meta name="description" content="\SmartRedisDb        final class \ SmartRedisDb    {   } -&gt;    Class: SmartRedisDb - provides a Client for Redis (Data Structure / Caching) Server. By">
+	<meta name="keywords" content="smartredisdb, final, class, smartredisdb, -, class, -, provides, a, client, for, redis, data, structure, caching, server., by, default, this, will, just, log, the, errors., tested, and, stable, on, versions, x, x, x, x, x, x, language, php, located, at, lib core plugins lib db redis.php, package, plugins database redis, namespace, name, version, v, depends, extensions, sockets, classes, smart, hints, rest, of, supported, methods, take, look, at, magic, call, method, visit, http   redis.io commands, most, base, are, implemented., usage, dynamic, object, new, class   - method, only, summary, public, function, construct, string, host, integer, port, integer, db, password, timeout, float, y debug exch slowtime, y description, default, boolean, y fatal err, false, param, string, host, server">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartRedisDb">
 	<title>PHP Documentation for: \SmartRedisDb</title>
 	<!-- CSS and Fonts -->
@@ -458,9 +458,9 @@
 	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191109 -->
+<!-- class r.20191122 -->
 <!-- Styles -->
-<!-- styles r.20191118 -->
+<!-- styles r.20191122 -->
 <style type="text/css">
 .doc-package {
 	color: #3F51B5;
@@ -481,6 +481,9 @@
 .doc-method-name {
 	color: #111111;
 }
+.doc-method-sub-name {
+	color: #555555;
+}
 .doc-method-special-name {
 	color: #003399;
 }
@@ -497,6 +500,9 @@
 .doc-implements {
 	color: #72C100;
 }
+.doc-language {
+	color: #92981b;
+}
 .doc-extends,
 .doc-type-class {
 	color: #20639E;
@@ -512,6 +518,9 @@
 .doc-reimplemented,
 .doc-reuses {
 	color: #99AABB;
+}
+.doc-throws {
+	color: #FF0000;
 }
 .doc-header {
 	color: #3F51B5;
@@ -572,6 +581,88 @@ div.doc-summary {
 	border: 1px solid #CCCCCC;
 }
 </style>
+<style type="text/css">
+/*
+// css/atelier-sulphurpool-dark.css
+// HighlightJs: v.9.13.1
+*/
+
+/* modified by unixman - changed color for comment */
+/* Base16 Atelier Sulphurpool Dark - Theme */
+/* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/sulphurpool) */
+/* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
+
+/* Atelier-Sulphurpool Comment */
+.hljs-comment {
+	color: #777777;
+}
+.hljs-quote {
+	color: #898ea4;
+}
+
+/* Atelier-Sulphurpool Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: #c94922;
+}
+
+/* Atelier-Sulphurpool Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+	color: #c76b29;
+}
+
+/* Atelier-Sulphurpool Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+	color: #ac9739;
+}
+
+/* Atelier-Sulphurpool Blue */
+.hljs-title,
+.hljs-section {
+	color: #3d8fd1;
+}
+
+/* Atelier-Sulphurpool Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #6679cc;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	background: #202746;
+	color: #979db4;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+
+/* END */
+
+</style>
 <!-- Headings -->
 <h1 title="PHP class: `\SmartRedisDb` @ PHP Namespace: `\`" id="Class--Summary-">
 	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartRedisDb</span><br>
@@ -588,14 +679,15 @@ Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x</
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
+		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
 		<li><span class="doc-located"><b>Located at:</b> lib/core/plugins/lib_db_redis.php</span></li>
 		<li><span class="doc-package"><b>Package:</b> Plugins:Database:Redis</span></li>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartRedisDb</span></li>
 		
-		<li><b>Version:</b> v.20191111</li>
+		<li><b>Version:</b> v.20191121</li>
 		<li><b>Depends:</b> extensions:  PHP Sockets ; classes: Smart</li>
-		
+		<li><b>Hints:</b> for  the rest of supported methods take a look at the SmartRedisDb class magic __call method ; Visit: http://redis.io/commands ; Most of the base methods are implemented.</li>
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
 		
 		
@@ -606,7 +698,7 @@ Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x</
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191109 -->
+<!-- methods r.20191122 -->
 <div class="doc-container" id="Method--__construct">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__construct</b></span>&nbsp;(
 				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$host` Parameter is REQUIRED">$host</span></b></span>, 
@@ -622,15 +714,17 @@ Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x</
 	)&nbsp;{}&nbsp;<span title="* Special* Method"><b>@</b></span>&nbsp;
 	
 	
-			<div class="doc-method-ret-params">@param: {$host} The Redis Server Host (Ex: '127.0.0.1')<br>
-@param: {$port} The Redis Server Port (Ex: 6379)<br>
-@param: {$db} The Redis Server DB Number (Ex: 0) ; By Default min: 0 and max: 15 (16 databases) ; if redis.conf specify more than 16, can be a larger number, min: 0 ; max 255<br>
-@param: {$password} *OPTIONAL* The Redis Auth Password ; Default is Empty String<br>
-@param: {$y_debug_exch_slowtime} *OPTIONAL* The Debug Slow Time in microseconds to Record slow Queries<br>
-@param: {$y_description} *OPTIONAL* The description of the Redis connection to make easy debug and log errors<br>
-@param: {$y_fatal_err} *OPTIONAL* If Errors are Fatal or Not ... ; Set this parameter to TRUE if you want to Raise a fatal error on Redis errors ; otherwise default is FALSE and will ignore Redis errors but just log them as warnings (this is the wanted behaviour on a production server ...)</div>
+			<div class="doc-method-ret-params">@param: {STRING} $host: The Redis Server Host (Ex: '127.0.0.1')<br>
+@param: {INTEGER} $port: The Redis Server Port (Ex: 6379)<br>
+@param: {INTEGER+} $db: The Redis Server DB Number (Ex: 0) ; By Default min: 0 and max: 15 (16 databases) ; if redis.conf specify more than 16, can be a larger number, min: 0 ; max 255<br>
+@param: {STRING} $password: *OPTIONAL* The Redis Auth Password ; Default is Empty String<br>
+@param: {FLOAT} $y_debug_exch_slowtime: *OPTIONAL* The Debug Slow Time in microseconds to Record slow Queries<br>
+@param: {STRING} $y_description: *OPTIONAL* The description of the Redis connection to make easy debug and log errors<br>
+@param: {BOOLEAN} $y_fatal_err: *OPTIONAL* If Errors are Fatal or Not ... ; Set this parameter to TRUE if you want to Raise a fatal error on Redis errors ; otherwise default is FALSE and will ignore Redis errors but just log them as warnings (this is the wanted behaviour on a production server ...)</div>
 	
 			<div class="doc-method-comments">Object Constructor</div>
+	
+	
 	
 </div><!-- Skip Internal-Priv Method: `setRecvBuf()` --><div class="doc-container" id="Method--__call">
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-special-name"><b>__call</b></span>&nbsp;(
@@ -638,27 +732,270 @@ Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x</
 	)&nbsp;{}&nbsp;<span title="* Special * Magic * Method"><b>@</b></span>&nbsp;
 	
 	
-			<div class="doc-method-ret-params">@method: {@return: STRING} ping()										# Ping the Redis server ; returns: the test answer which is always PONG<br>
-@method: {@return: MIXED} get(STRING $key) 							# Get a Redis Key ; returns: the value of key as STRING or NULL if not exists<br>
-@method: {@return: MIXED} set(STRING $key, STRING $value)				# Set a Redis Key ; returns: OK on success or NULL on failure<br>
-@method: {@return: MIXED} append(STRING $key, STRING $value)			# Append a Redis Key ; returns: OK on success or NULL on failure<br>
-@method: {@return: INT} del(STRING $key) 							# Delete a Redis Key ; returns: 0 if not successful or 1 if successful<br>
-@method: {@return: INT} expire(STRING $key, INT $expireinseconds)	# Set the Expiration time for a Redis Key in seconds ; returns: 0 if not successful or 1 if successful<br>
-@method: {@return: INT} expireat(STRING $key, INT $expirationtime)	# Set the Expiration time for a Redis Key at unixtimestamp ; returns: 0 if not successful or 1 if successful<br>
-@method: {@return: INT} persist(STRING $key)						# Remove the existing expiration timeout on a key ; returns: 0 if not successful or 1 if successful<br>
-@method: {@return: INT} exists(STRING $key)							# Determine if a key exists ; returns 1 if the key exists or 0 if does not exists<br>
-@method: {@return: STRING} type(STRING $key) 							# Returns the string representation of the type of the value stored at key (string, list, set, zset, hash and stream)<br>
-@method: {@return: INT} strlen(STRING $key) 						# Returns the length of the string value stored at key. An error is returned when key holds a non-string value<br>
-@method: {@return: MIXED} keys(STRING $pattern)						# Get all keys matching a pattern ; return array of all keys matching a pattern or null if no key<br>
-@method: {@return: MIXED} randomkey()									# Return a random key from the currently selected database ; if no key exist, returns NULL<br>
-@method: {@return: STRING} rename(STRING $key, STRING $newkey) 		# Renames key to newkey. It returns an error when key does not exist. If newkey already exists it is overwritten<br>
-@method: {@return: STRING} info()										# Returns information and statistics about the server<br>
-@method: {@return: INT} dbsize()									# Return the number of keys in the currently-selected database<br>
-@method: {@return: STRING} flushdb()									# Remove all keys from the selected database ; This command never fails ; Returns OK</div>
 	
 			<div class="doc-method-comments">This is the Magic Method (Call) that maps the PHP class extra methods to Redis methods.<br>
 It have variadic parameters mapped to Redis sub-calls.<br>
 The most common Redis methods are documented here. For the rest of the Redis methods see: https://redis.io/commands</div>
+	
+	
+			<br>
+					<div class="doc-container" id="Method-Sub--ping">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>ping</b></span>&nbsp;(
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+						<div class="doc-method-ret-params">
+							@return {STRING}<br>
+			
+			
+			</div>
+			
+							<div class="doc-method-comments">Ping the Redis server ; returns: the test answer which is always PONG</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--get">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>get</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;MIXED
+						<div class="doc-method-ret-params">
+							@return {MIXED}<br>
+			
+							@param {STRING} $key<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Get a Redis Key ; returns: the value of key as STRING or NULL if not exists</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--set">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>set</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>, 
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$value` Parameter is REQUIRED">$value</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;MIXED
+						<div class="doc-method-ret-params">
+							@return {MIXED}<br>
+			
+							@param {STRING} $key<br>
+							@param {STRING} $value<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Set a Redis Key ; returns: OK on success or NULL on failure</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--append">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>append</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>, 
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$value` Parameter is REQUIRED">$value</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;MIXED
+						<div class="doc-method-ret-params">
+							@return {MIXED}<br>
+			
+							@param {STRING} $key<br>
+							@param {STRING} $value<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Append a Redis Key ; returns: OK on success or NULL on failure</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--del">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>del</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INT
+						<div class="doc-method-ret-params">
+							@return {INT}<br>
+			
+							@param {STRING} $key<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Delete a Redis Key ; returns: 0 if not successful or 1 if successful</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--expire">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>expire</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>, 
+							<i>INT</i>&nbsp;<span class="doc-param-name"><b><span title="`$expireinseconds` Parameter is REQUIRED">$expireinseconds</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INT
+						<div class="doc-method-ret-params">
+							@return {INT}<br>
+			
+							@param {STRING} $key<br>
+							@param {INT} $expireinseconds<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Set the Expiration time for a Redis Key in seconds ; returns: 0 if not successful or 1 if successful</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--expireat">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>expireat</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>, 
+							<i>INT</i>&nbsp;<span class="doc-param-name"><b><span title="`$expirationtime` Parameter is REQUIRED">$expirationtime</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INT
+						<div class="doc-method-ret-params">
+							@return {INT}<br>
+			
+							@param {STRING} $key<br>
+							@param {INT} $expirationtime<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Set the Expiration time for a Redis Key at unixtimestamp ; returns: 0 if not successful or 1 if successful</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--persist">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>persist</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INT
+						<div class="doc-method-ret-params">
+							@return {INT}<br>
+			
+							@param {STRING} $key<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Remove the existing expiration timeout on a key ; returns: 0 if not successful or 1 if successful</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--exists">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>exists</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INT
+						<div class="doc-method-ret-params">
+							@return {INT}<br>
+			
+							@param {STRING} $key<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Determine if a key exists ; returns 1 if the key exists or 0 if does not exists</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--type">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>type</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+						<div class="doc-method-ret-params">
+							@return {STRING}<br>
+			
+							@param {STRING} $key<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Returns the string representation of the type of the value stored at key (string, list, set, zset, hash and stream)</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--strlen">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>strlen</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INT
+						<div class="doc-method-ret-params">
+							@return {INT}<br>
+			
+							@param {STRING} $key<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Returns the length of the string value stored at key. An error is returned when key holds a non-string value</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--keys">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>keys</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$pattern` Parameter is REQUIRED">$pattern</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;MIXED
+						<div class="doc-method-ret-params">
+							@return {MIXED}<br>
+			
+							@param {STRING} $pattern<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Get all keys matching a pattern ; return array of all keys matching a pattern or null if no key</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--randomkey">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>randomkey</b></span>&nbsp;(
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;MIXED
+						<div class="doc-method-ret-params">
+							@return {MIXED}<br>
+			
+			
+			</div>
+			
+							<div class="doc-method-comments">Return a random key from the currently selected database ; if no key exist, returns NULL</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--rename">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>rename</b></span>&nbsp;(
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$key` Parameter is REQUIRED">$key</span></b></span>, 
+							<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$newkey` Parameter is REQUIRED">$newkey</span></b></span>
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+						<div class="doc-method-ret-params">
+							@return {STRING}<br>
+			
+							@param {STRING} $key<br>
+							@param {STRING} $newkey<br>
+			
+			</div>
+			
+							<div class="doc-method-comments">Renames key to newkey. It returns an error when key does not exist. If newkey already exists it is overwritten</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--info">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>info</b></span>&nbsp;(
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+						<div class="doc-method-ret-params">
+							@return {STRING}<br>
+			
+			
+			</div>
+			
+							<div class="doc-method-comments">Returns information and statistics about the server</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--dbsize">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>dbsize</b></span>&nbsp;(
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;INT
+						<div class="doc-method-ret-params">
+							@return {INT}<br>
+			
+			
+			</div>
+			
+							<div class="doc-method-comments">Return the number of keys in the currently-selected database</div>
+			
+			</div>
+					<div class="doc-container" id="Method-Sub--flushdb">
+			<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-sub-name"><b>flushdb</b></span>&nbsp;(
+			
+			)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+						<div class="doc-method-ret-params">
+							@return {STRING}<br>
+			
+			
+			</div>
+			
+							<div class="doc-method-comments">Remove all keys from the selected database ; This command never fails ; Returns OK</div>
+			
+			</div>
+		
+		
 	
 </div>
 <!-- Properties -->
@@ -666,31 +1003,26 @@ The most common Redis methods are documented here. For the rest of the Redis met
 <div class="doc-container" id="Properties--Summary-">
 	<h2 class="doc-header">Properties summary</h2>
 </div>
-<!-- properties r.20191109 -->
+<!-- properties r.20191122 -->
 <!-- Skip Internal-Priv Property: `$recvbuf` -->
 <!-- Constants -->
-<br>
-<div class="doc-container" id="Constants--Summary-">
-	<h2 class="doc-header">Constants summary</h2>
-</div>
-<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
 <div class="doc-container" id="SAMPLE--Code-">
-	<h2 class="doc-header">Sample Code</h2>
+	<h2 class="doc-header">Sample Code: PHP</h2>
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;Redis&nbsp;Client&nbsp;usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">$redis&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartRedisDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'localhost'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'6379'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">3</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;connects&nbsp;at&nbsp;the&nbsp;database&nbsp;no.&nbsp;3<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list1:key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value2'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$value1&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;if(</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">exists</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">))&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFFFFF">$value2&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list5:key7'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;}&nbsp;</span><span style="color: #999999">//end&nbsp;if<br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br><br></span><span style="color: #999999">//&nbsp;Redis&nbsp;Client&nbsp;usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">$redis&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;new&nbsp;</span><span style="color: #FFFFFF">SmartRedisDb</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'localhost'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'6379'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #FFFFFF">3</span><span style="color: #FFCC00; font-weight: bold">);&nbsp;</span><span style="color: #999999">//&nbsp;connects&nbsp;at&nbsp;the&nbsp;database&nbsp;no.&nbsp;3<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">set</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list1:key1'</span><span style="color: #FFCC00; font-weight: bold">,&nbsp;</span><span style="color: #5F9CCE">'value2'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;</span><span style="color: #FFFFFF">$value1&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;if(</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">exists</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'key1'</span><span style="color: #FFCC00; font-weight: bold">))&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FFFFFF">$value2&nbsp;</span><span style="color: #FFCC00; font-weight: bold">=&nbsp;</span><span style="color: #FFFFFF">$redis</span><span style="color: #FFCC00; font-weight: bold">-&gt;</span><span style="color: #FFFFFF">get</span><span style="color: #FFCC00; font-weight: bold">(</span><span style="color: #5F9CCE">'list5:key7'</span><span style="color: #FFCC00; font-weight: bold">);<br>&nbsp;}&nbsp;</span><span style="color: #999999">//end&nbsp;if<br><br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191109 -->
+<!-- summary r.20191122 -->
 <script>
-// summary r.20191109
+// summary r.20191122
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -710,7 +1042,7 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* Class \SmartRedisDb # Documentation Index *</option>
+		<option value="" selected>* PHP Class \SmartRedisDb # Documentation Index *</option>
 		<optgroup label="Class \SmartRedisDb">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
@@ -718,20 +1050,39 @@ function smartHandleDocSelector(obj) {
 			<option value="Methods--Summary-">*** Methods summary ***</option>
 									<option value="Method--__construct">Method: __construct()</option>
 			
+			
 						
+			
 									<option value="Method--__call">Method: __call()</option>
+			
+									<option value="Method-Sub--ping">Method: ping()</option>
+						<option value="Method-Sub--get">Method: get()</option>
+						<option value="Method-Sub--set">Method: set()</option>
+						<option value="Method-Sub--append">Method: append()</option>
+						<option value="Method-Sub--del">Method: del()</option>
+						<option value="Method-Sub--expire">Method: expire()</option>
+						<option value="Method-Sub--expireat">Method: expireat()</option>
+						<option value="Method-Sub--persist">Method: persist()</option>
+						<option value="Method-Sub--exists">Method: exists()</option>
+						<option value="Method-Sub--type">Method: type()</option>
+						<option value="Method-Sub--strlen">Method: strlen()</option>
+						<option value="Method-Sub--keys">Method: keys()</option>
+						<option value="Method-Sub--randomkey">Method: randomkey()</option>
+						<option value="Method-Sub--rename">Method: rename()</option>
+						<option value="Method-Sub--info">Method: info()</option>
+						<option value="Method-Sub--dbsize">Method: dbsize()</option>
+						<option value="Method-Sub--flushdb">Method: flushdb()</option>
+			
 			
 			
 		</optgroup>
-		<optgroup label="Class Properties">
+				<optgroup label="Class Properties">
 			<option value="Properties--Summary-">*** Properties summary ***</option>
 						
 			
 		</optgroup>
-		<optgroup label="Class Constants">
-			<option value="Constants--Summary-">*** Constants summary ***</option>
-			
-		</optgroup>
+		
+		
 				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
@@ -740,7 +1091,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:41 +0000</small>
 <hr>
 <br>
 <!-- # -->

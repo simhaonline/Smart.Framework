@@ -5,10 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartTextTranslator        final class \ SmartTextTranslator    {   } -&gt;    Class Smart Text Translator Object     Language: PHP  Located at:">
-	<meta name="keywords" content="smarttexttranslator, final, class, smarttexttranslator, -, smart, text, translator, object, language, php, located, at, lib framework lib translate.php, package, core translations, namespace, name, version, v, depends, classes, smarttexttranslations, hints, do, not, use, this, directly, by, creating, a, new, instance, you, should, obtain, as, smarttexttranslations  gettranslator  area, subarea, for, current, language, or, subarea, custom language, custom, usage, dynamic, object, new, class   - method">
-	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartTextTranslator">
-	<title>PHP Documentation for: \SmartTextTranslator</title>
+	<meta name="description" content="Test_Browser_Compliance        static class Test_Browser_Compliance  {  } .    CLASS :: Browser Test Compliance This class provide a Browser Compliance">
+	<meta name="keywords" content="test browser compliance, static, class, ., browser, test, compliance, this, provide, a, check, for, javascript, language, located, at, lib js framework smart-framework.js, browser check.js, package, sf.javascript browser, name, usage, test browser compliance.method, version, methods, summary, public, function, checkismobiledevice, boolean, hint, is, very, basic, but, effective, and, quick, detection, return, will, return, true, if, seems, to, be, mobile, devices, false, not, detect, the, on, device., checkcookies">
+	<meta name="summary" content="Smart.Framework : Javascript Documentation:">
+	<title>JS Documentation for: Test_Browser_Compliance</title>
 	<!-- CSS and Fonts -->
 		<!-- skip fonts -->
 	
@@ -449,11 +449,11 @@
 </head>
 <body>
 <nav class="ux-navbar">
-	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
+	<div id="logo"><span>&#9776; </span>Smart.Framework : Javascript Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
 		<ul class="menu">
-		<li><a href="index.html#Package--CoreTranslations-" title="return to Index">return to Index</a></li>
+		<li><a href="index.html#Package--SfJavascriptBrowser-" title="return to Index">return to Index</a></li>
 	</ul>
 	
 </nav>
@@ -664,29 +664,26 @@ div.doc-summary {
 
 </style>
 <!-- Headings -->
-<h1 title="PHP class: `\SmartTextTranslator` @ PHP Namespace: `\`" id="Class--Summary-">
-	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartTextTranslator</span><br>
-	
-	
+<h1 title="PHP class: `Test_Browser_Compliance` @ JavaScript" id="Class--Summary-">
+	<span class="doc-modifiers">static</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-name">Test_Browser_Compliance</span><br>
 	{
-	
-	}&nbsp;-&gt;
+	}&nbsp;.
 </h1>
 <!-- Description -->
-<div class="doc-comments">Class Smart Text Translator Object</div><br>
+<div class="doc-comments">CLASS :: Browser Test Compliance<br>
+This class provide a Browser Compliance Check for JavaScript</div><br>
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
-		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
-		<li><span class="doc-located"><b>Located at:</b> lib/framework/lib_translate.php</span></li>
-		<li><span class="doc-package"><b>Package:</b> @Core:Translations</span></li>
-		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
-		<li><span class="doc-name"><b>Class Name:</b> SmartTextTranslator</span></li>
+		<li><span class="doc-language"><b>Language:</b> Javascript<span></li>
+		<li><span class="doc-located"><b>Located at:</b> lib/js/framework/smart-framework.js; browser_check.js</span></li>
+		<li><span class="doc-package"><b>Package:</b> Sf.Javascript:Browser</span></li>
+		<li><span class="doc-name"><b>Class Name:</b> Test_Browser_Compliance</span></li>
+		<li><b>Usage:</b> Test_Browser_Compliance.method();</li>
 		
-		<li><b>Version:</b> v.20191101</li>
-		<li><b>Depends:</b> classes:  Smart, SmartTextTranslations</li>
-		<li><b>Hints:</b> Do  not use this object directly by creating a new instance ; You should obtain this object as SmartTextTranslations::getTranslator($area, $subarea) for current language or as SmartTextTranslations::getTranslator($area, $subarea, $custom_language) for a custom language</li>
-		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
+		
+		
+		<li><b>Version:</b> 20191122</li>
 		
 		
 	</ul>
@@ -697,26 +694,47 @@ div.doc-summary {
 	<h2 class="doc-header">Methods summary</h2>
 </div>
 <!-- methods r.20191122 -->
-<!-- Skip Internal-Priv Method: `__construct()` --><!-- Skip Internal-Priv Method: `getinfo()` --><div class="doc-container" id="Method--text">
-	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>text</b></span>&nbsp;(
-				<span class="doc-param-name"><b><span title="`$y_textkey` Parameter is REQUIRED">$y_textkey</span></b></span>, 
-			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fallback_language` Parameter is OPTIONAL, with the Default Value: &quot;@default&quot;">$y_fallback_language</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;@default&quot;</b></span>, 
-			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_ignore_empty` Parameter is OPTIONAL, with the Default Value: false">$y_ignore_empty</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+<div class="doc-container" id="Method--checkIsMobileDevice">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>checkIsMobileDevice</b></span>&nbsp;(
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{Boolean}
+	<div class="doc-method-ret-params">
+			@hint: This is a very basic but effective and quick detection<br>
 	
 	
-	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+			@return: {Boolean} will return TRUE if Browser seems to be a Mobile Devices, FALSE if not<br>
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} the Translated Text or Fallback Text to Default Language</div>
-	
-			<div class="doc-method-comments">Get the Text Translation</div>
 	
 	
+	
+	</div>
+			<div class="doc-method-comments">Detect if the Browser is on a mobile device.</div>
+	
+	
+</div><div class="doc-container" id="Method--checkCookies">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>checkCookies</b></span>&nbsp;(
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{Boolean}
+	<div class="doc-method-ret-params">
+			@hint: If a browser show that does not supports Cookies may be a situation like user disabled cookies in the browser<br>
+	
+	
+			@return: {Boolean} will return TRUE if Browser supports Cookies, FALSE if not<br>
+	
+	
+	
+	
+	
+	</div>
+			<div class="doc-method-comments">Detect if a Browser support Cookies or have the Cookies enabled.</div>
+	
+			<pre><b>Sample Code: JavaScript</b><br><code class="hljs javascript"> <span class="hljs-keyword">if</span>(!Test_Browser_Compliance.checkCookies()) {
+ 		alert(<span class="hljs-string">'NOTICE: The COOKIES are required to access this URL ...\nMake sure your browser allow this URL to set cookies.\nFollow this steps:\n\n1. ENABLE cookies in your browser from PREFERENCES (OPTIONS) / PRIVACY  Panel. \n2. RELOAD / REFRESH this URL. \n3. IF YOU STILL SEE THIS MESSAGE after following the above steps it means that your browser may have a problem or is outdated. In this case try to use another browser like:\n* FireFox 10 or later\n* Chrome 12 or later\n* Safari 5 or later\n* Internet Explorer 9 or later (or other browser that support cookies).'</span>);
+ }</code></pre>
 	
 </div>
 <!-- Properties -->
-
-<!-- Constants -->
 
 <!-- Sample Code -->
 
@@ -744,29 +762,25 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* PHP Class \SmartTextTranslator # Documentation Index *</option>
-		<optgroup label="Class \SmartTextTranslator">
+		<option value="" selected>* Javascript Class Test_Browser_Compliance # Documentation Index *</option>
+		<optgroup label="Class Test_Browser_Compliance">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-						
+									<option value="Method--checkIsMobileDevice">Method: checkIsMobileDevice()</option>
 			
-						
-			
-									<option value="Method--text">Method: text()</option>
-			
+									<option value="Method--checkCookies">Method: checkCookies()</option>
 			
 			
 		</optgroup>
-		
 		
 		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:38 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:44:04 +0000</small>
 <hr>
 <br>
 <!-- # -->

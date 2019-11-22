@@ -46,11 +46,11 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * </code>
  *
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
- * @hint 		Important: MongoDB database specifies that max BSON document size is 16 megabytes and supports no more than 100 levels of nesting, thus this limit cannot be exceeded from PHP side when creating new mongodb documents: https://docs.mongodb.com/manual/reference/limits/ ; To store documents larger than the maximum size, MongoDB provides the GridFS API
+ * @hints 		Important: MongoDB database specifies that max BSON document size is 16 megabytes and supports no more than 100 levels of nesting, thus this limit cannot be exceeded from PHP side when creating new mongodb documents: https://docs.mongodb.com/manual/reference/limits/ ; To store documents larger than the maximum size, MongoDB provides the GridFS API
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20191119
+ * @version 	v.20191121
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error

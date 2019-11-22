@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191118 -->
+<!-- Template: Smart.Framework@Documentor v.20191122 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartInterfaceAdapterTextTranslations       interface \ SmartInterfaceAdapterTextTranslations    {   } ^::    Abstract Inteface Smart Adapter Text">
-	<meta name="keywords" content="smartinterfaceadaptertexttranslations, interface, smartinterfaceadaptertexttranslations, abstract, inteface, smart, adapter, text, translations, located, at, lib framework lib translate.php, package, development  core, namespace, name, version, v, internal-private, yes, methods, summary, public, static, function, gettranslationsfromsource, the lang, y area, y subarea, get, regional, translation, from, source, by, language, area, subarea, this, must, implement, a, parser., it, can, be, implemented, to, read, one, of, the, variety, sources, arrays, ini, yaml, xml, json, sqlite, postgresql, mysql, mongodb, gettext, ., return, an, associative, array, as, key, value, for, specific, set, gettranslationsversion, containing, latest, version">
+	<meta name="description" content="\SmartInterfaceAdapterTextTranslations        interface \ SmartInterfaceAdapterTextTranslations    {   } ^::    Abstract Inteface Smart Adapter Text">
+	<meta name="keywords" content="smartinterfaceadaptertexttranslations, interface, smartinterfaceadaptertexttranslations, abstract, inteface, smart, adapter, text, translations, language, php, located, at, lib framework lib translate.php, package, development  core, namespace, name, version, v, internal-private, yes, methods, summary, public, static, function, gettranslationsfromsource, the lang, y area, y subarea, get, regional, translation, from, source, by, language, area, subarea, this, must, implement, a, parser., it, can, be, implemented, to, read, one, of, the, variety, sources, arrays, ini, yaml, xml, json, sqlite, postgresql, mysql, mongodb, gettext, ., return, an, associative, array, as, key, value, for, specific, set, gettranslationsversion, containing">
 	<meta name="summary" content="Smart.Framework : PHP Documentation:">
 	<title>PHP Documentation for: \SmartInterfaceAdapterTextTranslations</title>
 	<!-- CSS and Fonts -->
@@ -458,9 +458,9 @@
 	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191109 -->
+<!-- class r.20191122 -->
 <!-- Styles -->
-<!-- styles r.20191118 -->
+<!-- styles r.20191122 -->
 <style type="text/css">
 .doc-package {
 	color: #3F51B5;
@@ -481,6 +481,9 @@
 .doc-method-name {
 	color: #111111;
 }
+.doc-method-sub-name {
+	color: #555555;
+}
 .doc-method-special-name {
 	color: #003399;
 }
@@ -497,6 +500,9 @@
 .doc-implements {
 	color: #72C100;
 }
+.doc-language {
+	color: #92981b;
+}
 .doc-extends,
 .doc-type-class {
 	color: #20639E;
@@ -512,6 +518,9 @@
 .doc-reimplemented,
 .doc-reuses {
 	color: #99AABB;
+}
+.doc-throws {
+	color: #FF0000;
 }
 .doc-header {
 	color: #3F51B5;
@@ -572,6 +581,88 @@ div.doc-summary {
 	border: 1px solid #CCCCCC;
 }
 </style>
+<style type="text/css">
+/*
+// css/atelier-sulphurpool-dark.css
+// HighlightJs: v.9.13.1
+*/
+
+/* modified by unixman - changed color for comment */
+/* Base16 Atelier Sulphurpool Dark - Theme */
+/* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/sulphurpool) */
+/* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
+
+/* Atelier-Sulphurpool Comment */
+.hljs-comment {
+	color: #777777;
+}
+.hljs-quote {
+	color: #898ea4;
+}
+
+/* Atelier-Sulphurpool Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: #c94922;
+}
+
+/* Atelier-Sulphurpool Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+	color: #c76b29;
+}
+
+/* Atelier-Sulphurpool Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+	color: #ac9739;
+}
+
+/* Atelier-Sulphurpool Blue */
+.hljs-title,
+.hljs-section {
+	color: #3d8fd1;
+}
+
+/* Atelier-Sulphurpool Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #6679cc;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	background: #202746;
+	color: #979db4;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+
+/* END */
+
+</style>
 <!-- Headings -->
 <h1 title="PHP interface: `\SmartInterfaceAdapterTextTranslations` @ PHP Namespace: `\`" id="Class--Summary-">
 	<span class="doc-modifiers"></span> <span class="doc-keyword"><i>interface</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartInterfaceAdapterTextTranslations</span><br>
@@ -586,6 +677,7 @@ div.doc-summary {
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
+		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
 		<li><span class="doc-located"><b>Located at:</b> lib/framework/lib_translate.php</span></li>
 		<li><span class="doc-package"><b>Package:</b> development:@Core</span></li>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
@@ -604,7 +696,7 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191109 -->
+<!-- methods r.20191122 -->
 <div class="doc-container" id="Method--getTranslationsFromSource">
 	<span class="doc-modifiers">abstract public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-abstract-name"><b>getTranslationsFromSource</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$the_lang` Parameter is REQUIRED">$the_lang</span></b></span>, 
@@ -621,6 +713,8 @@ This function must implement a Text Translations parser.<br>
 It can be implemented to read from one of the variety of sources: Arrays, INI, YAML, XML, JSON, SQLite, PostgreSQL, MySQL, MongoDB, GetText, ...<br>
 RETURN: an associative array as [key =&gt; value] for the specific translation set</div>
 	
+	
+	
 </div><div class="doc-container" id="Method--getTranslationsVersion">
 	<span class="doc-modifiers">abstract public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-abstract-name"><b>getTranslationsVersion</b></span>&nbsp;(
 		
@@ -634,6 +728,8 @@ This function must implement a way to get last version string to validate Text T
 If a version cannot be provided, must return (string) date('Y-m-d') and this way the texts persistent cache will be re-validated daily.<br>
 If a real version can be provided it is the best, so persistent cache would be re-validated just upon changes !<br>
 RETURN: a non-empty string the provides the latest version string of the current texts translations</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--setTranslationsKeyUsageCount">
 	<span class="doc-modifiers">abstract public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-abstract-name"><b>setTranslationsKeyUsageCount</b></span>&nbsp;(
@@ -653,28 +749,20 @@ This function will operate only in DEV mode (SMART_ERROR_HANDLER == 'dev') and a
 It can be implemented to write into one of the variety of sources: Text/CSV, Database, ...<br>
 RETURN: N/A</div>
 	
+	
+	
 </div>
 <!-- Properties -->
-<br>
-<div class="doc-container" id="Properties--Summary-">
-	<h2 class="doc-header">Properties summary</h2>
-</div>
-<!-- properties r.20191109 -->
 
 <!-- Constants -->
-<br>
-<div class="doc-container" id="Constants--Summary-">
-	<h2 class="doc-header">Constants summary</h2>
-</div>
-<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191109 -->
+<!-- summary r.20191122 -->
 <script>
-// summary r.20191109
+// summary r.20191122
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -694,7 +782,7 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* Interface \SmartInterfaceAdapterTextTranslations # Documentation Index *</option>
+		<option value="" selected>* PHP Interface \SmartInterfaceAdapterTextTranslations # Documentation Index *</option>
 		<optgroup label="Interface \SmartInterfaceAdapterTextTranslations">
 			<option value="Class--Summary-">***** Interface Definition *****</option>
 		</optgroup>
@@ -702,26 +790,23 @@ function smartHandleDocSelector(obj) {
 			<option value="Methods--Summary-">*** Methods summary ***</option>
 									<option value="Method--getTranslationsFromSource">Method: getTranslationsFromSource()</option>
 			
+			
 									<option value="Method--getTranslationsVersion">Method: getTranslationsVersion()</option>
+			
 			
 									<option value="Method--setTranslationsKeyUsageCount">Method: setTranslationsKeyUsageCount()</option>
 			
 			
-		</optgroup>
-		<optgroup label="Interface Properties">
-			<option value="Properties--Summary-">*** Properties summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Interface Constants">
-			<option value="Constants--Summary-">*** Constants summary ***</option>
-			
-		</optgroup>
+		
+		
 		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:09 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:38 +0000</small>
 <hr>
 <br>
 <!-- # -->

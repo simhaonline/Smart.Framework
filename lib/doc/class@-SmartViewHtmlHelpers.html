@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191118 -->
+<!-- Template: Smart.Framework@Documentor v.20191122 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartViewHtmlHelpers       final class \ SmartViewHtmlHelpers    {   } ::    Class: SmartViewHelpers - Easy to use HTML ViewHelper Components.">
-	<meta name="keywords" content="smartviewhtmlhelpers, final, class, smartviewhtmlhelpers, class, smartviewhelpers, -, easy, to, use, html, viewhelper, components., located, at, lib core plugins lib viewhelpers.php, package, plugins viewcomponents, namespace, name, version, v, depends, classes, smart, usage, static, object, class  method, this, provides, only, methods, summary, public, function, html js date field, string, y id, y var, date, yvalue, y text select, js-date, yjs mindate, yjs maxdate, array, y extra options, array, js-code, y js evcode, return, string, html, code, param, y id, page, id, for, field, unique, used, foor, javascript, y var, variable, name, or, empty, if, no, necessary, yvalue, date, formated, as, yyyy-mm-dd, y text select, the, text, title, select, date, yjs mindate, js, expression, min, date, new, date, yjs maxdate, max, date, y extra options, options, array width">
+	<meta name="description" content="\SmartViewHtmlHelpers        final class \ SmartViewHtmlHelpers    {   } ::    Class: SmartViewHelpers - Easy to use HTML ViewHelper Components.">
+	<meta name="keywords" content="smartviewhtmlhelpers, final, class, smartviewhtmlhelpers, class, smartviewhelpers, -, easy, to, use, html, viewhelper, components., language, php, located, at, lib core plugins lib viewhelpers.php, package, plugins viewcomponents, namespace, name, version, v, depends, classes, smart, usage, static, object, class  method, this, provides, only, methods, summary, public, function, html js date field, string, y id, y var, date, yvalue, y text select, js-date, yjs mindate, yjs maxdate, array, y extra options, array, js-code, y js evcode, return, string, html, code, param, y id, page, id, for, field, unique, used, foor, javascript, y var, variable, name, or, empty, if, no, necessary, date, yvalue, date, formated, as, yyyy-mm-dd, y text select, the, text, title, select, date, js-date, yjs mindate, js, expression, min, date, new, date, yjs maxdate, max">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartViewHtmlHelpers">
 	<title>PHP Documentation for: \SmartViewHtmlHelpers</title>
 	<!-- CSS and Fonts -->
@@ -458,9 +458,9 @@
 	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191109 -->
+<!-- class r.20191122 -->
 <!-- Styles -->
-<!-- styles r.20191118 -->
+<!-- styles r.20191122 -->
 <style type="text/css">
 .doc-package {
 	color: #3F51B5;
@@ -481,6 +481,9 @@
 .doc-method-name {
 	color: #111111;
 }
+.doc-method-sub-name {
+	color: #555555;
+}
 .doc-method-special-name {
 	color: #003399;
 }
@@ -497,6 +500,9 @@
 .doc-implements {
 	color: #72C100;
 }
+.doc-language {
+	color: #92981b;
+}
 .doc-extends,
 .doc-type-class {
 	color: #20639E;
@@ -512,6 +518,9 @@
 .doc-reimplemented,
 .doc-reuses {
 	color: #99AABB;
+}
+.doc-throws {
+	color: #FF0000;
 }
 .doc-header {
 	color: #3F51B5;
@@ -572,6 +581,88 @@ div.doc-summary {
 	border: 1px solid #CCCCCC;
 }
 </style>
+<style type="text/css">
+/*
+// css/atelier-sulphurpool-dark.css
+// HighlightJs: v.9.13.1
+*/
+
+/* modified by unixman - changed color for comment */
+/* Base16 Atelier Sulphurpool Dark - Theme */
+/* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/sulphurpool) */
+/* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
+
+/* Atelier-Sulphurpool Comment */
+.hljs-comment {
+	color: #777777;
+}
+.hljs-quote {
+	color: #898ea4;
+}
+
+/* Atelier-Sulphurpool Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: #c94922;
+}
+
+/* Atelier-Sulphurpool Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+	color: #c76b29;
+}
+
+/* Atelier-Sulphurpool Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+	color: #ac9739;
+}
+
+/* Atelier-Sulphurpool Blue */
+.hljs-title,
+.hljs-section {
+	color: #3d8fd1;
+}
+
+/* Atelier-Sulphurpool Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #6679cc;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	background: #202746;
+	color: #979db4;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+
+/* END */
+
+</style>
 <!-- Headings -->
 <h1 title="PHP class: `\SmartViewHtmlHelpers` @ PHP Namespace: `\`" id="Class--Summary-">
 	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartViewHtmlHelpers</span><br>
@@ -586,6 +677,7 @@ div.doc-summary {
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
+		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
 		<li><span class="doc-located"><b>Located at:</b> lib/core/plugins/lib_viewhelpers.php</span></li>
 		<li><span class="doc-package"><b>Package:</b> Plugins:ViewComponents</span></li>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
@@ -604,7 +696,7 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191109 -->
+<!-- methods r.20191122 -->
 <div class="doc-container" id="Method--html_js_date_field">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_date_field</b></span>&nbsp;(
 				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, 
@@ -620,17 +712,19 @@ div.doc-summary {
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
-@param: {$y_id} [HTML page ID for field (unique) ; used foor JavaScript]<br>
-@param: {$y_var} [HTML Variable Name or empty if no necessary]<br>
-@param: {$yvalue} [DATE, empty or formated as YYYY-MM-DD]<br>
-@param: {$y_text_select} [The text as title: 'Select Date']<br>
-@param: {$yjs_mindate} [JS Expression, Min Date] :: new Date(1937, 1 - 1, 1) or '-1y -1m -1d'<br>
-@param: {$yjs_maxdate} [JS Expression, Max Date] :: new Date(2037, 12 - 1, 31) or '1y 1m 1d'<br>
-@param: {$y_extra_options} [Options Array[width, ...] for for datePicker]<br>
-@param: {$y_js_evcode} [JS Code to execute on Select(date)]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]<br>
+@param: {STRING} $y_id: [HTML page ID for field (unique) ; used foor JavaScript]<br>
+@param: {STRING} $y_var: [HTML Variable Name or empty if no necessary]<br>
+@param: {DATE} $yvalue: [DATE, empty or formated as YYYY-MM-DD]<br>
+@param: {STRING} $y_text_select: [The text as title: 'Select Date']<br>
+@param: {JS-Date} $yjs_mindate: [JS Expression, Min Date] :: new Date(1937, 1 - 1, 1) or '-1y -1m -1d'<br>
+@param: {JS-Date} $yjs_maxdate: [JS Expression, Max Date] :: new Date(2037, 12 - 1, 31) or '1y 1m 1d'<br>
+@param: {ARRAY} $y_extra_options: [Options Array[width, ...] for for datePicker]<br>
+@param: {JS-Code} $y_js_evcode: [JS Code to execute on Select(date)]</div>
 	
 			<div class="doc-method-comments">Draws a HTML JS-UI Date Selector Field</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_js_time_field">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_time_field</b></span>&nbsp;(
@@ -651,21 +745,23 @@ div.doc-summary {
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
-@param: {$y_id} [HTML page ID for field (unique) ; used foor JavaScript]<br>
-@param: {$y_var} [HTML Variable Name]<br>
-@param: {$yvalue} [TIME, pre-definned value, formated as 24h HH:ii]<br>
-@param: {$y_text_select} [The text for 'Select Time']<br>
-@param: {$y_h_st} [Starting Time]<br>
-@param: {$y_h_end} [Ending Time]<br>
-@param: {$y_i_st} [Starting Minute]<br>
-@param: {$y_i_end} [Ending Minute]<br>
-@param: {$y_i_step} [Step of Minutes]<br>
-@param: {$y_rows} [Default is 2]<br>
-@param: {$y_extra_options} [Options Array[width, ...] for timePicker]<br>
-@param: {$y_js_evcode} [JS Code to execute on Select(time)]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]<br>
+@param: {STRING} $y_id: [HTML page ID for field (unique) ; used foor JavaScript]<br>
+@param: {STRING} $y_var: [HTML Variable Name]<br>
+@param: {HH:ii} $yvalue: [TIME, pre-definned value, formated as 24h HH:ii]<br>
+@param: {STRING} $y_text_select: [The text for 'Select Time']<br>
+@param: {0..22} $y_h_st: [Starting Time]<br>
+@param: {1..23} $y_h_end: [Ending Time]<br>
+@param: {0..58} $y_i_st: [Starting Minute]<br>
+@param: {1..59} $y_i_end: [Ending Minute]<br>
+@param: {1..30} $y_i_step: [Step of Minutes]<br>
+@param: {INTEGER} $y_rows: [Default is 2]<br>
+@param: {JS-Code} $y_extra_options: [Options Array[width, ...] for timePicker]<br>
+@param: {JS-Code} $y_js_evcode: [JS Code to execute on Select(time)]</div>
 	
 			<div class="doc-method-comments">Draws a HTML JS-UI Time Selector Field</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_select_list_single">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_select_list_single</b></span>&nbsp;(
@@ -684,19 +780,21 @@ div.doc-summary {
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
-@param: {$y_id} the HTML element ID<br>
-@param: {$y_selected_value} selected value of the list<br>
-@param: {$y_mode} 'form' = display form | 'list' = display list<br>
-@param: {$yarr_data} DATASET ROWS AS: ['id' =&gt; 'name', 'id2' =&gt; 'name2'] OR ['id', 'name', 'id2', 'name2']<br>
-@param: {$y_varname} as 'frm[test]'<br>
-@param: {$y_dimensions} dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')<br>
-@param: {$y_custom_js} custom js code (Ex: submit on change)<br>
-@param: {$y_raw} If Yes, the description values will not apply html special chars<br>
-@param: {$y_allowblank} If Yes, a blank value is allowed in list<br>
-@param: {$y_extrastyle} Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]<br>
+@param: {STRING} $y_id: the HTML element ID<br>
+@param: {STRING} $y_selected_value: selected value of the list<br>
+@param: {ENUM} $y_mode: 'form' = display form | 'list' = display list<br>
+@param: {ARRAY} $yarr_data: DATASET ROWS AS: ['id' =&gt; 'name', 'id2' =&gt; 'name2'] OR ['id', 'name', 'id2', 'name2']<br>
+@param: {STRING} $y_varname: as 'frm[test]'<br>
+@param: {INTEGER} $y_dimensions: dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')<br>
+@param: {CODE} $y_custom_js: custom js code (Ex: submit on change)<br>
+@param: {YES/NO} $y_raw: If Yes, the description values will not apply html special chars<br>
+@param: {YES/NO} $y_allowblank: If Yes, a blank value is allowed in list<br>
+@param: {CSS/#JS-UI#} $y_extrastyle: Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'</div>
 	
 			<div class="doc-method-comments">Manage a SINGLE Selection HTML List Element for Edit or Display data :: v.20141212</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_select_list_multi">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_select_list_multi</b></span>&nbsp;(
@@ -715,19 +813,21 @@ div.doc-summary {
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
-@param: {$y_id} the HTML element ID<br>
-@param: {$y_selected_value} selected value(s) data as ARRAY or STRING list as: '&lt;id1&gt;,&lt;id2&gt;'<br>
-@param: {$y_mode} 'form' = display form | checkboxes | 'list' = display list<br>
-@param: {$yarr_data} DATASET ROWS AS: ['id' =&gt; 'name', 'id2' =&gt; 'name2'] OR ['id', 'name', 'id2', 'name2']<br>
-@param: {$y_varname} as 'frm[test][]'<br>
-@param: {$y_draw} list | checkboxes<br>
-@param: {$y_sync_values} If Yes, sync select similar values used (curently works only for checkboxes)<br>
-@param: {$y_dimensions} dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')<br>
-@param: {$y_custom_js} custom js code (Ex: submit on change)<br>
-@param: {$y_extrastyle} Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]<br>
+@param: {STRING} $y_id: the HTML element ID<br>
+@param: {STRING} $y_selected_value: selected value(s) data as ARRAY or STRING list as: '&lt;id1&gt;,&lt;id2&gt;'<br>
+@param: {ENUM} $y_mode: 'form' = display form | checkboxes | 'list' = display list<br>
+@param: {ARRAY} $yarr_data: DATASET ROWS AS: ['id' =&gt; 'name', 'id2' =&gt; 'name2'] OR ['id', 'name', 'id2', 'name2']<br>
+@param: {STRING} $y_varname: as 'frm[test][]'<br>
+@param: {ENUM} $y_draw: list | checkboxes<br>
+@param: {YES/NO} $y_sync_values: If Yes, sync select similar values used (curently works only for checkboxes)<br>
+@param: {INTEGER} $y_dimensions: dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')<br>
+@param: {CODE} $y_custom_js: custom js code (Ex: submit on change)<br>
+@param: {SPECIAL} $y_extrastyle: Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'</div>
 	
 			<div class="doc-method-comments">Generate a MULTIPLE (many selections) View/Edit List to manage ID Selections</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_navpager">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_navpager</b></span>&nbsp;(
@@ -744,10 +844,12 @@ div.doc-summary {
 	
 	
 			<div class="doc-method-ret-params">@hints: $link  = 'some-script.php?ofs={{{offset}}}';<br>
-@return: {STRING} : [HTML Code]</div>
+@return: {STRING} [HTML Code]</div>
 	
 			<div class="doc-method-comments">Creates a navigation pager<br>
 The style of the pager can be set overall in: $configs['nav']['pager'], and can be: arrows or numeric</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_js_limited_text_area">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_limited_text_area</b></span>&nbsp;(
@@ -768,6 +870,8 @@ The style of the pager can be set overall in: $configs['nav']['pager'], and can 
 	
 			<div class="doc-method-comments">Function: Draw Limited Text Area</div>
 	
+	
+	
 </div><div class="doc-container" id="Method--html_selector_true_false">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_selector_true_false</b></span>&nbsp;(
 				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, 
@@ -777,12 +881,14 @@ The style of the pager can be set overall in: $configs['nav']['pager'], and can 
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
-@param: {$y_var} HTML Var Name<br>
-@param: {$y_val} '' | '0' | '1'</div>
+			<div class="doc-method-ret-params">@return: {STRING} HTML Code<br>
+@param: {STRING} $y_var: HTML Var Name<br>
+@param: {STRING} $y_val: '' | '0' | '1'</div>
 	
 			<div class="doc-method-comments">HTML Selector: TRUE / FALSE<br>
 Display True=1/False=0 Selector</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_selector_yes_no">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_selector_yes_no</b></span>&nbsp;(
@@ -793,12 +899,14 @@ Display True=1/False=0 Selector</div>
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
-@param: {$y_var} HTML Var Name<br>
-@param: {$y_val} '' | 'y' | 'n'</div>
+			<div class="doc-method-ret-params">@return: {STRING} HTML Code<br>
+@param: {STRING} $y_var: HTML Var Name<br>
+@param: {STRING} $y_val: '' | 'y' | 'n'</div>
 	
 			<div class="doc-method-comments">HTML Selector: YES / NO<br>
 Display Yes=y/No=n Selector</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_hidden_formvars">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_hidden_formvars</b></span>&nbsp;(
@@ -809,11 +917,13 @@ Display Yes=y/No=n Selector</div>
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : HTML Code<br>
-@param: {$y_var} ARRAY or STRING :: PHP variable<br>
-@param: {$y_html_var} HTML Variable Name</div>
+			<div class="doc-method-ret-params">@return: {STRING} HTML Code<br>
+@param: {MIXED} $y_var: ARRAY or STRING :: PHP variable<br>
+@param: {STRING} $y_html_var: HTML Variable Name</div>
 	
 			<div class="doc-method-comments">Function: HTML Form Vars</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_js_preview_iframe">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_preview_iframe</b></span>&nbsp;(
@@ -830,6 +940,8 @@ Display Yes=y/No=n Selector</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--html_jsload_editarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_jsload_editarea</b></span>&nbsp;(
 		
@@ -837,10 +949,12 @@ Display Yes=y/No=n Selector</div>
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]</div>
 	
 			<div class="doc-method-comments">Return the HTML / Javascript code to Load the required Javascripts for the Code Editor (Edit Area).<br>
 Should be called just once, before calling one or many ::html_js_editarea()</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_js_editarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_editarea</b></span>&nbsp;(
@@ -857,18 +971,20 @@ Should be called just once, before calling one or many ::html_js_editarea()</div
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
-@param: {$yid} [Unique HTML Page Element ID]<br>
-@param: {$yvarname} [HTML Form Variable Name]<br>
-@param: {$yvalue} [HTML Data]<br>
-@param: {$y_mode} [Parser mode: css, javascript, json, html, xml, yaml, markdown, sql, php, text]<br>
-@param: {$y_editable} [Editable: true / Not Editable: false]<br>
-@param: {$ywidth} [Area Width: (Example) 720px or 75%]<br>
-@param: {$yheight} [Area Height (Example) 480px or 50%]<br>
-@param: {$y_line_numbers} [Display line numbers: true ; Hide line numbersL false]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]<br>
+@param: {STRING} $yid: [Unique HTML Page Element ID]<br>
+@param: {STRING} $yvarname: [HTML Form Variable Name]<br>
+@param: {STRING} $yvalue: [HTML Data]<br>
+@param: {ENUM} $y_mode: [Parser mode: css, javascript, json, html, xml, yaml, markdown, sql, php, text]<br>
+@param: {BOOLEAN} $y_editable: [Editable: true / Not Editable: false]<br>
+@param: {INTEGER+} $ywidth: [Area Width: (Example) 720px or 75%]<br>
+@param: {INTEGER+} $yheight: [Area Height (Example) 480px or 50%]<br>
+@param: {BOOLEAN} $y_line_numbers: [Display line numbers: true ; Hide line numbersL false]</div>
 	
 			<div class="doc-method-comments">Return the HTML / Javascript code with a special TextArea with a built-in javascript Code Editor (Edit Area).<br>
 Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL, PHP, Text (default).</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_jsload_htmlarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_jsload_htmlarea</b></span>&nbsp;(
@@ -878,9 +994,11 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]</div>
 	
 			<div class="doc-method-comments">Outputs the HTML Code to init the HTML (wysiwyg) Editor</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_js_htmlarea">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_htmlarea</b></span>&nbsp;(
@@ -899,19 +1017,21 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [HTML Code]<br>
-@param: {$yid} [Unique HTML Page Element ID]<br>
-@param: {$yvarname} [HTML Form Variable Name]<br>
-@param: {$yvalue} [HTML Data]<br>
-@param: {$ywidth} [Area Width: (Example) 720px or 75%]<br>
-@param: {$yheight} [Area Height (Example) 480px or 50%]<br>
-@param: {$y_allow_scripts} [Allow JavaScripts]<br>
-@param: {$y_allow_script_src} [Allow JavaScript SRC attribute]<br>
-@param: {$y_cleaner_deftags} ['' or array of HTML Tags to be allowed / dissalowed by the cleaner ... see HTML Cleaner Documentation]<br>
-@param: {$y_cleaner_mode} [HTML Cleaner mode for defined tags: ALLOW / DISALLOW]<br>
-@param: {$y_toolbar_ctrls} [Toolbar Controls: ... see CLEditor Documentation]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [HTML Code]<br>
+@param: {STRING} $yid: [Unique HTML Page Element ID]<br>
+@param: {STRING} $yvarname: [HTML Form Variable Name]<br>
+@param: {STRING} $yvalue: [HTML Data]<br>
+@param: {INTEGER+} $ywidth: [Area Width: (Example) 720px or 75%]<br>
+@param: {INTEGER+} $yheight: [Area Height (Example) 480px or 50%]<br>
+@param: {BOOLEAN} $y_allow_scripts: [Allow JavaScripts]<br>
+@param: {BOOLEAN} $y_allow_script_src: [Allow JavaScript SRC attribute]<br>
+@param: {MIXED} $y_cleaner_deftags: ['' or array of HTML Tags to be allowed / dissalowed by the cleaner ... see HTML Cleaner Documentation]<br>
+@param: {ENUM} $y_cleaner_mode: [HTML Cleaner mode for defined tags: ALLOW / DISALLOW]<br>
+@param: {STRING} $y_toolbar_ctrls: [Toolbar Controls: ... see CLEditor Documentation]</div>
 	
 			<div class="doc-method-comments">Draw a TextArea with a built-in javascript HTML (wysiwyg) Editor</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--html_js_htmlarea_fm_callback">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>html_js_htmlarea_fm_callback</b></span>&nbsp;(
@@ -922,11 +1042,13 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [JS Code]<br>
-@param: {$yurl} The Callback URL<br>
-@param: {$is_popup} Set to True if Popup (incl. Modal)</div>
+			<div class="doc-method-ret-params">@return: {STRING} [JS Code]<br>
+@param: {STRING} $yurl: The Callback URL<br>
+@param: {BOOLEAN} $is_popup: Set to True if Popup (incl. Modal)</div>
 	
 			<div class="doc-method-comments">Returns HTML / JS code for CallBack Mapping for HTML (wysiwyg) Editor - FileBrowser Integration</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--js_code_wnd_redirect">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_wnd_redirect</b></span>&nbsp;(
@@ -937,11 +1059,13 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
-@param: {$y_redir_url} URL to redirect page to<br>
-@param: {$delay} *optional* ; if &gt; 0 will use Delayed Redirect, otherwise Instant Redirect</div>
+			<div class="doc-method-ret-params">@return: {STRING} JS Code<br>
+@param: {STRING} $y_redir_url: URL to redirect page to<br>
+@param: {INTEGER} $delay: *optional* ; if &gt; 0 will use Delayed Redirect, otherwise Instant Redirect</div>
 	
 			<div class="doc-method-comments">Redirect to URL</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--js_code_wnd_refresh_parent">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_wnd_refresh_parent</b></span>&nbsp;(
@@ -951,10 +1075,12 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
-@param: {$y_redir_url} *optional* URL to redirect by refresh page to</div>
+			<div class="doc-method-ret-params">@return: {STRING} JS Code<br>
+@param: {STRING} $y_redir_url: *optional* URL to redirect by refresh page to</div>
 	
 			<div class="doc-method-comments">Refresh Parent</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--js_code_wnd_close_modal_popup">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_wnd_close_modal_popup</b></span>&nbsp;(
@@ -964,10 +1090,12 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
-@param: {$y_delay} *optional* ; if &gt; 0 will use Delayed Close, otherwise Instant Close</div>
+			<div class="doc-method-ret-params">@return: {STRING} JS Code<br>
+@param: {INTEGER} $y_delay: *optional* ; if &gt; 0 will use Delayed Close, otherwise Instant Close</div>
 	
 			<div class="doc-method-comments">(Delayed) close Pop-Up / Modal</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--js_code_notification_add">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_notification_add</b></span>&nbsp;(
@@ -982,16 +1110,18 @@ Supported syntax parsers: CSS, Javascript, Json, HTML, XML, YAML, Markdown, SQL,
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
-@param: {$y_title} The Growl Title<br>
-@param: {$y_text} The Growl Text<br>
-@param: {$y_image} The Growl Image (can be empty)<br>
-@param: {$y_time} *optional* ; default is 5000 (5 seconds) ; The Display Time in microseconds<br>
-@param: {$y_sticky} *optional* ; default is 'false' ; If set to 'false' will be not sticky ; if set to 'true' will be sticky<br>
-@param: {$y_class} *optional* the CSS class</div>
+			<div class="doc-method-ret-params">@return: {STRING} JS Code<br>
+@param: {STRING} $y_title: The Growl Title<br>
+@param: {STRING} $y_text: The Growl Text<br>
+@param: {STRING} $y_image: The Growl Image (can be empty)<br>
+@param: {INTEGER+} $y_time: *optional* ; default is 5000 (5 seconds) ; The Display Time in microseconds<br>
+@param: {ENUM} $y_sticky: *optional* ; default is 'false' ; If set to 'false' will be not sticky ; if set to 'true' will be sticky<br>
+@param: {STRING} $y_class: *optional* the CSS class</div>
 	
 			<div class="doc-method-comments">Returns the JS Code to add (raise) a Growl Notification (sticky or not)<br>
 Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/script&gt; html tag or can be used for a JS action (ex: onClick=&quot;...&quot;)</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--js_code_notification_remove">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_code_notification_remove</b></span>&nbsp;(
@@ -1001,11 +1131,13 @@ Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/scr
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : JS Code<br>
-@param: {$y_id} *optional* the Growl ID ; default is '' ; if non empty will remove just the Growl that match the ID ; otherwise will remove ALL Growl instances</div>
+			<div class="doc-method-ret-params">@return: {STRING} JS Code<br>
+@param: {STRING} $y_id: *optional* the Growl ID ; default is '' ; if non empty will remove just the Growl that match the ID ; otherwise will remove ALL Growl instances</div>
 	
 			<div class="doc-method-comments">Returns the JS Code to remove a Growl Notification (sticky or not)<br>
 Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/script&gt; html tag or can be used for a JS action (ex: onClick=&quot;...&quot;)</div>
+	
+	
 	
 </div><!-- Skip Internal-Priv Method: `js_code_ui_confirm_dialog()` --><!-- Skip Internal-Priv Method: `js_code_ui_alert_dialog()` --><div class="doc-container" id="Method--js_ajax_submit_html_form">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_ajax_submit_html_form</b></span>&nbsp;(
@@ -1018,11 +1150,13 @@ Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/scr
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [javascript code]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [javascript code]</div>
 	
 			<div class="doc-method-comments">Return the JS Code to Submit a HTML Form by Ajax<br>
 Expects a standardized (json) reply created with SmartViewHtmlHelpers::js_ajax_replyto_html_form()<br>
 Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/script&gt; html tag or can be used for a JS action (ex: onClick=&quot;...&quot;)</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--js_ajax_replyto_html_form">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>js_ajax_replyto_html_form</b></span>&nbsp;(
@@ -1038,7 +1172,7 @@ Must be enclosed in a &lt;script type=&quot;text/javascript&quot;&gt;...&lt;/scr
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : [JSON data string]</div>
+			<div class="doc-method-ret-params">@return: {STRING} [JSON data string]</div>
 	
 			<div class="doc-method-comments">Reply back to the HTML Form submited by Ajax by returning a Json answer<br>
 Creates a standardized (json) reply for SmartViewHtmlHelpers::js_ajax_submit_html_form()<br>
@@ -1046,28 +1180,20 @@ NOTICE:<br>
 - if OK: and redirect URL have been provided, the replace div is not handled<br>
 - if ERROR: no replace div or redirect is handled</div>
 	
+	
+	
 </div><!-- Skip Internal-Priv Method: `js_code_confirm_form_submit()` --><!-- Skip Internal-Priv Method: `js_code_init_away_page()` --><!-- Skip Internal-Priv Method: `js_code_init_select_autocomplete_single()` --><!-- Skip Internal-Priv Method: `js_code_init_select_autocomplete_multi()` --><!-- Skip Internal-Priv Method: `js_code_uitabs_init()` --><!-- Skip Internal-Priv Method: `js_code_uitabs_activate()` -->
 <!-- Properties -->
-<br>
-<div class="doc-container" id="Properties--Summary-">
-	<h2 class="doc-header">Properties summary</h2>
-</div>
-<!-- properties r.20191109 -->
 
 <!-- Constants -->
-<br>
-<div class="doc-container" id="Constants--Summary-">
-	<h2 class="doc-header">Constants summary</h2>
-</div>
-<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191109 -->
+<!-- summary r.20191122 -->
 <script>
-// summary r.20191109
+// summary r.20191122
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -1087,7 +1213,7 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* Class \SmartViewHtmlHelpers # Documentation Index *</option>
+		<option value="" selected>* PHP Class \SmartViewHtmlHelpers # Documentation Index *</option>
 		<optgroup label="Class \SmartViewHtmlHelpers">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
@@ -1095,72 +1221,96 @@ function smartHandleDocSelector(obj) {
 			<option value="Methods--Summary-">*** Methods summary ***</option>
 									<option value="Method--html_js_date_field">Method: html_js_date_field()</option>
 			
+			
 									<option value="Method--html_js_time_field">Method: html_js_time_field()</option>
+			
 			
 									<option value="Method--html_select_list_single">Method: html_select_list_single()</option>
 			
+			
 									<option value="Method--html_select_list_multi">Method: html_select_list_multi()</option>
+			
 			
 									<option value="Method--html_navpager">Method: html_navpager()</option>
 			
+			
 									<option value="Method--html_js_limited_text_area">Method: html_js_limited_text_area()</option>
+			
 			
 									<option value="Method--html_selector_true_false">Method: html_selector_true_false()</option>
 			
+			
 									<option value="Method--html_selector_yes_no">Method: html_selector_yes_no()</option>
+			
 			
 									<option value="Method--html_hidden_formvars">Method: html_hidden_formvars()</option>
 			
+			
 									<option value="Method--html_js_preview_iframe">Method: html_js_preview_iframe()</option>
+			
 			
 									<option value="Method--html_jsload_editarea">Method: html_jsload_editarea()</option>
 			
+			
 									<option value="Method--html_js_editarea">Method: html_js_editarea()</option>
+			
 			
 									<option value="Method--html_jsload_htmlarea">Method: html_jsload_htmlarea()</option>
 			
+			
 									<option value="Method--html_js_htmlarea">Method: html_js_htmlarea()</option>
+			
 			
 									<option value="Method--html_js_htmlarea_fm_callback">Method: html_js_htmlarea_fm_callback()</option>
 			
+			
 									<option value="Method--js_code_wnd_redirect">Method: js_code_wnd_redirect()</option>
+			
 			
 									<option value="Method--js_code_wnd_refresh_parent">Method: js_code_wnd_refresh_parent()</option>
 			
+			
 									<option value="Method--js_code_wnd_close_modal_popup">Method: js_code_wnd_close_modal_popup()</option>
+			
 			
 									<option value="Method--js_code_notification_add">Method: js_code_notification_add()</option>
 			
+			
 									<option value="Method--js_code_notification_remove">Method: js_code_notification_remove()</option>
 			
+			
 						
+			
 						
+			
 									<option value="Method--js_ajax_submit_html_form">Method: js_ajax_submit_html_form()</option>
+			
 			
 									<option value="Method--js_ajax_replyto_html_form">Method: js_ajax_replyto_html_form()</option>
 			
-						
-						
-						
-						
-						
+			
 						
 			
-		</optgroup>
-		<optgroup label="Class Properties">
-			<option value="Properties--Summary-">*** Properties summary ***</option>
+						
+			
+						
+			
+						
+			
+						
+			
+						
+			
 			
 		</optgroup>
-		<optgroup label="Class Constants">
-			<option value="Constants--Summary-">*** Constants summary ***</option>
-			
-		</optgroup>
+		
+		
 		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:11 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:41 +0000</small>
 <hr>
 <br>
 <!-- # -->

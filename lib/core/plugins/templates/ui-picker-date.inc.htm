@@ -12,7 +12,6 @@ if(typeof SmartJS_BrowserUIUtils != 'undefined') {
 				setTimeout(function(){ try { SmartJS_BrowserUIUtils.Date_Picker_Display('[###THE-ID|htmid|js###]'); } catch(err){} }, 200);
 			}).on('dblclick doubletap', function(e){
 				jQuery('#[###THE-ID|htmid|js###]').val('');
-				jQuery('#date-bttn-[###THE-ID|htmid|js###]').attr('title', '');
 				jQuery(this).val('');
 			});
 		} catch(err) {

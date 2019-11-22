@@ -2,6 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+November 22, 2019 :: Version 5.2.7 rev.191122
+	* New documentation for PHP and Javascript
+
 November 19, 2019 :: Version 5.2.7 rev.191119
 	* DB Driver Fixes: Preserve NULL values on Read* for: SQlite3, MySQLi and PgSQL
 

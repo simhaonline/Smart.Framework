@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191118 -->
+<!-- Template: Smart.Framework@Documentor v.20191122 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartTextTranslations       final class \ SmartTextTranslations    {   } ::    Class Smart Text Translations. It provides a Language Based Text">
-	<meta name="keywords" content="smarttexttranslations, final, class, smarttexttranslations, smart, text, translations., it, provides, a, language, based, translations, layer, for, the, smart.framework, applications., located, at, lib framework lib translate.php, package, core translations, namespace, name, version, v, depends, classes, smartpersistentcache, smartadaptertexttranslations, usage, static, object, class  method, -, this, only, methods, summary, public, function, getavailablelanguages, array, return, array, with, available, ids, sample, en, ro, regional, get, languages, getlistoflanguages, list, english, ro, romanian, available, isdefaultlanguage, string, y language">
+	<meta name="description" content="\SmartTextTranslations        final class \ SmartTextTranslations    {   } ::    Class Smart Text Translations. It provides a Language Based Text">
+	<meta name="keywords" content="smarttexttranslations, final, class, smarttexttranslations, smart, text, translations., it, provides, a, language, based, translations, layer, for, the, smart.framework, applications., language, php, located, at, lib framework lib translate.php, package, core translations, namespace, name, version, v, depends, classes, smartpersistentcache, smartadaptertexttranslations, usage, static, object, class  method, -, this, only, methods, summary, public, function, getavailablelanguages, array, return, array, with, available, ids, sample, en, ro, regional, get, languages, getlistoflanguages, list, english, ro, romanian, available, isdefaultlanguage">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartTextTranslations">
 	<title>PHP Documentation for: \SmartTextTranslations</title>
 	<!-- CSS and Fonts -->
@@ -458,9 +458,9 @@
 	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191109 -->
+<!-- class r.20191122 -->
 <!-- Styles -->
-<!-- styles r.20191118 -->
+<!-- styles r.20191122 -->
 <style type="text/css">
 .doc-package {
 	color: #3F51B5;
@@ -481,6 +481,9 @@
 .doc-method-name {
 	color: #111111;
 }
+.doc-method-sub-name {
+	color: #555555;
+}
 .doc-method-special-name {
 	color: #003399;
 }
@@ -497,6 +500,9 @@
 .doc-implements {
 	color: #72C100;
 }
+.doc-language {
+	color: #92981b;
+}
 .doc-extends,
 .doc-type-class {
 	color: #20639E;
@@ -512,6 +518,9 @@
 .doc-reimplemented,
 .doc-reuses {
 	color: #99AABB;
+}
+.doc-throws {
+	color: #FF0000;
 }
 .doc-header {
 	color: #3F51B5;
@@ -572,6 +581,88 @@ div.doc-summary {
 	border: 1px solid #CCCCCC;
 }
 </style>
+<style type="text/css">
+/*
+// css/atelier-sulphurpool-dark.css
+// HighlightJs: v.9.13.1
+*/
+
+/* modified by unixman - changed color for comment */
+/* Base16 Atelier Sulphurpool Dark - Theme */
+/* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/sulphurpool) */
+/* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
+
+/* Atelier-Sulphurpool Comment */
+.hljs-comment {
+	color: #777777;
+}
+.hljs-quote {
+	color: #898ea4;
+}
+
+/* Atelier-Sulphurpool Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: #c94922;
+}
+
+/* Atelier-Sulphurpool Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+	color: #c76b29;
+}
+
+/* Atelier-Sulphurpool Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+	color: #ac9739;
+}
+
+/* Atelier-Sulphurpool Blue */
+.hljs-title,
+.hljs-section {
+	color: #3d8fd1;
+}
+
+/* Atelier-Sulphurpool Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #6679cc;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	background: #202746;
+	color: #979db4;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+
+/* END */
+
+</style>
 <!-- Headings -->
 <h1 title="PHP class: `\SmartTextTranslations` @ PHP Namespace: `\`" id="Class--Summary-">
 	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartTextTranslations</span><br>
@@ -587,6 +678,7 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
+		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
 		<li><span class="doc-located"><b>Located at:</b> lib/framework/lib_translate.php</span></li>
 		<li><span class="doc-package"><b>Package:</b> @Core:Translations</span></li>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
@@ -605,7 +697,7 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191109 -->
+<!-- methods r.20191122 -->
 <div class="doc-container" id="Method--getAvailableLanguages">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getAvailableLanguages</b></span>&nbsp;(
 		
@@ -613,9 +705,11 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;ARRAY
 	
 	
-			<div class="doc-method-ret-params">@return: {ARRAY} : The array with available language IDs ; sample: ['en', 'ro']</div>
+			<div class="doc-method-ret-params">@return: {ARRAY} The array with available language IDs ; sample: ['en', 'ro']</div>
 	
 			<div class="doc-method-comments">Regional Text :: Get Available Languages</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--getListOfLanguages">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getListOfLanguages</b></span>&nbsp;(
@@ -624,9 +718,11 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;ARRAY
 	
 	
-			<div class="doc-method-ret-params">@return: {ARRAY} : The array with available languages List ['en' =&gt; 'English', 'ro' =&gt; 'Romanian']</div>
+			<div class="doc-method-ret-params">@return: {ARRAY} The array with available languages List ['en' =&gt; 'English', 'ro' =&gt; 'Romanian']</div>
 	
 			<div class="doc-method-comments">Regional Text :: Get (available) Languages List</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--isDefaultLanguage">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>isDefaultLanguage</b></span>&nbsp;(
@@ -636,10 +732,12 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;BOOLEAN
 	
 	
-			<div class="doc-method-ret-params">@return: {BOOLEAN} : Returns TRUE if the Current Language is the Default Language for the current session / or parameter otherwise returns FALSE<br>
-@param: {$y_language} Optional, the language ID to be checked ; otherwise will check the session language ; sample (for English) will be: 'en'</div>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} Returns TRUE if the Current Language is the Default Language for the current session / or parameter otherwise returns FALSE<br>
+@param: {STRING} $y_language: Optional, the language ID to be checked ; otherwise will check the session language ; sample (for English) will be: 'en'</div>
 	
 			<div class="doc-method-comments">Regional Text :: Checks if the Current Language is the Default Language for the current session / or parameter</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--getDefaultLanguage">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getDefaultLanguage</b></span>&nbsp;(
@@ -648,9 +746,11 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : The language ID ; sample (for English) will return: 'en'</div>
+			<div class="doc-method-ret-params">@return: {STRING} The language ID ; sample (for English) will return: 'en'</div>
 	
 			<div class="doc-method-comments">Regional Text :: Get the Default Language for the current session as Set by Init</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--getLanguage">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getLanguage</b></span>&nbsp;(
@@ -659,9 +759,11 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : The language ID ; sample (for English) will return: 'en'</div>
+			<div class="doc-method-ret-params">@return: {STRING} The language ID ; sample (for English) will return: 'en'</div>
 	
 			<div class="doc-method-comments">Regional Text :: Get the Current Language for the current session as Set by Config / URL / Cookie / Method-Set</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--setLanguage">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>setLanguage</b></span>&nbsp;(
@@ -671,10 +773,12 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;BOOLEAN
 	
 	
-			<div class="doc-method-ret-params">@return: {BOOLEAN} : TRUE if successful, FALSE if not<br>
-@param: {$y_language} The language ID ; sample (for English) will be: 'en'</div>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} TRUE if successful, FALSE if not<br>
+@param: {STRING} $y_language: The language ID ; sample (for English) will be: 'en'</div>
 	
 			<div class="doc-method-comments">Regional Text :: Set the Language for current session</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--validateLanguage">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>validateLanguage</b></span>&nbsp;(
@@ -684,10 +788,12 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;BOOLEAN
 	
 	
-			<div class="doc-method-ret-params">@return: {BOOLEAN} : TRUE if language defined in configs, FALSE if not<br>
-@param: {$y_language} The language ID ; sample (for English) will be: 'en'</div>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} TRUE if language defined in configs, FALSE if not<br>
+@param: {STRING} $y_language: The language ID ; sample (for English) will be: 'en'</div>
 	
 			<div class="doc-method-comments">Validate Language</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--getTranslator">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getTranslator</b></span>&nbsp;(
@@ -699,44 +805,36 @@ It provides a Language Based Text Translations Layer for the Smart.Framework bas
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;OBJECT
 	
 	
-			<div class="doc-method-ret-params">@return: {OBJECT} : An Instance of SmartTextTranslator-&gt;<br>
-@param: {$y_area} The Translation Area<br>
-@param: {$y_subarea} The Translation Sub-Area<br>
-@param: {$y_custom_language} *OPTIONAL* a language code ; default empty ; if empty will use the current language</div>
+			<div class="doc-method-ret-params">@return: {OBJECT} An Instance of SmartTextTranslator-&gt;<br>
+@param: {STRING} $y_area: The Translation Area<br>
+@param: {STRING} $y_subarea: The Translation Sub-Area<br>
+@param: {STRING} $y_custom_language: *OPTIONAL* a language code ; default empty ; if empty will use the current language</div>
 	
 			<div class="doc-method-comments">Regional Text :: Get the Translator object for: area, subarea and a custom language (if enforced and not using the current language)</div>
 	
+	
+	
 </div><!-- Skip Internal-Priv Method: `getDateFormatForJs()` --><!-- Skip Internal-Priv Method: `getDateFormatForPhp()` --><!-- Skip Internal-Priv Method: `getSafeRegionalSettings()` --><!-- Skip Internal-Priv Method: `formatAsLocalNumber()` --><!-- Skip Internal-Priv Method: `reverseSignOfLocalFormattedNumber()` --><!-- Skip Internal-Priv Method: `getTranslationByKey()` --><!-- Skip Internal-Priv Method: `getAllTranslations()` -->
 <!-- Properties -->
-<br>
-<div class="doc-container" id="Properties--Summary-">
-	<h2 class="doc-header">Properties summary</h2>
-</div>
-<!-- properties r.20191109 -->
 
 <!-- Constants -->
-<br>
-<div class="doc-container" id="Constants--Summary-">
-	<h2 class="doc-header">Constants summary</h2>
-</div>
-<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 <br>
 <div class="doc-container" id="SAMPLE--Code-">
-	<h2 class="doc-header">Sample Code</h2>
+	<h2 class="doc-header">Sample Code: PHP</h2>
 </div>
 <div class="doc-code">
 	<pre><code><!-- Smart/HTML.Cleaner [@] --><code><span style="color: #57A64A">
-<span style="color: #FFFFFF">&lt;?php<br></span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">SmartTextTranslations</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">some_method_of_this_class</span><span style="color: #FFCC00; font-weight: bold">(...);<br></span><span style="color: #FFFFFF">?&gt;</span>
+<span style="color: #FFFFFF">&lt;?php<br><br></span><span style="color: #999999">//&nbsp;Usage&nbsp;example:<br>&nbsp;</span><span style="color: #FFFFFF">SmartTextTranslations</span><span style="color: #FFCC00; font-weight: bold">::</span><span style="color: #FFFFFF">some_method_of_this_class</span><span style="color: #FFCC00; font-weight: bold">(...);<br><br></span><span style="color: #FFFFFF">?&gt;</span>
 </span>
 </code><!-- [/@] Smart/HTML.Cleaner --></code></pre>
 </div>
 <!-- Summary List -->
 <br>
-<!-- summary r.20191109 -->
+<!-- summary r.20191122 -->
 <script>
-// summary r.20191109
+// summary r.20191122
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -756,7 +854,7 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* Class \SmartTextTranslations # Documentation Index *</option>
+		<option value="" selected>* PHP Class \SmartTextTranslations # Documentation Index *</option>
 		<optgroup label="Class \SmartTextTranslations">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
@@ -764,37 +862,46 @@ function smartHandleDocSelector(obj) {
 			<option value="Methods--Summary-">*** Methods summary ***</option>
 									<option value="Method--getAvailableLanguages">Method: getAvailableLanguages()</option>
 			
+			
 									<option value="Method--getListOfLanguages">Method: getListOfLanguages()</option>
+			
 			
 									<option value="Method--isDefaultLanguage">Method: isDefaultLanguage()</option>
 			
+			
 									<option value="Method--getDefaultLanguage">Method: getDefaultLanguage()</option>
+			
 			
 									<option value="Method--getLanguage">Method: getLanguage()</option>
 			
+			
 									<option value="Method--setLanguage">Method: setLanguage()</option>
+			
 			
 									<option value="Method--validateLanguage">Method: validateLanguage()</option>
 			
+			
 									<option value="Method--getTranslator">Method: getTranslator()</option>
 			
-						
-						
-						
-						
-						
-						
+			
 						
 			
-		</optgroup>
-		<optgroup label="Class Properties">
-			<option value="Properties--Summary-">*** Properties summary ***</option>
+						
+			
+						
+			
+						
+			
+						
+			
+						
+			
+						
+			
 			
 		</optgroup>
-		<optgroup label="Class Constants">
-			<option value="Constants--Summary-">*** Constants summary ***</option>
-			
-		</optgroup>
+		
+		
 				<optgroup label="Class Sample code">
 			<option value="SAMPLE--Code-">*** Sample code ***</option>
 		</optgroup>
@@ -803,7 +910,7 @@ function smartHandleDocSelector(obj) {
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:09 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:38 +0000</small>
 <hr>
 <br>
 <!-- # -->

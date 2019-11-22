@@ -5,10 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartTextTranslator        final class \ SmartTextTranslator    {   } -&gt;    Class Smart Text Translator Object     Language: PHP  Located at:">
-	<meta name="keywords" content="smarttexttranslator, final, class, smarttexttranslator, -, smart, text, translator, object, language, php, located, at, lib framework lib translate.php, package, core translations, namespace, name, version, v, depends, classes, smarttexttranslations, hints, do, not, use, this, directly, by, creating, a, new, instance, you, should, obtain, as, smarttexttranslations  gettranslator  area, subarea, for, current, language, or, subarea, custom language, custom, usage, dynamic, object, new, class   - method">
-	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartTextTranslator">
-	<title>PHP Documentation for: \SmartTextTranslator</title>
+	<meta name="description" content="SmartJS_CryptoBlowfish        static class SmartJS_CryptoBlowfish  {  } .    CLASS :: Blowfish (CBC) :: encrypt / decrypt Blowfish (CBC) for JavaScript">
+	<meta name="keywords" content="smartjs cryptoblowfish, static, class, ., blowfish, cbc, encrypt, decrypt, for, javascript, language, located, at, lib js framework smart-framework.js, crypt utils.js, package, sf.javascript crypto, name, usage, smartjs cryptoblowfish.method, version, depends, smartjs coreutils">
+	<meta name="summary" content="Smart.Framework : Javascript Documentation:">
+	<title>JS Documentation for: SmartJS_CryptoBlowfish</title>
 	<!-- CSS and Fonts -->
 		<!-- skip fonts -->
 	
@@ -449,11 +449,11 @@
 </head>
 <body>
 <nav class="ux-navbar">
-	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
+	<div id="logo"><span>&#9776; </span>Smart.Framework : Javascript Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
 		<ul class="menu">
-		<li><a href="index.html#Package--CoreTranslations-" title="return to Index">return to Index</a></li>
+		<li><a href="index.html#Package--SfJavascriptCrypto-" title="return to Index">return to Index</a></li>
 	</ul>
 	
 </nav>
@@ -664,30 +664,27 @@ div.doc-summary {
 
 </style>
 <!-- Headings -->
-<h1 title="PHP class: `\SmartTextTranslator` @ PHP Namespace: `\`" id="Class--Summary-">
-	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartTextTranslator</span><br>
-	
-	
+<h1 title="PHP class: `SmartJS_CryptoBlowfish` @ JavaScript" id="Class--Summary-">
+	<span class="doc-modifiers">static</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-name">SmartJS_CryptoBlowfish</span><br>
 	{
-	
-	}&nbsp;-&gt;
+	}&nbsp;.
 </h1>
 <!-- Description -->
-<div class="doc-comments">Class Smart Text Translator Object</div><br>
+<div class="doc-comments">CLASS :: Blowfish (CBC) :: encrypt / decrypt<br>
+Blowfish  (CBC) for JavaScript</div><br>
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
-		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
-		<li><span class="doc-located"><b>Located at:</b> lib/framework/lib_translate.php</span></li>
-		<li><span class="doc-package"><b>Package:</b> @Core:Translations</span></li>
-		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
-		<li><span class="doc-name"><b>Class Name:</b> SmartTextTranslator</span></li>
+		<li><span class="doc-language"><b>Language:</b> Javascript<span></li>
+		<li><span class="doc-located"><b>Located at:</b> lib/js/framework/smart-framework.js; crypt_utils.js</span></li>
+		<li><span class="doc-package"><b>Package:</b> Sf.Javascript:Crypto</span></li>
+		<li><span class="doc-name"><b>Class Name:</b> SmartJS_CryptoBlowfish</span></li>
+		<li><b>Usage:</b> SmartJS_CryptoBlowfish.method();</li>
 		
-		<li><b>Version:</b> v.20191101</li>
-		<li><b>Depends:</b> classes:  Smart, SmartTextTranslations</li>
-		<li><b>Hints:</b> Do  not use this object directly by creating a new instance ; You should obtain this object as SmartTextTranslations::getTranslator($area, $subarea) for current language or as SmartTextTranslations::getTranslator($area, $subarea, $custom_language) for a custom language</li>
-		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
 		
+		
+		<li><b>Version:</b> 20191122</li>
+		<li><b>Depends:</b> SmartJS_CoreUtils</li>
 		
 	</ul>
 </div>
@@ -697,26 +694,50 @@ div.doc-summary {
 	<h2 class="doc-header">Methods summary</h2>
 </div>
 <!-- methods r.20191122 -->
-<!-- Skip Internal-Priv Method: `__construct()` --><!-- Skip Internal-Priv Method: `getinfo()` --><div class="doc-container" id="Method--text">
-	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>text</b></span>&nbsp;(
-				<span class="doc-param-name"><b><span title="`$y_textkey` Parameter is REQUIRED">$y_textkey</span></b></span>, 
-			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fallback_language` Parameter is OPTIONAL, with the Default Value: &quot;@default&quot;">$y_fallback_language</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;@default&quot;</b></span>, 
-			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_ignore_empty` Parameter is OPTIONAL, with the Default Value: false">$y_ignore_empty</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+<div class="doc-container" id="Method--encrypt">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>encrypt</b></span>&nbsp;(
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`plaintext` Parameter">plaintext</span></b></span>, 
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`key` Parameter">key</span></b></span>
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{String}
+	<div class="doc-method-ret-params">
 	
 	
-	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+			@return: {String} The Blowfish encrypted string<br>
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} the Translated Text or Fallback Text to Default Language</div>
 	
-			<div class="doc-method-comments">Get the Text Translation</div>
+			@param: {String} plaintext The plain string<br>
+			@param: {String} key The encryption key<br>
 	
+	
+	</div>
+			<div class="doc-method-comments">Blowfish encrypts (CBC) plaintext using an encryption key</div>
+	
+	
+</div><div class="doc-container" id="Method--decrypt">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>decrypt</b></span>&nbsp;(
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`ciphertext` Parameter">ciphertext</span></b></span>, 
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`key` Parameter">key</span></b></span>
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{String}
+	<div class="doc-method-ret-params">
+	
+	
+			@return: {String} The decrypted string<br>
+	
+	
+	
+			@param: {String} ciphertext The Blowfish encrypted string<br>
+			@param: {String} key The encryption key<br>
+	
+	
+	</div>
+			<div class="doc-method-comments">Blowfish decrypts (CBC) ciphertext using the encryption key</div>
 	
 	
 </div>
 <!-- Properties -->
-
-<!-- Constants -->
 
 <!-- Sample Code -->
 
@@ -744,29 +765,25 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* PHP Class \SmartTextTranslator # Documentation Index *</option>
-		<optgroup label="Class \SmartTextTranslator">
+		<option value="" selected>* Javascript Class SmartJS_CryptoBlowfish # Documentation Index *</option>
+		<optgroup label="Class SmartJS_CryptoBlowfish">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
-						
+									<option value="Method--encrypt">Method: encrypt()</option>
 			
-						
-			
-									<option value="Method--text">Method: text()</option>
-			
+									<option value="Method--decrypt">Method: decrypt()</option>
 			
 			
 		</optgroup>
-		
 		
 		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:38 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:44:03 +0000</small>
 <hr>
 <br>
 <!-- # -->

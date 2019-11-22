@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- Template: Smart.Framework@Documentor v.20191118 -->
+<!-- Template: Smart.Framework@Documentor v.20191122 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartUtils       final class \ SmartUtils    {   } ::    Class: SmartUtils - provides various utility functions for Smart.Framework     Located at:">
-	<meta name="keywords" content="smartutils, final, class, smartutils, class, -, provides, various, utility, functions, for, smart.framework, located, at, lib framework lib utils.php, package, core extra, namespace, name, version, v, depends, classes, smart, smartvalidator, smarthashcrypto, smartauth, smartfilesysutils, smartfilesystem, smarthttpclient, usage, static, object, class  method, this, only, methods, summary, public, function, cookie default domain, get cookie, cookie name, set cookie, cookie data, expire time, cookie path, cookie domain, url hex encode, y val, url hex decode, y enc val, check ip in range, lower range ip address, upper range ip address, needle ip address, date interval days, y date now, y date past, datetime fixed offset, y timezone offset, ydate, data archive, y str, data unarchive, y enc data, comment php code, y code, y repl, array tag-start, -, tag-end, -, pretty print var, y var, indent, pretty print bytes, y bytes, y decimals, y separator, pretty print numbers, y number, number to roman, num, roman to number, roman, extract title">
+	<meta name="description" content="\SmartUtils        final class \ SmartUtils    {   } ::    Class: SmartUtils - provides various utility functions for Smart.Framework     Language: PHP">
+	<meta name="keywords" content="smartutils, final, class, smartutils, class, -, provides, various, utility, functions, for, smart.framework, language, php, located, at, lib framework lib utils.php, package, core extra, namespace, name, version, v, depends, classes, smart, smartvalidator, smarthashcrypto, smartauth, smartfilesysutils, smartfilesystem, smarthttpclient, usage, static, object, class  method, this, only, methods, summary, public, function, cookie default domain, get cookie, cookie name, set cookie, cookie data, expire time, cookie path, cookie domain, url hex encode, y val, url hex decode, y enc val, check ip in range, lower range ip address, upper range ip address, needle ip address, date interval days, y date now, y date past, datetime fixed offset, y timezone offset, ydate, data archive, y str, data unarchive, y enc data, comment php code, y code, y repl, array tag-start, -, tag-end, -, pretty print var, y var, indent, pretty print bytes, y bytes, y decimals, y separator, pretty print numbers, y number, number to roman, num">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartUtils">
 	<title>PHP Documentation for: \SmartUtils</title>
 	<!-- CSS and Fonts -->
@@ -458,9 +458,9 @@
 	
 </nav>
 <!-- skip logo -->
-<!-- class r.20191109 -->
+<!-- class r.20191122 -->
 <!-- Styles -->
-<!-- styles r.20191118 -->
+<!-- styles r.20191122 -->
 <style type="text/css">
 .doc-package {
 	color: #3F51B5;
@@ -481,6 +481,9 @@
 .doc-method-name {
 	color: #111111;
 }
+.doc-method-sub-name {
+	color: #555555;
+}
 .doc-method-special-name {
 	color: #003399;
 }
@@ -497,6 +500,9 @@
 .doc-implements {
 	color: #72C100;
 }
+.doc-language {
+	color: #92981b;
+}
 .doc-extends,
 .doc-type-class {
 	color: #20639E;
@@ -512,6 +518,9 @@
 .doc-reimplemented,
 .doc-reuses {
 	color: #99AABB;
+}
+.doc-throws {
+	color: #FF0000;
 }
 .doc-header {
 	color: #3F51B5;
@@ -572,6 +581,88 @@ div.doc-summary {
 	border: 1px solid #CCCCCC;
 }
 </style>
+<style type="text/css">
+/*
+// css/atelier-sulphurpool-dark.css
+// HighlightJs: v.9.13.1
+*/
+
+/* modified by unixman - changed color for comment */
+/* Base16 Atelier Sulphurpool Dark - Theme */
+/* by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/sulphurpool) */
+/* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
+
+/* Atelier-Sulphurpool Comment */
+.hljs-comment {
+	color: #777777;
+}
+.hljs-quote {
+	color: #898ea4;
+}
+
+/* Atelier-Sulphurpool Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: #c94922;
+}
+
+/* Atelier-Sulphurpool Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+	color: #c76b29;
+}
+
+/* Atelier-Sulphurpool Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+	color: #ac9739;
+}
+
+/* Atelier-Sulphurpool Blue */
+.hljs-title,
+.hljs-section {
+	color: #3d8fd1;
+}
+
+/* Atelier-Sulphurpool Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #6679cc;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	background: #202746;
+	color: #979db4;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+
+/* END */
+
+</style>
 <!-- Headings -->
 <h1 title="PHP class: `\SmartUtils` @ PHP Namespace: `\`" id="Class--Summary-">
 	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartUtils</span><br>
@@ -586,6 +677,7 @@ div.doc-summary {
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
+		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
 		<li><span class="doc-located"><b>Located at:</b> lib/framework/lib_utils.php</span></li>
 		<li><span class="doc-package"><b>Package:</b> @Core:Extra</span></li>
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
@@ -604,12 +696,14 @@ div.doc-summary {
 <div class="doc-container" id="Methods--Summary-">
 	<h2 class="doc-header">Methods summary</h2>
 </div>
-<!-- methods r.20191109 -->
+<!-- methods r.20191122 -->
 <div class="doc-container" id="Method--cookie_default_domain">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>cookie_default_domain</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -620,6 +714,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -638,6 +734,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--url_hex_encode">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>url_hex_encode</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_val` Parameter is REQUIRED">$y_val</span></b></span>
@@ -648,12 +746,16 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--url_hex_decode">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>url_hex_decode</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_enc_val` Parameter is REQUIRED">$y_enc_val</span></b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -670,6 +772,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--date_interval_days">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>date_interval_days</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_date_now` Parameter is REQUIRED">$y_date_now</span></b></span>, 
@@ -677,6 +781,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -692,6 +798,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--data_archive">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>data_archive</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_str` Parameter is REQUIRED">$y_str</span></b></span>
@@ -702,12 +810,16 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--data_unarchive">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>data_unarchive</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_enc_data` Parameter is REQUIRED">$y_enc_data</span></b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -723,6 +835,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--pretty_print_var">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>pretty_print_var</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_var` Parameter is REQUIRED">$y_var</span></b></span>, 
@@ -730,6 +844,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -746,6 +862,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--pretty_print_numbers">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>pretty_print_numbers</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_number` Parameter is REQUIRED">$y_number</span></b></span>, 
@@ -753,6 +871,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -767,12 +887,16 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--roman_to_number">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>roman_to_number</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$roman` Parameter is REQUIRED">$roman</span></b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -789,6 +913,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--extract_description">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>extract_description</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$ytxt` Parameter is REQUIRED">$ytxt</span></b></span>, 
@@ -797,6 +923,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -813,12 +941,16 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--extract_words_from_text_html">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>extract_words_from_text_html</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$ytxt` Parameter is REQUIRED">$ytxt</span></b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -833,11 +965,15 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--crypto_blowfish_algo">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>crypto_blowfish_algo</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -853,6 +989,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--crypto_blowfish_decrypt">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>crypto_blowfish_decrypt</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_data` Parameter is REQUIRED">$y_data</span></b></span>, 
@@ -864,11 +1002,15 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--crypto_algo">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>crypto_algo</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -884,6 +1026,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--crypto_decrypt">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>crypto_decrypt</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_data` Parameter is REQUIRED">$y_data</span></b></span>, 
@@ -891,6 +1035,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -903,10 +1049,12 @@ div.doc-summary {
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : The semantic URL, depends on SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE ( '' | 'standard' | 'semantic' ) ; 'standard' and 'semantic' requires Apache Rewrite ; Examples: '' -&gt; (script.php)?/page/(my-module.)my-page/param1/value1/Param2/Value2 ; 'standard' -&gt; (my-module.)my-page.html?param1=value1&amp;Param2=Value2 ; 'semantic' -&gt; (my-module.)my-page.html?/param1/value1/Param2/Value2<br>
-@param: {$y_url} The standard URL in RFC3986 format as: (script.php)?page=my-module.my-page&amp;param1=value1&amp;Param2=Value2</div>
+			<div class="doc-method-ret-params">@return: {STRING} The semantic URL, depends on SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE ( '' | 'standard' | 'semantic' ) ; 'standard' and 'semantic' requires Apache Rewrite ; Examples: '' -&gt; (script.php)?/page/(my-module.)my-page/param1/value1/Param2/Value2 ; 'standard' -&gt; (my-module.)my-page.html?param1=value1&amp;Param2=Value2 ; 'semantic' -&gt; (my-module.)my-page.html?/param1/value1/Param2/Value2<br>
+@param: {STRING} $y_url: The standard URL in RFC3986 format as: (script.php)?page=my-module.my-page&amp;param1=value1&amp;Param2=Value2</div>
 	
 			<div class="doc-method-comments">Create a semantic URL like: (script.php)?/param1/value1/Param2/Value2</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--decode_download_link">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>decode_download_link</b></span>&nbsp;(
@@ -918,6 +1066,8 @@ div.doc-summary {
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--create_download_link">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>create_download_link</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$y_file` Parameter is REQUIRED">$y_file</span></b></span>, 
@@ -925,6 +1075,8 @@ div.doc-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -942,16 +1094,18 @@ div.doc-summary {
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} : cached contents or empty string<br>
-@param: {$y_cache_file_extension} File Extension (example: '.ext')<br>
-@param: {$y_cache_prefix} prefix dir (at least 3 chars ; max 64 chars) ended by slash (Example: 'prefix')<br>
-@param: {$y_cache_unique_id} The Cache ID Unique Key (Ex: some.unique.key)<br>
-@param: {$y_content} default is FALSE to GET the cached content if exists ; if this is a non-empty string will SET the content into the cache and will return it back<br>
-@param: {$y_cache_expire} 0=never ; (&gt;0)=seconds<br>
-@param: {$y_encrypted} yes/no to encrypt the file content</div>
+			<div class="doc-method-ret-params">@return: {STRING} cached contents or empty string<br>
+@param: {STRING} $y_cache_file_extension: File Extension (example: '.ext')<br>
+@param: {STRING} $y_cache_prefix: prefix dir (at least 3 chars ; max 64 chars) ended by slash (Example: 'prefix')<br>
+@param: {STRING} $y_cache_unique_id: The Cache ID Unique Key (Ex: some.unique.key)<br>
+@param: {STRING} $y_content: default is FALSE to GET the cached content if exists ; if this is a non-empty string will SET the content into the cache and will return it back<br>
+@param: {INT} $y_cache_expire: 0=never ; (&gt;0)=seconds<br>
+@param: {ENUM} $y_encrypted: yes/no to encrypt the file content</div>
 	
 			<div class="doc-method-comments">GET/SET a cache file on the file system ; Cached File will be saved in 'tmp/cache/{prefix}/.../'<br>
 When SET will return the content back</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--read_uploaded_file">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>read_uploaded_file</b></span>&nbsp;(
@@ -964,13 +1118,15 @@ When SET will return the content back</div>
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;ARRAY
 	
 	
-			<div class="doc-method-ret-params">@return: {ARRAY} : array [ status =&gt; 'OK' | 'WARN' | 'ERR', 'message' =&gt; '' | 'WARN Message' | 'ERR Message', 'msg-code' =&gt; 0..n, 'filename' =&gt; '' | 'filename.ext', 'filetype' =&gt; '' | 'ext', 'filesize' =&gt; Bytes, 'filecontent' =&gt; '' | 'the Contents of the file ...' ]<br>
-@param: {$var_name} The HTML Variable Name<br>
-@param: {$var_index} The HTML Variable Index: -1 for single file uploads ; 0..n for multi-file uploads ; DEFAULT is -1<br>
-@param: {$max_size} The max file size in bytes that would be accepted ; set to zero for allow maximum size supported by PHP via INI settings ; DEFAULT is zero<br>
-@param: {$allowed_extensions} The list of allowed file extensions ; Default is '' ; Example to restrict to several extensions: '&lt;ext1&gt;,&lt;ext2&gt;,...&lt;ext100&gt;,...' ; set to empty string to allow all extenstions supported via Smart.Framework INI: SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS / SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS</div>
+			<div class="doc-method-ret-params">@return: {ARRAY} array [ status =&gt; 'OK' | 'WARN' | 'ERR', 'message' =&gt; '' | 'WARN Message' | 'ERR Message', 'msg-code' =&gt; 0..n, 'filename' =&gt; '' | 'filename.ext', 'filetype' =&gt; '' | 'ext', 'filesize' =&gt; Bytes, 'filecontent' =&gt; '' | 'the Contents of the file ...' ]<br>
+@param: {STRING} $var_name: The HTML Variable Name<br>
+@param: {INTEGER} $var_index: The HTML Variable Index: -1 for single file uploads ; 0..n for multi-file uploads ; DEFAULT is -1<br>
+@param: {INTEGER} $max_size: The max file size in bytes that would be accepted ; set to zero for allow maximum size supported by PHP via INI settings ; DEFAULT is zero<br>
+@param: {STRING} $allowed_extensions: The list of allowed file extensions ; Default is '' ; Example to restrict to several extensions: '&lt;ext1&gt;,&lt;ext2&gt;,...&lt;ext100&gt;,...' ; set to empty string to allow all extenstions supported via Smart.Framework INI: SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS / SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS</div>
 	
 			<div class="doc-method-comments">Reads and return one Uploaded File</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--store_uploaded_file">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>store_uploaded_file</b></span>&nbsp;(
@@ -987,23 +1143,27 @@ When SET will return the content back</div>
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;MIXED
 	
 	
-			<div class="doc-method-ret-params">@return: {MIXED} : '' (empty string) if all OK ; FALSE (boolean) if upload failed ; otherwise will return a non-empty string with the ERROR / WARNING message if the file was not successfuly stored in the destination directory<br>
-@param: {$dest_dir} The destination directory ; Example: 'wpub/my-test/'<br>
-@param: {$var_name} The HTML Variable Name<br>
-@param: {$var_index} The HTML Variable Index: -1 for single file uploads ; 0..n for multi-file uploads<br>
-@param: {$allow_rewrite} Allow rewrite if already exists that file in the destination directory ; default is TRUE<br>
-@param: {$max_size} The max file size in bytes that would be accepted ; set to zero for allow maximum size supported by PHP via INI settings<br>
-@param: {$allowed_extensions} The list of allowed file extensions ; Default is '' ; Example to restrict to several extensions: '&lt;ext1&gt;,&lt;ext2&gt;,...&lt;ext100&gt;,...' ; set to empty string to allow all extenstions supported via Smart.Framework INI: SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS / SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS<br>
-@param: {$new_name} Use a new file name for the uploaded file instead of the original one ; Set to empty string to preserve the uploaded file name ; DEFAULT is ''<br>
-@param: {$enforce_lowercase} Set to TRUE to enforce lowercase file name ; DEFAULT is FALSE</div>
+			<div class="doc-method-ret-params">@return: {MIXED} '' (empty string) if all OK ; FALSE (boolean) if upload failed ; otherwise will return a non-empty string with the ERROR / WARNING message if the file was not successfuly stored in the destination directory<br>
+@param: {STRING} $dest_dir: The destination directory ; Example: 'wpub/my-test/'<br>
+@param: {STRING} $var_name: The HTML Variable Name<br>
+@param: {INTEGER} $var_index: The HTML Variable Index: -1 for single file uploads ; 0..n for multi-file uploads<br>
+@param: {BOOLEAN} $allow_rewrite: Allow rewrite if already exists that file in the destination directory ; default is TRUE<br>
+@param: {INTEGER} $max_size: The max file size in bytes that would be accepted ; set to zero for allow maximum size supported by PHP via INI settings<br>
+@param: {STRING} $allowed_extensions: The list of allowed file extensions ; Default is '' ; Example to restrict to several extensions: '&lt;ext1&gt;,&lt;ext2&gt;,...&lt;ext100&gt;,...' ; set to empty string to allow all extenstions supported via Smart.Framework INI: SMART_FRAMEWORK_ALLOW_UPLOAD_EXTENSIONS / SMART_FRAMEWORK_DENY_UPLOAD_EXTENSIONS<br>
+@param: {STRING} $new_name: Use a new file name for the uploaded file instead of the original one ; Set to empty string to preserve the uploaded file name ; DEFAULT is ''<br>
+@param: {BOOLEAN} $enforce_lowercase: Set to TRUE to enforce lowercase file name ; DEFAULT is FALSE</div>
 	
 			<div class="doc-method-comments">Store one Uploaded File to a destination directory</div>
+	
+	
 	
 </div><div class="doc-container" id="Method--client_ident_private_key">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>client_ident_private_key</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1017,11 +1177,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--unique_auth_client_private_key">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>unique_auth_client_private_key</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1035,11 +1199,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_visitor_signature">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_visitor_signature</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1053,11 +1221,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_encoding_charset">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_encoding_charset</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1071,11 +1243,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_server_current_protocol">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_current_protocol</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1089,11 +1265,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_server_current_ip">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_current_ip</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1107,11 +1287,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_server_current_basedomain_name">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_current_basedomain_name</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1125,11 +1309,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_server_current_request_uri">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_current_request_uri</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1143,11 +1331,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_server_current_path">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_current_path</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1161,11 +1353,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_server_current_script">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_server_current_script</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1179,11 +1375,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_webserver_version">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_webserver_version</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1197,6 +1397,8 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_ip_client">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_ip_client</b></span>&nbsp;(
 		
@@ -1206,11 +1408,15 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><div class="doc-container" id="Method--get_ip_proxyclient">
 	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>get_ip_proxyclient</b></span>&nbsp;(
 		
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;
+	
+	
 	
 	
 	
@@ -1225,28 +1431,20 @@ When SET will return the content back</div>
 	
 	
 	
+	
+	
 </div><!-- Skip Internal-Priv Method: `run_proc_cmd()` --><!-- Skip Internal-Priv Method: `registerInternalCacheToDebugLog()` -->
 <!-- Properties -->
-<br>
-<div class="doc-container" id="Properties--Summary-">
-	<h2 class="doc-header">Properties summary</h2>
-</div>
-<!-- properties r.20191109 -->
 
 <!-- Constants -->
-<br>
-<div class="doc-container" id="Constants--Summary-">
-	<h2 class="doc-header">Constants summary</h2>
-</div>
-<!-- constants r.20191109 -->
 
 <!-- Sample Code -->
 
 <!-- Summary List -->
 <br>
-<!-- summary r.20191109 -->
+<!-- summary r.20191122 -->
 <script>
-// summary r.20191109
+// summary r.20191122
 function smartHandleDocSelector(obj) {
 	if(!obj) {
 		return;
@@ -1266,7 +1464,7 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* Class \SmartUtils # Documentation Index *</option>
+		<option value="" selected>* PHP Class \SmartUtils # Documentation Index *</option>
 		<optgroup label="Class \SmartUtils">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
@@ -1274,138 +1472,192 @@ function smartHandleDocSelector(obj) {
 			<option value="Methods--Summary-">*** Methods summary ***</option>
 									<option value="Method--cookie_default_domain">Method: cookie_default_domain()</option>
 			
+			
 									<option value="Method--get_cookie">Method: get_cookie()</option>
+			
 			
 									<option value="Method--set_cookie">Method: set_cookie()</option>
 			
+			
 									<option value="Method--url_hex_encode">Method: url_hex_encode()</option>
+			
 			
 									<option value="Method--url_hex_decode">Method: url_hex_decode()</option>
 			
+			
 									<option value="Method--check_ip_in_range">Method: check_ip_in_range()</option>
+			
 			
 									<option value="Method--date_interval_days">Method: date_interval_days()</option>
 			
+			
 									<option value="Method--datetime_fixed_offset">Method: datetime_fixed_offset()</option>
+			
 			
 									<option value="Method--data_archive">Method: data_archive()</option>
 			
+			
 									<option value="Method--data_unarchive">Method: data_unarchive()</option>
+			
 			
 									<option value="Method--comment_php_code">Method: comment_php_code()</option>
 			
+			
 									<option value="Method--pretty_print_var">Method: pretty_print_var()</option>
+			
 			
 									<option value="Method--pretty_print_bytes">Method: pretty_print_bytes()</option>
 			
+			
 									<option value="Method--pretty_print_numbers">Method: pretty_print_numbers()</option>
+			
 			
 									<option value="Method--number_to_roman">Method: number_to_roman()</option>
 			
+			
 									<option value="Method--roman_to_number">Method: roman_to_number()</option>
+			
 			
 									<option value="Method--extract_title">Method: extract_title()</option>
 			
+			
 									<option value="Method--extract_description">Method: extract_description()</option>
+			
 			
 									<option value="Method--extract_keywords">Method: extract_keywords()</option>
 			
+			
 									<option value="Method--extract_words_from_text_html">Method: extract_words_from_text_html()</option>
+			
 			
 									<option value="Method--cleanup_numbers_from_text">Method: cleanup_numbers_from_text()</option>
 			
+			
 									<option value="Method--crypto_blowfish_algo">Method: crypto_blowfish_algo()</option>
+			
 			
 									<option value="Method--crypto_blowfish_encrypt">Method: crypto_blowfish_encrypt()</option>
 			
+			
 									<option value="Method--crypto_blowfish_decrypt">Method: crypto_blowfish_decrypt()</option>
+			
 			
 									<option value="Method--crypto_algo">Method: crypto_algo()</option>
 			
+			
 									<option value="Method--crypto_encrypt">Method: crypto_encrypt()</option>
+			
 			
 									<option value="Method--crypto_decrypt">Method: crypto_decrypt()</option>
 			
+			
 									<option value="Method--create_semantic_url">Method: create_semantic_url()</option>
+			
 			
 									<option value="Method--decode_download_link">Method: decode_download_link()</option>
 			
+			
 									<option value="Method--create_download_link">Method: create_download_link()</option>
+			
 			
 									<option value="Method--load_cached_file_content">Method: load_cached_file_content()</option>
 			
+			
 									<option value="Method--read_uploaded_file">Method: read_uploaded_file()</option>
+			
 			
 									<option value="Method--store_uploaded_file">Method: store_uploaded_file()</option>
 			
+			
 									<option value="Method--client_ident_private_key">Method: client_ident_private_key()</option>
+			
 			
 									<option value="Method--unique_client_private_key">Method: unique_client_private_key()</option>
 			
+			
 									<option value="Method--unique_auth_client_private_key">Method: unique_auth_client_private_key()</option>
+			
 			
 									<option value="Method--get_selfrobot_useragent_name">Method: get_selfrobot_useragent_name()</option>
 			
+			
 									<option value="Method--get_visitor_signature">Method: get_visitor_signature()</option>
+			
 			
 									<option value="Method--get_visitor_tracking_uid">Method: get_visitor_tracking_uid()</option>
 			
+			
 									<option value="Method--get_encoding_charset">Method: get_encoding_charset()</option>
+			
 			
 									<option value="Method--get_server_current_request_method">Method: get_server_current_request_method()</option>
 			
+			
 									<option value="Method--get_server_current_protocol">Method: get_server_current_protocol()</option>
+			
 			
 									<option value="Method--get_server_current_port">Method: get_server_current_port()</option>
 			
+			
 									<option value="Method--get_server_current_ip">Method: get_server_current_ip()</option>
+			
 			
 									<option value="Method--get_server_current_domain_name">Method: get_server_current_domain_name()</option>
 			
+			
 									<option value="Method--get_server_current_basedomain_name">Method: get_server_current_basedomain_name()</option>
+			
 			
 									<option value="Method--get_server_current_request_path">Method: get_server_current_request_path()</option>
 			
+			
 									<option value="Method--get_server_current_request_uri">Method: get_server_current_request_uri()</option>
+			
 			
 									<option value="Method--get_server_current_full_script">Method: get_server_current_full_script()</option>
 			
+			
 									<option value="Method--get_server_current_path">Method: get_server_current_path()</option>
+			
 			
 									<option value="Method--get_server_current_url">Method: get_server_current_url()</option>
 			
+			
 									<option value="Method--get_server_current_script">Method: get_server_current_script()</option>
+			
 			
 									<option value="Method--get_server_current_queryurl">Method: get_server_current_queryurl()</option>
 			
+			
 									<option value="Method--get_webserver_version">Method: get_webserver_version()</option>
+			
 			
 									<option value="Method--get_server_os">Method: get_server_os()</option>
 			
+			
 									<option value="Method--get_ip_client">Method: get_ip_client()</option>
+			
 			
 									<option value="Method--get_ip_proxyclient">Method: get_ip_proxyclient()</option>
 			
+			
 									<option value="Method--get_os_browser_ip">Method: get_os_browser_ip()</option>
 			
+			
 						
+			
 						
 			
-		</optgroup>
-		<optgroup label="Class Properties">
-			<option value="Properties--Summary-">*** Properties summary ***</option>
 			
 		</optgroup>
-		<optgroup label="Class Constants">
-			<option value="Constants--Summary-">*** Constants summary ***</option>
-			
-		</optgroup>
+		
+		
 		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-18 10:06:09 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:39 +0000</small>
 <hr>
 <br>
 <!-- # -->

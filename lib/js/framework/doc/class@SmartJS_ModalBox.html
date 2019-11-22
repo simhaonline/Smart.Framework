@@ -5,10 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartTextTranslator        final class \ SmartTextTranslator    {   } -&gt;    Class Smart Text Translator Object     Language: PHP  Located at:">
-	<meta name="keywords" content="smarttexttranslator, final, class, smarttexttranslator, -, smart, text, translator, object, language, php, located, at, lib framework lib translate.php, package, core translations, namespace, name, version, v, depends, classes, smarttexttranslations, hints, do, not, use, this, directly, by, creating, a, new, instance, you, should, obtain, as, smarttexttranslations  gettranslator  area, subarea, for, current, language, or, subarea, custom language, custom, usage, dynamic, object, new, class   - method">
-	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartTextTranslator">
-	<title>PHP Documentation for: \SmartTextTranslator</title>
+	<meta name="description" content="SmartJS_ModalBox        static class SmartJS_ModalBox  {  } .    CLASS :: Smart Modal Box a Modal iFrame component for JavaScript / jQuery     Language:">
+	<meta name="keywords" content="smartjs modalbox, static, class, ., smart, modal, box, a, iframe, component, for, javascript, jquery, language, located, at, lib js framework smart-framework.js, ifmodalbox.js, package, sf.javascript browser, name, usage, smartjs modalbox.method, fires, iframe, show, load, unload, hide, listens, on before unload, version, depends, smartjs coreutils, smartjs browserutils, methods, summary, public, function, getstatus, string, return, the, status, of, as, visible, or, get">
+	<meta name="summary" content="Smart.Framework : Javascript Documentation: SmartJS_ModalBox">
+	<title>JS Documentation for: SmartJS_ModalBox</title>
 	<!-- CSS and Fonts -->
 		<!-- skip fonts -->
 	
@@ -449,11 +449,11 @@
 </head>
 <body>
 <nav class="ux-navbar">
-	<div id="logo"><span>&#9776; </span>Smart.Framework : PHP Documentation</div>
+	<div id="logo"><span>&#9776; </span>Smart.Framework : Javascript Documentation</div>
 	<label for="drop-0" class="toggle">&#9776;</label>
 	<input type="checkbox" id="drop-0">
 		<ul class="menu">
-		<li><a href="index.html#Package--CoreTranslations-" title="return to Index">return to Index</a></li>
+		<li><a href="index.html#Package--SfJavascriptBrowser-" title="return to Index">return to Index</a></li>
 	</ul>
 	
 </nav>
@@ -664,30 +664,27 @@ div.doc-summary {
 
 </style>
 <!-- Headings -->
-<h1 title="PHP class: `\SmartTextTranslator` @ PHP Namespace: `\`" id="Class--Summary-">
-	<span class="doc-modifiers">final</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\</span><span class="doc-name">SmartTextTranslator</span><br>
-	
-	
+<h1 title="PHP class: `SmartJS_ModalBox` @ JavaScript" id="Class--Summary-">
+	<span class="doc-modifiers">static</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-name">SmartJS_ModalBox</span><br>
 	{
-	
-	}&nbsp;-&gt;
+	}&nbsp;.
 </h1>
 <!-- Description -->
-<div class="doc-comments">Class Smart Text Translator Object</div><br>
+<div class="doc-comments">CLASS :: Smart Modal Box<br>
+a Modal iFrame component for JavaScript / jQuery</div><br>
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
-		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
-		<li><span class="doc-located"><b>Located at:</b> lib/framework/lib_translate.php</span></li>
-		<li><span class="doc-package"><b>Package:</b> @Core:Translations</span></li>
-		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
-		<li><span class="doc-name"><b>Class Name:</b> SmartTextTranslator</span></li>
+		<li><span class="doc-language"><b>Language:</b> Javascript<span></li>
+		<li><span class="doc-located"><b>Located at:</b> lib/js/framework/smart-framework.js; ifmodalbox.js</span></li>
+		<li><span class="doc-package"><b>Package:</b> Sf.Javascript:Browser</span></li>
+		<li><span class="doc-name"><b>Class Name:</b> SmartJS_ModalBox</span></li>
+		<li><b>Usage:</b> SmartJS_ModalBox.method();</li>
 		
-		<li><b>Version:</b> v.20191101</li>
-		<li><b>Depends:</b> classes:  Smart, SmartTextTranslations</li>
-		<li><b>Hints:</b> Do  not use this object directly by creating a new instance ; You should obtain this object as SmartTextTranslations::getTranslator($area, $subarea) for current language or as SmartTextTranslations::getTranslator($area, $subarea, $custom_language) for a custom language</li>
-		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
-		
+		<li><b>Fires:</b> iFrame: Show / Load / Unload / Hide</li>
+		<li><b>Listens:</b> on_Before_Unload()</li>
+		<li><b>Version:</b> 20191122</li>
+		<li><b>Depends:</b> jQuery, SmartJS_CoreUtils, *SmartJS_BrowserUtils</li>
 		
 	</ul>
 </div>
@@ -697,27 +694,57 @@ div.doc-summary {
 	<h2 class="doc-header">Methods summary</h2>
 </div>
 <!-- methods r.20191122 -->
-<!-- Skip Internal-Priv Method: `__construct()` --><!-- Skip Internal-Priv Method: `getinfo()` --><div class="doc-container" id="Method--text">
-	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>text</b></span>&nbsp;(
-				<span class="doc-param-name"><b><span title="`$y_textkey` Parameter is REQUIRED">$y_textkey</span></b></span>, 
-			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_fallback_language` Parameter is OPTIONAL, with the Default Value: &quot;@default&quot;">$y_fallback_language</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;@default&quot;</b></span>, 
-			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_ignore_empty` Parameter is OPTIONAL, with the Default Value: false">$y_ignore_empty</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>false</b></span>
+<!-- Skip Internal-Priv Method: `getName()` --><div class="doc-container" id="Method--getStatus">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getStatus</b></span>&nbsp;(
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{String}
+	<div class="doc-method-ret-params">
 	
 	
-	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;STRING
+			@return: {String} The status of the Modal Box as: 'visible' or ''<br>
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} the Translated Text or Fallback Text to Default Language</div>
-	
-			<div class="doc-method-comments">Get the Text Translation</div>
 	
 	
+	
+	</div>
+			<div class="doc-method-comments">Get the Status of Smart Modal Box</div>
+	
+	
+</div><!-- Skip Internal-Priv Method: `setRefreshParent()` --><!-- Skip Internal-Priv Method: `Refresh_SET_iFrame_Parent()` --><!-- Skip Internal-Priv Method: `make_Visible()` --><!-- Skip Internal-Priv Method: `go_Load()` --><!-- Skip Internal-Priv Method: `go_UnLoad()` --><!-- Skip Internal-Priv Method: `fx_Unload()` --><!-- Skip Internal-Priv Method: `on_Before_Unload()` -->
+<!-- Properties -->
+<br>
+<div class="doc-container" id="Properties--Summary-">
+	<h2 class="doc-header">Properties summary</h2>
+</div>
+<!-- properties r.20191122 -->
+<div class="doc-container" id="Property--param_LoaderImg">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>var</i></span> <b>param_LoaderImg</b>&nbsp;=&nbsp;<span class="doc-param-value"><b>'lib/js/framework/img/loading.svg'</b></span>&nbsp;;&nbsp;&nbsp;<span title="Static Property"><b>.</b></span>&nbsp;<i>{String}</i>
+			<div class="doc-method-comments">Loader Image used to display when loading ...</div>
+	
+</div><!-- Skip Internal-Priv Property: `param_LoaderBlank` --><div class="doc-container" id="Property--param_CloseImg">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>var</i></span> <b>param_CloseImg</b>&nbsp;=&nbsp;<span class="doc-param-value"><b>'lib/js/framework/img/close.svg'</b></span>&nbsp;;&nbsp;&nbsp;<span title="Static Property"><b>.</b></span>&nbsp;<i>{String}</i>
+			<div class="doc-method-comments">Close Button Image</div>
+	
+</div><div class="doc-container" id="Property--param_CloseAlign">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>var</i></span> <b>param_CloseAlign</b>&nbsp;=&nbsp;<span class="doc-param-value"><b>'right'</b></span>&nbsp;;&nbsp;&nbsp;<span title="Static Property"><b>.</b></span>&nbsp;<i>{String}</i>
+			<div class="doc-method-comments">Close Button Horizontal Align Mode :: 'left' or 'right'</div>
+	
+</div><div class="doc-container" id="Property--param_vAlign">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>var</i></span> <b>param_vAlign</b>&nbsp;=&nbsp;<span class="doc-param-value"><b>'top'</b></span>&nbsp;;&nbsp;&nbsp;<span title="Static Property"><b>.</b></span>&nbsp;<i>{String}</i>
+			<div class="doc-method-comments">Close Button Vertical Align Mode :: 'top' or 'middle' or 'center'</div>
+	
+</div><!-- Skip Internal-Priv Property: `param_CloseBtnAltHtml` --><!-- Skip Internal-Priv Property: `param_DelayOpen` --><!-- Skip Internal-Priv Property: `param_DelayClose` --><div class="doc-container" id="Property--param_CssOverlayBgColor">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>var</i></span> <b>param_CssOverlayBgColor</b>&nbsp;=&nbsp;<span class="doc-param-value"><b>'#333333'</b></span>&nbsp;;&nbsp;&nbsp;<span title="Static Property"><b>.</b></span>&nbsp;<i>{String}</i>
+			<div class="doc-method-comments">Overlay Customization - Background Color<br>
+Allowed Values: hexa color between #000000 - #FFFFFF</div>
+	
+</div><div class="doc-container" id="Property--param_CssOverlayOpacity">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>var</i></span> <b>param_CssOverlayOpacity</b>&nbsp;=&nbsp;<span class="doc-param-value"><b>0.85</b></span>&nbsp;;&nbsp;&nbsp;<span title="Static Property"><b>.</b></span>&nbsp;<i>{Decimal}</i>
+			<div class="doc-method-comments">Overlay Customization - Opacity<br>
+Allowed Values: between 0.1 and 1</div>
 	
 </div>
-<!-- Properties -->
-
-<!-- Constants -->
-
 <!-- Sample Code -->
 
 <!-- Summary List -->
@@ -744,29 +771,51 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* PHP Class \SmartTextTranslator # Documentation Index *</option>
-		<optgroup label="Class \SmartTextTranslator">
+		<option value="" selected>* Javascript Class SmartJS_ModalBox # Documentation Index *</option>
+		<optgroup label="Class SmartJS_ModalBox">
 			<option value="Class--Summary-">***** Class Definition *****</option>
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">*** Methods summary ***</option>
 						
+									<option value="Method--getStatus">Method: getStatus()</option>
 			
 						
+						
+						
+						
+						
+						
+						
 			
-									<option value="Method--text">Method: text()</option>
+		</optgroup>
+				<optgroup label="Class Properties">
+			<option value="Properties--Summary-">*** Properties summary ***</option>
+									<option value="Property--param_LoaderImg">Property: param_LoaderImg</option>
 			
+						
+									<option value="Property--param_CloseImg">Property: param_CloseImg</option>
+			
+									<option value="Property--param_CloseAlign">Property: param_CloseAlign</option>
+			
+									<option value="Property--param_vAlign">Property: param_vAlign</option>
+			
+						
+						
+						
+									<option value="Property--param_CssOverlayBgColor">Property: param_CssOverlayBgColor</option>
+			
+									<option value="Property--param_CssOverlayOpacity">Property: param_CssOverlayOpacity</option>
 			
 			
 		</optgroup>
-		
 		
 		
 	</select>
 </div>
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:32:38 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-11-22 15:44:03 +0000</small>
 <hr>
 <br>
 <!-- # -->
