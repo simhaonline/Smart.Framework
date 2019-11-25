@@ -3,6 +3,7 @@ wpub
 tmp
 modules/mod-agile
 modules/mod-cloud
+modules/mod-countries
 modules/mod-db-orm-redbean
 modules/mod-dbal-zend
 modules/mod-documentor
