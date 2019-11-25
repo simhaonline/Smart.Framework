@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191124
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -53,7 +53,12 @@ final class SmartYamlConverter {
 	// ->
 
 	//================================================================
-	public $setting_dump_force_quotes = false; // @var bool :: Setting this to true will force YAMLDump to enclose any string value in quotes.  False by default.
+	/**
+	 * Setting this to true will force YAMLDump to enclose any string value in quotes
+	 * @var BOOLEAN
+	 * @default false
+	 */
+	public $setting_dump_force_quotes = false;
 	//--
 	private $REMPTY = "\0\0\0\0\0";
 	private $yaml_dump_indent;
@@ -83,6 +88,9 @@ final class SmartYamlConverter {
 
 
 	//================================================================
+	/**
+	 * @return STRING the Error Message if Any
+	 */
 	public function getError() {
 		//--
 		return (string) $this->err;
@@ -976,7 +984,7 @@ final class SmartYamlConverter {
 
 
 	//================================================================
-	function revertLiteralYamlPlaceHolder($lineArray, $literalBlock) {
+	private function revertLiteralYamlPlaceHolder($lineArray, $literalBlock) {
 		//--
 		foreach($lineArray as $k => $v) {
 			if(is_array($v)) {

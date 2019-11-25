@@ -34,14 +34,14 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * Class: SmartMailerSend - provides a Mail Send Client that supports both: MAIL or SMTP with SSL/TLS support.
  * It automatically includes the SmartMailerSmtpClient class when sending via SMTP method.
  *
- * This class is for very advanced use.
+ * This class is a low level message composer and send utility for advanced usage.
  * If defined the SMART_SOFTWARE_MAILSEND_SAFE_RULES and set to TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
  * To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUtils::send_extended_email() functions.
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191120
+ * @version 	v.20191125
  * @package 	Plugins:Mailer
  *
  */
@@ -55,48 +55,259 @@ final class SmartMailerSend {
 	private $parts;					// init array
 	private $atts;					// init array
 	private $composed;				// init flag
-	//-- error and log
-	public $error;					// error collect
-	public $log;					// debug log
 	//--
 	//==================================================== PUBLIC vars
-	//-- store the encoded message
-	public $mime_message;			// store the message
-	//-- debug level
-	public $debuglevel;				// debug level :: 0=no debug ; 1,2 debug
-	//-- how to encode
-	public $usealways_b64 = true;	// use always b64 encode (as google), instead of quote printable
-	//-- method (smtp or mail)
-	public $method;					// mail | smtp
-	//-- message parts
-	public $from_return;
-	public $namefrom;
-	public $from;
-	public $to;
-	public $cc;
-	public $bcc;
-	public $priority;
-	public $subject;
-	public $body;
-	public $headers;
-	public $is_html;
-	public $is_related;
-	public $charset;
-	//-- smtp
-	public $smtp_helo;				// smtp helo (server name that is allowed to send mails for this domain)
-	public $smtp_server;			// smtp server host or ip
-	public $smtp_port;				// smtp port
-	public $smtp_ssl;				// smtp ssl mode
-	public $smtp_cafile; 			// smtp ssl ca file
-	public $smtp_timeout;			// seconds to timeout
-	public $smtp_login;				// true | false :: use smtp auth
-	public $smtp_user;				// SMTP auth username
-	public $smtp_password;			// SMTP auth password
+
+	//-- debug level, error and log
+
+	/**
+	 * Debug Level
+	 * Valid values: 0 = no debug ; 1 = simple debug (partial) ; 2 = advanced debug (full)
+	 * @var INTEGER+
+	 * @default 0
+	 */
+	public $debuglevel;
+
+	/**
+	 * Errors Collector
+	 * If any error occurs will be set here
+	 * @var STRING
+	 * default ''
+	 */
+	public $error;
+
+	/**
+	 * Debug Log Collector
+	 * If Debug, this will return the partial or full Log as string, depend on how $debuglevel is set
+	 * @var STRING
+	 * default ''
+	 */
+	public $log;
 	//--
+
+	//-- how to encode
+
+	/**
+	 * If set to TRUE will encode using Base64Encode (the most safe)
+	 * Otherwise will use QuotePrintableEncode (the most used)
+	 * @var BOOLEAN
+	 * @default TRUE
+	 */
+	public $usealways_b64 = true;
+
+	//-- method (smtp or mail)
+
+	/**
+	 * The Mail Method to be used
+	 * Valid values: 'mail' or 'smtp'
+	 * If 'smtp' is used, additional SMTP settings must be added to this class (see below)
+	 * @var ENUM
+	 * @default 'mail'
+	 */
+	public $method;
+
+	/**
+	 * If set to TRUE will send HTML formated message, otherwise Text
+	 * @var BOOLEAN
+	 * @default false
+	 */
+	public $is_html;
+
+	/**
+	 * Message Character Set
+	 * Ussualy should be set to 'UTF-8'
+	 * @var STRING
+	 * @default 'ISO-8859-1'
+	 */
+	public $charset;
+
+	//-- message parts
+
+	/**
+	 * Message Return Recipient Email Address
+	 * Ex: 'return@my-email.ext'
+	 * @var STRING
+	 * @default ''
+	 */
+	public $from_return;
+
+	/**
+	 * Message From Recipient Name
+	 * *Optional*
+	 * Ex: 'Me'
+	 * @var STRING
+	 * @default ''
+	 */
+	public $namefrom;
+
+	/**
+	 * Message From Recipient Email Address
+	 * Ex: 'me@my-email.ext'
+	 * @var STRING
+	 * @default ''
+	 */
+	public $from;
+
+	/**
+	 * Message To Recipient Email Address
+	 * Ex: 'to@email.ext'
+	 * @var STRING
+	 * @default ''
+	 */
+	public $to;
+
+	/**
+	 * Message Cc Recipient(s) Email Address(es) as STRING or ARRAY
+	 * *Optional*
+	 * Ex: 'cc@email.ext' or [ 'cc1@email.ext', 'cc2@email3.ext', ... ]
+	 * @var MIXED
+	 * @default ''
+	 */
+	public $cc;
+
+	/**
+	 * Message Bcc Recipient Email Address
+	 * *Optional*
+	 * Ex: 'bcc@email101.ext'
+	 * @var STRING
+	 * @default ''
+	 */
+	public $bcc;
+
+	/**
+	 * Message Priority ; Can be (as standards): 1 = High ; 3 = Normal ; 5 = Low
+	 * *Optional*
+	 * @var ENUM
+	 * @default 3
+	 */
+	public $priority;
+
+	/**
+	 * Message Subject ; Ex: 'This is the subject of the email Message'
+	 * @var STRING
+	 * @default ''
+	 */
+	public $subject;
+
+	/**
+	 * Message Body
+	 * Ex(text): 'This is the body of the email Message\nAnd a new Line ...' $is_html should be leave as FALSE as default in this case
+	 * Ex(html): 'This is the body of the email Message<br>And a new Line ...' -> $is_html must be set to TRUE if HTML body is sent
+	 * For the case of sending HTML bodies you must assure mprogramatically that all HTML required resources as images, css, ... are embedded (the will not be embedded automatically)
+	 * As an alternative tho this class which is low level, the functions SmartMailerUtils::send_email() / SmartMailerUtils::send_extended_email() may be used and they will automatically resolve the HTML resources embedding ...
+	 * @var STRING
+	 * @default ''
+	 */
+	public $body;
+
+	/**
+	 * Message Headers
+	 * *Optional*
+	 * If non-empty, each header line must be end as CRLF (\r\n)
+	 * Ex: 'X-AntiAbuse: This header was added to track abuse, please include it with any abuse report'."\r\n".'X-AntiAbuse: Sender Address Domain - mydomain.ext'."\r\n"
+	 * @var STRING
+	 * @default ''
+	 */
+	public $headers;
+
+	//-- smtp
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP HELO (server name that is allowed to send mails for this domain)
+	 * Must be set to a real domain host that is valid to send emails for that address
+	 * @var STRING
+	 * @default '127.0.0.1'
+	 */
+	public $smtp_helo;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP server host or ip
+	 * @var STRING
+	 * @default null
+	 */
+	public $smtp_server;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP server port ; usually 25
+	 * @var INTEGER+
+	 * @default null
+	 */
+	public $smtp_port;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP SSL Mode: '', 'ssl', 'sslv3', 'tls', 'starttls'
+	 * If empty string will be set it will be not using SSL Mode
+	 * @var ENUM
+	 * @default null
+	 */
+	public $smtp_ssl;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * Relative Path to a SSL Certificate Authority File
+	 * If SSL Mode is set this is optional, otherwise is not used
+	 * Ex: store within smart-framework/etc/certificates ; specify as 'etc/certificates/ca.pem')
+	 * IMPORTANT: in this case the 'etc/certificates/' directory must be protected with a .htaccess to avoid being public readable - the directory and any files within this directory ...
+	 * @var STRING
+	 * @default null
+	 */
+	public $smtp_cafile;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP Connection Timeout in seconds
+	 * @var INTEGER+
+	 * @default 30
+	 */
+	public $smtp_timeout;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP Authentication ; If set to TRUE will try a SMTP Auth (login) using non-empty and valid $smtp_user and $smtp_password
+	 * @var BOOLEAN
+	 * @default false
+	 */
+	public $smtp_login;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP Authentication username ($smtp_login must be set to TRUE and a valid, non-empty $smtp_password must be provided)
+	 * @var STRING
+	 * @default null
+	 */
+	public $smtp_user;
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP Authentication password ($smtp_login must be set to TRUE and a valid, non-empty $smtp_user must be provided)
+	 * @var STRING
+	 * @default null
+	 */
+	public $smtp_password;
+
+	//-- store the encoded message
+
+	/**
+	 * Store the composed message by this class
+	 * If used with $class->send() and not using the 2nd parameter may return the mime message composed in this variable
+	 * @default ''
+	 * @var STRING
+	 */
+	public $mime_message;
+
+	//--
+
 	//====================================================
 
 
 	//=====================================================================================
+	/**
+	 * Class constructor
+	 */
 	public function __construct() {
 		//--
 		$this->cleanup();
@@ -106,6 +317,14 @@ final class SmartMailerSend {
 
 
 	//=====================================================================================
+	/**
+	 * Compose and/or Send an Email Message using MAIL or SMTP method, depend how this class properties are set
+	 * If the 2nd parameter is empty as '', the composed message can be retrieved by reading the (string) $class->mime_message property after calling this function
+	 * Can be a Text or HTML Message
+	 * @param ENUM $do_send If set to 'yes' will do send the message using MAIL or SMTP method depend how this class is set ; If set to 'no' will just compose a message from provided parameters ; does not apply if $raw_message is supplied ...
+	 * @param STRING $raw_message If this is provided will use the message from this string and will not compose the message using this class properties: $subject, $body, $headers, $from, $to, $cc, $bcc, ...
+	 * @return STRING Empty string if SUCCESS or Error Message on FAILURE ; Failure may come as missing some required message compose properties and/or if send = 'yes' will also check the email send success ; NOTICE: if using MAIL method the mail send result may report or not an error ... ; With SMTP sending the message assure it is delivered to the destination SMTP server with or without an error
+	 */
 	public function send($do_send, $raw_message='') {
 
 		//--
@@ -331,7 +550,21 @@ final class SmartMailerSend {
 
 
 	//=====================================================================================
-	public function add_attachment($message, $name='', $ctype='', $disp='attachment', $cid='', $embed='no') {
+	/**
+	 * Add an attachment to the message
+	 * @param STRING $att_body The body of the attachment
+	 * @param STRING $name *Optional* A File Name for this attachment
+	 * @param ENUM $ctype *Optional* The content type of the attachment: 'text/plain', 'text/html', 'message/rfc822', 'application/octet-stream'
+	 * @param ENUM $disp *Optional* The content disposition of the attachment: 'inline' or 'attachment' ; if $ctype is 'application/octet-stream' can be only 'attachment'
+	 * @param STRING $cid *Optional* The content ID if using with linked HTML reference parts of the message HTML body
+	 * @param ENUM $embed *Optional* If set to 'yes' will embed this part as real attachment ; else will embedd it as message sub-part ; Chossing this depends pretty much on how the message is built, if there are linked sub-parts or not ... too much philosophy to explain all here, but all the documentation for MIME E-mail Encapsulation of Aggregate Parts is here: https://tools.ietf.org/html/rfc2110
+	 * @return BOOLEAN On Success will return TRUE, on Failure will return FALSE
+	 */
+	public function add_attachment($att_body, $name='', $ctype='', $disp='attachment', $cid='', $embed='no') {
+		//--
+		if((string)$att_body == '') {
+			return false;
+		} //end if
 		//--
 		$cid = (string) self::safe_header_str((string)$cid); // content ID
 		//--
@@ -357,7 +590,7 @@ final class SmartMailerSend {
 				$name = (string) self::safe_header_str((string)$name);
 				$filename = '';
 				//--
-				$message = (string) SmartUnicode::fix_charset((string)$message);
+				$att_body = (string) SmartUnicode::fix_charset((string)$att_body);
 				//--
 				break;
 			//-- email messages
@@ -377,7 +610,7 @@ final class SmartMailerSend {
 				$name = 'forwarded_message_'.date('YmdHis').'_'.Smart::random_number(10000,99999).'.eml';
 				$filename = (string) self::safe_header_str((string)$name);
 				//--
-				$message = (string) SmartUnicode::fix_charset((string)$message);
+				$att_body = (string) SmartUnicode::fix_charset((string)$att_body);
 				//--
 				break;
 			//-- the rest ...
@@ -405,7 +638,7 @@ final class SmartMailerSend {
 		//--
 		$arr_part = array(
 			'ctype' 	=> (string) $ctype,
-			'message' 	=> (string) $message,
+			'message' 	=> (string) $att_body,
 			'charset' 	=> (string) $charset,
 			'encode' 	=> (string) $encode,
 			'disp' 		=> (string) $disp,
@@ -420,11 +653,18 @@ final class SmartMailerSend {
 			$this->parts[] = (array) $arr_part;
 		} //end if else
 		//--
+		return true;
+		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
+	/**
+	 * Provide a helper to safe escape Mime (Email) Message Header Lines
+	 * @param STRING $str The mime header line (MUST NOT Contain the line ending CRLF as \r\n) ; Line ending must be added after escaping the header line using this function
+	 * @return STRING The safe escaped Mime Message Header Line
+	 */
 	public function safe_header_str($str) {
 		//--
 		return (string) Smart::normalize_spaces((string)SmartUnicode::fix_charset((string)$str));
@@ -459,7 +699,6 @@ final class SmartMailerSend {
 		$this->body =  '';
 		$this->headers = '';
 		$this->is_html = false;
-		$this->is_related = '';
 		$this->charset = 'ISO-8859-1';
 		//--
 		$this->error = '';
@@ -642,17 +881,16 @@ final class SmartMailerSend {
 
 /**
  * Class: SmartMailerSmtpClient - provides the raw communication protocol between PHP and a SMTP server with support for SSL/TLS.
- * This class is for very advanced use.
+ * This class is for advanced usage.
  *
- * It just implements the communication protocol between PHP and a SMTP server.
- * It does and NOT implement the Mail Send Client.
- * To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUtils::send_extended_email() functions.
- * For more advanced needs on send emails use the SmartMailerSend class ...
+ * It just implements the communication protocol between PHP and a SMTP or ESMTP server.
+ * It does and NOT implement the Mail Send Client or Message Composing.
+ * For a bit more easy use on send emails use the SmartMailerSend class ...
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191120
+ * @version 	v.20191125
  * @package 	Plugins:Mailer
  *
  */
@@ -714,7 +952,9 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [INIT]
+	/**
+	 * SMTP Client Class constructor
+	 */
 	public function __construct() {
 		//--
 		$this->socket = false;
@@ -727,7 +967,12 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC] :: set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
+	/**
+	 * Set a SSL/TLS Certificate Authority File
+	 * If not set but SMART_FRAMEWORK_SSL_CA_FILE is defined will use the SMART_FRAMEWORK_SSL_CA_FILE
+	 * @param STRING $cafile Relative Path to a SSL Certificate Authority File (Ex: store within smart-framework/etc/certificates ; specify as 'etc/certificates/ca.pem') ; IMPORTANT: in this case the 'etc/certificates/' directory must be protected with a .htaccess to avoid being public readable - the directory and any files within this directory ...)
+	 * @return VOID
+	 */
 	public function set_ssl_tls_ca_file($cafile) {
 		//--
 		$this->cafile = '';
@@ -742,10 +987,15 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Opens a socket to the specified server. Returns 1 on success, 0 on fail
-	// SMTP CODE SUCCESS: 220
-	// SMTP CODE FAILURE: 421
+	/**
+	 * Will try to open a socket to the specified SMTP Server using the host/ip and port ; If a SSL option is selected will try to establish a SSL socket or fail
+	 * @hints SMTP SUCCESS CODE: 220 ; SMTP FAILURE CODE: 421
+	 * @param STRING $helo The SMTP HELO (server name that is allowed to send mails for this domain) ; Must be set to a real domain host that is valid to send emails for that address ; Ex: 'mail.mydomain.ext'
+	 * @param STRING $server The SMTP server Hostname or IP address
+	 * @param INTEGER+ $port *Optional* The SMTP Server Port ; Default is: 25
+	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'ssl', 'sslv3', 'tls', 'starttls' ; If empty string will be set will be not using SSL Mode
+	 * @return INTEGER+ 1 on success, 0 on fail
+	 */
 	public function connect($helo, $server, $port=25, $sslversion='') {
 
 		//-- inits
@@ -940,56 +1190,15 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// enable crypto on server
-	// Sends the command STARTTLS to the SMTP server.
-	// Implements from rfc 821: STARTTLS <CRLF>
-	// SMTP CODE SUCCESS: 220
-	// SMTP CODE ERROR  : 501, 454
-	private function starttls($stream_context) {
-		//--
-		if($this->debug) {
-			$this->log .= '[INF] Starting TLS on Mail Server // STARTTLS'."\n";
-		} //end if
-		//--
-		if((string)$this->error != '') {
-			return 0;
-		} //end if
-		//--
-		$reply = $this->send_cmd('STARTTLS');
-		if((string)$this->error != '') {
-			return 0;
-		} //end if
-		//--
-		$test = $this->answer_code($reply);
-		if((string)$test != '220') {
-			$this->error = '[ERR] Server StartTLS Failed :: '.$test.' // '.$reply;
-			return 0;
-		} //end if
-		//--
-		if(!$this->socket) {
-			$this->error = '[ERR] Server StartTLS Failed :: Invalid Socket';
-			return 0;
-		} //end if
-		//--
-		$test_starttls = @stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-		if(!$test_starttls) {
-			$this->error = '[ERR] Server StartTLS Failed to be Enabled on Socket ...';
-			return 0;
-		} //end if
-		//--
-		return 1;
-		//--
-	} //END FUNCTION
-	//=====================================================================================
-
-
-	//=====================================================================================
-	// [PUBLIC]
-	// Sends both user and pass. Returns 1 on Success and 0 on Error
-	// Performs SMTP authentication.  Must be run after running the
-	// Hello() method.  Returns true if successfully authenticated.
-	// Success Codes are: 334 and final is 235
+	/**
+	 * Try a SMTP Authentication with a username and password
+	 * Generally this must be run after running the SMTP hello() method
+	 * Sends both user and pass to the SMTP server
+	 * @hints SMTP SUCCESS CODES are: 334 OR 235 (final)
+	 * @param STRING $username The SMTP authentication username
+	 * @param STRING $pass The SMTP authentication password
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function login($username, $pass) {
 		//--
 		if($this->debug) {
@@ -1040,13 +1249,13 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Sends both user and pass. Returns 1 on Success and 0 on Error
-	// Sends the quit command to the server and then closes the socket
-	// if there is no error or the $close_on_error argument is true.
-	// Implements from rfc 821: QUIT <CRLF>
-	// SMTP CODE SUCCESS: 221
-	// SMTP CODE ERROR  : 500
+	/**
+	 * Sends the QUIT command to the SMTP server
+	 * Closes the communication socket after sending QUIT command
+	 * Implemented as RFC 821: QUIT <CRLF>
+	 * @hints SMTP SUCCESS CODE: 221 ; SMTP ERROR CODE: 500
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function quit() {
 		//--
 		if($this->debug) {
@@ -1077,12 +1286,13 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// ping server
-	// Sends the command NOOP to the SMTP server.
-	// Implements from rfc 821: NOOP <CRLF>
-	// SMTP CODE SUCCESS: 250
-	// SMTP CODE ERROR  : 500, 421
+	/**
+	 * Ping the SMTP Server
+	 * Sends the command NOOP to the SMTP server
+	 * Implemented as RFC 821: NOOP <CRLF>
+	 * @hints SMTP SUCCESS CODE: 250 ; SMTP ERROR CODE: 500, 421
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function noop() {
 		//--
 		if($this->debug) {
@@ -1111,12 +1321,13 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Help for supported commands
-	// Sends the command HELP to the SMTP server.
-	// Implements rfc 821: HELP [ <SP> <string> ] <CRLF>
-	// SMTP CODE SUCCESS: 211,214
-	// SMTP CODE ERROR  : 500,501,502,504,421
+	/**
+	 * Help for supported commands on the SMTP Server
+	 * Sends the command HELP to the SMTP server.
+	 * Implemented as RFC 821: HELP [ <SP> <string> ] <CRLF>
+	 * @hints SMTP SUCCESS CODE: 211, 214 ; SMTP ERROR CODE: 500, 501, 502, 504, 421
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function help() {
 		//--
 		if($this->debug) {
@@ -1145,12 +1356,12 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Sends the RSET command to abort and transaction that is currently in progress.
-	// Returns true if successful false otherwise.
-	// Implements rfc 821: RSET <CRLF>
-	// SMTP CODE SUCCESS: 250
-	// SMTP CODE ERROR  : 500,501,504,421
+	/**
+	 * Sends the RSET command to the SMTP Server to abort any transaction that is currently in progress
+	 * Implemented as RFC 821: RSET <CRLF>
+	 * @hints SMTP SUCCESS CODE: 250 ; SMTP ERROR CODE: 500, 501, 504, 421
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function reset() {
 		//--
 		if($this->debug) {
@@ -1179,11 +1390,14 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// Sends the EHLO/HELO command to the smtp server.
-	// This makes sure that we and the server are in the same known state.
-	// Implements from rfc 821: HELO <SP> <domain> <CRLF>
-	// SMTP CODE SUCCESS: 250
-	// SMTP CODE ERROR  : 500, 501, 504, 421
+	/**
+	 * Sends the EHLO and/or HELO command to the SMTP Server
+	 * First will try the extended SMTP feature by sending EHLO. If EHLO is not successful will try HELO
+	 * This makes sure that the client and the server are in the same known state.
+	 * Implemented as RFC 821: EHLO <SP> <domain> <CRLF> / HELO <SP> <domain> <CRLF>
+	 * @hints SMTP SUCCESS CODE: 250 ; SMTP ERROR CODE: 500, 501, 504, 421
+	 * @return INTEGER+ 1 on Success (if any of EHLO/HELO is successful) ; 0 on Error (if both EHLO and HELO fail)
+	 */
 	public function hello($hostname) {
 		//--
 		if($this->debug) {
@@ -1214,13 +1428,13 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Verifies that the name is recognized by the server.
-	// Returns false if the name could not be verified otherwise the response from the server is returned.
-	// Implements rfc 821: VRFY <SP> <string> <CRLF>
-	// SMTP CODE SUCCESS: 250,251
-	// SMTP CODE FAILURE: 550,551,553
-	// SMTP CODE ERROR  : 500,501,502,421
+	/**
+	 * Verifies if the given recipient name is recognized by the SMTP server
+	 * Implemented as RFC 821: VRFY <SP> <string> <CRLF>
+	 * @hints SMTP SUCCESS CODE: 250, 251 ; SMTP FAIL CODE: 550, 551, 553 ; SMTP ERROR CODE: 500, 501, 502, 421
+	 * @param STRING $name The recipient name to be verified ; Ex: name@domain.ext
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function verify($name) {
 		//--
 		if($this->debug) {
@@ -1249,15 +1463,16 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Expand takes the name and asks the server to list all the people who are members of the _list_.
-	// Expand will return back an empty string for error and the reply with reply lines ended by [CRLF].
-	// Each value in the array returned has the format of: [ <full-name> <sp> ] <path>
-	// The definition of <path> is defined in rfc 821
-	// Implements rfc 821: EXPN <SP> <string> <CRLF>
-	// SMTP CODE SUCCESS: 250
-	// SMTP CODE FAILURE: 550
-	// SMTP CODE ERROR  : 500,501,502,504,421
+	/**
+	 * Expand takes the recipient name and asks the server to list all the recipients who are members of the _list_
+	 * SMTP Expand will return back an empty string for error and the reply with reply lines ended by [CRLF]
+	 * Each value in the array returned has the format of: [ <full-name> <sp> ] <path>
+	 * The definition of <path> is defined in RFC 821
+	 * Implemented as RFC 821: EXPN <SP> <string> <CRLF>
+	 * @hints SMTP SUCCESS CODE: 250 ; SMTP FAIL CODE: 550 ; SMTP ERROR CODE: 500, 501, 502, 504, 421
+	 * @param STRING $name The recipient name to be expanded ; Ex: mail-list@domain.ext
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function expand($name) {
 		//--
 		if($this->debug) {
@@ -1286,15 +1501,14 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Starts a mail transaction from the email address specified in
-	// $from. Returns true if successful or false otherwise. If True
-	// the mail transaction is started and then one or more Recipient
-	// commands may be called followed by a Data command.
-	// Implements rfc 821: MAIL <SP> FROM:<reverse-path> <CRLF>
-	// SMTP CODE SUCCESS: 250
-	// SMTP CODE SUCCESS: 552,451,452
-	// SMTP CODE SUCCESS: 500,501,421
+	/**
+	 * Starts a send mail (message) transaction originating from the email address specified in $from recipient name on the SMTP Server
+	 * If this command is successful then the mail transaction is started and then one or more Recipient commands may be called followed by a Data command
+	 * Implemented as RFC 821: MAIL <SP> FROM:<reverse-path> <CRLF>
+	 * @hints SMTP SUCCESS CODE: 250 ; SMTP FAIL CODE: 552, 451, 452 ; SMTP ERROR CODE: 500, 501, 421
+	 * @param STRING $from The originating email recipient ; Ex: me@my-email.ext
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function mail($from) {
 		//--
 		if($this->debug) {
@@ -1323,13 +1537,13 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Sends the command RCPT to the SMTP server with the TO: argument of $to.
-	// Returns true if the recipient was accepted false if it was rejected.
-	// Implements from rfc 821: RCPT <SP> TO:<forward-path> <CRLF>
-	// SMTP CODE SUCCESS: 250,251
-	// SMTP CODE FAILURE: 550,551,552,553,450,451,452
-	// SMTP CODE ERROR  : 500,501,503,421
+	/**
+	 * Sends the command RCPT to the SMTP server with the TO: argument of $to.
+	 * Implemented as RFC 821: RCPT <SP> TO:<forward-path> <CRLF>
+	 * @hints SMTP SUCCESS CODE: 250, 251 ; SMTP FAIL CODE: 550, 551, 552, 553, 450, 451, 452 ; SMTP ERROR CODE: 500, 501, 503, 421
+	 * @param STRING $to The destination email recipient (or email list) ; Ex: destination@your-email.ext
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function recipient($to) {
 		//--
 		if($this->debug) {
@@ -1358,19 +1572,16 @@ final class SmartMailerSmtpClient {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Issues a data command and sends the msg_data to the server finializing the mail transaction.
-	// The data $msg_data is the message that is to be send with the headers.
-	// Each header needs to be on a single line followed by a <CRLF> with the message headers
-	// and the message body being seperated by and additional <CRLF>.
-	// Implements rfc 821: DATA <CRLF>
-	// SMTP CODE INTERMEDIATE: 354
-	//   [data]
-	//   <CRLF>.<CRLF>
-	//   SMTP CODE SUCCESS: 250
-	//   SMTP CODE FAILURE: 552,554,451,452
-	// SMTP CODE FAILURE: 451,554
-	// SMTP CODE ERROR  : 500,501,503,421
+	/**
+	 * Initiates a data command on the SMTP Server and sends the $msg_data to the server finalizing the mail transaction started with mail($from) and followed by recipient($to)
+	 * The $msg_data as data is the message that is to be send together with the message headers
+	 * Each header line (if any) needs to be on a single line followed by a <CRLF>
+	 * After headers the mail message body have to be appended and being separated by and additional <CRLF>
+	 * Implemented as RFC 821: DATA <CRLF>
+	 * @hints [ Intermediate codes for {data} <CRLF>.<CRLF> are: SMTP INTERMEDIATE CODE: 354 ; SMTP CODE SUCCESS: 250 ; SMTP CODE FAILURE: 552,554,451,452 ] ; [ Final Transaction codes are: SMTP SUCCESS CODE: 250 ; SMTP FAIL CODE: 451, 554 ; SMTP ERROR CODE: 500, 501, 503, 421 ]
+	 * @param STRING $msg_data The message data (headers + body) to be sent to the SMTP Server
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function data_send($msg_data) {
 		//--
 		if($this->debug) {
@@ -1480,6 +1691,51 @@ final class SmartMailerSmtpClient {
 
 	//=====================================================================================
 	// :: PRIVATES ::
+	//=====================================================================================
+
+
+	//=====================================================================================
+	// [PRIVATE]
+	// enable crypto on server
+	// Sends the command STARTTLS to the SMTP server.
+	// Implements from rfc 821: STARTTLS <CRLF>
+	// SMTP CODE SUCCESS: 220
+	// SMTP CODE ERROR  : 501, 454
+	private function starttls($stream_context) {
+		//--
+		if($this->debug) {
+			$this->log .= '[INF] Starting TLS on Mail Server // STARTTLS'."\n";
+		} //end if
+		//--
+		if((string)$this->error != '') {
+			return 0;
+		} //end if
+		//--
+		$reply = $this->send_cmd('STARTTLS');
+		if((string)$this->error != '') {
+			return 0;
+		} //end if
+		//--
+		$test = $this->answer_code($reply);
+		if((string)$test != '220') {
+			$this->error = '[ERR] Server StartTLS Failed :: '.$test.' // '.$reply;
+			return 0;
+		} //end if
+		//--
+		if(!$this->socket) {
+			$this->error = '[ERR] Server StartTLS Failed :: Invalid Socket';
+			return 0;
+		} //end if
+		//--
+		$test_starttls = @stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+		if(!$test_starttls) {
+			$this->error = '[ERR] Server StartTLS Failed to be Enabled on Socket ...';
+			return 0;
+		} //end if
+		//--
+		return 1;
+		//--
+	} //END FUNCTION
 	//=====================================================================================
 
 

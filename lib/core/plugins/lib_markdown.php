@@ -36,8 +36,14 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	Smart, SmartUnicode, SmartUtils
- * @version 	v.20190301
+ * @version 	v.20191124
  * @package 	Plugins:ConvertersAndParsers
+ *
+ * <code>
+ * $markdown = new SmartMarkdownToHTML();
+ * echo $markdown->text('Hello _SmartMarkdownToHTML_!');
+ * // prints: '<p>Hello <i>SmartMarkdownToHTML</i>!</p>'
+ * </code>
  *
  */
 final class SmartMarkdownToHTML {
@@ -136,6 +142,9 @@ final class SmartMarkdownToHTML {
 	//===================================
 
 
+	/**
+	 * Class constructor with many options
+	 */
 	public function __construct($y_breaksEnabled=true, $y_markupEscaped=true, $y_urlsLinked=true, $y_htmlEntitiesEscaped=false) {
 		//--
 		if(!$y_markupEscaped) {
@@ -150,6 +159,11 @@ final class SmartMarkdownToHTML {
 	} //END FUNCTION
 
 
+	/**
+	 * Converts Markdown to HTML
+	 * @param STRING $text The Markdown to be processed
+	 * @return STRING HTML code
+	 */
 	public function text($text) {
 		//-- make sure no definitions are set
 		$this->DefinitionData = array(); // init
@@ -1834,11 +1848,6 @@ final class SmartMarkdownToHTML {
 
 
 } //END CLASS
-
-/*
-$markdown = new SmartMarkdownToHTML();
-echo $markdown->text('Hello _SmartMarkdownToHTML_!'); // prints: <p>Hello <i>SmartMarkdownToHTML</i>!</p>
-*/
 
 
 //=====================================================================================

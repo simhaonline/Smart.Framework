@@ -28,9 +28,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * Class: SmartMailerImap4Client - provides an IMAP4 Mail Client with SSL/TLS support.
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
+ * @hints 		After each operation on the IMAP4 Server should check the $imap4->error string and if non-empty stop and disconnect to free the socket
  *
  * @depends 	classes: Smart
- * @version 	v.20191120
+ * @version 	v.20191125
  * @package 	Plugins:Mailer
  *
  */
@@ -63,7 +64,8 @@ final class SmartMailerImap4Client {
 	/**
 	 * @var STRING
 	 * @default ''
-	 * the error message(s) will be collected here
+	 * This should be checked after each operation on the server
+	 * The error message(s) will be collected here
 	 * do not SET a value here, but just GET the result
 	 */
 	public $error = '';
@@ -71,8 +73,8 @@ final class SmartMailerImap4Client {
 	/**
 	 * @var STRING
 	 * @default ''
-	 * the operations log (only if debug is enabled)
-	 * do not SET a value here, but just GET the result
+	 * The operations log (only if debug is enabled)
+	 * Do not SET a value here, but just GET the result
 	 */
 	public $log = '';
 
@@ -93,7 +95,9 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [INIT]
+	/**
+	 * IMAP4 Client Class constructor
+	 */
 	public function __construct($buffer=0) { // IMAP4
 		//--
 		$this->socket = false;
@@ -120,7 +124,12 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC] :: set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
+	/**
+	 * Set a SSL/TLS Certificate Authority File
+	 * If not set but SMART_FRAMEWORK_SSL_CA_FILE is defined will use the SMART_FRAMEWORK_SSL_CA_FILE
+	 * @param STRING $cafile Relative Path to a SSL Certificate Authority File (Ex: store within smart-framework/etc/certificates ; specify as 'etc/certificates/ca.pem') ; IMPORTANT: in this case the 'etc/certificates/' directory must be protected with a .htaccess to avoid being public readable - the directory and any files within this directory ...)
+	 * @return VOID
+	 */
 	public function set_ssl_tls_ca_file($cafile) {
 		//--
 		$this->cafile = '';
@@ -135,8 +144,13 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Opens a socket to the specified server. Returns 1 on success, 0 on fail
+	/**
+	 * Will try to open a socket to the specified IMAP4 Server using the host/ip and port ; If a SSL option is selected will try to establish a SSL socket or fail
+	 * @param STRING $server The Server Hostname or IP address
+	 * @param INTEGER+ $port *Optional* The Server Port ; Default is: 143
+	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'ssl', 'sslv3', 'tls', 'starttls' ; If empty string will be set will be not using SSL Mode
+	 * @return INTEGER+ 1 on success, 0 on fail
+	 */
 	public function connect($server, $port=143, $sslversion='') { // IMAP4
 
 		//-- inits
@@ -277,8 +291,11 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// ping server
+	/**
+	 * Ping the IMAP4 Server
+	 * Sends the command NOOP to the Server
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function noop() { // IMAP4
 		//--
 		if($this->debug) {
@@ -307,8 +324,10 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// reset server connection (includding all messages marked to be deleted)
+	/**
+	 * Reset the IMAP4 server connection (includding all messages marked to be deleted)
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function reset() { // IMAP4
 		//--
 		if($this->debug) {
@@ -322,8 +341,11 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// close connection
+	/**
+	 * Sends the CLOSE/UNSELECT/LOGOUT commands set to the IMAP4 server
+	 * Closes the communication socket after sending LOGOUT command
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function quit() { // IMAP4
 		//--
 		if($this->debug) {
@@ -356,8 +378,14 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Sends both user and pass. Returns 1 on Success and 0 on Error
+	/**
+	 * Try to Authenticate on the IMAP4 Server with a username and password
+	 * Sends both user and pass to the Server
+	 * @param STRING $username The authentication username
+	 * @param STRING $pass The authentication password
+	 * @param ENUM $mode *Optional* The authentication mode ; can be set to 'login' or 'authenticate' ; Default is 'authenticate'
+	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
+	 */
 	public function login($username, $pass, $mode='') { // IMAP4
 		//--
 		$this->tag = 'smart77'.strtolower(Smart::uuid_10_seq()).'7framework';
@@ -398,7 +426,14 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	public function select_mailbox($mbox_name, $allow_create=false) { // IMAP4
+	/**
+	 * Selects a MailBox after login on the IMAP4 Server
+	 * Unlike the POP3 servers the IMAP4 servers can operate on multiple MailBoxes over the same account
+	 * @param STRING $mbox_name The MailBox to Select ; Ex: 'Inbox' or 'Sent' or 'Trash' or 'Spam' or ... 'Sent Items', ...
+	 * @param BOOLEAN $allow_create If MailBox does not exists and this param is set to TRUE then MailBox will be created
+	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
+	 */
+	public function select_mailbox($mbox_name, $allow_create=false) { // this is just for IMAP4, n/a for POP3
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Select MailBox // '.$mbox_name."\n";
@@ -486,75 +521,31 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	public function parse_uidls($y_list) { // this is just for IMAP4, n/a for POP3
-
-		// ID[SPACE]UID\n
-
-		//--
-		$y_list = (string) trim((string)str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), (string)$y_list));
-		//--
-		$uidls = (array) explode("\n", (string)$y_list);
-		//--
-
-		//--
-		$new_uidls = array();
-		//--
-		if(Smart::array_size($uidls) > 0) {
-			//--
-			foreach($uidls as $key => $val) {
-				//--
-				$val = (string) trim((string)$val);
-				//--
-				$tmp_arr = array();
-				//--
-				if((string)$val != '') {
-					//--
-					$tmp_arr = (array) explode(' ', (string)$val);
-					$tmp_arr[0] = (string) trim((string)$tmp_arr[0]);
-					$tmp_arr[1] = (string) trim((string)$tmp_arr[1]);
-					//--
-					if(preg_match('/^([0-9])+$/', (string)$tmp_arr[0])) {
-						//--
-						if((string)$tmp_arr[1] != '') {
-							$new_uidls[(string)$tmp_arr[0]] = (string) $tmp_arr[1];
-						} //end if
-						//--
-					} //end if
-					//--
-				} //end if
-				//--
-			} //end foreach
-			//--
-		} //end if
-		//--
-		$uidls = array();
-		//--
-
-		//--
-		return (array) $new_uidls;
-		//--
-
-	} //END FUNCTION
-	//=====================================================================================
-
-
-	//=====================================================================================
+	/**
+	 * Get all the IMAP4 MetaData for the selected account MailBox
+	 * @return ARRAY Which contains the following keys [ 'uivalidity' => 'CurrentUIV', 'count' => 101, 'recent' => '', 'size' => 1024 ]
+	 */
 	public function get_metadata() { // IMAP4
 		//--
-		$uivalidity = $this->crr_uiv;
-		//--
-		return array('uivalidity' => $uivalidity, 'count' => $this->inf_count, 'recent' => $this->inf_recent, 'size' => $this->inf_size);
+		return array(
+			'uivalidity' 	=> $this->crr_uiv,
+			'count' 		=> $this->inf_count,
+			'recent' 		=> $this->inf_recent,
+			'size' 			=> $this->inf_size
+		);
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// returns array() on Success and '' on Error
+	/**
+	 * Get The Count Information for the selected account MailBox
+	 * @return ARRAY Which contains the following keys [ 'size' => 1024, 'count' => 101, 'recent' => '' ]
+	 */
 	public function count() { // IMAP4
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
+		if((string)$this->crr_mbox == '') {
 			$this->error = '[ERR] IMAP4 Count // No MailBox Selected ...';
 		} //end if
 		//--
@@ -577,8 +568,12 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return the UID for the selected message or empty on error
+	/**
+	 * Get the list of UIDs or a specific UID for the selected message
+	 * A list with multiple UIDs provided by this method can be parsed using $imap4->parse_uidls($list)
+	 * @param STRING $msg_num *Optional* A specific UID for a specific message or leave empty to get the list with all UIDs
+	 * @return STRING A unique UID or a list with multiple (ar all) UIDs ; returns empty string on error
+	 */
 	public function uid($msg_num='') { // IMAP4
 		//--
 		if(strlen($this->crr_mbox) <= 0) {
@@ -629,9 +624,9 @@ final class SmartMailerImap4Client {
 			$uid = '';
 			$tmp_arr = (array) explode("\r\n", (string)$reply);
 			for($i=0; $i<count($tmp_arr); $i++) {
-				$tmp_line = trim($tmp_arr[$i]);
+				$tmp_line = (string) trim((string)$tmp_arr[$i]);
 				if(substr($tmp_line, 0, 9) == '* SEARCH ') {
-					$uid = trim(substr($tmp_line, 9));
+					$uid = (string) trim(substr($tmp_line, 9));
 				} //end if
 			} //end for
 			//--
@@ -658,15 +653,76 @@ final class SmartMailerImap4Client {
 			} //end if else
 		} //end if
 		//--
-		return $uid;
+		return (string) $uid;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return the size for the selected message or empty on error
+	/**
+	 * Parse the (standard) list of UIDs supplied IMAP4 protocol
+	 * @hints Some IMAP4 servers have non-standard responses for the format of $mailget->uid() and in this case you may have to build your own parser ...
+	 * @param STRING $y_list The UIDs list given by the IMAP4 server with command: $mailget->uid() ; Expects a format similar with: ID[SPACE]UID\n
+	 * @return ARRAY the list of parsed UIDs as [ id1 => uid1, id2 => uid2, ..., idN => uidN ]
+	 */
+	public function parse_uidls($y_list) { // this is just for IMAP4, n/a for POP3
+
+		//--
+		$y_list = (string) trim((string)str_replace(array("\r\n", "\r", "\t"), array("\n", "\n", ' '), (string)$y_list));
+		//--
+		$uidls = (array) explode("\n", (string)$y_list);
+		//--
+
+		//--
+		$new_uidls = array();
+		//--
+		if(Smart::array_size($uidls) > 0) {
+			//--
+			foreach($uidls as $key => $val) {
+				//--
+				$val = (string) trim((string)$val);
+				//--
+				$tmp_arr = array();
+				//--
+				if((string)$val != '') {
+					//--
+					$tmp_arr = (array) explode(' ', (string)$val);
+					$tmp_arr[0] = (string) trim((string)$tmp_arr[0]);
+					$tmp_arr[1] = (string) trim((string)$tmp_arr[1]);
+					//--
+					if(preg_match('/^([0-9])+$/', (string)$tmp_arr[0])) {
+						//--
+						if((string)$tmp_arr[1] != '') {
+							$new_uidls[(string)$tmp_arr[0]] = (string) $tmp_arr[1];
+						} //end if
+						//--
+					} //end if
+					//--
+				} //end if
+				//--
+			} //end foreach
+			//--
+		} //end if
+		//--
+		$uidls = array();
+		//--
+
+		//--
+		return (array) $new_uidls;
+		//--
+
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Get the size for the selected message
+	 * @hints Some servers may not comply with this method and may return empty result
+	 * @param STRING $msg_num The Message Number
+	 * @return STRING the size of the selected message (ussualy in Bytes) or empty string if Error
+	 */
 	public function size($msg_num) { // IMAP4
 		//--
 		if(strlen($this->crr_mbox) <= 0) {
@@ -696,21 +752,25 @@ final class SmartMailerImap4Client {
 		$tmp_size = trim($tmp_arr[1]);
 		$tmp_arr = array();
 		$tmp_arr = (array) explode(')', (string)$tmp_size);
-		$size = trim($tmp_arr[0]);
+		$size = trim((string)$tmp_arr[0]);
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Size For Message #'.$msg_num.' is: ['.$size.']'."\n";
 		} //end if
 		//--
-		return $size;
+		return (string) $size;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// delete a message from server
+	/**
+	 * Delete a message stored on the IMAP4 Server
+	 * @param STRING $msg_num The Message Number or Message UID if 2nd param is set to TRUE
+	 * @param BOOLEAN $by_uid *Optional* ; Default is FALSE ; If TRUE a Message UID should be supplied for 1st param ; If FALSE a Message Number should be supplied for 1st param
+	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
+	 */
 	public function delete($msg_num, $by_uid=false) { // IMAP4
 		//--
 		if(strlen($this->crr_mbox) <= 0) {
@@ -752,8 +812,12 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return STRING: the message header or empty on error
+	/**
+	 * Get the Message Head Lines (first lines of the message body)
+	 * @param STRING $msg_num The Message Number
+	 * @param INTEGER+ $read_lines The number of lines to retrieve 1..255
+	 * @return STRING The first lines of the message body or empty string on ERROR
+	 */
 	public function header($msg_num, $read_lines=5) { // IMAP4
 		//--
 		if(strlen($this->crr_mbox) <= 0) {
@@ -791,7 +855,7 @@ final class SmartMailerImap4Client {
 			//--
 			if($read_lines <= 0) {
 				//--
-				$header_out = trim((string)implode("\r\n", (array)$tmp_repl_arr));
+				$header_out = (string) trim((string)implode("\r\n", (array)$tmp_repl_arr));
 				//--
 			} else {
 				//--
@@ -802,22 +866,26 @@ final class SmartMailerImap4Client {
 				} //end if
 				//--
 				for($i=1; $i<$tmp_max; $i++) { // we start at 1 because the 1st line is the IMAP Answer
-					$header_out .= $tmp_repl_arr[$i]."\r\n";
+					$header_out .= (string) $tmp_repl_arr[$i]."\r\n";
 				} //end for
 				//--
 			} //end if else
 			//--
 		} //end if
 		//--
-		return $header_out;
+		return (string) $header_out;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return STRING: the full message or empty on error
+	/**
+	 * Get the Entire Message from Server
+	 * @param STRING $msg_num The Message Number or Message UID if 2nd param is set to TRUE
+	 * @param BOOLEAN $by_uid *Optional* ; Default is FALSE ; If TRUE a Message UID should be supplied for 1st param ; If FALSE a Message Number should be supplied for 1st param
+	 * @return STRING The full message containing the Message Headers and Body as stored on the server or empty string on ERROR
+	 */
 	public function read($msg_num, $by_uid=false) { // IMAP4
 		//--
 		if(strlen($this->crr_mbox) <= 0) {
@@ -867,15 +935,20 @@ final class SmartMailerImap4Client {
 			//--
 		} //end if
 		//--
-		return $msg_out;
+		return (string) $msg_out;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return 1/0: COPY Message to another MBox by NUM/UID
+	/**
+	 * COPY a Message from the current selected MailBox to another (destination) MailBox
+	 * @param STRING $msg_num The Message Number or Message UID if 3rd param is set to TRUE
+	 * @param STRING $dest_mbox The destination MailBox name ; Ex: 'Trash' or 'Deleted Messages' or 'Archive', ...
+	 * @param BOOLEAN $by_uid *Optional* ; Default is FALSE ; If TRUE a Message UID should be supplied for 1st param ; If FALSE a Message Number should be supplied for 1st param
+	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
+	 */
 	public function copy($msg_uid, $dest_mbox, $by_uid=false) { // IMAP4
 		//--
 		if(strlen($this->crr_mbox) <= 0) {
@@ -917,8 +990,11 @@ final class SmartMailerImap4Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return STRING: UID of uploaded (appended) message or empty on error
+	/**
+	 * STORE an uploaded Message to the current selected MailBox
+	 * @param STRING $message The full message containing the headers and the body as stored locally
+	 * @return STRING The UID of the new uploaded message or Empty string on Error
+	 */
 	public function append($message) {
 		//--
 		if(strlen($this->crr_mbox) <= 0) {
@@ -977,10 +1053,10 @@ final class SmartMailerImap4Client {
 		} //end if
 		//--
 		$tmp_arr_uid = (array) explode('[APPENDUID ', (string)$data);
-		$tmp_uid = trim($tmp_arr_uid[1]);
+		$tmp_uid = (string) trim((string)$tmp_arr_uid[1]);
 		$tmp_arr_uid = array();
 		$tmp_arr_uid = (array) explode('] Append', (string)$tmp_uid);
-		$tmp_uid = trim($tmp_arr_uid[0]);
+		$tmp_uid = (string) trim((string)$tmp_arr_uid[0]);
 		$tmp_arr_uid = array();
 		$tmp_arr_uid = (array) explode(' ', (string)$tmp_uid);
 		if(trim($tmp_arr_uid[0]) == $this->crr_uiv) {
@@ -991,7 +1067,7 @@ final class SmartMailerImap4Client {
 		//--
 		$this->log .= '[INF] Appended Completed and the UID is: '.$tmp_uid."\n";
 		//--
-		return $tmp_uid;
+		return (string) $tmp_uid;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1016,7 +1092,7 @@ final class SmartMailerImap4Client {
 	// Strips \r\n from server responses
 	private function strip_clf($text) { // IMAP4
 		//--
-		return trim($text);
+		return (string) trim((string)$text);
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1179,9 +1255,10 @@ final class SmartMailerImap4Client {
  * Class: SmartMailerPop3Client - provides a POP3 Mail Client with SSL/TLS support.
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
+ * @hints 		After each operation on the POP3 Server should check the $pop3->error string and if non-empty stop and disconnect to free the socket
  *
  * @depends 	classes: Smart
- * @version 	v.20191120
+ * @version 	v.20191125
  * @package 	Plugins:Mailer
  *
  */
@@ -1214,7 +1291,8 @@ final class SmartMailerPop3Client {
 	/**
 	 * @var STRING
 	 * @default ''
-	 * the error message(s) will be collected here
+	 * This should be checked after each operation on the server
+	 * The error message(s) will be collected here
 	 * do not SET a value here, but just GET the result
 	 */
 	public $error = '';
@@ -1222,8 +1300,8 @@ final class SmartMailerPop3Client {
 	/**
 	 * @var STRING
 	 * @default ''
-	 * the operations log (only if debug is enabled)
-	 * do not SET a value here, but just GET the result
+	 * The operations log (only if debug is enabled)
+	 * Do not SET a value here, but just GET the result
 	 */
 	public $log = '';
 
@@ -1236,7 +1314,9 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [INIT]
+	/**
+	 * POP3 Client Class constructor
+	 */
 	public function __construct($buffer=0) {
 		//--
 		$this->socket = false;
@@ -1259,7 +1339,12 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC] :: set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
+	/**
+	 * Set a SSL/TLS Certificate Authority File
+	 * If not set but SMART_FRAMEWORK_SSL_CA_FILE is defined will use the SMART_FRAMEWORK_SSL_CA_FILE
+	 * @param STRING $cafile Relative Path to a SSL Certificate Authority File (Ex: store within smart-framework/etc/certificates ; specify as 'etc/certificates/ca.pem') ; IMPORTANT: in this case the 'etc/certificates/' directory must be protected with a .htaccess to avoid being public readable - the directory and any files within this directory ...)
+	 * @return VOID
+	 */
 	public function set_ssl_tls_ca_file($cafile) {
 		//--
 		$this->cafile = '';
@@ -1274,8 +1359,13 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Opens a socket to the specified server. Returns 1 on success, 0 on fail
+	/**
+	 * Will try to open a socket to the specified POP3 Server using the host/ip and port ; If a SSL option is selected will try to establish a SSL socket or fail
+	 * @param STRING $server The Server Hostname or IP address
+	 * @param INTEGER+ $port *Optional* The Server Port ; Default is: 110
+	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'ssl', 'sslv3', 'tls', 'starttls' ; If empty string will be set will be not using SSL Mode
+	 * @return INTEGER+ 1 on success, 0 on fail
+	 */
 	public function connect($server, $port=110, $sslversion='') {
 
 		//-- inits
@@ -1425,8 +1515,11 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// ping server
+	/**
+	 * Ping the POP3 Server
+	 * Sends the command NOOP to the Server
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function noop() {
 		//--
 		if($this->debug) {
@@ -1455,8 +1548,10 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// reset server connection (includding all messages marked to be deleted)
+	/**
+	 * Reset the IMAP4 server connection (includding all messages marked to be deleted)
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function reset() {
 		//--
 		if($this->debug) {
@@ -1485,8 +1580,11 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// close connection
+	/**
+	 * Sends the QUIT/LOGOUT commands set to the POP3 server
+	 * Closes the communication socket after sending LOGOUT command
+	 * @return INTEGER+ 1 on Success or 0 on Error
+	 */
 	public function quit() {
 		//--
 		if($this->debug) {
@@ -1516,8 +1614,14 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// Sends both user and pass. Returns 1 on Success and 0 on Error
+	/**
+	 * Try to Authenticate on the POP3 Server with a username and password
+	 * Sends both user and pass to the Server
+	 * @param STRING $username The authentication username
+	 * @param STRING $pass The authentication password
+	 * @param ENUM $mode *Optional* The authentication mode ; can be set to 'standard' or 'apop' ; Default is 'standard'
+	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
+	 */
 	public function login($username, $pass, $mode='') {
 		//--
 		$apop = false;
@@ -1587,8 +1691,10 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// returns array() on Success and '' on Error
+	/**
+	 * Get The Count Information for the selected account MailBox
+	 * @return ARRAY Which contains the following keys [ 'size' => 1024, 'count' => 101 ]
+	 */
 	public function count() {
 		//--
 		if($this->debug) {
@@ -1611,8 +1717,8 @@ final class SmartMailerPop3Client {
 		} //end if
 		//--
 		$vars = (array) explode(' ', (string)$reply);
-		$count = trim($vars[1]);
-		$size = trim($vars[2]);
+		$count = trim((string)$vars[1]);
+		$size = trim((string)$vars[2]);
 		//--
 		$count = (int) $count;
 		$size = (int) $size;
@@ -1628,8 +1734,11 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return the UID for the selected message or empty on error
+	/**
+	 * Get the list of UIDs or a specific UID for the selected message
+	 * @param STRING $msg_num *Optional* A specific Message Number for a specific message or leave empty to get the list with all UIDs (all message numbers on the server)
+	 * @return STRING A unique UID or a list with multiple (ar all) UIDs ; returns empty string on error
+	 */
 	public function uid($msg_num='') {
 		//--
 		if($this->debug) {
@@ -1684,8 +1793,12 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return the size for the selected message or empty on error
+	/**
+	 * Get the size for the selected message
+	 * @hints Some servers may not comply with this method and may return empty result
+	 * @param STRING $msg_num The Message Number
+	 * @return STRING the size of the selected message (ussualy in Bytes) or empty string if Error
+	 */
 	public function size($msg_num) {
 		//--
 		if($this->debug) {
@@ -1708,21 +1821,24 @@ final class SmartMailerPop3Client {
 		} //end if
 		//--
 		$tmp_arr = (array) explode(' ', (string)$reply); // The answer is like [JUNK] [MSGNUM] [MSGSIZE]
-		$size = trim($tmp_arr[2]);
+		$size = trim((string)$tmp_arr[2]);
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Size For Message #'.$msg_num.' is: ['.$size.']'."\n";
 		} //end if
 		//--
-		return $size;
+		return (string) $size;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// delete a message from server
+	/**
+	 * Delete a message stored on the POP3 Server
+	 * @param STRING $msg_num The Message Number
+	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
+	 */
 	public function delete($msg_num) {
 		//--
 		if($this->debug) {
@@ -1751,8 +1867,12 @@ final class SmartMailerPop3Client {
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return STRING: the message header or empty on error
+	/**
+	 * Get the Message Head Lines (first lines of the message body)
+	 * @param STRING $msg_num The Message Number
+	 * @param INTEGER+ $read_lines The number of lines to retrieve 1..255
+	 * @return STRING The first lines of the message body or empty string on ERROR
+	 */
 	public function header($msg_num, $read_lines=5) {
 		//--
 		if($this->debug) {
@@ -1779,20 +1899,23 @@ final class SmartMailerPop3Client {
 			return '';
 		} //end if
 		//--
-		$header_out = $this->retry_data();
+		$header_out = (string) $this->retry_data();
 		if(strlen($this->error) > 0) {
 			return '';
 		} //end if
 		//--
-		return $header_out;
+		return (string) $header_out;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// [PUBLIC]
-	// return STRING: the full message or empty on error
+	/**
+	 * Get the Entire Message from Server
+	 * @param STRING $msg_num The Message Number
+	 * @return STRING The full message containing the Message Headers and Body as stored on the server or empty string on ERROR
+	 */
 	public function read($msg_num) {
 		//--
 		if($this->debug) {
@@ -1824,7 +1947,7 @@ final class SmartMailerPop3Client {
 			return '';
 		} //end if
 		//--
-		return $msg_out;
+		return (string) $msg_out;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1838,13 +1961,9 @@ final class SmartMailerPop3Client {
 	//=====================================================================================
 	// [PRIVATE]
 	// Strips \r\n from server responses
-	private function strip_clf($text='') {
+	private function strip_clf($text) {
 		//--
-		if(strlen($text) > 0) {
-			$text = str_replace(array("\r", "\n"), array('', ''), $text);
-		} //end if
-		//--
-		return $text;
+		return (string) str_replace(["\r", "\n"], ['', ''], (string)$text);
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1985,7 +2104,7 @@ final class SmartMailerPop3Client {
 			} //end while
 		} //end if
 		//--
-		return $data;
+		return (string) $data;
 		//--
 	} //END FUNCTION
 	//=====================================================================================

@@ -1,5 +1,5 @@
 /*!
- * QUnit 2.9.2 (modified by unixman r.20191019)
+ * QUnit 2.9.2 (modified by unixman r.20191024)
  * https://qunitjs.com/
  *
  * Copyright jQuery Foundation and other contributors
@@ -644,7 +644,8 @@
 
 		//-- #unixman
 		uxmAllowRerun: true, // if set to false will not display ReRun test
-		uxmUniqueModules: false // if set to true will merge modules by name to ensure unique module names (may produce unexpected behaviour with nested modules)
+		uxmUniqueModules: false, // if set to true will merge modules by name to ensure unique module names (may produce unexpected behaviour with nested modules)
+		uxmHideFilterSearchModules: false // if set to true will hide modules search and filter in bar
 		//-- #
 	};
 
@@ -4833,6 +4834,11 @@
 					input = document.createElement("input"),
 					button = document.createElement("button");
 
+			// unixman
+			if(config.uxmHideFilterSearchModules === true) {
+				return filter;
+			} //end if
+
 			addClass(filter, "qunit-filter");
 
 			label.innerHTML = "Filter: ";
@@ -4870,6 +4876,7 @@
 		}
 
 		function toolbarModuleFilter() {
+
 			var commit,
 					reset,
 					moduleFilter = document.createElement("form"),
@@ -4883,6 +4890,11 @@
 					allCheckbox = document.createElement("input"),
 					dropDownList = document.createElement("ul"),
 					dirty = false;
+
+			// unixman
+			if(config.uxmHideFilterSearchModules === true) {
+				return moduleFilter;
+			} //end if
 
 			moduleSearch.id = "qunit-modulefilter-search";
 			moduleSearch.autocomplete = "off";

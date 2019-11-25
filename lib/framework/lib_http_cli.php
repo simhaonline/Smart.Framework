@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.20191113
+ * @version 	v.20191124
  * @package 	@Core:Network
  *
  */
@@ -45,24 +45,105 @@ final class SmartHttpClient {
 	// ->
 
 	//==============================================
+
 	//--
-	public $useragent; 										// User agent (must have the robot in the name to avoid start un-necessary sessions)
-	public $connect_timeout;								// Connect timeout in seconds
+
+	/**
+	 * User agent (if used as robot, it must have the robot in the name to avoid start un-necessary sessions)
+	 * @var STRING
+	 * @default 'NetSurf/3.7 (Smart.Framework {version}; {OS} {Release} {Arch}; PHP/{php-ver})'
+	 */
+	public $useragent;
+
+	/**
+	 * Connect timeout in seconds
+	 * @var INTEGER+
+	 * @default 30
+	 */
+	public $connect_timeout;
+
 	//--
-	public $rawheaders;										// Array of RawHeaders (to send)
-	public $cookies;										// Array of Cookies (to send)
+
+	/**
+	 * Array of RawHeaders (to send)
+	 * @var ARRAY
+	 * @default []
+	 */
+	public $rawheaders;
+
+	/**
+	 * Array of Cookies (to send)
+	 * @var ARRAY
+	 * @default []
+	 */
+	public $cookies;
+
 	//--
-	public $postvars;										// Array of PostVars (to send)
-	public $poststring;										// Pre-Built Post String (as alternative to PostVars) ; must not contain unencoded \r\n ; must use the RFC 3986 standard.
+
+	/**
+	 * Array of PostVars (to send)
+	 * @var ARRAY
+	 * @default []
+	 */
+	public $postvars;
+
+	/**
+	 * Pre-Built Post String (as alternative to PostVars) ; must not contain unencoded \r\n ; must use the RFC 3986 standard.
+	 * @var STRING
+	 * @default ''
+	 */
+	public $poststring;
+
 	//--
-	public $putbodymode;									// PUT Request (to send) :: mode: string/file
-	public $putbodyres;										// PUT Request (to send) :: string or file path
+
+	/**
+	 * PUT Request Mode (used for $putbodyres
+	 * Can have one of the values: 'string' or 'file'
+	 * @var ENUM
+	 * @default 'string'
+	 */
+	public $putbodymode;
+
+	/**
+	 * PUT Request (to send)
+	 * If $putbodymode is set to 'string', this string will be sent as put
+	 * If $putbodymode is set to 'file', the content of this file will be sent as put ; this must be a valid relative path to a file (ex: tmp/file-to-put.txt)
+	 * @var MIXED
+	 * @default ''
+	 */
+	public $putbodyres;
+
 	//--
-	public $skipcontentif401;								// Return no Content (response body) if Not Auth (401)
-	public $skip100continue;								// Apply just for HTTP 1.1 and if set to TRUE will disable expect-100-continue and will skip parsing 100-continue header from server (this is a fix for those servers that does no t comply with situations where 100-continue is required on HTTP 1.1)
+
+	/**
+	 * Return no Content (empty response body) if Not Auth (401)
+	 * If the response HTTP Status will return 401, if this is set to TRUE, will return empty content body ; else will return the HTML response body that server response set for 401 (irrelevant but in some cases may be important to parse)
+	 * @var BOOLEAN
+	 * @default true
+	 */
+	public $skipcontentif401;
+
+	/**
+	 * If set to TRUE will disable expect-100-continue and will skip parsing 100-continue header from server
+	 * Applies just for HTTP 1.1 and
+	 * This is a fix for those servers that does not comply with situations where 100-continue is required on HTTP 1.1
+	 * @var BOOLEAN
+	 * @default false
+	 */
+	public $skip100continue;
+
 	//--
-	public $debug;											// DEBUG
+
+	/**
+	 * Enable or Disable Debug for this class and the HTTP Request
+	 * If set to TRUE will enable debug
+	 * @var BOOLEAN
+	 * @default false
+	 */
+	public $debug;
+
 	//--
+
 	//============================================== privates
 	//-- set
 	private $protocol = '1.0';								// HTTP Protocol :: 1.0 (default) or 1.1
@@ -86,6 +167,11 @@ final class SmartHttpClient {
 
 	//==============================================
 	// [CONSTRUCTOR] :: init object
+	/**
+	 * Class constructor
+	 *
+	 * @param ENUM $http_protocol The HTTP protocol version to use ; can be set to 1.0 or 1.1 ; default is 1.0 (HTTP 1.0) which is fastest for single requests, especially in simple situations like GET or POST ; can be set to 1.1 (HTTP 1.1) which may be required in special situations for more complex requests
+	 */
 	public function __construct($http_protocol='1.0') {
 
 		//-- signature (fake) as NetSurf Browser - which is a real browser but have no default support for Javascript
@@ -121,8 +207,8 @@ final class SmartHttpClient {
 		$this->skip100continue = false;
 		//--
 
-		//-- debugging (set to 1 to enable)
-		$this->debug = 0;
+		//-- debugging
+		$this->debug = false;
 		//--
 
 		//-- reset

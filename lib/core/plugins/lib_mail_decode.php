@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191125
  * @package 	Plugins:Mailer
  *
  */
@@ -43,8 +43,20 @@ final class SmartMailerMimeDecode {
 
 
 	//-- export
+	/**
+	 * @var ARRAY
+	 * @ignore
+	 */
 	public $arr_heads;
+	/**
+	 * @var ARRAY
+	 * @ignore
+	 */
 	public $arr_parts;
+	/**
+	 * @var ARRAY
+	 * @ignore
+	 */
 	public $arr_atts;
 	//-- temporary
 	private $last_charset;
@@ -57,6 +69,9 @@ final class SmartMailerMimeDecode {
 
 
 	//================================================================
+	/**
+	 * Class constructor
+	 */
 	public function __construct($encoding='') {
 		//--
 		if((string)$encoding == '') {
@@ -76,6 +91,10 @@ final class SmartMailerMimeDecode {
 
 
 	//================================================================
+	/**
+	 * Get the local decoder encoding (Ex: UTF-8)
+	 * @return STRING the current decoder CharSet
+	 */
 	public function get_working_charset() {
 		//--
 		return (string) $this->local_charset;
@@ -85,6 +104,9 @@ final class SmartMailerMimeDecode {
 
 
 	//================================================================
+	/**
+	 * Reset this class after a parsing to avoid re-create a new clean object
+	 */
 	public function reset() {
 		//--
 		$this->arr_heads = array();
@@ -101,7 +123,10 @@ final class SmartMailerMimeDecode {
 
 
 	//================================================================
-	// PUBLIC
+	/**
+	 * Get the parsed Bodies and Attachments
+	 * @return ARRAY parsed Bodies and Attachments as [ 'texts' => [ 0..n array of text bodies ], 'attachments' => [ 0..n array of attachments ] ]
+	 */
 	public function get_bodies($message, $part_id) {
 		//-- decode params
 		$params 					= array();
@@ -127,7 +152,10 @@ final class SmartMailerMimeDecode {
 
 
 	//================================================================
-	// separe email from name as: 'Name <email@address>'
+	/**
+	 * Utility: separe email from name as: 'Name <email@address>'
+	 * @return ARRAY [ STRING $name, STRING $email ]
+	 */
 	public function separe_email_from_name($y_address) {
 		//--
 		if(SmartUnicode::str_contains($y_address, '<')) {
@@ -154,6 +182,10 @@ final class SmartMailerMimeDecode {
 
 
 	//================================================================
+	/**
+	 * Get the parsed Header as array
+	 * @return ARRAY [ key => value, ... ]
+	 */
 	public function get_header($message) {
 
 		//== [INITS]
@@ -673,7 +705,7 @@ final class SmartMailerMimeDecode {
  * @access 		private
  * @internal
  *
- * @version 	v.20191111
+ * @version 	v.20191125
  *
  */
 final class SmartMailerMimeExtract {

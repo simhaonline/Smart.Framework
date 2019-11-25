@@ -1516,7 +1516,7 @@ final class SmartMysqliDb {
 
 
 	//======================================================
-	/*
+	/**
 	 * Get the MySQLi Connection ID
 	 * This is for internal use only !
 	 *

@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191111
+ * @version 	v.20191125
  * @package 	Plugins:Network
  *
  */
@@ -40,12 +40,46 @@ final class SmartFtpClient {
 
 
 	//=================================================== Public variables
-	public $error_msg;		// error messages
-	public $debug;			// debug true/false
-	public $debug_level;	// if 'full' get all messages else then get only answers
-	public $debug_msg;		// store debug messages
-	public $timeout;		// socket time-out
-	public $umask;			// local umask
+	//--
+
+	/**
+	 * Error Message(s) Collector
+	 * If any error occurs will be set here
+	 * @var STRING
+	 * default ''
+	 */
+	public $error_msg;
+
+	/**
+	 * @var BOOLEAN
+	 * @default FALSE
+	 * to debug or not
+	 */
+	public $debug;
+
+	/**
+	 * @var ENUM
+	 * @default ''
+	 * debug level '' as standard, log only responses | 'full' as full, log both requests and responses
+	 */
+	public $debug_level;
+
+	/**
+	 * Debug Log Collector
+	 * If Debug, this will return the partial or full Log as string, depend on how $debug_level is set
+	 * @var STRING
+	 * default ''
+	 */
+	public $debug_msg;
+
+	/**
+	 * Connect timeout in seconds
+	 * @var INTEGER+
+	 * @default 30
+	 */
+	public $timeout;
+
+	//--
 	//=================================================== Private variables
 	private $_sock;			// connection socket
 	private $_buf;			// socket buffer
@@ -53,8 +87,11 @@ final class SmartFtpClient {
 	//===================================================
 
 
-	//=================================================== Constructor
-	public function __construct($debug=false, $timeout=30, $umask=0022) {
+	//===================================================
+	/**
+	 * Class Constructor
+	 */
+	public function __construct($debug=false, $timeout=30) {
 		//--
 		$this->error_msg 	= '';
 		//--
@@ -67,7 +104,6 @@ final class SmartFtpClient {
 		$this->debug_msg = '';
 		//--
 		$this->timeout 		= $timeout;
-		$this->umask   		= $umask;
 		//--
 		$this->_sock 		= false;
 		$this->_buf  		= 4096;
@@ -83,6 +119,10 @@ final class SmartFtpClient {
 
 
 	//===================================
+	/**
+	 * FTP Connect :: Connect to a FTP Server
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_connect($server, $port=21) {
 		//--
 		if((string)$this->debug_level == 'full') {
@@ -106,6 +146,10 @@ final class SmartFtpClient {
 
 
 	//===================================
+	/**
+	 * FTP Login :: Authenticate on FTP Server using a username and a password
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_login($user, $pass) {
 		//--
 		$this->_putcmd("USER", $user);
@@ -131,6 +175,10 @@ final class SmartFtpClient {
 
 
 	//===================================
+	/**
+	 * FTP PWD :: Get the current path on FTP server
+	 * @return MIXED On Success return Reponse String ; If Failure return FALSE
+	 */
 	public function ftp_pwd() {
 		//--
 		$this->_putcmd("PWD");
@@ -139,13 +187,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return preg_replace("/^[0-9]{3} \"(.+)\" .+\r\n/", "\\1", (string)$this->_resp);
+		return (string) preg_replace("/^[0-9]{3} \"(.+)\" .+\r\n/", "\\1", (string)$this->_resp);
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP SIZE :: The size of a file on server
+	 * @return INTEGER On Success return the SIZE ; If Failure return -1
+	 */
 	public function ftp_size($pathname) {
 		// if file does not exists returns -1
 		//--
@@ -155,13 +207,17 @@ final class SmartFtpClient {
 			return -1;
 		} //end if
 		//--
-		return preg_replace("/^[0-9]{3} ([0-9]+)\r\n/", "\\1", (string)$this->_resp);
+		return (string) preg_replace("/^[0-9]{3} ([0-9]+)\r\n/", "\\1", (string)$this->_resp);
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP MDTM :: Last Modification Time for a PATH on FTP server
+	 * @return INTEGER On Success return the LAST MODIF TIME ; If Failure return -1
+	 */
 	public function ftp_mdtm($pathname) {
 		//--
 		$this->_putcmd("MDTM", $pathname);
@@ -175,13 +231,17 @@ final class SmartFtpClient {
 		$date = sscanf($mdtm, "%4d%2d%2d%2d%2d%2d");
 		$timestamp = mktime($date[3], $date[4], $date[5], $date[1], $date[2], $date[0]);
 		//--
-		return $timestamp;
+		return (int) $timestamp;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP SYST :: Asks FTP Server for information about the server's operating system
+	 * @return MIXED On Success return Reponse String ; If Failure return FALSE
+	 */
 	public function ftp_systype() {
 		//--
 		$this->_putcmd("SYST");
@@ -192,13 +252,17 @@ final class SmartFtpClient {
 		//--
 		$res_data = (array) explode(" ", (string)$this->_resp);
 		//--
-		return $res_data[1];
+		return (string) $res_data[1];
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP CDUP :: Change directory to parent directory on FTP server
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_cdup() {
 		//--
 		$this->_putcmd("CDUP");
@@ -208,13 +272,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP CWD :: Change to a new directory on FTP server
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_chdir($pathname) {
 		//--
 		$this->_putcmd("CWD", $pathname);
@@ -224,13 +292,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP DELE :: Delete a file on FTP server
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_delete($pathname) {
 		//--
 		$this->_putcmd("DELE", $pathname);
@@ -240,13 +312,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP RMD :: Remove a directory on FTP server
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_rmdir($pathname) {
 		//--
 		$this->_putcmd("RMD", $pathname);
@@ -256,13 +332,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP MKD :: Create a new directory on FTP server
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_mkdir($pathname) {
 		//--
 		$this->_putcmd("MKD", $pathname);
@@ -272,13 +352,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP Check If File Exists on server
+	 * @return ENUM If Exists return 1 ; If Not Exists return 0 ; If Error return -1
+	 */
 	public function ftp_file_exists($pathname) {
 		//--
 		if(!($remote_list = $this->ftp_nlist("-a"))) {
@@ -310,6 +394,10 @@ final class SmartFtpClient {
 
 
 	//===================================
+	/**
+	 * FTP RNFR/RNTO :: Rename a file or a directory on FTP server
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_rename($from, $to) {
 		//--
 		$this->_putcmd("RNFR", $from);
@@ -325,13 +413,18 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP NLST :: Get the Files List on a FTP Server
+	 * Unlike the FTP LIST command, the server will send only the list of files and no other information on those files
+	 * @return MIXED The list of files as ARRAY or FALSE on error
+	 */
 	public function ftp_nlist($arg='', $pathname='') {
 		//--
 		if(!($string = $this->_pasv())) {
@@ -377,13 +470,18 @@ final class SmartFtpClient {
 			return array();
 		} //end if
 		//--
-		return $list;
+		return (array) $list;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP LIST :: Get the Raw Files List on a FTP Server
+	 * Unlike the FTP NLST command, the server will send all information on those files
+	 * @return MIXED The list of files as ARRAY or FALSE on error
+	 */
 	public function ftp_rawlist($pathname='') {
 		//--
 		if(!($string = $this->_pasv())) {
@@ -423,16 +521,18 @@ final class SmartFtpClient {
 			return array();
 		} //end if
 		//--
-		return $list;
+		return (array) $list;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP GET :: Get a file from FTP server and store locally
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_get($localfile, $remotefile, $mode=1) {
-		//--
-		umask($this->umask);
 		//--
 		if(SmartFileSystem::path_exists($localfile)) {
 			SmartFileSystem::delete($localfile);
@@ -493,13 +593,17 @@ final class SmartFtpClient {
 			return '';
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP PUT :: Put a local file on FTP server and store remote
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_put($remotefile, $localfile, $mode=1) {
 		//--
 		if(!SmartFileSystem::path_real_exists($localfile)) {
@@ -559,13 +663,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP SITE :: Ask FTP server to accept non-standard FTP commands that may not be universally supported by the FTP standard protocol
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_site($command) {
 		//--
 		$this->_putcmd("SITE", $command);
@@ -576,13 +684,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP EXTENDED Command :: Send an extra and non-standard FTP command to the FTP Server that may not be universally supported by the FTP standard protocol
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_extcmd($command) {
 		//--
 		$this->_putcmd($command, '');
@@ -592,13 +704,17 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * FTP EXTENDED Command :: Send an extra and non-standard FTP command to the FTP Server that returns an answer and that may not be universally supported by the FTP standard protocol
+	 * @return MIXED If Success return a string with the server's answer ; If Failure return FALSE
+	 */
 	public function ftp_extcmdx($command) {
 		//--
 		$this->_putcmd($command, '');
@@ -608,13 +724,18 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (string) $response;
 		//--
 	} //END FUNCTION
 	//===================================
 
 
 	//===================================
+	/**
+	 * Sends the QUIT command to the FTP server
+	 * Closes the communication socket after sending QUIT command
+	 * @return BOOLEAN If Success return TRUE ; If Failure return FALSE
+	 */
 	public function ftp_quit() {
 		//--
 		$this->_putcmd("QUIT");
@@ -623,7 +744,7 @@ final class SmartFtpClient {
 			$this->_debug_print('ERROR: QUIT command failed'."\n");
 		} //end if
 		//--
-		$out = $this->_close_data_connection($this->_sock);
+		$out = (bool) $this->_close_data_connection($this->_sock);
 		//--
 		if($out) {
 			$this->_debug_print('Disconnected from remote host'."\n");
@@ -631,7 +752,7 @@ final class SmartFtpClient {
 			$this->_debug_print('WARNING: Disconnecting from remote host Failed ...'."\n");
 		} //end if
 		//--
-		return $out;
+		return (bool) $out;
 		//--
 	} //END FUNCTION
 	//===================================
@@ -658,7 +779,7 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
@@ -674,7 +795,7 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $response;
+		return (bool) $response;
 		//--
 	} //END FUNCTION
 	//===================================
@@ -691,7 +812,7 @@ final class SmartFtpClient {
 		//--
 		$ip_port = preg_replace("/^.+ \\(?([0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]+,[0-9]+)\\)?.*\r\n$/", "\\1", (string)$this->_resp);
 		//--
-		return $ip_port;
+		return (string) $ip_port;
 		//--
 	} //END FUNCTION
 	//===================================
@@ -793,7 +914,7 @@ final class SmartFtpClient {
 		//--
 		$this->_debug_print(str_replace("\r\n", "\n", $this->_resp));
 		//--
-		return $this->_resp;
+		return (string) $this->_resp;
 		//--
 	} //END FUNCTION
 	//===================================
@@ -812,7 +933,7 @@ final class SmartFtpClient {
 			$out = false;
 		} //end if else
 		//--
-		return $out;
+		return (bool) $out;
 		//--
 	} //END FUNCTION
 	//===================================
@@ -838,7 +959,7 @@ final class SmartFtpClient {
 			return false;
 		} //end if
 		//--
-		return $data_connection;
+		return $data_connection; // resource
 		//--
 	} //END FUNCTION
 	//===================================

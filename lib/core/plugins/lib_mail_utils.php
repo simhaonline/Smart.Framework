@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20191111
+ * @version 	v.20191125
  * @package 	Plugins:Mailer
  *
  */
@@ -779,7 +779,7 @@ final class SmartMailerUtils {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.20191111
+ * @version 	v.20191125
  * @package 	Plugins:Mailer
  *
  */
@@ -789,6 +789,14 @@ final class SmartMailerMimeParser {
 
 
 	//==================================================================
+	/**
+	 * Encode and Encrypts a Mime File URL using the crypto algo defined in SMART_FRAMEWORK_SECURITY_CRYPTO or 'hash/sha256' as a fallback
+	 * It takes in account if the User is Authenticated or not
+	 * This make safe using Mail Message Parts URL links sent by URL for specific and private user access
+	 * @param STRING $y_msg_file The relative path to the .eml message file
+	 * @param STRING $y_ctrl_key The encryption private key
+	 * @return STRING the encoded and encrypted url segment
+	 */
 	public static function encode_mime_fileurl($y_msg_file, $y_ctrl_key) {
 		//--
 		$y_msg_file = (string) trim((string)$y_msg_file);
@@ -833,7 +841,13 @@ final class SmartMailerMimeParser {
 
 
 	//==================================================================
-	// It takes in account if the User is Authenticated or not
+	/**
+	 * Decode and Decrypts a Mime File URL encoded/encrypted with encode_mime_fileurl()
+	 * It takes in account if the User is Authenticated or not
+	 * @param STRING $y_enc_msg_file The encoded/encrypted path to the .eml message file
+	 * @param STRING $y_ctrl_key The decryption private key
+	 * @return ARRAY with the decoded and decrypted url segment containing all required information to validate the email message path
+	 */
 	public static function decode_mime_fileurl($y_enc_msg_file, $y_ctrl_key) {
 		//--
 		$y_enc_msg_file = (string) trim((string)$y_enc_msg_file);
@@ -939,8 +953,11 @@ final class SmartMailerMimeParser {
 
 
 	//==================================================================
+	/**
+	 * Get an Email Message (.eml) as HTML
+	 * @return STRING the HTML view of the message linked with all sub-parts in a safe way by making use of encode_mime_fileurl() and decode_mime_fileurl()
+	 */
 	public static function display_message($y_enc_msg_file, $y_ctrl_key, $y_link, $y_target='', $y_title='', $y_process_mode='', $y_show_headers='') {
-
 		//--
 		if((string)$y_process_mode != 'print') {
 			$y_process_mode = 'default';
@@ -952,28 +969,26 @@ final class SmartMailerMimeParser {
 			$y_target = '_blank';
 		} //end if
 		//--
-
-		//--
 		return (string) self::read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_show_headers, $y_title, $y_link, $y_target);
 		//--
-
 	} //END FUNCTION
 	//==================================================================
 
 
 	//==================================================================
+	/**
+	 * Get an Email Message (.eml) as ARRAY
+	 * This can be used to re-compose a Mime Message for Reply or Forward
+	 * @return ARRAY with the full message structure as parts and all sub-parts in a safe way by making use of encode_mime_fileurl() and decode_mime_fileurl()
+	 */
 	public static function get_message_data_structure($y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_link='', $y_target='') {
-
 		//--
 		if((string)$y_process_mode != 'data-reply') {
 			$y_process_mode = 'data-full';
 		} //end if
 		//--
-
-		//--
 		return (array) self::read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_process_mode, '', '', $y_link, $y_target);
 		//--
-
 	} //END FUNCTION
 	//==================================================================
 
