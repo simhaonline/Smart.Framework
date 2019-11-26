@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartTextTranslations
- * @version 	v.20191117
+ * @version 	v.20191126
  * @package 	Application:ViewComponents
  *
  */
@@ -676,10 +676,11 @@ final class SmartComponents {
 	 * @param STRING 	$dom_selector		The HTML-DOM Selector as container(s) for Pre>Code (see jQuery ...)
 	 * @param ARRAY 	$plugins 			The Array with enum of packages to load
 	 * @param ENUM 		$theme 				The Visual CSS Theme to Load
+	 * @param BOOLEAN 	$loadpacks 			If TRUE will load syntax packed files instead of syntax single files which are many
 	 *
 	 * @return STRING						[HTML Code]
 	 */
-	public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], $theme='github') {
+	public static function js_code_highlightsyntax($dom_selector, $plugins=['web'], $theme='github', $loadpacks=true) {
 		//--
 		$theme = (string) strtolower((string)$theme);
 		switch((string)$theme) {
@@ -701,36 +702,59 @@ final class SmartComponents {
 		//--
 		$arr_packs = [ // {{{SYNC-HIGHLIGHT-FTYPE-PACK}}}
 			'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, pgsql, xml, yaml',
-			'tpl'  => 'markertpl',
+			'tpl'  => 'markertpl, tex',
 			'lnx'  => 'awk, bash, perl, shell',
 			'srv'  => 'accesslog, apache, dns, nginx, pf',
 			'net'  => 'csp, http',
 			'lang' => 'cmake, coffeescript, cpp, go, lua, makefile, python, ruby, rust, tcl, vala'
 		];
 		//--
+$plugins = [];
 		$arr_stx_plugs = [];
+		$arr_check_keys = [];
 		foreach($arr_packs as $key => $val) {
 			$key = (string) strtolower((string)trim((string)$key));
 			if((Smart::array_size($plugins) <= 0) OR (in_array((string)$key, (array)$plugins))) {
 				if((string)$key != '') {
-					$tmp_arr = (array) explode(',', (string)$val);
-					for($i=0; $i<Smart::array_size($tmp_arr); $i++) {
-						$tmp_arr[$i] = (string) trim((string)$tmp_arr[$i]);
-						if((string)$tmp_arr[$i] != '') {
-							$arr_stx_plugs[] = (string) $key.'/'.strtolower((string)$tmp_arr[$i]);
+					if($loadpacks === false) { // load single files
+						//--
+						$tmp_arr = (array) explode(',', (string)$val);
+						for($i=0; $i<Smart::array_size($tmp_arr); $i++) {
+							$tmp_arr[$i] = (string) trim((string)$tmp_arr[$i]);
+							if((string)$tmp_arr[$i] != '') {
+								$arr_stx_plugs[] = (string) 'syntax/'.$key.'/'.strtolower((string)$tmp_arr[$i]);
+							} //end if
 						} //end if
-					} //end if
-					$tmp_arr = [];
+						$tmp_arr = [];
+						//--
+					} else { // load packs
+						//--
+						$arr_stx_plugs[] = (string) 'syntax-'.$key.'.pak';
+						$arr_check_keys[] = (string) $key;
+						//--
+					} //end if else
 				} //end if
 			} //end if
 		} //end foreach
+		//--
+		if($loadpacks === false) { // load single files
+			$syntax_packs = 'src';
+		} else { // load packs
+			$syntax_packs = 'pak';
+			if(Smart::array_size($arr_check_keys) > 0) {
+				if(array_keys($arr_packs) === $arr_check_keys) {
+					$arr_stx_plugs = [ 'syntax.pak' ]; // if all packs need to be loaded, replace with this one
+				} //end if
+			} //end if
+		} //end if
 		//--
 		return (string) SmartMarkersTemplating::render_file_template(
 			'lib/core/templates/syntax-highlight.inc.htm',
 			[
 				'CSS-THEME' 		=> (string) $theme,
 				'AREAS-SELECTOR' 	=> (string) $dom_selector,
-				'SYNTAX-PLUGINS' 	=> (array)  $arr_stx_plugs
+				'SYNTAX-PLUGINS' 	=> (array)  $arr_stx_plugs,
+				'SYNTAX-PACKS' 		=> (string) $syntax_packs
 			]
 		);
 		//--

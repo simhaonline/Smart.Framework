@@ -1,4 +1,4 @@
-<!-- Partial Template: Core.SyntaxHighlight v.20191110 -->
+<!-- Partial Template: Core.SyntaxHighlight v.20191126 -->
 <link rel="stylesheet" href="lib/core/plugins/fonts/typo/mono/ibm-plex-mono.css">
 <style>
 code.hljs, code.hljs * {
@@ -10,10 +10,10 @@ code.hljs, code.hljs * {
 <!-- HL Core -->
 <link rel="stylesheet" href="lib/js/jshighlight/css/[###CSS-THEME|html###].css">
 <script type="text/javascript" src="lib/js/jshighlight/highlight.js"></script>
-<!-- HL Plugins -->
 <script type="text/javascript" src="lib/js/jshighlight/syntax/plaintext.js"></script>
+<!-- HL Plugins [[###SYNTAX-PACKS|html###]] -->
 [%%%LOOP:SYNTAX-PLUGINS%%%]
-<script type="text/javascript" src="lib/js/jshighlight/syntax/[###SYNTAX-PLUGINS._-VAL-_|html###].js"></script>[%%%IF:SYNTAX-PLUGINS._-ITERATOR-_:<###SYNTAX-PLUGINS._-MAXCOUNT-_###;%%%][%%%|N%%%][%%%/IF:SYNTAX-PLUGINS._-ITERATOR-_%%%]
+<script type="text/javascript" src="lib/js/jshighlight/[###SYNTAX-PLUGINS._-VAL-_|html###].js"></script>[%%%IF:SYNTAX-PLUGINS._-ITERATOR-_:<###SYNTAX-PLUGINS._-MAXCOUNT-_###;%%%][%%%|N%%%][%%%/IF:SYNTAX-PLUGINS._-ITERATOR-_%%%]
 [%%%/LOOP:SYNTAX-PLUGINS%%%]
 <!-- HL Async Render -->
 <script type="text/javascript">

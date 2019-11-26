@@ -2,8 +2,11 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
-November 25, 2019 :: Version 5.2.7 rev.191125
+November 26, 2019 :: Version 5.2.7 rev.191126
 	* New documentation for PHP and Javascript
+	* Renamed lib/js/framework/smart-framework.js to lib/js/framework/smart-framework.pak.js
+	* Generated Js Package as lib/js/jscharts/charts.pak.js from lib/js/jscharts/src/*.js
+	* Generated Js Packages as lib/js/jshighlight/syntax{%}.pak.js from lib/js/jshighlight/syntax/{%}
 
 November 19, 2019 :: Version 5.2.7 rev.191119
 	* DB Driver Fixes: Preserve NULL values on Read* for: SQlite3, MySQLi and PgSQL
