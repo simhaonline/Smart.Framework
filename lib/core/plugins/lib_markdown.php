@@ -50,7 +50,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.20190301@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
+	private $mkdw_version = 'v.1.5.4-r.20191126@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -173,6 +173,8 @@ final class SmartMarkdownToHTML {
 		$text = (string) str_replace('```space```', '&nbsp;', $text);
 		//-- standardize line breaks
 		$text = (string) str_replace(["\r\n", "\r"], "\n", $text);
+		//-- fix \s
+		$text = (string) str_replace('\\s'."\n", '&nbsp;'."\n".'&nbsp;'."\n", $text); // fix: replace \\s\n with a new line
 		//-- remove surrounding line breaks
 		$text = (string) trim($text, "\n");
 		//-- split text into lines
@@ -220,7 +222,7 @@ final class SmartMarkdownToHTML {
 			$info_entities = 'E:1';
 		} //end if else
 		//-- it always add tags ...
-		return $markup = "\n".'<!--  HTML/Markdown # ( '.Smart::escape_html($info_linebreaks.' '.$info_markup.' '.$info_urls.' '.$info_entities.' T:'.date('YmdHi')).' )  -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!--  # HTML/Markdown # '.Smart::escape_html((string)$this->mkdw_version).' #  -->'."\n"; // if parsed and contain HTML Tags, add div and comments
+		return (string) $markup = "\n".'<!--  HTML/Markdown # ( '.Smart::escape_html($info_linebreaks.' '.$info_markup.' '.$info_urls.' '.$info_entities.' T:'.date('YmdHi')).' )  -->'."\n".'<div id="markdown">'."\n".$markup."\n".'</div>'."\n".'<!--  # HTML/Markdown # '.Smart::escape_html((string)$this->mkdw_version).' #  -->'."\n"; // if parsed and contain HTML Tags, add div and comments
 		//--
 	} //END FUNCTION
 
@@ -392,7 +394,7 @@ final class SmartMarkdownToHTML {
 		//--
 		if($Line['indent'] >= 4) {
 			//--
-			$text = substr($Line['body'], 4);
+			$text = (string) substr((string)$Line['body'], 4);
 			//--
 			$Block = array(
 				'element' => array(
@@ -426,7 +428,7 @@ final class SmartMarkdownToHTML {
 			//--
 			$Block['element']['text']['text'] .= "\n";
 			//--
-			$text = substr($Line['body'], 4);
+			$text = (string) substr((string)$Line['body'], 4);
 			//--
 			$Block['element']['text']['text'] .= $text;
 			//--
@@ -440,9 +442,8 @@ final class SmartMarkdownToHTML {
 	private function blockCodeComplete($Block) {
 		//--
 		$text = $Block['element']['text']['text'];
-		$text = Smart::escape_html($text); // fix from: html special chars ENT_NOQUOTES UTF-8
 		//--
-		$Block['element']['text']['text'] = $text;
+		$Block['element']['text']['text'] = Smart::escape_html($text); // fix from: html special chars ENT_NOQUOTES UTF-8
 		//--
 		return $Block;
 		//--
@@ -458,7 +459,7 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//--
-		if(isset($Line['text'][3]) AND $Line['text'][3] === '-' AND $Line['text'][2] === '-' AND $Line['text'][1] === '!') {
+		if(isset($Line['text'][3]) AND ($Line['text'][3] === '-') AND ($Line['text'][2] === '-') AND ($Line['text'][1] === '!')) {
 			//--
 			$Block = array(
 				'markup' => $Line['body'],
@@ -973,7 +974,7 @@ final class SmartMarkdownToHTML {
 		//--
 		if(preg_match('/^\[(.+?)\]:[ ]*<?(\S+?)>?(?:[ ]+["\'(](.+)["\')])?[ ]*$/', $Line['text'], $matches)) {
 			//--
-			$id = strtolower($matches[1]);
+			$id = (string) strtolower((string)$matches[1]);
 			//--
 			$Data = array(
 				'url' => $matches[2],
@@ -1017,15 +1018,15 @@ final class SmartMarkdownToHTML {
 			//-- #unixman
 			$alignments = array();
 			//--
-			$divider = $Line['text'];
-			$divider = trim($divider);
-			$divider = trim($divider, '|');
+			$divider = (string) $Line['text'];
+			$divider = (string) trim($divider);
+			$divider = (string) trim($divider, '|');
 			//--
-			$dividerCells = explode('|', $divider);
+			$dividerCells = (array) explode('|', $divider);
 			//--
 			foreach($dividerCells as $z => $dividerCell) {
 				//--
-				$dividerCell = trim($dividerCell);
+				$dividerCell = (string) trim((string)$dividerCell);
 				//--
 				if($dividerCell === '') {
 					continue;
@@ -1055,7 +1056,7 @@ final class SmartMarkdownToHTML {
 			//--
 			foreach($headerCells as $index => $headerCell) {
 				//--
-				$headerCell = trim($headerCell);
+				$headerCell = (string) trim((string)$headerCell);
 				//--
 				$HeaderElement = array(
 					'name' => 'th',
@@ -1132,9 +1133,9 @@ final class SmartMarkdownToHTML {
 			//--
 			$Elements = array();
 			//--
-			$row = $Line['text'];
-			$row = trim($row);
-			$row = trim($row, '|');
+			$row = (string) $Line['text'];
+			$row = (string) trim($row);
+			$row = (string) trim($row, '|');
 			//--
 			preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]+`|`)+/', $row, $matches);
 			//--
@@ -1322,13 +1323,13 @@ final class SmartMarkdownToHTML {
 
 	private function inlineCode($Excerpt) {
 		//--
-		$marker = $Excerpt['text'][0];
+		$marker = (string) $Excerpt['text'][0];
 		//--
-		if(preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches)) {
+		if(preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', (string)$Excerpt['text'], $matches)) {
 			//--
-			$text = $matches[2];
-			$text = Smart::escape_html($text); // fix from: html special chars ENT_NOQUOTES UTF-8
-			$text = preg_replace("/[ ]*\n/", ' ', $text);
+			$text = (string) $matches[2];
+			$text = (string) Smart::escape_html($text); // fix from: html special chars ENT_NOQUOTES UTF-8
+			$text = (string) preg_replace("/[ ]*\n/", ' ', $text);
 			//--
 			return array(
 				'extent' => strlen($matches[0]),
@@ -1349,19 +1350,19 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//-- #end unixman
-		if((strpos($Excerpt['text'], '>') !== false) AND preg_match('/^<((mailto:)?\S+?@\S+?)>/i', $Excerpt['text'], $matches)) {
+		if((strpos((string)$Excerpt['text'], '>') !== false) AND preg_match('/^<((mailto:)?\S+?@\S+?)>/i', (string)$Excerpt['text'], $matches)) {
 			//--
-			$url = $matches[1];
+			$url = (string) $matches[1];
 			//--
 			if(!isset($matches[2])) {
-				$url = 'mailto:' . $url;
+				$url = (string) 'mailto:'.$url;
 			} //end if
 			//--
 			return array(
 				'extent' => strlen($matches[0]),
 				'element' => array(
 					'name' => 'a',
-					'text' => $matches[1],
+					'text' => (string) $matches[1],
 					'attributes' => array(
 						'href' => $url,
 					),
@@ -1379,7 +1380,7 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//--
-		$marker = $Excerpt['text'][0];
+		$marker = (string) $Excerpt['text'][0];
 		//--
 		if($Excerpt['text'][1] === $marker AND preg_match($this->StrongRegex[$marker], $Excerpt['text'], $matches)) {
 			$emphasis = 'b'; // 'strong';
@@ -1715,12 +1716,12 @@ final class SmartMarkdownToHTML {
 		//--
 		if($this->breaksEnabled) {
 			//--
-			$text = preg_replace('/[ ]*\n/', "<br>\n", $text); // <br />
+			$text = (string) preg_replace('/[ ]*\n/', "<br>\n", (string)$text); // <br />
 			//--
 		} else {
 			//--
-			$text = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br>\n", $text); // <br />
-			$text = str_replace(" \n", "\n", $text);
+			$text = (string) preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br>\n", (string)$text); // <br />
+			$text = (string) str_replace(" \n", "\n", (string)$text);
 			//--
 		} //end if else
 		//--

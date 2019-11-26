@@ -709,7 +709,6 @@ final class SmartComponents {
 			'lang' => 'cmake, coffeescript, cpp, go, lua, makefile, python, ruby, rust, tcl, vala'
 		];
 		//--
-$plugins = [];
 		$arr_stx_plugs = [];
 		$arr_check_keys = [];
 		foreach($arr_packs as $key => $val) {
