@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20191121
+ * @version 	v.20191127
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -1094,12 +1094,14 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 
 		//--
 		$options = array(
-			'connect' 			=> false,
-			'connectTimeoutMS' 	=> (int) ($this->timeout * 1000),
-			'socketTimeoutMS' 	=> (int) (SMART_FRAMEWORK_NETSOCKET_TIMEOUT * 1000),
-			'readConcernLevel' 	=> $concern_rd, // rd concern
-			'w' 				=> $concern_wr, // wr concern
-			'wTimeoutMS' 		=> (int) (SMART_FRAMEWORK_NETSOCKET_TIMEOUT * 1000) // if this is 0 (no timeout) the write operation will block indefinitely
+			'connect' 					=> false, // lazy
+			'connectTimeoutMS' 			=> (int) ($this->timeout * 1000),
+			'socketTimeoutMS' 			=> (int) (SMART_FRAMEWORK_NETSOCKET_TIMEOUT * 1000),
+			'serverSelectionTimeoutMS' 	=> (int) ($this->timeout * 1000),
+			'serverSelectionTryOnce' 	=> false, // searches for a server up to the serverSelectionTimeoutMS value
+			'readConcernLevel' 			=> $concern_rd, // rd concern
+			'w' 						=> $concern_wr, // wr concern
+			'wTimeoutMS' 				=> (int) (SMART_FRAMEWORK_NETSOCKET_TIMEOUT * 1000) // if this is 0 (no timeout) the write operation will block indefinitely
 		);
 		//--
 		if((string)$username != '') {
