@@ -57,7 +57,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'@SUB-TEMPLATES@' => [
 							'%the-tpl%|html' => '@/'.SmartFileSysUtils::get_file_name_from_path($tpl)
 						],
-						'HTML-HIGHLIGHT' 	=> (string) SmartComponents::js_code_highlightsyntax('body', ['web','tpl']),
+						'HTML-HIGHLIGHT' 	=> (string) SmartViewHtmlHelpers::html_jsload_highlightsyntax('body', ['web','tpl']),
 						'TPL-PATH' 			=> (string) $tpl,
 						'TPL-TYPE' 			=> 'Template'
 					]
@@ -75,7 +75,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'@SUB-TEMPLATES@' => [
 							'%the-tpl%|html' => '@/'.SmartFileSysUtils::get_file_name_from_path($ptpl)
 						],
-						'HTML-HIGHLIGHT' 	=> (string) SmartComponents::js_code_highlightsyntax('body', ['web','tpl']),
+						'HTML-HIGHLIGHT' 	=> (string) SmartViewHtmlHelpers::html_jsload_highlightsyntax('body', ['web','tpl']),
 						'TPL-PATH' 			=> (string) $ptpl,
 						'TPL-TYPE' 			=> 'Sub-Template'
 					]

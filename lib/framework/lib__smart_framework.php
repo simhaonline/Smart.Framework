@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191115
+ * @version 	v.20191127
  * @package 	development:Application
  *
  */
@@ -444,13 +444,81 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	/**
 	 * Test if Debug is On
 	 *
-	 * If Debug is turned on, this area of Debug messages will be displayed in Modules section
-	 *
 	 * @return 	BOOLEAN					:: TRUE if Debug is ON, FALSE if not
 	 */
 	final public function IfDebug() {
 		//--
 		return (bool) SmartFrameworkRuntime::ifDebug();
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Force Debug View Over Raw Output or DownloadPacket Output Pages
+	 * The output of this pages is not displayed by default in the Debug Profiler because is not a common HTML Page
+	 * To debug this type of pages this function should be called (ONLY IN DEBUG MODE) at the end (or before return) of the controller Run() method
+	 * This is not available for direct Direct Output pages (which can be integrated in Debug Profiler only if called as sub-request in an Ajax call from any HTML page)
+	 *
+	 * @param BOOLEAN $show_output 		:: *Optional* ; Default is FALSE ; If set to TRUE will try to output the contents as HTML ; BEWARE, if the content is binary it should not ...
+	 * @return 	BOOLEAN					:: TRUE if Debug is ON, FALSE if not
+	 */
+	final public function forceRawDebug($show_output=false) {
+		//--
+		if($this->IfDebug() !== true) {
+			Smart::log_warning('ERROR: Page Controller: '.$this->controller.' # '.__FUNCTION__.'(): Method should be called only when Debug Mode is ON ...');
+			return false;
+		} //end if
+		//--
+		if($this->directoutput === true) {
+			$this->PageViewSetErrorStatus(500, 'ERROR: Page Controller: '.$this->controller.' # '.__FUNCTION__.'(): Method is not available for Direct Output Mode ...');
+			return false;
+		} //end if
+		//--
+		if(((string)strtolower((string)$this->pagesettings['rawpage']) !== 'yes') AND ((string)$this->pagesettings['download-packet'] == '')) {
+			$this->PageViewSetErrorStatus(500, 'ERROR: Page Controller: '.$this->controller.' # '.__FUNCTION__.'(): Method is available only for Raw or DownloadPacket Output Mode ...');
+			return false;
+		} //end if
+		//--
+		$info = [
+			'RawPage' 			=> 'YES',
+			'MimeType' 			=> (string) $this->pagesettings['rawmime'],
+			'MimeDisposition' 	=> (string) $this->pagesettings['rawdisp']
+		];
+		//--
+		$this->pagesettings['rawpage'] = ''; // clear
+		$this->pagesettings['rawmime'] = ''; // clear
+		$this->pagesettings['rawdisp'] = ''; // clear
+		//--
+		$part = '[Output will not be displayed]';
+		if((string)$this->pagesettings['download-packet'] != '') {
+			$size = (int) strlen((string)$this->pagesettings['download-packet']);
+			$type = 'Download Packet Output';
+			if($show_output === true) {
+				$part = (string) substr((string)$this->pagesettings['download-packet'], 0, 65535);
+				if($size > 65535) {
+					$part .= '...';
+				} //end if
+			} //end if
+		} else {
+			$size = (int) strlen((string)$this->pageview['main']);
+			$type = 'Raw Output';
+			if($show_output === true) {
+				$part = (string) substr((string)$this->pageview['main'], 0, 65535);
+				if($size > 65535) {
+					$part .= '...';
+				} //end if
+			} //end if
+		} //end if else
+		$output = '<h1>[DEBUG: '.$type.' ; OutputSize = '.SmartUtils::pretty_print_bytes($size).']</h1>'.'<br><pre>'.Smart::escape_html(SmartUtils::pretty_print_var($info)).'</pre><hr><pre>'.Smart::escape_html($part).'</pre>';
+		//--
+		$this->pagesettings['download-packet'] = '';
+		$this->pageview['main'] = '';
+		//--
+		$this->pageview['main'] = (string) $output;
+		//--
+		return true;
 		//--
 	} //END FUNCTION
 	//=====

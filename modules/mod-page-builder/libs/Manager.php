@@ -18,6 +18,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 //	* SmartUtils
 //	* SmartAuth
 //	* SmartComponents
+//	* SmartViewHtmlHelpers
 //	* SmartTextTranslations
 
 //==================================================================
@@ -49,7 +50,7 @@ $administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Specia
  * @access 		private
  * @internal
  *
- * @version 	v.20191116
+ * @version 	v.20191126
  * @package 	PageBuilder
  *
  */
@@ -214,7 +215,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 		} //end if else
 		//--
 		$out = \SmartViewHtmlHelpers::html_jsload_editarea();
-		$out .= \SmartComponents::js_code_highlightsyntax('body');
+		$out .= \SmartViewHtmlHelpers::html_jsload_highlightsyntax('body');
 		$out .= '<div style="text-align:left;">';
 		$out .= '<h3>Code Preview: '.\Smart::escape_html($query['name']).' :: '.\Smart::escape_html($query['id']).'</h3>';
 		$out .= '<pre style="background:#ebe9e9;"><code class="'.\Smart::escape_html($type).'" id="code-view-area">'.\Smart::escape_html((string)\base64_decode((string)$query['code'])).'</code></pre>';
@@ -238,7 +239,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 		$type = 'yaml';
 		//--
 		$out = \SmartViewHtmlHelpers::html_jsload_editarea();
-		$out .= \SmartComponents::js_code_highlightsyntax('body');
+		$out .= \SmartViewHtmlHelpers::html_jsload_highlightsyntax('body');
 		$out .= '<div style="text-align:left;">';
 		$out .= '<h3>Data Preview: '.\Smart::escape_html($query['name']).' :: '.\Smart::escape_html($query['id']).'</h3>';
 		$out .= '<pre style="background:#ebe9e9;"><code class="'.\Smart::escape_html($type).'" id="data-view-area">'.\Smart::escape_html((string)\base64_decode((string)$query['data'])).'</code></pre>';

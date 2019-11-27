@@ -92,6 +92,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		// so thereafter you can create secure download links that you can set in controllers but more,
 		// you can even send this encrypted (secured) download links via URL GET/POST between requests as long as the $download_key is not exposed to the visitor !!!
 
+		//$this->forceRawDebug(true); // force debug profiler (this type of page is not shown by default in Debug Profiler, must be explicit forced to be displayed in Debug Profiler)
+
 	} //END FUNCTION
 
 } //END CLASS

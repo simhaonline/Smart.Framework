@@ -40,13 +40,328 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191115
+ * @version 	v.20191126
  * @package 	Plugins:ViewComponents
  *
  */
 final class SmartViewHtmlHelpers {
 
 	// ::
+
+
+	//================================================================
+	/**
+	 * Return the HTML / CSS / Javascript code to HighlightJs DOM Areas in a DOM Selector
+	 * If a valid DOM Selector is specified all code areas in that dom selector will be highlighted
+	 * @hints This should be rendered just once per HTML page for a specific DOM Selector ; It can be used more than once per HTML page with different DOM Selectors that are not contained one within another
+	 *
+	 * @param STRING 	$dom_selector		A valid jQuery HTML-DOM Selector as container(s) for Pre>Code (see jQuery ...)
+	 *
+	 * @return STRING						[HTML Code]
+	 */
+	public static function html_js_highlightsyntax($dom_selector) {
+		//--
+		return (string) SmartMarkersTemplating::render_file_template(
+			'lib/core/plugins/templates/syntax-highlight-process.inc.htm',
+			[
+				'AREAS-SELECTOR' 	=> (string) $dom_selector
+			]
+		);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Return the HTML / CSS / Javascript code to Load the required Javascripts for the Highlight.Js
+	 * If a valid DOM Selector is specified all code areas in that dom selector will be highlighted
+	 * This function should not be rendered more than once in a HTML page
+	 *
+	 * @param STRING 	$dom_selector		A valid jQuery HTML-DOM Selector as container(s) for Pre>Code (see jQuery ...)
+	 * @param ARRAY 	$plugins 			The Array with enum of packages to load
+	 * @param ENUM 		$theme 				The Visual CSS Theme to Load
+	 * @param BOOLEAN 	$loadpacks 			If TRUE will load syntax packed files instead of syntax single files which are many
+	 *
+	 * @return STRING						[HTML Code]
+	 */
+	public static function html_jsload_highlightsyntax($dom_selector, $plugins=['web'], $theme='github', $loadpacks=true) {
+		//--
+		$theme = (string) strtolower((string)$theme);
+		switch((string)$theme) {
+			case 'atom-one-light':
+			case 'github-gist':
+			case 'github':
+			case 'googlecode':
+			case 'grayscale':
+			case 'ocean':
+			case 'tomorrow-night-blue':
+			case 'xcode':
+			case 'zenburn':
+				$theme = (string) $theme;
+				break;
+			case 'default':
+			default:
+				$theme = 'default';
+		} //end switch
+		//--
+		$arr_packs = [ // {{{SYNC-HIGHLIGHT-FTYPE-PACK}}}
+			'web'  => 'css, diff, ini, javascript, json, less, markdown, php, scss, sql, pgsql, xml, yaml',
+			'tpl'  => 'markertpl, tex',
+			'lnx'  => 'awk, bash, perl, shell',
+			'srv'  => 'accesslog, apache, dns, nginx, pf',
+			'net'  => 'csp, http',
+			'lang' => 'cmake, coffeescript, cpp, go, lua, makefile, python, ruby, rust, tcl, vala'
+		];
+		//--
+		$arr_stx_plugs = [];
+		$arr_check_keys = [];
+		foreach($arr_packs as $key => $val) {
+			$key = (string) strtolower((string)trim((string)$key));
+			if((Smart::array_size($plugins) <= 0) OR (in_array((string)$key, (array)$plugins))) {
+				if((string)$key != '') {
+					if($loadpacks === false) { // load single files
+						//--
+						$tmp_arr = (array) explode(',', (string)$val);
+						for($i=0; $i<Smart::array_size($tmp_arr); $i++) {
+							$tmp_arr[$i] = (string) trim((string)$tmp_arr[$i]);
+							if((string)$tmp_arr[$i] != '') {
+								$arr_stx_plugs[] = (string) 'syntax/'.$key.'/'.strtolower((string)$tmp_arr[$i]);
+							} //end if
+						} //end if
+						$tmp_arr = [];
+						//--
+					} else { // load packs
+						//--
+						$arr_stx_plugs[] = (string) 'syntax-'.$key.'.pak';
+						$arr_check_keys[] = (string) $key;
+						//--
+					} //end if else
+				} //end if
+			} //end if
+		} //end foreach
+		//--
+		if($loadpacks === false) { // load single files
+			$syntax_packs = 'src';
+		} else { // load packs
+			$syntax_packs = 'pak';
+			if(Smart::array_size($arr_check_keys) > 0) {
+				if(array_keys($arr_packs) === $arr_check_keys) {
+					$arr_stx_plugs = [ 'syntax.pak' ]; // if all packs need to be loaded, replace with this one
+				} //end if
+			} //end if
+		} //end if
+		//--
+		return (string) SmartMarkersTemplating::render_file_template(
+			'lib/core/plugins/templates/syntax-highlight-init.inc.htm',
+			[
+				'CSS-THEME' 		=> (string) $theme,
+				'SYNTAX-PLUGINS' 	=> (array)  $arr_stx_plugs,
+				'SYNTAX-PACKS' 		=> (string) $syntax_packs,
+				'AREAS-SELECTOR' 	=> (string) $dom_selector
+			]
+		);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Get the HighlightJs Syntax type for a file type
+	 *
+	 * @param STRING 	$path				The file path or file name (includding file extension)
+	 *
+	 * @return ARRAY						[ type, pack ]
+	 */
+	public static function get_highlightsyntax_by_filetype($path) {
+		//--
+		$path = (string) $path;
+		//--
+		$fname = (string) SmartFileSysUtils::get_file_name_from_path((string)$path);
+		$fext = (string) SmartFileSysUtils::get_file_extension_from_path((string)$fname);
+		$fext = (string) strtolower((string)trim((string)$fext));
+		//--
+		$fpack = 'unknown'; // avoid return empty string on pack as this will load all packs
+		$ftype = '';
+		switch((string)$fext) { // {{{SYNC-HIGHLIGHT-FTYPE-PACK}}}
+			//-- web
+			case 'css':
+				$fpack = 'web';
+				$ftype = 'css';
+				break;
+			case 'diff':
+			case 'patch':
+				$fpack = 'web';
+				$ftype = 'diff';
+				break;
+			case 'ini':
+			case 'toml': // rust cargo def
+				$fpack = 'web';
+				$ftype = 'ini';
+				break;
+			case 'js':
+			case 'gjs':
+				$fpack = 'web';
+				$ftype = 'javascript';
+				break;
+			case 'json':
+				$fpack = 'web';
+				$ftype = 'json';
+				break;
+			case 'less':
+				$fpack = 'web';
+				$ftype = 'less';
+				break;
+			case 'md':
+			case 'markdown':
+				$fpack = 'web';
+				$ftype = 'markdown';
+				break;
+			case 'pgsql':
+				$fpack = 'web';
+				$ftype = 'pgsql';
+				break;
+			case 'php':
+			case 'php3':
+			case 'php4':
+			case 'php5':
+			case 'php6': // n/a
+			case 'php7':
+			case 'hh': // hip hop, a kind of static PHP
+				$fpack = 'web';
+				$ftype = 'php';
+				break;
+			case 'scss':
+				$fpack = 'web';
+				$ftype = 'scss';
+				break;
+			case 'sql':
+				$fpack = 'web';
+				$ftype = 'sql';
+				break;
+			case 'yaml':
+			case 'yml':
+				$fpack = 'web';
+				$ftype = 'yaml';
+				break;
+				break;
+			case 'xml':
+			case 'svg':
+			case 'html':
+				$fpack = 'web';
+				$ftype = 'xml';
+				break;
+			//-- tpl (depends on web)
+			case 'htm':
+				$fpack = 'web,tpl';
+				$ftype = 'markertpl';
+				break;
+			//-- lnx
+			case 'awk':
+				$fpack = 'lnx';
+				$ftype = 'awk';
+				break;
+			case 'pl':
+			case 'pm':
+				$fpack = 'lnx';
+				$ftype = 'perl';
+				break;
+			case 'bash':
+				$fpack = 'lnx';
+				$ftype = 'bash';
+				break;
+			case 'sh':
+				$fpack = 'lnx';
+				$ftype = 'shell';
+				break;
+			//-- srv
+			case 'dns':
+				$fpack = 'srv';
+				$ftype = 'dns';
+				break;
+			//-- net
+			case 'csp':
+				$fpack = 'net';
+				$ftype = 'csp';
+				break;
+			case 'httph':
+				$fpack = 'net';
+				$ftype = 'http';
+				break;
+			//-- lang
+			case 'coffee':
+			case 'cson':
+				$fpack = 'lang';
+				$ftype = 'coffeescript';
+				break;
+			case 'c':
+			case 'h':
+			case 'cpp':
+			case 'hpp':
+			case 'cxx':
+			case 'hxx':
+				$fpack = 'lang';
+				$ftype = 'cpp';
+				break;
+			case 'go':
+				$fpack = 'lang';
+				$ftype = 'go';
+				break;
+			case 'lua':
+				$fpack = 'lang';
+				$ftype = 'lua';
+				break;
+			case 'py':
+				$fpack = 'lang';
+				$ftype = 'python';
+				break;
+			case 'rb':
+				$fpack = 'lang';
+				$ftype = 'ruby';
+				break;
+			case 'rs':
+				$fpack = 'lang';
+				$ftype = 'rust';
+				break;
+			case 'tcl':
+			case 'tk':
+				$fpack = 'lang';
+				$ftype = 'tcl';
+				break;
+			case 'vala':
+			case 'vapi':
+				$fpack = 'lang';
+				$ftype = 'vala';
+				break;
+			//--
+			default:
+				// no handler
+		} //end switch
+		//--
+		if((string)strtolower((string)$fname) == 'cmake') {
+			$fpack = 'lang';
+			$ftype = 'cmake';
+		} elseif((string)strtolower((string)$fname) == 'makefile') {
+			$fpack = 'lang';
+			$ftype = 'makefile';
+		} elseif((string)$fname == 'pf.conf') {
+			$fpack = 'srv';
+			$ftype = 'pf';
+		} elseif((in_array((string)$ftype, ['xml', 'html', 'md', 'json'])) OR ((string)$fext == 'txt')) {
+			if((stripos((string)$fname, '.mtpl.') !== false) OR (stripos((string)$fname, '.inc.') !== false)) {
+				$fpack = 'web,tpl';
+				$ftype = 'markertpl';
+			} //end if
+		} //end if
+		//--
+		return array(
+			'type' => (string) $ftype,
+			'pack' => (array)  explode(',', (string)$fpack)
+		);
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
 	//================================================================
