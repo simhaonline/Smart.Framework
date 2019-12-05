@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MBString ; classes: Smart, SmartHashCrypto
- * @version 	v.20191111
+ * @version 	v.20191203
  * @package 	Plugins:Archivers
  *
  */
@@ -150,7 +150,7 @@ final class SmartArchiverLZS {
 			//	$enc4.' = '.self::$keyStr{$enc4}
 			//));
 			//--
-			$output .= (string) self::$keyStr{$enc1}.self::$keyStr{$enc2}.self::$keyStr{$enc3}.self::$keyStr{$enc4};
+			$output .= (string) self::$keyStr[$enc1].self::$keyStr[$enc2].self::$keyStr[$enc3].self::$keyStr[$enc4];
 			//--
 		} //end while
 		//--
@@ -203,19 +203,19 @@ final class SmartArchiverLZS {
 			$enc3 = false;
 			$enc4 = false;
 			//--
-			$needle = (string) $input{$i++};
+			$needle = (string) $input[$i++];
 			if((string)$needle != '') {
 				$enc1 = strpos(self::$keyStr, $needle);
 			} //end if
-			$needle = (string) $input{$i++};
+			$needle = (string) $input[$i++];
 			if((string)$needle != '') {
 				$enc2 = strpos(self::$keyStr, $needle);
 			} //end if
-			$needle = (string) $input{$i++};
+			$needle = (string) $input[$i++];
 			if((string)$needle != '') {
 				$enc3 = strpos(self::$keyStr, $needle);
 			} //end if
-			$needle = (string) $input{$i++};
+			$needle = (string) $input[$i++];
 			if((string)$needle != '') {
 				$enc4 = strpos(self::$keyStr, $needle);
 			} //end if
@@ -362,7 +362,7 @@ final class SmartArchiverLZS {
 			return false;
 		} //end if
 		//--
-		$h = ord($ch{0});
+		$h = ord($ch[0]);
 		//--
 		if($h <= 0x7F) {
 			return $h;
@@ -371,13 +371,13 @@ final class SmartArchiverLZS {
 			return false;
 		} //end if
 		if($h <= 0xDF && $len>1) {
-			return ($h & 0x1F) <<  6 | (ord($ch{1}) & 0x3F);
+			return ($h & 0x1F) <<  6 | (ord($ch[1]) & 0x3F);
 		} //end if
 		if($h <= 0xEF && $len>2) {
-			return ($h & 0x0F) << 12 | (ord($ch{1}) & 0x3F) << 6 | (ord($ch{2}) & 0x3F);
+			return ($h & 0x0F) << 12 | (ord($ch[1]) & 0x3F) << 6 | (ord($ch[2]) & 0x3F);
 		} //end if
 		if($h <= 0xF4 && $len>3) {
-			return ($h & 0x0F) << 18 | (ord($ch{1}) & 0x3F) << 12 | (ord($ch{2}) & 0x3F) << 6 | (ord($ch{3}) & 0x3F);
+			return ($h & 0x0F) << 18 | (ord($ch[1]) & 0x3F) << 12 | (ord($ch[2]) & 0x3F) << 6 | (ord($ch[3]) & 0x3F);
 		} //end if
 		//--
 		return false; // mixed
@@ -729,7 +729,7 @@ final class SmartArchiverLZS {
  * @access 		private
  * @internal
  *
- * @version 	v.20191111
+ * @version 	v.20191203
  *
  */
 final class SmartArchiverObjContextLZS {
@@ -771,7 +771,7 @@ final class SmartArchiverObjContextLZS {
  * @access 		private
  * @internal
  *
- * @version 	v.20191111
+ * @version 	v.20191203
  *
  */
 final class SmartArchiverObjDataLZS {

@@ -24,7 +24,7 @@ define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
  */
 class SmartAppAdminController extends SmartAbstractAppController {
 
-	public function Run() { // r.181221
+	public function Run() { // r.20191204
 
 		//-- dissalow run this sample if not test mode enabled
 		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
@@ -51,6 +51,7 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
+		$tests_fs_enabled = (bool) (defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS') AND (SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS === true));
 		$tests_db_enabled = (bool) (defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS') AND (SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS === true));
 		//--
 
@@ -70,10 +71,11 @@ class SmartAppAdminController extends SmartAbstractAppController {
 					'LANG' 					=> (string) $this->ControllerGetParam('lang'),
 					'MODULE-PATH' 			=> (string) $this->ControllerGetParam('module-path'),
 					//--
-					'TEST-FILESYSTEM' 		=> (string) ((defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS') AND (SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS === true)) ? true : false),
+					'TEST-FILESYSTEM' 		=> (string) ($tests_fs_enabled ? true : false),
 					//--
 					'TEST-DB-SQLITE' 		=> (string) true,
-					'NAME-DB-PCACHE' 		=> (string) SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND,
+					'TEST-DB-DBA' 			=> (string) ($tests_db_enabled && (SmartDbaUtilDb::isDbaAndHandlerAvailable() === true) && SmartDbaUtilDb::getDbaHandler()) ? (string)SmartDbaUtilDb::getDbaHandler() : '',
+					'NAME-DB-PCACHE' 		=> (string) SmartPersistentCache::getVersionInfo(),
 					'TEST-DB-PCACHE' 		=> (string) ((defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS') AND (SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS === true) AND (SmartPersistentCache::isActive() === true)) ? true : false),
 					'TEST-DB-MONGO' 		=> (string) (($tests_db_enabled === true) AND (Smart::array_size(Smart::get_from_config('mongodb')) > 0) ? true : false),
 					'TEST-DB-PGSQL' 		=> (string) (($tests_db_enabled === true) AND (Smart::array_size(Smart::get_from_config('pgsql')) > 0) ? true : false),

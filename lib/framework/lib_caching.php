@@ -215,13 +215,25 @@ final class SmartCache {
  * @internal
  *
  * @depends 	-
- * @version 	v.20190715
+ * @version 	v.20191204
  * @package 	development:Application
  *
  */
 abstract class SmartAbstractPersistentCache {
 
 	// :: ABSTRACT
+
+
+	/**
+	 * Get the version info about the Persistent Cache
+	 *
+	 * @return STRING
+	 */
+	public static function getVersionInfo() {
+		//--
+		return 'N/A';
+		//--
+	} //END FUNCTION
 
 
 	/**
@@ -239,10 +251,42 @@ abstract class SmartAbstractPersistentCache {
 	/**
 	 * Check if the persistent Cache is Memory Based.
 	 * This function must ALWAYS be used in conjunction with isActive() as it will return TRUE just if the backend is a Memory Based one and will not check if Backed is Active or not ...
+	 * This function should be used in some caching scenarios to check if make sense to cache things in Persistent Cache or not (Ex: if something make sense to be stored in a Memory based Cache)
 	 *
-	 * @return BOOLEAN	TRUE if is Memory Based (Ex: Redis / Memcache / ...) or FALSE if not (Ex: File Cache)
+	 * @return BOOLEAN	TRUE if is Memory Based (Ex: Redis / Memcached / ...) or FALSE if not
 	 */
 	public static function isMemoryBased() {
+		//--
+		return false;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Check if the persistent Cache is FileSystem Based.
+	 * Notice: DBA or SQLite are both FileSystem + Database based, this may return true to both - this function but aso isDbBased()
+	 * This function must ALWAYS be used in conjunction with isActive() as it will return TRUE just if the backend is a FileSystem Based one and will not check if Backed is Active or not ...
+	 * This function should be used in some caching scenarios to check if make sense to cache things in Persistent Cache or not (Ex: if something make sense to be stored in a FileSystem based Cache)
+	 *
+	 * @return BOOLEAN	TRUE if is FileSystem Based (Ex: SQLite / DBA / ...) or FALSE if not
+	 */
+	public static function isFileSystemBased() {
+		//--
+		return false;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Check if the persistent Cache is Database Based.
+	 * Notice: DBA or SQLite are both FileSystem + Database based, this may return true to both - this function but aso isFileSystemBased()
+	 * Notice: PostgreSQL / MySQL / MongoDB are real DB servers so must return TRUE to this function but must return FALSE to isFileSystemBased() because they have advanced storage systems not a typical prefixed folder storage on Disk
+	 * This function must ALWAYS be used in conjunction with isActive() as it will return TRUE just if the backend is a FileSystem Based one and will not check if Backed is Active or not ...
+	 * This function should be used in some caching scenarios to check if make sense to cache things in Persistent Cache or not (Ex: if something make sense to be stored in a Database based Cache)
+	 *
+	 * @return BOOLEAN	TRUE if is Database Based (Ex: PostgreSQL / MySQL / MongoDB / SQLite / DBA / ...) or FALSE if not
+	 */
+	public static function isDbBased() {
 		//--
 		return false;
 		//--
@@ -338,6 +382,9 @@ abstract class SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
+	//===== BELOW ARE FINAL STATE FUNCTIONS THAT CANNOT BE OVERRIDEN
+
+
 	/**
 	 * Validate persistent Cache Realm (can be empty or must comply with self::safeKey() charset)
 	 *
@@ -345,7 +392,7 @@ abstract class SmartAbstractPersistentCache {
 	 *
 	 * @return BOOLEAN	Returns True if the realm is valid or False if not
 	 */
-	public static function validateRealm($y_realm) {
+	final public static function validateRealm($y_realm) {
 		//--
 		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]*$/', (string)$y_realm)) { // {{{SYNC-WITH-self::safeKey()}}} + allow empty * instead of +
 			return true;
@@ -363,7 +410,7 @@ abstract class SmartAbstractPersistentCache {
 	 *
 	 * @return BOOLEAN	Returns True if the key is valid or False if not
 	 */
-	public static function validateKey($y_key) {
+	final public static function validateKey($y_key) {
 		//--
 		if((string)$y_key == '') {
 			return false;
@@ -385,7 +432,7 @@ abstract class SmartAbstractPersistentCache {
 	 *
 	 * @return STRING	Returns the safe prepared Key or Realm
 	 */
-	public static function safeKey($y_key_or_realm) {
+	final public static function safeKey($y_key_or_realm) {
 		//--
 		$key_or_realm = (string) Smart::safe_pathname((string)$y_key_or_realm);
 		if((string)$key_or_realm == '') {
@@ -409,7 +456,7 @@ abstract class SmartAbstractPersistentCache {
 	 *
 	 * @return STRING	Returns the safe serialized variable content
 	 */
-	public static function varEncode($y_var) {
+	final public static function varEncode($y_var) {
 		//--
 		return (string) Smart::seryalize($y_var);
 		//--
@@ -427,7 +474,7 @@ abstract class SmartAbstractPersistentCache {
 	 *
 	 * @return MIXED	Returns the original restored type and value of that variable
 	 */
-	public static function varDecode($y_encoded_var) {
+	final public static function varDecode($y_encoded_var) {
 		//--
 		return Smart::unseryalize((string)$y_encoded_var); // mixed
 		//--
@@ -445,7 +492,7 @@ abstract class SmartAbstractPersistentCache {
 	 *
 	 * @return STRING	Returns the safe serialized + compressed variable content
 	 */
-	public static function varCompress($y_var) {
+	final public static function varCompress($y_var) {
 		//--
 		$raw_data = (string) Smart::seryalize($y_var);
 		$y_var = ''; // free mem
@@ -491,7 +538,7 @@ abstract class SmartAbstractPersistentCache {
 	 *
 	 * @return MIXED	Returns the original restored type and value of that variable
 	 */
-	public static function varUncompress($y_cache_arch_var) {
+	final public static function varUncompress($y_cache_arch_var) {
 		//--
 		$y_cache_arch_var = (string) trim((string)$y_cache_arch_var);
 		//--

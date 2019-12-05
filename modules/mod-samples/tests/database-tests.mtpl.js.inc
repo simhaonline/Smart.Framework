@@ -1,13 +1,14 @@
 [%%%COMMENT%%%]
 // IMPORTANT: use only JavaScript code here, no HTML !
 [%%%/COMMENT%%%]
-//===== QUnit Tests.DataBase: START :: r.20191109
+//===== QUnit Tests.DataBase: START :: r.20191202
 
 (function() {
 
 	var localTests = {};
 
 	localTests.SQLite 		= [###TEST-DB-SQLITE|bool###];
+	localTests.Dba 			= '[###TEST-DB-DBA|js###]';
 	localTests.PCache 		= [###TEST-DB-PCACHE|bool###];
 	localTests.MongoDB 		= [###TEST-DB-MONGO|bool###];
 	localTests.PostgreSQL 	= [###TEST-DB-PGSQL|bool###];
@@ -58,6 +59,32 @@
 				});
 			} else {
 				// skip SQLite Test
+			} //end if else
+
+			if(localTests.Dba) {
+				QUnit.test('Dba [' + localTests.Dba + '] Test: PHP :: ajax', function(assert) {
+					SmartQUnit.runAjaxTest(
+						baseScript + '?page=samples.testunit&op=testunit.dbadb-test',
+						'GET',
+						'html', // data type
+						assert,
+						'Test OK: PHP Dba DB [' + localTests.Dba + '].',
+						function(QAsyncTestDone, testOK, msg, testHtmlDiv) {
+							if(typeof msg == 'string') {
+								testHtmlDiv(assert, QAsyncTestDone, testOK, value, msg, 250);
+							} else {
+								var value = 'INVALID TEST CONTENT: ' + String(JSON.stringify(msg).substr(0,100) + '...');
+								assert.equal(
+									value, testOK,
+									testOK
+								);
+								QAsyncTestDone();
+							} //end if else
+						} //end function
+					);
+				});
+			} else {
+				// skip Dba Test
 			} //end if else
 
 			if(localTests.PCache) {

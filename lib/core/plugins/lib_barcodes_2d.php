@@ -48,7 +48,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20191028
+ * @version 	v.20191203
  * @package 	Plugins:ViewComponents
  *
  */
@@ -73,8 +73,21 @@ final class SmartBarcode2D {
 	 */
 	public static function getBarcode($y_code, $y_type, $y_format, $y_size, $y_color='#000000', $y_extraoptions='', $y_cachetime=-1) {
 		//--
+		$y_size = (int) $y_size;
+		if($y_size < 1) {
+			$y_size = 1;
+		} elseif($y_size > 4) {
+			$y_size = 4;
+		} //end if
+		//--
+		$y_color = (string) strtoupper((string)$y_color);
+		if(!preg_match('/^\#([A-F0-9]{6})$/', (string)$y_color)) {
+			$y_color = '#000000';
+		} //end if
+		//--
 		switch((string)$y_type) {
 			case 'qrcode':
+				$c__typ = 1;
 				switch((string)$y_extraoptions) {
 					case 'H':
 						$y_extraoptions = 'H';
@@ -92,10 +105,12 @@ final class SmartBarcode2D {
 				$barcode_type = 'qrcode';
 				break;
 			case 'semacode':
+				$c__typ = 2;
 				$y_extraoptions = '';
 				$barcode_type = 'semacode';
 				break;
 			case 'pdf417':
+				$c__typ = 3;
 				$y_extraoptions = (int) $y_extraoptions;
 				if($y_extraoptions <= 0) {
 					$y_extraoptions = 1;
@@ -106,53 +121,82 @@ final class SmartBarcode2D {
 				$barcode_type = 'pdf417';
 				break;
 			default:
-				$barcode_type = '???';
-				Smart::log_warning('ERROR: BarCodes2D - Invalid Type Selected for getBarcode');
+				Smart::log_warning(__METHOD__.' # Invalid Barcode Type: '.$y_type);
 				return '';
 		} //end switch
 		//--
 		switch((string)$y_format) {
 			case 'html':
 				$barcode_format = '.htm';
+				$c__fmt = 1;
 				break;
 			case 'html-png':
 				$barcode_format = '.png.htm';
+				$c__fmt = 2;
 				break;
 			case 'png':
 				$barcode_format = '.png';
+				$c__fmt = 3;
 				break;
 			case 'html-svg':
 				$barcode_format = '.svg.htm';
+				$c__fmt = 4;
 				break;
 			case 'svg':
 				$barcode_format = '.svg';
+				$c__fmt = 0;
 				break;
 			default:
-				$barcode_format = '.unknown';
-				Smart::log_warning('ERROR: BarCodes2D - Invalid Mode Selected for getBarcode');
+				Smart::log_warning(__METHOD__.' # Invalid Barcode Format: '.$y_format);
 				return '';
 		} //end switch
 		//--
 		$y_cachetime = (int) $y_cachetime;
 		//--
 
+		//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
+		$tmp_1_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 0, 1));
+		$tmp_2_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 1, 1));
+		$tmp_3_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 2, 1));
+		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_1_prefix))) {
+			$tmp_1_prefix = '@';
+		} //end if
+		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_2_prefix))) {
+			$tmp_2_prefix = '@';
+		} //end if
+		if(((string)trim((string)$tmp_3_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_3_prefix))) {
+			$tmp_3_prefix = '@';
+		} //end if
 		//--
-		$realm = 'barcode-2d';
-		$cache_uuid = (string) $realm.'://'.$barcode_type.'/'.$barcode_format.'/'.$y_size.'/'.$y_color.'/'.$y_extraoptions.'/'.$y_code;
+		$realm = 'barcode2d';
+		$cache_realm = (string) SmartDbaPersistentCache::safeKey($tmp_1_prefix.$tmp_2_prefix.$tmp_3_prefix.'-'.$realm.'-T'.$c__typ.'-F'.$c__fmt.'-S'.(int)$y_size.'-E'.$y_extraoptions.'-Q'.trim((string)$y_color,'#'));
+		$cache_uuid  = (string) SmartDbaPersistentCache::safeKey(substr(Smart::safe_filename($y_code), 0, 25).'-'.sha1($realm.'://'.$barcode_type.'/'.$barcode_format.'/'.(int)$y_size.'/'.$y_extraoptions.'/'.$y_color.'/'.$y_code));
 		//--
 
 		//--
-		if((int)$y_cachetime >= 0) {
+		if((int)$y_cachetime >= 0) { // if allow caching, try to load from cache
 			//--
-			$out = SmartUtils::load_cached_file_content((string)$barcode_format, (string)$realm, (string)$cache_uuid, false, (int)$y_cachetime); // (try to) GET from cache
-			//--
-			if((string)$out != '') {
-				return $out; // if found in cache return it
+			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
+				//--
+				$out = SmartDbaPersistentCache::getKey( // MIXED
+					(string) $cache_realm, 	// realm
+					(string) $cache_uuid 	// key
+				);
+				//--
+				if(is_string($out)) {
+					if((string)$out == '') { // invalid key ... must not return empty string
+						SmartDbaPersistentCache::unsetKey( // unset the invalid key !
+							(string) $cache_realm, 	// realm
+							(string) $cache_uuid 	// key
+						);
+					} else {
+						return (string) $out; // if found in cache return it
+					} //end if else
+				} //end if
+				//--
 			} //end if
 			//--
 		} //end if
-		//--
-
 		//--
 		switch((string)$barcode_type) {
 			case 'qrcode':
@@ -165,7 +209,8 @@ final class SmartBarcode2D {
 				$arr_barcode = (new SmartBarcode2D_Pdf417($y_code, $y_extraoptions, -1))->getBarcodeArray();
 				break;
 			default:
-				$arr_barcode = ''; // not to be an array for error detection
+				// if invalid type is logged before
+				return '';
 		} //end switch
 		//--
 		switch((string)$y_format) {
@@ -185,20 +230,30 @@ final class SmartBarcode2D {
 				$out = self::getBarcodeSVG($arr_barcode, $y_size, $y_color); // needs header image/svg on output
 				break;
 			default:
-				$out = '';
+				// if invalid format is logged before
+				return '';
 		} //end switch
 		//--
 
 		//--
-		if((string)$out != '') { // avoid to get again if by mistake the content is empty (we want set ...)
-			if((int)$y_cachetime >= 0) {
-				$out = SmartUtils::load_cached_file_content((string)$barcode_format, (string)$realm, (string)$cache_uuid, (string)$out, (int)$y_cachetime); // SET & GET Back from cache
+		if((int)$y_cachetime >= 0) { // if allow caching, try to save in cache
+			//--
+			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
+				//--
+				SmartDbaPersistentCache::setKey(
+					(string) $cache_realm, 	// realm
+					(string) $cache_uuid, 	// key
+					(string) $out,			// content
+					(int)    $y_cachetime 	// expire time
+				);
+				//--
 			} //end if
+			//--
 		} //end if
 		//--
 
 		//--
-		return $out;
+		return (string) $out;
 		//--
 
 	} //END FUNCTION
@@ -512,7 +567,7 @@ final class SmartBarcode2D {
 /**
  * Class Smart BarCode 2D QRCode
  *
- * @version 	v.20191028
+ * @version 	v.20191203
  *
  * @access 		private
  * @internal
@@ -3260,7 +3315,7 @@ final class SmartBarcode2D_QRcode {
 /**
  * Class Smart BarCode 2D DataMatrix
  *
- * @version 	v.20191028
+ * @version 	v.20191203
  *
  * @access 		private
  * @internal
@@ -3888,7 +3943,7 @@ final class SmartBarcode2D_DataMatrix {
 					if($numch[self::SEMACODE_ENCODE_C40] == $numch[self::SEMACODE_ENCODE_X12]) {
 						$k = ($pos + $charscount + 1);
 						while ($k < $data_length) {
-							$tmpchr = ord($data{$k});
+							$tmpchr = ord($data[$k]);
 							if($this->isCharMode($tmpchr, self::SEMACODE_ENCODE_X12)) {
 								return self::SEMACODE_ENCODE_X12;
 							} elseif(!($this->isCharMode($tmpchr, self::SEMACODE_ENCODE_X12) OR $this->isCharMode($tmpchr, self::SEMACODE_ENCODE_C40))) {
@@ -4519,7 +4574,7 @@ final class SmartBarcode2D_DataMatrix {
 /**
  * Class Smart BarCode 2D PDF417
  *
- * @version 	v.20191028
+ * @version 	v.20191203
  *
  * @access 		private
  * @internal
@@ -5374,7 +5429,7 @@ final class SmartBarcode2D_Pdf417 {
 				$codelen = strlen($code);
 				//--
 				for($i = 0; $i < $codelen; ++$i) {
-					$chval = ord($code{$i});
+					$chval = ord($code[$i]);
 					if(($k = array_search($chval, $this->textsubmodes[$submode])) !== false) {
 						// we are on the same sub-mode
 						$txtarr[] = $k;
@@ -5384,7 +5439,7 @@ final class SmartBarcode2D_Pdf417 {
 							//-- search new sub-mode
 							if(($s != $submode) AND (($k = array_search($chval, $this->textsubmodes[$s])) !== false)) {
 								//-- $s is the new submode
-								if(((($i + 1) == $codelen) OR ((($i + 1) < $codelen) AND (array_search(ord($code{($i + 1)}), $this->textsubmodes[$submode]) !== false))) AND (($s == 3) OR (($s == 0) AND ($submode == 1)))) {
+								if(((($i + 1) == $codelen) OR ((($i + 1) < $codelen) AND (array_search(ord($code[($i+1)]), $this->textsubmodes[$submode]) !== false))) AND (($s == 3) OR (($s == 0) AND ($submode == 1)))) {
 									//-- shift (temporary change only for this char)
 									if($s == 3) {
 										//-- shift to puntuaction
@@ -5456,7 +5511,7 @@ final class SmartBarcode2D_Pdf417 {
 						$cw = array_merge($cw, $cw6);
 					} else {
 						for($i = 0; $i < $sublen; ++$i) {
-							$cw[] = ord($code{$i});
+							$cw[] = ord($code[$i]);
 						} //end for
 					} //end if else
 					$code = $rest;

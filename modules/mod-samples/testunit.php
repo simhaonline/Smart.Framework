@@ -114,6 +114,13 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main = \SmartModExtLib\Samples\TestUnitFileSystem::testFs();
 				//--
 				break;
+			case 'testunit.dbadb-test':
+				//--
+				sleep(1);
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitDbaDB::testDbaDb();
+				//--
+				break;
 			case 'testunit.pcache-test':
 				//--
 				sleep(1);

@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191119
+ * @version 	v.20191204
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -81,7 +81,7 @@ final class SmartSQliteDb {
 	/**
 	 * Class constructor
 	 *
-	 * @param STRING $sqlite_db_file 		:: The path to the SQLite Database File :: Example: 'tmp/test.sqlite3' ; (if DB does not exist, will create it)
+	 * @param STRING $sqlite_db_file 		:: The path to the SQLite Database File :: Example: 'tmp/test.sqlite' ; (if DB does not exist, will create it)
 	 *
 	 */
 	public function __construct($sqlite_db_file, $timeout_busy_sec=60) {
@@ -470,7 +470,7 @@ final class SmartSQliteDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191119
+ * @version 	v.20191204
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -508,6 +508,11 @@ final class SmartSQliteUtilDb {
 			return;
 		} //end if
 		//--
+		if((string)substr((string)$file_name, -7, 7) != '.sqlite') {
+			self::error((string)$file_name, 'OPEN', 'ERROR: DB must have .sqlite file extension !', '', '');
+			return;
+		} //end if
+		//--
 		if(SmartFileSysUtils::check_if_safe_path((string)$file_name, 'yes', 'yes') != 1) { 				// deny absolute path access ; allow protected path access (starting with #)
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB path is invalid !', '', '');
 			return;
@@ -541,13 +546,12 @@ final class SmartSQliteUtilDb {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB folder is not writable !', '', '');
 			return;
 		} //end if
+		//-- {{{SYNC-#DB-FOLDER-HTACCESS}}}
 		if(!SmartFileSystem::is_type_file((string)$dir_of_db.'.htaccess')) {
 			SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'.htaccess', 'yes', 'yes'); // deny absolute path access ; allow protected path access (starting with #)
-			if(!@file_put_contents((string)$dir_of_db.'.htaccess', (string)'### Smart.Framework // '.__METHOD__.' @ HtAccess Data Protection ###'."\n".SMART_FRAMEWORK_HTACCESS_NOINDEXING.SMART_FRAMEWORK_HTACCESS_FORBIDDEN."\n".'### END ###', LOCK_EX)) {
-				self::error((string)$file_name, 'OPEN', 'ERROR: DB folder access-protection not initialized !', '', '');
-				return;
+			if(@file_put_contents((string)$dir_of_db.'.htaccess', (string)'### Smart.Framework // '.__METHOD__.' @ HtAccess Data Protection ###'."\n".SMART_FRAMEWORK_HTACCESS_NOINDEXING.SMART_FRAMEWORK_HTACCESS_FORBIDDEN."\n".'### END ###', LOCK_EX)) {
+				SmartFileSystem::fix_file_chmod((string)$dir_of_db.'.htaccess'); // apply file chmod
 			} //end if
-			SmartFileSystem::fix_file_chmod((string)$dir_of_db.'.htaccess'); // apply file chmod
 			if(!SmartFileSystem::is_type_file((string)$dir_of_db.'.htaccess')) {
 				self::error((string)$file_name, 'OPEN', 'ERROR: DB folder access-protection not found !', '', '');
 				return;
@@ -555,7 +559,9 @@ final class SmartSQliteUtilDb {
 		} //end if
 		if(!SmartFileSystem::is_type_file((string)$dir_of_db.'index.html')) {
 			SmartFileSysUtils::raise_error_if_unsafe_path((string)$dir_of_db.'index.html', 'yes', 'yes'); // deny absolute path access ; allow protected path access (starting with #)
-			@file_put_contents((string)$dir_of_db.'index.html', '', LOCK_EX);
+			if(@file_put_contents((string)$dir_of_db.'index.html', '', LOCK_EX)) {
+				SmartFileSystem::fix_file_chmod((string)$dir_of_db.'index.html'); // apply file chmod
+			} //end if
 			if(!SmartFileSystem::is_type_file((string)$dir_of_db.'index.html')) {
 				self::error((string)$file_name, 'OPEN', 'ERROR: DB folder index-protection not found !', '', '');
 				return;
@@ -581,8 +587,10 @@ final class SmartSQliteUtilDb {
 					'data' => 'SQLite Library Version: '.$arr_version['versionString'].' / '.$arr_version['versionNumber']
 				]);
 				//--
-				if((float)$configs['sqlite']['slowtime'] > 0) {
-					self::$slow_time = (float) $configs['sqlite']['slowtime'];
+				if(is_array($configs['sqlite'])) {
+					if((float)$configs['sqlite']['slowtime'] > 0) {
+						self::$slow_time = (float) $configs['sqlite']['slowtime'];
+					} //end if
 				} //end if
 				if(self::$slow_time < 0.0000001) {
 					self::$slow_time = 0.0000001;
@@ -1768,7 +1776,7 @@ final class SmartSQliteUtilDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20191119
+ * @version 	v.20191204
  * @package 	Plugins:Database:SQLite
  *
  */

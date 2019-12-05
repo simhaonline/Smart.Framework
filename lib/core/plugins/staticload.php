@@ -29,6 +29,17 @@ require_once('lib/core/plugins/lib_html.php');				// html parser
 require_once('lib/core/plugins/lib_markdown.php'); 			// markdown syntax parser
 require_once('lib/core/plugins/lib_archlzs.php');			// lzs archiver
 //--
+require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
+require_once('lib/core/plugins/lib_pcache_redis.php');		// redis persistent cache
+require_once('lib/core/plugins/lib_db_dba.php');			// dba db connector
+require_once('lib/core/plugins/lib_pcache_dba.php'); 		// dba persistent cache
+require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
+require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
+require_once('lib/core/plugins/lib_db_mysqli.php');			// mysqli db connector
+require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
+//--
+require_once('lib/core/plugins/lib_session.php');			// session storage
+//--
 require_once('lib/core/plugins/lib_imgd.php');				// img (gd) process
 require_once('lib/core/plugins/lib_barcodes_1d.php');		// barcodes 1D
 require_once('lib/core/plugins/lib_barcodes_2d.php');		// barcodes 2D
@@ -38,14 +49,6 @@ require_once('lib/core/plugins/lib_viewhelpers.php'); 		// viewhelpers component
 require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
 //--
 require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
-//--
-require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
-require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
-require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
-require_once('lib/core/plugins/lib_db_mysqli.php');			// mysqli db connector
-require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
-//--
-require_once('lib/core/plugins/lib_session.php');			// session storage
 //--
 require_once('lib/core/plugins/lib_spreadsheet.php');		// spreadsheet export / import
 require_once('lib/core/plugins/lib_export_pdf.php'); 		// pdf export

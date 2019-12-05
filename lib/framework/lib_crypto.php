@@ -645,7 +645,7 @@ final class SmartCryptoOpenSSLCipher {
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.20190103
+ * @version     v.20191203
  *
  */
 final class SmartCryptoCipherBlowfishCBC {
@@ -838,7 +838,7 @@ final class SmartCryptoCipherBlowfishCBC {
 		for($i=0; $i<18; $i++) {
 			$data = 0;
 			for($j=4; $j>0; $j--) {
-				$data = $data << 8 | ord($key{$k});
+				$data = $data << 8 | ord($key[$k]); // fix for PHP 7.4
 				$k = ($k+1) % $len;
 			} //end for
 			$this->_P[$i] ^= $data;

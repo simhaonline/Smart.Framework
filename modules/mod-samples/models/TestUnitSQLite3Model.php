@@ -37,7 +37,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20191130
  *
  */
 final class TestUnitSQLite3Model {
@@ -50,7 +50,7 @@ final class TestUnitSQLite3Model {
 	public function __construct() {
 
 		//--
-		$this->connection = new \SmartSQliteDb('tmp/testunit.sqlite3');
+		$this->connection = new \SmartSQliteDb('tmp/testunit.sqlite');
 		//--
 		$this->connection->open();
 		//--

@@ -64,7 +64,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.20191112
+ * @version 	v.20191204
  * @package 	Application:Session
  *
  */
@@ -230,11 +230,11 @@ final class SmartSession {
 				return;
 			} //end if
 			$detected_session_mode = 'files';
-		} else { // redis or another
+		} else { // redis, dba or custom
 			if(((string)$ini_sess_mode !== 'files') AND ((string)$ini_sess_mode !== 'user')) {
-				return; // can be memcached ...
+				return; // can be a different handler directly supported by PHP like memcached or other, so let it handle ...
 			} //end if
-			$detected_session_mode = 'user';
+			$detected_session_mode = 'user'; // since PHP 7.3 there is no more supports set 'user' mode on session.save_handler ; PHP will just need to detect a custom handler user passes to handle the session
 		} //end if
 		//--
 		//=====
@@ -274,11 +274,19 @@ final class SmartSession {
 			die('');
 			return;
 		} //end if
-		//-- by default set for files
+		//-- by default set for files {{{SYNC-SESSION-FILE_BASED-PREFIX}}}
 		$sf_sess_mode = 'files';
-		$sf_sess_dir = 'tmp/sessions/'.$sf_sess_area.'/'.$sf_sess_ns.'/';
+		$tmp_1_prefix = (string) strtolower((string)substr((string)$sf_sess_ns, -3, 1));
+		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_1_prefix))) {
+			$tmp_1_prefix = '@';
+		} //end if
+		$tmp_2_prefix = (string) strtolower((string)substr((string)$sf_sess_ns, -1, 1));
+		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_2_prefix))) {
+			$tmp_2_prefix = '@';
+		} //end if
+		$sf_sess_dir = 'tmp/sessions/'.SmartFileSysUtils::add_dir_last_slash($sf_sess_area).SmartFileSysUtils::add_dir_last_slash($tmp_1_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_2_prefix).SmartFileSysUtils::add_dir_last_slash($sf_sess_ns);
 		if((string)$detected_session_mode === 'user') {
-			if(class_exists('SmartCustomSession')) {
+			if(class_exists('SmartCustomSession', false)) { // explicit autoload is false
 				if((string)get_parent_class('SmartCustomSession') == 'SmartAbstractCustomSession') {
 					$sf_sess_mode = 'user-custom';
 					$sf_sess_dir = 'tmp/sessions/'.$sf_sess_area.'/'; // here the NS is saved in DB so we do not need to complicate paths
@@ -348,9 +356,29 @@ final class SmartSession {
 		//-- start session
 		@session_start();
 		//--
-		if((Smart::array_size($_SESSION) <= 0) OR ((string)$_SESSION['visitor_UUID'] != (string)SMART_APP_VISITOR_COOKIE) OR ((string)$_SESSION['uniqbrowser_ID'] != (string)$the_sess_client_uuid) OR (strlen($_SESSION['session_ID']) < 32)) {
+		if((int)$tmp_exp_seconds > 0) {
+			$sess_max_expire = (int) $tmp_exp_seconds;
+		} else {
+			$sess_max_expire = (int) 3600 * 24; // {{{SYNC-SESS-MAX-HARDCODED-VAL}}} max 24 hour from the last access if browser session, there is a security risk if SMART_FRAMEWORK_SESSION_LIFETIME is zero
+		} //end if
+		$time_now = (int) time();
+		//--
+		if(
+			(Smart::array_size($_SESSION) <= 0) OR
+			(strlen($_SESSION['session_ID']) < 32) OR
+			((string)$_SESSION['visitor_UUID'] != (string)SMART_APP_VISITOR_COOKIE) OR
+			((string)$_SESSION['uniqbrowser_ID'] != (string)$the_sess_client_uuid) OR
+			((string)$_SESSION['session_AREA'] != (string)$sf_sess_area) OR
+			((string)$_SESSION['session_NS'] != (string)$sf_sess_ns) OR
+			((string)$_SESSION['website_ID'] != (string)SMART_SOFTWARE_NAMESPACE) OR
+			((int)((int)$_SESSION['visit_UPDATE'] + (int)$sess_max_expire) < (int)$time_now)
+		) {
 			//--
 			if(Smart::array_size($_SESSION) > 0) {
+				//--
+				if(strlen($_SESSION['session_ID']) < 32) {
+					Smart::log_warning('Session Reset: Session ID must be at least 32 characters ...');
+				} //end if
 				//--
 				if((string)$_SESSION['visitor_UUID'] != (string)SMART_APP_VISITOR_COOKIE) {
 					Smart::log_warning('Session Reset: Unique Visitor UUID does not match ...');
@@ -360,8 +388,22 @@ final class SmartSession {
 					Smart::log_warning('Session Reset: Unique Browser ID does not match ...');
 				} //end if
 				//--
-				if(strlen($_SESSION['session_ID']) < 32) {
-					Smart::log_warning('Session Reset: Session ID must be at least 32 characters ...');
+				if((string)$_SESSION['session_AREA'] != (string)$sf_sess_area) {
+					Smart::log_warning('Session Reset: Session Area does not match ...');
+				} //end if
+				//--
+				if((string)$_SESSION['session_NS'] != (string)$sf_sess_ns) {
+					Smart::log_warning('Session Reset: Session NameSpace does not match ...');
+				} //end if
+				//--
+				if((string)$_SESSION['website_ID'] != (string)SMART_SOFTWARE_NAMESPACE) {
+					Smart::log_warning('Session Reset: Session Website ID does not match ...');
+				} //end if
+				//--
+				if(SmartFrameworkRuntime::ifDebug()) {
+					if((int)((int)$_SESSION['visit_UPDATE'] + (int)$sess_max_expire) < (int)$time_now) {
+						Smart::log_notice('Session Reset: Session Max HardCoded Expiration Time was Reach ; sessionUpdate='.(int)$_SESSION['visit_UPDATE'].' ; maxExpire='.(int)$sess_max_expire.' ; timeNow='.(int)$time_now);
+					} //end if
 				} //end if
 				//--
 			} //end if
@@ -372,15 +414,16 @@ final class SmartSession {
 			$_SESSION['SoftwareFramework_SessionMode'] 	= (string) $sf_sess_mode.':'.SMART_FRAMEWORK_SESSION_HANDLER; 	// session mode
 			$_SESSION['website_ID'] 					= (string) SMART_SOFTWARE_NAMESPACE; 							// the website ID
 			$_SESSION['visitor_UUID'] 					= (string) SMART_APP_VISITOR_COOKIE; 							// the visitor UUID
-			$_SESSION['visit_COUNTER'] 					= (int)    0; 													// the session visit counter
 			$_SESSION['session_AREA'] 					= (string) $sf_sess_area; 										// session area
 			$_SESSION['session_NS'] 					= (string) $sf_sess_ns; 										// session namespace
 			$_SESSION['session_ID'] 					= (string) @session_id(); 										// read current session ID
 			$_SESSION['session_STARTED'] 				= (string) date('Y-m-d H:i:s O'); 								// read current session ID
+			$_SESSION['visit_COUNTER'] 					= (int)    0; 													// the session visit counter
 			//--
 		} //end if
 		//--
 		$_SESSION['visit_COUNTER'] += 1; // increment visit counter
+		$_SESSION['visit_UPDATE'] = (int) $time_now;
 		//--
 		if(!isset($_SESSION['visitor_UUID'])) {
 			$_SESSION['visitor_UUID'] = (string) SMART_APP_VISITOR_COOKIE; // set it only once
@@ -392,7 +435,7 @@ final class SmartSession {
 		//--
 		$_SESSION['SmartFramework__Browser__Identification__Data'] = (array) $browser_os_ip_identification; // rewrite it each time
 		//--
-		self::$active = (int) time(); // successfuly started
+		self::$active = (int) $time_now; // successfuly started
 		//--
 	} //END FUNCTION
 	//==================================================
@@ -416,7 +459,7 @@ final class SmartSession {
  * Abstract Class Smart Custom Session
  * This is the abstract for extending the class SmartCustomSession
  *
- * @version 	v.20191111
+ * @version 	v.20191204
  * @package 	development:Application
  */
 abstract class SmartAbstractCustomSession {

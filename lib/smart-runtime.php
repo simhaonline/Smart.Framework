@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.2.7'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.11.27'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.05'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -136,6 +136,11 @@ if(!defined('SMART_FRAMEWORK_SESSION_NAME')) {
 if(!defined('SMART_FRAMEWORK_SESSION_HANDLER')) {
 	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SESSION_HANDLER');
+} //end if
+//--
+if(!defined('SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER')) {
+	@http_response_code(500);
+	die('A required INIT constant has not been defined: SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER');
 } //end if
 //--
 if(!defined('SMART_FRAMEWORK_MEMORY_LIMIT')) {
@@ -338,7 +343,7 @@ if(!class_exists('SmartPersistentCache')) {
 	@http_response_code(500);
 	die('Smart.Framework // Runtime: the Class SmartPersistentCache is missing ...');
 } //end if
-if((string)get_parent_class('SmartPersistentCache') != 'SmartAbstractPersistentCache') {
+if(!is_subclass_of('SmartPersistentCache', 'SmartAbstractPersistentCache')) {
 	@http_response_code(500);
 	die('Smart.Framework // Runtime: the Class SmartPersistentCache must be extended from the Class SmartAbstractPersistentCache ...');
 } //end if
@@ -991,7 +996,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20191112
+ * @version		v.20191205
  * @package 	Application
  *
  */
@@ -1014,6 +1019,35 @@ final class SmartFrameworkRuntime {
 	private static $RequiredDirsCreated 		= false;	// after creating required dirs this will be set to true to avoid re-run that function again
 	private static $RedirectionMonitorStarted 	= false; 	// after the redirection monitor have been started this will be set to true to avoid re-run it
 	private static $HighLoadMonitorStats 		= null; 	// register the high load monitor caches
+
+
+	//======================================================================
+	// Include with Require a PHP Script (script must end with .php, be a safe relative path and cannot be includded more than once) ; $area must be a description in case of error
+	public static function requirePhpScript($script, $area) {
+		//--
+		$script = (string) trim((string)$script);
+		//--
+		if(strlen((string)$script) < 5) {
+			Smart::raise_error('ERROR: Cannot Include a PHP Script for the area: `'.$area.'` ; script is: '.$script.' ; reason: the file path is too short');
+			return;
+		} //end if
+		if((string)substr((string)$script, -4, 4) !== '.php') {
+			Smart::raise_error('ERROR: Cannot Include a PHP Script for the area: `'.$area.'` ; script is: '.$script.' ; reason: the file path must end with .php file extension');
+			return;
+		} //end if
+		if(!SmartFileSysUtils::check_if_safe_path((string)$script)) {
+			Smart::raise_error('ERROR: Cannot Include a PHP Script for the area: `'.$area.'` ; script is: '.$script.' ; reason: the file path is not relative/safe');
+			return;
+		} //end if
+		if(!SmartFileSystem::is_type_file((string)$script)) {
+			Smart::raise_error('ERROR: Cannot Include a PHP Script for the area: `'.$area.'` ; script is: '.$script.' ; reason: the file was not found');
+			return;
+		} //end if
+		//--
+		require((string)$script);
+		//--
+	} //END FUNCTION
+	//======================================================================
 
 
 	//======================================================================
@@ -1614,8 +1648,6 @@ final class SmartFrameworkRuntime {
 		$dir = 'tmp/';
 		if(!SmartFileSystem::is_type_dir($dir)) {
 			SmartFileSystem::dir_create($dir);
-			SmartFileSystem::write($dir.'index.html', '');
-			SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n");
 		} else { // manage debug cleanup
 			if(!self::ifDebug()) {
 				if(SmartFileSystem::is_type_file('tmp/SMART-FRAMEWORK__DEBUG-ON')) {
@@ -1633,54 +1665,79 @@ final class SmartFrameworkRuntime {
 		} // end if
 		if(!SmartFileSystem::have_access_write($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
-				'App Init ERROR :: (Temporary Folder is Not Writable)' // this must be also as message !!!
+				__METHOD__."\n".'General ERROR :: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
 			);
 			return;
 		} //end if
 		if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
-			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #TMP: '.$dir.'.htaccess',
-				'App Init ERROR :: (See Error Log for More Details)'
-			);
-			return;
+			SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n"); // {{{SYNC-TMP-FOLDER-HTACCESS}}}
+			if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
+				Smart::raise_error(
+					'#SMART-FRAMEWORK-CREATE-REQUIRED-FILES#'."\n".'A required file cannot be created in #TMP: `'.$dir.'.htaccess`',
+					'App Init ERROR'
+				);
+				return;
+			} //end if
+		} //end if
+		if(!SmartFileSystem::is_type_file($dir.'index.html')) {
+			SmartFileSystem::write($dir.'index.html', '');
+			if(!SmartFileSystem::is_type_file($dir.'index.html')) {
+				Smart::raise_error(
+					'#SMART-FRAMEWORK-CREATE-REQUIRED-FILES#'."\n".'A required file cannot be created in #TMP: `'.$dir.'index.html`',
+					'App Init ERROR'
+				);
+				return;
+			} //end if
 		} //end if
 		//-- tmp cache dir
 		$dir = 'tmp/cache/';
 		if(!SmartFileSystem::is_type_dir($dir)) {
 			SmartFileSystem::dir_create($dir);
-			SmartFileSystem::write($dir.'index.html', '');
+			if(SmartFileSystem::is_type_dir($dir)) {
+				SmartFileSystem::write($dir.'index.html', '');
+			} //end if
 		} // end if
 		if(!SmartFileSystem::have_access_write($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
-				'App Init ERROR :: (See Error Log for More Details)'
+				__METHOD__."\n".'General ERROR :: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
 			);
 			return;
+		} //end if
+		if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
+			SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n"); // {{{SYNC-TMP-FOLDER-HTACCESS}}}
 		} //end if
 		//-- tmp logs dir
 		$dir = 'tmp/logs/';
 		if(!SmartFileSystem::is_type_dir($dir)) {
 			SmartFileSystem::dir_create($dir);
-			SmartFileSystem::write($dir.'index.html', '');
+			if(SmartFileSystem::is_type_dir($dir)) {
+				SmartFileSystem::write($dir.'index.html', '');
+			} //end if
 		} // end if
 		if(!SmartFileSystem::have_access_write($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
-				'App Init ERROR :: (Error Log Folder is Not Writable)' // this must be also as message !!!
+				__METHOD__."\n".'General ERROR :: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
 			);
 			return;
+		} //end if
+		if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
+			SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n"); // {{{SYNC-TMP-FOLDER-HTACCESS}}}
 		} //end if
 		//-- tmp logs/admin dir
 		$dir = 'tmp/logs/adm/';
 		if(!SmartFileSystem::is_type_dir($dir)) {
 			SmartFileSystem::dir_create($dir);
-			SmartFileSystem::write($dir.'index.html', '');
+			if(SmartFileSystem::is_type_dir($dir)) {
+				SmartFileSystem::write($dir.'index.html', '');
+			} //end if
 		} // end if
 		if(!SmartFileSystem::have_access_write($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
-				'App Init ERROR :: (See Error Log for More Details)'
+				__METHOD__."\n".'General ERROR :: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
 			);
 			return;
 		} //end if
@@ -1688,12 +1745,14 @@ final class SmartFrameworkRuntime {
 		$dir = 'tmp/logs/idx/';
 		if(!SmartFileSystem::is_type_dir($dir)) {
 			SmartFileSystem::dir_create($dir);
-			SmartFileSystem::write($dir.'index.html', '');
+			if(SmartFileSystem::is_type_dir($dir)) {
+				SmartFileSystem::write($dir.'index.html', '');
+			} //end if
 		} // end if
 		if(!SmartFileSystem::have_access_write($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
-				'App Init ERROR :: (See Error Log for More Details)'
+				__METHOD__."\n".'General ERROR :: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
 			);
 			return;
 		} //end if
@@ -1701,14 +1760,19 @@ final class SmartFrameworkRuntime {
 		$dir = 'tmp/sessions/';
 		if(!SmartFileSystem::is_type_dir($dir)) {
 			SmartFileSystem::dir_create($dir);
-			SmartFileSystem::write($dir.'index.html', '');
+			if(SmartFileSystem::is_type_dir($dir)) {
+				SmartFileSystem::write($dir.'index.html', '');
+			} //end if
 		} // end if
 		if(!SmartFileSystem::have_access_write($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: \''.$dir.'\' is NOT writable !',
-				'App Init ERROR :: (See Error Log for More Details)'
+				__METHOD__."\n".'General ERROR :: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
 			);
 			return;
+		} //end if
+		if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
+			SmartFileSystem::write($dir.'.htaccess', trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n".trim((string)SMART_FRAMEWORK_HTACCESS_FORBIDDEN)."\n"); // {{{SYNC-TMP-FOLDER-HTACCESS}}}
 		} //end if
 		//-- wpub dir
 		$dir = 'wpub/'; // {{{SYNC-WPUB-DIR}}}
@@ -1724,15 +1788,15 @@ final class SmartFrameworkRuntime {
 		} // end if
 		if(!SmartFileSystem::is_type_dir($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: #WEB-PUBLIC Folder: \''.$dir.'\' does NOT exists !',
-				'App Init ERROR :: (See Error Log for More Details)'
+				__METHOD__."\n".'General ERROR :: #WEB-PUBLIC Folder: `'.$dir.'` does NOT exists !',
+				'App Init ERROR'
 			);
 			return;
 		} //end if
 		if(!SmartFileSystem::have_access_write($dir)) {
 			Smart::raise_error(
-				'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'General ERROR :: #WEB-PUBLIC Folder: \''.$dir.'\' is NOT writable !',
-				'App Init ERROR :: (See Error Log for More Details)'
+				__METHOD__."\n".'General ERROR :: #WEB-PUBLIC Folder: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
 			);
 			return;
 		} //end if
@@ -1740,8 +1804,8 @@ final class SmartFrameworkRuntime {
 			SmartFileSystem::write($ctrlfile, 'FileName: #wpub (#WEB-PUBLIC)'."\n".'Created by: App-Runtime'."\n".date('Y-m-d H:i:s O'));
 			if(!SmartFileSystem::is_type_file($ctrlfile)) {
 				Smart::raise_error(
-					'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'Cannot Connect to FileSystem #WEB-PUBLIC: '.$ctrlfile,
-					'App Init ERROR :: (See Error Log for More Details)'
+					__METHOD__."\n".'Cannot Connect to FileSystem #WEB-PUBLIC, the control file is missing `'.$ctrlfile.'`',
+					'App Init ERROR'
 				);
 				return;
 			} //end if
@@ -1750,8 +1814,45 @@ final class SmartFrameworkRuntime {
 			SmartFileSystem::write($htfile, (string)trim((string)SMART_FRAMEWORK_HTACCESS_NOEXECUTION)."\n"); // trim((string)SMART_FRAMEWORK_HTACCESS_NOINDEXING)."\n".
 			if(!SmartFileSystem::is_type_file($htfile)) {
 				Smart::raise_error(
-					'#SMART-FRAMEWORK-CREATE-REQUIRED-DIRS#'."\n".'The .htaccess file is missing on FileSystem #WEB-PUBLIC: '.$htfile,
-					'App Init ERROR :: (See Error Log for More Details)'
+					__METHOD__."\n".'The `.htaccess` file is missing on FileSystem #WEB-PUBLIC: '.$htfile,
+					'App Init ERROR'
+				);
+				return;
+			} //end if
+		} //end if
+		//--
+		$dir = '#db/'; // {{{SYNC-#DB-FOLDER-HTACCESS}}}
+		if(!SmartFileSystem::is_type_dir($dir)) {
+			SmartFileSystem::dir_create($dir, false, true); // allow protected paths
+		} //end if
+		if(!SmartFileSystem::have_access_write($dir)) {
+			Smart::raise_error(
+				__METHOD__."\n".'General ERROR :: `'.$dir.'` is NOT writable !',
+				'App Init ERROR'
+			);
+			return;
+		} //end if
+		//--
+		if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
+			if(@file_put_contents((string)$dir.'.htaccess', (string)'### Smart.Framework // '.__METHOD__.' @ HtAccess Data Protection ###'."\n".SMART_FRAMEWORK_HTACCESS_NOINDEXING.SMART_FRAMEWORK_HTACCESS_FORBIDDEN."\n".'### END ###', LOCK_EX)) {
+				SmartFileSystem::fix_file_chmod((string)$dir.'.htaccess'); // apply file chmod
+			} //end if
+			if(!SmartFileSystem::is_type_file($dir.'.htaccess')) {
+				Smart::raise_error(
+					'#SMART-FRAMEWORK-CREATE-REQUIRED-FILES#'."\n".'A required file cannot be created in #DB: `'.$dir.'.htaccess`',
+					'App Init ERROR'
+				);
+				return;
+			} //end if
+		} //end if
+		if(!SmartFileSystem::is_type_file($dir.'index.html')) {
+			if(@file_put_contents((string)$dir.'index.html', '', LOCK_EX)) {
+				SmartFileSystem::fix_file_chmod((string)$dir.'index.html'); // apply file chmod
+			} //end if
+			if(!SmartFileSystem::is_type_file($dir.'index.html')) {
+				Smart::raise_error(
+					'#SMART-FRAMEWORK-CREATE-REQUIRED-FILES#'."\n".'A required file cannot be created in #DB: `'.$dir.'index.html`',
+					'App Init ERROR'
 				);
 				return;
 			} //end if

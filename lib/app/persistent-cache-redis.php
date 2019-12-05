@@ -16,13 +16,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
-define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based');
 
 /**
  * Class: App.Custom.PersistentCacheAdapter.Redis adapter based on Redis - provides a persistent Cache (in-Redis-Memory), that can be shared and/or reused between multiple PHP executions.
  * If Redis is not available it will be replaced by the Blackhole Persistent Cache adapter that will provide the compatibility adapter for the case there is no real Persistent Cache available.
  *
- * To use your own custom adapter for the persistent cache in Smart.Framework you have to build it by extending the SmartAbstractPersistentCache abstract class and define it in etc/init.php at the begining such as: define('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM',  'modules/app/persistent-cache-custom-adapter.php');
+ * NOTICE: The Persistent Cache will share the keys between both areas (INDEX and ADMIN) ; It is programmer's choice and work to ensure realm separation for keys if required so (Ex: INDEX may use separate realms than ADMIN)
+ * @hints To use your own custom adapter for the persistent cache in Smart.Framework you have to build it by extending the SmartAbstractPersistentCache abstract class and define it in etc/init.php as SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER
  *
  * Requires Redis to be set-up in config properly.
  * This cache type is persistent will keep the cached values in Redis between multiple PHP executions.
@@ -35,260 +35,14 @@ define('SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND', 'Redis: Memory based')
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
- * @depends 	-
- * @version 	v.20191110
+ * @depends 	SmartRedisDb, Smart
+ * @version 	v.20191205
  * @package 	Application:Caching
  *
  */
-final class SmartPersistentCache extends SmartAbstractPersistentCache {
+final class SmartPersistentCache extends SmartRedisPersistentCache {
 
 	// ::
-
-	private static $redis = null; 		// Redis Object
-	private static $is_active = 0;		// Cache if Active (init to zero; then on 1st check set as TRUE or FALSE)
-
-
-	public static function isActive() {
-		//--
-		global $configs;
-		//--
-		if((self::$is_active === true) OR (self::$is_active === false)) {
-			return (bool) self::$is_active;
-		} //end if
-		//--
-		if(is_array($configs['redis'])) {
-			self::$is_active = true;
-		} else {
-			self::$is_active = false;
-		} //end if else
-		//--
-		return (bool) self::$is_active;
-		//--
-	} //END FUNCTION
-
-
-	public static function isMemoryBased() {
-		//--
-		return true; // Redis is a memory based cache backend, so it is TRUE
-		//--
-	} //END FUNCTION
-
-
-	public static function clearData() {
-		//--
-		if(!self::isActive()) {
-			return false;
-		} //end if
-		//--
-		self::initCacheManager();
-		//--
-		return (bool) self::$redis->flushdb();
-		//--
-	} //END FUNCTION
-
-
-	public static function keyExists($y_realm, $y_key) {
-		//--
-		if(!self::isActive()) {
-			return false;
-		} //end if
-		//--
-		if(!self::validateRealm((string)$y_realm)) {
-			return false;
-		} //end if
-		if(!self::validateKey((string)$y_key)) {
-			return false;
-		} //end if
-		//--
-		self::initCacheManager();
-		//--
-		if((string)$y_realm == '') {
-			return (bool) self::$redis->exists((string)$y_key);
-		} else {
-			return (bool) self::$redis->exists((string)$y_realm.':'.$y_key);
-		} //end if else
-		//--
-	} //END FUNCTION
-
-
-	public static function getTtl($y_realm, $y_key) {
-		//--
-		if(!self::isActive()) {
-			return -3;
-		} //end if
-		//--
-		if(!self::validateRealm((string)$y_realm)) {
-			Smart::log_warning('Persistent Cache / Invalid Realm: '.$y_realm);
-			return -3;
-		} //end if
-		if(!self::validateKey((string)$y_key)) {
-			Smart::log_warning('Persistent Cache / Invalid Key: '.$y_key);
-			return -3;
-		} //end if
-		//--
-		self::initCacheManager();
-		//--
-		if((string)$y_realm == '') {
-			return (int) self::$redis->ttl((string)$y_key);
-		} else {
-			return (int) self::$redis->ttl((string)$y_realm.':'.$y_key);
-		} //end if else
-		//--
-	} //END FUNCTION
-
-
-	public static function getKey($y_realm, $y_key) {
-		//--
-		if(!self::isActive()) {
-			return null;
-		} //end if
-		//--
-		if(!self::validateRealm((string)$y_realm)) {
-			Smart::log_warning('Persistent Cache / Invalid Realm: '.$y_realm);
-			return null;
-		} //end if
-		if(!self::validateKey((string)$y_key)) {
-			Smart::log_warning('Persistent Cache / Invalid Key: '.$y_key);
-			return null;
-		} //end if
-		//--
-		self::initCacheManager();
-		//--
-		if((string)$y_realm == '') {
-			return self::$redis->get((string)$y_key);
-		} else {
-			return self::$redis->get((string)$y_realm.':'.$y_key);
-		} //end if else
-		//--
-	} //END FUNCTION
-
-
-	public static function setKey($y_realm, $y_key, $y_value, $y_expiration=0) {
-		//--
-		if(!self::isActive()) {
-			return false;
-		} //end if
-		//--
-		if(!self::validateRealm((string)$y_realm)) {
-			Smart::log_warning('Persistent Cache / Invalid Realm: '.$y_realm);
-			return false;
-		} //end if
-		if(!self::validateKey((string)$y_key)) {
-			Smart::log_warning('Persistent Cache / Invalid Key: '.$y_key);
-			return false;
-		} //end if
-		//--
-		self::initCacheManager();
-		//--
-		$y_value = (string) SmartUnicode::fix_charset((string)$y_value); // fix
-		$y_expiration = Smart::format_number_int($y_expiration, '+');
-		//--
-		$resexp = 1;
-		if((string)$y_realm == '') {
-			$result = self::$redis->set((string)$y_key, (string)$y_value);
-			if($y_expiration > 0) {
-				$resexp = self::$redis->expire((string)$y_key, (int)$y_expiration);
-			} //end if
-		} else {
-			$result = self::$redis->set((string)$y_realm.':'.$y_key, (string)$y_value);
-			if($y_expiration > 0) {
-				$resexp = self::$redis->expire((string)$y_realm.':'.$y_key, (int)$y_expiration);
-			} //end if
-		} //end if else
-		//--
-		if((strtoupper(trim((string)$result)) == 'OK') AND ($resexp == 1)) {
-			return true;
-		} else {
-			return false;
-		} //end if else
-		//--
-	} //END FUNCTION
-
-
-	public static function unsetKey($y_realm, $y_key) {
-		//--
-		if(!self::isActive()) {
-			return false;
-		} //end if
-		//--
-		if(!self::validateRealm((string)$y_realm)) {
-			Smart::log_warning('Persistent Cache / Invalid Realm: '.$y_realm);
-			return false;
-		} //end if
-		if((string)$y_key != '*') {
-			if(!self::validateKey((string)$y_key)) {
-				Smart::log_warning('Persistent Cache / Invalid Key: '.$y_key);
-				return false;
-			} //end if
-		} //end if
-		//--
-		self::initCacheManager();
-		//--
-		if((string)$y_realm == '') {
-			return (bool) self::$redis->del((string)$y_key);
-		} else {
-			if((string)$y_key != '*') {
-				return (bool) self::$redis->del((string)$y_realm.':'.$y_key);
-			} else {
-				$rarr = (array) self::$redis->keys((string)$y_realm.':*');
-				$err = 0;
-				if(Smart::array_size($rarr) > 0) {
-					foreach($rarr as $key => $rark) {
-						if((string)$rark != '') {
-							$del = self::$redis->del((string)$rark);
-							if($del <= 0) {
-								$err++;
-							} //end if
-						} //end if
-					} //end foreach
-				} //end if
-				if($err > 0) {
-					return false;
-				} else {
-					return true;
-				} //end if else
-			} //end if
-		} //end if else
-		//--
-	} //END FUNCTION
-
-
-	//##### PRIVATES
-
-
-	private static function initCacheManager() {
-		//--
-		if((is_object(self::$redis)) AND (self::$redis instanceof SmartRedisDb)) {
-			//--
-			// OK, already connected ...
-			//--
-		} else {
-			//--
-			if((defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) AND (SMART_SOFTWARE_MEMDB_FATAL_ERR === true)) {
-				$is_fatal_err = false;
-			} else {
-				$is_fatal_err = true; // default
-			} //end if
-			//--
-			$redis_cfg = (array) Smart::get_from_config('redis');
-			//--
-			self::$redis = new SmartRedisDb(
-				(string) $redis_cfg['server-host'],
-				(string) $redis_cfg['server-port'],
-				(string) $redis_cfg['dbnum'],
-				(string) $redis_cfg['password'],
-				(string) $redis_cfg['timeout'],
-				(string) $redis_cfg['slowtime'],
-				'SmartPersistentCache',
-				(bool)   $is_fatal_err
-			);
-			//--
-		} //end if
-		//--
-		return true;
-		//--
-	} //END FUNCTION
-
 
 } //END CLASS
 

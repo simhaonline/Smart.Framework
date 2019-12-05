@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191105
+ * @version 	v.20191203
  * @package 	@Core:FileSystem
  *
  */
@@ -173,7 +173,7 @@ final class SmartFileSysUtils {
 			} //end if
 		} //end if
 		//-- test max path length
-		if(strlen($y_path) > 1024) {
+		if((strlen($y_path) > 1024) OR (strlen($y_path) > (int)PHP_MAXPATHLEN)) {
 			return 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
 		} //end if
 		//--
@@ -1272,6 +1272,7 @@ final class SmartFileSysUtils {
  * Absolute paths are denied by internal checks as they are NOT SAFE in a Web Application from the security point of view ...
  * Also the backward path access like `../some-file-or-folder` is denied from the above exposed reasons.
  * Files and Folders must contain ONLY safe characters as: `[a-z] [A-Z] [0-9] _ - . @ #` ; folders can also contain slashes `/` (as path separators); no spaces are allowed in paths !!
+ * All operations in this class are safe against TOC/TOU (time-of-check to time-of-use) expoits
  *
  * <code>
  * // Usage example:
@@ -1279,10 +1280,10 @@ final class SmartFileSysUtils {
  * </code>
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
- * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
+ * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be mostly safe ; Reads can also use optional shared locking if needed
  *
  * @depends 	classes: Smart
- * @version 	v.20191105
+ * @version 	v.20191203
  * @package 	@Core:FileSystem
  *
  */
@@ -1705,10 +1706,11 @@ final class SmartFileSystem {
 	 * @param 	STRING 		$file_name 				:: The relative path of file to be read (can be a symlink to a file)
 	 * @param 	INTEGER+ 	$file_len 				:: DEFAULT is 0 (zero) ; If zero will read the entire file ; If > 0 (ex: 100) will read only the first 100 bytes fro the file or less if the file size is under 100 bytes
 	 * @param 	YES/NO 		$markchmod 				:: DEFAULT is 'no' ; If 'yes' will force a chmod (as defined in SMART_FRAMEWORK_CHMOD_FILES) on the file before trying to read to ensure consistent chmod on all accesible files.
+	 * @param 	BOOLEAN 	$safelock 				:: DEFAULT is 'no' ; If 'yes' will try to get a read shared lock on file prior to read ; If cannot lock the file will return empty string to avoid partial content read where reading a file that have intensive writes (there is always a risk to cannot achieve the lock ... there is no perfect scenario for intensive file operations in multi threaded environments ...)
 	 *
 	 * @return 	STRING								:: The file contents (or a part of file contents if $file_len parameter is used) ; if the file does not exists will return an empty string
 	 */
-	public static function read($file_name, $file_len=0, $markchmod='no') {
+	public static function read($file_name, $file_len=0, $markchmod='no', $safelock='no') {
 		//--
 		$file_name = (string) $file_name;
 		$file_len = (int) $file_len;
@@ -1741,30 +1743,59 @@ final class SmartFileSystem {
 						Smart::log_warning(__METHOD__.'() // ReadFile // A file is not readable: '.$file_name);
 						return '';
 					} //end if
-					//--
-					if($file_len > 0) {
-						$tmp_file_len = Smart::format_number_int(self::get_file_size((string)$file_name), '+');
-						if((int)$file_len > (int)$tmp_file_len) {
-							$file_len = (int) $tmp_file_len; // cannot be more than file length
+					//-- fix for read file locking when using file_get_contents() # https://stackoverflow.com/questions/49262971/does-phps-file-get-contents-ignore-file-locking
+					// USE LOCKING ON READS, only if specified so:
+					//	* because there is a risk a file remain locked if a process crashes, there are a lot of reads in every execution, but few writes
+					//	* on systems where locking is mandatory and not advisory this is expensive from resources point of view
+					//	* if a process have to wait until obtain a lock ... is not what we want in web environment ...
+					//	* neither the LOCK_NB does not resolv this issue, what we do if not locked ? return empty file contents instead of partial ? ... actually this is how it works also without locking ... tricky ... :-)
+					//	* without a lock there is a little risk to get empty file (a partial file just on Windows), but that risk cannot be avoid, there is no perfect solution in multi-threaded environments with file read/writes concurrency ... use an sqlite or dba if having many writes and reads on the same file and care of data integrity
+					//	* anyway, hoping for the best file_get_contents() should be atomic and if writes are made with atomic and LOCK_EX file_put_contents() everything should be fine, in any scenario there is a compromise
+					if((string)$safelock === 'yes') {
+						$lock = @fopen((string)$file_name, 'rb');
+						if($lock) {
+							$is_locked = @flock($lock, LOCK_SH);
 						} //end if
-						$fcontent = @file_get_contents(
-							(string) $file_name,
-							false, // don't use include path
-							null, // context resource
-							0, // start from begining (negative offsets still don't work)
-							(int) $file_len // max length to read ; if zero, read the entire file
-						);
 					} else {
-						$file_len = 0; // can't be negative (by mistake) ; if zero reads the entire file
-						$fcontent = @file_get_contents(
-							(string) $file_name,
-							false, // don't use include path
-							null, // context resource
-							0 // start from begining (negative offsets still don't work)
-							// max length to read ; don't use this parameter here ...
-						);
+						$is_locked = true; // non-required
+					} //end if
+					//--
+					if($is_locked !== true) {
+						$fcontent = '';
+					} else {
+						if($file_len > 0) {
+							$tmp_file_len = Smart::format_number_int(self::get_file_size((string)$file_name), '+');
+							if((int)$file_len > (int)$tmp_file_len) {
+								$file_len = (int) $tmp_file_len; // cannot be more than file length
+							} //end if
+							$fcontent = @file_get_contents(
+								(string) $file_name,
+								false, // don't use include path
+								null, // context resource
+								0, // start from begining (negative offsets still don't work)
+								(int) $file_len // max length to read ; if zero, read the entire file
+							);
+						} else {
+							$file_len = 0; // can't be negative (by mistake) ; if zero reads the entire file
+							$fcontent = @file_get_contents(
+								(string) $file_name,
+								false, // don't use include path
+								null, // context resource
+								0 // start from begining (negative offsets still don't work)
+								// max length to read ; don't use this parameter here ...
+							);
+						} //end if else
 					} //end if else
 					//--
+					if((string)$safelock === 'yes') {
+						if($lock) {
+							if($is_locked) {
+								@flock($lock, LOCK_UN);
+							} //end if
+							@fclose($lock); // will release any lock even if not unlocked by flock LOCK_UN
+						} //end if
+					} //end if
+					//-- #fix for locking
 					if($fcontent === false) { // check
 						Smart::log_warning(__METHOD__.'() // ReadFile // Failed to read the file: '.$file_name);
 						$fcontent = '';
@@ -1834,10 +1865,10 @@ final class SmartFileSystem {
 					} //end if
 				} //end if
 				//-- fopen/fwrite method lacks the real locking which can be achieved just with flock which is not as safe as doing at once with: file_put_contents
-				if((string)$write_mode == 'w') { // wb (write, binary safe)
-					$result = @file_put_contents($file_name, (string)$file_content, LOCK_EX);
-				} else { // ab (append, binary safe)
+				if((string)$write_mode == 'a') { // a (append, binary safe)
 					$result = @file_put_contents($file_name, (string)$file_content, FILE_APPEND | LOCK_EX);
+				} else { // w (write, binary safe)
+					$result = @file_put_contents($file_name, (string)$file_content, LOCK_EX);
 				} //end if else
 				//--
 				if(self::is_type_file($file_name)) {
@@ -3137,7 +3168,7 @@ final class SmartFileSystem {
 /**
  * Class: SmartGetFileSystem - provides the File System Get/Scan functions.
  *
- * This class enforces the use of RELATIVE PATHS to force using correct path access in a web environment application.
+ * This class requires the use of RELATIVE PATHS to force using correct path access in a web environment application.
  * Relative paths must be relative to the web application folder as folder: `some-folder/` or file: `some-folder/my-file.txt`.
  * Absolute paths are denied by internal checks as they are NOT SAFE in a Web Application from the security point of view ...
  * Also the backward path access like `../some-file-or-folder` is denied from the above exposed reasons.
@@ -3154,7 +3185,7 @@ final class SmartFileSystem {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.20191105
+ * @version 	v.20191203
  * @package 	@Core:FileSystem
  *
  */

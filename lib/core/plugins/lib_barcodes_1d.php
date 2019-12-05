@@ -57,7 +57,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20191028
+ * @version 	v.20191204
  * @package 	Plugins:ViewComponents
  *
  */
@@ -83,73 +83,125 @@ final class SmartBarcode1D {
 	 */
 	public static function getBarcode($y_code, $y_type, $y_format, $y_size, $y_height, $y_color='#000000', $y_display_text=false, $y_cachetime=-1) {
 		//--
+		$y_size = (int) $y_size;
+		if($y_size < 1) {
+			$y_size = 1;
+		} elseif($y_size > 4) {
+			$y_size = 4;
+		} //end if
+		//--
+		$y_height = (int) $y_height;
+		if($y_height < 1) {
+			$y_height = 10;
+		} elseif($y_height > 550) {
+			$y_height = 550;
+		} //end if else
+		//--
+		$y_color = (string) strtoupper((string)$y_color);
+		if(!preg_match('/^\#([A-F0-9]{6})$/', (string)$y_color)) {
+			$y_color = '#000000';
+		} //end if
+		//--
 		switch((string)$y_type) {
 			case '128': // 128 B (Extended)
 				$barcode_type = '128B';
+				$c__typ = 1;
 				break;
 			case '93': // 93 Extended +Checksum
 				$barcode_type = '93E+';
+				$c__typ = 2;
 				break;
 			case '39': // 39 Extended
 				$barcode_type = '39E';
+				$c__typ = 3;
 				break;
 			case 'KIX': // RMS KIX Variant (Extended) :: max 11 chars :: This needs a height that divides by 3
 				$barcode_type = 'KIX';
+				$c__typ = 0;
 				break;
 			default:
-				$barcode_type = '???';
-				Smart::log_warning('ERROR: BarCodes1D - Invalid Type Selected for getBarcode');
+				Smart::log_warning(__METHOD__.' # Invalid Barcode Type: '.$y_type);
 				return '';
 		} //end switch
 		//--
 		switch((string)$y_format) {
 			case 'html':
 				$barcode_format = '.htm';
+				$c__fmt = 1;
 				break;
 			case 'html-png':
 				$barcode_format = '.png.htm';
+				$c__fmt = 2;
 				break;
 			case 'png':
 				$barcode_format = '.png';
+				$c__fmt = 3;
 				break;
 			case 'html-svg':
 				$barcode_format = '.svg.htm';
+				$c__fmt = 4;
 				break;
 			case 'svg':
 				$barcode_format = '.svg';
+				$c__fmt = 0;
 				break;
 			default:
-				$barcode_format = '.unknown';
-				Smart::log_warning('ERROR: BarCodes1D - Invalid Mode Selected for getBarcode');
+				Smart::log_warning(__METHOD__.' # Invalid Barcode Format: '.$y_format);
 				return '';
 		} //end switch
 		//--
 		if($y_display_text === true) {
-			$barcode_show_text = 'TX';
+			$barcode_show_text = 'T';
 		} else {
-			$barcode_show_text = 'XX';
+			$barcode_show_text = 'X';
 		} //end if else
 		//--
 		$y_cachetime = (int) $y_cachetime;
 		//--
 
+		//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
+		$tmp_1_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 0, 1));
+		$tmp_2_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 1, 1));
+		$tmp_3_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 2, 1));
+		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_1_prefix))) {
+			$tmp_1_prefix = '@';
+		} //end if
+		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_2_prefix))) {
+			$tmp_2_prefix = '@';
+		} //end if
+		if(((string)trim((string)$tmp_3_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_3_prefix))) {
+			$tmp_3_prefix = '@';
+		} //end if
 		//--
-		$realm = 'barcode-1d';
-		$cache_uuid = (string) $realm.'://'.$barcode_type.'/'.$barcode_format.'/'.$y_size.'/'.$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code;
+		$realm = 'barcode1d';
+		$cache_realm = (string) SmartDbaPersistentCache::safeKey($tmp_1_prefix.$tmp_2_prefix.$tmp_3_prefix.'-'.$realm.'-T'.$c__typ.'-F'.$c__fmt.'-S'.(int)$y_size.'-H'.(int)$y_height.'-Q'.trim((string)$y_color,'#').'-'.$barcode_show_text);
+		$cache_uuid  = (string) SmartDbaPersistentCache::safeKey(substr(Smart::safe_filename($y_code), 0, 25).'-'.sha1($realm.'://'.$barcode_type.'/'.$barcode_format.'/'.(int)$y_size.'/'.(int)$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code));
 		//--
 
 		//--
-		if((int)$y_cachetime >= 0) {
+		if((int)$y_cachetime >= 0) { // if allow caching, try to load from cache
 			//--
-			$out = SmartUtils::load_cached_file_content((string)$barcode_format, (string)$realm, (string)$cache_uuid, false, (int)$y_cachetime); // (try to) GET from cache
-			//--
-			if((string)$out != '') {
-				return $out; // if found in cache return it
+			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
+				//--
+				$out = SmartDbaPersistentCache::getKey( // MIXED
+					(string) $cache_realm, 	// realm
+					(string) $cache_uuid 	// key
+				);
+				//--
+				if(is_string($out)) {
+					if((string)$out == '') { // invalid key ... must not return empty string
+						SmartDbaPersistentCache::unsetKey( // unset the invalid key !
+							(string) $cache_realm, 	// realm
+							(string) $cache_uuid 	// key
+						);
+					} else {
+						return (string) $out; // if found in cache return it
+					} //end if else
+				} //end if
+				//--
 			} //end if
 			//--
 		} //end if
-		//--
-
 		//--
 		switch((string)$barcode_type) {
 			case '128B':
@@ -165,7 +217,8 @@ final class SmartBarcode1D {
 				$arr_barcode = (new SmartBarcode1D_RMS4CC($y_code, 'KIX'))->getBarcodeArray();
 				break;
 			default:
-				$arr_barcode = ''; // not to be an array for error detection
+				// if invalid type is logged before
+				return '';
 		} //end switch
 		//--
 		switch((string)$y_format) {
@@ -185,20 +238,28 @@ final class SmartBarcode1D {
 				$out = self::getBarcodeSVG($arr_barcode, $y_size, $y_height, $y_color, $y_display_text); // needs header image/svg on output
 				break;
 			default:
-				$out = '';
+				// if invalid format is logged before
+				return '';
 		} //end switch
 		//--
-
-		//--
-		if((string)$out != '') { // avoid to get again if by mistake the content is empty (we want set ...)
-			if((int)$y_cachetime >= 0) {
-				$out = SmartUtils::load_cached_file_content((string)$barcode_format, (string)$realm, (string)$cache_uuid, (string)$out, (int)$y_cachetime); // SET & GET Back from cache
+		if((int)$y_cachetime >= 0) { // if allow caching, try to save in cache
+			//--
+			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
+				//--
+				SmartDbaPersistentCache::setKey(
+					(string) $cache_realm, 	// realm
+					(string) $cache_uuid, 	// key
+					(string) $out,			// content
+					(int)    $y_cachetime 	// expire time
+				);
+				//--
 			} //end if
+			//--
 		} //end if
 		//--
 
 		//--
-		return $out;
+		return (string) $out;
 		//--
 
 	} //END FUNCTION
@@ -535,7 +596,7 @@ final class SmartBarcode1D {
 /**
  * Class Smart BarCode 1D 128
  *
- * @version 	v.20191028
+ * @version 	v.20191203
  *
  * @access 		private
  * @internal
@@ -715,7 +776,7 @@ final class SmartBarcode1D_128 {
 			case 'A':  // MODE A
 				$startid = 103;
 				for($i = 0; $i < $len; ++$i) {
-					$char = $code{$i};
+					$char = $code[$i];
 					$char_id = ord($char);
 					if(($char_id >= 241) AND ($char_id <= 244)) {
 						$code_data[] = $fnc_a[$char_id];
@@ -738,7 +799,7 @@ final class SmartBarcode1D_128 {
 					return false;
 				} //end if
 				for($i = 0; $i < $len; $i+=2) {
-					$chrnum = $code{$i}.$code{$i+1};
+					$chrnum = $code[$i].$code[$i+1];
 					if(preg_match('/([0-9]{2})/', (string)$chrnum) > 0) {
 						$code_data[] = intval($chrnum);
 					} else {
@@ -750,7 +811,7 @@ final class SmartBarcode1D_128 {
 			default:
 				$startid = 104;
 				for($i = 0; $i < $len; ++$i) {
-					$char = $code{$i};
+					$char = $code[$i];
 					$char_id = ord($char);
 					if(($char_id >= 241) AND ($char_id <= 244)) {
 						$code_data[] = $fnc_b[$char_id];
@@ -782,7 +843,7 @@ final class SmartBarcode1D_128 {
 				} else {
 					$t = false; // space
 				} //end if else
-				$w = $seq{$j};
+				$w = $seq[$j];
 				$bararray['bcode'][] = array('t' => $t, 'w' => $w, 'h' => 1, 'p' => 0);
 				$bararray['maxw'] += $w;
 			} //end for
@@ -833,7 +894,7 @@ final class SmartBarcode1D_128 {
 /**
  * Class Smart BarCode 1D 93
  *
- * @version 	v.20191028
+ * @version 	v.20191203
  *
  * @access 		private
  * @internal
@@ -963,10 +1024,10 @@ final class SmartBarcode1D_93 {
 		$clen = strlen($code);
 		//--
 		for($i = 0 ; $i < $clen; ++$i) {
-			if(ord($code{$i}) > 127) {
+			if(ord($code[$i]) > 127) {
 				return false;
 			} //end if
-			$code_ext .= $encode[$code{$i}];
+			$code_ext .= $encode[$code[$i]];
 		} //end for
 		//-- checksum
 		$code_ext .= $this->checksum($code_ext);
@@ -978,7 +1039,7 @@ final class SmartBarcode1D_93 {
 		//--
 		for($i = 0; $i < $clen; ++$i) {
 			//--
-			$char = ord($code{$i});
+			$char = ord($code[$i]);
 			//--
 			if(!isset($chr[$char])) {
 				return false; // invalid character
@@ -992,7 +1053,7 @@ final class SmartBarcode1D_93 {
 					$t = false; // space
 				} //end if else
 				//--
-				$w = $chr[$char]{$j};
+				$w = $chr[$char][$j];
 				$bararray['bcode'][$k] = array('t' => $t, 'w' => $w, 'h' => 1, 'p' => 0);
 				$bararray['maxw'] += $w;
 				//--
@@ -1033,7 +1094,7 @@ final class SmartBarcode1D_93 {
 		$p = 1;
 		$check = 0;
 		for($i = ($len - 1); $i >= 0; --$i) {
-			$k = array_keys($chars, $code{$i});
+			$k = array_keys($chars, $code[$i]);
 			$check += ($k[0] * $p);
 			++$p;
 			if($p > 20) {
@@ -1048,7 +1109,7 @@ final class SmartBarcode1D_93 {
 		$p = 1;
 		$check = 0;
 		for($i = $len; $i >= 0; --$i) {
-			$k = array_keys($chars, $code{$i});
+			$k = array_keys($chars, $code[$i]);
 			$check += ($k[0] * $p);
 			++$p;
 			if($p > 15) {
@@ -1107,7 +1168,7 @@ final class SmartBarcode1D_93 {
 /**
  * Class Smart BarCode 1D 39
  *
- * @version 	v.20191028
+ * @version 	v.20191203
  *
  * @access 		private
  * @internal
@@ -1232,7 +1293,7 @@ final class SmartBarcode1D_39 {
 		//--
 		for($i = 0; $i < $clen; ++$i) {
 			//--
-			$char = $code{$i};
+			$char = $code[$i];
 			//--
 			if(!isset($chr[$char])) {
 				return false; // invalid character
@@ -1246,7 +1307,7 @@ final class SmartBarcode1D_39 {
 					$t = false; // space
 				} //end if else
 				//--
-				$w = $chr[$char]{$j};
+				$w = $chr[$char][$j];
 				$bararray['bcode'][$k] = array('t' => $t, 'w' => $w, 'h' => 1, 'p' => 0);
 				$bararray['maxw'] += $w;
 				//--
@@ -1284,7 +1345,7 @@ final class SmartBarcode1D_39 {
 		$clen = strlen($code);
 		//--
 		for($i = 0 ; $i < $clen; ++$i) {
-			$k = array_keys($chars, $code{$i});
+			$k = array_keys($chars, $code[$i]);
 			$sum += $k[0];
 		} //end for
 		//--
@@ -1341,10 +1402,10 @@ final class SmartBarcode1D_39 {
 		$clen = strlen($code);
 		//--
 		for($i = 0 ; $i < $clen; ++$i) {
-			if(ord($code{$i}) > 127) {
+			if(ord($code[$i]) > 127) {
 				return false;
 			} //end if
-			$code_ext .= $encode[$code{$i}];
+			$code_ext .= $encode[$code[$i]];
 		} //end for
 		//--
 		return $code_ext;
@@ -1394,7 +1455,7 @@ final class SmartBarcode1D_39 {
 /**
  * Class Smart BarCode 1D RMS4CC
  *
- * @version 	v.20191028
+ * @version 	v.20191203
  *
  * @access 		private
  * @internal
@@ -1540,8 +1601,8 @@ final class SmartBarcode1D_RMS4CC {
 			$col = 0;
 			//--
 			for($i = 0; $i < $len; ++$i) {
-				$row += $checktable[$code{$i}][0];
-				$col += $checktable[$code{$i}][1];
+				$row += $checktable[$code[$i]][0];
+				$col += $checktable[$code[$i]][1];
 			} //end for
 			//--
 			$row %= 6;
@@ -1566,7 +1627,7 @@ final class SmartBarcode1D_RMS4CC {
 			//--
 			for($j = 0; $j < 4; ++$j) {
 				//--
-				switch($barmode[$code{$i}][$j]) {
+				switch($barmode[$code[$i]][$j]) {
 					case 1:
 						$p = 0;
 						$h = 2;

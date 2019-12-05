@@ -80,6 +80,41 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartArchiverLZS':
 			require_once('lib/core/plugins/lib_archlzs.php');			// lzs archiver
 			break;
+		//-- db drivers
+		case 'SmartRedisDb':
+			require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
+			break;
+		case 'SmartRedisPersistentCache':
+			require_once('lib/core/plugins/lib_pcache_redis.php');		// redis persistent cache
+			break;
+		case 'SmartDbaUtilDb':
+		case 'SmartDbaDb':
+			require_once('lib/core/plugins/lib_db_dba.php');			// dba db connector
+			break;
+		case 'SmartDbaPersistentCache':
+			require_once('lib/core/plugins/lib_pcache_dba.php'); 		// dba persistent cache
+			break;
+		case 'SmartSQliteFunctions':
+		case 'SmartSQliteUtilDb':
+		case 'SmartSQliteDb':
+			require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
+			break;
+		case 'SmartPgsqlDb':
+		case 'SmartPgsqlExtDb':
+			require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
+			break;
+		case 'SmartMysqliDb':
+		case 'SmartMysqliExtDb':
+			require_once('lib/core/plugins/lib_db_mysqli.php'); 		// mysqli db connector
+			break;
+		case 'SmartMongoDb':
+			require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
+			break;
+		//-- session handler
+		case 'SmartAbstractCustomSession':
+		case 'SmartSession':
+			require_once('lib/core/plugins/lib_session.php');			// session handler
+			break;
 		//-- im (gd) process
 		case 'SmartImageGdProcess':
 			require_once('lib/core/plugins/lib_imgd.php');				// img (gd) process
@@ -116,31 +151,6 @@ function autoload__SmartFrameworkPlugins($classname) {
 		//-- ftp client
 		case 'SmartFtpClient':
 			require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
-			break;
-		//-- db drivers
-		case 'SmartRedisDb':
-			require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
-			break;
-		case 'SmartSQliteDb':
-		case 'SmartSQliteUtilDb':
-		case 'SmartSQliteFunctions':
-			require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
-			break;
-		case 'SmartPgsqlDb':
-		case 'SmartPgsqlExtDb':
-			require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
-			break;
-		case 'SmartMysqliDb':
-		case 'SmartMysqliExtDb':
-			require_once('lib/core/plugins/lib_db_mysqli.php'); 		// mysqli db connector
-			break;
-		case 'SmartMongoDb':
-			require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
-			break;
-		//-- session handler
-		case 'SmartSession':
-		case 'SmartAbstractCustomSession':
-			require_once('lib/core/plugins/lib_session.php');			// session handler
 			break;
 		//-- spreadsheet export / import
 		case 'SmartSpreadSheetExport':

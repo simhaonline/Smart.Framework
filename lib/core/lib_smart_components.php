@@ -34,6 +34,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //===================================================================================== CLASS START
 //=====================================================================================
 
+//===== pre-read to make this available for errors called from register_shutdown_function() handlers as they cannot handle relative paths ... (Ex: session handler with sqlite)
+if(defined('SMART_FRAMEWORK_COMPONENTS_ERR_MSG')) {
+	@http_response_code(500);
+	die('The constant SMART_FRAMEWORK_COMPONENTS_ERR_MSG must not be previous defined: '.@basename(__FILE__).' ...');
+} //end if
+define('SMART_FRAMEWORK_COMPONENTS_ERR_MSG', (string)SmartFileSystem::read('lib/core/templates/app-error-message.inc.htm')); // it must not contain any sub-templates
+//=====
 
 /**
  * Class: SmartComponents - provides various components for Smart.Framework
@@ -41,7 +48,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartTextTranslations
- * @version 	v.20191126
+ * @version 	v.20191205
  * @package 	Application:ViewComponents
  *
  */
@@ -72,8 +79,8 @@ final class SmartComponents {
 		$y_area_one = (string) trim((string)$y_area_one); // if this is empty will display: DEBUG OFF
 		$y_area_two = (string) trim((string)$y_area_two); // if this is empty will display: View App Log for more details ...
 		//--
-		return (string) SmartMarkersTemplating::render_file_template(
-			'lib/core/templates/app-error-message.inc.htm',
+		return (string) SmartMarkersTemplating::render_template(
+			(string) SMART_FRAMEWORK_COMPONENTS_ERR_MSG,
 			[
 				'WIDTH' 	=> (int) $y_width,
 				'TITLE' 	=> (string) $y_title,
@@ -86,8 +93,7 @@ final class SmartComponents {
 				'AREA-ONE' 	=> (string) $y_area_one,
 				'AREA-TWO' 	=> (string) $y_area_two,
 				'CRR-URL' 	=> (string) SmartUtils::get_server_current_url()
-			],
-			'no'
+			]
 		);
 		//--
 	} //END FUNCTION
@@ -532,6 +538,14 @@ final class SmartComponents {
 				'name' 	=> (string) 'SQLite Embedded Database',
 				'logo' 	=> (string) $base_url.'lib/core/img/db/sqlite-logo.svg',
 				'url' 	=> (string) 'https://www.sqlite.org'
+			];
+		} //end if
+		//-- dba
+		if(is_array($configs['dba'])) {
+			$arr_powered_sside[] = [
+				'name' 	=> (string) 'DBA/GDBM Embedded DataStore ('.$configs['dba']['handler'].')',
+				'logo' 	=> (string) $base_url.'lib/core/img/db/dba-logo.svg',
+				'url' 	=> (string) 'https://www.gnu.org/software/gdbm'
 			];
 		} //end if
 		//-- redis
@@ -1000,6 +1014,7 @@ final class SmartComponents {
 
 
 } //END CLASS
+
 
 //=====================================================================================
 //===================================================================================== CLASS END

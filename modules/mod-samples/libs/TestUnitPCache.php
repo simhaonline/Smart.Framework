@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20191204
  *
  */
 final class TestUnitPCache {
@@ -53,11 +53,32 @@ final class TestUnitPCache {
 			//--
 		} //end if
 		//--
+		$thePcacheVersionInfo = (string) \SmartPersistentCache::getVersionInfo();
+		//--
 
 		//--
 		$the_test_realm = 'persistent-cache-test';
 		//--
 		$pcache_big_content = self::packTestArchive(); // CREATE THE Test Archive (time not counted)
+		//--
+		$pcache_mode = [];
+		if(\SmartPersistentCache::isMemoryBased() === true) {
+			$pcache_mode[] = 'Memory-Based';
+		} //end if
+		if(\SmartPersistentCache::isFileSystemBased() === true) {
+			$pcache_mode[] = 'FileSystem-Based';
+		} //end if
+		if(\SmartPersistentCache::isDbBased() === true) {
+			$pcache_mode[] = 'DB-Based';
+		} //end if
+		$pcache_mode = (string) implode(' + ', (array)$pcache_mode);
+		//--
+		if(\SmartPersistentCache::isMemoryBased() !== true) {
+			$expire_wait_seconds = 5; // it is slower and seconds begins before writing which may take a second or so ...
+		//	$pcache_big_content = (string) substr($pcache_big_content, 0, 65535); // avoid test with very big loads on non-memory based PCache Handlers
+		} else {
+			$expire_wait_seconds = 4; // should be enough for memory based
+		} //end if
 		//--
 		$pcache_test_key = 'pcache-test-key_'.\SmartPersistentCache::safeKey(\Smart::uuid_10_num().'-'.\Smart::uuid_36().'-'.\Smart::uuid_45());
 		$pcache_test_value = array(
@@ -72,7 +93,8 @@ final class TestUnitPCache {
 
 		//--
 		$tests = array();
-		$tests[] = '***** Persistent Cache Backend: ['.\SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND.'] *****';
+		$tests[] = '***** Persistent Cache Backend: ['.$thePcacheVersionInfo.'] *****';
+		$tests[] = '*** Persistent Cache Storage: '.$pcache_mode.' ***';
 		$tests[] = '===== Persistent Cache / TESTS with a huge size Variable (String/Json) Key-Size of 2x'.\SmartUtils::pretty_print_bytes(\strlen($pcache_test_arch_content), 2).' : =====';
 		//--
 		$err = '';
@@ -95,9 +117,9 @@ final class TestUnitPCache {
 
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Clearing All Data (FLUSHDB)';
+			$tests[] = 'Clearing All Data in Persistent Cache Store(s)';
 			if(\SmartPersistentCache::clearData() !== true) {
-				$err = 'Persistent Cache FAILED to Clear All Data (FLUSHDB)';
+				$err = 'Persistent Cache FAILED to Clear All Data in Persistent Cache Store(s)';
 			} //end if
 		} //end if
 		//--
@@ -124,12 +146,12 @@ final class TestUnitPCache {
 				$err = 'Persistent Cache SetKey (short) returned a non-true result: '."\n".$pcache_test_key;
 			} //end if
 			if((string)$err == '') {
-				$tests[] = 'Wait 5 seconds for Persistent Cache Key to expire, then check again if exists (time not counted)';
-				sleep(5); // wait the Persistent Cache Key to Expire
-				$time = (float) $time + 5; // ignore those 5 seconds (waiting time) to fix counter
-				$tests[] = '-- FIX Counter (substract the 5 seconds, waiting time) ...';
+				$tests[] = 'Wait 7 seconds for Persistent Cache Key to expire, then check again if exists (time not counted)';
+				sleep((int)$expire_wait_seconds); // wait the Persistent Cache Key to Expire
+				$time = (float) ((float)$time + (int)$expire_wait_seconds); // ignore those wait seconds (waiting time) to fix counter
+				$tests[] = '-- FIX Counter (substract the '.(int)$expire_wait_seconds.' seconds, waiting time) ...';
 				if(\SmartPersistentCache::keyExists($the_test_realm, $pcache_test_key)) {
-					$err = 'Persistent Cache (short) Key does still exists (but should be expired after 5 seconds) and is not: '."\n".$pcache_test_key;
+					$err = 'Persistent Cache (short) Key does still exists (but should be expired after '.(int)$expire_wait_seconds.' seconds) and is not: '."\n".$pcache_test_key;
 				} //end if
 			} //end if
 		} //end if
@@ -211,14 +233,55 @@ final class TestUnitPCache {
 		//--
 
 		//--
-		$time = 'TOTAL TIME (Except building the test archive) was: '.(\microtime(true) - $time); // substract the 3 seconds waiting time for Persistent Cache Key to expire
+		if((string)$err == '') {
+			$tests[] = 'Set 100 Persistent Cache Keys with Realm';
+			for($i=0; $i<100; $i++) {
+				$pcache_set_multi = \SmartPersistentCache::setKey(
+					$the_test_realm.'__MKeys',
+					'Multi-'.$pcache_test_key.'#'.$i,
+					\date('Y-m-d H:i:s')
+				);
+				if($pcache_set_multi !== true) {
+					$err = 'Persistent Cache SetKey['.($i+1).'] with Realm returned a non-true result';
+					break;
+				} //end if
+			} //end for
+		} //end if
 		//--
-		$end_tests = '===== END TESTS ... '.$time.' sec. =====';
+		if((string)$err == '') {
+			$tests[] = 'Unset all 100 Persistent Cache Keys with Realm, using wildcard (*)';
+			$pcache_unset_multi = \SmartPersistentCache::unsetKey($the_test_realm.'__MKeys', '*');
+			if($pcache_unset_multi !== true) {
+				$err = 'Persistent Cache UnsetKeys[1.100] using wildcard (*), with Realm returned a non-true result';
+			} //end if
+		} //end if
 		//--
-		if(stripos((string)\SMART_FRAMEWORK__INFO__PERSISTENT_CACHE_BACKEND, 'redis:') === 0) {
+		if((string)$err == '') {
+			$tests[] = 'Check if FIRST Persistent Cache Key (from 100) exists, after unset with wildcard (*)';
+			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#0')) {
+				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#0';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Check if LAST Persistent Cache Key (from 100) exists, after unset with wildcard (*)';
+			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#99')) {
+				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#99';
+			} //end if
+		} //end if
+		//--
+
+		//--
+		$time = 'TOTAL TIME (Except building the test archive, Except wait expire) was: '.\Smart::format_number_dec((\microtime(true) - $time), 11, '.', '');
+		//--
+		$end_tests = '===== END TESTS ... ====='."\n".'=== '.$time.' sec. ===';
+		//--
+		if(stripos((string)$thePcacheVersionInfo, 'redis:') === 0) {
 			$img_check = 'lib/core/img/db/redis-logo.svg';
+		} elseif(stripos((string)$thePcacheVersionInfo, 'dba:') === 0) {
+			$img_check = 'lib/core/img/db/dba-logo.svg';
 		} else {
-			$img_check = 'lib/framework/img/sf-logo.svg';
+			$img_check = 'lib/core/img/app/session.svg';
 		} //end if else
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';

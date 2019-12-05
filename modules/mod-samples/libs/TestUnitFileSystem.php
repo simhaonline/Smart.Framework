@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20191202
  *
  */
 final class TestUnitFileSystem {
@@ -488,9 +488,17 @@ final class TestUnitFileSystem {
 			} //end if
 		} //end if
 		if((string)$err == '') {
-			$the_test = 'FILE READ / Append: read() Full Size + Test Path/RealPath Exist + isFile/!isLink/!isDir + Test Readable/Writable: '.$the_file;
+			$the_test = 'FILE READ / read() the Appended File, Full Size + Test Path/RealPath Exist + isFile/!isLink/!isDir + Test Readable/Writable: '.$the_file;
 			$tests[] = $the_test;
 			$result = \SmartFileSystem::read($the_file);
+			if(((string)\SmartHashCrypto::sha512($result) != (string)\SmartHashCrypto::sha512($test_string.$test_string)) OR (!\SmartFileSystem::path_exists($the_file)) OR (!\SmartFileSystem::path_real_exists($the_file)) OR (!\SmartFileSystem::is_type_file($the_file)) OR (\SmartFileSystem::is_type_link($the_file)) OR (\SmartFileSystem::is_type_dir($the_file)) OR (!\SmartFileSystem::have_access_read($the_file)) OR (!\SmartFileSystem::have_access_write($the_file))) {
+				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
+			} //end if
+		} //end if
+		if((string)$err == '') {
+			$the_test = 'FILE READ / read() with SAFELOCK the Appended File, Full Size + Test Path/RealPath Exist + isFile/!isLink/!isDir + Test Readable/Writable: '.$the_file;
+			$tests[] = $the_test;
+			$result = \SmartFileSystem::read($the_file, 0, 'no', 'yes');
 			if(((string)\SmartHashCrypto::sha512($result) != (string)\SmartHashCrypto::sha512($test_string.$test_string)) OR (!\SmartFileSystem::path_exists($the_file)) OR (!\SmartFileSystem::path_real_exists($the_file)) OR (!\SmartFileSystem::is_type_file($the_file)) OR (\SmartFileSystem::is_type_link($the_file)) OR (\SmartFileSystem::is_type_dir($the_file)) OR (!\SmartFileSystem::have_access_read($the_file)) OR (!\SmartFileSystem::have_access_write($the_file))) {
 				$err = 'ERROR :: '.$the_test.' #RESULT='.$result;
 			} //end if

@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// # r.20190315 # this should be loaded from app web root only
+// # r.20191205 # this should be loaded from app web root only
 
 // ===== IMPORTANT =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE REGISTERING ANY OF GET/POST VARIABLES (CAN CAUSE SECURITY ISSUES)
@@ -48,7 +48,7 @@ if(defined('SMART_ERROR_LOGDIR')) {
 	@http_response_code(500);
 	die('SMART_ERROR_LOGDIR cannot be defined outside ERROR HANDLER');
 } //end if
-define('SMART_ERROR_LOGDIR', 'tmp/logs/'); // Error Handler log folder: the phperrors-Y-m-d.log file will be generated into this folder ; it must be .htaccess protected
+define('SMART_ERROR_LOGDIR', (string)smart__framework__err__handler__get__absolute_logpath()); // the function will check if path is safe and correct ; if not will raise a fatal error !
 //--
 if(defined('SMART_ERROR_AREA')) { // display this error area
 	@http_response_code(500);
@@ -79,8 +79,11 @@ if(((string)SMART_ERROR_HANDLER == 'log') AND ((string)SMART_FRAMEWORK_DEBUG_MOD
 } //end if else
 ini_set('track_errors', '0');
 //==
-// PHP 5.4 or later: E_ALL & ~E_NOTICE & ~E_STRICT :: E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED); // error reporting for display only
+if((string)SMART_ERROR_HANDLER == 'log') {
+	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED); // error reporting for display only, production
+} else {
+	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT); // error reporting for display only, development (show deprecated)
+} //end if else
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	//--
 	global $smart_____framework_____last__error; // presume it is already html special chars safe
@@ -136,10 +139,10 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	} //end if
 	//--
 	if(($is_supressed !== true) OR ($is_fatal === true)) {
-		if((is_dir(SMART_ERROR_LOGDIR)) && (is_writable(SMART_ERROR_LOGDIR))) { // here must be is_dir(), is_writable() and file_put_contents() as the smart framework libs are not yet initialized in this phase ...
+		if((is_dir((string)SMART_ERROR_LOGDIR)) && (is_writable((string)SMART_ERROR_LOGDIR))) { // here must be is_dir(), is_writable() and file_put_contents() as the smart framework libs are not yet initialized in this phase ...
 			@file_put_contents(
-				SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE,
-				"\n".'===== '.date('Y-m-d H:i:s O')."\n".'PHP '.PHP_VERSION.' [SMART-ERR-HANDLER] #'.$errno.' ['.$ferr.']'.$app_halted."\n".'HTTP-METHOD: '.$_SERVER['REQUEST_METHOD'].' # '.'CLIENT: '.trim($_SERVER['REMOTE_ADDR'].' ; '.$_SERVER['HTTP_CLIENT_IP'].' ; '.$_SERVER['HTTP_X_FORWARDED_FOR'], '; ').' @ '.$_SERVER['HTTP_USER_AGENT']."\n".'URI: ['.SMART_ERROR_AREA.'] @ '.$_SERVER['REQUEST_URI']."\n".'Script: '.$errfile."\n".'Line number: '.$errline."\n".$errstr."\n".'==================================='."\n\n",
+				(string) SMART_ERROR_LOGDIR.SMART_ERROR_LOGFILE,
+				(string) "\n".'===== '.date('Y-m-d H:i:s O')."\n".'PHP '.PHP_VERSION.' [SMART-ERR-HANDLER] #'.$errno.' ['.$ferr.']'.$app_halted."\n".'HTTP-METHOD: '.$_SERVER['REQUEST_METHOD'].' # '.'CLIENT: '.trim($_SERVER['REMOTE_ADDR'].' ; '.$_SERVER['HTTP_CLIENT_IP'].' ; '.$_SERVER['HTTP_X_FORWARDED_FOR'], '; ').' @ '.$_SERVER['HTTP_USER_AGENT']."\n".'URI: ['.SMART_ERROR_AREA.'] @ '.$_SERVER['REQUEST_URI']."\n".'Script: '.$errfile."\n".'Line number: '.$errline."\n".$errstr."\n".'==================================='."\n\n",
 				FILE_APPEND | LOCK_EX
 			);
 		} //end if
@@ -250,13 +253,95 @@ function smart__framework__err__handler__catch_fatal_errs() {
  * @internal
  */
 function smart__framework__err__handler__get__basepath() {
+	//--
 	$imgprefix = (string) dirname((string)$_SERVER['SCRIPT_NAME']);
+	//--
 	if(((string)$imgprefix == '') || ((string)$imgprefix == '/') || ((string)$imgprefix == '\\') || ((string)$imgprefix == '.')) {
 		$imgprefix = ''; // no prefix
 	} else {
 		$imgprefix .= '/'; // fix: add a trailing slash
 	} //end if
+	//--
 	return (string) $imgprefix;
+	//--
+} //END FUNCTION
+//--
+/**
+ * Function: Get the Error Handler log folder ; it must be .htaccess protected
+ * @hints 		The phperrors-idx-yyyy-mm-dd@hh.log and phperrors-adm-yyyy-mm-dd@hh.log error log files will be written into this folder
+ * @access 		private
+ * @internal
+ */
+function smart__framework__err__handler__get__absolute_logpath() {
+	//--
+	// the PHP Bug #31570 (not fixed since a very long time) : cannot access relative paths after destruct of main executors started, ex: handlers registered with register_shutdown_function()
+	//--
+	// INFO: this must be a full / absolute path (not a relative path) because register_shutdown_function() handlers may not always work with relative paths
+	// EXAMPLE: need to log to tmp/logs after majority of objects have been destroyed and no more detection of relative path
+	// NOTICE: this converts windows path from using backslash to using slash
+	//--
+	$err_paths = 'broken in the current PHP installation. Please fix this by install a PHP version without this bug ...';
+	//--
+	$current_file = (string) @basename(__FILE__);
+	if((string)$current_file !== 'smart-error-handler.php') {
+		@http_response_code(500);
+		die('Smart.Framework # ERROR HANDLER: the Path BaseName detection is '.$err_paths);
+		return '';
+	} //end if
+	//--
+	$path = (string) realpath('./'); // get the current absolute path of current running folder (this will be run from index.php or admin.php which is outside lib/ ... so this scenario is considered)
+	if((string)$path == '') { // if realpath fails and return an empty path
+		@http_response_code(500);
+		die('Smart.Framework # ERROR HANDLER: the RealPath detection is '.$err_paths);
+		return '';
+	} //end if
+	if((string)DIRECTORY_SEPARATOR == '\\') { // if on Windows, Fix Path Separator !!!
+		if(strpos((string)$path, '\\') !== false) {
+			$path = (string) str_replace((string)DIRECTORY_SEPARATOR, '/', (string)$path); // convert windows path from using backslash to using slash
+		} //end if
+		$regex = '/^[_a-zA-Z0-9\-\.@#\/\:]+$/'; // regex for windows, after converting backslashes to normal slashes ; {{{SYNC-CHK-SAFE-FILENAME}}} with extra `/` and `:`
+	} else {
+		$regex = '/^[_a-zA-Z0-9\-\.@#\/]+$/'; // regex for linux/unix ; ; {{{SYNC-CHK-SAFE-FILENAME}}} with extra `/`
+	} //end if else
+	//--
+	if(
+		((string)trim((string)$path) == '') OR // empty path, cannot detect real path !
+		(strlen((string)$path) > 90) OR // path too long (89 + an optional final slash + 10 = 100 min or 101 max)
+		(strpos((string)$path, '.') === 0) OR // path must not start with a single dot (this covers all dangerous scenarios: path is a single dot (.) ; path is a double dot (..) ; path start with a dot (.hidden)
+		(strpos((string)$path, '\\') !== false) OR // single backslash \ has been converted already, must not exists
+		(strpos((string)$path, '..') !== false) OR // check for double dots .. which are unsafe
+		(strpos((string)$path, '//') !== false) OR // check for double slashes // which are unsafe
+		(!preg_match((string)$regex, (string)$path))
+	) {
+		@http_response_code(500);
+		die('Smart.Framework # ERROR HANDLER: the current installation of Smart.Framework runs under a Path that contain unsafe characters ; Only these characters are allowed in path: `_`, `a-z`, `A-Z`, `0-9`, `-`, `.`, `@`, `#` and `/` on linux/unix ; on windows also the `:` character is allowed');
+		return '';
+	} //end if
+	//--
+	$path = (string) rtrim((string)$path, '/').'/'; // add last slash to the path after above checks if not already have
+	//--
+	if (
+		(!is_dir($path.'lib/')) OR // try to detect Smart.Framework lib directory to see if the path is correct
+		(!is_file($path.'lib/'.$current_file)) // try to detect Smart.Framework lib/smart-error-handler.php (this file) to see if the path is correct
+	) {
+		@http_response_code(500);
+		die('Smart.Framework # ERROR HANDLER: cannot detect the Path to the current Smart.Framework installation');
+		return '';
+	} //end if
+	//--
+	$path .= 'tmp/logs/'; // append the `tmp/logs/` to the path as suffix (the path last slash was added above)
+	//--
+	if(
+		(strlen((string)$path) < 11) OR // because 10 characters is only the `/tmp/logs/` suffix
+		((string)substr((string)$path, -11, 1) == '.') OR // the `/tmp/logs/` must not be preceded by a `.` that may result in unsafe `./tmp/logs/`
+		((string)substr((string)$path, -10, 10) != '/tmp/logs/') // and must end with `/tmp/logs/` to avoid mistakes
+	) { // safety checks after adding the `/tmp/logs/` suffix
+		@http_response_code(500);
+		die('Smart.Framework # ERROR HANDLER: cannot detect the path to current Smart.Framework installation `tmp/logs/` folder');
+	} //end if
+	//--
+	return (string) $path;
+	//--
 } //END FUNCTION
 //==
 

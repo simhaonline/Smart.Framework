@@ -15,9 +15,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 } //end if
 //-----------------------------------------------------
 
-
 //======================================================
-// Smart-Framework - App Bootstrap :: r.20190605
+// Smart-Framework - App Bootstrap :: r.20191205
 // DEPENDS: SmartFramework, SmartFrameworkRuntime
 //======================================================
 // This file can be customized per App ...
@@ -28,63 +27,83 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //##### WARNING: #####
 // Changing the code below is on your own risk and may lead to severe disrupts in the execution of this software !
-// This code part is handling the bootstrap libs, that can be changed by setting the following constants in etc/init.php: SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, SMART_FRAMEWORK_SESSION_HANDLER
+// This code part is handling the bootstrap libs, that can be changed by setting the following constants in etc/init.php:
+// * SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER
+// * SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM
+// * SMART_FRAMEWORK_SESSION_HANDLER
 //####################
 
-//== Persistent-Cache Adapter
-if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM') AND (substr((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM) >= 5)) {
-	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM);
-	if(!SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM)) {
-		Smart::raise_error(
-			'ERROR: The Custom Persistent Cache is set but the file cannot be found: '.SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM,
-			'ERROR: Invalid Settings for the Custom Persistent Cache. See the Error Log for more details ...'
-		);
-		die('');
-	} //end if
-	require((string)SMART_FRAMEWORK_PERSISTENT_CACHE_CUSTOM); // custom persistent cache
-} elseif(is_array($configs['redis'])) {
-	require('lib/app/persistent-cache-redis.php'); // load the redis based persistent cache
+//== Set Persistent-Cache Adapter
+if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER') AND ((string)SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER != '')) {
+	switch((string)SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER) {
+		case 'redis':
+			if(!is_array($configs['redis'])) {
+				Smart::raise_error('ERROR: The Custom Persistent Cache handler is set to: '.SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER.' but the Redis config is not available');
+				die('');
+			} //end if
+			require('lib/app/persistent-cache-redis.php'); // load the Redis based persistent cache
+			break;
+		case 'dba':
+			if((!is_array($configs['dba'])) OR (SmartDbaUtilDb::isDbaAndHandlerAvailable() !== true)) {
+				Smart::raise_error('ERROR: The Custom Persistent Cache handler is set to: '.SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER.' but the DBA config is not available or wrong');
+				die('');
+			} //end if
+			require('lib/app/persistent-cache-dba.php'); // load the DBA based persistent cache
+			break;
+		default:
+			SmartFrameworkRuntime::requirePhpScript((string)SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER, 'Custom Persistent Cache Handler');
+			if(!class_exists('SmartPersistentCache', false)) { // explicit autoload is false
+				Smart::raise_error('ERROR: The Custom Persistent Cache handler is set to: '.SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER.' but the php file is missing the `SmartPersistentCache` class');
+				die('');
+			} //end if
+	} //end switch
 } else {
-	require('lib/app/persistent-cache-x-blackhole.php'); // load the blackhole (x-none) persistent cache which will implement nothing but definitions and is required for compatibility
+	require('lib/app/persistent-cache-x-blackhole.php'); // load the Blackhole (x-none) persistent cache which will implement only definitions and is required for compatibility but having no storage at all
 } //end if else
-//== Text Translations Adapter (depends on Persistent-Cache)
-if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND (substr((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM) >= 5)) {
-	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
-	if(!SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM)) {
-		Smart::raise_error(
-			'ERROR: The Custom Translations Adapter is set but the file cannot be found: '.SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM,
-			'ERROR: Invalid Settings for the Custom Translations Adapter. See the Error Log for more details ...'
-		);
+//== Set Text-Translations Adapter (depends on Persistent-Cache)
+if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND ((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM != '')) {
+	SmartFrameworkRuntime::requirePhpScript((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM, 'Custom Translations Adapter');
+	if(!class_exists('SmartAdapterTextTranslations', false)) { // explicit autoload is false
+		Smart::raise_error('ERROR: The Custom Translations Adapter handler is set to: '.SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM.' but the php file is missing the `SmartAdapterTextTranslations` class');
 		die('');
 	} //end if
-	require((string)SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM);
 } else {
 	require('lib/app/translations-adapter-yaml.php'); // text translations (YAML based adapter)
 } //end if else
-//== Custom-Session Adapter
-if((string)SMART_FRAMEWORK_SESSION_HANDLER === 'redis') {
-	if(is_array($configs['redis'])) {
-		require('lib/app/custom-session-redis.php'); // use custom session based on Redis
-	} else {
-		Smart::raise_error(
-			'ERROR: The Custom Session Handler is set for (user) mode Redis but the Redis config is not set ...',
-			'ERROR: Invalid Settings for App Session Handler. See the Error Log for more details ...'
-		);
-		die('');
-	} //end if else
-} elseif(((string)SMART_FRAMEWORK_SESSION_HANDLER === 'custom') AND defined('SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER') AND (substr((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER, -4, 4) == '.php') AND (strlen((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER) >= 5)) {
-	SmartFileSysUtils::raise_error_if_unsafe_path((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
-	if(!SmartFileSystem::is_type_file((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER)) {
-		Smart::raise_error(
-			'ERROR: The Custom Session Handler is set is set but the file cannot be found: '.SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER,
-			'ERROR: Invalid Settings for App Session Handler. See the Error Log for more details ...'
-		);
-		die('');
-	} //end if
-	require((string)SMART_FRAMEWORK_SESSION_CUSTOM_HANDLER);
-} else { // files
-	// do nothing (this is built-in)
-} //end if
+//== Set Custom Session Handler Adapter if any
+if(defined('SMART_FRAMEWORK_SESSION_HANDLER') AND ((string)SMART_FRAMEWORK_SESSION_HANDLER !== 'files')) {
+	switch((string)SMART_FRAMEWORK_SESSION_HANDLER) {
+		case 'redis':
+			if(!is_array($configs['redis'])) {
+				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the Redis config is not available');
+				die('');
+			} //end if
+			require('lib/app/custom-session-redis.php'); // use custom session based on Redis
+			break;
+		case 'dba':
+			if((!is_array($configs['dba'])) OR (SmartDbaUtilDb::isDbaAndHandlerAvailable() !== true)) {
+				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the DBA config is not available or wrong');
+				die('');
+			} //end if
+			require('lib/app/custom-session-dba.php'); // use custom session based on DBA
+			break;
+		case 'sqlite':
+			if((!is_array($configs['sqlite'])) OR (!class_exists('SQLite3'))) {
+				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the SQLite config is not available or wrong');
+				die('');
+			} //end if
+			require('lib/app/custom-session-sqlite.php'); // use custom session based on SQLite3 (this uses fatal err)
+			break;
+		default:
+			SmartFrameworkRuntime::requirePhpScript((string)SMART_FRAMEWORK_SESSION_HANDLER, 'Custom Session Handler');
+			if(!class_exists('SmartCustomSession', false)) { // explicit autoload is false
+				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the php file is missing the `SmartCustomSession` class');
+				die('');
+			} //end if
+	} //end switch
+} else {
+	// using files based session (default, built-in)
+} //end if else
 //==
 
 //==

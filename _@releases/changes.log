@@ -2,6 +2,16 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+December 05, 2019 :: Version 5.2.7 rev.191205
+	* PHP 7.4 ready
+	* removed deprecated SmartUtils::load_cached_file_content() ; use Persistent Cache instead
+	* Add DBA Client
+	* Add DBA Custom Session Handler
+	* Add DBA Custom Persistent Cache
+	* Add SQLite Custom Session Handler
+	* Redis: Change Object Constructor (order of parameters and all parameters are optional) to Simplify usage with default params from config
+	* Error Handler: now uses a safe and absolute path to the tmp/log to be available also for handlers registered with register_shutdown_function() that can no more access relative bugs ; the PHP Bug #31570 (not fixed since a very long time)
+
 November 26, 2019 :: Version 5.2.7 rev.191126
 	* New documentation for PHP and Javascript
 	* Renamed lib/js/framework/smart-framework.js to lib/js/framework/smart-framework.pak.js

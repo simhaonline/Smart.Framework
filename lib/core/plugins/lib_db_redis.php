@@ -28,15 +28,15 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // with portions of code from: PRedis StreamConnection, by Daniele Alessandri https://github.com/nrk/predis
 
 /**
- * Class: SmartRedisDb - provides a Client for Redis (Data Structure / Caching) Server.
+ * Class: SmartRedisDb - provides a Client for Redis MemDB Server.
  * By default this class will just log the errors.
  *
  * Tested and Stable on Redis versions: 2.6.x / 2.8.x / 3.0.x / 3.2.x / 4.x / 5.x
  *
  * <code>
  *
- * // Redis Client usage example:
- * $redis = new SmartRedisDb('localhost', '6379', 3); // connects at the database no. 3
+ * // Redis Client usage example, with custom connection parameters:
+ * $redis = new SmartRedisDb('SampleInstance', false, 'localhost', '6379', 3); // connects at the database no. 3 ; for debug and log will identify by 'SampleInstance' (1st param) ; 2nd param set the fatal errors to false and just log errors not raise fatal errors ... (this is default behaviour)
  * $redis->set('key1', 'value1');
  * $redis->set('list1:key1', 'value2');
  * $value1 = $redis->get('key1');
@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.20191121
+ * @version 	v.20191203
  * @package 	Plugins:Database:Redis
  *
  */
@@ -96,17 +96,48 @@ final class SmartRedisDb {
 	//======================================================
 	/**
 	 * Object Constructor
+	 * If no value is provided for Host, Port and DbNum it will use the values from the config[redis]
 	 *
-	 * @param STRING $host :: The Redis Server Host (Ex: '127.0.0.1')
-	 * @param INTEGER $port :: The Redis Server Port (Ex: 6379)
-	 * @param INTEGER+ $db :: The Redis Server DB Number (Ex: 0) ; By Default min: 0 and max: 15 (16 databases) ; if redis.conf specify more than 16, can be a larger number, min: 0 ; max 255
-	 * @param STRING $password :: *OPTIONAL* The Redis Auth Password ; Default is Empty String
-	 * @param FLOAT $y_debug_exch_slowtime :: *OPTIONAL* The Debug Slow Time in microseconds to Record slow Queries
-	 * @param STRING $y_description :: *OPTIONAL* The description of the Redis connection to make easy debug and log errors
-	 * @param BOOLEAN $y_fatal_err :: *OPTIONAL* If Errors are Fatal or Not ... ; Set this parameter to TRUE if you want to Raise a fatal error on Redis errors ; otherwise default is FALSE and will ignore Redis errors but just log them as warnings (this is the wanted behaviour on a production server ...)
+	 * <code>
+	 * // Sample Redis configuration of Default Instance (must be set in etc/config.php)
+	 * $configs['redis']['server-host']	= '127.0.0.1';							// redis host
+	 * $configs['redis']['server-port']	= 6379;									// redis port
+	 * $configs['redis']['dbnum'] 		= 8;									// redis db number 0..15
+	 * $configs['redis']['password']	= '';									// redis Base64-Encoded password ; by default is empty
+	 * $configs['redis']['timeout']		= 5;									// redis connect timeout in seconds
+	 * $configs['redis']['slowtime']	= 0.0005;								// redis slow query time (for debugging) 0.0010 .. 0.0001
+	 * </code>
+	 *
+	 * @param STRING $y_description 		:: *OPTIONAL* Default is 'DEFAULT' ; The description of the Redis connection to make easy debug and log errors
+	 * @param BOOLEAN $y_fatal_err 			:: *OPTIONAL* Default is FALSE ; If Errors are Fatal or Not ... ; Set this parameter to TRUE if you want to Raise a fatal error on Redis errors ; otherwise default is FALSE and will ignore Redis errors but just log them as warnings (this is the wanted behaviour on a production server ...)
+	 * @param STRING $host 					:: *OPTIONAL* The Redis Server Host (Ex: '127.0.0.1')
+	 * @param INTEGER $port 				:: *OPTIONAL* The Redis Server Port (Ex: 6379)
+	 * @param INTEGER+ $db 					:: *OPTIONAL* The Redis Server DB Number (Ex: 0) ; By Default min: 0 and max: 15 (16 databases) ; if redis.conf specify more than 16, can be a larger number, min: 0 ; max 255
+	 * @param STRING $password 				:: *OPTIONAL* The Redis Auth Password ; Default is Empty String
+	 * @param INTEGER+ $timeout 			:: *OPTIONAL* The connection TimeOut in seconds
+	 * @param FLOAT $y_debug_exch_slowtime 	:: *OPTIONAL* The Debug Slow Time in microseconds to Record slow Queries
 	 *
 	 */
-	public function __construct($host, $port, $db, $password='', $timeout=5, $y_debug_exch_slowtime=0.0005, $y_description='DEFAULT', $y_fatal_err=false) {
+	public function __construct($y_description='DEFAULT', $y_fatal_err=false, $host='', $port='', $db='', $password='', $timeout=5, $y_debug_exch_slowtime=0.0005) {
+		//--
+		$this->err = false;
+		//--
+		$this->fatal_err = (bool) $y_fatal_err;
+		//--
+		$this->description = (string) trim((string)$y_description);
+		//--
+		if(((string)$host == '') AND ((string)$port == '') AND ((string)$db == '')) {
+			//-- use values from configs
+			$redis_cfg 				= (array)  Smart::get_from_config('redis');
+			//--
+			$host 					= (string) $redis_cfg['server-host'];
+			$port 					= (string) $redis_cfg['server-port'];
+			$db   					= (string) $redis_cfg['dbnum'];
+			$password 				= (string) $redis_cfg['password'];
+			$timeout 				= (int)    $redis_cfg['timeout'];
+			$y_debug_exch_slowtime 	= (float)  $redis_cfg['slowtime'];
+			//--
+		} //end if
 		//--
 		if(((string)$host == '') OR ((string)$port == '') OR ((string)$db == '') OR ((string)$timeout == '')) {
 			$this->error('Redis Configuration Init', 'Some Required Parameters are Empty', 'CFG:host:port@db#timeout'); // fatal error
@@ -137,20 +168,13 @@ final class SmartRedisDb {
 			$this->password = '';
 		} //end if else
 		//--
-		$this->description = (string) $y_description;
-		//--
-		$y_fatal_err = (bool) $y_fatal_err;
-		if($y_fatal_err === true) {
-			$this->fatal_err = false;
-			$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
-		} else {
-			$this->fatal_err = true;
-			$txt_conn = 'FATAL ERRORS';
-		} //end if else
-		//--
-		$this->err = false;
-		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
+			//--
+			if($this->fatal_err === true) {
+				$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
+			} else {
+				$txt_conn = 'FATAL ERRORS';
+			} //end if else
 			//--
 			if((float)$y_debug_exch_slowtime > 0) {
 				$this->slow_time = (float) $y_debug_exch_slowtime;
@@ -207,19 +231,24 @@ final class SmartRedisDb {
 	 * @magic
 	 *
 	 * @method	STRING		ping()										:: Ping the Redis server ; returns: the test answer which is always PONG
+	 * @method	INT			exists(STRING $key)							:: Determine if a key exists ; returns 1 if the key exists or 0 if does not exists
 	 * @method	MIXED		get(STRING $key) 							:: Get a Redis Key ; returns: the value of key as STRING or NULL if not exists
 	 * @method	MIXED	 	set(STRING $key, STRING $value)				:: Set a Redis Key ; returns: OK on success or NULL on failure
 	 * @method	MIXED		append(STRING $key, STRING $value)			:: Append a Redis Key ; returns: OK on success or NULL on failure
+	 * @method	MIXED		incr(STRING $key)							:: Increments a key that have an integer value with 1 ; max is 64-bit int ; if the value is non integer returns error ; returns the value after increment
+	 * @method	MIXED		incrby(STRING $key, INTEGER $value)			:: Increments a key that have an integer value with the given int value ; max is 64-bit int ; if the value is non integer returns error ; returns the value after increment
+	 * @method	MIXED		decr(STRING $key)							:: Decrements a key that have an integer value with 1 ; min is 64-bit int ; if the value is non integer returns error ; returns the value after decrement
+	 * @method	MIXED		decrby(STRING $key, INTEGER $value)			:: Decrements a key that have an integer value with the given int value ; min is 64-bit int ; if the value is non integer returns error ; returns the value after decrement
+	 * @method	STRING		rename(STRING $key, STRING $newkey) 		:: Renames key to newkey. It returns an error when key does not exist or OK. If newkey already exists it is overwritten
 	 * @method	INT			del(STRING $key) 							:: Delete a Redis Key ; returns: 0 if not successful or 1 if successful
+	 * @method	INT			ttl(STRING $key)							:: Get the TTL in seconds for a key ; -1 if the key does not expire ; -2 if the key does not exists
 	 * @method	INT			expire(STRING $key, INT $expireinseconds)	:: Set the Expiration time for a Redis Key in seconds ; returns: 0 if not successful or 1 if successful
 	 * @method	INT			expireat(STRING $key, INT $expirationtime)	:: Set the Expiration time for a Redis Key at unixtimestamp ; returns: 0 if not successful or 1 if successful
 	 * @method	INT			persist(STRING $key)						:: Remove the existing expiration timeout on a key ; returns: 0 if not successful or 1 if successful
-	 * @method	INT			exists(STRING $key)							:: Determine if a key exists ; returns 1 if the key exists or 0 if does not exists
 	 * @method	STRING		type(STRING $key) 							:: Returns the string representation of the type of the value stored at key (string, list, set, zset, hash and stream)
 	 * @method	INT			strlen(STRING $key) 						:: Returns the length of the string value stored at key. An error is returned when key holds a non-string value
 	 * @method	MIXED		keys(STRING $pattern)						:: Get all keys matching a pattern ; return array of all keys matching a pattern or null if no key
 	 * @method	MIXED		randomkey()									:: Return a random key from the currently selected database ; if no key exist, returns NULL
-	 * @method	STRING		rename(STRING $key, STRING $newkey) 		:: Renames key to newkey. It returns an error when key does not exist. If newkey already exists it is overwritten
 	 * @method	STRING		info()										:: Returns information and statistics about the server
 	 * @method	INT			dbsize()									:: Return the number of keys in the currently-selected database
 	 * @method	STRING		flushdb()									:: Remove all keys from the selected database ; This command never fails ; Returns OK
@@ -261,13 +290,14 @@ final class SmartRedisDb {
 			//--
 			case 'INCR': // increments a key that have an integer value with 1 ; max is 64-bit int ; if the value is non integer returns error ; returns the value after increment
 			case 'INCRBY': // increments a key that have an integer value with the given int value ; max is 64-bit int ; if the value is non integer returns error ; returns the value after increment
-			case 'DECR': // decrements a key that have an integer value with 1 ; max is 64-bit int ; if the value is non integer returns error ; returns the value after decrement
-			case 'DECRBY': // decrements a key that have an integer value with the given int value ; max is 64-bit int ; if the value is non integer returns error ; returns the value after decrement
+			case 'DECR': // decrements a key that have an integer value with 1 ; min is 64-bit int ; if the value is non integer returns error ; returns the value after decrement
+			case 'DECRBY': // decrements a key that have an integer value with the given int value ; min is 64-bit int ; if the value is non integer returns error ; returns the value after decrement
 			//--
 			case 'KEYS': // return all keys matching a pattern
-			case 'SCAN': // available since Redis 2.8 ; incrementally iterate over a collection of keys
-			case 'SORT': // sort key by pattern ; SORT mylist DESC ; SORT mylist ALPHA ; for UTF-8 the !LC_COLLATE environment must be set
 			case 'RANDOMKEY': // return a random key from the currently selected database
+			//--
+			case 'SORT': // sort key by pattern ; SORT mylist DESC ; SORT mylist ALPHA ; for UTF-8 the !LC_COLLATE environment must be set
+			case 'SCAN': // available since Redis 2.8 ; incrementally iterate over a collection of keys
 			//--
 			case 'HSET': // sets field in the hash stored at key to value
 			case 'HDEL': // removes the specified fields from the hash stored at key
@@ -572,7 +602,7 @@ final class SmartRedisDb {
 						//--
 						SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 							'type' => 'set',
-							'data' => 'Selected Database #'.$this->db,
+							'data' => 'Selected Redis Database #'.$this->db.' :: `'.$this->description.'`',
 							'skip-count' => 'yes'
 						]);
 						//--
@@ -598,25 +628,27 @@ final class SmartRedisDb {
 	//======================================================
 	/**
 	 * this is for disconnect from Redis
+	 * normally should not be used
 	 *
 	 * @access 		private
 	 * @internal
 	 *
 	 */
-	private function disconnect() {
+	public function disconnect() {
 		//--
 		if($this->socket) {
 			//--
-			@fclose($this->socket); // closing the local connection (the global might remain opened ...)
-			//--
 			if(SmartFrameworkRuntime::ifDebug()) {
-				//--
 				SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 					'type' => 'open-close',
-					'data' => 'Redis DB :: Close Connection for: '.$this->server.'@'.$this->db.' on: '.$this->socket
+					'data' => 'Redis DB :: Close Connection for: '.$this->server.'@'.$this->db.' :: '.$this->description.' @ Connection-Socket: '.$this->socket
 				]);
-				//--
 			} //end if
+			//--
+			@fclose($this->socket); // closing the local connection (the global might remain opened ...)
+			SmartFrameworkRegistry::$Connections['redis'][(string)$this->server.'@'.$this->db] = null;
+			$this->socket = null; // reset and clear socket
+			$this->err = true; // required, to halt driver, no more allow operations and avoid reconnect, was explicit destroyed
 			//--
 		} //end if
 		//--
@@ -627,9 +659,9 @@ final class SmartRedisDb {
 	//======================================================
 	/**
 	 * Displays the Redis Errors and HALT EXECUTION (This have to be a FATAL ERROR as it occur when a FATAL Redis ERROR happens or when Data Exchange fails)
+	 * If Non-Fatal Errors are set per instance will just log them
 	 * PRIVATE
 	 *
-	 * @param BOOL $is_fatal :: TRUE / FALSE if the Error is Fatal or Not
 	 * @param STRING $y_area :: The Area
 	 * @param STRING $y_error_message :: The Error Message to Display
 	 * @param STRING $y_query :: The query
@@ -638,23 +670,21 @@ final class SmartRedisDb {
 	 * @return :: HALT EXECUTION WITH ERROR MESSAGE
 	 *
 	 */
-	private function error($is_fatal, $y_area, $y_error_message, $y_query='', $y_warning='') {
+	private function error($y_area, $y_error_message, $y_query='', $y_warning='') {
 		//--
 		$this->err = true; // required, to halt driver
 		//--
 		$is_fatal = (bool) $this->fatal_err;
 		//--
 		if($is_fatal === false) { // NON-FATAL ERROR
-			//--
 			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('db', 'redis|log', [
 					'type' => 'metainfo',
-					'data' => 'Redis SILENT WARNING: '.$y_area."\n".$y_query."\n".'Error-Message: '.$y_error_message."\n".'The settings for this Redis instance allow just silent warnings on connection fail.'."\n".'All next method calls to this Redis instance will be discarded silently ...'
+					'data' => 'Redis (`'.$this->description.'`) :: SILENT WARNING: '.$y_area."\n".'Command: '.$y_query."\n".'Error-Message: '.$y_error_message."\n".'The settings for this Redis instance allow just silent warnings on connection fail.'."\n".'All next method calls to this Redis instance will be discarded silently ...'
 				]);
 			} //end if
-			//--
-			Smart::log_warning('#REDIS@'.$this->socket.' :: Q# // Redis :: WARNING :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query);
-			//--
+			Smart::log_warning('#REDIS@'.$this->socket.'# (`'.$this->description.'`) :: Q# // Redis Client :: NON-FATAL ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query);
+			return;
 		} //end if
 		//--
 		$def_warn = 'Execution Halted !';
@@ -682,7 +712,7 @@ final class SmartRedisDb {
 		$out = SmartComponents::app_error_message(
 			'Redis Client',
 			'Redis',
-			'Caching',
+			'MemDB',
 			'Server',
 			'lib/core/img/db/redis-logo.svg',
 			$width, // width
@@ -693,7 +723,7 @@ final class SmartRedisDb {
 		);
 		//--
 		Smart::raise_error(
-			'#REDIS@'.$this->socket.'# :: Q# // Redis Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query,
+			'#REDIS@'.$this->socket.'# (`'.$this->description.'`) :: Q# // Redis Client :: ERROR :: '.$y_area."\n".'*** Error-Message: '.$y_error_message."\n".'*** Command:'."\n".$y_query,
 			$out // msg to display
 		);
 		die(''); // just in case

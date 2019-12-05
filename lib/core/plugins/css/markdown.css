@@ -1,34 +1,37 @@
 
-/* -- CSS Start :: Smart.Framework / Plugins / Markdown v.20190105 :: r.5.2.7 / smart.framework.v.5.2 -- */
+/* -- CSS Start :: Smart.Framework / Plugins / Markdown v.20191205 :: r.5.2.7 / smart.framework.v.5.2 -- */
 
 /* ----------------------------- */
 
 /* Headings */
 
-#markdown h1,
-#markdown h2,
-#markdown h3,
-#markdown h4,
-#markdown h5,
-#markdown h6 {
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
 	display: block;
 }
 
 /* Helpers */
-#markdown hr {
+.markdown hr {
 	border: none 0;
 	border-top: 1px solid #EDEDED;
 	height: 1px;
 }
 
 /* Links */
-#markdown a {
+.markdown a,
+.markdown a:link,
+.markdown a:visited,
+.markdown a:hover {
 	color: #0077AA;
 	text-decoration: underline;
 }
 
 /* Table */
-#markdown table {
+.markdown table {
 	max-width: 100%;
 	margin-bottom: 20px;
 	border-spacing: 0px;
@@ -37,58 +40,58 @@
 	border: 0;
 }
 
-#markdown table.full-width-table {
+.markdown table.full-width-table {
 	width: 100%;
 }
 
-#markdown table th {
+.markdown table th {
 	padding: 3px;
 	font-size: 15px;
 	font-weight: bold;
 }
-#markdown table th.hidden {
+.markdown table th.hidden {
 	line-height: 1px !important;
 	display: none;
 }
-#markdown table th.stripped {
+.markdown table th.stripped {
 	background: #F9FCF7;
 }
 
-#markdown table > tbody > tr > td {
+.markdown table > tbody > tr > td {
 	padding: 3px;
 	font-size: 15px;
 }
-#markdown table > tbody > tr:nth-child(odd) > td.stripped {
+.markdown table > tbody > tr:nth-child(odd) > td.stripped {
 	background: #F5F5F5;
 }
-#markdown table > tbody > tr:nth-child(even) > td.stripped {
+.markdown table > tbody > tr:nth-child(even) > td.stripped {
 	background: #FEFEFE;
 }
-#markdown table > tbody > tr:hover > td.stripped {
+.markdown table > tbody > tr:hover > td.stripped {
 	background: #F9FCF7;
 }
 
-#markdown table tr.bordered, #markdown table th.bordered, #markdown table td.bordered {
+.markdown table tr.bordered, .markdown table th.bordered, .markdown table td.bordered {
 	border: 1px solid #ECECEC;
 }
 
-#markdown table tr.dbordered, #markdown table th.dbordered, #markdown table td.dbordered {
+.markdown table tr.dbordered, .markdown table th.dbordered, .markdown table td.dbordered {
 	border: 1px dashed #ECECEC;
 }
 
-#markdown table tr.pbordered, #markdown table th.pbordered, #markdown table td.pbordered {
+.markdown table tr.pbordered, .markdown table th.pbordered, .markdown table td.pbordered {
 	border: 1px dotted #ECECEC;
 }
 
 /* Quote, BlockQuote */
-#markdown blockquote {
+.markdown blockquote {
 	background: #F9F9F9;
 	border-left: 10px solid #CCCCCC;
 	margin: 20px 10px;
 	padding: 15px 10px;
 	quotes: "\201C""\201D""\2018""\2019";
 }
-#markdown blockquote:before {
+.markdown blockquote:before {
 	color: #CCCCCC;
 	content: open-quote;
 	font-size: 4rem;
@@ -96,27 +99,27 @@
 	margin-right: 0.25rem;
 	vertical-align: -2rem;
 }
-#markdown blockquote p {
+.markdown blockquote p {
 	display: inline;
 }
 /* -- */
 
 /* Pre, Code */
-#markdown pre {
+.markdown pre {
 	border: 1px solid #ECECEC;
 	background: #F9F9F9;
 	padding: 4px;
 	white-space: pre-line;
 	overflow: auto;
 }
-#markdown code {
+.markdown code {
 	background: #F9F9F9;
 	padding: 1px;
 	white-space: pre;
 }
 /* -- */
 
-#markdown img {
+.markdown img {
 	max-width: 100%;
 }
 

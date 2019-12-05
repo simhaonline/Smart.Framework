@@ -16,8 +16,8 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // ... They are required just for Samples / Testing / Development purposes ...
 define('SMART_FRAMEWORK_TEST_MODE', true);
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS', true);
-//define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', true); // redis
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS', true);
+//define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', true); // redis
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_WEBDAV_TESTS', true);
 //========================================= END Testing-ONLY Settings
 
@@ -75,6 +75,11 @@ $configs['sendmail']['log-messages']		= 'no';							// `no` | `yes` :: // Log Se
 //--------------------------------------- SQLite related configuration
 $configs['sqlite']['timeout'] 		= 60;									// connection timeout
 $configs['sqlite']['slowtime'] 		= 0.0025;								// slow query time (for debugging)
+//---------------------------------------
+
+//--------------------------------------- DBA related configuration
+$configs['dba']['handler'] 			= '@autoselect'; 						// @autoselect or specific: gdbm, qdbm, db4
+$configs['dba']['slowtime'] 		= 0.0025;								// slow query time (for debugging)
 //---------------------------------------
 
 //--------------------------------------- Redis (Default) In-Memory/Key:Value-Store Server configuration (this is primary used for Persistent Memory Cache but can be also for Redis Based Sessions and more ...)

@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20191110.1457'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20191203.1855'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2196,7 +2196,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20191110 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20191203 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3505,7 +3505,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartUtils v.20191103
+	//##### SmartUtils v.20191203
 
 
 	//================================================================
@@ -3736,7 +3736,7 @@ Options -Indexes
 			} //end if
 		} //end if
 		//-- test max path length
-		if(strlen($y_path) > 1024) {
+		if((strlen($y_path) > 1024) OR (strlen($y_path) > (int)PHP_MAXPATHLEN)) {
 			return 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
 		} //end if
 		//--
@@ -3968,7 +3968,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20191105
+	//##### SmartFileSystem v.20191203
 
 
 	//================================================================
@@ -4321,10 +4321,11 @@ Options -Indexes
 	 * @param 	STRING 		$file_name 				:: The relative path of file to be read (can be a symlink to a file)
 	 * @param 	INTEGER+ 	$file_len 				:: DEFAULT is 0 (zero) ; If zero will read the entire file ; If > 0 (ex: 100) will read only the first 100 bytes fro the file or less if the file size is under 100 bytes
 	 * @param 	YES/NO 		$markchmod 				:: DEFAULT is 'no' ; If 'yes' will force a chmod (as defined in SMART_FRAMEWORK_CHMOD_FILES) on the file before trying to read to ensure consistent chmod on all accesible files.
+	 * @param 	BOOLEAN 	$safelock 				:: DEFAULT is 'no' ; If 'yes' will try to get a read shared lock on file prior to read ; If cannot lock the file will return empty string to avoid partial content read where reading a file that have intensive writes (there is always a risk to cannot achieve the lock ... there is no perfect scenario for intensive file operations in multi threaded environments ...)
 	 *
 	 * @return 	STRING								:: The file contents (or a part of file contents if $file_len parameter is used) ; if the file does not exists will return an empty string
 	 */
-	public static function read($file_name, $file_len=0, $markchmod='no') {
+	public static function read($file_name, $file_len=0, $markchmod='no', $safelock='no') {
 		//--
 		$file_name = (string) $file_name;
 		$file_len = (int) $file_len;
@@ -4357,30 +4358,59 @@ Options -Indexes
 						self::log_warning(__METHOD__.'() // ReadFile // A file is not readable: '.$file_name);
 						return '';
 					} //end if
-					//--
-					if($file_len > 0) {
-						$tmp_file_len = self::format_number_int(self::get_file_size((string)$file_name), '+');
-						if((int)$file_len > (int)$tmp_file_len) {
-							$file_len = (int) $tmp_file_len; // cannot be more than file length
+					//-- fix for read file locking when using file_get_contents() # https://stackoverflow.com/questions/49262971/does-phps-file-get-contents-ignore-file-locking
+					// USE LOCKING ON READS, only if specified so:
+					//	* because there is a risk a file remain locked if a process crashes, there are a lot of reads in every execution, but few writes
+					//	* on systems where locking is mandatory and not advisory this is expensive from resources point of view
+					//	* if a process have to wait until obtain a lock ... is not what we want in web environment ...
+					//	* neither the LOCK_NB does not resolv this issue, what we do if not locked ? return empty file contents instead of partial ? ... actually this is how it works also without locking ... tricky ... :-)
+					//	* without a lock there is a little risk to get empty file (a partial file just on Windows), but that risk cannot be avoid, there is no perfect solution in multi-threaded environments with file read/writes concurrency ... use an sqlite or dba if having many writes and reads on the same file and care of data integrity
+					//	* anyway, hoping for the best file_get_contents() should be atomic and if writes are made with atomic and LOCK_EX file_put_contents() everything should be fine, in any scenario there is a compromise
+					if((string)$safelock === 'yes') {
+						$lock = @fopen((string)$file_name, 'rb');
+						if($lock) {
+							$is_locked = @flock($lock, LOCK_SH);
 						} //end if
-						$fcontent = @file_get_contents(
-							(string) $file_name,
-							false, // don't use include path
-							null, // context resource
-							0, // start from begining (negative offsets still don't work)
-							(int) $file_len // max length to read ; if zero, read the entire file
-						);
 					} else {
-						$file_len = 0; // can't be negative (by mistake) ; if zero reads the entire file
-						$fcontent = @file_get_contents(
-							(string) $file_name,
-							false, // don't use include path
-							null, // context resource
-							0 // start from begining (negative offsets still don't work)
-							// max length to read ; don't use this parameter here ...
-						);
+						$is_locked = true; // non-required
+					} //end if
+					//--
+					if($is_locked !== true) {
+						$fcontent = '';
+					} else {
+						if($file_len > 0) {
+							$tmp_file_len = self::format_number_int(self::get_file_size((string)$file_name), '+');
+							if((int)$file_len > (int)$tmp_file_len) {
+								$file_len = (int) $tmp_file_len; // cannot be more than file length
+							} //end if
+							$fcontent = @file_get_contents(
+								(string) $file_name,
+								false, // don't use include path
+								null, // context resource
+								0, // start from begining (negative offsets still don't work)
+								(int) $file_len // max length to read ; if zero, read the entire file
+							);
+						} else {
+							$file_len = 0; // can't be negative (by mistake) ; if zero reads the entire file
+							$fcontent = @file_get_contents(
+								(string) $file_name,
+								false, // don't use include path
+								null, // context resource
+								0 // start from begining (negative offsets still don't work)
+								// max length to read ; don't use this parameter here ...
+							);
+						} //end if else
 					} //end if else
 					//--
+					if((string)$safelock === 'yes') {
+						if($lock) {
+							if($is_locked) {
+								@flock($lock, LOCK_UN);
+							} //end if
+							@fclose($lock); // will release any lock even if not unlocked by flock LOCK_UN
+						} //end if
+					} //end if
+					//-- #fix for locking
 					if($fcontent === false) { // check
 						self::log_warning(__METHOD__.'() // ReadFile // Failed to read the file: '.$file_name);
 						$fcontent = '';

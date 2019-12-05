@@ -20,13 +20,14 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
 
 /**
  * Class App.Custom.Session.Redis - Provides a custom session adapter to use Redis (an alternative for the default files based session).
+ * To use this set in etc/init.php the constant SMART_FRAMEWORK_SESSION_HANDLER = redis
  * NOTICE: using this adapter if the Session is set to expire as 0 (when browser is closed), in redis the session will expire at session.gc_maxlifetime seconds ...
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
- * @depends 	-
- * @version 	v.20191110
+ * @depends 	SmartRedisDb, Smart
+ * @version 	v.20191205
  * @package 	Application
  *
  */
@@ -49,12 +50,6 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 	//==================================================
 	public function open() {
 		//--
-		if((defined('SMART_SOFTWARE_MEMDB_FATAL_ERR')) AND (SMART_SOFTWARE_MEMDB_FATAL_ERR === true)) {
-			$is_fatal_err = false;
-		} else {
-			$is_fatal_err = true; // default
-		} //end if
-		//--
 		$redis_cfg = (array) Smart::get_from_config('redis');
 		//--
 		if(Smart::array_size($redis_cfg) <= 0) {
@@ -65,16 +60,12 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 			die('');
 		} //end if
 		//--
+		$is_fatal_err = false; // for session do not use fatal errors, just log them
+		//--
 		$this->redis = new SmartRedisDb(
-			(string) $redis_cfg['server-host'],
-			(string) $redis_cfg['server-port'],
-			(string) $redis_cfg['dbnum'],
-			(string) $redis_cfg['password'],
-			(string) $redis_cfg['timeout'],
-			(string) $redis_cfg['slowtime'],
-			'SmartCustomSession',
-			(bool)   $is_fatal_err
-		);
+			(string) __CLASS__, 	// desc
+			(bool)   $is_fatal_err // fatal err
+		); // use the connection values from configs
 		//--
 		return true;
 		//--
@@ -110,7 +101,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		} else {
 			$expire = (int) ini_get('session.gc_maxlifetime');
 			if($expire <= 0) {
-				$expire = (int) 60 * 60; // default to 1 hour (in redis expire zero means no expire ...)
+				$expire = (int) 3600 * 24; // {{{SYNC-SESS-MAX-HARDCODED-VAL}}} max 1 hour from the last access if browser session, there is a security risk if SMART_FRAMEWORK_SESSION_LIFETIME is zero
 			} //end if
 		} //end if
 		//--
@@ -158,10 +149,9 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 
 
 	//==================================================
-	// TO BE EXTENDED
 	public function gc($lifetime) {
 		//--
-		return true; // for Redis the Keys are Expiring with set in Write, so GC will not make use here ...
+		return true; // for Redis the Keys are Expiring from internal mechanism, so GC will not be used here ...
 		//--
 	} //END FUNCTION
 	//==================================================

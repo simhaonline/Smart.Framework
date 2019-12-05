@@ -1,11 +1,13 @@
 /*
  * jQuery Timepicker 0.3.3.smart.1
- * r.20190105
+ * r.20191129
  */
 
 /* Fixes for non-jQueryUI version */
 .ui-timepicker-widget {
-	font-size: 0.9rem;
+	font-size: 0.875rem;
+	background: #fff;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .ui-timepicker-clearfix:before,
@@ -19,15 +21,14 @@
 }
 
 .ui-timepicker-corner-all {
-	border-radius: 5px;
+	border-radius: 3px;
 }
 
 .ui-timepicker-header {
 	border: 1px solid #F2F2F2;
 	background: #FFFFFF;
-	color: #333333;
-	font-weight: bold;
-	border-radius: 5px !important;
+	color: #EE8908;
+	border-radius: 3px !important;
 }
 
 .ui-timepicker-content {
@@ -74,10 +75,11 @@
 .ui-timepicker-table {
 	display: inline-table;
 	width: 0;
+	border: 0;
 }
 
 .ui-timepicker-table table {
-	margin:0.15rem 0 0 0;
+	margin: 0.15rem 0 0 0;
 	border-collapse: separate;
 }
 
@@ -91,7 +93,7 @@
 }
 
 .ui-timepicker-table th, .ui-timepicker-table th.periods, .ui-timepicker-table td {
-	font-size: 0.9rem !important;
+	font-size: 0.875rem;
 	padding: 0;
 	width: 2.2rem;
 }
@@ -103,6 +105,14 @@
 	width: 15px;
 	text-align: center;
 	text-decoration: none;
+}
+
+.ui-timepicker-table td .ui-timepicker-hour-cell a {
+	color: #333333;
+}
+
+.ui-timepicker-table td .ui-timepicker-minute-cell a {
+	color: #777777;
 }
 
 /* anchors for clickable cells */
@@ -135,7 +145,6 @@
 	width: auto;
 	overflow: visible;
 	color: #555555;
-	font-weight: bold;
 	text-align: center;
 	background: #FFFFFF;
 	border: 1px solid #DDDDDD;
@@ -146,7 +155,7 @@
 	padding-bottom: 1px !important;
 	height: 22px !important;
 	line-height: 22px !important;
-	font-size: 14px !important;
+	font-size: 0.875rem !important;
 }
 
 .ui-timepicker .ui-timepicker-buttonpane button:hover {
@@ -155,7 +164,7 @@
 
 /* The close button */
 .ui-timepicker .ui-timepicker-close {
-	float: right;
+	float: left;
 }
 
 /* the now button */
@@ -165,7 +174,7 @@
 
 /* the deselect button */
 .ui-timepicker .ui-timepicker-deselect {
-	float: left;
+	float: right;
 }
 
 /* END */
