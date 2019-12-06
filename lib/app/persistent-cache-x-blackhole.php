@@ -23,13 +23,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * The Persistent Cache supports many adapters that can be enabled via config.
  *
  * NOTICE: The Persistent Cache will share the keys between both areas (INDEX and ADMIN) ; It is programmer's choice and work to ensure realm separation for keys if required so (Ex: INDEX may use separate realms than ADMIN)
- * @hints To use your own custom adapter for the persistent cache in Smart.Framework you have to build it by extending the SmartAbstractPersistentCache abstract class and define it in etc/init.php as SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER
+ * @hints The Persistent Cache adapter can be set in etc/init.php as SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER ; By default there are 3 options for the Persistent Cache Adapter in Smart.Framework ; 1st is Blackhole (inactive), the 2nd is DBA and 3rd is Redis ; you can also use your own custom adapter for the persistent cache that you must develop by extending the SmartAbstractPersistentCache abstract class
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191205
+ * @version 	v.20191206
  * @package 	Application:Caching
  *
  */

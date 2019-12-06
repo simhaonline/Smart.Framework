@@ -386,6 +386,42 @@ abstract class SmartAbstractPersistentCache {
 
 
 	/**
+	 * Create a cache prefix for the persistent Cache for a realm and an optional key
+	 * This is mainly designed to be used by the FileSystem based persistent cache implementations, but can be used also for other purposes
+	 * Ex: if the prefix returned by this method will be `xy9z` can be expanded by the handler as `x/y/` or `x/y/9/` or `x/y/9/z/` for distributing the cache files in a balanced way on disk, depending how many levels will need
+	 *
+	 * @param STRING	$y_realm	The Cache Realm
+	 * @param STRING	$y_key		*Optional* The Cache Key
+	 *
+	 * @return STRING	The 4 letters cache prefix (contains: 0..9 a..z) ; Ex: `xy9z`
+	 */
+	final public static function cachePrefix($y_realm, $y_key='') {
+		//--
+		return (string) strtolower(
+			(string) substr(
+				(string) str_pad( // fix left padding to have a fixed length string of 4 chars after conversion from `0000` to `MH33`
+					(string) base_convert( // will have after conversion a base36 number from 0 to MH33
+						(string) substr( // 00000 to FFFFF
+							(string) md5($y_realm.':'.$y_key), // calculate a hash based on realm and key for the purpose of balance the storage using this prefix
+							0, // start from begining and get
+							5 // the first 5 hexa characters of the hash
+						),
+						16, // convert the prefix from hexa (base-16) because is using only 0..9 and a..f
+						36  // to base-36 as will use 9..9 and a..z instead
+					),
+					4,
+					'0',
+					STR_PAD_LEFT
+				),
+				0, // start from begining and get
+				4 // ensure no more than 4 characters
+			)
+		); // ensure even higher entropy by using 1..9 and a..z instead of 1..f
+		//--
+	} //END FUNCTION
+
+
+	/**
 	 * Validate persistent Cache Realm (can be empty or must comply with self::safeKey() charset)
 	 *
 	 * @param STRING 	$y_realm	The Cache Realm

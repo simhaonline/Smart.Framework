@@ -57,7 +57,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_1D_MODE')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20191204
+ * @version 	v.20191206
  * @package 	Plugins:ViewComponents
  *
  */
@@ -82,6 +82,11 @@ final class SmartBarcode1D {
 	 *
 	 */
 	public static function getBarcode($y_code, $y_type, $y_format, $y_size, $y_height, $y_color='#000000', $y_display_text=false, $y_cachetime=-1) {
+		//--
+		if((string)trim((string)$y_code) == '') {
+			Smart::log_warning(__METHOD__.' # Empty Code');
+			return '';
+		} //end if
 		//--
 		$y_size = (int) $y_size;
 		if($y_size < 1) {
@@ -159,23 +164,10 @@ final class SmartBarcode1D {
 		$y_cachetime = (int) $y_cachetime;
 		//--
 
-		//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
-		$tmp_1_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 0, 1));
-		$tmp_2_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 1, 1));
-		$tmp_3_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($y_code), 2, 1));
-		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_1_prefix))) {
-			$tmp_1_prefix = '@';
-		} //end if
-		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_2_prefix))) {
-			$tmp_2_prefix = '@';
-		} //end if
-		if(((string)trim((string)$tmp_3_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_3_prefix))) {
-			$tmp_3_prefix = '@';
-		} //end if
 		//--
 		$realm = 'barcode1d';
-		$cache_realm = (string) SmartDbaPersistentCache::safeKey($tmp_1_prefix.$tmp_2_prefix.$tmp_3_prefix.'-'.$realm.'-T'.$c__typ.'-F'.$c__fmt.'-S'.(int)$y_size.'-H'.(int)$y_height.'-Q'.trim((string)$y_color,'#').'-'.$barcode_show_text);
-		$cache_uuid  = (string) SmartDbaPersistentCache::safeKey(substr(Smart::safe_filename($y_code), 0, 25).'-'.sha1($realm.'://'.$barcode_type.'/'.$barcode_format.'/'.(int)$y_size.'/'.(int)$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code));
+		$cache_realm = (string) SmartDbaPersistentCache::safeKey($realm.'-T'.$c__typ.'-F'.$c__fmt.'-S'.(int)$y_size.'-H'.(int)$y_height.'-Q'.trim((string)$y_color,'#').'-'.$barcode_show_text);
+		$cache_uuid  = (string) SmartDbaPersistentCache::safeKey(substr((string)Smart::safe_filename($y_code), 0, 25).'-'.sha1($realm.'://'.$barcode_type.'/'.$barcode_format.'/'.(int)$y_size.'/'.(int)$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code));
 		//--
 
 		//--

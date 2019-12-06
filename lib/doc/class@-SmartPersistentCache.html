@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="unix-world.org">
 	<meta name="description" content="\SmartPersistentCache        final class \ SmartPersistentCache  extends \SmartAbstractPersistentCache   {   } ::    Class: SmartPersistentCache (Default)">
-	<meta name="keywords" content="smartpersistentcache, final, class, smartpersistentcache, extends, smartabstractpersistentcache, class, default, the, backends, used, for, persistent, cache, must, be, very, fast, support, large, keys, and, supply, key, expiration, by, time., if, is, not, supported, natively, then, this, functionality, custom, implemented, to, delete, expired, keys., supports, many, adapters, that, can, enabled, via, config., notice, will, share, between, both, areas, index, admin, it, programmer s, choice, work, ensure, realm, separation, required, so, ex, index, may, use, separate, realms, than, language, php, located, at, lib app persistent-cache-x-blackhole.php, package, application caching, namespace, name, version, v, depends, -, hints, your, own, adapter, in, smart.framework, you, have, build, extending, smartabstractpersistentcache">
+	<meta name="keywords" content="smartpersistentcache, final, class, smartpersistentcache, extends, smartabstractpersistentcache, class, default, the, backends, used, for, persistent, cache, must, be, very, fast, support, large, keys, and, supply, key, expiration, by, time., if, is, not, supported, natively, then, this, functionality, custom, implemented, to, delete, expired, keys., supports, many, adapters, that, can, enabled, via, config., notice, will, share, between, both, areas, index, admin, it, programmer s, choice, work, ensure, realm, separation, required, so, ex, index, may, use, separate, realms, than, language, php, located, at, lib app persistent-cache-x-blackhole.php, package, application caching, namespace, name, version, v, depends, -, hints, adapter, set, in, etc init.php, as, smart framework persistent cache handler, default, there, are, options">
 	<meta name="summary" content="Smart.Framework : PHP Documentation: \SmartPersistentCache">
 	<title>PHP Documentation for: \SmartPersistentCache</title>
 	<!-- CSS and Fonts -->
@@ -698,9 +698,9 @@ NOTICE: The Persistent Cache will share the keys between both areas (INDEX and A
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartPersistentCache</span></li>
 		
-		<li><b>Version:</b> v.20191205</li>
+		<li><b>Version:</b> v.20191206</li>
 		<li><b>Depends:</b> -</li>
-		<li><b>Hints:</b> To  use your own custom adapter for the persistent cache in Smart.Framework you have to build it by extending the SmartAbstractPersistentCache abstract class and define it in etc/init.php as SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER</li>
+		<li><b>Hints:</b> The  Persistent Cache adapter can be set in etc/init.php as SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER ; By default there are 3 options for the Persistent Cache Adapter in Smart.Framework ; 1st is Blackhole (inactive), the 2nd is DBA and 3rd is Redis ; you can also use your own custom adapter for the persistent cache that you must develop by extending the SmartAbstractPersistentCache abstract class</li>
 		<li><b>Usage:</b> static  object: Class::method() - This class provides only STATIC methods</li>
 		
 				<li><b>Inheritance Chart:</b>
@@ -892,6 +892,25 @@ This function should be used in some caching scenarios to check if make sense to
 @param: {STRING} $y_key: The Cache Key ; Use * for All Keys in that Realm</div>
 	
 			<div class="doc-method-comments">Unset a Key into the persistent Cache</div>
+	
+	
+	
+</div><div class="doc-container" id="Method--cachePrefix">
+	<span class="doc-modifiers">final public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>cachePrefix</b></span>&nbsp;(
+				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_realm` Parameter is REQUIRED">$y_realm</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_key` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_key</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
+	
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
+	<br><span class="doc-inherited"><i>inherited</i>&nbsp;from&nbsp;<b>\SmartAbstractPersistentCache</b></span>
+	
+			<div class="doc-method-ret-params">@return: {STRING} The 4 letters cache prefix (contains: 0..9 a..z) ; Ex: `xy9z`<br>
+@param: {STRING} $y_realm: The Cache Realm<br>
+@param: {STRING} $y_key: *Optional* The Cache Key</div>
+	
+			<div class="doc-method-comments">Create a cache prefix for the persistent Cache for a realm and an optional key<br>
+This is mainly designed to be used by the FileSystem based persistent cache implementations, but can be used also for other purposes<br>
+Ex: if the prefix returned by this method will be `xy9z` can be expanded by the handler as `x/y/` or `x/y/9/` or `x/y/9/z/` for distributing the cache files in a balanced way on disk, depending how many levels will need</div>
 	
 	
 	
@@ -1091,6 +1110,9 @@ function smartHandleDocSelector(obj) {
 									<option value="Method--unsetKey"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;unsetKey()</option>
 			
 			
+									<option value="Method--cachePrefix"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;cachePrefix()</option>
+			
+			
 									<option value="Method--validateRealm"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;validateRealm()</option>
 			
 			
@@ -1129,7 +1151,7 @@ function smartHandleDocSelector(obj) {
 
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-12-05 17:14:17 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-12-06 19:59:09 +0000</small>
 <hr>
 <br>
 <!-- # -->

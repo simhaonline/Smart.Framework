@@ -27,7 +27,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'DBA: DB file based');
  *
  * @access 		PUBLIC
  * @depends 	SmartDbaDb, Smart, PHP DBA
- * @version 	v.20191205
+ * @version 	v.20191206
  * @package 	Application
  *
  */
@@ -63,11 +63,11 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		$is_fatal_err = false; // for session do not use fatal errors, just log them
 		//-- {{{SYNC-SESSION-FILE_BASED-PREFIX}}}
 		$tmp_1_prefix = (string) strtolower((string)substr((string)$this->sess_ns, -3, 1));
-		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_1_prefix))) {
+		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_1_prefix))) {
 			$tmp_1_prefix = '@';
 		} //end if
 		$tmp_2_prefix = (string) strtolower((string)substr((string)$this->sess_ns, -1, 1));
-		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_2_prefix))) {
+		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_2_prefix))) {
 			$tmp_2_prefix = '@';
 		} //end if
 		//--

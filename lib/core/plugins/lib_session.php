@@ -64,7 +64,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.20191204
+ * @version 	v.20191206
  * @package 	Application:Session
  *
  */
@@ -257,16 +257,18 @@ final class SmartSession {
 			die('');
 			return;
 		} //end if
-		$sf_sess_dpfx = (string) substr($the_sess_hash_pub_key, 0, 1).'-'.substr($the_sess_hash_priv_key, 0, 1); // this come from hexa so 3 chars are 16x16x16=4096 dirs
+		$sf_sess_dpfx = (string) substr((string)$the_sess_hash_pub_key, 0, 1).'-'.substr((string)$the_sess_hash_priv_key, 0, 1); // this come from hexa so 3 chars are 16x16x16=4096 dirs
 		//--
 		if((string)$browser_os_ip_identification['bw'] == '@s#') {
 			$sf_sess_ns = '@sr-'.$sf_sess_dpfx;
 		} elseif((string)$browser_os_ip_identification['bw'] == 'bot') {
 			$sf_sess_ns = 'r0-'.$sf_sess_dpfx; // we just need a short prefix for robots (on disk is costly for GC to keep separate folders, but of course, not so safe)
+		} elseif((string)$browser_os_ip_identification['bw'] == '[?]') {
+			$sf_sess_ns = 'c-'.'_x_'.'-'.$sf_sess_dpfx; // unidentified browser
 		} else {
-			$sf_sess_ns = 'c-'.substr($browser_os_ip_identification['bw'],0,3).'-'.$sf_sess_dpfx; // we just need a short prefix for clients (on disk is costly for GC to keep separate folders, but of course, not so safe)
+			$sf_sess_ns = 'c-'.substr((string)$browser_os_ip_identification['bw'],0,3).'-'.$sf_sess_dpfx; // we just need a short prefix for clients (on disk is costly for GC to keep separate folders, but of course, not so safe)
 		} //end if else
-		$sf_sess_ns = Smart::safe_filename($sf_sess_ns);
+		$sf_sess_ns = (string) Smart::safe_filename($sf_sess_ns);
 		if(((string)$sf_sess_ns == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$sf_sess_ns))) {
 			Smart::raise_error(
 				'SESSION // FATAL ERROR: Invalid/Empty Session NameSpace: '.$sf_sess_ns
@@ -274,14 +276,15 @@ final class SmartSession {
 			die('');
 			return;
 		} //end if
-		//-- by default set for files {{{SYNC-SESSION-FILE_BASED-PREFIX}}}
+		//-- by default set for files
 		$sf_sess_mode = 'files';
+		//-- {{{SYNC-SESSION-FILE_BASED-PREFIX}}}
 		$tmp_1_prefix = (string) strtolower((string)substr((string)$sf_sess_ns, -3, 1));
-		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_1_prefix))) {
+		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_1_prefix))) {
 			$tmp_1_prefix = '@';
 		} //end if
 		$tmp_2_prefix = (string) strtolower((string)substr((string)$sf_sess_ns, -1, 1));
-		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_2_prefix))) {
+		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_2_prefix))) {
 			$tmp_2_prefix = '@';
 		} //end if
 		$sf_sess_dir = 'tmp/sessions/'.SmartFileSysUtils::add_dir_last_slash($sf_sess_area).SmartFileSysUtils::add_dir_last_slash($tmp_1_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_2_prefix).SmartFileSysUtils::add_dir_last_slash($sf_sess_ns);
@@ -459,7 +462,7 @@ final class SmartSession {
  * Abstract Class Smart Custom Session
  * This is the abstract for extending the class SmartCustomSession
  *
- * @version 	v.20191204
+ * @version 	v.20191206
  * @package 	development:Application
  */
 abstract class SmartAbstractCustomSession {

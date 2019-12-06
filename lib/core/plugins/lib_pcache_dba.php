@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	Smart, PHP DBA, SmartDbaUtilDb, SmartDbaDb
- * @version 	v.20191205
+ * @version 	v.20191206
  * @package 	Plugins:Database:Dba
  *
  */
@@ -280,6 +280,19 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
+	private static function getSafeStorageNameCharPrefix($y_char) {
+		//--
+		$y_char = (string) strtolower((string)$y_char);
+		//--
+		if(((string)trim((string)$y_char) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$y_char))) {
+			$y_char = '@';
+		} //end if
+		//--
+		return (string) $y_char;
+		//--
+	} //END FUNCTION
+
+
 	private static function initCacheManager($y_realm) {
 		//--
 		if(!is_array(self::$dba)) {
@@ -303,24 +316,21 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			//--
 			$handler = (string) SmartDbaUtilDb::getDbaHandler();
 			//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
-			if(((string)trim((string)$realm) != '') AND ((string)$realm != '!') AND (SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$realm))) {
-				$tmp_1_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($realm), 0, 1));
-				$tmp_2_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($realm), 1, 1));
-				$tmp_3_prefix = (string) strtolower((string)substr((string)Smart::safe_varname($realm), 2, 1));
-				if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_1_prefix))) {
-					$tmp_1_prefix = '@';
-				} //end if
-				if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_2_prefix))) {
-					$tmp_2_prefix = '@';
-				} //end if
-				if(((string)trim((string)$tmp_3_prefix) == '') OR (!preg_match('/^[a-z0-9]+$/', (string)$tmp_3_prefix))) {
-					$tmp_3_prefix = '@';
-				} //end if
+			if(((string)trim((string)$realm) != '') AND ((string)$realm != '!')) {
+				//--
+				$cachePrefix = (string) SmartPersistentCache::cachePrefix($realm);
+				$tmp_1_prefix = (string) self::getSafeStorageNameCharPrefix(substr((string)$cachePrefix, 0, 1));
+				$tmp_2_prefix = (string) self::getSafeStorageNameCharPrefix(substr((string)$cachePrefix, 1, 1));
+				$tmp_3_prefix = (string) self::getSafeStorageNameCharPrefix(substr((string)$cachePrefix, 2, 1));
+				//--
 				$db_file_folder = (string) SmartFileSysUtils::add_dir_last_slash(self::DBA_FOLDER).SmartFileSysUtils::add_dir_last_slash($tmp_1_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_2_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_3_prefix);
 				$dba_fname = (string) substr((string)self::DBA_FILE, 0, -4).'-@-'.substr(Smart::safe_filename(strtolower((string)$realm)), 0, 50).'#'.SmartHashCrypto::crc32b($realm).substr((string)self::DBA_FILE, -4, 4); // ~ 79 chars ; NOTICE: $realm can contain slashes as they are allowed by validateRealm !!
-			} else {
+				//--
+			} else { // fallback to default realm
+				//--
 				$db_file_folder = (string) SmartFileSysUtils::add_dir_last_slash(self::DBA_FOLDER);
 				$dba_fname = (string) self::DBA_FILE;
+				//--
 			} //end if else
 			SmartFileSysUtils::raise_error_if_unsafe_path($db_file_folder);
 			//--

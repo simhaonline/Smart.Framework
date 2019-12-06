@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191204
+ * @version 	v.20191206
  *
  */
 final class TestUnitPCache {
@@ -108,6 +108,14 @@ final class TestUnitPCache {
 			} //end if
 		} //end if
 		//--
+		if((string)$err == '') {
+			$cachePrefix = (string) \SmartPersistentCache::cachePrefix($the_test_realm);
+			$tests[] = 'Get the Cache Prefix (must be exactly 4 characters containing 0..9 a..z): `'.$cachePrefix.'`';
+			if((\strlen((string)\trim((string)$cachePrefix)) != 4) OR (!\preg_match('/^[a-z0-9]{4}$/', (string)$cachePrefix))) {
+				$err = 'The Cache Prefix must have only 4 characters as 0-9 a-z ...';
+			} //end if
+		} //end if
+		//--
 
 		//--
 		$time = \microtime(true);
@@ -146,7 +154,7 @@ final class TestUnitPCache {
 				$err = 'Persistent Cache SetKey (short) returned a non-true result: '."\n".$pcache_test_key;
 			} //end if
 			if((string)$err == '') {
-				$tests[] = 'Wait 7 seconds for Persistent Cache Key to expire, then check again if exists (time not counted)';
+				$tests[] = 'Wait '.(int)$expire_wait_seconds.' seconds for Persistent Cache Key to expire, then check again if exists (time not counted)';
 				sleep((int)$expire_wait_seconds); // wait the Persistent Cache Key to Expire
 				$time = (float) ((float)$time + (int)$expire_wait_seconds); // ignore those wait seconds (waiting time) to fix counter
 				$tests[] = '-- FIX Counter (substract the '.(int)$expire_wait_seconds.' seconds, waiting time) ...';
