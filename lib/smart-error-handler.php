@@ -10,7 +10,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 } //end if
 //-----------------------------------------------------
 
-// # r.20191205 # this should be loaded from app web root only
+// # r.20191206 # this should be loaded from app web root only
 
 // ===== IMPORTANT =====
 //	* NO VARIABLES SHOULD BE DEFINED IN THIS FILE BECAUSE IS LOADED BEFORE REGISTERING ANY OF GET/POST VARIABLES (CAN CAUSE SECURITY ISSUES)
@@ -314,7 +314,7 @@ function smart__framework__err__handler__get__absolute_logpath() {
 		(!preg_match((string)$regex, (string)$path))
 	) {
 		@http_response_code(500);
-		die('Smart.Framework # ERROR HANDLER: the current installation of Smart.Framework runs under a Path that contain unsafe characters ; Only these characters are allowed in path: `_`, `a-z`, `A-Z`, `0-9`, `-`, `.`, `@`, `#` and `/` on linux/unix ; on windows also the `:` character is allowed');
+		die('Smart.Framework # ERROR HANDLER: the current installation of Smart.Framework runs under a non-secure Path ; Path must not be no longer than 90 characters long ; Only these characters are allowed in the Path: `_`, `a-z`, `A-Z`, `0-9`, `-`, `.`, `@`, `#` and `/` on Linux/Unix ; on Windows also the `:` character is allowed');
 		return '';
 	} //end if
 	//--

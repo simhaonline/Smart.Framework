@@ -35,11 +35,11 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //=====================================================================================
 
 //===== pre-read to make this available for errors called from register_shutdown_function() handlers as they cannot handle relative paths ... (Ex: session handler with sqlite)
-if(defined('SMART_FRAMEWORK_COMPONENTS_ERR_MSG')) {
+if(defined('SMART_TPL_COMPONENTS_APP_ERROR_MSG')) {
 	@http_response_code(500);
-	die('The constant SMART_FRAMEWORK_COMPONENTS_ERR_MSG must not be previous defined: '.@basename(__FILE__).' ...');
+	die('The constant SMART_TPL_COMPONENTS_APP_ERROR_MSG must not be previous defined: '.@basename(__FILE__).' ...');
 } //end if
-define('SMART_FRAMEWORK_COMPONENTS_ERR_MSG', (string)SmartFileSystem::read('lib/core/templates/app-error-message.inc.htm')); // it must not contain any sub-templates
+define('SMART_TPL_COMPONENTS_APP_ERROR_MSG', (string)SmartFileSystem::read('lib/core/templates/app-error-message.inc.htm')); // it must not contain any sub-templates
 //=====
 
 /**
@@ -80,7 +80,7 @@ final class SmartComponents {
 		$y_area_two = (string) trim((string)$y_area_two); // if this is empty will display: View App Log for more details ...
 		//--
 		return (string) SmartMarkersTemplating::render_template(
-			(string) SMART_FRAMEWORK_COMPONENTS_ERR_MSG,
+			(string) SMART_TPL_COMPONENTS_APP_ERROR_MSG,
 			[
 				'WIDTH' 	=> (int) $y_width,
 				'TITLE' 	=> (string) $y_title,

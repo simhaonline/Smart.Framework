@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.20191127
+ * @version 	v.20191205
  * @package 	Application:Development
  *
  */
@@ -792,6 +792,8 @@ private static function print_log_configs() {
 			} else {
 				$val = (string) $val.' (!!! Warning, Invalid ... Must be OCTAL !!!)';
 			} //end if
+		} elseif((string)$key == 'APP_AUTH_ADMIN_PASSWORD') {
+			$val = '*****'; // avoid display pass as clear text
 		} //end if
 		//--
 		$log .= '<table cellspacing="0" cellpadding="2" width="100%">';
@@ -991,7 +993,10 @@ private static function print_log_environment($req_filtered, $cookies_arr, $get_
 		$log .= '<div class="smartframework_debugbar_status smartframework_debugbar_status_highlight" style="width:450px;">Total Variables: <b>'.Smart::escape_html($max).'</b></div>';
 		$log .= '<table cellspacing="0" cellpadding="2">';
 		foreach($server_arr as $debug_key => $debug_val) {
-			$log .= '<tr valign="top"><td style="min-width: 200px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true).'</font></div></td></tr>';
+			if((string)$debug_key == 'PHP_AUTH_PW') {
+				$debug_val = '*****'; // avoid display pass as clear text
+			} //end if
+			$log .= '<tr valign="top"><td style="min-width: 200px;"><div class="smartframework_debugbar_inforow"><b>'.Smart::escape_html($debug_key).'</b></div></td><td><div class="smartframework_debugbar_inforow"><font color="#000000">'.($debug_val ? SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true) : '&nbsp;').'</font></div></td></tr>';
 		} //end while
 		$log .= '</table>';
 	} else {
@@ -1051,6 +1056,9 @@ private static function print_log_auth($auth_arr) {
 			if(is_array($debug_val)) {
 				$log .= '<pre>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html(SmartUtils::pretty_print_var($debug_val)), true).'</pre>';
 			} else {
+				if((string)$debug_key == 'login-password') {
+					$debug_val = '*****'; // avoid display pass as clear text
+				} //end if
 				$log .= SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($debug_val), true);
 			} //end if else
 			$log .= '</font></div></td></tr>';

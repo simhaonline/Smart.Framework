@@ -49,7 +49,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
- * @version 	v.20191203
+ * @version 	v.20191205
  * @package 	@Core:Extra
  *
  */
@@ -359,7 +359,7 @@ final class SmartUtils {
 				} else {
 					//--
 					if(is_object($val)) { // {{{SYNC-UTILS-PRETTY-PRINT-VAR}}}
-						$val = '!OBJECT!';
+						$val = '!OBJECT! # `'.get_class($val).'`';
 					} elseif($val === null) {
 						$val = 'NULL';
 					} elseif($val === false) {

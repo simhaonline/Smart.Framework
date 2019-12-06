@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191119
+ * @version 	v.20191205
  *
  */
 final class TestUnitMongoDB {
@@ -59,7 +59,9 @@ final class TestUnitMongoDB {
 		//--
 
 		//--
-		$mongo = new \SmartMongoDb((array)$cfg_mongo);
+		$is_fatal_err = true; // this is default
+		//--
+		$mongo = new \SmartMongoDb((array)$cfg_mongo, $is_fatal_err);
 		//--
 
 		//--

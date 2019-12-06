@@ -61,7 +61,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191204
+ * @version 	v.20191206
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -470,7 +470,7 @@ final class SmartSQliteDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191204
+ * @version 	v.20191206
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -1603,8 +1603,12 @@ final class SmartSQliteUtilDb {
 			self::error($db, 'CREATE TABLE', 'Create Table: '.$table_name, 'Invalid Table Name', $table_name);
 			return '';
 		} //end if
+		//-- check if table exists
+		if(self::check_if_table_exists($db, $table_name) == 1) { // if test failed means table is not available
+			return true;
+		} //end if
 		//-- the create table query
-		$tbl_query = "CREATE TABLE {$table_name} (\n{$table_schema}\n);";
+		$tbl_query = "CREATE TABLE IF NOT EXISTS {$table_name} (\n{$table_schema}\n);";
 		//--
 		$idx_query = '';
 		//--
@@ -1616,9 +1620,9 @@ final class SmartSQliteUtilDb {
 					return '';
 				} //end if
 				if(is_array($val)) {
-					$idx_query .= ' CREATE '.strtoupper((string)$val['mode']).' INDEX \''.(string)$key.'\' ON `'.(string)$table_name.'` ('.$val['index'].');';
+					$idx_query .= ' CREATE '.strtoupper((string)$val['mode']).' INDEX IF NOT EXISTS \''.(string)$key.'\' ON `'.(string)$table_name.'` ('.$val['index'].');';
 				} else {
-					$idx_query .= ' CREATE INDEX \''.(string)$key.'\' ON `'.(string)$table_name.'` ('.$val.');';
+					$idx_query .= ' CREATE INDEX IF NOT EXISTS \''.(string)$key.'\' ON `'.(string)$table_name.'` ('.$val.');';
 				} //end if else
 			} //end for
 			//--
@@ -1626,11 +1630,9 @@ final class SmartSQliteUtilDb {
 		//--
 		$query = (string) $tbl_query.$idx_query;
 		//--
-		$sqlite_table_exists = self::check_if_table_exists($db, $table_name);
+		self::write_data($db, $query); // this will die with message if query have errors
 		//--
-		if($sqlite_table_exists != 1) { // if test failed means table is not available
-			self::write_data($db, $query); // this will die with message if query have errors
-		} //end if
+		return true;
 		//--
 	} //END FUNCTION
 	//======================================================
@@ -1776,7 +1778,7 @@ final class SmartSQliteUtilDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20191204
+ * @version 	v.20191206
  * @package 	Plugins:Database:SQLite
  *
  */

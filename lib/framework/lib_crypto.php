@@ -381,7 +381,7 @@ final class SmartCipherCrypto {
  * @internal
  *
  * @depends     extensions: PHP OpenSSL ; classes: Smart
- * @version     v.20190103
+ * @version     v.20191206
  *
  */
 final class SmartCryptoOpenSSLCipher {
@@ -594,7 +594,7 @@ final class SmartCryptoOpenSSLCipher {
 		$plainText = (string) trim((string)$arr[0]);
 		$checksum = (string) trim((string)$arr[1]);
 		if((string)sha1($plainText) != (string)$checksum) {
-			Smart::log_warning('SmartCryptoOpenSSLCipher/Decrypt: Checksum Failed');
+			Smart::log_notice('SmartCryptoOpenSSLCipher/Decrypt: Checksum Failed');
 			return ''; // string is corrupted, avoid to return
 		} //end if
 		//-- base64 :: because is not UTF-8 safe and may corrupt unicode characters

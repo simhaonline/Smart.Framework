@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.20191203
+ * @version 	v.20191205
  * @package 	Plugins:Database:Redis
  *
  */
@@ -171,9 +171,9 @@ final class SmartRedisDb {
 		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
 			if($this->fatal_err === true) {
-				$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
-			} else {
 				$txt_conn = 'FATAL ERRORS';
+			} else {
+				$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
 			} //end if else
 			//--
 			if((float)$y_debug_exch_slowtime > 0) {

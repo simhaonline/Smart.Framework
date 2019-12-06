@@ -123,9 +123,9 @@ final class SmartDbaDb {
 		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
 			if($this->fatal_err === true) {
-				$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
-			} else {
 				$txt_conn = 'FATAL ERRORS';
+			} else {
+				$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
 			} //end if else
 			//--
 			if((float)$y_debug_exch_slowtime > 0) {
@@ -387,7 +387,7 @@ final class SmartDbaDb {
 			SmartFrameworkRegistry::setDebugMsg('db', 'dba|log', [
 				'type' => 'read',
 				'data' => __FUNCTION__.' :: '.$this->description,
-				'command' => 'Key='.$key.' ; Status='.(($value === null) ? 'N/A' : ( ($value === false) ? 'Expired' : 'Found' )).' ; Value='.Smart::text_cut_by_limit((string)$value, 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]'),
+				'command' => 'Key='.$key.' ; Status='.(($value === null) ? 'N/A' : ( ($value === false) ? 'Expired' : 'Found' )).' ; PackSize='.(int)$rlen.' ; Value='.Smart::text_cut_by_limit((string)$value, 1024, true, '[...data-longer-than-1024-bytes-is-not-logged-all-here...]'),
 				'time' => Smart::format_number_dec($time_end, 9, '.', ''),
 				'rows' => ($value === null) ? 0 : ( ($value === false) ? (-1 * (int)$rlen) : strlen((string)$value) ),
 				'connection' => (string) $this->dba
@@ -1396,7 +1396,8 @@ final class SmartDbaUtilDb {
 	 */
 	public static function dataPack($originalData) {
 		//--
-		return (string) SmartUtils::data_archive(Smart::seryalize($originalData));
+	//	return (string) SmartUtils::data_archive(Smart::seryalize($originalData));
+		return (string) SmartPersistentCache::varCompress($originalData);
 		//--
 	} //END FUNCTION
 
@@ -1409,7 +1410,8 @@ final class SmartDbaUtilDb {
 	 */
 	public static function dataUnpack($packedData) {
 		//--
-		return Smart::unseryalize(SmartUtils::data_unarchive((string)$packedData)); // mixed
+	//	return Smart::unseryalize(SmartUtils::data_unarchive((string)$packedData)); // mixed
+		return SmartPersistentCache::varUncompress((string)$packedData); // mixed
 		//--
 	} //END FUNCTION
 

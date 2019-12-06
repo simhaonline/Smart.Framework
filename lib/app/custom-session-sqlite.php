@@ -27,7 +27,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'SQLite: DB file based')
  *
  * @access 		PUBLIC
  * @depends 	SmartSQliteDb, Smart, PHP SQLite3 Extension
- * @version 	v.20191205
+ * @version 	v.20191206
  * @package 	Application
  *
  */
@@ -79,21 +79,23 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		); // use the rest of values from configs
 		$this->sqlite->open();
 		//--
-		$this->sqlite->write_data('BEGIN'); // start transaction
-		$this->sqlite->create_table(
-			'smart_framework_sessions',
-			'`id` CHARACTER VARYING(256) PRIMARY KEY NOT NULL, `area` CHARACTER VARYING(64) NOT NULL, `ns` CHARACTER VARYING(512) NOT NULL, `created` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, `modified` BIGINT NOT NULL, `expire` BIGINT NOT NULL, `expire_at` BIGINT NOT NULL, `data` TEXT NOT NULL',
-			[ // indexes
-			//	'id' 		=> 'id', // not necessary, it is the primary key
-				'area' 		=> 'area ASC',
-				'ns' 		=> 'ns ASC',
-			//	'created' 	=> 'created',
-				'modified' 	=> 'modified',
-			//	'expire' 	=> 'expire',
-				'expire_at' => 'expire_at'
-			]
-		);
-		$this->sqlite->write_data('COMMIT'); // commit transaction
+		if(!$this->sqlite->check_if_table_exists('smart_framework_sessions')) { // better check here and make create table in a transaction if does not exists ; if not check here the create_table() will anyway check
+			$this->sqlite->write_data('BEGIN'); // start transaction ; avoid transaction run each time on session table ...
+			$this->sqlite->create_table(
+				'smart_framework_sessions',
+				'`id` CHARACTER VARYING(256) PRIMARY KEY NOT NULL, `area` CHARACTER VARYING(64) NOT NULL, `ns` CHARACTER VARYING(512) NOT NULL, `created` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, `modified` BIGINT NOT NULL, `expire` BIGINT NOT NULL, `expire_at` BIGINT NOT NULL, `data` TEXT NOT NULL',
+				[ // indexes
+				//	'id' 		=> 'id', // not necessary, it is the primary key
+					'area' 		=> 'area ASC',
+					'ns' 		=> 'ns ASC',
+				//	'created' 	=> 'created',
+					'modified' 	=> 'modified',
+				//	'expire' 	=> 'expire',
+					'expire_at' => 'expire_at'
+				]
+			);
+			$this->sqlite->write_data('COMMIT'); // commit transaction
+		} //end if
 		//--
 		return true;
 		//--

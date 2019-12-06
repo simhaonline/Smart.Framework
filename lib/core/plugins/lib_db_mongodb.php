@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20191127
+ * @version 	v.20191205
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -168,9 +168,15 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 		//--
 		if(SmartFrameworkRuntime::ifDebug()) {
 			//--
+			if($this->fatal_err === true) {
+				$txt_conn = 'FATAL ERRORS';
+			} else {
+				$txt_conn = 'IGNORED BUT LOGGED AS WARNINGS';
+			} //end if else
+			//--
 			SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 				'type' => 'metainfo',
-				'data' => 'MongoDB App Connector Version: '.SMART_FRAMEWORK_VERSION
+				'data' => 'MongoDB App Connector Version: '.SMART_FRAMEWORK_VERSION.' // Connection Errors are: '.$txt_conn
 			]);
 			//--
 			if((float)$timeslow > 0) {

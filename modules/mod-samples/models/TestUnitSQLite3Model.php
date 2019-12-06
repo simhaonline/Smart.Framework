@@ -37,7 +37,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191130
+ * @version 	v.20191206
  *
  */
 final class TestUnitSQLite3Model {
@@ -1588,32 +1588,35 @@ final class TestUnitSQLite3Model {
 		//--
 
 		//--
-		$this->connection->write_data('BEGIN'); // start transaction
-		$this->connection->create_table(
-			'sample_countries',
-			'iso character varying(2) PRIMARY KEY NOT NULL, name character varying(100) NOT NULL, iso3 character varying(3) NOT NULL, numcode integer NOT NULL, uuid character varying(10)',
-			[ // indexes
-			//	'iso' 		=> 'iso', // not necessary, it is the primary key
-				'name' 		=> 'name ASC',
-				'iso3' 		=> 'iso3',
-				'numcode' 	=> 'numcode DESC',
-				'uuid' 		=> 'uuid'
-			]
-		);
-		$this->connection->write_data('UPDATE `sample_countries` '.$this->connection->prepare_statement($rows[0], 'update').' WHERE (`iso` IS NULL)'); // test
-		$iterator = 0;
-		foreach($rows as $key => $row) {
-			$row['uuid'] = (string) $this->connection->new_safe_id('uid10seq', 'uuid', 'sample_countries');
-			$wr = (array) $this->connection->write_data(
-				'INSERT INTO `sample_countries` '.$this->connection->prepare_statement($row, 'insert')
+		if(!$this->connection->check_if_table_exists('sample_countries')) { // better check here and make create table in a transaction if does not exists ; if not check here the create_table() will anyway check
+			$this->connection->write_data('BEGIN'); // start transaction
+			$this->connection->create_table(
+				'sample_countries',
+				'iso character varying(2) PRIMARY KEY NOT NULL, name character varying(100) NOT NULL, iso3 character varying(3) NOT NULL, numcode integer NOT NULL, uuid character varying(10)',
+				[ // indexes
+				//	'iso' 		=> 'iso', // not necessary, it is the primary key
+					'name' 		=> 'name ASC',
+					'iso3' 		=> [ 'mode' => 'unique', 'index' => 'iso3' ],
+					'numcode' 	=> 'numcode DESC',
+					'uuid' 		=> 'uuid'
+				]
 			);
-			$iterator++;
-			if($iterator != $wr[2]) {
-				\Smart::log_warning(__METHOD__.' :: Invalid LastInsertID at cycle #'.$iterator.' is: '.$wr[2]);
-			} //end if
-		} //end foreach
+			$this->connection->write_data('UPDATE `sample_countries` '.$this->connection->prepare_statement($rows[0], 'update').' WHERE (`iso` IS NULL)'); // test
+			$iterator = 0;
+			foreach($rows as $key => $row) {
+				$row['uuid'] = (string) $this->connection->new_safe_id('uid10seq', 'uuid', 'sample_countries');
+				$wr = (array) $this->connection->write_data(
+					'INSERT INTO `sample_countries` '.$this->connection->prepare_statement($row, 'insert')
+				);
+				$iterator++;
+				if($iterator != $wr[2]) {
+					\Smart::log_warning(__METHOD__.' :: Invalid LastInsertID at cycle #'.$iterator.' is: '.$wr[2]);
+				} //end if
+			} //end foreach
+			$this->connection->write_data('COMMIT');
+		} //end if
+		//--
 		$this->connection->read_data('SELECT * FROM sample_countries WHERE (iso '.$this->connection->prepare_statement(array('US', 7, null), 'in-select').')');
-		$this->connection->write_data('COMMIT');
 		//--
 
 	} //END FUNCTION
