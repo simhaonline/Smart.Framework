@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	Smart, SmartRedisDb
- * @version 	v.20191205
+ * @version 	v.20191207
  * @package 	Plugins:Database:Dba
  *
  */

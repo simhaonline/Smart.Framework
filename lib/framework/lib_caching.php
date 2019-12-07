@@ -34,20 +34,19 @@ if((!function_exists('gzencode')) OR (!function_exists('gzdecode'))) {
 //=====================================================================================
 
 /**
- * Class: SmartCache - Provides per Execution, Volatille Cache (in-PHP-Memory volatille cache).
+ * Class: SmartCache - Provides per Execution, Volatille Cache (in-PHP-Memory).
  *
- * This cache type is volatille, not persistent and will reset on each PHP execution.
- * Because this kind of cache is per-execution, the key values may not be shared
- * between multiple instances, and offer 100% isolation in all cases.
+ * This cache type is volatille, not persistent and will reset after each PHP execution.
+ * Because this kind of cache is per-execution, the key values will not be shared between executions.
  * It is intended to be used on per-execution optimizations to avoid repetitive
- * execution of complex high-cost functions that would output the same result under
- * the same execution conditions as: same environment, same parameters, same client.
+ * execution of complex high-cost methods that would output the same result under
+ * the same execution conditions as: same environment / same parameters / same client.
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20190401
+ * @version 	v.20191207
  * @package 	@Core
  *
  */
@@ -215,7 +214,7 @@ final class SmartCache {
  * @internal
  *
  * @depends 	-
- * @version 	v.20191204
+ * @version 	v.20191207
  * @package 	development:Application
  *
  */
@@ -386,23 +385,35 @@ abstract class SmartAbstractPersistentCache {
 
 
 	/**
-	 * Create a cache prefix for the persistent Cache for a realm and an optional key
+	 * Create a (safe path) Persistent Cache Path prefix for a given realm
 	 * This is mainly designed to be used by the FileSystem based persistent cache implementations, but can be used also for other purposes
-	 * Ex: if the prefix returned by this method will be `xy9z` can be expanded by the handler as `x/y/` or `x/y/9/` or `x/y/9/z/` for distributing the cache files in a balanced way on disk, depending how many levels will need
 	 *
-	 * @param STRING	$y_realm	The Cache Realm
-	 * @param STRING	$y_key		*Optional* The Cache Key
+	 * @param INTEGER+ 	$y_len 			The Cache Prefix length (how many dirs in the expanded path) ; can be between 2..4 depending how will scale the cache structure
+	 * @param STRING	$y_realm		The Cache Realm
+	 * @param STRING 	$y_key			*Optional* The Cache Key
 	 *
-	 * @return STRING	The 4 letters cache prefix (contains: 0..9 a..z) ; Ex: `xy9z`
+	 * @return STRING	The 2..4 letters cache path prefix (contains: 0..9 a..z) expanded to a path ; Ex: `x/y` or `x/y/9` or `x/y/9/z`
 	 */
-	final public static function cachePrefix($y_realm, $y_key='') {
+	final public static function cachePathPrefix($y_len, $y_realm, $y_key='') {
 		//--
-		return (string) strtolower(
+		$y_len = (int) $y_len;
+		if((int)$y_len < 2) {
+			$y_len = 2;
+		} elseif((int)$y_len > 4) {
+			$y_len = 4;
+		} //end if
+		//--
+		$uuid = (string) $y_realm;
+		if(((string)$y_key !== '') AND ((string)$y_key !== '*')) {
+			$uuid .= ':'.$y_key;
+		} //end if
+		//--
+		$prefix = (string) strtolower(
 			(string) substr(
 				(string) str_pad( // fix left padding to have a fixed length string of 4 chars after conversion from `0000` to `MH33`
 					(string) base_convert( // will have after conversion a base36 number from 0 to MH33
 						(string) substr( // 00000 to FFFFF
-							(string) md5($y_realm.':'.$y_key), // calculate a hash based on realm and key for the purpose of balance the storage using this prefix
+							(string) md5((string)$uuid), // calculate a hash based on realm and key for the purpose of balance the storage using this prefix
 							0, // start from begining and get
 							5 // the first 5 hexa characters of the hash
 						),
@@ -413,38 +424,51 @@ abstract class SmartAbstractPersistentCache {
 					'0',
 					STR_PAD_LEFT
 				),
-				0, // start from begining and get
-				4 // ensure no more than 4 characters
+				0,
+				(int) $y_len
 			)
 		); // ensure even higher entropy by using 1..9 and a..z instead of 1..f
 		//--
+		if((int)strlen((string)$prefix) < (int)$y_len) {
+			$prefix = (string) str_pad((string)$prefix, (int)$y_len, '@', STR_PAD_RIGHT);
+		} //end if
+		//--
+		return (string) Smart::safe_pathname((string)implode('/', (array)str_split((string)substr((string)$prefix, 0, (int)$y_len), 1)));
+		//--
 	} //END FUNCTION
 
 
 	/**
-	 * Validate persistent Cache Realm (can be empty or must comply with self::safeKey() charset)
+	 * Validate persistent Cache Realm
+	 * Can be empty or must comply with PersistentCache::safeKey() restricted charset: _ a-z A-Z 0-9 - . @ # /
+	 * Must be between 0 (min) and 255 (max) characters long
 	 *
-	 * @param STRING 	$y_realm	The Cache Realm
+	 * @param STRING 	$y_realm	The Cache Realm that must be previous prepared with PersistentCache::safeKey() if non-empty
 	 *
-	 * @return BOOLEAN	Returns True if the realm is valid or False if not
+	 * @return BOOLEAN	Returns TRUE if the realm is valid or FALSE if not
 	 */
 	final public static function validateRealm($y_realm) {
 		//--
-		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]*$/', (string)$y_realm)) { // {{{SYNC-WITH-self::safeKey()}}} + allow empty * instead of +
-			return true;
-		} else {
+		if(strlen((string)$y_realm) > 255) {
+			return false;
+		} //end if
+		//--
+		if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]*$/', (string)$y_realm)) { // {{{SYNC-PCACHE-SAFE-KEY-OR-REALM}}} + allow empty * instead of +
 			return false;
 		} //end if else
+		//--
+		return true;
 		//--
 	} //END FUNCTION
 
 
 	/**
-	 * Validate persistent Cache Realm (cannot be empty and must comply with self::safeKey() charset)
+	 * Validate persistent Cache Key
+	 * Cannot be empty and must comply with self::safeKey() restricted charset: _ a-z A-Z 0-9 - . @ # /
 	 *
-	 * @param STRING 	$y_key		The Cache Key
+	 * @param STRING 	$y_key		The Cache Key that must be previous prepared with PersistentCache::safeKey()
 	 *
-	 * @return BOOLEAN	Returns True if the key is valid or False if not
+	 * @return BOOLEAN	Returns TRUE if the key is valid or FALSE if not
 	 */
 	final public static function validateKey($y_key) {
 		//--
@@ -452,17 +476,23 @@ abstract class SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		if(preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_key)) { // {{{SYNC-WITH-self::safeKey()}}}
-			return true;
-		} else {
+		if(strlen((string)$y_key) > 255) {
 			return false;
-		} //end if else
+		} //end if
+		//--
+		if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_key)) { // {{{SYNC-PCACHE-SAFE-KEY-OR-REALM}}}
+			return false;
+		} //end if
+		//--
+		return true;
 		//--
 	} //END FUNCTION
 
 
 	/**
 	 * Prepare a persistent Cache SAFE Key or Realm
+	 * Works only for Keys (that can not be empty) and for non-empty Realms
+	 * Will return a prepared string with a restricted charset: _ a-z A-Z 0-9 - . @ # /
 	 *
 	 * @param STRING 	$y_key_or_realm		The Cache Key or Realm
 	 *
@@ -470,7 +500,7 @@ abstract class SmartAbstractPersistentCache {
 	 */
 	final public static function safeKey($y_key_or_realm) {
 		//--
-		$key_or_realm = (string) Smart::safe_pathname((string)$y_key_or_realm);
+		$key_or_realm = (string) Smart::safe_pathname((string)$y_key_or_realm); // {{{SYNC-PCACHE-SAFE-KEY-OR-REALM}}}
 		if((string)$key_or_realm == '') {
 			$key_or_realm = 'InvalidName__Cache__Key/Realm__';
 			Smart::log_warning(__METHOD__.'() :: Invalid/Empty parameter KeyOrRealm: '.$y_key_or_realm);

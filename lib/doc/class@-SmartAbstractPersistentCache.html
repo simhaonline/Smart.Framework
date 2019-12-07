@@ -697,7 +697,7 @@ It must contain ONLY public functions to avoid late state binding (self:: vs sta
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartAbstractPersistentCache</span></li>
 		
-		<li><b>Version:</b> v.20191204</li>
+		<li><b>Version:</b> v.20191207</li>
 		<li><b>Depends:</b> -</li>
 		
 		
@@ -887,22 +887,23 @@ This function should be used in some caching scenarios to check if make sense to
 	
 	
 	
-</div><div class="doc-container" id="Method--cachePrefix">
-	<span class="doc-modifiers">final public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>cachePrefix</b></span>&nbsp;(
-				<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_realm` Parameter is REQUIRED">$y_realm</span></b></span>, 
+</div><div class="doc-container" id="Method--cachePathPrefix">
+	<span class="doc-modifiers">final public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>cachePathPrefix</b></span>&nbsp;(
+				<i>INTEGER+</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_len` Parameter is REQUIRED">$y_len</span></b></span>, 
+			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_realm` Parameter is REQUIRED">$y_realm</span></b></span>, 
 			<i>STRING</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_key` Parameter is OPTIONAL, with the Default Value: &quot;&quot;">$y_key</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>&quot;&quot;</b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;STRING
 	
 	
-			<div class="doc-method-ret-params">@return: {STRING} The 4 letters cache prefix (contains: 0..9 a..z) ; Ex: `xy9z`<br>
+			<div class="doc-method-ret-params">@return: {STRING} The 2..4 letters cache path prefix (contains: 0..9 a..z) expanded to a path ; Ex: `x/y` or `x/y/9` or `x/y/9/z`<br>
+@param: {INTEGER+} $y_len: The Cache Prefix length (how many dirs in the expanded path) ; can be between 2..4 depending how will scale the cache structure<br>
 @param: {STRING} $y_realm: The Cache Realm<br>
 @param: {STRING} $y_key: *Optional* The Cache Key</div>
 	
-			<div class="doc-method-comments">Create a cache prefix for the persistent Cache for a realm and an optional key<br>
-This is mainly designed to be used by the FileSystem based persistent cache implementations, but can be used also for other purposes<br>
-Ex: if the prefix returned by this method will be `xy9z` can be expanded by the handler as `x/y/` or `x/y/9/` or `x/y/9/z/` for distributing the cache files in a balanced way on disk, depending how many levels will need</div>
+			<div class="doc-method-comments">Create a (safe path) Persistent Cache Path prefix for a given realm<br>
+This is mainly designed to be used by the FileSystem based persistent cache implementations, but can be used also for other purposes</div>
 	
 	
 	
@@ -914,10 +915,12 @@ Ex: if the prefix returned by this method will be `xy9z` can be expanded by the 
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;BOOLEAN
 	
 	
-			<div class="doc-method-ret-params">@return: {BOOLEAN} Returns True if the realm is valid or False if not<br>
-@param: {STRING} $y_realm: The Cache Realm</div>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} Returns TRUE if the realm is valid or FALSE if not<br>
+@param: {STRING} $y_realm: The Cache Realm that must be previous prepared with PersistentCache::safeKey() if non-empty</div>
 	
-			<div class="doc-method-comments">Validate persistent Cache Realm (can be empty or must comply with self::safeKey() charset)</div>
+			<div class="doc-method-comments">Validate persistent Cache Realm<br>
+Can be empty or must comply with PersistentCache::safeKey() restricted charset: _ a-z A-Z 0-9 - . @ # /<br>
+Must be between 0 (min) and 255 (max) characters long</div>
 	
 	
 	
@@ -929,10 +932,11 @@ Ex: if the prefix returned by this method will be `xy9z` can be expanded by the 
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>::</b></span>&nbsp;BOOLEAN
 	
 	
-			<div class="doc-method-ret-params">@return: {BOOLEAN} Returns True if the key is valid or False if not<br>
-@param: {STRING} $y_key: The Cache Key</div>
+			<div class="doc-method-ret-params">@return: {BOOLEAN} Returns TRUE if the key is valid or FALSE if not<br>
+@param: {STRING} $y_key: The Cache Key that must be previous prepared with PersistentCache::safeKey()</div>
 	
-			<div class="doc-method-comments">Validate persistent Cache Realm (cannot be empty and must comply with self::safeKey() charset)</div>
+			<div class="doc-method-comments">Validate persistent Cache Key<br>
+Cannot be empty and must comply with self::safeKey() restricted charset: _ a-z A-Z 0-9 - . @ # /</div>
 	
 	
 	
@@ -947,7 +951,9 @@ Ex: if the prefix returned by this method will be `xy9z` can be expanded by the 
 			<div class="doc-method-ret-params">@return: {STRING} Returns the safe prepared Key or Realm<br>
 @param: {STRING} $y_key_or_realm: The Cache Key or Realm</div>
 	
-			<div class="doc-method-comments">Prepare a persistent Cache SAFE Key or Realm</div>
+			<div class="doc-method-comments">Prepare a persistent Cache SAFE Key or Realm<br>
+Works only for Keys (that can not be empty) and for non-empty Realms<br>
+Will return a prepared string with a restricted charset: _ a-z A-Z 0-9 - . @ # /</div>
 	
 	
 	
@@ -1102,7 +1108,7 @@ function smartHandleDocSelector(obj) {
 									<option value="Method--unsetKey"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;unsetKey()</option>
 			
 			
-									<option value="Method--cachePrefix"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;cachePrefix()</option>
+									<option value="Method--cachePathPrefix"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;cachePathPrefix()</option>
 			
 			
 									<option value="Method--validateRealm"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;validateRealm()</option>
@@ -1143,7 +1149,7 @@ function smartHandleDocSelector(obj) {
 
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2019-12-06 19:59:09 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2019-12-07 20:31:42 +0000</small>
 <hr>
 <br>
 <!-- # -->

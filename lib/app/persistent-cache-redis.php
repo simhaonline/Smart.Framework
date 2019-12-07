@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	SmartRedisDb, Smart
- * @version 	v.20191206
+ * @version 	v.20191207
  * @package 	Application:Caching
  *
  */

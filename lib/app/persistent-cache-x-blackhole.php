@@ -17,19 +17,29 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 /**
- * Class: SmartPersistentCache (Default)
- * The backends used for Persistent Cache must be very fast, must support large keys and must supply key expiration by time.
- * If the key expiration is not supported natively, then this functionality must be custom implemented to delete expired keys.
- * The Persistent Cache supports many adapters that can be enabled via config.
+ * Class: SmartPersistentCache (Default, Blackhole)
+ * Provides compatibility support for the Persistent Cache when not using any storage adapter (handler).
+ * This class is used just for ensuring code reliability when no other real adapter was set.
+ * If no real Persistent Cache adapter is set this class is used by default, automatically.
+ * It will function as a blackhole, meaning the Persistent Cache will be just emulated.
+ * Thus all variables set in this (blackhole) Persistent Cache will simply vanish ... and get will always return an empty result, because have no storage attached (emulated only)
  *
- * NOTICE: The Persistent Cache will share the keys between both areas (INDEX and ADMIN) ; It is programmer's choice and work to ensure realm separation for keys if required so (Ex: INDEX may use separate realms than ADMIN)
- * @hints The Persistent Cache adapter can be set in etc/init.php as SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER ; By default there are 3 options for the Persistent Cache Adapter in Smart.Framework ; 1st is Blackhole (inactive), the 2nd is DBA and 3rd is Redis ; you can also use your own custom adapter for the persistent cache that you must develop by extending the SmartAbstractPersistentCache abstract class
+ * A real Persistent Cache adapter can be set in etc/init.php as SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER to use a real and functional Persistent Cache adapter (handler).
+ * By default there are 2 built-in options and a 3rd extra option for the Persistent Cache Adapter in Smart.Framework:
+ * 1) the built-in DBA adapter, using small DBA files across the FileSystem
+ * 2) the built-in Redis adapter using inMemory Persistent Cache
+ * 3) a custom implementation (that you must develop and set) to use your own custom Persistent Cache adapter (handler) by extending the SmartAbstractPersistentCache abstract class
+ * NOTICE: When developing a custom Persistent Cache adapter (handler) if the key expiration is not supported natively, then this functionality must be implemented in a custom way to expire and to delete expired keys.
+ * By example Memcached is not a good choice for a Persistent Cache storage because the max length of a string that can be stored in Memcached is 1MB.
+ * This is why Smart.Framework supply only the Redis and DBA adapters (and not a Memcached adapter) because another requirement of the Persistent Cache implementation is to have no limit on the key/value that can be stored. And Redis does not have such limit. Also DBA does not have any limit.
+ *
+ * @hints The Persistent Cache will share the keys between both areas (INDEX and ADMIN) ; It is programmer's choice and work to ensure realm separation if needed for the keys if required so (Ex: INDEX area may use separate realms than ADMIN area)
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191206
+ * @version 	v.20191207
  * @package 	Application:Caching
  *
  */
@@ -37,9 +47,6 @@ final class SmartPersistentCache extends SmartAbstractPersistentCache {
 
 	// ::
 
-	// Provides support for the Persistent Cache when not using any adapter.
-	// This is provided just for compatibility.
-	// When this class will be used instead of other persistent cache options it will function as a blackhole, meaning no Persistent Cache will be emulated, thus all variables set through this class will simply vanish ... in this blackhole :-)
 
 	public static function getVersionInfo() {
 		//--

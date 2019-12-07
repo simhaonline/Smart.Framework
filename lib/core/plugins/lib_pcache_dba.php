@@ -37,8 +37,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
- * @depends 	Smart, PHP DBA, SmartDbaUtilDb, SmartDbaDb
- * @version 	v.20191206
+ * @depends 	Smart, PHP DBA Extension, SmartDbaUtilDb, SmartDbaDb
+ * @version 	v.20191207
  * @package 	Plugins:Database:Dba
  *
  */
@@ -52,7 +52,6 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 	const DBA_FOLDER 			= 'tmp/cache/pcache#dba/'; // base cached folder
 	const DBA_FILE   			= 'p-cache.dba';		// base name for dba cache file
 
-	private static $dba 		= null; 	// Array of DBA Objects ; by default is null
 	private static $is_active 	= null;		// Cache Active State ; by default is null ; on 1st check must set to TRUE or FALSE
 
 
@@ -109,8 +108,6 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		self::$dba = []; // reset all connections
-		//--
 		return (bool) SmartFileSystem::dir_delete(
 			(string) SmartFileSysUtils::add_dir_last_slash(self::DBA_FOLDER),
 			true // recursive delete all p-cache folder
@@ -134,13 +131,13 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		$realm = self::initCacheManager($y_realm);
-		if(!$realm) {
-			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$realm);
+		$dba_obj = self::initCacheManager($y_realm, $y_key);
+		if(!is_object($dba_obj)) {
+			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$y_realm.':'.$y_key);
 			return false;
 		} //end if
 		//--
-		return (bool) self::$dba[(string)$realm]->keyExists((string)$y_key);
+		return (bool) $dba_obj->keyExists((string)$y_key);
 		//--
 	} //END FUNCTION
 
@@ -160,13 +157,13 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			return -3;
 		} //end if
 		//--
-		$realm = self::initCacheManager($y_realm);
-		if(!$realm) {
-			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$realm);
+		$dba_obj = self::initCacheManager($y_realm, $y_key);
+		if(!is_object($dba_obj)) {
+			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$y_realm.':'.$y_key);
 			return -3;
 		} //end if
 		//--
-		return (int) self::$dba[(string)$realm]->getTtl((string)$y_key);
+		return (int) $dba_obj->getTtl((string)$y_key);
 		//--
 	} //END FUNCTION
 
@@ -186,13 +183,13 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			return null;
 		} //end if
 		//--
-		$realm = self::initCacheManager($y_realm);
-		if(!$realm) {
-			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$realm);
+		$dba_obj = self::initCacheManager($y_realm, $y_key);
+		if(!is_object($dba_obj)) {
+			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$y_realm.':'.$y_key);
 			return null;
 		} //end if
 		//--
-		return self::$dba[(string)$realm]->getKey((string)$y_key);
+		return $dba_obj->getKey((string)$y_key);
 		//--
 	} //END FUNCTION
 
@@ -217,9 +214,9 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		$realm = self::initCacheManager($y_realm);
-		if(!$realm) {
-			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$realm);
+		$dba_obj = self::initCacheManager($y_realm, $y_key);
+		if(!is_object($dba_obj)) {
+			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$y_realm.':'.$y_key);
 			return false;
 		} //end if
 		//--
@@ -229,7 +226,7 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			$y_expiration = 0; // zero is for not expiring records
 		} //end if
 		//--
-		return (bool) self::$dba[(string)$realm]->setKey((string)$y_key, (string)$y_value, (int)$y_expiration);
+		return (bool) $dba_obj->setKey((string)$y_key, (string)$y_value, (int)$y_expiration);
 		//--
 	} //END FUNCTION
 
@@ -251,16 +248,23 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 			} //end if
 		} //end if
 		//--
-		$realm = self::initCacheManager($y_realm);
-		if(!$realm) {
-			Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$realm);
-			return false;
-		} //end if
-		//--
 		if((string)$y_key == '*') { // delete all keys in this realm
-			return (bool) self::$dba[(string)$realm]->truncateDb(); // for each realm there is a separate DB file, so truncate it
+			//--
+			return (bool) SmartFileSystem::dir_delete(
+				(string) self::getSafeStorageNameDir($y_realm),
+				true // recursive delete all p-cache folder
+			);
+			//--
 		} else { // delete just one key
-			return (bool) self::$dba[(string)$realm]->unsetKey($y_key);
+			//--
+			$dba_obj = self::initCacheManager($y_realm, $y_key);
+			if(!is_object($dba_obj)) {
+				Smart::log_warning(__METHOD__.' # Invalid DBA Instance: '.$y_realm.':'.$y_key);
+				return false;
+			} //end if
+			//--
+			return (bool) $dba_obj->unsetKey($y_key);
+			//--
 		} //end if else
 		//--
 	} //END FUNCTION
@@ -269,83 +273,67 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 	//##### PRIVATES
 
 
-	private static function getValidatedDbaRealm($y_realm) {
+	private static function getSafeStorageNameDir($y_realm) {
 		//--
-		if(((string)trim((string)$y_realm) == '') OR (!self::validateRealm((string)$y_realm))) {
-			$y_realm = '!'; // invalid or empty realm ; NOTICE: validateRealm will validate a realm if empty string or match the pattern !!
-		} //end if
+		// This will spread the realms in 000..FFF sub-folders ~ 4096 sub-folders
+		//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
+		$db_file_folder = '';
+		if(((string)trim((string)$y_realm) != '') AND (self::validateRealm((string)$y_realm))) {
+			//--
+			$hash = (string) SmartHashCrypto::crc32b((string)$y_realm);
+			$prefix = (string) substr((string)Smart::safe_filename((string)strtolower((string)$y_realm), '-'), 0, 25);
+			$db_file_folder = (string) SmartFileSysUtils::add_dir_last_slash((string)substr((string)$hash, 0, 3)).SmartFileSysUtils::add_dir_last_slash($prefix.'#'.$hash);
+			//--
+		} //end if else
 		//--
-		return (string) $y_realm;
-		//--
-	} //END FUNCTION
-
-
-	private static function getSafeStorageNameCharPrefix($y_char) {
-		//--
-		$y_char = (string) strtolower((string)$y_char);
-		//--
-		if(((string)trim((string)$y_char) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$y_char))) {
-			$y_char = '@';
-		} //end if
-		//--
-		return (string) $y_char;
+		return (string) Smart::safe_pathname(SmartFileSysUtils::add_dir_last_slash(self::DBA_FOLDER).$db_file_folder, '-');
 		//--
 	} //END FUNCTION
 
 
-	private static function initCacheManager($y_realm) {
+	private static function getSafeStorageNameFile($y_realm, $y_key) {
 		//--
-		if(!is_array(self::$dba)) {
-			self::$dba = [];
+		// This function will spread the cache files in a range of 0-0-0 z-z-z as of ~ 50000 (+50000 lock files) files for each realm (very reasonable ; ex, for 10 million keys in a realm will store no more than 200 keys in a db file)
+		//--
+		if(((string)$y_key == '') OR ((string)$y_key == '*')) {
+			return 'dba-pcache-error.err'; // this must not have the .dba extension to force driver raise error
 		} //end if
+		//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
+		if(((string)trim((string)$y_realm) != '') AND (self::validateRealm((string)$y_realm))) {
+			$cachePathPrefix = (string) self::cachePathPrefix(3, $y_realm, $y_key); // this is already safe path
+			$cachePathPrefix = (string)  str_replace('/', '-', (string)$cachePathPrefix); // replaces / with - to avoid use sub-folders in this context
+			$dba_fname = (string) substr((string)self::DBA_FILE, 0, -4).'-#-'.Smart::safe_filename($cachePathPrefix).substr((string)self::DBA_FILE, -4, 4); // ~ 79 chars ; NOTICE: $y_realm can contain slashes as they are allowed by validateRealm, so must apply Smart::safe_filename() !!
+		} else {
+			$dba_fname = (string) self::DBA_FILE;
+		} //end if else
+		//--
+		return (string) Smart::safe_filename((string)$dba_fname, '-');
+		//--
+	} //END FUNCTION
+
+
+	private static function initCacheManager($y_realm, $y_key) {
 		//--
 		if(!self::isActive()) {
 			Smart::log_warning(__METHOD__.' # DBA does not appear to be active in configs');
 			return '';
 		} //end if
 		//--
-		$realm = (string) self::getValidatedDbaRealm($y_realm);
+		$db_file_path = (string) self::getSafeStorageNameDir($y_realm).self::getSafeStorageNameFile($y_realm, $y_key);
+		SmartFileSysUtils::raise_error_if_unsafe_path((string)$db_file_path);
 		//--
-		if((is_object(self::$dba[(string)$realm])) AND (self::$dba[(string)$realm] instanceof SmartDbaDb)) {
-			//--
-			return (string) $realm; // OK, already instantiated ...
-			//--
-		} else {
-			//--
-			$is_fatal_err = false; // for a persistent cache do not use fatal errors, just log them
-			//--
-			$handler = (string) SmartDbaUtilDb::getDbaHandler();
-			//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
-			if(((string)trim((string)$realm) != '') AND ((string)$realm != '!')) {
-				//--
-				$cachePrefix = (string) SmartPersistentCache::cachePrefix($realm);
-				$tmp_1_prefix = (string) self::getSafeStorageNameCharPrefix(substr((string)$cachePrefix, 0, 1));
-				$tmp_2_prefix = (string) self::getSafeStorageNameCharPrefix(substr((string)$cachePrefix, 1, 1));
-				$tmp_3_prefix = (string) self::getSafeStorageNameCharPrefix(substr((string)$cachePrefix, 2, 1));
-				//--
-				$db_file_folder = (string) SmartFileSysUtils::add_dir_last_slash(self::DBA_FOLDER).SmartFileSysUtils::add_dir_last_slash($tmp_1_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_2_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_3_prefix);
-				$dba_fname = (string) substr((string)self::DBA_FILE, 0, -4).'-@-'.substr(Smart::safe_filename(strtolower((string)$realm)), 0, 50).'#'.SmartHashCrypto::crc32b($realm).substr((string)self::DBA_FILE, -4, 4); // ~ 79 chars ; NOTICE: $realm can contain slashes as they are allowed by validateRealm !!
-				//--
-			} else { // fallback to default realm
-				//--
-				$db_file_folder = (string) SmartFileSysUtils::add_dir_last_slash(self::DBA_FOLDER);
-				$dba_fname = (string) self::DBA_FILE;
-				//--
-			} //end if else
-			SmartFileSysUtils::raise_error_if_unsafe_path($db_file_folder);
-			//--
-			$db_file_path = (string) $db_file_folder.$dba_fname;
-			SmartFileSysUtils::raise_error_if_unsafe_path((string)$db_file_path);
-			//--
-			self::$dba[(string)$realm] = new SmartDbaDb(
-				(string) $db_file_path, 		// file :: for each realm there is a separate DB file (in a separate sub-folder)
-				(string) get_called_class(), 	// desc (late state binding to get this class or class that extends this)
-				(bool)   $is_fatal_err 			// fatal err
-			); // use the connection values from configs
-			//--
-		} //end if
+
 		//--
-		return (string) $realm;
+		$is_fatal_err = false; // for a persistent cache do not use fatal errors, just log them
+		//-- !!! must create each time a new object because reusing a large number of objects will run out of memory ; even more may run in trouble by having too many opened files !!!
+		// Ex: inserting in a session ~ 1000 keys in a single realm if reusing objects will run out of memory, so this is the only way to create a new object each time ...
+		$obj = new SmartDbaDb(
+			(string) $db_file_path, 		// file :: for each realm there is a separate DB file (in a separate sub-folder)
+			(string) get_called_class(), 	// desc (late state binding to get this class or class that extends this)
+			(bool)   $is_fatal_err 			// fatal err
+		); // use the connection values from configs
+		//--
+		return (object) $obj;
 		//--
 	} //END FUNCTION
 

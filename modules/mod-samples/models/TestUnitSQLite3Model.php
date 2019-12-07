@@ -37,7 +37,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191206
+ * @version 	v.20191207
  *
  */
 final class TestUnitSQLite3Model {
@@ -1598,7 +1598,7 @@ final class TestUnitSQLite3Model {
 					'name' 		=> 'name ASC',
 					'iso3' 		=> [ 'mode' => 'unique', 'index' => 'iso3' ],
 					'numcode' 	=> 'numcode DESC',
-					'uuid' 		=> 'uuid'
+					'uuid' 		=> [ 'mode' => 'unique', 'index' => 'uuid' ]
 				]
 			);
 			$this->connection->write_data('UPDATE `sample_countries` '.$this->connection->prepare_statement($rows[0], 'update').' WHERE (`iso` IS NULL)'); // test

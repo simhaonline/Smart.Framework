@@ -18,6 +18,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartHashCrypto::
 //	* SmartFileSystem::
 //	* SmartUtils::
+//	* SmartPersistentCache::
 // DEPENDS-EXT: PHP Session Module
 //======================================================
 //#NOTICE: GC is controlled via
@@ -64,7 +65,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.20191206
+ * @version 	v.20191207
  * @package 	Application:Session
  *
  */
@@ -279,15 +280,8 @@ final class SmartSession {
 		//-- by default set for files
 		$sf_sess_mode = 'files';
 		//-- {{{SYNC-SESSION-FILE_BASED-PREFIX}}}
-		$tmp_1_prefix = (string) strtolower((string)substr((string)$sf_sess_ns, -3, 1));
-		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_1_prefix))) {
-			$tmp_1_prefix = '@';
-		} //end if
-		$tmp_2_prefix = (string) strtolower((string)substr((string)$sf_sess_ns, -1, 1));
-		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_2_prefix))) {
-			$tmp_2_prefix = '@';
-		} //end if
-		$sf_sess_dir = 'tmp/sessions/'.SmartFileSysUtils::add_dir_last_slash($sf_sess_area).SmartFileSysUtils::add_dir_last_slash($tmp_1_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_2_prefix).SmartFileSysUtils::add_dir_last_slash($sf_sess_ns);
+		$path_prefix = (string) SmartPersistentCache::cachePathPrefix(2, $sf_sess_ns); // this is a safe path
+		$sf_sess_dir = 'tmp/sessions/'.SmartFileSysUtils::add_dir_last_slash($sf_sess_area).SmartFileSysUtils::add_dir_last_slash($path_prefix).SmartFileSysUtils::add_dir_last_slash($sf_sess_ns);
 		if((string)$detected_session_mode === 'user') {
 			if(class_exists('SmartCustomSession', false)) { // explicit autoload is false
 				if((string)get_parent_class('SmartCustomSession') == 'SmartAbstractCustomSession') {
@@ -462,7 +456,7 @@ final class SmartSession {
  * Abstract Class Smart Custom Session
  * This is the abstract for extending the class SmartCustomSession
  *
- * @version 	v.20191206
+ * @version 	v.20191207
  * @package 	development:Application
  */
 abstract class SmartAbstractCustomSession {

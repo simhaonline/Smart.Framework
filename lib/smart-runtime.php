@@ -47,7 +47,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.2.7'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.06'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.07'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -996,7 +996,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20191205
+ * @version		v.20191207
  * @package 	Application
  *
  */

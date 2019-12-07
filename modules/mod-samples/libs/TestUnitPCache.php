@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191206
+ * @version 	v.20191207
  *
  */
 final class TestUnitPCache {
@@ -57,7 +57,7 @@ final class TestUnitPCache {
 		//--
 
 		//--
-		$the_test_realm = 'persistent-cache-test';
+		$the_test_realm = 'persistent@cache/test';
 		//--
 		$pcache_big_content = self::packTestArchive(); // CREATE THE Test Archive (time not counted)
 		//--
@@ -109,10 +109,11 @@ final class TestUnitPCache {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$cachePrefix = (string) \SmartPersistentCache::cachePrefix($the_test_realm);
-			$tests[] = 'Get the Cache Prefix (must be exactly 4 characters containing 0..9 a..z): `'.$cachePrefix.'`';
-			if((\strlen((string)\trim((string)$cachePrefix)) != 4) OR (!\preg_match('/^[a-z0-9]{4}$/', (string)$cachePrefix))) {
-				$err = 'The Cache Prefix must have only 4 characters as 0-9 a-z ...';
+			$cachePathPrefix = (string) \SmartPersistentCache::cachePathPrefix(3, $the_test_realm);
+			$cacheTestPrefix = (string) \str_replace('/', '', (string)$cachePathPrefix);
+			$tests[] = 'Get the Cache Prefix, must be exactly 3 alphanumeric characters containing 0..9 a..z separed by slash: `'.$cacheTestPrefix.'` (`'.$cachePathPrefix.'`)';
+			if((\strlen((string)\trim((string)$cacheTestPrefix)) != 3) OR (!\preg_match('/^[a-z0-9]{3}$/', (string)$cacheTestPrefix))) {
+				$err = 'The Cache Prefix `'.$cacheTestPrefix.'` must have only 3 alphanumeric characters as 0-9 a-z, separed by slashes (`'.$cachePathPrefix.'`)';
 			} //end if
 		} //end if
 		//--
@@ -242,8 +243,8 @@ final class TestUnitPCache {
 
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Set 100 Persistent Cache Keys with Realm';
-			for($i=0; $i<100; $i++) {
+			$tests[] = 'Set 1000 Persistent Cache Keys with Realm';
+			for($i=0; $i<1000; $i++) {
 				$pcache_set_multi = \SmartPersistentCache::setKey(
 					$the_test_realm.'__MKeys',
 					'Multi-'.$pcache_test_key.'#'.$i,
@@ -257,24 +258,52 @@ final class TestUnitPCache {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Unset all 100 Persistent Cache Keys with Realm, using wildcard (*)';
-			$pcache_unset_multi = \SmartPersistentCache::unsetKey($the_test_realm.'__MKeys', '*');
-			if($pcache_unset_multi !== true) {
-				$err = 'Persistent Cache UnsetKeys[1.100] using wildcard (*), with Realm returned a non-true result';
+			$tests[] = 'Check if FIRST Persistent Cache Key (from 1000) exists, before unset with wildcard (*)';
+			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#0')) {
+				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#0';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if FIRST Persistent Cache Key (from 100) exists, after unset with wildcard (*)';
+			$tests[] = 'Check if MIDDLE Persistent Cache Key (from 1000) exists, before unset with wildcard (*)';
+			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#500')) {
+				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#500';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Check if LAST Persistent Cache Key (from 1000) exists, before unset with wildcard (*)';
+			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#999')) {
+				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#999';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Unset all 1000 Persistent Cache Keys with Realm, using wildcard (*)';
+			$pcache_unset_multi = \SmartPersistentCache::unsetKey($the_test_realm.'__MKeys', '*');
+			if($pcache_unset_multi !== true) {
+				$err = 'Persistent Cache UnsetKeys[1.1000] using wildcard (*), with Realm returned a non-true result';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Check if FIRST Persistent Cache Key (from 1000) exists, after unset with wildcard (*)';
 			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#0')) {
 				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#0';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if LAST Persistent Cache Key (from 100) exists, after unset with wildcard (*)';
-			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#99')) {
-				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#99';
+			$tests[] = 'Check if MIDDLE Persistent Cache Key (from 1000) exists, after unset with wildcard (*)';
+			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#500')) {
+				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#500';
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Check if LAST Persistent Cache Key (from 1000) exists, after unset with wildcard (*)';
+			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#999')) {
+				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#999';
 			} //end if
 		} //end if
 		//--

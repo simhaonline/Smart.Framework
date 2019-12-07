@@ -26,8 +26,8 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'DBA: DB file based');
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
- * @depends 	SmartDbaDb, Smart, PHP DBA
- * @version 	v.20191206
+ * @depends 	SmartDbaDb, Smart, SmartPersistentCache, PHP DBA Extension
+ * @version 	v.20191207
  * @package 	Application
  *
  */
@@ -62,16 +62,8 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		//--
 		$is_fatal_err = false; // for session do not use fatal errors, just log them
 		//-- {{{SYNC-SESSION-FILE_BASED-PREFIX}}}
-		$tmp_1_prefix = (string) strtolower((string)substr((string)$this->sess_ns, -3, 1));
-		if(((string)trim((string)$tmp_1_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_1_prefix))) {
-			$tmp_1_prefix = '@';
-		} //end if
-		$tmp_2_prefix = (string) strtolower((string)substr((string)$this->sess_ns, -1, 1));
-		if(((string)trim((string)$tmp_2_prefix) == '') OR (!preg_match('/^[a-z0-9]{1}$/', (string)$tmp_2_prefix))) {
-			$tmp_2_prefix = '@';
-		} //end if
-		//--
-		$db_path = (string) 'tmp/sessions/'.SmartFileSysUtils::add_dir_last_slash($this->sess_area).SmartFileSysUtils::add_dir_last_slash($tmp_1_prefix).SmartFileSysUtils::add_dir_last_slash($tmp_2_prefix).'db-sess_'.$this->sess_ns.'.dba';
+		$path_prefix = (string) SmartPersistentCache::cachePathPrefix(2, $this->sess_ns); // this is a safe path
+		$db_path = (string) 'tmp/sessions/'.SmartFileSysUtils::add_dir_last_slash(Smart::safe_filename($this->sess_area)).SmartFileSysUtils::add_dir_last_slash($path_prefix).'db-sess_'.Smart::safe_filename($this->sess_ns).'.dba';
 		SmartFileSysUtils::raise_error_if_unsafe_path($db_path);
 		//--
 		$this->dba = new SmartDbaDb(

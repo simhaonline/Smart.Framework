@@ -16,7 +16,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // DEPENDS:
 //	* Smart::
 //	* SmartUtils::
-// DEPENDS-EXT: PHP DBA
+// DEPENDS-EXT: PHP DBA Extension
 //======================================================
 
 
@@ -40,8 +40,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @access 		PUBLIC
- * @depends 	extensions: PHP DBA ; classes: Smart
- * @version 	v.20191205
+ * @depends 	extensions: PHP DBA Extension ; classes: Smart
+ * @version 	v.20191207
  * @package 	Plugins:Database:Dba
  *
  */
@@ -1301,8 +1301,8 @@ final class SmartDbaDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @depends 	extensions: PHP DBA ; classes: Smart, SmartUtils
- * @version 	v.20191205
+ * @depends 	extensions: PHP DBA Extension ; classes: Smart, SmartUtils
+ * @version 	v.20191207
  * @package 	Plugins:Database:Dba
  *
  */

@@ -27,7 +27,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
  *
  * @access 		PUBLIC
  * @depends 	SmartRedisDb, Smart
- * @version 	v.20191206
+ * @version 	v.20191207
  * @package 	Application
  *
  */
