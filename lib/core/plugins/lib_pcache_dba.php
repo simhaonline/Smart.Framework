@@ -30,6 +30,17 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * Provides a persistent Cache (in-DBA-Files), that can be shared and/or reused between multiple PHP executions.
  * Requires DBA to be set-up in config properly.
  *
+ * It uses a structure like below:
+ * tmp/pcache#dba/9af/realm#9afbcde0/z/p-cache-#-z-0-a.gdbm.dba
+ * Realms are spreaded in 16x16x16 = 4096 sub-folders by CRC32B hash of the realm name
+ * The dba files in each realm will spread 37x37x37 = 50653 (max dba files per realm) organized in 37 sub-folders per each realm [0-9a-z] ; will result a max of 1369x2 files per dir as dba and lock files
+ * Each dba file can store unlimited number of keys in theory
+ * Scenario:
+ * - using 10,000,000 keys in a realm will spread the dba cache storage in optimal way in 37 sub-folders, each sub-folder containing 1369x2 dba files and lock files
+ * - each dba file will store ~ 200 cache keys in a total of 50653x2 dba files spreaded in those 37 sub-dirs
+ * - if each key have an archived size of 500KB will result in storage size of no more than 100MB per dba file which is super light ... dba files can size much more than that
+ * - but this is only theory, in practice, tested in a real production environment with a realm that have ~ 3,000,000 keys (2D QRCodes) results a max dba size as of 2.7 MB (~ 15 KB / key size)
+ *
  * THIS CLASS IS FOR PRIVATE USE ONLY (used as a backend for for SmartPersistentCache)
  * @access 		private
  * @internal
@@ -38,7 +49,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	Smart, PHP DBA Extension, SmartDbaUtilDb, SmartDbaDb
- * @version 	v.20191207
+ * @version 	v.20191208
  * @package 	Plugins:Database:Dba
  *
  */
@@ -277,14 +288,13 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 		//--
 		// This will spread the realms in 000..FFF sub-folders ~ 4096 sub-folders
 		//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
-		$db_file_folder = '';
-		if(((string)trim((string)$y_realm) != '') AND (self::validateRealm((string)$y_realm))) {
-			//--
-			$hash = (string) SmartHashCrypto::crc32b((string)$y_realm);
-			$prefix = (string) substr((string)Smart::safe_filename((string)strtolower((string)$y_realm), '-'), 0, 25);
-			$db_file_folder = (string) SmartFileSysUtils::add_dir_last_slash((string)substr((string)$hash, 0, 3)).SmartFileSysUtils::add_dir_last_slash($prefix.'#'.$hash);
-			//--
-		} //end if else
+		if(((string)trim((string)$y_realm) == '') OR (!self::validateRealm((string)$y_realm))) {
+			$y_realm = 'default';
+		} //end if
+		//--
+		$hash = (string) SmartHashCrypto::crc32b((string)$y_realm);
+		$prefix = (string) substr((string)Smart::safe_filename((string)strtolower((string)$y_realm), '-'), 0, 35);
+		$db_file_folder = (string) SmartFileSysUtils::add_dir_last_slash((string)substr((string)$hash, 0, 3)).SmartFileSysUtils::add_dir_last_slash($prefix.'#'.$hash);
 		//--
 		return (string) Smart::safe_pathname(SmartFileSysUtils::add_dir_last_slash(self::DBA_FOLDER).$db_file_folder, '-');
 		//--
@@ -293,21 +303,21 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 
 	private static function getSafeStorageNameFile($y_realm, $y_key) {
 		//--
-		// This function will spread the cache files in a range of 0-0-0 z-z-z as of ~ 50000 (+50000 lock files) files for each realm (very reasonable ; ex, for 10 million keys in a realm will store no more than 200 keys in a db file)
+		// This function will spread the cache files in a range of 0-0-0 z-z-z as of ~ 50000 (+50000 lock files) files for each realm but divided in 37 sub-dirs (very reasonable ; ex, for 10 million keys in a realm will store no more than 200 keys in a db file)
 		//--
 		if(((string)$y_key == '') OR ((string)$y_key == '*')) {
 			return 'dba-pcache-error.err'; // this must not have the .dba extension to force driver raise error
 		} //end if
 		//-- {{{SYNC-PREFIXES-FOR-FS-CACHE}}}
-		if(((string)trim((string)$y_realm) != '') AND (self::validateRealm((string)$y_realm))) {
-			$cachePathPrefix = (string) self::cachePathPrefix(3, $y_realm, $y_key); // this is already safe path
-			$cachePathPrefix = (string)  str_replace('/', '-', (string)$cachePathPrefix); // replaces / with - to avoid use sub-folders in this context
-			$dba_fname = (string) substr((string)self::DBA_FILE, 0, -4).'-#-'.Smart::safe_filename($cachePathPrefix).substr((string)self::DBA_FILE, -4, 4); // ~ 79 chars ; NOTICE: $y_realm can contain slashes as they are allowed by validateRealm, so must apply Smart::safe_filename() !!
-		} else {
-			$dba_fname = (string) self::DBA_FILE;
-		} //end if else
+		if(((string)trim((string)$y_realm) == '') OR (!self::validateRealm((string)$y_realm))) {
+			$y_realm = 'default';
+		} //end if
+		$cachePathPrefix = (string) self::cachePathPrefix(3, $y_realm, $y_key); // this is already safe path
+		$arrPathPrefix = (array) explode('/', (string)$cachePathPrefix);
+		$cachePathPrefix = (string) implode('-', (array)$arrPathPrefix); // replaces / with - to avoid use sub-folders in this context
+		$dba_fname = (string) substr((string)self::DBA_FILE, 0, -4).'-#-'.Smart::safe_filename($cachePathPrefix).substr((string)self::DBA_FILE, -4, 4); // NOTICE: $y_realm can contain slashes as they are allowed by validateRealm, so must apply Smart::safe_filename() !!
 		//--
-		return (string) Smart::safe_filename((string)$dba_fname, '-');
+		return (string) Smart::safe_pathname(SmartFileSysUtils::add_dir_last_slash((string)$arrPathPrefix[0])).Smart::safe_filename((string)$dba_fname, '-');
 		//--
 	} //END FUNCTION
 
