@@ -335,8 +335,8 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 
 		//--
 		$is_fatal_err = false; // for a persistent cache do not use fatal errors, just log them
-		//-- !!! must create each time a new object because reusing a large number of objects will run out of memory ; even more may run in trouble by having too many opened files !!!
-		// Ex: inserting in a session ~ 1000 keys in a single realm if reusing objects will run out of memory, so this is the only way to create a new object each time ...
+		//-- !!! must create each time a new object because reusing a large number of resources / opened files may run out of memory/resources
+		// Ex: inserting in a session ~ 1000 keys in a single realm that spread in ~1000 separate dba files will run out of resources ; so this is the only way to create a new object each time ; works well and tested ...
 		$obj = new SmartDbaDb(
 			(string) $db_file_path, 		// file :: for each realm there is a separate DB file (in a separate sub-folder)
 			(string) get_called_class(), 	// desc (late state binding to get this class or class that extends this)

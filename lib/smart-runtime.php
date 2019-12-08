@@ -29,7 +29,22 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //--
 if(version_compare((string)phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.6 as minimum ; prefer PHP 7.x instead of 5.6
 	@http_response_code(500);
-	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 / 7.3 / 7.4 or later');
+	die('PHP Runtime not supported: '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 / 7.3 / 7.4 or later');
+} //end if
+//--
+if(((int)PHP_INT_SIZE < 8) OR ((string)(int)PHP_INT_MAX < '9223372036854775807')) {
+	@http_response_code(500);
+	die('PHP Runtime not supported: this version of PHP does not support 64-bit Integers (PHP_INT_SIZE should be 8 and is: '.PHP_INT_SIZE.' ; PHP_INT_MAX should be at least 9223372036854775807 and is: '.PHP_INT_MAX.') ...');
+} //end if
+
+if((string)(int)strtotime('2038-03-16 07:55:08') != '2152338908') { // test year2038 bug with an integer value longer than 32-bit max int which is: 2147483647
+	@http_response_code(500);
+	die('PHP OS not supported: this version of OS ('.PHP_OS.') does not support 64-bit time or date detection is broken ...');
+} //end if
+
+if((int)PHP_MAXPATHLEN < 255) { // test min req. path length
+	@http_response_code(500);
+	die('PHP OS not supported: this version of OS ('.PHP_OS.') does not support the minimum required path length which is 255 characters (PHP_MAXPATHLEN='.PHP_MAXPATHLEN.') ...');
 } //end if
 //--
 

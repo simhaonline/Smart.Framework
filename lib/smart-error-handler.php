@@ -304,9 +304,11 @@ function smart__framework__err__handler__get__absolute_logpath() {
 		$regex = '/^[_a-zA-Z0-9\-\.@#\/]+$/'; // regex for linux/unix ; ; {{{SYNC-CHK-SAFE-FILENAME}}} with extra `/`
 	} //end if else
 	//--
+	$max_path_len = (int) ceil(PHP_MAXPATHLEN * 0.33); // the path to the Smart.Framework installation should not be longer than 33% of max path length supported by OS
+	//--
 	if(
 		((string)trim((string)$path) == '') OR // empty path, cannot detect real path !
-		(strlen((string)$path) > 90) OR // path too long (89 + an optional final slash + 10 = 100 min or 101 max)
+		((int)strlen((string)$path) > (int)$max_path_len) OR // path too long
 		(strpos((string)$path, '.') === 0) OR // path must not start with a single dot (this covers all dangerous scenarios: path is a single dot (.) ; path is a double dot (..) ; path start with a dot (.hidden)
 		(strpos((string)$path, '\\') !== false) OR // single backslash \ has been converted already, must not exists
 		(strpos((string)$path, '..') !== false) OR // check for double dots .. which are unsafe
@@ -314,7 +316,7 @@ function smart__framework__err__handler__get__absolute_logpath() {
 		(!preg_match((string)$regex, (string)$path))
 	) {
 		@http_response_code(500);
-		die('Smart.Framework # ERROR HANDLER: the current installation of Smart.Framework runs under a non-secure Path ; Path must not be no longer than 90 characters long ; Only these characters are allowed in the Path: `_`, `a-z`, `A-Z`, `0-9`, `-`, `.`, `@`, `#` and `/` on Linux/Unix ; on Windows also the `:` character is allowed');
+		die('Smart.Framework # ERROR HANDLER: the current installation of Smart.Framework runs under a non-safe Path (`'.$path.'`) ; Path should be no longer than '.(int)$max_path_len.' characters long (~ 33% of max path length allowed by the OS which is '.PHP_MAXPATHLEN.') ; Only the following restricted character set is allowed in the Path by Smart.Framework: `_`, `a-z`, `A-Z`, `0-9`, `-`, `.`, `@`, `#` and `/` on Linux/Unix/Windows ; on Windows an extra `:` character is allowed. Using non-safe paths in web environments may lead to severe security issues.');
 		return '';
 	} //end if
 	//--
@@ -325,7 +327,7 @@ function smart__framework__err__handler__get__absolute_logpath() {
 		(!is_file($path.'lib/'.$current_file)) // try to detect Smart.Framework lib/smart-error-handler.php (this file) to see if the path is correct
 	) {
 		@http_response_code(500);
-		die('Smart.Framework # ERROR HANDLER: cannot detect the Path to the current Smart.Framework installation');
+		die('Smart.Framework # ERROR HANDLER: cannot detect the Path to the current Smart.Framework installation. Detected path cannot find the current error handler script at: `'.$path.'lib/'.$current_file.'`');
 		return '';
 	} //end if
 	//--
@@ -337,7 +339,7 @@ function smart__framework__err__handler__get__absolute_logpath() {
 		((string)substr((string)$path, -10, 10) != '/tmp/logs/') // and must end with `/tmp/logs/` to avoid mistakes
 	) { // safety checks after adding the `/tmp/logs/` suffix
 		@http_response_code(500);
-		die('Smart.Framework # ERROR HANDLER: cannot detect the path to current Smart.Framework installation `tmp/logs/` folder');
+		die('Smart.Framework # ERROR HANDLER: cannot detect the Path to the current Smart.Framework temporary folder: `tmp/logs/` ...');
 	} //end if
 	//--
 	return (string) $path;

@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.20191205
+ * @version 	v.20191208
  * @package 	Application:Development
  *
  */
@@ -667,10 +667,19 @@ private static function print_log_runtime() {
 		],
 		'Server Runtime: PHP' => [
 			'PHP OS' => (string) PHP_OS,
-			'PHP Version' => 'PHP '.PHP_VERSION.' / '.@php_sapi_name(),
+			'PHP Server API' => (string) PHP_SAPI, //.@php_sapi_name(),
+			'PHP Version' => (string) 'PHP '.PHP_VERSION,
+			'PHP Build (debug or release): ' => ((PHP_DEBUG !== 0) ? 'DEBUG' : 'RELEASE'),
+			'PHP ZTS: ' => (string) ((PHP_ZTS !== 0) ? 'ON' : 'OFF'),
+			'PHP End Of Line' => (string) (((string)PHP_EOL === "\n") ? '\n' : ( ((string)PHP_EOL === "\r\n") ? '\r\n' : '\r' )),
 			'PHP Locales: ' => (string) setlocale(LC_ALL, 0),
-			'PHP Encoding: Internal / MBString' => ini_get('default_charset').' / '.@mb_internal_encoding(),
+			'PHP Encoding: Internal / MBString' => (string) ini_get('default_charset').' / '.@mb_internal_encoding(),
 			'PHP Memory' => (string) ini_get('memory_limit'),
+			'PHP Max File Descriptors (System Calls)' => (string) (defined('PHP_FD_SETSIZE') ? PHP_FD_SETSIZE : 'undefined'), // available just since PHP 7.1
+			'PHP Max Path Length: ' => (string) PHP_MAXPATHLEN,
+			'PHP Integer Size: ' => (string) PHP_INT_SIZE,
+			'PHP Integer Max: ' => (string) PHP_INT_MAX,
+			'PHP Integer Min: ' => (string) (defined('PHP_INT_MIN') ? PHP_INT_MIN : 'undefined'), // available just since PHP 7.0
 			'PHP Loaded Modules (Extensions)' => (string) strtolower(implode(', ', (array)@get_loaded_extensions())),
 			'PHP INI Settings' => (array) ini_get_all(null, false)
 		]
