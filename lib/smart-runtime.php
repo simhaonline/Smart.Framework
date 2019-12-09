@@ -37,7 +37,7 @@ if(((int)PHP_INT_SIZE < 8) OR ((string)(int)PHP_INT_MAX < '9223372036854775807')
 	die('PHP Runtime not supported: this version of PHP does not support 64-bit Integers (PHP_INT_SIZE should be 8 and is: '.PHP_INT_SIZE.' ; PHP_INT_MAX should be at least 9223372036854775807 and is: '.PHP_INT_MAX.') ...');
 } //end if
 
-if((string)(int)strtotime('2038-03-16 07:55:08') != '2152338908') { // test year2038 bug with an integer value longer than 32-bit max int which is: 2147483647
+if((string)(int)strtotime('2038-03-16 07:55:08 UTC') != '2152338908') { // test year2038 bug with an integer value longer than 32-bit max int which is: 2147483647
 	@http_response_code(500);
 	die('PHP OS not supported: this version of OS ('.PHP_OS.') does not support 64-bit time or date detection is broken ...');
 } //end if
