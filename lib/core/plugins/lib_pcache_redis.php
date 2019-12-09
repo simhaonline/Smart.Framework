@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	Smart, SmartRedisDb
- * @version 	v.20191207
+ * @version 	v.20191209
  * @package 	Plugins:Database:Dba
  *
  */
@@ -216,8 +216,8 @@ class SmartRedisPersistentCache extends SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		if(strlen((string)$y_value) > 16777216) { // {{{SYNC-PCACHE-MAX-OBJ-SIZE}}}
-			Smart::log_warning(__METHOD__.' # Invalid Value: OVERSIZED, more than 16MB');
+		if(!self::validateValue((string)$y_value)) { // {{{SYNC-PCACHE-MAX-OBJ-SIZE}}}
+			Smart::log_warning(__METHOD__.' # Invalid Value: must be not EMPTY or OVERSIZED (max 16MB) ; size='.strlen((string)$y_value));
 			return false;
 		} //end if
 		//--

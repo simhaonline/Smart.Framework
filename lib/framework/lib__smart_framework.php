@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191127
+ * @version 	v.20191209
  * @package 	development:Application
  *
  */
@@ -1523,10 +1523,6 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return null;
 		} //end if
 		//--
-		if(!SmartPersistentCache::keyExists((string)$storage_namespace, (string)$unique_key)) {
-			return null;
-		} //end if
-		//--
 		$cache = SmartPersistentCache::getKey(
 			(string) $storage_namespace,
 			(string) $unique_key
@@ -1563,7 +1559,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			return false;
 		} //end if
 		//--
-		$cache = SmartPersistentCache::varCompress($content); // mixed (number / string / array)
+		$cache = (string) SmartPersistentCache::varCompress($content); // mixed (number / string / array)
 		if((string)$cache == '') {
 			return false;
 		} //end if

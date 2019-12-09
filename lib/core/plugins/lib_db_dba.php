@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP DBA Extension ; classes: Smart
- * @version 	v.20191207
+ * @version 	v.20191209
  * @package 	Plugins:Database:Dba
  *
  */
@@ -1302,7 +1302,7 @@ final class SmartDbaDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP DBA Extension ; classes: Smart, SmartUtils
- * @version 	v.20191207
+ * @version 	v.20191209
  * @package 	Plugins:Database:Dba
  *
  */
@@ -1389,29 +1389,27 @@ final class SmartDbaUtilDb {
 
 
 	/**
-	 * Pack the data using a safe archive format to minimize space
+	 * Pack the data using a safe serialized format
 	 *
 	 * @param MIXED $originalData The data to be packed ; can be: string, array, number ...
 	 * @return STRING the packed data
 	 */
 	public static function dataPack($originalData) {
 		//--
-	//	return (string) SmartUtils::data_archive(Smart::seryalize($originalData));
-		return (string) SmartPersistentCache::varCompress($originalData);
+		return (string) Smart::seryalize($originalData);
 		//--
 	} //END FUNCTION
 
 
 	/**
-	 * UnPack the data from packed archive format to it's original state
+	 * UnPack the data from packed serialized format to it's original state
 	 *
 	 * @param STRING $packedData The previous packed data
 	 * @return MIXED the unpacked data ; can be: string, array, number ...
 	 */
 	public static function dataUnpack($packedData) {
 		//--
-	//	return Smart::unseryalize(SmartUtils::data_unarchive((string)$packedData)); // mixed
-		return SmartPersistentCache::varUncompress((string)$packedData); // mixed
+		return Smart::unseryalize((string)$packedData); // mixed
 		//--
 	} //END FUNCTION
 
@@ -1419,7 +1417,7 @@ final class SmartDbaUtilDb {
 	//=====
 
 
-	// the allowed safe handlers that have no limits on record data size and are fast and reliable, in order
+	// the allowed safe handlers that have no limits on record data size and are fast and reliable, in prefered order
 	private static function allowedSafeHandlers() {
 		//--
 		return [ // {{{SYNC-SAFE-DBA-HANDLERS}}}

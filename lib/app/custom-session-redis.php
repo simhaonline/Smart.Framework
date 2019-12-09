@@ -27,7 +27,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'Redis: Memory based');
  *
  * @access 		PUBLIC
  * @depends 	SmartRedisDb, Smart
- * @version 	v.20191207
+ * @version 	v.20191209
  * @package 	Application
  *
  */
@@ -91,7 +91,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		//--
 		$result = $this->redis->set((string)$key, (string)$data);
 		//--
-		if(strtoupper(trim($result)) != 'OK') {
+		if((string)strtoupper((string)trim((string)$result)) != 'OK') {
 			Smart::log_warning('Redis Custom Session: Failed to write ...');
 			return false;
 		} //end if

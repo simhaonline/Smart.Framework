@@ -48,7 +48,7 @@ if(!defined('SMART_FRAMEWORK_BARCODE_2D_OPTS')) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	Smart.Framework
- * @version 	v.20191206
+ * @version 	v.20191209
  * @package 	Plugins:ViewComponents
  *
  */
@@ -170,21 +170,16 @@ final class SmartBarcode2D {
 			//--
 			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
 				//--
-				$out = SmartDbaPersistentCache::getKey( // MIXED
+				$out = SmartDbaPersistentCache::getKey( // mixed
 					(string) $cache_realm, 	// realm
 					(string) $cache_uuid 	// key
 				);
 				//--
-				if(is_string($out)) {
-					if((string)$out == '') { // invalid key ... must not return empty string
-						SmartDbaPersistentCache::unsetKey( // unset the invalid key !
-							(string) $cache_realm, 	// realm
-							(string) $cache_uuid 	// key
-						);
-					} else {
-						return (string) $out; // if found in cache return it
-					} //end if else
-				} //end if
+				if((string)$out != '') {
+					return (string) SmartPersistentCache::varUncompress($out); // if found in cache return it
+				} else {
+					$out = '';
+				} //end if else
 				//--
 			} //end if
 			//--
@@ -233,10 +228,10 @@ final class SmartBarcode2D {
 			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
 				//--
 				SmartDbaPersistentCache::setKey(
-					(string) $cache_realm, 	// realm
-					(string) $cache_uuid, 	// key
-					(string) $out,			// content
-					(int)    $y_cachetime 	// expire time
+					(string) $cache_realm, 								// realm
+					(string) $cache_uuid, 								// key
+					(string) SmartPersistentCache::varCompress($out), 	// content
+					(int)    $y_cachetime 								// expire time
 				);
 				//--
 			} //end if

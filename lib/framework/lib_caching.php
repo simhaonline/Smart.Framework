@@ -214,7 +214,7 @@ final class SmartCache {
  * @internal
  *
  * @depends 	-
- * @version 	v.20191207
+ * @version 	v.20191209
  * @package 	development:Application
  *
  */
@@ -481,6 +481,29 @@ abstract class SmartAbstractPersistentCache {
 		} //end if
 		//--
 		if(!preg_match('/^[_a-zA-Z0-9\-\.@#\/]+$/', (string)$y_key)) { // {{{SYNC-PCACHE-SAFE-KEY-OR-REALM}}}
+			return false;
+		} //end if
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+
+
+	/**
+	 * Validate persistent Cache Value
+	 * Should not be not empty and not oversized (max 16MB)
+	 *
+	 * @hints If the value is oversized try to archive it before SET using SmartPersistentCache::varCompress() and after GET use SmartPersistentCache::varUncompress()
+	 *
+	 * @param STRING 	$y_value	The Cache Value to be tested
+	 *
+	 * @return BOOLEAN	Returns TRUE if the value is valid or FALSE if not
+	 */
+	final public static function validateValue($y_value) {
+		//--
+		$len = (int) strlen((string)$y_value);
+		//--
+		if(((int)$len <= 0) OR ((int)$len > 16777216)) { // {{{SYNC-PCACHE-MAX-OBJ-SIZE}}}
 			return false;
 		} //end if
 		//--
