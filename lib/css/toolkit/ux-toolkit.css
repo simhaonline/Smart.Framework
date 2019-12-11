@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20191110), (c) 2015-2019 unix-world.org
+	extended by unixman, (stable.20191210), (c) 2015-2019 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -353,11 +353,17 @@ a.ux-link:hover {
 .ux-button-disabled,
 .ux-button-disabled:hover,
 .ux-button-disabled:focus,
-.ux-button-disabled:active {
+.ux-button-disabled:active,
+.ux-button-noaction {
 	background-image: none !important;
 	opacity: 0.40 !important;
 	cursor: not-allowed !important;
 	box-shadow: none !important;
+}
+
+.ux-button[disabled].ux-button-noaction,
+.ux-button-noaction {
+	cursor: default !important;
 }
 
 .ux-button-dark {

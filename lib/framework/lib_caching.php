@@ -214,7 +214,7 @@ final class SmartCache {
  * @internal
  *
  * @depends 	-
- * @version 	v.20191209
+ * @version 	v.20191210
  * @package 	development:Application
  *
  */
@@ -491,7 +491,7 @@ abstract class SmartAbstractPersistentCache {
 
 	/**
 	 * Validate persistent Cache Value
-	 * Should not be not empty and not oversized (max 16MB)
+	 * Should not be not empty and not oversized (max ~16MB minus 65KB reserved for metainfo)
 	 *
 	 * @hints If the value is oversized try to archive it before SET using SmartPersistentCache::varCompress() and after GET use SmartPersistentCache::varUncompress()
 	 *
@@ -503,7 +503,7 @@ abstract class SmartAbstractPersistentCache {
 		//--
 		$len = (int) strlen((string)$y_value);
 		//--
-		if(((int)$len <= 0) OR ((int)$len > 16777216)) { // {{{SYNC-PCACHE-MAX-OBJ-SIZE}}}
+		if(((int)$len <= 0) OR ((int)$len > (16777216 - 65535))) { // {{{SYNC-PCACHE-MAX-OBJ-SIZE}}} :: reserve 65535 for metainfo
 			return false;
 		} //end if
 		//--

@@ -645,7 +645,7 @@ final class SmartCryptoOpenSSLCipher {
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.20191203
+ * @version     v.20191210
  *
  */
 final class SmartCryptoCipherBlowfishCBC {
@@ -803,7 +803,7 @@ final class SmartCryptoCipherBlowfishCBC {
 		$plainText = (string) trim((string)$arr[0]);
 		$checksum = (string) trim((string)$arr[1]);
 		if((string)sha1($plainText) != (string)$checksum) {
-			Smart::log_warning('SmartCryptoCipherBlowfishCBC/Decrypt: Checksum Failed');
+			Smart::log_notice('SmartCryptoCipherBlowfishCBC/Decrypt: Checksum Failed');
 			return ''; // string is corrupted, avoid to return
 		} //end if
 		//-- b64 because is not UTF-8 safe and may corrupt unicode characters

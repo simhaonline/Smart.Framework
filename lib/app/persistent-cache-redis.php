@@ -35,8 +35,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
- * @depends 	SmartRedisDb, Smart
- * @version 	v.20191207
+ * @depends 	SmartRedisPersistentCache, SmartRedisDb, Smart
+ * @version 	v.20191209
  * @package 	Application:Caching
  *
  */

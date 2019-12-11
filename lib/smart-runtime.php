@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.2.7'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.09'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.11'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -179,14 +179,6 @@ if(!defined('SMART_FRAMEWORK_SSL_MODE')) {
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_SSL_MODE');
 } //end if
 //--
-if(!defined('SMART_FRAMEWORK_FILE_LOCKTIME')) {
-	@http_response_code(500);
-	die('A required INIT constant has not been defined: SMART_FRAMEWORK_FILE_LOCKTIME');
-} //end if
-if(!is_int(SMART_FRAMEWORK_FILE_LOCKTIME)) {
-	@http_response_code(500);
-	die('Invalid INIT constant value for SMART_FRAMEWORK_FILE_LOCKTIME');
-} //end if
 if(!defined('SMART_FRAMEWORK_CHMOD_DIRS')) {
 	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_CHMOD_DIRS');

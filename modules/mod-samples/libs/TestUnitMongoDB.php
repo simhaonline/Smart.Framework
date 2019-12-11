@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191205
+ * @version 	v.20191209
  *
  */
 final class TestUnitMongoDB {
@@ -83,6 +83,21 @@ final class TestUnitMongoDB {
 		//--
 		$tests[] = 'MongoDB Extension Version: '.$mongo->get_ext_version();
 		$tests[] = 'MongoDB Server Version: '.$mongo->get_server_version();
+		//--
+
+		//--
+		if((string)$err == '') {
+			$tst = 'Ping MongoDB';
+			$tests[] = (string) $tst;
+			$result = $mongo->command(
+				[
+					'ping' => 1,
+				]
+			);
+			if(!$mongo->is_command_ok($result)) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.\print_r($result,1);
+			} //end if
+		} //end if
 		//--
 
 		//--

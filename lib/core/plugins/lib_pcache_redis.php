@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		PUBLIC
  * @depends 	Smart, SmartRedisDb
  * @version 	v.20191209
- * @package 	Plugins:Database:Dba
+ * @package 	Plugins:PersistentCache:Redis
  *
  */
 class SmartRedisPersistentCache extends SmartAbstractPersistentCache {
@@ -302,7 +302,7 @@ class SmartRedisPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	//##### PRIVATES
+	//===== PRIVATES
 
 
 	private static function initCacheManager() {

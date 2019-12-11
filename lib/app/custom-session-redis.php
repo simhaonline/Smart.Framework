@@ -151,7 +151,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 	//==================================================
 	public function gc($lifetime) {
 		//--
-		return true; // for Redis the Keys are Expiring from internal mechanism, so GC will not be used here ...
+		return true; // for Redis the Keys are Expiring from it's internal mechanism, so GC will not be used here ...
 		//--
 	} //END FUNCTION
 	//==================================================

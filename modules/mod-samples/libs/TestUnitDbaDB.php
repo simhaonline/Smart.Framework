@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191205
+ * @version 	v.20191209
  *
  */
 final class TestUnitDbaDB {
@@ -205,20 +205,20 @@ final class TestUnitDbaDB {
 		} //end if
 		//--
 		if((string)$err == '') {
+			$tst = 'Get Key TTL for the updated Key (which does expire)';
+			$tests[] = (string) $tst;
+			$result = $dba->getTtl($testKey);
+			if($result < 1) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result should be at least time now but have: '.$result;
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
 			$tst = 'Read the same Key from DB (and compare with the written value, should not be expired)';
 			$tests[] = (string) $tst;
 			$result = $dba->getKey($testKey);
 			if((string)$result !== (string)$comments.'@exp=2') {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result: `'.$comments.'#'.'` but have: `'.$result.'`';
-			} //end if
-		} //end if
-		//--
-		if((string)$err == '') {
-			$tst = 'Get Key TTL for the updated Key (which does expire)';
-			$tests[] = (string) $tst;
-			$result = $dba->getTtl($testKey);
-			if($result < (int)time()) {
-				$err = 'The Test: '.$tst.' FAILED ! Expected result should be at least time now but have: '.$result;
 			} //end if
 		} //end if
 		//--

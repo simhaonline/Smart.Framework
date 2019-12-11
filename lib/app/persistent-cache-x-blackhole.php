@@ -33,13 +33,13 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * By example Memcached is not a good choice for a Persistent Cache storage because the max length of a string that can be stored in Memcached is 1MB.
  * This is why Smart.Framework supply only the Redis and DBA adapters (and not a Memcached adapter) because another requirement of the Persistent Cache implementation is to have no limit on the key/value that can be stored. And Redis does not have such limit. Also DBA does not have any limit.
  *
- * @hints The Persistent Cache will share the keys between both areas (INDEX and ADMIN) ; It is programmer's choice and work to ensure realm separation if needed for the keys if required so (Ex: INDEX area may use separate realms than ADMIN area)
+ * @hints The Persistent Cache will share the keys between both areas (INDEX and ADMIN) ; It is developer's choice and work to ensure realm separation if needed for the keys if required so (Ex: INDEX area may use separate realms than ADMIN area)
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191207
+ * @version 	v.20191209
  * @package 	Application:Caching
  *
  */

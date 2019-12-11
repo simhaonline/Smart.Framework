@@ -25,9 +25,11 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'SQLite: DB file based')
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
+ * @hints 		The SQLite based key/value store is significant slower than DBA ; whenever is available DBA should be used
+ *
  * @access 		PUBLIC
  * @depends 	SmartSQliteDb, Smart, SmartPersistentCache, PHP SQLite3 Extension
- * @version 	v.20191207
+ * @version 	v.20191210
  * @package 	Application
  *
  */
@@ -67,7 +69,8 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		//--
 		$this->sqlite = new SmartSQliteDb(
 			(string) $db_path, // avoid prefix with sess_ ; the class will check itself if it is a safe, relative path
-			(int)    $sqlite_cfg['timeout']
+			(int)    $sqlite_cfg['timeout'],
+			false // do not register extra SQL functions, they are not needed in this context
 		); // use the rest of values from configs
 		$this->sqlite->open();
 		//--
@@ -130,7 +133,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 			'data' 		=> (string) SmartPersistentCache::varCompress((string)$data) // data is serialized session as string
 		];
 		//--
-		$result = $this->sqlite->write_data(
+		$result = (array) $this->sqlite->write_data(
 			'INSERT OR REPLACE INTO `smart_framework_sessions` '.
 			$this->sqlite->prepare_statement($arr_insert, 'insert')
 		);
@@ -171,7 +174,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 	//==================================================
 	public function destroy($id) {
 		//--
-		$wr = (array) $this->sqlite->write_data(
+		$this->sqlite->write_data(
 			'DELETE FROM `smart_framework_sessions` WHERE ((`id` = ?) AND (`area` = ?) AND (`ns` = ?))',
 			[
 				(string) $id,
@@ -180,12 +183,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 			]
 		);
 		//--
-		/* should not check because other processes may unset an expired key when do GC and in that case may return false here ...
-		if($wr[1] != 1) {
-			Smart::log_warning('SQLite Custom Session: Failed to destroy ...');
-			return false;
-		} //end if
-		*/
+		// do not check the write result because other processes may unset an expired key when do GC and in that case may return false here ...
 		//--
 		return true;
 		//--

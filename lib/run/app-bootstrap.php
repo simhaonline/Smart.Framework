@@ -16,7 +16,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //-----------------------------------------------------
 
 //======================================================
-// Smart-Framework - App Bootstrap :: r.20191207
+// Smart-Framework - App Bootstrap :: r.20191210
 // DEPENDS: SmartFramework, SmartFrameworkRuntime
 //======================================================
 // This file can be customized per App ...
@@ -33,22 +33,36 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // * SMART_FRAMEWORK_SESSION_HANDLER
 //####################
 
-//== Set Persistent-Cache Adapter
+//== Set Persistent-Cache Adapter (or use none/blackhole)
 if(defined('SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER') AND ((string)SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER != '')) {
 	switch((string)SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER) {
-		case 'redis':
+		case 'redis': // Redis is significant faster than DBA or SQLite but needs RAM memory which could not be available ...
 			if(!is_array($configs['redis'])) {
 				Smart::raise_error('ERROR: The Custom Persistent Cache handler is set to: '.SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER.' but the Redis config is not available');
 				die('');
 			} //end if
 			require('lib/app/persistent-cache-redis.php'); // load the Redis based persistent cache
 			break;
-		case 'dba':
+		case 'mongodb': // MongoDB is faster than DBA or SQLite and can scale in a big data cluster (slower than Redis) ...
+			if(!is_array($configs['mongodb'])) {
+				Smart::raise_error('ERROR: The Custom Persistent Cache handler is set to: '.SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER.' but the MongoDB config is not available');
+				die('');
+			} //end if
+			require('lib/app/persistent-cache-mongodb.php'); // load the MongoDB based persistent cache
+			break;
+		case 'dba': // DBA is significant faster than SQLite
 			if((!is_array($configs['dba'])) OR (SmartDbaUtilDb::isDbaAndHandlerAvailable() !== true)) {
 				Smart::raise_error('ERROR: The Custom Persistent Cache handler is set to: '.SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER.' but the DBA config is not available or wrong');
 				die('');
 			} //end if
 			require('lib/app/persistent-cache-dba.php'); // load the DBA based persistent cache
+			break;
+		case 'sqlite': // this is designed to be used only if DBA is N/A or for small websites
+			if((!is_array($configs['sqlite'])) OR (!class_exists('SQLite3'))) {
+				Smart::raise_error('ERROR: The Custom Persistent Cache handler is set to: '.SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER.' but the SQLite config is not available or wrong');
+				die('');
+			} //end if
+			require('lib/app/persistent-cache-sqlite.php'); // load the SQLite3 based persistent cache (this uses fatal err)
 			break;
 		default:
 			SmartFrameworkRuntime::requirePhpScript((string)SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER, 'Custom Persistent Cache Handler');
@@ -70,24 +84,31 @@ if(defined('SMART_FRAMEWORK_TRANSLATIONS_ADAPTER_CUSTOM') AND ((string)SMART_FRA
 } else {
 	require('lib/app/translations-adapter-yaml.php'); // text translations (YAML based adapter)
 } //end if else
-//== Set Custom Session Handler Adapter if any
+//== Set Custom Session Handler Adapter if any (or fallback to files)
 if(defined('SMART_FRAMEWORK_SESSION_HANDLER') AND ((string)SMART_FRAMEWORK_SESSION_HANDLER !== 'files')) {
 	switch((string)SMART_FRAMEWORK_SESSION_HANDLER) {
-		case 'redis':
+		case 'redis': // Redis is significant faster than DBA or SQLite but needs RAM memory which could not be available ...
 			if(!is_array($configs['redis'])) {
 				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the Redis config is not available');
 				die('');
 			} //end if
 			require('lib/app/custom-session-redis.php'); // use custom session based on Redis
 			break;
-		case 'dba':
+		case 'mongodb': // MongoDB is faster than DBA or SQLite and can scale in a big data cluster (slower than Redis) ...
+			if(!is_array($configs['mongodb'])) {
+				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the MongoDB config is not available');
+				die('');
+			} //end if
+			require('lib/app/custom-session-mongodb.php'); // use custom session based on MongoDB
+			break;
+		case 'dba': // DBA is significant faster than SQLite
 			if((!is_array($configs['dba'])) OR (SmartDbaUtilDb::isDbaAndHandlerAvailable() !== true)) {
 				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the DBA config is not available or wrong');
 				die('');
 			} //end if
 			require('lib/app/custom-session-dba.php'); // use custom session based on DBA
 			break;
-		case 'sqlite':
+		case 'sqlite': // this is designed to be used only if DBA is N/A or for small websites
 			if((!is_array($configs['sqlite'])) OR (!class_exists('SQLite3'))) {
 				Smart::raise_error('ERROR: The Custom Session Handler is set to: '.SMART_FRAMEWORK_SESSION_HANDLER.' but the SQLite config is not available or wrong');
 				die('');

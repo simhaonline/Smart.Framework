@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.20191208
+ * @version 	v.20191209
  * @package 	Application:Development
  *
  */
@@ -1181,7 +1181,10 @@ private static function print_log_database($title, $db_log) {
 						} //end if
 					} //end if
 					if((string)$tmp_arr['query'] != '') {
-						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html($tmp_arr['query']), true);
+						if((int)strlen((string)$tmp_arr['query']) > 8192) {
+							$tmp_arr['query'] = (string) Smart::text_cut_by_limit((string)$tmp_arr['query'], 7168, true, '[%%%COMMENT%%%]... query is too long to display all here ...[%%%/COMMENT%%%]').substr((string)$tmp_arr['query'], -1024, 1024);
+						} //end
+						$log .= '<br>'.SmartMarkersTemplating::prepare_nosyntax_html_template(Smart::escape_html((string)$tmp_arr['query']), true);
 						if(Smart::array_size($tmp_arr['params']) > 0) {
 							$tmp_params = array();
 							foreach($tmp_arr['params'] as $key => $val) {

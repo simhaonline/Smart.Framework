@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191207
+ * @version 	v.20191210
  *
  */
 final class TestUnitPCache {
@@ -74,10 +74,10 @@ final class TestUnitPCache {
 		$pcache_mode = (string) implode(' + ', (array)$pcache_mode);
 		//--
 		if(\SmartPersistentCache::isMemoryBased() !== true) {
-			$expire_wait_seconds = 5; // it is slower and seconds begins before writing which may take a second or so ...
+			$expire_wait_seconds = 7; // it is slower and seconds begins before writing which may take a second or so ...
 		//	$pcache_big_content = (string) substr($pcache_big_content, 0, 65535); // avoid test with very big loads on non-memory based PCache Handlers
 		} else {
-			$expire_wait_seconds = 4; // should be enough for memory based
+			$expire_wait_seconds = 6; // should be enough for memory based
 		} //end if
 		//--
 		$pcache_test_key = 'pcache-test-key_'.\SmartPersistentCache::safeKey(\Smart::uuid_10_num().'-'.\Smart::uuid_36().'-'.\Smart::uuid_45());
@@ -92,9 +92,23 @@ final class TestUnitPCache {
 		//--
 
 		//--
+		if((stripos((string)$thePcacheVersionInfo, 'redis:') === 0) OR (stripos((string)$thePcacheVersionInfo, 'mongodb:') === 0) OR (stripos((string)$thePcacheVersionInfo, 'dba:') === 0)) {
+			$test_scale = 'LARGE';
+			$num_keys = 1000;
+			$key_middle = 500;
+			$key_last = 999;
+		} else { // sqlite and the rest, only test 100 keys to avoid run out of resources ...
+			$test_scale = 'SMALL';
+			$num_keys = 100;
+			$key_middle = 50;
+			$key_last = 99;
+		} //end if else
+		//--
+
+		//--
 		$tests = array();
 		$tests[] = '***** Persistent Cache Backend: ['.$thePcacheVersionInfo.'] *****';
-		$tests[] = '*** Persistent Cache Storage: '.$pcache_mode.' ***';
+		$tests[] = '*** Persistent Cache Storage: '.$pcache_mode.' # '.$test_scale.' SCALE Test ('.(int)$num_keys.') keys ***';
 		$tests[] = '===== Persistent Cache / TESTS with a huge size Variable (String/Json) Key-Size of 2x'.\SmartUtils::pretty_print_bytes(\strlen($pcache_test_arch_content), 2).' : =====';
 		//--
 		$err = '';
@@ -144,21 +158,31 @@ final class TestUnitPCache {
 
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Set a short Persistent Cache Key (auto-expire in 3 seconds)';
+			$tests[] = 'Set a short Persistent Cache Key (auto-expire in 5 seconds)';
 			$pcache_set_key = \SmartPersistentCache::setKey(
 				$the_test_realm,
 				$pcache_test_key,
 				(string) $pcache_test_value['unicode-test'],
-				3 // expire it after 3 seconds
+				5 // expire it after 5 seconds
 			);
 			if($pcache_set_key !== true) {
 				$err = 'Persistent Cache SetKey (short) returned a non-true result: '."\n".$pcache_test_key;
 			} //end if
 			if((string)$err == '') {
+				$tests[] = 'Get the TTL of the short Persistent Cache Key (auto-expire in 5 seconds)';
+				$pcache_get_ttl = \SmartPersistentCache::getTtl(
+					$the_test_realm,
+					$pcache_test_key
+				);
+				if(((int)$pcache_get_ttl < 1) OR ((int)$pcache_get_ttl > 5)) {
+					$err = 'Persistent Cache getTtl (short) returned an invalid result: '."\n".$pcache_get_ttl;
+				} //end if
+			} //end if
+			if((string)$err == '') {
 				$tests[] = 'Wait '.(int)$expire_wait_seconds.' seconds for Persistent Cache Key to expire, then check again if exists (time not counted)';
 				sleep((int)$expire_wait_seconds); // wait the Persistent Cache Key to Expire
 				$time = (float) ((float)$time + (int)$expire_wait_seconds); // ignore those wait seconds (waiting time) to fix counter
-				$tests[] = '-- FIX Counter (substract the '.(int)$expire_wait_seconds.' seconds, waiting time) ...';
+				$tests[] = '-- FIX Counter (substract the the waiting time: '.(int)$expire_wait_seconds.' seconds) ...';
 				if(\SmartPersistentCache::keyExists($the_test_realm, $pcache_test_key)) {
 					$err = 'Persistent Cache (short) Key does still exists (but should be expired after '.(int)$expire_wait_seconds.' seconds) and is not: '."\n".$pcache_test_key;
 				} //end if
@@ -243,8 +267,8 @@ final class TestUnitPCache {
 
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Set 1000 Persistent Cache Keys with Realm';
-			for($i=0; $i<1000; $i++) {
+			$tests[] = 'Set '.(int)$num_keys.' Persistent Cache Keys with Realm';
+			for($i=0; $i<(int)$num_keys; $i++) {
 				$pcache_set_multi = \SmartPersistentCache::setKey(
 					$the_test_realm.'__MKeys',
 					'Multi-'.$pcache_test_key.'#'.$i,
@@ -258,52 +282,68 @@ final class TestUnitPCache {
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if FIRST Persistent Cache Key (from 1000) exists, before unset with wildcard (*)';
+			$tests[] = 'Check if FIRST Persistent Cache Key (from '.(int)$num_keys.') exists, before unset with wildcard (*)';
 			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#0')) {
 				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#0';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if MIDDLE Persistent Cache Key (from 1000) exists, before unset with wildcard (*)';
-			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#500')) {
-				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#500';
+			$tests[] = 'Check if MIDDLE Persistent Cache Key (from '.(int)$num_keys.') exists, before unset with wildcard (*)';
+			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#'.$key_middle)) {
+				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#'.$key_middle;
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if LAST Persistent Cache Key (from 1000) exists, before unset with wildcard (*)';
-			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#999')) {
-				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#999';
+			$tests[] = 'Get the TTL of the MIDDLE Persistent Cache Key (from '.(int)$num_keys.') exists, before unset with wildcard (*)';
+			$pcache_get_ttl = \SmartPersistentCache::getTtl($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#'.$key_middle);
+			if((int)$pcache_get_ttl != -1) { // does not expire
+				$err = 'Persistent Cache Ttl returned an invalid result: '."\n".$pcache_get_ttl;
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Unset all 1000 Persistent Cache Keys with Realm, using wildcard (*)';
+			$tests[] = 'Check if LAST Persistent Cache Key (from '.(int)$num_keys.') exists, before unset with wildcard (*)';
+			if(!\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#'.$key_last)) {
+				$err = 'Persistent Cache Key does not exists and should: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#'.$key_last;
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Unset all '.(int)$num_keys.' Persistent Cache Keys with Realm, using wildcard (*)';
 			$pcache_unset_multi = \SmartPersistentCache::unsetKey($the_test_realm.'__MKeys', '*');
 			if($pcache_unset_multi !== true) {
-				$err = 'Persistent Cache UnsetKeys[1.1000] using wildcard (*), with Realm returned a non-true result';
+				$err = 'Persistent Cache UnsetKeys[1..'.(int)$num_keys.'] using wildcard (*), with Realm returned a non-true result';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if FIRST Persistent Cache Key (from 1000) exists, after unset with wildcard (*)';
+			$tests[] = 'Check if FIRST Persistent Cache Key (from '.(int)$num_keys.') exists, after unset with wildcard (*)';
 			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#0')) {
 				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#0';
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if MIDDLE Persistent Cache Key (from 1000) exists, after unset with wildcard (*)';
-			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#500')) {
-				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#500';
+			$tests[] = 'Check if MIDDLE Persistent Cache Key (from '.(int)$num_keys.') exists, after unset with wildcard (*)';
+			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#'.$key_middle)) {
+				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#'.$key_middle;
 			} //end if
 		} //end if
 		//--
 		if((string)$err == '') {
-			$tests[] = 'Check if LAST Persistent Cache Key (from 1000) exists, after unset with wildcard (*)';
-			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#999')) {
-				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#999';
+			$tests[] = 'Get the TTL of the MIDDLE Persistent Cache Key (from '.(int)$num_keys.') exists, after unset with wildcard (*)';
+			$pcache_get_ttl = \SmartPersistentCache::getTtl($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#'.$key_middle);
+			if((int)$pcache_get_ttl != -2) { // does not exists
+				$err = 'Persistent Cache Ttl returned an invalid result: '."\n".$pcache_get_ttl;
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tests[] = 'Check if LAST Persistent Cache Key (from '.(int)$num_keys.') exists, after unset with wildcard (*)';
+			if(\SmartPersistentCache::keyExists($the_test_realm.'__MKeys', 'Multi-'.$pcache_test_key.'#'.$key_last)) {
+				$err = 'Persistent Cache Key does exists and should not: '."\n".$the_test_realm.'__MKeys'.':'.'Multi-'.$pcache_test_key.'#'.$key_last;
 			} //end if
 		} //end if
 		//--
@@ -315,8 +355,12 @@ final class TestUnitPCache {
 		//--
 		if(stripos((string)$thePcacheVersionInfo, 'redis:') === 0) {
 			$img_check = 'lib/core/img/db/redis-logo.svg';
+		} elseif(stripos((string)$thePcacheVersionInfo, 'mongodb:') === 0) {
+			$img_check = 'lib/core/img/db/mongodb-logo.svg';
 		} elseif(stripos((string)$thePcacheVersionInfo, 'dba:') === 0) {
 			$img_check = 'lib/core/img/db/dba-logo.svg';
+		} elseif(stripos((string)$thePcacheVersionInfo, 'sqlite:') === 0) {
+			$img_check = 'lib/core/img/db/sqlite-logo.svg';
 		} else {
 			$img_check = 'lib/core/img/app/session.svg';
 		} //end if else

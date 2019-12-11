@@ -436,7 +436,7 @@ final class SmartDbaDb {
 		//--
 		$expire = (int) $expire;
 		if($expire > 0) {
-			$expiration = (int) ((int)time() + (int)$expire);
+			$expiration = (int) ((int)time() + (int)$expire); // {{{SYNC-PCACHE-EXPIRE}}}
 		} else {
 			$expiration = -1; // does not expire (compatible to Redis)
 		} //end if else
@@ -996,11 +996,13 @@ final class SmartDbaDb {
 			return -4; // invalid record
 		} //end if
 		//--
-		if(
-			((int)$value['expire'] <= 0) OR  // does not expires
-			(((int)$value['expire'] > 0) AND ((int)$value['expire'] > (int)time())) // expires but not yet expired
-		) { // not expired
-			$value = (int) $value['expire']; // ok
+		if((int)$value['expire'] <= 0) {
+			$value = -1; // does not expire
+		} elseif(((int)$value['expire'] > 0) AND ((int)$value['expire'] > (int)time())) {
+			$value = (int) ((int)$value['expire'] - (int)time()); // {{{SYNC-PCACHE-TTL}}}
+			if($value < 0) {
+				$value = 0;
+			} //end if
 		} else {
 			$value = -3; // expired
 			@dba_delete((string)$hash, $this->dba); // remove expired

@@ -166,22 +166,31 @@ final class SmartBarcode1D {
 
 		//--
 		$realm = 'barcode1d';
-		$cache_realm = (string) SmartDbaPersistentCache::safeKey($realm.'-T'.$c__typ.'-F'.$c__fmt.'-S'.(int)$y_size.'-H'.(int)$y_height.'-Q'.trim((string)$y_color,'#').'-'.$barcode_show_text);
-		$cache_uuid  = (string) SmartDbaPersistentCache::safeKey(substr((string)Smart::safe_filename($y_code), 0, 25).'-'.sha1($realm.'://'.$barcode_type.'/'.$barcode_format.'/'.(int)$y_size.'/'.(int)$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code));
-		//--
-
+		$cache_handler = null;
 		//--
 		if((int)$y_cachetime >= 0) { // if allow caching, try to load from cache
 			//--
-			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
+			if(SmartDbaPersistentCache::isActive()) {
+				$cache_handler = 'SmartDbaPersistentCache';
+			} elseif(SmartSQlitePersistentCache::isActive()) {
+				$cache_handler = 'SmartSQlitePersistentCache';
+			} //end if else
+			if(!class_exists((string)$cache_handler)) {
+				$cache_handler = false;
+			} //end if
+			//--
+			if($cache_handler) { // and of course if DBA or SQLite PCache is Available/Active
 				//--
-				$out = SmartDbaPersistentCache::getKey( // mixed
+				$cache_realm = (string) $cache_handler::safeKey($realm.'-T'.$c__typ.'-F'.$c__fmt.'-S'.(int)$y_size.'-H'.(int)$y_height.'-Q'.trim((string)$y_color,'#').'-'.$barcode_show_text);
+				$cache_uuid  = (string) $cache_handler::safeKey(substr((string)Smart::safe_filename($y_code), 0, 25).'-'.sha1($realm.'://'.$barcode_type.'/'.$barcode_format.'/'.(int)$y_size.'/'.(int)$y_height.'/'.$y_color.'/'.$barcode_show_text.'/'.$y_code));
+				//--
+				$out = $cache_handler::getKey( // mixed
 					(string) $cache_realm, 	// realm
 					(string) $cache_uuid 	// key
 				);
 				//--
 				if((string)$out != '') {
-					return (string) SmartPersistentCache::varUncompress($out); // if found in cache return it
+					return (string) $cache_handler::varUncompress($out); // if found in cache return it
 				} else {
 					$out = '';
 				} //end if else
@@ -231,13 +240,13 @@ final class SmartBarcode1D {
 		//--
 		if((int)$y_cachetime >= 0) { // if allow caching, try to save in cache
 			//--
-			if(SmartDbaPersistentCache::isActive()) { // and of course if DBA caching is Available/Active
+			if($cache_handler) { // and of course if DBA or SQLite PCache is Available/Active
 				//--
-				SmartDbaPersistentCache::setKey(
-					(string) $cache_realm, 								// realm
-					(string) $cache_uuid, 								// key
-					(string) SmartPersistentCache::varCompress($out), 	// content
-					(int)    $y_cachetime 								// expire time
+				$cache_handler::setKey(
+					(string) $cache_realm, 							// realm
+					(string) $cache_uuid, 							// key
+					(string) $cache_handler::varCompress($out), 	// content
+					(int)    $y_cachetime 							// expire time
 				);
 				//--
 			} //end if

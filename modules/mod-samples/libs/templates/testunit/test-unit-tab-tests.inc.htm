@@ -63,7 +63,7 @@
 				});
 				//--
 				$('#btn_loader_test_pcache').click(function() {
-					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Persistent Cache Test Suite ...</span>');
+					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;">Loading the Persistent Cache Test Suite ...<br>This test will run ~ 15 seconds as it needs to set and wait (sleep) for some keys to expire ...</span>');
 					SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_div_by_ajax', 'lib/framework/img/loading-spin.svg', '[###TESTUNIT_BASE_URL|js###]testunit.pcache-test&time=[###NO-CACHE-TIME|url|js###]', 'GET', 'html');
 				});
 				//--

@@ -30,13 +30,16 @@ require_once('lib/core/plugins/lib_markdown.php'); 			// markdown syntax parser
 require_once('lib/core/plugins/lib_archlzs.php');			// lzs archiver
 //--
 require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
-require_once('lib/core/plugins/lib_pcache_redis.php');		// redis persistent cache
+require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
 require_once('lib/core/plugins/lib_db_dba.php');			// dba db connector
-require_once('lib/core/plugins/lib_pcache_dba.php'); 		// dba persistent cache
 require_once('lib/core/plugins/lib_db_sqlite.php');			// sqlite3 db connector
 require_once('lib/core/plugins/lib_db_pgsql.php');			// postgresql db connector
 require_once('lib/core/plugins/lib_db_mysqli.php');			// mysqli db connector
-require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
+//--
+require_once('lib/core/plugins/lib_pcache_redis.php');		// redis persistent cache
+require_once('lib/core/plugins/lib_pcache_mongodb.php');	// mongodb persistent cache
+require_once('lib/core/plugins/lib_pcache_dba.php'); 		// dba persistent cache
+require_once('lib/core/plugins/lib_pcache_sqlite.php'); 	// sqlite3 persistent cache
 //--
 require_once('lib/core/plugins/lib_session.php');			// session storage
 //--

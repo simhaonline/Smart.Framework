@@ -27,7 +27,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'DBA: DB file based');
  *
  * @access 		PUBLIC
  * @depends 	SmartDbaDb, Smart, SmartPersistentCache, PHP DBA Extension
- * @version 	v.20191207
+ * @version 	v.20191209
  * @package 	Application
  *
  */
@@ -103,7 +103,11 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 			} //end if
 		} //end if
 		//--
-		$result = $this->dba->setKey((string)$key, (string)$data, (int)$expire);
+		$result = $this->dba->setKey(
+			(string) $key,
+			(string) SmartPersistentCache::varCompress((string)$data),
+			(int)    $expire
+		);
 		//--
 		if($result !== true) {
 			Smart::log_warning('DBA Custom Session: Failed to write ...');
@@ -127,7 +131,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 			$data = ''; // if key does not exists it returns null or if expired returns false
 		} //end if
 		//--
-		return (string) $data;
+		return (string) SmartPersistentCache::varUncompress((string)$data);
 		//--
 	} //END FUNCTION
 	//==================================================
@@ -138,14 +142,9 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 		//--
 		$key = (string) SmartPersistentCache::safeKey((string)$this->sess_area).':'.SmartPersistentCache::safeKey((string)$this->sess_ns).':'.SmartPersistentCache::safeKey((string)$id);
 		//--
-		$ok = $this->dba->unsetKey((string)$key);
+		$this->dba->unsetKey((string)$key);
 		//--
-		/* should not check because other processes may unset an expired key when do GC and in that case may return false here ...
-		if($ok !== true) {
-			Smart::log_warning('DBA Custom Session: Failed to destroy ...');
-			return false;
-		} //end if
-		*/
+		// do not check the write result because other processes may unset an expired key when do GC and in that case may return false here ...
 		//--
 		return true;
 		//--

@@ -17,7 +17,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* Smart::
 //	* SmartDbaUtilDb::
 //	* SmartDbaDb::
-// DEPENDS-EXT: PHP DBA
+// DEPENDS-EXT: PHP DBA Extension
 //======================================================
 
 
@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		PUBLIC
  * @depends 	Smart, PHP DBA Extension, SmartDbaUtilDb, SmartDbaDb
  * @version 	v.20191209
- * @package 	Plugins:Database:Dba
+ * @package 	Plugins:PersistentCache:Dba
  *
  */
 class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
@@ -60,10 +60,10 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 	// !!! THIS CLASS MUST NOT BE MARKED AS FINAL to allow the class SmartPersistentCache@DBA to be extended from this !!!
 	// But this class have all PUBLIC Methods marked as FINAL to avoid being rewritten ...
 
-	const DBA_FOLDER 			= 'tmp/cache/pcache#dba/'; // base cached folder
-	const DBA_FILE   			= 'p-cache.dba';		// base name for dba cache file
+	const DBA_FOLDER 			= 'tmp/cache/pcache#dba/'; 	// base cached folder
+	const DBA_FILE   			= 'p-cache.dba';			// base name for dba cache file
 
-	private static $is_active 	= null;		// Cache Active State ; by default is null ; on 1st check must set to TRUE or FALSE
+	private static $is_active 	= null;						// Cache Active State ; by default is null ; on 1st check must set to TRUE or FALSE
 
 
 	final public static function getVersionInfo() {
@@ -281,7 +281,7 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 	} //END FUNCTION
 
 
-	//##### PRIVATES
+	//===== PRIVATES
 
 
 	private static function getSafeStorageNameDir($y_realm) {
@@ -331,8 +331,6 @@ class SmartDbaPersistentCache extends SmartAbstractPersistentCache {
 		//--
 		$db_file_path = (string) self::getSafeStorageNameDir($y_realm).self::getSafeStorageNameFile($y_realm, $y_key);
 		SmartFileSysUtils::raise_error_if_unsafe_path((string)$db_file_path);
-		//--
-
 		//--
 		$is_fatal_err = false; // for a persistent cache do not use fatal errors, just log them
 		//-- !!! must create each time a new object because reusing a large number of resources / opened files may run out of memory/resources

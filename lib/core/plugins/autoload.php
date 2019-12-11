@@ -84,15 +84,12 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartRedisDb':
 			require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
 			break;
-		case 'SmartRedisPersistentCache':
-			require_once('lib/core/plugins/lib_pcache_redis.php');		// redis persistent cache
+		case 'SmartMongoDb':
+			require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
 			break;
 		case 'SmartDbaUtilDb':
 		case 'SmartDbaDb':
 			require_once('lib/core/plugins/lib_db_dba.php');			// dba db connector
-			break;
-		case 'SmartDbaPersistentCache':
-			require_once('lib/core/plugins/lib_pcache_dba.php'); 		// dba persistent cache
 			break;
 		case 'SmartSQliteFunctions':
 		case 'SmartSQliteUtilDb':
@@ -107,8 +104,18 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartMysqliExtDb':
 			require_once('lib/core/plugins/lib_db_mysqli.php'); 		// mysqli db connector
 			break;
-		case 'SmartMongoDb':
-			require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
+		//-- persistent cache
+		case 'SmartRedisPersistentCache':
+			require_once('lib/core/plugins/lib_pcache_redis.php');		// redis persistent cache
+			break;
+		case 'SmartMongoDbPersistentCache':
+			require_once('lib/core/plugins/lib_pcache_mongodb.php');	// mongodb persistent cache
+			break;
+		case 'SmartDbaPersistentCache':
+			require_once('lib/core/plugins/lib_pcache_dba.php'); 		// dba persistent cache
+			break;
+		case 'SmartSQlitePersistentCache':
+			require_once('lib/core/plugins/lib_pcache_sqlite.php'); 	// sqlite3 persistent cache
 			break;
 		//-- session handler
 		case 'SmartAbstractCustomSession':

@@ -52,6 +52,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * 		'name' => 'Test Record'
  * );
  * $sq_ins = (array) $db->write_data('INSERT INTO other_table '.$db->prepare_statement($arr_insert, 'insert'));
+ * $sq_ins = (array) $db->write_data('INSERT OR REPLACE INTO other_table '.$db->prepare_statement($arr_insert, 'insert')); // upsert
  * $sq_upd = (array) $db->write_data('UPDATE other_table SET active = 0 WHERE (id = ?)', array(100));
  * $prepared_sql = $db->prepare_param_query('SELECT * FROM table WHERE id = ?', [99]);
  * $db->close(); // optional, but safe
@@ -61,7 +62,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191207
+ * @version 	v.20191210
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -74,6 +75,7 @@ final class SmartSQliteDb {
 	private $file = '';
 	private $opened = false;
 	private $timeoutbusysec = 60;
+	private $regextfuncs = true;
 	//--
 
 
@@ -81,10 +83,12 @@ final class SmartSQliteDb {
 	/**
 	 * Class constructor
 	 *
-	 * @param STRING $sqlite_db_file 		:: The path to the SQLite Database File :: Example: 'tmp/test.sqlite' ; (if DB does not exist, will create it)
+	 * @param STRING $sqlite_db_file 				:: The path to the SQLite Database File :: Example: 'tmp/test.sqlite' ; (if DB does not exist, will create it)
+	 * @param INTEGER+ $timeout_busy_sec 			:: The busy timeout in seconds
+	 * @param BOOLEAN $register_extra_functions 	:: If set to FALSE will not register the default extra SQL functions ; default is TRUE ; extra SQL functions can be set later with register_sql_function()
 	 *
 	 */
-	public function __construct($sqlite_db_file, $timeout_busy_sec=60) {
+	public function __construct($sqlite_db_file, $timeout_busy_sec=60, $register_extra_functions=true) {
 
 		//--
 		if((string)$sqlite_db_file == '') {
@@ -104,6 +108,8 @@ final class SmartSQliteDb {
 		} //end if
 		//--
 
+		//--
+		$this->regextfuncs = (bool) $register_extra_functions;
 		//--
 		$this->file = (string) $sqlite_db_file; // add SQLite Version as suffix
 		//--
@@ -138,7 +144,7 @@ final class SmartSQliteDb {
 	 * This must be called prior any other DB operations: read / write / count / ...
 	 */
 	public function open() {
-		$this->db = SmartSQliteUtilDb::open($this->file, $this->timeoutbusysec);
+		$this->db = SmartSQliteUtilDb::open($this->file, $this->timeoutbusysec, $this->regextfuncs);
 		if($this->db) {
 			$this->opened = true;
 		} //end if
@@ -470,7 +476,7 @@ final class SmartSQliteDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191207
+ * @version 	v.20191210
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -497,11 +503,13 @@ final class SmartSQliteUtilDb {
 
 	//======================================================
 	// SQLite will automatically lock file on write access (does not allow multiple write acess at same time)
-	public static function open($file_name, $timeout_busy_sec=60) {
+	public static function open($file_name, $timeout_busy_sec=60, $register_extra_functions=true) {
 		//--
 		global $configs;
 		//-- check if available
 		self::check_is_available();
+		//--
+		$register_extra_functions = (bool) $register_extra_functions;
 		//--
 		if((string)$file_name == '') {
 			self::error((string)$file_name, 'OPEN', 'ERROR: DB path is empty !', '', '');
@@ -641,46 +649,54 @@ final class SmartSQliteUtilDb {
 			]);
 		} //end if
 		//-- register basic user functions (will use as prefix: `smart_` for each below)
-		$ext_functions = [ // 0 = no arguments ; -1 = variadic ; 1..n args
-			'time' 						=>  0, // no arguments
-			'strtotime' 				=>  1,
-			'date' 						=> -1, // can have 1 or 2 args
-			'date_diff' 				=>  2,
-			'period_diff' 				=>  2,
-			'base64_encode' 			=>  1,
-			'base64_decode' 			=>  1,
-			'bin2hex' 					=>  1,
-			'hex2bin' 					=>  1,
-			'crc32b' 					=>  1,
-			'md5' 						=>  1,
-			'sha1' 						=>  1,
-			'sha512' 					=>  1,
-			'strlen' 					=>  1,
-			'charlen' 					=>  1,
-			'str_wordcount' 			=>  1,
-			'strip_tags' 				=> -1, // can have 1 or 2 args
-			'striptags' 				=>  1,
-			'deaccent_str' 				=>  1,
-			'json_arr_contains' 		=>  2,
-			'json_obj_contains' 		=>  3,
-			'json_arr_delete' 			=>  2,
-			'json_obj_delete' 			=>  3,
-			'json_arr_append' 			=>  2,
-			'json_obj_append' 			=>  2
-		];
-		foreach($ext_functions as $func => $argnum) {
-			if(self::register_sql_function($db, (string)$func, (int)$argnum) !== true) {
-				Smart::log_warning('WARNING: '.__METHOD__.' # Failed to Register Internal Function: `'.(string)$func.'` with SQLite DB');
+		if($register_extra_functions !== false) {
+			$ext_functions = [ // 0 = no arguments ; -1 = variadic ; 1..n args
+				'time' 						=>  0, // no arguments
+				'strtotime' 				=>  1,
+				'date' 						=> -1, // can have 1 or 2 args
+				'date_diff' 				=>  2,
+				'period_diff' 				=>  2,
+				'base64_encode' 			=>  1,
+				'base64_decode' 			=>  1,
+				'bin2hex' 					=>  1,
+				'hex2bin' 					=>  1,
+				'crc32b' 					=>  1,
+				'md5' 						=>  1,
+				'sha1' 						=>  1,
+				'sha512' 					=>  1,
+				'strlen' 					=>  1,
+				'charlen' 					=>  1,
+				'str_wordcount' 			=>  1,
+				'strip_tags' 				=> -1, // can have 1 or 2 args
+				'striptags' 				=>  1,
+				'deaccent_str' 				=>  1,
+				'json_arr_contains' 		=>  2,
+				'json_obj_contains' 		=>  3,
+				'json_arr_delete' 			=>  2,
+				'json_obj_delete' 			=>  3,
+				'json_arr_append' 			=>  2,
+				'json_obj_append' 			=>  2
+			];
+			foreach($ext_functions as $func => $argnum) {
+				if(self::register_sql_function($db, (string)$func, (int)$argnum) !== true) {
+					Smart::log_warning('WARNING: '.__METHOD__.' # Failed to Register Internal Function: `'.(string)$func.'` with SQLite DB');
+				} //end if
+			} //end foreach
+			if(SmartFrameworkRuntime::ifDebug()) {
+				SmartFrameworkRegistry::setDebugMsg('db', 'sqlite|log', [
+					'type' => 'nosql',
+					'data' => 'SQLite Registered Extra Functions: '.implode(', ', (array)array_keys((array)$ext_functions))
+				]);
 			} //end if
-		} //end foreach
+		} //end if
 		//-- create the first time table to record the sqlite version
 		if(!self::check_if_table_exists($db, '_smartframework_metadata')) {
 			self::create_table($db, '_smartframework_metadata', '`id` VARCHAR(255) PRIMARY KEY UNIQUE, `description` TEXT');
-			self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'sqlite-version\', \''.self::escape_str($db, '3').'\')');
-			self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'smartframework-version\', \''.self::escape_str($db, (string)SMART_FRAMEWORK_VERSION).'\')');
-			self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'creation-date-and-time\', \''.self::escape_str($db, (string)date('Y-m-d H:i:s O')).'\')');
-			self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'database-name\', \''.self::escape_str($db, (string)$file_name).'\')');
-			self::write_data($db, 'INSERT INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'domain-realm-id\', \''.self::escape_str($db, (string)SMART_SOFTWARE_NAMESPACE).'\')');
+			self::write_data($db, 'INSERT OR REPLACE INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'sqlite-version\', \''.self::escape_str($db, '3').'\')');
+			self::write_data($db, 'INSERT OR REPLACE INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'smartframework-version\', \''.self::escape_str($db, (string)SMART_FRAMEWORK_VERSION).'\')');
+			self::write_data($db, 'INSERT OR REPLACE INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'creation-date-and-time\', \''.self::escape_str($db, (string)date('Y-m-d H:i:s O')).'\')');
+			self::write_data($db, 'INSERT OR REPLACE INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'database-name\', \''.self::escape_str($db, (string)$file_name).'\')');
+			self::write_data($db, 'INSERT OR REPLACE INTO `_smartframework_metadata` (`id`, `description`) VALUES (\'domain-realm-id\', \''.self::escape_str($db, (string)SMART_SOFTWARE_NAMESPACE).'\')');
 		} //end if
 		//--
 		return $db;
@@ -1778,7 +1794,7 @@ final class SmartSQliteUtilDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20191207
+ * @version 	v.20191210
  * @package 	Plugins:Database:SQLite
  *
  */

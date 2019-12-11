@@ -101,13 +101,14 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			);
 			//--
 			if(Smart::array_size($test_pcache_data_arr) > 0) {
+				$pCacheInfo = (string) strtoupper((string)substr((string)SmartPersistentCache::getVersionInfo(), 0, 1));
 				if($this->PageViewSetData($test_pcache_data_arr) === true) {
 					//-- *optional* code
 					if($this->IfDebug()) {
 						$this->SetDebugData('Page Cache Info', 'Serving page from Persistent Cache (override PHP full code Execution). Page namespace/key is: cached-samples / '.$the_page_cache_key);
 					} // end if
-					$this->PageViewPrependVar('main', "\n".'<!-- [R]: Cached Content ; Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
-					$this->PageViewAppendVar('main',  "\n".'<!-- [R]: Cached Content ; Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
+					$this->PageViewPrependVar('main', "\n".'<!-- ['.Smart::escape_html($pCacheInfo).']: Cached Content ; Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
+					$this->PageViewAppendVar('main',  "\n".'<!-- ['.Smart::escape_html($pCacheInfo).']: Cached Content ; Key: '.Smart::escape_html($the_page_cache_key).' -->'."\n"); // add a markup to the HTML to know was served from cache ...
 					//-- #end: *optional code
 					return; // this is mandatory, the page was served from Cache (stop here ...)
 				} //end if
