@@ -2,6 +2,10 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+December 11, 2019 :: Version 5.2.7 rev.191211
+	* Add MongoDB Custom Session Handler
+	* Add MongoDB Custom Persistent Cache
+
 December 05, 2019 :: Version 5.2.7 rev.191205
 	* PHP 7.4 ready
 	* removed deprecated SmartUtils::load_cached_file_content() ; use Persistent Cache instead
@@ -9,6 +13,7 @@ December 05, 2019 :: Version 5.2.7 rev.191205
 	* Add DBA Custom Session Handler
 	* Add DBA Custom Persistent Cache
 	* Add SQLite Custom Session Handler
+	* Add SQLite Custom Persistent Cache
 	* Redis: Change Object Constructor (order of parameters and all parameters are optional) to Simplify usage with default params from config
 	* Error Handler: now uses a safe and absolute path to the tmp/log to be available also for handlers registered with register_shutdown_function() that can no more access relative bugs ; the PHP Bug #31570 (not fixed since a very long time)
 

@@ -16,7 +16,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // DEPENDS:
 //	* Smart::
 //	* SmartPersistentCache::
-//	* SmartAdapterTextTranslations:: *BOOTSTRAP*
+//	* SmartAdapterTextTranslations:: *APP-BOOTSTRAP*
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.20191101
+ * @version 	v.20191211
  * @package 	@Core:Translations
  *
  */
@@ -857,7 +857,7 @@ final class SmartTextTranslations {
 		//--
 		$arr = array();
 		//--
-		if(SmartPersistentCache::isActive() AND SmartPersistentCache::isMemoryBased()) {
+		if(SmartPersistentCache::isActive() AND (!SmartPersistentCache::isFileSystemBased()) AND (SmartPersistentCache::isMemoryBased() OR SmartPersistentCache::isDbBased())) {
 			//-- if not set translations versions, set them to internal cache :: this will be executed just once per session and is necessary to keep sync between Persistent Cache Translations and Real Translation Sources
 			if((string)$version_translations == '') {
 				Smart::log_warning('Empty Version for Text Translations ... It is needed for store them in the Persistent Cache !');
@@ -908,7 +908,7 @@ final class SmartTextTranslations {
 	// try to set to persistent cache if active and non-empty array
 	private static function setInPersistentCache($the_cache_key, $y_data_arr) {
 		//--
-		if(SmartPersistentCache::isActive() AND SmartPersistentCache::isMemoryBased()) {
+		if(SmartPersistentCache::isActive() AND (!SmartPersistentCache::isFileSystemBased()) AND (SmartPersistentCache::isMemoryBased() OR SmartPersistentCache::isDbBased())) {
 			if(Smart::array_size($y_data_arr) > 0) {
 				SmartPersistentCache::setKey('smart-regional-texts', (string)$the_cache_key, (string)SmartPersistentCache::varEncode((array)$y_data_arr));
 			} //end if

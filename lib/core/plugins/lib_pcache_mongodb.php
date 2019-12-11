@@ -587,6 +587,24 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 				//--
 			} //end if
 			//--
+			if(Smart::random_number(0, 10) == 1) { // 10% chance to delete
+				try {
+					$clear_expired = self::$mongo->delete(
+						(string) self::$collection,
+						[ // find filter: all expired
+							'$and' => [
+								[ 'expire' 		=> [ '$gt' 	=> 0 ] ], 				// expire > 0
+								[ 'expire_at' 	=> [ '$gte' => 0 ] ], 				// expire_at >= 0
+								[ 'expire_at' 	=> [ '$lt' 	=> (int)time() ] ] 		// expire_at < time()
+							]
+						]
+					);
+				} catch(Exception $err) { // don't throw if MongoDB error !
+					Smart::log_warning(__METHOD__.' # Failed to delete expired sessions: '.$err->getMessage());
+					return false;
+				} //end try catch
+			} //end if
+			//--
 		} //end if
 		//--
 		return true;
