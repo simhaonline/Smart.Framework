@@ -27,7 +27,7 @@ define('SMART_FRAMEWORK__INFO__CUSTOM_SESSION_ADAPTER', 'MongoDB: DB NoSQL based
  *
  * @access 		PUBLIC
  * @depends 	SmartMongoDb, Smart
- * @version 	v.20191210
+ * @version 	v.20191211
  * @package 	Application
  *
  */
@@ -181,6 +181,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 				],
 				'$set', 			// operation
 				[ // update array
+					'_id' 		=> (string) SmartHashCrypto::sha256($id.':'.$this->sess_area.':'.$this->sess_ns).'-'.SmartHashCrypto::crc32b($this->sess_ns.':'.$this->sess_area.':'.$id), // ensure the same uuid to avoid 2 different uuids are upserted in the same time and generate duplicate error on high concurrency
 					'id' 		=> (string) $id,
 					'area' 		=> (string) $this->sess_area,
 					'ns' 		=> (string) $this->sess_ns,

@@ -145,7 +145,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		$id = (string) sha1($y_realm.':'.$y_key);
+		$id = (string) SmartHashCrypto::sha512($y_realm.':'.$y_key);
 		//--
 		$rd = array();
 		try {
@@ -177,7 +177,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 						if(array_key_exists('expire', (array)$rd)) {
 							if(array_key_exists('expire_at', (array)$rd)) {
 								if(((string)$id === (string)$rd['id']) AND ((string)$y_key === (string)$rd['key']) AND ((string)$y_realm === (string)$rd['realm'])) {
-									if((string)$id === sha1($rd['realm'].':'.$rd['key'])) {
+									if((string)$id === (string)SmartHashCrypto::sha512($rd['realm'].':'.$rd['key'])) {
 										if(((int)$rd['expire'] <= 0) OR (((int)$rd['expire'] > 0) AND ((int)$rd['expire_at'] > 0) AND ((int)$rd['expire_at'] >= (int)time()))) {
 											$ok = true;
 										} //end if
@@ -215,7 +215,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 			return -3;
 		} //end if
 		//--
-		$id = (string) sha1($y_realm.':'.$y_key);
+		$id = (string) SmartHashCrypto::sha512($y_realm.':'.$y_key);
 		//--
 		$rd = array();
 		try {
@@ -247,7 +247,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 						if(array_key_exists('expire', (array)$rd)) {
 							if(array_key_exists('expire_at', (array)$rd)) {
 								if(((string)$id === (string)$rd['id']) AND ((string)$y_key === (string)$rd['key']) AND ((string)$y_realm === (string)$rd['realm'])) {
-									if((string)$id === sha1($rd['realm'].':'.$rd['key'])) {
+									if((string)$id === (string)SmartHashCrypto::sha512($rd['realm'].':'.$rd['key'])) {
 										if(((int)$rd['expire'] <= 0) OR (((int)$rd['expire'] > 0) AND ((int)$rd['expire_at'] > 0) AND ((int)$rd['expire_at'] >= (int)time()))) {
 											if((int)$rd['expire'] <= 0) {
 												if((int)$rd['expire_at'] <= 0) {
@@ -296,7 +296,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 			return null;
 		} //end if
 		//--
-		$id = (string) sha1($y_realm.':'.$y_key);
+		$id = (string) SmartHashCrypto::sha512($y_realm.':'.$y_key);
 		//--
 		$rd = array();
 		try {
@@ -321,7 +321,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 						if(array_key_exists('expire', (array)$rd)) {
 							if(array_key_exists('expire_at', (array)$rd)) {
 								if(((string)$id === (string)$rd['id']) AND ((string)$y_key === (string)$rd['key']) AND ((string)$y_realm === (string)$rd['realm'])) {
-									if((string)$id === sha1($rd['realm'].':'.$rd['key'])) {
+									if((string)$id === (string)SmartHashCrypto::sha512($rd['realm'].':'.$rd['key'])) {
 										if(((int)$rd['expire'] <= 0) OR (((int)$rd['expire'] > 0) AND ((int)$rd['expire_at'] > 0) AND ((int)$rd['expire_at'] >= (int)time()))) {
 											if(array_key_exists('pcache', (array)$rd)) {
 												$rd['pcache'] = Smart::unseryalize((string)$rd['pcache']);
@@ -393,7 +393,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 			$expiration = -1; // does not expire (compatible to Redis)
 		} //end if else
 		//--
-		$id = (string) sha1($y_realm.':'.$y_key);
+		$id = (string) SmartHashCrypto::sha512($y_realm.':'.$y_key);
 		//--
 		$upsert = array();
 		try {
@@ -406,6 +406,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 				],
 				'$set', 			// operation
 				[ // update array
+					'_id' 		=> (string) SmartHashCrypto::sha256($y_realm.':'.$y_key).'-'.SmartHashCrypto::crc32b($y_key.':'.$y_realm), // ensure the same uuid to avoid 2 different uuids are upserted in the same time and generate duplicate error on high concurrency
 					'id' 		=> (string) $id,
 					'key' 		=> (string) $y_key,
 					'realm' 	=> (string) $y_realm,
@@ -470,7 +471,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 			} //end try catch
 			// do not check $delete[1] >= 1, as it may already be deleted by other process
 		} else {
-			$id = (string) sha1($y_realm.':'.$y_key);
+			$id = (string) SmartHashCrypto::sha512($y_realm.':'.$y_key);
 			try {
 				$delete = self::$mongo->delete(
 					(string) self::$collection,
