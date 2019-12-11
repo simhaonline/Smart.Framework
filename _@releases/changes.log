@@ -5,6 +5,7 @@
 December 11, 2019 :: Version 5.2.7 rev.191211
 	* Add MongoDB Custom Session Handler
 	* Add MongoDB Custom Persistent Cache
+	* Add new custom class to Toolkit CSS for buttons
 
 December 05, 2019 :: Version 5.2.7 rev.191205
 	* PHP 7.4 ready

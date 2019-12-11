@@ -411,6 +411,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 					'key' 		=> (string) $y_key,
 					'realm' 	=> (string) $y_realm,
 					//--
+					'mtime' 	=> (string) microtime(true), // ensure get at least one field changed to force return row as changed
 					'created' 	=> (string) date('Y-m-d H:i:s O'),
 					'modified' 	=> (int)    $now,
 					'expire' 	=> (int)    $expire,

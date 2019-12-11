@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191210
+ * @version 	v.20191211
  *
  */
 final class TestUnitPCache {
@@ -278,6 +278,22 @@ final class TestUnitPCache {
 					$err = 'Persistent Cache SetKey['.($i+1).'] with Realm returned a non-true result';
 					break;
 				} //end if
+			} //end for
+		} //end if
+		if((string)$err == '') {
+			$tests[] = 'Rewrite Set first 10 keys (each 5 times) Persistent Cache Keys with Realm';
+			for($i=0; $i<10; $i++) {
+				for($j=0; $j<5; $j++) {
+					$pcache_set_multi = \SmartPersistentCache::setKey(
+						$the_test_realm.'__MKeys',
+						'Multi-'.$pcache_test_key.'#'.$i,
+						\date('Y-m-d H:i:s')
+					);
+					if($pcache_set_multi !== true) {
+						$err = 'Persistent Cache Rewrite SetKey['.($i+1).'] with Realm returned a non-true result';
+						break;
+					} //end if
+				} //end for
 			} //end for
 		} //end if
 		//--

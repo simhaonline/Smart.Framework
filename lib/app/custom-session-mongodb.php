@@ -186,6 +186,7 @@ final class SmartCustomSession extends SmartAbstractCustomSession {
 					'area' 		=> (string) $this->sess_area,
 					'ns' 		=> (string) $this->sess_ns,
 					//--
+					'mtime' 	=> (string) microtime(true), // ensure get at least one field changed to force return row as changed
 					'created' 	=> (string) date('Y-m-d H:i:s O'),
 					'modified' 	=> (int)    $now,
 					'expire' 	=> (int)    $expire,
