@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20191205
+ * @version 	v.20191212
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -828,18 +828,19 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 					$result = $this->mongodbclient->executeBulkWrite($this->db.'.'.$this->collection, $write);
 				} catch(Exception $err) {
 					if((string)$method == 'upsert') {
-						$is_fatal = false; // for upsert, will throw catcheable exception because: 'Multiple clients can simultaneously update the collection. Wiredtiger will lock the document to be updated, rather than the collection), thus may result in multi-concurrency error !!
-					} else {
-						$is_fatal = null; // leave as default (depends on how $this->fatal_err is set)
+						if(stripos((string)trim((string)$err->getMessage()), 'E11000 duplicate key error') === 0) { // avoid log upsert duplicate key errors which may occur in high concurrency when multiple processes try to update the same record exactly in the same time ; if upsert we assume that any process can do insert or update (order can be random)
+							if(SmartFrameworkRuntime::ifDebug()) {
+								Smart::log_notice('#MongoDB# :: Ignoring Upsert Duplicate Key: '.$err->getMessage());
+							} //end if
+							return array();
+						} //end if
 					} //end if else
 					$this->error(
 						(string) $this->connex_key,
 						'MongoDB Write Execute',
 						'MongoDB->'.$method.'() :: '.$this->collection,
 						'ERROR: '.$err->getMessage(),
-						$args,
-						'', // warning
-						$is_fatal // mixed: false OR null
+						$args
 					);
 					return array();
 				} //end try
