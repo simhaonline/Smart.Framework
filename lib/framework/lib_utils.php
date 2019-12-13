@@ -21,7 +21,6 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartAuth::
 //	* SmartFileSysUtils::
 //	* SmartFileSystem::
-//	* SmartHttpClient->
 // REQUIRED CSS:
 //	* responsive-fluid.css
 //======================================================
@@ -48,7 +47,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
- * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem, SmartHttpClient
+ * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
  * @version 	v.20191205
  * @package 	@Core:Extra
  *

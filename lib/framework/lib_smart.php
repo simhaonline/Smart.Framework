@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20191113
+ * @version     v.20191213
  * @package     @Core
  *
  */
@@ -127,7 +127,7 @@ final class Smart {
 		//--
 		if((string)DIRECTORY_SEPARATOR == '\\') { // if on Windows, Fix Path Separator !!!
 			if(strpos((string)$y_path, '\\') !== false) {
-				$y_path = str_replace((string)DIRECTORY_SEPARATOR, '/', (string)$y_path); // convert \ to / on paths
+				$y_path = (string) str_replace((string)DIRECTORY_SEPARATOR, '/', (string)$y_path); // convert \ to / on paths
 			} //end if
 		} //end if
 		//--
@@ -147,9 +147,9 @@ final class Smart {
 	 */
 	public static function real_path($y_path) {
 		//--
-		$y_path = trim((string)$y_path);
+		$y_path = (string) trim((string)$y_path);
 		//--
-		$the_path = (string) @realpath($y_path);
+		$the_path = (string) @realpath((string)$y_path);
 		//--
 		return (string) self::fix_path_separator($the_path); // FIX: on Windows, is possible to return a backslash \ instead of slash /
 		//--
@@ -167,9 +167,9 @@ final class Smart {
 	 */
 	public static function dir_name($y_path) {
 		//--
-		$y_path = trim((string)$y_path);
+		$y_path = (string) trim((string)$y_path);
 		//--
-		$dir_name = (string) dirname($y_path);
+		$dir_name = (string) dirname((string)$y_path);
 		//--
 		return (string) self::fix_path_separator($dir_name); // FIX: on Windows, is possible to return a backslash \ instead of slash /
 		//--
@@ -1281,6 +1281,38 @@ final class Smart {
 
 	//================================================================
 	/**
+	 * Creates a Safe Valid Variable Name
+	 * NOTICE: this have a special usage and must allow also 0..9 as prefix because is can be used for other purposes not just for real safe variable names, thus if real safe valid variable name must be tested later (real safe variable names cannot start with numbers ...)
+	 * NOTICE: It may return an empty string if all characters in the given variable name are invalid or invalid path sequences detected, so if empty variable name must be tested later
+	 * ALLOWED CHARS: [a-zA-Z0-9] _
+	 *
+	 * @param STRING 		$y_name				:: Variable Name to be processed
+	 *
+	 * @return STRING 							:: The safe variable name ; if invalid should return empty value
+	 */
+	public static function safe_varname($y_name, $y_allow_upper=false) {
+		//-- v.20191213
+		$y_name = (string) trim((string)$y_name); // force string and trim
+		if((string)$y_name == '') {
+			return '';
+		} //end if
+		//--
+		if(preg_match('/^[_a-zA-Z0-9]+$/', (string)$y_name)) {
+			return (string) self::safe_fix_invalid_filesys_names($y_name);
+		} //end if
+		//--
+		$y_name = (string) self::safe_filename($y_name, '-');
+		$y_name = (string) str_replace(array('-', '.', '@', '#'), '', $y_name); // replace the invalid - . @ #
+		$y_name = (string) trim($y_name);
+		//--
+		return (string) self::safe_fix_invalid_filesys_names($y_name);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
 	 * Create a (RFC, ISO) Safe compliant User Name, Domain Name or Email Address
 	 * NOTICE: It may return an empty string if all characters in the given name are invalid or invalid path sequences detected, so if empty name must be tested later
 	 * ALLOWED CHARS: [a-z0-9] _ - . @
@@ -1343,39 +1375,7 @@ final class Smart {
 		} //end if
 		//--
 		$y_name = (string) self::safe_validname($y_name, '.');
-		$y_name = (string) str_replace(array('@', '-', '_'), array('', '', ''), $y_name); // replace also @ - _
-		$y_name = (string) trim($y_name);
-		//--
-		return (string) self::safe_fix_invalid_filesys_names($y_name);
-		//--
-	} //END FUNCTION
-	//================================================================
-
-
-	//================================================================
-	/**
-	 * Creates a Safe Valid Variable Name
-	 * NOTICE: this have a special usage and must allow also 0..9 as prefix because is can be used for other purposes not just for real safe variable names, thus if real safe valid variable name must be tested later (real safe variable names cannot start with numbers ...)
-	 * NOTICE: It may return an empty string if all characters in the given variable name are invalid or invalid path sequences detected, so if empty variable name must be tested later
-	 * ALLOWED CHARS: [a-z0-9] _
-	 *
-	 * @param STRING 		$y_name			:: Variable Name to be processed
-	 *
-	 * @return STRING 						:: The safe variable name ; if invalid should return empty value
-	 */
-	public static function safe_varname($y_name) {
-		//-- v.170920
-		$y_name = (string) trim((string)$y_name); // force string and trim
-		if((string)$y_name == '') {
-			return '';
-		} //end if
-		//--
-		if(preg_match('/^[_a-z0-9]+$/', (string)$y_name)) {
-			return (string) self::safe_fix_invalid_filesys_names($y_name);
-		} //end if
-		//--
-		$y_name = (string) self::safe_validname($y_name, '-');
-		$y_name = (string) str_replace(array('.', '@', '-'), array('', '', ''), $y_name); // replace also . @ -
+		$y_name = (string) str_replace(array('@', '-', '_'), '', $y_name); // replace also @ - _
 		$y_name = (string) trim($y_name);
 		//--
 		return (string) self::safe_fix_invalid_filesys_names($y_name);

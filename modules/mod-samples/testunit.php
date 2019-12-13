@@ -344,29 +344,82 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main .= SmartCalendarComponent::display_html_minicalendar();
 				//--
 				break;
-			case 'test.load-url':
-				//--
-				$browser = (array) SmartRobot::load_url_content('http://www.unix-world.org', 20, 'GET');
-				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
-					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
-					unset($browser);
+			case 'test.http-post-preview':
+				$this->PageViewSetCfg('rawpage', true);
+				$nofiles = $this->RequestVarGet('nofiles', '', 'string');
+				$main = 'Smart.Framework HTTP Post Test'."\n";
+				$main .= 'COOKIES :: '.SmartUtils::pretty_print_var($_COOKIE)."\n";
+				$main .= 'GET VARS :: '.SmartUtils::pretty_print_var($_GET)."\n";
+				$main .= 'POST VARS :: '.SmartUtils::pretty_print_var($_POST)."\n";
+				if((string)$nofiles != 'yes') {
+					$main .= 'FILES :: '.SmartUtils::pretty_print_var($_FILES)."\n";
+				} //end if
+				break;
+			case 'test.http-post':
+				$nofiles = $this->RequestVarGet('nofiles', '', 'string');
+				$browser = new SmartHttpClient('1.0');
+				$browser->postvars = [
+					'nofiles' 	=> (string) $nofiles,
+					'var1' 		=> 'val1',
+					'var2' 		=> [
+						'val2.1' => 'a',
+						'val"2.2' => 'b'
+					],
+					'var3' 		=> [
+						1,
+						2,
+						3
+					]
+				];
+				if((string)$nofiles != 'yes') {
+					$browser->postfiles = [ // optional
+						'my_file' => [
+							'filename' => 'sample.txt',
+							'content'  => 'this is the content of the file'
+						],
+						'my_other_file' => [
+							'filename' => 'sample.xml',
+							'content'  => '<xml>test</xml>'
+						]
+					];
+				} //end if
+				$browser->cookies = [ // optional
+					'testCookie' => '12345'
+				];
+				$result = (array) $browser->browse_url($this->ControllerGetParam('url-addr').'?page=samples.testunit&op=test.http-post-preview', 'POST');
+				$browser = null; // free mem
+				if(($result['result'] != 1) OR ($result['code'] != 200)) {
+					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$result['result'].' ; Status-Code: '.(int)$result['code']);
+					$result = null; // free mem
 					return;
 				} else {
-					$main = (string) '<h1>Load URL: OK '.$browser['code'].'</h1><pre style="background:#ECECEC">'.Smart::escape_html($browser['content']).'</pre>';
-					unset($browser);
+					$main = (string) '<h1>Load URL: OK '.$result['code'].'</h1><pre style="background:#ECECEC">'.Smart::escape_html($result['content']).'</pre>';
+					$result = null; // free mem
+				} //end if else
+				break;
+			case 'test.load-url':
+				//--
+				$robot = (array) SmartRobot::load_url_content('http://www.unix-world.org', 20, 'GET');
+				if(($robot['result'] != 1) OR ($robot['code'] != 200)) {
+					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$robot['result'].' ; Status-Code: '.(int)$robot['code']);
+					$robot = null; // free mem
+					return;
+				} else {
+					$main = (string) '<h1>Load URL: OK '.$robot['code'].'</h1><pre style="background:#ECECEC">'.Smart::escape_html($robot['content']).'</pre>';
+					$robot = null; // free mem
 				} //end if else
 				//--
 				break;
 			case 'test.load-secure-url':
 				//--
-				$browser = (array) SmartRobot::load_url_content('https://www.unix-world.org', 20, 'GET', (string)SMART_FRAMEWORK_SSL_MODE);
-				if(($browser['result'] != 1) OR ($browser['code'] != 200)) {
-					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$browser['result'].' ; Status-Code: '.(int)$browser['code']);
-					unset($browser);
+				$robot = (array) SmartRobot::load_url_content('https://www.unix-world.org', 20, 'GET', (string)SMART_FRAMEWORK_SSL_MODE);
+				if(($robot['result'] != 1) OR ($robot['code'] != 200)) {
+					$this->PageViewSetErrorStatus(502, 'Browsing failed for the given URL :: Result: '.$robot['result'].' ; Status-Code: '.(int)$robot['code']);
+					$robot = null; // free mem
 					return;
 				} else {
-					$main = (string) '<h1>Load Secure URL: OK '.$browser['code'].'</h1><pre style="background:#ECECEC">'.Smart::escape_html($browser['content']).'</pre>';
-					unset($browser);
+					$main = (string) '<h1>Load Secure URL: OK '.$robot['code'].'</h1><pre style="background:#ECECEC">'.Smart::escape_html($robot['content']).'</pre>';
+					$robot = null; // free mem
 				} //end if else
 				//--
 				break;

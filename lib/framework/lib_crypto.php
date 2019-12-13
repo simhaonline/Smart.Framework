@@ -46,7 +46,7 @@ if(!function_exists('hash_algos')) {
  *
  * @access      PUBLIC
  * @depends     PHP hash_algos() / hash()
- * @version     v.20190103
+ * @version     v.20191213
  * @package     @Core:Crypto
  *
  */
@@ -185,19 +185,25 @@ final class SmartHashCrypto {
 
 	//==============================================================
 	/**
-	 * Returns the CRC32B hash of a string (better than CRC32, portable between 32-bit and 64-bit platforms, unsigned)
+	 * Returns the CRC32B hash of a string in base16 by default or base36 optional (better than CRC32, portable between 32-bit and 64-bit platforms, unsigned)
 	 *
 	 * @param STRING $y_str
+	 * @param BOOLEAN $y_base36
 	 * @return STRING, 8 chars length
 	 */
-	public static function crc32b($y_str) {
+	public static function crc32b($y_str, $y_base36=false) {
 		//--
 		if(!self::algo_check('sha512')) {
 			Smart::raise_error('ERROR: Smart.Framework Crypto Hash requires CRC32B Hash/Algo', 'CRC32B Hash/Algo is missing');
 			return '';
 		} //end if
 		//--
-		return (string) hash('crc32b', (string)$y_str, false); // execution cost: 0.21
+		$hash = (string) hash('crc32b', (string)$y_str, false); // execution cost: 0.21
+		if($y_base36 === true) {
+			$hash = (string) base_convert((string)$hash, 16, 36);
+		} //end if
+		//--
+		return (string) $hash;
 		//--
 	} //END FUNCTION
 	//==============================================================

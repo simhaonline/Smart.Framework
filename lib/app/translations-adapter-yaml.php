@@ -36,7 +36,7 @@ define('SMART_FRAMEWORK__INFO__TEXT_TRANSLATIONS_ADAPTER', 'YAML: File based');
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191110
+ * @version 	v.20191213
  * @package 	Application
  *
  */
@@ -49,7 +49,7 @@ final class SmartAdapterTextTranslations implements SmartInterfaceAdapterTextTra
 	// This reads and parse the YAML translation files by language, area and sub-area
 	public static function getTranslationsFromSource($the_lang, $y_area, $y_subarea) {
 		//--
-		$the_lang = (string) Smart::safe_varname((string)$the_lang);
+		$the_lang = (string) strtolower((string)Smart::safe_varname((string)$the_lang)); // from camelcase to lower
 		if(((string)$the_lang == '') OR (!SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$the_lang))) {
 			Smart::log_warning(__METHOD__.'() :: Invalid/Empty parameter for Translation Language: '.$the_lang);
 			return array();

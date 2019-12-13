@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.2.7'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.12'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.13'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -1003,7 +1003,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20191207
+ * @version		v.20191213
  * @package 	Application
  *
  */
@@ -1535,8 +1535,8 @@ final class SmartFrameworkRuntime {
 	public static function getAppReleaseHash() {
 		//--
 		if((string)self::$AppReleaseHash == '') {
-			$hash = (string) SmartHashCrypto::crc32b((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION.(string)SMART_APP_MODULES_RELEASE);
-			self::$AppReleaseHash = (string) strtolower((string)base_convert((string)$hash, 16, 36));
+			$hash = (string) SmartHashCrypto::crc32b((string)SMART_FRAMEWORK_RELEASE_TAGVERSION.(string)SMART_FRAMEWORK_RELEASE_VERSION.(string)SMART_APP_MODULES_RELEASE, true); // get as b36
+			self::$AppReleaseHash = (string) strtolower((string)$hash);
 		} //end if
 		//--
 		return (string) self::$AppReleaseHash;

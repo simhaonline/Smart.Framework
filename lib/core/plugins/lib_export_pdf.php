@@ -41,7 +41,7 @@ define('SMART_FRAMEWORK_PDF_GENERATOR_SVG2PNG', '/usr/local/bin/rsvg-convert');	
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	executables: HTMLDoc ; classes: Smart, SmartUtils, SmartFileSysUtils, SmartHtmlParser
- * @version 	v.20191111
+ * @version 	v.20191213
  * @package 	Plugins:ExportAndImport
  *
  */
@@ -252,7 +252,7 @@ final class SmartPdfExport {
 			$dir = $tmp_prefix_dir.SMART_FRAMEWORK_SESSION_PREFIX.'/'; // we use different for index / admin / @
 			//--
 			$uniquifier = SmartUtils::unique_auth_client_private_key().SMART_APP_VISITOR_COOKIE;
-			$the_dir = $dir.Smart::safe_varname(Smart::uuid_10_seq().'_'.Smart::uuid_10_num().'_'.SmartHashCrypto::sha1($uniquifier)).'/';
+			$the_dir = $dir.strtolower(Smart::safe_varname(Smart::uuid_10_seq().'_'.Smart::uuid_10_num().'_'.SmartHashCrypto::sha1($uniquifier))).'/'; // from camelcase to lower
 			//--
 			$tmp_uuid = Smart::uuid_45($uniquifier).Smart::uuid_36($uniquifier);
 			$file = $the_dir.'__document_'.SmartHashCrypto::sha256('@@PDF#File::Cache@@'.$tmp_uuid).'.html' ;

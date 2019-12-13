@@ -29,9 +29,9 @@ define('SMART_FRAMEWORK_CHARSET', 			'UTF-8'); 				// App Charset: UTF-8
 define('SMART_FRAMEWORK_CHMOD_DIRS', 		0770);					// Folder Permissions: 0770 | 0700
 define('SMART_FRAMEWORK_CHMOD_FILES', 		0660);					// File Permissions: 0660 | 0600
 //--
-if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.4.20 to use anonymous functions at runtime, but mark 5.6  as minimum for latest optimizations ; since 5.4 / 5.5 are deprecated the framework is no more actively tested on PHP versions < 5.6
+if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.6  as minimum for latest optimizations
 	@http_response_code(500);
-	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 or later');
+	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 / 7.3 / 7.4 or later');
 } //end if
 //--
 date_default_timezone_set('UTC');
@@ -126,7 +126,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 		if((string)$logfile != '') {
 			@file_put_contents(
 				(string) $logfile,
-				"\n".'===== '.date('Y-m-d H:i:s O')."\n".'PHP '.PHP_VERSION.' [APP-ERR-HANDLER] #'.$errno.' ['.$ferr.']'.$app_halted."\n".'URI: '.$_SERVER['REQUEST_URI']."\n".'Script: '.$errfile."\n".'Line number: '.$errline."\n".$errstr."\n".'==================================='."\n\n",
+				(string) "\n".'===== '.date('Y-m-d H:i:s O')."\n".'PHP '.PHP_VERSION.' [APP-ERR-HANDLER] #'.$errno.' ['.$ferr.']'.$app_halted."\n".'HTTP-METHOD: '.$_SERVER['REQUEST_METHOD'].' # '.'CLIENT: '.trim($_SERVER['REMOTE_ADDR'].' ; '.$_SERVER['HTTP_CLIENT_IP'].' ; '.$_SERVER['HTTP_X_FORWARDED_FOR'], '; ').' @ '.$_SERVER['HTTP_USER_AGENT']."\n".'URI: '.$_SERVER['REQUEST_URI']."\n".'Script: '.$errfile."\n".'Line number: '.$errline."\n".$errstr."\n".'==================================='."\n\n",
 				FILE_APPEND | LOCK_EX
 			);
 		} //end if
@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20191203.1855'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20191213.1737'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -384,6 +384,20 @@ $code_loading_stop  = '<script>try{ document.getElementById(\'img-loader\').inne
 //--
 $btn_return_index = '<button style="position:fixed; top:10px; right:10px; padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" onclick="self.location=\'?\';" title="Click this button to return to the application main index">Return to Index</button>';
 $btn_return_goback = '<button style="position:fixed; top:100px; right:10px; padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#4B73A4 !important; border:1px solid #3C5A98 !important; border-radius:3px !important; cursor: pointer !important;" onclick="try{ self.history.back(); } catch(err){ console.log(err); }" title="Click this button to Return Back">Go Back</button>';
+//--
+if((string)$_REQUEST['remote'] == 'appcodepack') {
+	$action_cursor_style_header = 'default';
+	$action_header = '';
+	$btn_return_index = '';
+	$btn_return_goback = '';
+	$server_info_url = ($_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+	$background_color = '#F5F5F5';
+} else {
+	$action_cursor_style_header = 'pointer';
+	$action_header = "self.location='?';";
+	$background_color = '#FFFFFF';
+	$server_info_url = '';
+} //end if
 //--
 
 //--
@@ -754,7 +768,7 @@ switch((string)$_REQUEST['run']) {
 			$data['html-main-area'] .= '<br><br>';
 			$data['html-main-area'] .= 'Package: <input type="file" title="Browse an AppPackCode NetArchive (.z-netarch) Package" name="znetarch" id="znetarch" style="font-size:1em !important;" required> &nbsp; ';
 			$data['html-main-area'] .= '<span style="color:#DCDCDC;">Max File Size support (php.ini): '.AppPackUtils::escape_html(ini_get('upload_max_filesize')).'</span><br><br>';
-			$data['html-main-area'] .= '<button type="submit" style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#FF9900 !important; border:1px solid #FFAA00 !important; border-radius:3px !important; cursor: pointer !important;" title="Click this button to proceed">Upload the Package and Deploy the Code on this server</button>'."\n";
+			$data['html-main-area'] .= '<button type="submit" style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#FF9900 !important; border:1px solid #FFAA00 !important; border-radius:3px !important; cursor: pointer !important;" title="Click this button to proceed">Upload the Package and Deploy the Code on this App Server</button>'."\n";
 			$data['html-main-area'] .= '</div>'."\n";
 			$data['html-main-area'] .= '</form>';
 			//--
@@ -794,7 +808,13 @@ foreach($data as $key => $val) {
 	} //end if
 } //end foreach
 //--
+$action_cursor_style_header = (string) AppPackUtils::escape_html((string)$action_cursor_style_header);
+$action_header = (string) AppPackUtils::escape_html((string)$action_header);
 $meta_charset = (string) AppPackUtils::escape_html((string)SMART_FRAMEWORK_CHARSET);
+$background_color = (string) AppPackUtils::escape_html((string)$background_color);
+if($server_info_url) {
+	$server_info_url = (string) '<div align="right" style="font-weight:bold; color:#009ace;">[Remote:'.AppPackUtils::escape_html((string)$_REQUEST['remote']).']&nbsp;#&nbsp;'.AppPackUtils::escape_html((string)$server_info_url).'&nbsp;</div>';
+} //end if
 //--
 $tpl = <<<HTML_CODE
 <!DOCTYPE html>
@@ -803,6 +823,7 @@ $tpl = <<<HTML_CODE
 	<meta charset="{$meta_charset}"><title>Smart::AppCode.UNPACK</title>
 	<style type="text/css">
 		*{font-family:arial,sans-serif;font-smooth:always;}
+		body { background-color: {$background_color}; }
 		hr{border:none 0; border-top:1px solid #CCCCCC; height:1px;}
 		a{color:#000000 !important;}
 	</style>
@@ -810,12 +831,13 @@ $tpl = <<<HTML_CODE
 <body>
 	<table><tr>
 		<td width="64" style="cursor:help;"><img width="48" height="48" alt="AppCodeUnpack {$data['app_version']}" title="AppCodeUnpack {$data['app_version']}" src="{$data['app-logo']}"></td>
-		<td><h1 style="display:inline; cursor:pointer;" onclick="self.location='?';"><span style="color:#778899;">Smart</span><span style="color:#DCDCDC;">::</span><span style="color:#555555;">AppCode</span><span style="color:#999999;">.</span><span style="color:#3C5A98;">UnPack</span></h1></td><td> &nbsp; &nbsp; &nbsp; </td>
+		<td><h1 style="display:inline; cursor:{$action_cursor_style_header};" onclick="{$action_header}"><span style="color:#778899;">Smart</span><span style="color:#DCDCDC;">::</span><span style="color:#555555;">AppCode</span><span style="color:#999999;">.</span><span style="color:#3C5A98;">UnPack</span></h1></td><td> &nbsp; &nbsp; &nbsp; </td>
 		<td>
 			<img width="32" height="32" alt="PHP-Logo" title="PHP-Logo" src="{$data['php-logo']}">&nbsp;
 			<img width="32" height="32" alt="Apache-Logo" title="Apache-Logo" src="{$data['apache-logo']}">&nbsp;
 		</td>
 	</tr></table>
+	{$server_info_url}
 	<hr>
 	{$data['html-main-area']}
 	<hr>
@@ -964,7 +986,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20191203 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20191213.r2 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -987,6 +1009,7 @@ Options -Indexes
 ';
 
 
+	//================================================================
 	public static function InstantFlush() {
 		//--
 		$output_buffering_status = @ob_get_status();
@@ -1000,15 +1023,19 @@ Options -Indexes
 		@flush();
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	public static function unpack_get_basefolder_name() {
 		//--
 		return '#APPCODE-UNPACK#/'; // must end with slash ; {{{SYNC-UNPACK-FOLDER-NAME}}}
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	public static function unpack_create_basefolder() {
 		//--
 		$unpack_basefolder = self::unpack_get_basefolder_name();
@@ -1036,8 +1063,10 @@ Options -Indexes
 		return '';
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	public static function unpack_netarchive($y_content, $testonly) {
 		//--
 		clearstatcache(true); // do a full clear stat cache at the begining
@@ -1101,8 +1130,10 @@ Options -Indexes
 		return (string) $err;
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	private static function unpack_operate_netarchive($y_content, $testonly, $the_tmp_netarch_folder) {
 		//--
 		$y_content = (string) trim((string)$y_content);
@@ -1620,8 +1651,10 @@ Options -Indexes
 		return '';
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	private static function unpack_upgrade_script($restoreroot, $the_tmp_netarch_versions_logfile) {
 		//--
 		// ISOLATE UPGRADE SCRIPT INTO A FUNCTION
@@ -1668,8 +1701,10 @@ Options -Indexes
 		return '';
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	private static function unpack_move_file_or_dir_netarchive($path, $newpath) {
 		//--
 		if((string)$path == '') {
@@ -1704,16 +1739,20 @@ Options -Indexes
 		return -8;
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	// provide complete isolation of the upgrade script run (to avoid rewrite variables inside other functions)
 	private static function unpack_run_upgrade_script($path_to_upgrade_script) {
 		//--
 		include_once((string)$path_to_upgrade_script); // don't suppress output errors !!
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	// provide complete isolation of the extra run script (to avoid rewrite variables inside other functions)
 	public static function pack_run_extra_script($task, $path_to_extra_script) {
 		//--
@@ -1739,8 +1778,10 @@ Options -Indexes
 		} //end if else
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
+	//================================================================
 	public static function deaccent_fix_str_to_iso($str) {
 		//--
 		$str = (string) $str;
@@ -1756,6 +1797,7 @@ Options -Indexes
 		return (string) $str;
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
 	//================================================================
@@ -1776,9 +1818,267 @@ Options -Indexes
 		);
 		//--
 	} //END FUNCTION
+	//================================================================
 
 
-	//##### Smart v.20191103
+	//================================================================
+	public static function is_curl_available() {
+		//--
+		return (bool) ((function_exists('curl_init')) AND (function_exists('curl_file_create')));
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	public static function browse_url($y_url, $y_method='GET', $y_user='', $y_pass='', $y_cookies=[], $y_postvars=[], $y_postfiles=[], $y_raw_headers=[], $y_protocol='1.0', $y_connect_timeout=30, $y_exec_timeout=0, $y_useragent='') {
+		//--
+		if(self::is_curl_available() !== true) {
+			return -100; // PHP CURL Extension is N/A
+		} //end if
+		//--
+		$y_url = (string) trim((string)$y_url);
+		if((string)$y_url == '') {
+			return -101; // empty URL
+		} //end if
+		//--
+		$y_method = (string) strtoupper((string)trim((string)$y_method));
+		if((string)$y_method == '') {
+			return -102; // empty HTTP Method
+		} //end if
+		//--
+		$y_user = (string) $y_user;
+		$y_pass = (string) $y_pass;
+		//--
+		if(!is_array($y_postvars)) {
+			$y_postvars = array();
+		} //end if
+		//--
+		if(!is_array($y_postfiles)) {
+			$y_postfiles = array();
+		} //end if
+		//--
+		if(!is_array($y_cookies)) {
+			$y_cookies = array();
+		} //end if
+		//--
+		if(!is_array($y_raw_headers)) {
+			$y_raw_headers = [];
+		} //end if
+		//--
+		switch((string)$y_protocol) {
+			case '1.1':
+				$y_protocol = '1.1'; // for 1.1 the time can be significant LONGER than 1.0
+				break;
+			case '1.0':
+			default:
+				$y_protocol = '1.0'; // default is 1.0
+		} //end switch
+		//--
+		$y_connect_timeout = (int) $y_connect_timeout;
+		if((int)$y_connect_timeout < 1) {
+			$y_connect_timeout = 1;
+		} elseif((int)$y_connect_timeout > 60) {
+			$y_connect_timeout = 60;
+		} //end if
+		//--
+		$y_exec_timeout = (int) $y_exec_timeout;
+		if((int)$y_exec_timeout > 0) {
+			if((int)$y_exec_timeout < 30) {
+				$y_exec_timeout = 30;
+			} elseif((int)$y_exec_timeout > 600) {
+				$y_exec_timeout = 600;
+			} //end if
+		} else {
+			$y_exec_timeout = 0;
+		} //end if else
+		//--
+		if((int)$y_exec_timeout < 0) {
+			$y_exec_timeout = 0;
+		} elseif((int)$y_exec_timeout > 600) {
+			$y_exec_timeout = 600;
+		} //end if else
+		//--
+		$y_useragent = (string) trim((string)$y_useragent);
+		if((string)$y_useragent == '') {
+			$y_useragent = 'Mozilla/5.0 PHP.CURL.SF.AppCodePack ('.APPCODEUNPACK_VERSION.'/'.php_uname().')';
+		} //end if
+		//--
+		$ssl_ciphers = 'HIGH';
+		//--
+		$curl = @curl_init();  // Initialise a cURL handle
+		if(!$curl) {
+			return -103; // cannot initialize CURL
+		} //end if
+		//--
+		@curl_setopt($curl, CURLOPT_USERAGENT, (string)$y_useragent);
+		//--
+		if((string)$y_protocol == '1.1') {
+			@curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+		} else {
+			@curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+		} //end if else
+		//--
+		@curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+		@curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, (int)$y_connect_timeout);
+		@curl_setopt($curl, CURLOPT_TIMEOUT, (int)$y_exec_timeout);
+		//--
+		@curl_setopt($curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_DEFAULT); // CURL_SSLVERSION_TLSv1
+		@curl_setopt($curl, CURLOPT_SSL_CIPHER_LIST, (string)$ssl_ciphers);
+		@curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		@curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		//--
+		if(((string)$y_user != '') AND ((string)$y_pass != '')) {
+			@curl_setopt($curl, CURLOPT_USERPWD, (string)$y_user.':'.$y_pass);
+		} //end if
+		//--
+		@curl_setopt($curl, CURLOPT_ENCODING, (string)SMART_FRAMEWORK_CHARSET);
+		@curl_setopt($curl, CURLOPT_HEADER, true);
+		@curl_setopt($curl, CURLOPT_COOKIESESSION, true);
+		@curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		@curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+		@curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		//--
+		$have_cookies = false;
+		if(self::array_size($y_cookies) > 0) {
+			$send_cookies = '';
+			foreach($y_cookies as $key => $value) {
+				if((string)$key != '') {
+					if((string)$value != '') {
+						$send_cookies .= (string) self::encode_var_cookie($key, $value);
+					} //end if
+				} //end if
+			} //end foreach
+			if((string)$send_cookies != '') {
+				$have_cookies = true;
+				$y_raw_headers[] = (string) 'Cookie: '.$send_cookies;
+			} //end if
+			$send_cookies = '';
+		} //end if
+		//--
+		$post_vars = '';
+		if((string)$y_method == 'POST') {
+			//--
+			if(self::array_size($y_postfiles) > 0) {
+				$delimiter = (string) self::http_multipart_form_delimiter();
+				$post_vars = (string) self::http_multipart_form_build((string)$delimiter, (array)$y_postvars, (array)$y_postfiles);
+				$y_raw_headers[] = 'Content-Type: multipart/form-data; boundary='.$delimiter;
+				$y_raw_headers[] = 'Content-Length: '.(int)strlen($post_vars);
+			} elseif(self::array_size($y_postvars) > 0) {
+				$post_vars = '';
+				foreach($y_postvars as $key => $value) {
+					$post_vars .= (string) self::encode_var_post($key, $value);
+				} //end foreach
+			} //end if
+			//--
+			if((string)$post_vars == '') { // if have post vars force POST if GET
+				$y_method = 'GET';
+			} //end if
+			//--
+		} //end if
+		//--
+		switch((string)$y_method) {
+			case 'HEAD':
+			case 'GET':
+				break;
+			case 'POST':
+				@curl_setopt($curl, CURLOPT_POSTFIELDS, (string)$post_vars);
+				@curl_setopt($curl, CURLOPT_POST, true);
+				break;
+			case 'PUT':
+			case 'DELETE':
+			default:
+				@curl_setopt($curl, CURLOPT_CUSTOMREQUEST, (string)$y_method);
+		} //end switch
+		//--
+		if(self::array_size($y_raw_headers) > 0) { // request headers are constructed above
+			@curl_setopt($curl, CURLOPT_HTTPHEADER, (array)$y_raw_headers);
+		} //end if
+		//--
+		@curl_setopt($curl, CURLOPT_DNS_USE_GLOBAL_CACHE, false);
+		@curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
+		@curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+		//--
+		@curl_setopt($curl, CURLOPT_URL, (string)$y_url);
+		if(!$curl) {
+			return -104; // Aborted before Execution
+		} //end if
+		//--
+		$results = @curl_exec($curl);
+		$error = @curl_errno($curl);
+		$ermsg = @curl_error($curl);
+		//-- eval results
+		$is_unauth = false;
+		$bw_info = array();
+		$is_ok = 0;
+		$header = '';
+		$body = '';
+		$status = 999; // pre-set to something that does not exists
+		//--
+		if($results) {
+			//--
+			$is_ok = 1;
+			//--
+			$bw_info = (array) array_change_key_case((array)@curl_getinfo($curl), CASE_LOWER);
+			//--
+			$hd_len = (int) $bw_info['header_size']; // get header length
+			//--
+			if($hd_len > 0) {
+				//--
+				$header = (string) substr((string)$results, 0, $hd_len);
+				$body = (string) substr((string)$results, $hd_len);
+				//--
+			} else {
+				//--
+				$header = (string) $results;
+				$body = '';
+				//--
+				$is_ok = 0;
+				//--
+			} //end if else
+			//--
+			$results = ''; // free memory
+			//--
+			if((string)$bw_info['http_code'] == '401') {
+				//--
+				$is_unauth = true;
+				//--
+			} //end if
+			//--
+			if($error) {
+				//--
+				$is_ok = 0;
+				//--
+			} //end if
+			//--
+			$status = (int) $bw_info['http_code'];
+			//--
+		} else {
+			//--
+			$is_ok = 0;
+			//--
+		} //end if
+		//--
+		if($is_unauth) {
+			//--
+			$is_ok = 0;
+			//--
+		} //end if
+		//--
+		return array(
+			'status' 		=> (int)    $is_ok,
+			'errno' 		=> (int)    $error,
+			'ermsg' 		=> (string) $ermsg,
+			'http-status' 	=> (int)    $status,
+			'http-header' 	=> (string) $header,
+			'http-body' 	=> (string) $body
+		);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//##### Smart v.20191213
 
 
 	//================================================================
@@ -1840,6 +2140,36 @@ Options -Indexes
 
 	//================================================================
 	/**
+	 * Test if the Array Type for being associative or non-associative sequential (0..n)
+	 *
+	 * @param ARRAY 		$y_arr			:: The array to test
+	 *
+	 * @return ENUM 						:: The array type as: 0 = not an array ; 1 = non-associative (sequential) array or empty array ; 2 = associative array or non-sequential, must be non-empty
+	 */
+	public static function array_type_test($y_arr) {
+		//--
+		if(!is_array($y_arr)) {
+			return 0; // not an array
+		} //end if
+		//--
+	//	$c = (int) count($y_arr);
+	//	if(((int)$c <= 0) OR ((array)array_keys($y_arr) === (array)range(0, ((int)$c - 1)))) { // most elegant, but slow
+		//--
+	//	$a = (array) array_keys((array)$y_arr);
+	//	if((array)$a === (array)array_keys((array)$a)) { // memory-optimized (prev OK)
+		//--
+		if((array)array_values((array)$y_arr) === (array)$y_arr) { // speed-optimized, 10x faster with non-associative large arrays, tested in all scenarios with large or small arrays
+			return 1; // non-associative
+		} else {
+			return 2; // associative
+		} //end if else
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
 	 * Format a number as INTEGER (NOTICE: On 64-bit systems PHP_INT_MAX is: 9223372036854775807 ; On 32-bit old systems the PHP_INT_MAX is just 2147483647)
 	 *
 	 * @param 	NUMERIC 	$y_number		:: A numeric value
@@ -1893,11 +2223,31 @@ Options -Indexes
 		//--
 		if((string)DIRECTORY_SEPARATOR == '\\') { // if on Windows, Fix Path Separator !!!
 			if(strpos((string)$y_path, '\\') !== false) {
-				$y_path = str_replace((string)DIRECTORY_SEPARATOR, '/', (string)$y_path); // convert \ to / on paths
+				$y_path = (string) str_replace((string)DIRECTORY_SEPARATOR, '/', (string)$y_path); // convert \ to / on paths
 			} //end if
 		} //end if
 		//--
 		return (string) $y_path;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Return the FIXED realpath(), also with fix on Windows
+	 *
+	 * @param 	STRING 	$y_path 			:: The path name from to extract realpath()
+	 *
+	 * @return 	STRING						:: The real path
+	 */
+	public static function real_path($y_path) {
+		//--
+		$y_path = (string) trim((string)$y_path);
+		//--
+		$the_path = (string) @realpath((string)$y_path);
+		//--
+		return (string) self::fix_path_separator($the_path); // FIX: on Windows, is possible to return a backslash \ instead of slash /
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1913,11 +2263,38 @@ Options -Indexes
 	 */
 	public static function dir_name($y_path) {
 		//--
-		$y_path = trim((string)$y_path);
+		$y_path = (string) trim((string)$y_path);
 		//--
-		$dir_name = (string) dirname($y_path);
+		$dir_name = (string) dirname((string)$y_path);
 		//--
 		return (string) self::fix_path_separator($dir_name); // FIX: on Windows, is possible to return a backslash \ instead of slash /
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Return the FIXED basename(), in a safe way
+	 * The directory separator character is the forward slash (/), except Windows where both slash (/) and backslash (\) are considered
+	 *
+	 * @param 	STRING 	$y_path 			:: The path name from to extract basename()
+	 * @param 	STRING 	$y_suffix 			:: If the name component ends in suffix this will also be cut off
+	 *
+	 * @return 	STRING						:: The basename
+	 */
+	public static function base_name($y_path, $y_suffix='') {
+		//--
+		$y_path = (string) trim((string)$y_path);
+		$y_suffix = (string) trim((string)$y_suffix);
+		//--
+		if((string)$y_suffix != '') {
+			$base_name = (string) basename($y_path, $y_suffix);
+		} else {
+			$base_name = (string) basename($y_path);
+		} //end if else
+		//--
+		return (string) $base_name;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -2097,6 +2474,80 @@ Options -Indexes
 
 	//================================================================
 	/**
+	 * Create a (RFC, ISO) Safe compliant User Name, Domain Name or Email Address
+	 * NOTICE: It may return an empty string if all characters in the given name are invalid or invalid path sequences detected, so if empty name must be tested later
+	 * ALLOWED CHARS: [a-z0-9] _ - . @
+	 *
+	 * @param STRING 		$y_name			:: Name to be processed
+	 * @param STRING 		$ysupresschar	:: The suppression character to replace weird characters ; optional ; default is ''
+	 *
+	 * @return STRING 						:: The safe name ; if invalid should return empty value
+	 */
+	public static function safe_validname($y_name, $ysupresschar='') {
+		//-- v.170920
+		$y_name = (string) trim((string)$y_name); // force string and trim
+		if((string)$y_name == '') {
+			return '';
+		} //end if
+		//--
+		if(preg_match('/^[_a-z0-9\-\.@]+$/', (string)$y_name)) {
+			return (string) self::safe_fix_invalid_filesys_names($y_name);
+		} //end if
+		//--
+		$ysupresschar = (string) $ysupresschar; // force string and be sure is lower
+		switch((string)$ysupresschar) {
+			case '-':
+			case '_':
+				break;
+			default:
+				$ysupresschar = '';
+		} //end if
+		//--
+		$y_name = (string) self::safe_filename($y_name, $ysupresschar);
+		$y_name = (string) strtolower($y_name); // make all lower chars
+		$y_name = (string) str_replace('#', '', $y_name); // replace also diez
+		$y_name = (string) trim($y_name);
+		//--
+		return (string) self::safe_fix_invalid_filesys_names($y_name);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Creates a Safe Valid Variable Name
+	 * NOTICE: this have a special usage and must allow also 0..9 as prefix because is can be used for other purposes not just for real safe variable names, thus if real safe valid variable name must be tested later (real safe variable names cannot start with numbers ...)
+	 * NOTICE: It may return an empty string if all characters in the given variable name are invalid or invalid path sequences detected, so if empty variable name must be tested later
+	 * ALLOWED CHARS: [a-z0-9] _
+	 *
+	 * @param STRING 		$y_name			:: Variable Name to be processed
+	 *
+	 * @return STRING 						:: The safe variable name ; if invalid should return empty value
+	 */
+	public static function safe_varname($y_name) {
+		//-- v.170920
+		$y_name = (string) trim((string)$y_name); // force string and trim
+		if((string)$y_name == '') {
+			return '';
+		} //end if
+		//--
+		if(preg_match('/^[_a-z0-9]+$/', (string)$y_name)) {
+			return (string) self::safe_fix_invalid_filesys_names($y_name);
+		} //end if
+		//--
+		$y_name = (string) self::safe_validname($y_name, '-');
+		$y_name = (string) str_replace(array('.', '@', '-'), array('', '', ''), $y_name); // replace also . @ -
+		$y_name = (string) trim($y_name);
+		//--
+		return (string) self::safe_fix_invalid_filesys_names($y_name);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
 	 * Safe escape strings to be injected in HTML code
 	 * This is a shortcut to the htmlspecialchars() to avoid use long options each time and provide a standard into Smart.Framework
 	 *
@@ -2227,19 +2678,25 @@ Options -Indexes
 
 	//==============================================================
 	/**
-	 * Returns the CRC32B hash of a string (better than CRC32, portable between 32-bit and 64-bit platforms, unsigned)
+	 * Returns the CRC32B hash of a string in base16 by default or base36 optional (better than CRC32, portable between 32-bit and 64-bit platforms, unsigned)
 	 *
 	 * @param STRING $y_str
+	 * @param BOOLEAN $y_base36
 	 * @return STRING, 8 chars length
 	 */
-	public static function crc32b($y_str) {
+	public static function crc32b($y_str, $y_base36=false) {
 		//--
 		if(!self::algo_check('sha512')) {
 			self::raise_error('ERROR: Smart.Framework Crypto Hash requires CRC32B Hash/Algo', 'CRC32B Hash/Algo is missing');
 			return '';
 		} //end if
 		//--
-		return (string) hash('crc32b', (string)$y_str, false); // execution cost: 0.21
+		$hash = (string) hash('crc32b', (string)$y_str, false); // execution cost: 0.21
+		if($y_base36 === true) {
+			$hash = (string) base_convert((string)$hash, 16, 36);
+		} //end if
+		//--
+		return (string) $hash;
 		//--
 	} //END FUNCTION
 	//==============================================================
@@ -2271,6 +2728,152 @@ Options -Indexes
 		//--
 	} //END FUNCTION
 	//==============================================================
+
+
+	//##### SmartHttpUtils v.20191213
+
+
+	//==============================================
+	// encode a COOKIE variable ; returns the HTTP Cookie string
+	public static function encode_var_cookie($name, $value) {
+		//--
+		$name = (string) self::safe_varname($name);
+		//--
+		if((string)$name == '') {
+			return '';
+		} //end if
+		//--
+		return (string) $name.'='.rawurlencode($value).';';
+		//--
+	} //END FUNCTION
+	//==============================================
+
+
+	//==============================================
+	// encode a POST variable ; returns the HTTP POST String
+	public static function encode_var_post($varname, $value) {
+		//--
+		$varname = (string) self::safe_varname($varname);
+		//--
+		if((string)$varname == '') {
+			return '';
+		} //end if
+		//--
+		$out = '';
+		//--
+		if(is_array($value)) {
+			$arrtype = self::array_type_test($value); // 0: not an array ; 1: non-associative ; 2:associative
+			if($arrtype === 1) { // 1: non-associative
+				for($i=0; $i<self::array_size($value); $i++) {
+					$out .= (string) $varname.'[]='.rawurlencode($value[$i]).'&';
+				} //end foreach
+			} else { // 2: associative
+				foreach($value as $key => $val) {
+					$out .= (string) $varname.'['.rawurlencode($key).']='.rawurlencode($val).'&';
+				} //end foreach
+			} //end if else
+		} else {
+			$out = (string) $varname.'='.rawurlencode($value).'&';
+		} //end if else
+		//--
+		return (string) $out;
+		//--
+	} //END FUNCTION
+	//==============================================
+
+
+	//================================================================
+	public static function http_multipart_form_delimiter() { // {{{SYNC-MULTIPART-BUILD}}}
+		//--
+		$timeduid = (string) strtolower((string)self::crc32b(microtime(true).'-'.time(), true));
+		$entropy = (string) self::sha512(uniqid().'-'.microtime(true).'-'.time());
+		//--
+		return '_===-MForm.Part____.'.$timeduid.'_'.md5('@MFormPart---#Boundary@'.$entropy).'_P_.-=_'; // 69 chars of 70 max
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	public static function http_multipart_form_build($delimiter, $fields, $files) { // {{{SYNC-MULTIPART-BUILD}}}
+		//--
+		$delimiter = (string) $delimiter;
+		if((strlen($delimiter) < 50) OR (strlen($delimiter) > 70)) {
+			return '';
+		} //end if
+		//--
+		if(!is_array($fields)) {
+			$fields = array();
+		} //end if
+		//--
+		if(!is_array($files)) {
+			$files = array();
+		} //end if
+		//--
+		if((self::array_size($fields) <= 0) AND (self::array_size($files) <= 0)) {
+			return '';
+		} //end if
+		//--
+		$data = '';
+		//--
+		foreach((array)$fields as $name => $content) {
+			//--
+			if(is_array($content)) {
+				//--
+				foreach($content as $key => $val) {
+					//--
+					$data .= '--'.$delimiter."\r\n";
+					//--
+					$data .= 'Content-Disposition: form-data; name="'.self::safe_varname($name).'['.str_replace('"', '\\"', (string)$key).']'.'"'."\r\n";
+					$data .= 'Content-Type: text/plain; charset=UTF-8'."\r\n";
+					$data .= 'Content-Length: '.(int)(strlen((string)$val))."\r\n";
+					//--
+					$data .= "\r\n".$val."\r\n";
+					//--
+				} //end foreach
+				//--
+			} else {
+				//--
+				$data .= '--'.$delimiter."\r\n";
+				//--
+				$data .= 'Content-Disposition: form-data; name="'.self::safe_varname($name).'"'."\r\n";
+				$data .= 'Content-Type: text/plain; charset=UTF-8'."\r\n";
+				$data .= 'Content-Length: '.(int)(strlen((string)$content))."\r\n";
+				//--
+				$data .= "\r\n".$content."\r\n";
+				//--
+			} //end if else
+			//--
+		} //end foreach
+		//--
+		foreach((array)$files as $var_name => $arr_file) {
+			//--
+			if(self::array_size($arr_file) > 0) {
+				//--
+				$filename = (string) $arr_file['filename'];
+				$content  = (string) $arr_file['content'];
+				//--
+				if($filename AND $content) {
+					//--
+					$data .= '--'.$delimiter."\r\n";
+					//--
+					$data .= 'Content-Disposition: form-data; name="'.self::safe_varname($var_name).'"; filename="'.self::safe_filename($filename).'"'."\r\n";
+					$data .= 'Content-Transfer-Encoding: binary'."\r\n";
+					$data .= 'Content-Length: '.(int)strlen((string)$content)."\r\n";
+					$data .= "\r\n".$content."\r\n";
+					//--
+				} //end if
+				//--
+			} //end if
+			//--
+		} //end foreach
+		//--
+		$data .= '--'.$delimiter.'--'."\r\n";
+		//--
+		return (string) $data;
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
 	//##### SmartUtils v.20191203

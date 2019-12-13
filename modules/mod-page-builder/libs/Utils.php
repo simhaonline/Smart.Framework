@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191113
+ * @version 	v.20191213
  * @package 	PageBuilder
  *
  */
@@ -169,7 +169,7 @@ final class Utils {
 			//--
 			if((string)$arr[$i] != '') {
 				//--
-				$arr[$i] = (string) \Smart::safe_varname((string)$arr[$i]);
+				$arr[$i] = (string) \strtolower((string)\Smart::safe_varname((string)$arr[$i])); // from camelcase to lower
 				//--
 				if((string)$arr[$i] != '') {
 					$class .= (string) \ucfirst((string)$arr[$i]);

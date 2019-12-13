@@ -41,7 +41,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191125
+ * @version 	v.20191213
  * @package 	Plugins:Mailer
  *
  */
@@ -344,23 +344,23 @@ final class SmartMailerSend {
 		//--
 		$this->mime_message = ''; // init
 		//--
-		$this->mime_message .= 'Return-Path: '.'<'.self::safe_header_str((string)$this->from_return).'>'."\r\n";
-		$this->mime_message .= 'From: '.self::safe_header_str((string)$tmp_name.' <'.$this->from.'>')."\r\n"; // [ucwords] is safe here as the name is ISO-8859-1 (1st part of email address)
+		$this->mime_message .= 'Return-Path: '.'<'.$this->safe_header_str((string)$this->from_return).'>'."\r\n";
+		$this->mime_message .= 'From: '.$this->safe_header_str((string)$tmp_name.' <'.$this->from.'>')."\r\n"; // [ucwords] is safe here as the name is ISO-8859-1 (1st part of email address)
 		$this->mime_message .= 'Date: '.date('D, d M Y H:i:s O')."\r\n";
-		$this->mime_message .= 'To: '.self::safe_header_str((string)$this->to)."\r\n";
+		$this->mime_message .= 'To: '.$this->safe_header_str((string)$this->to)."\r\n";
 		//--
 		if(is_array($this->cc)) {
 			for($z=0; $z<Smart::array_size($this->cc); $z++) {
 				if((string)$this->cc[$z] != '') {
-					$this->mime_message .= 'Cc: '.self::safe_header_str((string)$this->cc[$z])."\r\n";
+					$this->mime_message .= 'Cc: '.$this->safe_header_str((string)$this->cc[$z])."\r\n";
 				} //end if
 			} //end for
 		} elseif((string)$this->cc != '') {
-			$this->mime_message .= 'Cc: '.self::safe_header_str((string)$this->cc)."\r\n";
+			$this->mime_message .= 'Cc: '.$this->safe_header_str((string)$this->cc)."\r\n";
 		} //end if
 		if((string)$do_send != 'yes') {
 			if((string)$this->bcc != '') {
-				$this->mime_message .= 'BCc: '.self::safe_header_str((string)$this->bcc)."\r\n";
+				$this->mime_message .= 'BCc: '.$this->safe_header_str((string)$this->bcc)."\r\n";
 			} //end if
 		} //end if
 		//--
@@ -378,9 +378,9 @@ final class SmartMailerSend {
 				$this->mime_message .= 'X-Priority: 3'."\r\n"; // normal
 		} //end switch
 		//--
-		$this->mime_message .= 'X-Mailer: '.'Smart.Framework Mailer ('.self::safe_header_str((string)SMART_FRAMEWORK_VERSION).')'."\r\n";
+		$this->mime_message .= 'X-Mailer: '.'Smart.Framework Mailer ('.$this->safe_header_str((string)SMART_FRAMEWORK_VERSION).')'."\r\n";
 		$this->mime_message .= 'MIME-Version: 1.0 '.'(Smart.Framework Mime-Message v.2018.11.23)'."\r\n";
-		$this->mime_message .= 'Message-Id: '.'<ID-'.self::safe_header_str((string)Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain)).'>'."\r\n";
+		$this->mime_message .= 'Message-Id: '.'<ID-'.$this->safe_header_str((string)Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain)).'>'."\r\n";
 		//--
 		if((string)trim((string)$this->headers) != '') {
 			$this->mime_message .= (string) trim((string)$this->headers)."\r\n"; // all lines must end with: \r\n !!! IF THIS IS MALFORMED THERE IS A RISK TO BREAK THE MIME MESSAGE !!
@@ -566,7 +566,7 @@ final class SmartMailerSend {
 			return false;
 		} //end if
 		//--
-		$cid = (string) self::safe_header_str((string)$cid); // content ID
+		$cid = (string) $this->safe_header_str((string)$cid); // content ID
 		//--
 		switch((string)strtolower((string)$ctype)) {
 			//-- text parts
@@ -584,10 +584,10 @@ final class SmartMailerSend {
 				} //end if else
 				//--
 				if((string)$disp == 'inline') {
-					$charset = (string) self::safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
+					$charset = (string) $this->safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
 				} //end if
 				//--
-				$name = (string) self::safe_header_str((string)$name);
+				$name = (string) $this->safe_header_str((string)$name);
 				$filename = '';
 				//--
 				$att_body = (string) SmartUnicode::fix_charset((string)$att_body);
@@ -608,7 +608,7 @@ final class SmartMailerSend {
 				$disp = 'inline';
 				//--
 				$name = 'forwarded_message_'.date('YmdHis').'_'.Smart::random_number(10000,99999).'.eml';
-				$filename = (string) self::safe_header_str((string)$name);
+				$filename = (string) $this->safe_header_str((string)$name);
 				//--
 				$att_body = (string) SmartUnicode::fix_charset((string)$att_body);
 				//--
@@ -616,7 +616,7 @@ final class SmartMailerSend {
 			//-- the rest ...
 			default:
 				//--
-				$ctype = (string) self::safe_header_str((string)trim((string)$ctype));
+				$ctype = (string) $this->safe_header_str((string)trim((string)$ctype));
 				if((string)$ctype == '') {
 					$ctype = 'application/octet-stream';
 				} //end if
@@ -630,7 +630,7 @@ final class SmartMailerSend {
 				//--
 				$encode = 'base64'; // force base64 in this case, can be binary data
 				//--
-				$filename = (string) self::safe_header_str((string)$name);
+				$filename = (string) $this->safe_header_str((string)$name);
 				//--
 				// DO NOT DO UNICODE FIX ON BINARY DATA
 				//--
@@ -668,6 +668,20 @@ final class SmartMailerSend {
 	public function safe_header_str($str) {
 		//--
 		return (string) Smart::normalize_spaces((string)SmartUnicode::fix_charset((string)$str));
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Provide a helper to safe escape Mime (Email) Message Values
+	 * @param STRING $str The mime value
+	 * @return STRING The safe escaped Mime Message Value
+	 */
+	public function safe_value_str($str) {
+		//--
+		return (string) str_replace([' ', '"', '<', '>'], ['_', "'", '(', ')'], (string)$this->safe_header_str((string)$str));
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -722,9 +736,9 @@ final class SmartMailerSend {
 	//=====================================================================================
 	private function prepare_subject($subject) {
 		//--
-		$subject = (string) self::safe_header_str((string)$subject);
+		$subject = (string) $this->safe_header_str((string)$subject);
 		//--
-		$charset = (string) self::safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
+		$charset = (string) $this->safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
 		//--
 		if((string)$charset != 'ISO-8859-1') {
 			if($this->usealways_b64 === false) { // quote printable encoded subject
@@ -743,39 +757,41 @@ final class SmartMailerSend {
 
 
 	//=====================================================================================
-	// v.150119, added sha512 checksum
-	// v.181123, added quoted printable as enabled, an alternative to base64
+	// v.20191213, added content length and safe values {{{SYNC-MULTIPART-BUILD}}}
 	private function build_message($part) {
 		//--
 		$part = (array) $part;
 		//--
-		$checksum = sha1($part['message']);
+		$checksum = (string) sha1((string)$part['message']);
 		//--
 		if((string)$part['encode'] == '7bit') {
 			// leave as is
 		} elseif((string)$part['encode'] == 'quoted-printable') { // quoted printable encode specific for email body
 			$part['message'] = (string) str_replace(["\r\n", "\r"], "\n", (string)quoted_printable_encode((string)$part['message'])); // see PHP Mailer ; no need for chunk split
 	//		$part['message'] = (string) str_replace(' ', '-', (string)$part['message']); // {{{SYNC-QUOTED-PRINTABLE-FIX}}} ; this appear to be a fix just for email subject that must be not applied to email bodies
-	//	} elseif((string)$part['encode'] == 'uuencode') { // currently this is unmaintained an may not work with modern antispam filters !!
-	//		$part['message'] = chunk_split(convert_uuencode((string)$part['message']), 76, "\r\n");
+	//	} elseif((string)$part['encode'] == 'uuencode') { // currently this is not tested an may not work with modern antispam filters !!
+	//		$part['message'] = (string) convert_uuencode((string)$part['message']); // uuencode
+	//		$part['message'] = (string) trim((string)chunk_split((string)$part['message'], 76, "\r\n"));
 		} else { // base64 encode
 			$part['encode'] = 'base64'; // rewrite this for all other cases
-			$part['message'] = (string) chunk_split((string)base64_encode((string)$part['message']), 76, "\r\n"); // encode b64
+			$part['message'] = (string) base64_encode((string)$part['message']); // encode b64
+			$part['message'] = (string) trim((string)chunk_split((string)$part['message'], 76, "\r\n"));
 		} //end if
 		//--
-		return 	'Content-Type: '.$part['ctype'].($part['charset'] ? '; charset='.$part['charset'] : '').($part['name'] ? '; name="'.$part['name'].'"' : '')."\r\n".
-				'Content-Transfer-Encoding: '.strtoupper((string)$part['encode'])."\r\n".
-				($part['cid'] ? 'Content-ID: <'.$part['cid'].'>'."\r\n" : '').
-				'Content-Disposition: '.$part['disp'].';'.($part['filename'] ? ' filename="'.$part['filename'].'"' : '')."\r\n".
-				'Content-Decoded-Checksum-SHA1: '.$checksum."\r\n".
-				"\r\n".$part['message']."\r\n";
+		return 	'Content-Type: '.$this->safe_value_str($part['ctype']).($part['charset'] ? '; charset='.$this->safe_value_str($part['charset']) : '').($part['name'] ? '; name="'.$this->safe_value_str($part['name']).'"' : '')."\r\n".
+				'Content-Transfer-Encoding: '.$this->safe_value_str(strtoupper((string)$part['encode']))."\r\n".
+				($part['cid'] ? 'Content-ID: <'.$this->safe_value_str($part['cid']).'>'."\r\n" : '').
+				'Content-Disposition: '.$this->safe_value_str($part['disp']).';'.($part['filename'] ? ' filename="'.$this->safe_value_str($part['filename']).'"' : '')."\r\n".
+				'Content-Length: '.(int)strlen((string)$part['message'])."\r\n".
+				'Content-Decoded-Checksum-SHA1: '.$this->safe_value_str($checksum)."\r\n".
+				"\r\n".$part['message']; //."\r\n";
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// v.2016-02-01 (multipart/mixed + multipart/related)
+	// v.20191213 (multipart/mixed + multipart/related) {{{SYNC-MULTIPART-BUILD}}}
 	private function build_multipart() {
 		//--
 		$timeduid = (string) Smart::uuid_10_seq(); // 10 chars, timed based, can repeat only once in 1000 years for the same millisecond

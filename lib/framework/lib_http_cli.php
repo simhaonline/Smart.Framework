@@ -33,10 +33,53 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * The Standard Methods will prefere HTTP 1.0 (which provide a faster access)
  * The Extended Methods will prefere HTTP 1.1 instead of 1.0 because of some additional headers that may validate for error checks ...
  *
+ * <code>
+ * // Sample GET
+ * $browser = new SmartHttpClient();
+ * $browser->connect_timeout = 20;
+ * print_r(
+ * 		$browser->browse_url('https://some-website.ext:443/some-path/', 'GET', 'tls')
+ * );
+ *
+ * // Sample POST, with optional Files and Cookies
+ * $browser = new SmartHttpClient();
+ * $browser->postvars = [
+ * 		'var1' => 'val1',
+ * 		'var2' => 'val2'
+ * ];
+ * $browser->postfiles = [ // optional
+ * 		'my_file' => [
+ * 			'filename' => 'sample.txt',
+ * 			'content'  => 'this is the content of the file'
+ * 		],
+ * 		'my_other_file' => [
+ * 			'filename' => 'sample.xml',
+ * 			'content'  => '<xml>test</xml>'
+ * 		]
+ * ];
+ * $browser->cookies = [ // optional
+ * 		'sessionID' => '12345'
+ * ];
+ * print_r(
+ * 		$browser->browse_url('https://some-website.ext:443/some-path/', 'POST', 'tls')
+ * );
+ *
+ * // Sample PUT
+ * $browser = new SmartHttpClient('1.1');
+ * $browser->connect_timeout = 20;
+ * $browser->putbodyres = 'tmp/test-file.txt'; // using a file
+ * $browser->putbodymode = 'file';
+ * //$browser->putbodyres = '123'; // alternate can use a string
+ * //$browser->putbodymode = 'string';
+ * print_r(
+ * 		$browser->browse_url('https://some-website.ext:443/some-path/~/some-file.txt', 'PUT', 'tls', 'admin', 'pass')
+ * );
+ * </code>
+ *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.20191124
+ * @version 	v.20191213
  * @package 	@Core:Network
  *
  */
@@ -81,6 +124,14 @@ final class SmartHttpClient {
 	//--
 
 	/**
+	 * Pre-Built Post String (as alternative to PostVars) ; must not contain unencoded \r\n ; must use the RFC 3986 standard.
+	 * If $poststring is used the $postvars and $postfiles are ignored
+	 * @var STRING
+	 * @default ''
+	 */
+	public $poststring;
+
+	/**
 	 * Array of PostVars (to send)
 	 * @var ARRAY
 	 * @default []
@@ -88,16 +139,16 @@ final class SmartHttpClient {
 	public $postvars;
 
 	/**
-	 * Pre-Built Post String (as alternative to PostVars) ; must not contain unencoded \r\n ; must use the RFC 3986 standard.
-	 * @var STRING
-	 * @default ''
+	 * Array of PostFiles (to send) ; This can be used only in combination with $postvars ; Example [ 'filename' => 'file.txt', 'content' => 'the contents go here' ]
+	 * @var ARRAY
+	 * @default []
 	 */
-	public $poststring;
+	public $postfiles;
 
 	//--
 
 	/**
-	 * PUT Request Mode (used for $putbodyres
+	 * PUT Request Mode (used for $putbodyres)
 	 * Can have one of the values: 'string' or 'file'
 	 * @var ENUM
 	 * @default 'string'
@@ -197,8 +248,9 @@ final class SmartHttpClient {
 		$this->rawheaders = array();
 		$this->cookies = array();
 		//--
-		$this->postvars = array();
 		$this->poststring = '';
+		$this->postvars = array();
+		$this->postfiles = array();
 		//--
 		$this->putbodymode = 'string';
 		$this->putbodyres = '';
@@ -241,29 +293,30 @@ final class SmartHttpClient {
 		$result = $this->get_answer($url, $user, $pwd, $method, $ssl_version);
 		//--
 		return array( // {{{SYNC-GET-URL-OR-FILE-RETURN}}}
-			'client' 		=> (string) __CLASS__,
-			'date-time' 	=> (string) date('Y-m-d H:i:s O'),
-			'protocol' 		=> (string) $this->protocol,
-			'method' 		=> (string) $this->method,
-			'url' 			=> (string) $url,
-			'ssl'			=> (string) $ssl_version,
-			'ssl-ca' 		=> (string) ($this->cafile ? $this->cafile : (defined('SMART_FRAMEWORK_SSL_CA_FILE') ? SMART_FRAMEWORK_SSL_CA_FILE : '')),
-			'auth-user' 	=> (string) $user,
-			'cookies-len' 	=> (int)    Smart::array_size($this->cookies),
-			'post-vars-len' => (int)    Smart::array_size($this->postvars),
-			'post-str-len' 	=> (int)    strlen($this->poststring),
-			'put-resource' 	=> (string) substr($this->putbodyres, 0, 255).' ...',
-			'put-res-mode' 	=> (string) $this->putbodymode,
-			'put-body-len' 	=> (int)    $this->put_body_len,
-			'mode' 			=> (string) trim((string)$this->url_parts['protocol']),
-			'result' 		=> (int)    $result,
-			'pre-code' 		=> (string) $this->pre_status, // if 100-continue, this is the HTTP 1.1 Pre-Status
-			'pre-headers' 	=> (string) $this->pre_header, // if 100-continue, this is the HTTP 1.1 Pre-Header
-			'code' 			=> (string) $this->status,
-			'headers' 		=> (string) $this->header,
-			'content' 		=> (string) $this->body,
-			'log' 			=> (string) 'User-Agent: '.$this->useragent."\n", // this is reserved for calltime functions
-			'debuglog' 		=> (string) $this->log // this is for internal use
+			'client' 			=> (string) __CLASS__,
+			'date-time' 		=> (string) date('Y-m-d H:i:s O'),
+			'protocol' 			=> (string) $this->protocol,
+			'method' 			=> (string) $this->method,
+			'url' 				=> (string) $url,
+			'ssl'				=> (string) $ssl_version,
+			'ssl-ca' 			=> (string) ($this->cafile ? $this->cafile : (defined('SMART_FRAMEWORK_SSL_CA_FILE') ? SMART_FRAMEWORK_SSL_CA_FILE : '')),
+			'auth-user' 		=> (string) $user,
+			'cookies-len' 		=> (int)    Smart::array_size($this->cookies),
+			'post-str-len' 		=> (int)    strlen($this->poststring),
+			'post-vars-len' 	=> (int)    Smart::array_size($this->postvars),
+			'post-files-len' 	=> (int)    Smart::array_size($this->postfiles),
+			'put-resource' 		=> (string) substr($this->putbodyres, 0, 255).' ...',
+			'put-res-mode' 		=> (string) $this->putbodymode,
+			'put-body-len' 		=> (int)    $this->put_body_len,
+			'mode' 				=> (string) trim((string)$this->url_parts['protocol']),
+			'result' 			=> (int)    $result,
+			'pre-code' 			=> (string) $this->pre_status, // if 100-continue, this is the HTTP 1.1 Pre-Status
+			'pre-headers' 		=> (string) $this->pre_header, // if 100-continue, this is the HTTP 1.1 Pre-Header
+			'code' 				=> (string) $this->status,
+			'headers' 			=> (string) $this->header,
+			'content' 			=> (string) $this->body,
+			'log' 				=> (string) 'User-Agent: '.$this->useragent."\n", // this is reserved for calltime functions
+			'debuglog' 			=> (string) $this->log // this is for internal use
 		);
 		//--
 	} //END FUNCTION
@@ -573,12 +626,11 @@ final class SmartHttpClient {
 		} //end if
 		//--
 		$have_post_vars = false;
-		if((string)$this->poststring != '') {
+		$have_post_files = false;
+		if(((string)$this->poststring != '') OR (Smart::array_size($this->postvars) > 0)) {
 			$have_post_vars = true;
-		} elseif(is_array($this->postvars)) {
-			if(count($this->postvars) > 0) {
-				$have_post_vars = true;
-			} //end if
+		} elseif(Smart::array_size($this->postfiles) > 0) {
+			$have_post_files = true;
 		} //end if
 		//--
 
@@ -686,37 +738,59 @@ final class SmartHttpClient {
 		//--
 
 		//-- request
-		if($have_post_vars) { // post vars
-			//--
-			if((string)$this->method == 'GET') {
-				$this->method = 'POST'; // FIX: if GET Method is using PostVars, then set method to POST ; this should not be fixed for other methods like: HEAD, PUT, DELETE ...
-			} //end if
+		if($have_post_vars OR $have_post_files) { // post vars or post files
 			//--
 			if($this->debug) {
 				$this->log .= '[INF] POST request'."\n";
 			} //end if
 			//--
+			$header_form_type = '';
 			$post_string = '';
 			if((string)$this->poststring != '') {
-				$post_string = (string) $this->poststring;
-			} elseif(is_array($this->postvars)) {
+				$header_form_type = 'application/x-www-form-urlencoded';
+				$post_string = (string) $this->poststring; // send raw post string
+			} elseif(Smart::array_size($this->postfiles) > 0) { // build multipart form data with/without extra post vars (files have anyway)
+				$boundary = (string) SmartHttpUtils::http_multipart_form_delimiter();
+				$header_form_type = 'multipart/form-data; boundary='.$boundary;
+				$post_string = (string) SmartHttpUtils::http_multipart_form_build($boundary, $this->postvars, $this->postfiles);
+			} elseif(Smart::array_size($this->postvars) > 0) { // build post string from array
+				$header_form_type = 'application/x-www-form-urlencoded';
+				$post_string = '';
 				foreach($this->postvars as $key => $value) {
 					$post_string .= (string) SmartHttpUtils::encode_var_post($key, $value);
 				} //end foreach
 			} //end if else
 			//--
+			if(((string)$post_string != '') AND ((string)$header_form_type != '')) {
+				if((string)$this->method == 'GET') {
+					$this->method = 'POST'; // FIX: if GET Method is used instead of POST fix this ; (have post vars)
+				} //end if
+			} else {
+				if((string)$this->method == 'POST') {
+					$this->method = 'GET'; // FIX: if POST Method is used instead of GET fix this ; (have no post vars)
+				} //end if
+			} //end if else
+			//--
 			$request = $this->method.' '.$path.' HTTP/'.$this->protocol."\r\n";
-			$this->raw_headers['Content-Type'] = 'application/x-www-form-urlencoded';
-			$this->raw_headers['Content-Length'] = strlen($post_string);
+			//--
+			if(((string)$post_string != '') AND ((string)$header_form_type != '')) {
+			//	$this->raw_headers[' Content-Type'] = 'text/html; charset=UTF-8'; // trick: to add duplicate header values the keys can be preceded by one or more spaces
+				$this->raw_headers['Content-Type'] = (string) $header_form_type;
+				$this->raw_headers['Content-Length'] = (int) strlen((string)$post_string);
+			} //end if
 			//--
 		} else { // other request: HEAD / GET / PUT ...
+			//--
+			if((string)$this->method == 'POST') {
+				$this->method = 'GET'; // FIX: if POST Method is used instead of GET fix this (have no post vars) ; this should not be fixed for other methods like: HEAD, PUT, DELETE ...
+			} //end if
 			//--
 			if($this->debug) {
 				$this->log .= '[INF] '.$this->method.' request'."\n";
 			} //end if
 			//--
 			if((string)strtoupper($this->method) == 'PUT') {
-				$this->raw_headers['Accept'] 			= (string) '*/*';
+				$this->raw_headers['Accept'] = (string) '*/*';
 				if((string)$this->putbodymode == 'file') {
 					if((SmartFileSysUtils::check_if_safe_path((string)$this->putbodyres) == '1') AND (SmartFileSystem::is_type_file((string)$this->putbodyres) == true) AND (SmartFileSystem::have_access_read((string)$this->putbodyres) == true)) {
 						$this->put_body_len = (int) SmartFileSystem::get_file_size((string)$this->putbodyres);
@@ -777,7 +851,7 @@ final class SmartHttpClient {
 		} //end if
 		//--
 		foreach($this->raw_headers as $key => $value) {
-			if(@fwrite($this->socket, $key.": ".$value."\r\n") === false) {
+			if(@fwrite($this->socket, trim((string)$key).': '.$value."\r\n") === false) {
 				if($this->debug) {
 					$this->log .= '[ERR] Error writing Raw-Headers to socket'."\n";
 					Smart::log_notice('LibHTTP // RequestFromURL ('.$browser_protocol.$host.':'.$port.$path.') // Error writing Raw-Headers to socket ...');
@@ -808,7 +882,7 @@ final class SmartHttpClient {
 		//--
 
 		//--
-		if($have_post_vars) {
+		if($have_post_vars OR $have_post_files) {
 			//--
 			if(!$this->socket) {
 				//--
@@ -939,44 +1013,6 @@ final class SmartHttpClient {
 } //END CLASS
 
 
-//===================================================== USAGE
-/*
-
-// Sample GET
-$browser = new SmartHttpClient();
-$browser->connect_timeout = 20;
-print_r(
-	$browser->browse_url('https://some-website.ext:443/some-path/', 'GET', 'tls')
-);
-
-// Sample POST
-$browser = new SmartHttpClient();
-$browser->postvars = [
-	'var1' => 'val1',
-	'var2' => 'val2'
-];
-$browser->cookies = [ // optional
-	'sessionID' => '12345'
-];
-print_r(
-	$browser->browse_url('https://some-website.ext:443/some-path/', 'POST', 'tls')
-);
-
-// Sample PUT
-$browser = new SmartHttpClient('1.1');
-$browser->connect_timeout = 20;
-$browser->putbodyres = 'tmp/test-file.txt'; // using a file
-$browser->putbodymode = 'file';
-//$browser->putbodyres = '123'; // alternate can use a string
-//$browser->putbodymode = 'string';
-print_r(
-	$browser->browse_url('https://some-website.ext:443/some-path/~/some-file.txt', 'PUT', 'tls', 'admin', 'pass')
-);
-
-*/
-//=====================================================
-
-
 //=====================================================================================
 //===================================================================================== CLASS END
 //=====================================================================================
@@ -999,8 +1035,8 @@ print_r(
  * @hints 		It is recommended to use the methods in this class instead of PHP native methods whenever is possible because this class will offer Long Term Support and the methods will be supported even if the behind PHP methods can change over time, so the code would be easier to maintain.
  *
  * @access 		PUBLIC
- * @depends 	classes: Smart
- * @version 	v.20191101
+ * @depends 	classes: Smart, SmartHashCrypto
+ * @version 	v.20191213
  * @package 	@Core:Network
  *
  */
@@ -1012,15 +1048,13 @@ final class SmartHttpUtils {
 	// encode a COOKIE variable ; returns the HTTP Cookie string
 	public static function encode_var_cookie($name, $value) {
 		//--
-		$name = (string) trim((string)$name);
+		$name = (string) Smart::safe_varname($name);
 		//--
-		$out = '';
+		if((string)$name == '') {
+			return '';
+		} //end if
 		//--
-		if((string)$name != '') {
-			$out = (string) urlencode($name).'='.rawurlencode($value).';';
-		} //end if else
-		//--
-		return (string) $out;
+		return (string) $name.'='.rawurlencode($value).';';
 		//--
 	} //END FUNCTION
 	//==============================================
@@ -1030,7 +1064,7 @@ final class SmartHttpUtils {
 	// encode a POST variable ; returns the HTTP POST String
 	public static function encode_var_post($varname, $value) {
 		//--
-		$varname = (string) trim((string)$varname);
+		$varname = (string) Smart::safe_varname($varname);
 		//--
 		if((string)$varname == '') {
 			return '';
@@ -1042,21 +1076,115 @@ final class SmartHttpUtils {
 			$arrtype = Smart::array_type_test($value); // 0: not an array ; 1: non-associative ; 2:associative
 			if($arrtype === 1) { // 1: non-associative
 				for($i=0; $i<Smart::array_size($value); $i++) {
-					$out .= (string) urlencode($varname).'[]='.rawurlencode($value[$i]).'&';
+					$out .= (string) $varname.'[]='.rawurlencode($value[$i]).'&';
 				} //end foreach
 			} else { // 2: associative
 				foreach($value as $key => $val) {
-					$out .= (string) urlencode($varname).'['.rawurlencode($key).']='.rawurlencode($val).'&';
+					$out .= (string) $varname.'['.rawurlencode($key).']='.rawurlencode($val).'&';
 				} //end foreach
 			} //end if else
 		} else {
-			$out = (string) urlencode($varname).'='.rawurlencode($value).'&';
+			$out = (string) $varname.'='.rawurlencode($value).'&';
 		} //end if else
 		//--
 		return (string) $out;
 		//--
 	} //END FUNCTION
 	//==============================================
+
+
+	//================================================================
+	public static function http_multipart_form_delimiter() { // {{{SYNC-MULTIPART-BUILD}}}
+		//--
+		$timeduid = (string) strtolower((string)SmartHashCrypto::crc32b(microtime(true).'-'.time(), true));
+		$entropy = (string) SmartHashCrypto::sha512(uniqid().'-'.microtime(true).'-'.time());
+		//--
+		return '_===-MForm.Part____.'.$timeduid.'_'.md5('@MFormPart---#Boundary@'.$entropy).'_P_.-=_'; // 69 chars of 70 max
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	public static function http_multipart_form_build($delimiter, $fields, $files) { // {{{SYNC-MULTIPART-BUILD}}}
+		//--
+		$delimiter = (string) $delimiter;
+		if((strlen($delimiter) < 50) OR (strlen($delimiter) > 70)) {
+			return '';
+		} //end if
+		//--
+		if(!is_array($fields)) {
+			$fields = array();
+		} //end if
+		//--
+		if(!is_array($files)) {
+			$files = array();
+		} //end if
+		//--
+		if((Smart::array_size($fields) <= 0) AND (Smart::array_size($files) <= 0)) {
+			return '';
+		} //end if
+		//--
+		$data = '';
+		//--
+		foreach((array)$fields as $name => $content) {
+			//--
+			if(is_array($content)) {
+				//--
+				foreach($content as $key => $val) {
+					//--
+					$data .= '--'.$delimiter."\r\n";
+					//--
+					$data .= 'Content-Disposition: form-data; name="'.Smart::safe_varname($name).'['.str_replace('"', '\\"', (string)$key).']'.'"'."\r\n";
+					$data .= 'Content-Type: text/plain; charset=UTF-8'."\r\n";
+					$data .= 'Content-Length: '.(int)(strlen((string)$val))."\r\n";
+					//--
+					$data .= "\r\n".$val."\r\n";
+					//--
+				} //end foreach
+				//--
+			} else {
+				//--
+				$data .= '--'.$delimiter."\r\n";
+				//--
+				$data .= 'Content-Disposition: form-data; name="'.Smart::safe_varname($name).'"'."\r\n";
+				$data .= 'Content-Type: text/plain; charset=UTF-8'."\r\n";
+				$data .= 'Content-Length: '.(int)(strlen((string)$content))."\r\n";
+				//--
+				$data .= "\r\n".$content."\r\n";
+				//--
+			} //end if else
+			//--
+		} //end foreach
+		//--
+		foreach((array)$files as $var_name => $arr_file) {
+			//--
+			if(Smart::array_size($arr_file) > 0) {
+				//--
+				$filename = (string) $arr_file['filename'];
+				$content  = (string) $arr_file['content'];
+				//--
+				if($filename AND $content) {
+					//--
+					$data .= '--'.$delimiter."\r\n";
+					//--
+					$data .= 'Content-Disposition: form-data; name="'.Smart::safe_varname($var_name).'"; filename="'.Smart::safe_filename($filename).'"'."\r\n";
+					$data .= 'Content-Transfer-Encoding: binary'."\r\n";
+					$data .= 'Content-Length: '.(int)strlen((string)$content)."\r\n";
+					$data .= "\r\n".$content."\r\n";
+					//--
+				} //end if
+				//--
+			} //end if
+			//--
+		} //end foreach
+		//--
+		$data .= '--'.$delimiter.'--'."\r\n";
+		//--
+		return (string) $data;
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
 } //END CLASS
