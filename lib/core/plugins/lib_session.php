@@ -65,7 +65,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.20191207
+ * @version 	v.20191216
  * @package 	Application:Session
  *
  */
@@ -145,6 +145,22 @@ final class SmartSession {
 		} //end if else
 		//--
 		return true;
+		//--
+	} //END FUNCTION
+	//==================================================
+
+
+	//==================================================
+	/**
+	 * [PUBLIC] Session Unset Variable
+	 *
+	 * @param STRING $yvariable 		variable name
+	 *
+	 * @return BOOLEAN 					TRUE if successful, FALSE if not
+	 */
+	public static function unsets($yvariable) {
+		//--
+		return (bool) self::set($yvariable, null);
 		//--
 	} //END FUNCTION
 	//==================================================

@@ -779,7 +779,7 @@ final class SmartMailerUtils {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.20191125
+ * @version 	v.20191214
  * @package 	Plugins:Mailer
  *
  */
@@ -1041,13 +1041,18 @@ final class SmartMailerMimeParser {
 		$out = ''; // init
 		//--
 		$reply_text 				= array(); // init
+		$reply_text['atts_num'] 	= '';
+		$reply_text['atts_lst'] 	= '';
+		$reply_text['filepath'] 	= '';
 		$reply_text['from'] 		= '';
+		$reply_text['from-name'] 	= '';
 		$reply_text['to'] 			= '';
 		$reply_text['cc'] 			= '';
 		$reply_text['date'] 		= '';
 		$reply_text['subject'] 		= '';
 		$reply_text['in-reply-to'] 	= '';
 		$reply_text['message-id'] 	= '';
+		$reply_text['message-type'] = '';
 		$reply_text['message'] 		= '';
 		//--
 
@@ -1272,7 +1277,8 @@ final class SmartMailerMimeParser {
 							//--
 							$percent_similar = 0;
 							if((string)$the_part_id == '') {
-								@similar_text($buff, $markup_multipart, $percent_similar);
+							//	@similar_text($buff, $markup_multipart, $percent_similar);
+								$percent_similar = 99; // {{{SYNC-FIX-EML-HIDE-ALTERNATE-PARTS}}}
 								if($percent_similar >= 25) { // 25% at least similarity
 									$skips[$buff_id] = $percent_similar; // skip this alternate html part ...
 								} //end if
@@ -1305,7 +1311,8 @@ final class SmartMailerMimeParser {
 							//--
 							$percent_similar = 0;
 							if((string)$the_part_id == '') {
-								@similar_text($buff, $xbuff, $percent_similar);
+							//	@similar_text($buff, $xbuff, $percent_similar);
+								$percent_similar = 99; // {{{SYNC-FIX-EML-HIDE-ALTERNATE-PARTS}}}
 								if($percent_similar >= 15) { // 15% at least similarity
 									$skips[$buff_id] = $percent_similar; // skip this alternate text part ...
 								} //end if
@@ -1353,6 +1360,7 @@ final class SmartMailerMimeParser {
 							//--
 							if((string)$y_process_mode == 'data-reply') {
 								if((string)$reply_text['message'] == '') {
+									$reply_text['message-type'] = (string) $val['mode'];
 									$reply_text['message'] = (string) $val['content'];
 								} //end if
 							} else {
@@ -1361,7 +1369,7 @@ final class SmartMailerMimeParser {
 								if(((string)$val['mode'] == 'text/plain') OR ((string)$y_process_mode == 'print')) {
 									$out .= $val['content'];
 								} else { // for non text/plain parts, use sandbox iframe if non-print mode ; for print mode the iframe sandbox must be manually added to ensure safety !
-									$out .= '<div title="MimeMessage HTML Safe SandBox / iFrame" style="position:relative;"><img height="16" src="lib/core/plugins/img/email/safe.svg" style="cursor:help; position:absolute; top:5px; left:49vw; opacity:0.25;"><iframe name="'.Smart::escape_html($htmid).'" id="'.Smart::escape_html($htmid).'" width="100%" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="height:75vh; max-height:max-content; border:1px solid #ECECEC;" srcdoc="'.Smart::escape_html('<!DOCTYPE html><html><head><title>Mime Message</title><meta charset="'.Smart::escape_html(SMART_FRAMEWORK_CHARSET).'">'.SmartFileSystem::read('lib/core/templates/base-html-styles.inc.htm').'</head><body>'.$val['content'].'<script>alert(\'If you can see this alert the Mime Message iFrame Sandbox is unsafe ...\');</script></body></html>').'" sandbox></iframe></div>';
+									$out .= '<div title="MimeMessage HTML Safe SandBox / iFrame" style="position:relative;"><img height="16" src="lib/core/plugins/img/email/safe.svg" style="cursor:help; position:absolute; top:5px; left:49vw; opacity:0.25;"><iframe name="'.Smart::escape_html($htmid).'" id="'.Smart::escape_html($htmid).'" width="100%" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="min-height:75vh; height:max-content; border:1px solid #ECECEC;" srcdoc="'.Smart::escape_html('<!DOCTYPE html><html><head><title>Mime Message</title><meta charset="'.Smart::escape_html(SMART_FRAMEWORK_CHARSET).'">'.SmartFileSystem::read('lib/core/templates/base-html-styles.inc.htm').'</head><body>'.$val['content'].'<script>alert(\'If you can see this alert the Mime Message iFrame Sandbox is unsafe ...\');</script></body></html>').'" sandbox></iframe></div>';
 								} //end if else
 								$out .= '<br><hr><br>';
 							} //end if
@@ -1394,12 +1402,14 @@ final class SmartMailerMimeParser {
 			//--
 			return array(
 				'from' 			=> (string) $head['from_addr'],
+				'from-name' 	=> (string) $head['from_name'],
 				'to' 			=> (string) $head['to_addr'],
 				'cc' 			=> (string) $head['cc_addr'],
 				'date' 			=> (string) $head['date'],
 				'atts_num' 		=> (int)    $reg_atts_num,
 				'atts_lst' 		=> (string) $reg_atts_list,
 				'filepath' 		=> (string) $the_message_eml,
+				'subject' 		=> (string) $head['subject'],
 				'is_part' 		=> (string) $reg_is_part, // yes/no
 				'in-reply-to' 	=> (string) $head['in-reply-to'],
 				'message-id' 	=> (string) $head['message-id'],
@@ -1409,12 +1419,17 @@ final class SmartMailerMimeParser {
 		} elseif((string)$y_process_mode == 'data-reply') { // output a special array for replies only
 			//--
 			$reply_text['from'] 		= (string) $head['from_addr'];
+			$reply_text['from-name'] 	= (string) $head['from_name'];
 			$reply_text['to'] 			= (string) $head['to_addr'];
 			$reply_text['cc'] 			= (string) $head['cc_addr'];
 			$reply_text['date'] 		= (string) $head['date'];
+			$reply_text['atts_num'] 	= (int)    $reg_atts_num;
+			$reply_text['atts_lst'] 	= (string) $reg_atts_list;
+			$reply_text['filepath'] 	= (string) $the_message_eml;
 			$reply_text['subject'] 		= (string) $head['subject'];
 			$reply_text['in-reply-to'] 	= (string) $head['in-reply-to'];
 			$reply_text['message-id'] 	= (string) $head['message-id'];
+			$reply_text['message-type'] = (string) $reply_text['message-type'];
 			$reply_text['message'] 		= (string) $reply_text['message']; // this comes from above
 			//--
 			return (array) $reply_text;

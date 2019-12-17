@@ -29,7 +29,7 @@ if(is_file('modules/vendor/MatthiasMullie/autoload.php')) {
 final class StripCode {
 
 	// ::
-	// v.20191213.1737
+	// v.20191217.1427
 
 	public static function strip_css_code($y_file) {
 		//--

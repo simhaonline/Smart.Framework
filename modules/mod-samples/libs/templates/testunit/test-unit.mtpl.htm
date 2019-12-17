@@ -22,7 +22,9 @@ jQuery(document).ready(function() {
 				<li><a href="[###TESTUNIT-TPL-PATH|html###]test-unit-tabext-smartgrid-test.inc.htm"><i class="sfi sfi-table2"></i> &nbsp; Smart Grid</a></li>
 				<li><a href="[###TESTUNIT-TPL-PATH|html###]test-unit-tabext-slickgrid-test.inc.htm"><i class="sfi sfi-command"></i> &nbsp; BigData Grid</a></li>
 				<li><a href="[###TESTUNIT-TPL-PATH|html###]test-unit-tabext-charts-test.inc.htm"><i class="sfi sfi-pie-chart"></i> &nbsp; Charts</a></li>
+				[%%%IF:MOD-BARCODES-AVAILABLE:==yes;%%%]
 				<li><a href="[###TESTUNIT-TPL-PATH|html###]test-unit-tabext-barcodes-test.inc.htm"><i class="sfi sfi-qrcode"></i> &nbsp; Barcodes</a></li>
+				[%%%/IF:MOD-BARCODES-AVAILABLE%%%]
 				<li><a href="#tabs_tests_ui_components"><i class="sfi sfi-display"></i> &nbsp; UI / Components</a></li>
 				<li><a href="broken-link.html"><i class="sfi sfi-eye-blocked"></i> &nbsp; Broken Link</a></li><!-- this is just for testing (broken), the URL actually does not exists -->
 			</ul>

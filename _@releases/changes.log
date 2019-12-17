@@ -2,6 +2,12 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+December 17, 2019 :: Version 5.2.7 rev.191217
+	* Barcodes moved to mod-barcodes
+	* Captcha completely rewritten to support plugins (default uses SVG captcha) ; captcha image + fonts moved to mod-captcha
+	* HTTP(s) Client support file uploads
+	* Add support for AppcodePack to send package by upload to AppcodeUnpack
+
 December 11, 2019 :: Version 5.2.7 rev.191211
 	* Add MongoDB Custom Session Handler
 	* Add MongoDB Custom Persistent Cache

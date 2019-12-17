@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20191205
+ * @version 	v.20191216
  * @package 	@Core:Extra
  *
  */
@@ -89,7 +89,7 @@ final class SmartUtils {
 
 
 	//================================================================
-	// use this function to set cookies as it takes care to set them according with the cookie domain if set or not per app ; use empty data to unset ; use zero expire time for cookies that will expire with browser session
+	// use this function to set cookies as it takes care to set them according with the cookie domain if set or not per app ; use zero expire time for cookies that will expire with browser session
 	public static function set_cookie($cookie_name, $cookie_data, $expire_time=0, $cookie_path='/', $cookie_domain='@') {
 		//--
 		if(headers_sent()) {
@@ -112,6 +112,16 @@ final class SmartUtils {
 		} //end if else
 		//--
 		return (bool) $cookie_set;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	// use this function to unset cookies as it takes care to set them according with the cookie domain if set or not per app
+	public static function unset_cookie($cookie_name, $cookie_path='/', $cookie_domain='@') {
+		//--
+		return (bool) self::set_cookie($cookie_name, '', 1, $cookie_path, $cookie_domain);
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -735,6 +745,10 @@ final class SmartUtils {
 	// It must be used for safe exchanging data between PHP and Javascript
 	public static function crypto_blowfish_encrypt($y_data, $y_key='') {
 		//--
+		if((string)$y_data == '') { // do not trim !
+			return '';
+		} //end if
+		//--
 		if((string)$y_key == '') {
 			$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
 		} else {
@@ -753,6 +767,10 @@ final class SmartUtils {
 	// This always provides a compatible layer with the JS Blowfish CBC
 	// It must be used for safe exchanging data between PHP and Javascript
 	public static function crypto_blowfish_decrypt($y_data, $y_key='') {
+		//--
+		if((string)trim((string)$y_data) == '') {
+			return '';
+		} //end if
 		//--
 		if((string)$y_key == '') {
 			$key = (string) SMART_FRAMEWORK_SECURITY_KEY;

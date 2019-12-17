@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191205
+ * @version 	v.20191214
  *
  */
 final class TestUnitBarcodes {
@@ -37,24 +37,47 @@ final class TestUnitBarcodes {
 
 
 	//============================================================
-	public static function test2dBarcodeQRCode() {
+	public static function test2dBarcodeDataMatrix() {
 		//--
-		$str = 'Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes2D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
+		$str = 'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
 		//--
 		$use_cache = 60; // cache for 60 seconds
 		//--
-		return \SmartBarcode2D::getBarcode($str, 'qrcode', 'html-svg', 2, '#3B5897', 'M', (int)$use_cache);
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes2D::getBarcode($str, 'semacode', 'html-svg', 2, '#333333', '', (int)$use_cache);
 		//--
 	} //END FUNCTION
 	//============================================================
 
 
 	//============================================================
-	public static function test2dBarcodeDataMatrix() {
+	public static function test2dBarcodeQRCode() {
 		//--
-		$str = 'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes2D')) {
+			return 'Barcode Module is missing';
+		} //end if
 		//--
-		return \SmartBarcode2D::getBarcode($str, 'semacode', 'html-png', 2, '#3B5897', '');
+		$str = 'Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
+		//--
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes2D::getBarcode($str, 'qrcode', 'html-svg', 2, '#333333', 'M');
+		//--
+	} //END FUNCTION
+	//============================================================
+
+
+	//============================================================
+	public static function test2dBarcodeAztec() {
+		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes2D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
+		$str = 'Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
+		//--
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes2D::getBarcode($str, 'aztec', 'html-svg', 2, '#333333');
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -63,9 +86,30 @@ final class TestUnitBarcodes {
 	//============================================================
 	public static function test2dBarcodePdf417() {
 		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes2D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
 		$str = '1234567890 abcdefghij klmnopqrst uvwxzy 234DSKJFH23YDFKJHaS AbcdeFghij KlmnopQrsT uvWxZy 234D-SKJFH23YDFKJHaS '.time();
 		//--
-		return \SmartBarcode2D::getBarcode($str, 'pdf417', 'html-svg', 1, '#3B5897', '1');
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes2D::getBarcode($str, 'pdf417', 'html-png', 1, '#333333', '1');
+		//--
+	} //END FUNCTION
+	//============================================================
+
+
+	//============================================================
+	public static function test1dBarcodeEanUpc() {
+		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes1D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
+		$str = '123456789012'; // fixed length of 12 digits
+		//--
+		$use_cache = 60; // cache for 60 seconds
+		//--
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes1D::getBarcode($str, 'EANUPC', 'html-png', 1, 20, '#333333', true, (int)$use_cache);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -74,11 +118,13 @@ final class TestUnitBarcodes {
 	//============================================================
 	public static function test1dBarcode128B() {
 		//--
-		$str = '77WW88YYZZ'; // for caching we need a constant ID else will hit the cache each time different
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes1D')) {
+			return 'Barcode Module is missing';
+		} //end if
 		//--
-		$use_cache = 60; // cache for 60 seconds
+		$str = (string) self::generateCodeForBarcode1D();
 		//--
-		return \SmartBarcode1D::getBarcode($str, '128', 'html-svg', 1, 20, '#3B5897', true, (int)$use_cache);
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes1D::getBarcode($str, '128', 'html-svg', 1, 20, '#333333', true);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -87,9 +133,13 @@ final class TestUnitBarcodes {
 	//============================================================
 	public static function test1dBarcode93() {
 		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes1D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
 		$str = (string) self::generateCodeForBarcode1D();
 		//--
-		return \SmartBarcode1D::getBarcode($str, '93', 'html-png', 1, 20, '#3B5897', true);
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes1D::getBarcode($str, '93', 'html-svg', 1, 20, '#333333', true);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -98,9 +148,28 @@ final class TestUnitBarcodes {
 	//============================================================
 	public static function test1dBarcode39() {
 		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes1D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
 		$str = (string) self::generateCodeForBarcode1D();
 		//--
-		return \SmartBarcode1D::getBarcode($str, '39', 'html-svg', 1, 20, '#3B5897', true);
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes1D::getBarcode($str, '39', 'html-svg', 1, 20, '#333333', true);
+		//--
+	} //END FUNCTION
+	//============================================================
+
+
+	//============================================================
+	public static function test1dBarcodeRms() {
+		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes1D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
+		$str = (string) self::generateCodeForBarcode1D();
+		//--
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes1D::getBarcode($str, 'RMS', 'html-svg', 2, 20, '#333333', true);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -109,9 +178,13 @@ final class TestUnitBarcodes {
 	//============================================================
 	public static function test1dBarcodeKix() {
 		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes1D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
 		$str = (string) self::generateCodeForBarcode1D();
 		//--
-		return \SmartBarcode1D::getBarcode($str, 'KIX', 'html-png', 2, 20, '#3B5897', true);
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes1D::getBarcode($str, 'KIX', 'html-png', 2, 20, '#333333', true);
 		//--
 	} //END FUNCTION
 	//============================================================

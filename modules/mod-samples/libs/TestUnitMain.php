@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191115
+ * @version 	v.20191217
  *
  */
 final class TestUnitMain {
@@ -71,7 +71,7 @@ final class TestUnitMain {
 		//--
 
 		//-- ajax post form
-		$btnop = '<button title="Submit this Test Form by AJAX (with Confirmation)" class="ux-button ux-button-large ux-button-primary" onClick="'.\SmartViewHtmlHelpers::js_ajax_submit_html_form('test_form_ajax', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#smart__CaptchaFrm__img\').click();').' return false;">Submit this Test Form by AJAX &nbsp; <span class="sfi sfi-compass"></span></button>';
+		$btnop = '<button title="Submit this Test Form by AJAX (with Confirmation)" class="ux-button ux-button-large ux-button-primary" onClick="'.\SmartViewHtmlHelpers::js_ajax_submit_html_form('test_form_ajax', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#Smart-Captcha-Plugin img:first\').trigger(\'click\');').' return false;">Submit this Test Form by AJAX &nbsp; <span class="sfi sfi-compass"></span></button>';
 		//-- end
 
 		//-- lists with one element
@@ -142,9 +142,9 @@ final class TestUnitMain {
 		$demo_mod_ui_components = \SmartMarkersTemplating::render_file_template(
 			'modules/mod-samples/libs/templates/testunit/test-unit-tab-components.inc.htm',
 			[
-				'TESTUNIT_BASE_URL' 	=> (string) \SMART_FRAMEWORK_TESTUNIT_BASE_URL,
-				'EXTERNAL-TOOLKITS' 	=> (string) $demo_mod_ext_toolkits,
-				'EXTERNAL-COMPONENTS' 	=> (string) $demo_mod_ext_components
+				'TESTUNIT_BASE_URL' 		=> (string) \SMART_FRAMEWORK_TESTUNIT_BASE_URL,
+				'EXTERNAL-TOOLKITS' 		=> (string) $demo_mod_ext_toolkits,
+				'EXTERNAL-COMPONENTS' 		=> (string) $demo_mod_ext_components
 			]
 		);
 		//--
@@ -169,6 +169,7 @@ final class TestUnitMain {
 					'test-unit-tab-forms.inc.htm' 			=> '@', 																// @ (self) path, assumes the same dir
 					'%test-unit-tab-templating%'			=> '@/test-unit-tab-templating.inc.htm'									// variable, with full path, using self @/sub-dir/ instead of $tpl_path/test-unit-tab-misc.htm
 				],
+				'MOD-BARCODES-AVAILABLE' 					=> (string) (\SmartAppInfo::TestIfModuleExists('mod-barcodes') ? 'yes' : 'no'),
 				'TEST-URL-UNICODE-STR' 						=> (string) \SmartModExtLib\Samples\TestUnitStrings::testStr(),
 				'TEST-UNIT-AREA' 							=> (string) $info_pfx,
 				'TESTUNIT-TPL-PATH' 						=> (string) \SmartFileSysUtils::add_dir_last_slash((string)$tpl_path), 	// this MUST be with trailing slash
@@ -197,7 +198,7 @@ final class TestUnitMain {
 				'TEST-ELEMENTS-TRUE_FALSE' 					=> \SmartViewHtmlHelpers::html_selector_true_false('true_or_false', '0'),
 				'TEST-ELEMENTS_AUTOCOMPLETE-SINGLE' 		=> 'AutoComplete Single: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;"><script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_init_select_autocomplete_single('auto-complete-fld', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
 				'TEST-ELEMENTS_AUTOCOMPLETE-MULTI'			=> 'Autocomplete Multi: '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;"><script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_init_select_autocomplete_multi('auto-complete-mfld', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
-				'TEST-elements_Captcha' 					=> (string) \SmartCaptchaFormCheck::captcha_form(\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha', self::captchaFormName()),
+				'TEST-elements_Captcha' 					=> (string) \SmartCaptcha::drawCaptchaForm(self::captchaFormName(), \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha'),
 				'test-elements_limited-area' 				=> '<div>Limited TextArea:</div>'.\SmartViewHtmlHelpers::html_js_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '90px'),
 				'POWERED-INFO' 								=> (string) \SmartComponents::app_powered_info('no', [ [], [ 'type' => 'cside', 'name' => $arr_bw['desc'], 'logo' => \SmartUtils::get_server_current_url().$arr_bw['img'], 'url' => '' ] ]),
 				'STR-NUM' 									=> '1abc', // this will be converted to num !!
@@ -261,11 +262,11 @@ final class TestUnitMain {
 		//--
 
 		//--
-		if(\SmartCaptchaFormCheck::verify(self::captchaFormName(), self::captchaMode(), false) == 1) { // verify but do not clear yet
-			$captcha_ok = true;
-		} else {
-			$captcha_ok = false;
-		} //end if else
+		$captcha_ok = (bool) \SmartCaptcha::verifyCaptcha(
+			self::captchaFormName(),
+			false, // do not clear, will clear below
+			self::captchaMode()
+		);
 		//--
 
 		//--
@@ -296,10 +297,10 @@ final class TestUnitMain {
 				} else {
 					$redir = '';
 					$div_id = 'answer_ajax';
-					$div_htm = '<script>jQuery("#Smart-Captcha-Img img:first").attr("src", "'.\Smart::escape_js(\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha&time='.\time()).'");</script><table border="0" bgcolor="#DDEEFF" width="100%"><tr><td><h1>OK, form sent on: '.\date('Y-m-d H:i:s').'</h1></td></tr><tr><td><div align="left"><img width="64" src="lib/framework/img/sign-ok.svg"></div><div><a data-smart="open.modal" href="'.\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'test.markdown" target="testunit-json-test">Test Link 1 (modal link)</a><br><a href="'.\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'test.json" target="_blank">Test Link 2 (default link)</a><br><a data-slimbox="slimbox" title="Image 3" href="?page=samples.test-image"><img src="?page=samples.test-image" alt="Click to Test Image Gallery" title="Click to Test Image Gallery"></a></div></td></tr><tr><td><hr><b>Here is the content of the text area:</b><br><pre>'.\Smart::escape_html($frm['text_area_1']).'</pre></td></tr></table>';
+					$div_htm = '<table border="0" bgcolor="#DDEEFF" width="100%"><tr><td><h1>OK, form sent on: '.\date('Y-m-d H:i:s').'</h1></td></tr><tr><td><div align="left"><img width="64" src="lib/framework/img/sign-ok.svg"></div><div><a data-smart="open.modal" href="'.\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'test.markdown" target="testunit-json-test">Test Link 1 (modal link)</a><br><a href="'.\SMART_FRAMEWORK_TESTUNIT_BASE_URL.'test.json" target="_blank">Test Link 2 (default link)</a><br><a data-slimbox="slimbox" title="Image 3" href="?page=samples.test-image"><img src="?page=samples.test-image" alt="Click to Test Image Gallery" title="Click to Test Image Gallery"></a></div></td></tr><tr><td><hr><b>Here is the content of the text area:</b><br><pre>'.\Smart::escape_html($frm['text_area_1']).'</pre></td></tr></table>';
 				} //end if else
 				//--
-				\SmartCaptchaFormCheck::clear(self::captchaFormName(), self::captchaMode()); // everything OK, so clear captcha
+				\SmartCaptcha::clearCaptcha(self::captchaFormName(), self::captchaMode()); // everything OK, so clear captcha
 				//--
 			} //end if else
 			//--
@@ -330,20 +331,63 @@ final class TestUnitMain {
 
 
 	//============================================================
-	public static function captchaImg($type) {
+	public static function captchaImg() {
+
 		//--
-		return (string) \SmartCaptchaFormCheck::captcha_image(
-			(string) self::captchaFormName(),
-			(string) self::captchaMode(),
-			\Smart::random_number(0,1) ? 'dotted' : 'hashed',
-			'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-			'300',
-			'5',
-			'175',
-			'50',
-			(string) $type // image type: gif / png / jpg
-		);
+		$rand = \Smart::random_number(0,2);
 		//--
+
+		//--
+		if(\SmartAppInfo::TestIfModuleExists('mod-captcha') && ($rand > 0)) {
+			//--
+			if($rand == 1) {
+				$mode = 'hashed';
+				$noise = 250;
+			} else {
+				$mode = 'dotted';
+				$noise = 500;
+			} //end if else
+			//--
+			$captcha = new \SmartModExtLib\Captcha\SmartImageCaptcha();
+			$captcha->format = 'svg';
+			$captcha->mode = (string) $mode;
+			$captcha->pool = (string) '23579ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			$captcha->width = 175;
+			$captcha->height = 50;
+			$captcha->chars = 5;
+			$captcha->charfont = 'modules/mod-captcha/fonts/barrio.ttf';
+			$captcha->charttfsize = 24;
+			$captcha->charspace = 20;
+			$captcha->charxvar = 15;
+			$captcha->charyvar = 7;
+			$captcha->noise = (int) $noise;
+			$captcha->colors_chars = [0x111111, 0x333333, 0x778899, 0x666699, 0x003366, 0x669966, 0x006600, 0xFF3300];
+			$captcha->colors_noise = [0x888888, 0x999999, 0xAAAAAA, 0xBBBBBB, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE, 0x8080C0];
+			//--
+		} else {
+			//--
+			$captcha = new \SmartSVGCaptcha(5, 175, 50, 0);
+			//--
+		} //end if else
+		//--
+
+		//--
+		$image = (string) $captcha->draw_image();
+		$code = (string) strtoupper((string)$captcha->get_code());
+		//--
+		$captcha = null; // free mem
+		//--
+
+		//-- initialize captha form with the generated code
+		if(!\SmartCaptcha::initCaptchaPlugin((string)self::captchaFormName(), (string)$code, (string)self::captchaMode())) {
+			\Smart::log_warning(__METHOD__.' # Failed to init Captcha Form with code ...');
+		} //end if
+		//--
+
+		//-- return the captcha image as string
+		return (string) $image;
+		//--
+
 	} //END FUNCTION
 	//============================================================
 

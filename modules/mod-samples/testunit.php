@@ -185,22 +185,34 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main .= SmartViewHtmlHelpers::html_js_editarea('test_code_editor', 'test_code_editor', '', (string)$mode, true, '920px', '450px'); // html
 				//--
 				break;
-			case 'testunit.barcodes-qrcode':
-				//--
-				$this->PageViewSetCfg('rawpage', true);
-				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeQRCode();
-				//--
-				break;
 			case 'testunit.barcodes-semcode':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
 				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeDataMatrix();
 				//--
 				break;
+			case 'testunit.barcodes-qrcode':
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeQRCode();
+				//--
+				break;
+			case 'testunit.barcodes-aztec':
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeAztec();
+				//--
+				break;
 			case 'testunit.barcodes-pdf417':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
 				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodePdf417();
+				//--
+				break;
+			case 'testunit.barcodes-eanupc':
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test1dBarcodeEanUpc();
 				//--
 				break;
 			case 'testunit.barcodes-code128':
@@ -219,6 +231,12 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				//--
 				$this->PageViewSetCfg('rawpage', true);
 				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test1dBarcode39();
+				//--
+				break;
+			case 'testunit.barcodes-rm4cbc':
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test1dBarcodeRms();
 				//--
 				break;
 			case 'testunit.barcodes-rm4kix':
@@ -244,9 +262,9 @@ class SmartAppAdminController extends SmartAbstractAppController {
 			case 'testunit.captcha':
 				//--
 				$this->PageViewSetCfg('rawpage', 'yes'); // should work both: true or 'yes'
-				$this->PageViewSetCfg('rawmime', 'image/png');
+				$this->PageViewSetCfg('rawmime', 'image/svg+xml');
 				$this->PageViewSetCfg('rawdisp', 'inline');
-				$main = \SmartModExtLib\Samples\TestUnitMain::captchaImg('png');
+				$main = \SmartModExtLib\Samples\TestUnitMain::captchaImg();
 				//--
 				break;
 			case 'testunit.post-form-by-ajax':

@@ -2,7 +2,7 @@
  [@[#[!NO-STRIP!]#]@]
  this fails to compile with google closure stylesheets (unrecognized: @-moz ...)
 */
-/* CLEditor / SmartComponents v.2016.02.18 */
+/* CLEditor / SmartComponents v.20191214 */
 
 @import url("../../../../lib/core/plugins/fonts/typo/mono/ibm-plex-mono.css");
 

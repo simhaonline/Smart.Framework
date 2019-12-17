@@ -42,6 +42,10 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartRobot':
 			require_once('lib/core/plugins/lib_robot.php'); 			// smart robot
 			break;
+		//-- ftp client
+		case 'SmartFtpClient':
+			require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
+			break;
 		//-- mail
 		case 'SmartMailerSend':
 		case 'SmartMailerSmtpClient':
@@ -126,38 +130,16 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartImageGdProcess':
 			require_once('lib/core/plugins/lib_imgd.php');				// img (gd) process
 			break;
-		//-- barcodes 1D
-		case 'SmartBarcode1D':
-		case 'SmartBarcode1D_128':
-		case 'SmartBarcode1D_93':
-		case 'SmartBarcode1D_39':
-		case 'SmartBarcode1D_RMS4CC':
-			require_once('lib/core/plugins/lib_barcodes_1d.php');		// barcodes 1D
-			break;
-		//-- barcodes 2D
-		case 'SmartBarcode2D':
-		case 'SmartBarcode2D_QRcode':
-		case 'SmartBarcode2D_DataMatrix':
-		case 'SmartBarcode2D_Pdf417':
-			require_once('lib/core/plugins/lib_barcodes_2d.php');		// barcodes 2D
-			break;
 		//-- captcha
-		case 'SmartCaptchaImageDraw':
-		case 'SmartCaptchaFormCheck':
-			require_once('lib/core/plugins/lib_captcha.php'); 			// captcha image
+		case 'SmartCaptcha':
+			require_once('lib/core/plugins/lib_captcha_form.php'); 		// captcha form manager
+			break;
+		case 'SmartSVGCaptcha':
+			require_once('lib/core/plugins/lib_captcha_image.php'); 	// captcha image
 			break;
 		//-- viewhelpers
 		case 'SmartViewHtmlHelpers':
 			require_once('lib/core/plugins/lib_viewhelpers.php'); 		// viewhelpers components (html / js)
-			break;
-		//-- calendar
-		case 'SmartCalendarComponent':
-		case 'SmartHTMLCalendar':
-			require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
-			break;
-		//-- ftp client
-		case 'SmartFtpClient':
-			require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
 			break;
 		//-- spreadsheet export / import
 		case 'SmartSpreadSheetExport':

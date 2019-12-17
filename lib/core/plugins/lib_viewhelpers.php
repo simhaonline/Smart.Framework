@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191126
+ * @version 	v.20191214
  * @package 	Plugins:ViewComponents
  *
  */
@@ -1766,16 +1766,18 @@ final class SmartViewHtmlHelpers {
 	/**
 	 * Outputs the HTML Code to init the HTML (wysiwyg) Editor
 	 *
-	 * @param $y_filebrowser_link STRING 		URL to Image Browser (Example: script.php?op=image-gallery&type=images)
+	 * @param $y_filebrowser_link 	STRING 		URL to Image Browser (Example: script.php?op=image-gallery&type=images)
+	 * @param $y_styles 			ENUM 		Can be '' or 'a/path/to/styles.css'
 	 *
 	 * @return STRING							[HTML Code]
 	 */
-	public static function html_jsload_htmlarea($y_filebrowser_link='') {
+	public static function html_jsload_htmlarea($y_filebrowser_link='', $y_stylesheet='') {
 		//--
 		return (string) SmartMarkersTemplating::render_file_template(
 			'lib/core/plugins/templates/html-editor-init.inc.htm',
 			[
 				'LANG' => (string) SmartTextTranslations::getLanguage(),
+				'STYLESHEET' => (string) $y_stylesheet,
 				'FILE-BROWSER-CALLBACK-URL' => (string) $y_filebrowser_link
 			],
 			'yes' // export to cache

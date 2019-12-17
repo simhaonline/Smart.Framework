@@ -1,12 +1,12 @@
 <!-- Partial Template: Plugins.CaptchaForm -->
 <div id="Smart-Captcha-Area" title="Captcha">
 	<div id="Smart-Captcha-Container">
-		<div id="Smart-Captcha-Img">
-			<img src="[###CAPTCHA-IMG-SRC|html###]" alt="[###CAPTCHA-IMG-TITLE|html###]" title="[###CAPTCHA-IMG-TITLE|html###]" onClick="javascript: [###CAPTCHA-JS-IMG-CLICK|html###]">
+		<div id="Smart-Captcha-Plugin">
+			<img src="[###CAPTCHA-IMG-SRC|html###]" alt="[###CAPTCHA-IMG-TITLE|html###]" title="[###CAPTCHA-IMG-TITLE|html###]" onClick="(function(img) { var captcha_date = new Date(); img.src = '[###CAPTCHA-IMG-SRC|js###]' + String(captcha_date.getTime()) + String(captcha_date.getMilliseconds()); try { if(jQuery) { jQuery(img).parent().parent().find('input').val(''); } } catch(err){ console.error('Captcha Plugin ERROR: Cannot Reset Input Field on Image Change !'); } })(this);">
 		</div>
 		<div id="Smart-Captcha-Input">
 			<span>[###CAPTCHA-TXT-CONFIRM|html###]</span><br>
-			<input class="ux-field" type="text" value="" size="15" maxlength="255" title="[###CAPTCHA-TXT-VERIFY|html###]" placeholder="[###CAPTCHA-TXT-VERIFY|html###]" onblur="[###CAPTCHA-JS-FIELD-BLUR|html###]" autocomplete="off"></span>
+			<input class="ux-field" type="text" value="" size="15" maxlength="255" title="[###CAPTCHA-TXT-VERIFY|html###]" placeholder="[###CAPTCHA-TXT-VERIFY|html###]" onblur="(function(fld){ try { eval(String(SmartJS_Base64.decode('[###CAPTCHA-JS-FIELD-BLUR|js###]'))); } catch(error) { console.error('ERROR: Invalid Captcha Script'); } })(this);" autocomplete="off"></span>
 		</div>
 	</div>
 </div>

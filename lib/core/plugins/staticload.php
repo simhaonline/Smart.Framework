@@ -17,6 +17,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 require_once('lib/core/plugins/lib_idn_punycode.php'); 		// idn punnycode converter
 require_once('lib/core/plugins/lib_detect_img.php');		// detect img
 require_once('lib/core/plugins/lib_robot.php'); 			// smart robot
+require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
 //--
 require_once('lib/core/plugins/lib_mail_send.php');			// mail send client (sendmail, smtp)
 require_once('lib/core/plugins/lib_mail_get.php'); 			// mail get client (pop3, imap4)
@@ -44,14 +45,11 @@ require_once('lib/core/plugins/lib_pcache_sqlite.php'); 	// sqlite3 persistent c
 require_once('lib/core/plugins/lib_session.php');			// session storage
 //--
 require_once('lib/core/plugins/lib_imgd.php');				// img (gd) process
-require_once('lib/core/plugins/lib_barcodes_1d.php');		// barcodes 1D
-require_once('lib/core/plugins/lib_barcodes_2d.php');		// barcodes 2D
-require_once('lib/core/plugins/lib_captcha.php'); 			// captcha image
+//--
+require_once('lib/core/plugins/lib_captcha_form.php'); 		// captcha form manager
+require_once('lib/core/plugins/lib_captcha_image.php'); 	// captcha image
 //--
 require_once('lib/core/plugins/lib_viewhelpers.php'); 		// viewhelpers components
-require_once('lib/core/plugins/lib_calendar.php');			// calendar component (html)
-//--
-require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
 //--
 require_once('lib/core/plugins/lib_spreadsheet.php');		// spreadsheet export / import
 require_once('lib/core/plugins/lib_export_pdf.php'); 		// pdf export
