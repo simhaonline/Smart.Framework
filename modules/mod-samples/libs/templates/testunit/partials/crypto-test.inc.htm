@@ -12,11 +12,8 @@ Base64@Encoded:&nbsp;<span id="base64enc-string" style="color:#666699;">[###BASE
 Base64@Decoded:&nbsp;<span id="base64dec-string" style="color:#FF5500;">[###BASE64-DECODED|html###]</span><br>
 Bin2Hex@Encoded:&nbsp;<span id="bin2hex-encoded" style="color:#444477;">[###BIN2HEX-ENCODED|html###]</span><br>
 Hex2Bin@Decoded:&nbsp;<span id="hex2bin-decoded" style="color:#FF5500;">[###HEX2BIN-DECODED|html###]</span><br>
-LZS@Archived:&nbsp;<span id="lzs-archived" style="color:#003399;">[###LZS-ARCHIVED|html###]</span><br>
-LZS@Unarchived:&nbsp;<span id="lzs-unarchived" style="color:#FF5500;">[###LZS-UNARCHIVED|html###]</span><br>
 <input type="hidden" id="blowfisk-key" value="[###BLOWFISH-KEY|html###]">
 Blowfish.CBC@Encrypted:&nbsp;<span id="blowfish-encrypted" style="color:#66AA00;">[###BLOWFISH-ENCRYPTED|html###]</span><br>
-Blowfish.CBC@Encrypted/LZS:&nbsp;<span id="blowfish-lzs-encrypted" style="color:#8CB23F;">[###BLOWFISH-LZS-ENCRYPTED|html###]</span><br>
 Blowfish.CBC@Decrypted:&nbsp;<span id="blowfish-decrypted" style="color:#FF5500;">[###BLOWFISH-DECRYPTED|html###]</span><br>
 Blowfish.CBC@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[###BLOWFISH-OPTIONS|html###]</span><br>
 CustomCipher@Encrypted:&nbsp;<span id="hash-encrypted" style="color:#626831;">[###HASHCRYPT-ENC|html###]</span><br>
@@ -47,12 +44,6 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[###HASHCRYPT-OPTION
 	var bf_enc = SmartJS_CryptoBlowfish.encrypt(unicodeText, bf_key);
 	var bf_dec = SmartJS_CryptoBlowfish.decrypt(bf_enc, bf_key);
 	//--
-	var arch_lzs = SmartJS_Archiver_LZS.compressToBase64(unicodeText);
-	var unarch_lzs = SmartJS_Archiver_LZS.decompressFromBase64(arch_lzs);
-	//--
-	var arch_bf_lzs = SmartJS_Archiver_LZS.compressToBase64(bf_enc);
-	var unarch_bf_lzs = SmartJS_Archiver_LZS.decompressFromBase64(arch_bf_lzs);
-	//--
 	var jsescTxt = SmartJS_CoreUtils.escape_js(unicodeText);
 	var htmlcode = 'Unicode@String:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(unicodeText) + '</span><br>';
 	htmlcode += SmartJS_CoreUtils.nl2br('Escaped@JS:&nbsp;<span style="color:#778899;">' + SmartJS_CoreUtils.escape_html(jsescTxt) + '</span>' + "\n");
@@ -64,10 +55,7 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[###HASHCRYPT-OPTION
 	htmlcode += 'Base64@Decoded:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(b64dec) + '</span><br>';
 	htmlcode += 'Bin2Hex@Encoded:&nbsp;<span style="color:#444477;">' + SmartJS_CoreUtils.escape_html(bin2hex) + '</span><br>';
 	htmlcode += 'Hex2Bin@Decoded:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(hex2bin) + '</span><br>';
-	htmlcode += 'LZS@Archived:&nbsp;<span style="color:#003399;">' + SmartJS_CoreUtils.escape_html(arch_lzs) + '</span><br>';
-	htmlcode += 'LZS@Unarchived:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(unarch_lzs) + '</span><br>';
 	htmlcode += 'Blowfish@Encrypted:&nbsp;<span style="color:#66AA00;">' + SmartJS_CoreUtils.escape_html(bf_enc) + '</span><br>';
-	htmlcode += 'Blowfish@Encrypted/LZS:&nbsp;<span style="color:#8CB23F;">' + SmartJS_CoreUtils.escape_html(arch_bf_lzs) + '</span><br>';
 	htmlcode += 'Blowfish@Decrypted:&nbsp;<span style="color:#FF5500;">' + SmartJS_CoreUtils.escape_html(bf_dec) + '</span><br>';
 	htmlcode += 'Blowfish@Options:&nbsp;<span style="color:#CCCCCC;">JS:blowfish/CBC</span>' + '<br>';
 	$('#testunit-partial-crypto').html(htmlcode);
@@ -82,14 +70,6 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[###HASHCRYPT-OPTION
 	} //end if
 	if((bf_dec !== unicodeText) || (SmartJS_CryptoHash.sha1(bf_dec) !== the_sha1)) {
 		console.error('ERROR: BlowFish Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + bf_dec + '` / ' + SmartJS_CryptoHash.sha1(bf_dec));
-		the_error++;
-	} //end if
-	if((unarch_bf_lzs !== bf_enc) || (SmartJS_CryptoHash.sha1(unarch_bf_lzs) !== SmartJS_CryptoHash.sha1(bf_enc))) {
-		console.error('ERROR: Blowfish-Arch-LZS Test Failed:\n' + 'Before: `' + unarch_bf_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_bf_lzs) + '\n' + 'After: `' + bf_enc + '` / ' + SmartJS_CryptoHash.sha1(bf_enc));
-		the_error++;
-	} //end if
-	if((unarch_lzs !== unicodeText) || (SmartJS_CryptoHash.sha1(unarch_lzs) !== the_sha1)) {
-		console.error('ERROR: Arch-LZS Test Failed:\n' + 'Before: `' + unicodeText + '` / ' + the_sha1 + '\n' + 'After: `' + unarch_lzs + '` / ' + SmartJS_CryptoHash.sha1(unarch_lzs));
 		the_error++;
 	} //end if
 	//-- compare with PHP
@@ -144,14 +124,6 @@ CustomCipher@Options:&nbsp;<span style="color:#CCCCCC;">PHP:[###HASHCRYPT-OPTION
 	} //end if
 	if($('#unicode-string').text() !== $('#blowfish-decrypted').text()) {
 		console.error('ERROR: PHP Blowfish decrypted is different than original PHP string ...');
-		the_error++;
-	} //end if
-	if((arch_lzs != $('#lzs-archived').text()) || (SmartJS_CryptoHash.sha1(arch_lzs) != SmartJS_CryptoHash.sha1($('#lzs-archived').text()))) {
-		console.error('ERROR: PHP Arch-LZS Archive is different than Javascript one ...');
-		the_error++;
-	} //end if
-	if((arch_bf_lzs != $('#blowfish-lzs-encrypted').text()) || (SmartJS_CryptoHash.sha1(arch_bf_lzs) != SmartJS_CryptoHash.sha1($('#blowfish-lzs-encrypted').text()))) {
-		console.error('ERROR: PHP Blowfish-Arch-LZS Archive is different than Javascript one ...');
 		the_error++;
 	} //end if
 	//--

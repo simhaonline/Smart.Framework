@@ -550,7 +550,7 @@ function RunApp() {
 				echo '<div align="center"><iframe name="UnpackDeployOnServerResponseSandBox" id="UnpackDeployOnServerResponseSandBox" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="width:70vw; min-width:920px; min-height:50vh; height:max-content; border:1px solid #CCCCCC;" srcdoc="'.AppPackUtils::escape_html($browser['http-body']).'" sandbox></iframe></div>';
 				unset($browser);
 			} else {
-				echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'Invalid Release Package.'.'</div>'."\n";
+				echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'Invalid Release Package or No Package Selected.'.'</div>'."\n";
 			} //end if else
 		} else {
 			echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'The Release Server Deploy URL and Authentication Credentials must be non-empty (APPCODEPACK_APP_UNPACK_URL / APPCODEPACK_APP_UNPACK_USER / APPCODEPACK_APP_UNPACK_PASSWORD).'.'</div>'."\n";
@@ -752,7 +752,7 @@ function RunApp() {
 									if(AppPackUtils::check_if_safe_path((string)$the_archdir.'/'.$arr_dir_packs[$i])) {
 										if(AppPackUtils::is_type_file($the_archdir.'/'.$arr_dir_packs[$i])) {
 											$pkcnt++;
-											echo '<input type="radio" name="netarch_package" value="'.AppPackUtils::escape_html($the_archdir.'/'.$arr_dir_packs[$i]).'"'.($pkcnt === 1 ? ' checked' : '').'>&nbsp;Package #'.(int)$pkcnt.': <a download="'.AppPackUtils::escape_html($arr_dir_packs[$i]).'" href="'.AppPackUtils::escape_html(rawurlencode($the_archdir).'/'.rawurlencode((string)$arr_dir_packs[$i])).'">'.AppPackUtils::escape_html($arr_dir_packs[$i]).'</a>'.'&nbsp;&nbsp;&nbsp;['.AppPackUtils::pretty_print_bytes(AppPackUtils::get_file_size($the_archdir.'/'.$arr_dir_packs[$i]), 2, '&nbsp;').'] @ '.AppPackUtils::escape_html(date('Y-m-d H:i:s O', (int)AppPackUtils::get_file_mtime($the_archdir.'/'.$arr_dir_packs[$i]))).'<br>'."\n";
+											echo '<input type="radio" name="netarch_package" value="'.AppPackUtils::escape_html($the_archdir.'/'.$arr_dir_packs[$i]).'">&nbsp;Package #'.(int)$pkcnt.': <a download="'.AppPackUtils::escape_html($arr_dir_packs[$i]).'" href="'.AppPackUtils::escape_html(rawurlencode($the_archdir).'/'.rawurlencode((string)$arr_dir_packs[$i])).'">'.AppPackUtils::escape_html($arr_dir_packs[$i]).'</a>'.'&nbsp;&nbsp;&nbsp;['.AppPackUtils::pretty_print_bytes(AppPackUtils::get_file_size($the_archdir.'/'.$arr_dir_packs[$i]), 2, '&nbsp;').'] @ '.AppPackUtils::escape_html(date('Y-m-d H:i:s O', (int)AppPackUtils::get_file_mtime($the_archdir.'/'.$arr_dir_packs[$i]))).'<br>'."\n";
 										} //end if
 									} //end if
 								} //end if

@@ -54,7 +54,7 @@ if(!\defined('\\APP_AUTH_DB_SQLITE')) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD, APP_AUTH_PRIVILEGES (must be set in set in config-admin.php)
  * Required configuration: $configs['app-auth']['adm-namespaces'][ 'Admins Manager' => 'admin.php?page=auth-admins.manager.stml', ... ] (must be set in set in config-admin.php)
  *
- * @version 	v.20191111
+ * @version 	v.20191218
  * @package 	development:modules:AuthAdmins
  *
  */
@@ -279,7 +279,7 @@ final class AuthAdminsHandler {
 							'LOGIN-NSPACES' => (array) $arr_login_namespaces,
 							'POWERED-HTML' 	=> (string) \SmartComponents::app_powered_info('no'),
 							'CRR-YEAR' 		=> (string) \date('Y'),
-							'SECRET' 		=> (string) \bin2hex((string)\SmartArchiverLZS::compressToBase64((string)$secret)),
+							'SECRET' 		=> (string) \bin2hex((string)(string)$secret),
 							'LOGOUT-URL' 	=> (string) \SmartUtils::get_server_current_url().\SmartUtils::get_server_current_script().'?logout=yes'
 						]
 					)

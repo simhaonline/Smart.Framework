@@ -21,10 +21,6 @@ echo "// ===== date_utils.js" >> ${THE_FILE}
 cat ../lib/js/framework/src/date_utils.js >> ${THE_FILE}
 echo "" >> ${THE_FILE}
 
-echo "// ===== arch_utils.js" >> ${THE_FILE}
-cat ../lib/js/framework/src/arch_utils.js >> ${THE_FILE}
-echo "" >> ${THE_FILE}
-
 echo "// ===== crypt_utils.js" >> ${THE_FILE}
 cat ../lib/js/framework/src/crypt_utils.js >> ${THE_FILE}
 echo "" >> ${THE_FILE}

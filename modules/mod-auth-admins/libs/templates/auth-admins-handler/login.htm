@@ -1,4 +1,4 @@
-<!-- AuthAdmins Login # v.20191110 -->
+<!-- AuthAdmins Login # v.20191218 -->
 <style>
 body {
 	background-color: #FFFFFF !important;
@@ -29,7 +29,7 @@ a#special {
 	var AuthAdmins_LogURL = "";
 	function AuthAdmins_Login() {
 		if((typeof AuthAdmins_LogURL != "undefined") && (AuthAdmins_LogURL != "") && (AuthAdmins_LogURL != null)) {
-			var AuthAdmins_LogZURL = SmartJS_CryptoBlowfish.decrypt(String(AuthAdmins_LogURL), String(SmartJS_Archiver_LZS.decompressFromBase64(String(SmartJS_CoreUtils.hex2bin('[###SECRET|js###]'))))); if(AuthAdmins_LogZURL) { SmartJS_BrowserUtils.RedirectToURL(String(AuthAdmins_LogZURL)); }
+			var AuthAdmins_LogZURL = SmartJS_CryptoBlowfish.decrypt(String(AuthAdmins_LogURL), String(SmartJS_CoreUtils.hex2bin('[###SECRET|js###]'))); if(AuthAdmins_LogZURL) { SmartJS_BrowserUtils.RedirectToURL(String(AuthAdmins_LogZURL)); }
 		} //end if
 	} //END FUNCTION
 </script>

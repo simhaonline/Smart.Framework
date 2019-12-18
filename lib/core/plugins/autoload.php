@@ -80,10 +80,6 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartMarkdownToHTML':
 			require_once('lib/core/plugins/lib_markdown.php');			// markdown to html parser
 			break;
-		//-- lzs archiver
-		case 'SmartArchiverLZS':
-			require_once('lib/core/plugins/lib_archlzs.php');			// lzs archiver
-			break;
 		//-- db drivers
 		case 'SmartRedisDb':
 			require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
@@ -131,6 +127,9 @@ function autoload__SmartFrameworkPlugins($classname) {
 			require_once('lib/core/plugins/lib_imgd.php');				// img (gd) process
 			break;
 		//-- captcha
+		case 'SmartQR2DBarcode':
+			require_once('lib/core/plugins/lib_qrcode.php'); 			// qrcode integration for captcha
+			break;
 		case 'SmartCaptcha':
 			require_once('lib/core/plugins/lib_captcha_form.php'); 		// captcha form manager
 			break;

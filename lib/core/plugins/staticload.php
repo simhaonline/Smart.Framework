@@ -28,7 +28,6 @@ require_once('lib/core/plugins/lib_yaml.php');				// yaml converter
 require_once('lib/core/plugins/lib_xml.php');				// xml parser and composer
 require_once('lib/core/plugins/lib_html.php');				// html parser
 require_once('lib/core/plugins/lib_markdown.php'); 			// markdown syntax parser
-require_once('lib/core/plugins/lib_archlzs.php');			// lzs archiver
 //--
 require_once('lib/core/plugins/lib_db_redis.php');			// redis db connector
 require_once('lib/core/plugins/lib_db_mongodb.php');		// mongodb db connector
@@ -46,6 +45,7 @@ require_once('lib/core/plugins/lib_session.php');			// session storage
 //--
 require_once('lib/core/plugins/lib_imgd.php');				// img (gd) process
 //--
+require_once('lib/core/plugins/lib_qrcode.php'); 			// qrcode integration for captcha
 require_once('lib/core/plugins/lib_captcha_form.php'); 		// captcha form manager
 require_once('lib/core/plugins/lib_captcha_image.php'); 	// captcha image
 //--

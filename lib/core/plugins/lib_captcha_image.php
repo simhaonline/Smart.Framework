@@ -155,7 +155,20 @@ final class SmartSVGCaptcha {
 		$this->dsettings['change_degree']['p'] = 2;
 		$this->dsettings['split_curve']['apply'] = true;
 		//--
-		if($difficulty == 1) { // easy
+		if($difficulty == -1) { // extremely easy
+			$this->dsettings['glyph_offsetting']['apply'] = true;
+			$this->dsettings['transformations']['apply'] = false;
+			$this->dsettings['transformations']['rotate'] = true;
+			$this->dsettings['transformations']['skew'] = false;
+			$this->dsettings['transformations']['scale'] = true;
+			$this->dsettings['transformations']['shear'] = false;
+			$this->dsettings['transformations']['translate'] = false;
+			$this->dsettings['shapeify']['apply'] = false;
+			$this->dsettings['change_degree']['apply'] = false;
+			$this->dsettings['split_curve']['apply'] = false;
+			$this->dsettings['stroke_opacity'] = 0.9;
+			$this->dsettings['stroke_color'] = '#888888';
+		} elseif($difficulty == 1) { // easy
 			$this->dsettings['stroke_width'] = 2;
 			$this->dsettings['stroke_opacity'] = 0.95;
 			$this->dsettings['glyph_fragments']['apply'] = true;

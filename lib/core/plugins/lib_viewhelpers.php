@@ -12,7 +12,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //======================================================
-// Smart-Framework - Calendar (HTML Component)
+// Smart-Framework - View HTML Helpers
 // DEPENDS:
 //	* Smart::
 //	* SmartComponents::

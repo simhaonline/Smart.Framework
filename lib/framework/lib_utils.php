@@ -1650,7 +1650,7 @@ final class SmartUtils {
 
 
 	//================================================================
-	// Ex: /sites/test/script.php/page.html|path/to/seomething-else ; the path is decoded
+	// Ex: /sites/test/script.php/page.html|path/to/something-else ; the path is decoded
 	public static function get_server_current_request_path() {
 		//--
 		return (string) trim((string)$_SERVER['PATH_INFO']);

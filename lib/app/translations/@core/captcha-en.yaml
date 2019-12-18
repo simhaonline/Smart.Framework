@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2019-11-10
+  @version: 2019-12-18
   captcha:
     error: |
       The Captcha session expired ...
@@ -12,4 +12,8 @@ TRANSLATIONS:
     verify: 'Verification Code'
     failed: 'Captcha verification Failed'
     click: 'Click to Refresh Image'
+    image: 'Captcha Image'
+    enter: 'Enter the code from the image into the verification field'
+    interractive: 'Draw over the box a shape identical with the one in the box starting from the dot to activate the captcha. After this step you have to enter the captcha code from the image that will appear.'
+    helper: 'As alternative you can scan the barcode and find the verification code that you have to fill in the verification input.'
 #END

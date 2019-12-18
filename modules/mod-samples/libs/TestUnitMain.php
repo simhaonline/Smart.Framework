@@ -198,7 +198,7 @@ final class TestUnitMain {
 				'TEST-ELEMENTS-TRUE_FALSE' 					=> \SmartViewHtmlHelpers::html_selector_true_false('true_or_false', '0'),
 				'TEST-ELEMENTS_AUTOCOMPLETE-SINGLE' 		=> 'AutoComplete Single: '.'<input id="auto-complete-fld" type="text" name="frm[autocomplete]" style="width:75px;"><script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_init_select_autocomplete_single('auto-complete-fld', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
 				'TEST-ELEMENTS_AUTOCOMPLETE-MULTI'			=> 'Autocomplete Multi: '.'<input id="auto-complete-mfld" type="text" name="frm[mautocomplete]" style="width:125px;"><script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_init_select_autocomplete_multi('auto-complete-mfld', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.autocomplete', 'src', 1, 'alert(\'You selected: \' + value);').'</script>',
-				'TEST-elements_Captcha' 					=> (string) \SmartCaptcha::drawCaptchaForm(self::captchaFormName(), \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha'),
+				'TEST-elements_Captcha' 					=> (string) \SmartCaptcha::drawCaptchaForm(self::captchaFormName(), self::captchaFormPluginUrl(), (string)self::captchaMode()),
 				'test-elements_limited-area' 				=> '<div>Limited TextArea:</div>'.\SmartViewHtmlHelpers::html_js_limited_text_area('', 'frm[text_area_1]', '', 300, '400px', '90px'),
 				'POWERED-INFO' 								=> (string) \SmartComponents::app_powered_info('no', [ [], [ 'type' => 'cside', 'name' => $arr_bw['desc'], 'logo' => \SmartUtils::get_server_current_url().$arr_bw['img'], 'url' => '' ] ]),
 				'STR-NUM' 									=> '1abc', // this will be converted to num !!
@@ -412,6 +412,20 @@ final class TestUnitMain {
 	private static function captchaFormName() {
 		//--
 		return ' Test_Unit-Ajax-Form-forCaptcha_'.\date('Y').' '; // test value with all allowed characters and some spaces (that spaces are presumed to be trimmed ...)
+		//--
+	} //END FUNCTION
+	//============================================================
+
+
+	//============================================================
+	private static function captchaFormPluginUrl() {
+		//--
+		$url = \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.captcha';
+		if(\Smart::random_number(0,1)) {
+			$url = '';
+		} //end if
+		//--
+		return (string) $url;
 		//--
 	} //END FUNCTION
 	//============================================================

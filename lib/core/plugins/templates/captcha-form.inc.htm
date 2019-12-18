@@ -1,12 +1,17 @@
 <!-- Partial Template: Plugins.CaptchaForm -->
-<div id="Smart-Captcha-Area" title="Captcha">
+<link rel="stylesheet" type="text/css" href="[###CURRENT-URL|js###]lib/js/jscaptcha/jquery.motionCaptcha.css?[###RELEASE-HASH|html###]">
+<script type="text/javascript" src="lib/js/jscaptcha/jquery.motionCaptcha.js?[###RELEASE-HASH|html###]"></script>
+<script type="text/javascript">jQuery(document).ready(function(){ jQuery('#Smart-Captcha-Container').motionCaptcha({ divId: '#Smart-Captcha-Plugin', canvasId: '#Smart-Captcha-Plugin-Canvas', onSuccess: function($canvas, ctx){ setTimeout(function(){ var divPlugin = $canvas.parent(); var container = divPlugin.parent(); var divInput = container.find('div#Smart-Captcha-Input'); divPlugin.width(divPlugin.width()).height(divPlugin.height()); divInput.width(divInput.width()).height(divInput.height()); divInput.find('div#Smart-Captcha-Info').empty().html('2. [###CAPTCHA-TXT-ENTER|html|js###] ; [###CAPTCHA-QR-HELPER|html|js###]'); divInput.find('input').show(); var zSVG = ''; try { eval(String(SmartJS_CoreUtils.hex2bin('[###CAPTCHA-IMG-SRC|js###]'))); } catch(error) { console.error('ERROR: Captcha not found'); } if(zSVG) { divPlugin.empty().html('<br><img style="cursor:default;" src="' + SmartJS_CoreUtils.escape_html(zSVG) + '" alt="[###CAPTCHA-TXT-IMG|html|js###]" title="[###CAPTCHA-TXT-IMG|html|js###]">'); var qSVG = ''; try { eval(String(SmartJS_CoreUtils.hex2bin('[###CAPTCHA-QR-CODE|js###]'))); } catch(error) { console.error('ERROR: Captcha Helper not found'); } if(qSVG) { divPlugin.append('<br><img style="cursor:help;" src="' + SmartJS_CoreUtils.escape_html(qSVG) + '" alt="[###CAPTCHA-QR-HELPER|html|js###]" title="[###CAPTCHA-QR-HELPER|html|js###]">'); } } else { divPlugin.empty().html('Invalid Captcha ...'); } }, 1000); } }); });</script>
+<div id="Smart-Captcha-Area" title="Secure Captcha by Smart.Framework" style="position:relative;">
+	<img src="lib/framework/img/sf-logo.svg" width="24" height="24" style="position:absolute; top:3px; right:3px; opacity:0.55; cursor:help;">
 	<div id="Smart-Captcha-Container">
-		<div id="Smart-Captcha-Plugin">
-			<img src="[###CAPTCHA-IMG-SRC|html###]" alt="[###CAPTCHA-IMG-TITLE|html###]" title="[###CAPTCHA-IMG-TITLE|html###]" onClick="(function(img) { var captcha_date = new Date(); img.src = '[###CAPTCHA-IMG-SRC|js###]' + String(captcha_date.getTime()) + String(captcha_date.getMilliseconds()); try { if(jQuery) { jQuery(img).parent().parent().find('input').val(''); } } catch(err){ console.error('Captcha Plugin ERROR: Cannot Reset Input Field on Image Change !'); } })(this);">
+		<div id="Smart-Captcha-Plugin" style="cursor:default;">
+			<canvas id="Smart-Captcha-Plugin-Canvas" class="mc-canvas"></canvas>
 		</div>
 		<div id="Smart-Captcha-Input">
-			<span>[###CAPTCHA-TXT-CONFIRM|html###]</span><br>
-			<input class="ux-field" type="text" value="" size="15" maxlength="255" title="[###CAPTCHA-TXT-VERIFY|html###]" placeholder="[###CAPTCHA-TXT-VERIFY|html###]" onblur="(function(fld){ try { eval(String(SmartJS_Base64.decode('[###CAPTCHA-JS-FIELD-BLUR|js###]'))); } catch(error) { console.error('ERROR: Invalid Captcha Script'); } })(this);" autocomplete="off"></span>
+			<br><span>[###CAPTCHA-TXT-CONFIRM|html###]</span><br>
+			<input style="display:none;" class="ux-field" type="text" value="" size="15" maxlength="255" title="[###CAPTCHA-TXT-VERIFY|html###]" placeholder="[###CAPTCHA-TXT-VERIFY|html###]" onblur="(function(fld){ try { eval(String(SmartJS_Base64.decode('[###CAPTCHA-JS-FIELD-BLUR|js###]'))); } catch(error) { console.error('ERROR: Invalid Captcha Script'); } })(jQuery(this));" autocomplete="off">
+			<br><div id="Smart-Captcha-Info">1. [###CAPTCHA-TXT-INTERRACTIVE|html###]</div>
 		</div>
 	</div>
 </div>
