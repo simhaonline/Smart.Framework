@@ -11,19 +11,10 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //-----------------------------------------------------
 
 
-//======================================================
-// Minimalist QRCode Implementation
-// supports only binary encoding
-//======================================================
-
-
-//=====================================================================================
-//===================================================================================== CLASS START
-//=====================================================================================
-
-
 //============================================================
 // BarCode 2D: QRCode (binary only)
+// Minimalist QRCode Implementation
+// supports only binary encoding
 // License: BSD
 // (c) 2019 unix-world.org
 //============================================================
@@ -39,13 +30,18 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //============================================================
 
 
+//=====================================================================================
+//===================================================================================== CLASS START
+//=====================================================================================
+
+
 /**
  * Class: QRCode - A minimalist QRCode Implementation (supports only binary encoding)
  * Creates a SVG QRCode
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart
- * @version 	v.20191218
+ * @version 	v.20191219
  * @package 	Plugins:Barcodes
  */
 final class SmartQR2DBarcode {

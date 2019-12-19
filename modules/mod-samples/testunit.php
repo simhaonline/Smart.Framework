@@ -185,10 +185,10 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				$main .= SmartViewHtmlHelpers::html_js_editarea('test_code_editor', 'test_code_editor', '', (string)$mode, true, '920px', '450px'); // html
 				//--
 				break;
-			case 'testunit.barcodes-semcode':
+			case 'testunit.barcodes-mqrcode':
 				//--
 				$this->PageViewSetCfg('rawpage', true);
-				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeDataMatrix();
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeQRMiniCode();
 				//--
 				break;
 			case 'testunit.barcodes-qrcode':
@@ -201,6 +201,12 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				//--
 				$this->PageViewSetCfg('rawpage', true);
 				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeAztec();
+				//--
+				break;
+			case 'testunit.barcodes-semcode':
+				//--
+				$this->PageViewSetCfg('rawpage', true);
+				$main = \SmartModExtLib\Samples\TestUnitBarcodes::test2dBarcodeDataMatrix();
 				//--
 				break;
 			case 'testunit.barcodes-pdf417':

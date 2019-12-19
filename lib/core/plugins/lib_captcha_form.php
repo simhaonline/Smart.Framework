@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartUtils, SmartTextTranslations ; javascript: jquery.js, smart-framework.pak.js ; css: captcha.css
- * @version 	v.20191218
+ * @version 	v.20191219
  * @package 	development:Captcha
  *
  */
@@ -129,6 +129,9 @@ final class SmartCaptcha {
 		//--
 		$translator_core_captcha = SmartTextTranslations::getTranslator('@core', 'captcha');
 		//--
+		$uuid = (string) strtoupper(Smart::uuid_10_num().'-'.Smart::uuid_10_str());
+		$js_solver = "var SmartCaptchaChecksum = SmartJS_BrowserUtils.getCookie('".Smart::escape_js(self::cookie_name_chk($y_form_name))."'); if(SmartCaptchaChecksum == '') { SmartCaptchaChecksum = 'invalid-captcha'; alert('".Smart::escape_js($translator_core_captcha->text('error'))."'); } var smartCaptchaTimerCookie = new Date(); var smartCaptchaCookie = SmartJS_CoreUtils.bin2hex(SmartJS_CryptoBlowfish.encrypt(SmartJS_Base64.encode(smartCaptchaTimerCookie.getTime() + '!' + String(SmartJS_CryptoBlowfish.decrypt(fldVal,String(kZ))) + '!Smart.Framework'), SmartJS_CoreUtils.stringTrim(SmartCaptchaChecksum))); SmartJS_BrowserUtils.setCookie('".Smart::escape_js($js_cookie_name)."', smartCaptchaCookie, false, '/', '@');";
+		//--
 		if($y_captcha_image_url) {
 			//--
 			$captcha_url = (string) $y_captcha_image_url;
@@ -138,7 +141,10 @@ final class SmartCaptcha {
 			//--
 			$qrcode_str = ''; // n/a in this context
 			//--
+			$input_style = '';
+			//--
 			$tpl = 'lib/core/plugins/templates/captcha-form-image.inc.htm';
+			//--
 		} else {
 			//--
 			$captcha_obj = new SmartSVGCaptcha(5, 175, 50, -1);
@@ -148,12 +154,16 @@ final class SmartCaptcha {
 			if(!self::initCaptchaPlugin((string)$y_form_name, (string)$captcha_code, (string)$y_mode)) {
 				return 'Captcha Form Init ERROR ...';
 			} //end if
-			$captcha_url = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$captcha_url), '(function(zSVG){return new zSVG;})('.(int)$release_time.');');
-			$captcha_url = (string) bin2hex('zSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($captcha_url).'\', \''.Smart::escape_js('(function(zSVG){return new zSVG;})('.(int)$release_time.');').'\');');
+			$zsvg_fx = '(function(zSVG){return new zSVG;})(this.key('.(int)$release_time.'));';
+			$captcha_url = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$captcha_url), (string)$zsvg_fx);
+			$captcha_url = (string) base64_encode('if(sim >= 0.9) { zSim = Number(sim); var fldVal = \''.SmartUtils::crypto_blowfish_encrypt((string)$captcha_code, (string)strtoupper((string)$uuid)).'\'; var kZ = String(jQuery(\'#Smart-Captcha-Container-'.strtolower((string)$uuid).'\').find(\'input\').data(\'id\')).toUpperCase(); '.$js_solver.' } else { zSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($captcha_url).'\', \''.Smart::escape_js($zsvg_fx).'\'); }');
 			//--
-			$qrcode_str = (string) (new SmartQR2DBarcode('L'))->renderAsSVG((string)$captcha_code, ['cm'=>'#555555']);
-			$qrcode_str = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$qrcode_str), '(function(qSVG){return new qSVG;})('.(int)$release_time.');');
-			$qrcode_str = (string) bin2hex('qSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($qrcode_str).'\', \''.Smart::escape_js('(function(qSVG){return new qSVG;})('.(int)$release_time.');').'\');');
+			$qsvg_fx = '(function(qSVG){return new qSVG;})(this.key('.(int)$release_time.'));';
+			$qrcode_str = (string) (new SmartQR2DBarcode('L'))->renderAsSVG((string)$captcha_code, ['cm'=>'#777777','wq'=>0]);
+			$qrcode_str = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$qrcode_str), (string)$qsvg_fx);
+			$qrcode_str = (string) base64_encode('qSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($qrcode_str).'\', \''.Smart::escape_js($qsvg_fx).'\');');
+			//--
+			$input_style = 'display:none;';
 			//--
 			$tpl = 'lib/core/plugins/templates/captcha-form.inc.htm';
 			//--
@@ -163,9 +173,10 @@ final class SmartCaptcha {
 			(string) $tpl,
 			[
 				'RELEASE-HASH' 				=> (string) SmartFrameworkRuntime::getAppReleaseHash(),
+				'RELEASE-UUID' 				=> (string) strtolower((string)$uuid),
 				'RELEASE-TIME' 				=> (int)    $release_time,
-				'CURRENT-URL' 				=> (string) SmartUtils::get_server_current_url(),
 				'CAPTCHA-QR-CODE' 			=> (string) $qrcode_str,
+				'CAPTCHA-PASSED' 			=> (string) $translator_core_captcha->text('passed'),
 				'CAPTCHA-QR-HELPER' 		=> (string) $translator_core_captcha->text('helper'),
 				'CAPTCHA-TXT-IMG' 			=> (string) $translator_core_captcha->text('image'),
 				'CAPTCHA-TXT-CONFIRM' 		=> (string) $translator_core_captcha->text('confirm'),
@@ -174,7 +185,8 @@ final class SmartCaptcha {
 				'CAPTCHA-TXT-ENTER' 		=> (string) $translator_core_captcha->text('enter'),
 				'CAPTCHA-TXT-INTERRACTIVE' 	=> (string) $translator_core_captcha->text('interractive'),
 				'CAPTCHA-IMG-SRC' 			=> (string) $captcha_url,
-				'CAPTCHA-JS-FIELD-BLUR' 	=> (string) base64_encode("try { var SmartCaptchaChecksum = SmartJS_BrowserUtils.getCookie('".Smart::escape_js(self::cookie_name_chk($y_form_name))."'); if(SmartCaptchaChecksum == '') { SmartCaptchaChecksum = 'invalid-captcha'; alert('".Smart::escape_js($translator_core_captcha->text('error'))."'); } var smartCaptchaTimerCookie = new Date(); var smartCaptchaCookie = SmartJS_CoreUtils.bin2hex(SmartJS_CryptoBlowfish.encrypt(SmartJS_Base64.encode(smartCaptchaTimerCookie.getTime() + '!' + fld.val().toUpperCase() + '!Smart.Framework'), SmartJS_CoreUtils.stringTrim(SmartCaptchaChecksum))); SmartJS_BrowserUtils.setCookie('".Smart::escape_js($js_cookie_name)."', smartCaptchaCookie, false, '/', '@'); } catch(err) { console.error('Captcha ERROR: ' + err); } fld.val('*******');")
+				'CAPTCHA-INPUT-STYLE' 		=> (string) $input_style,
+				'CAPTCHA-JS-FIELD-BLUR' 	=> (string) SmartUtils::crypto_blowfish_encrypt("try { var kZ = String(fld.data('id')).toUpperCase(); var fldVal = SmartJS_CryptoBlowfish.encrypt(fld.val().toUpperCase(),String(kZ)); ".$js_solver." } catch(err) { console.error('Captcha ERROR: ' + err); } if(fld.val()) { fld.val('*******'); }", (string)(int)$release_time)
 			],
 			'yes' // export to cache
 		);

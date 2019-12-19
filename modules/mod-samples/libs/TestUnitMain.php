@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191217
+ * @version 	v.20191219
  *
  */
 final class TestUnitMain {
@@ -71,7 +71,7 @@ final class TestUnitMain {
 		//--
 
 		//-- ajax post form
-		$btnop = '<button title="Submit this Test Form by AJAX (with Confirmation)" class="ux-button ux-button-large ux-button-primary" onClick="'.\SmartViewHtmlHelpers::js_ajax_submit_html_form('test_form_ajax', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'#Smart-Captcha-Plugin img:first\').trigger(\'click\');').' return false;">Submit this Test Form by AJAX &nbsp; <span class="sfi sfi-compass"></span></button>';
+		$btnop = '<button title="Submit this Test Form by AJAX (with Confirmation)" class="ux-button ux-button-large ux-button-primary" onClick="'.\SmartViewHtmlHelpers::js_ajax_submit_html_form('test_form_ajax', \SMART_FRAMEWORK_TESTUNIT_BASE_URL.'testunit.post-form-by-ajax&tab=2', '<h2>Are you sure you want to submit this form by Ajax !?</h2>', 'jQuery(\'[id^=Smart-Captcha-Plugin] img:first\').trigger(\'click\');').' return false;">Submit this Test Form by AJAX &nbsp; <span class="sfi sfi-compass"></span></button>';
 		//-- end
 
 		//-- lists with one element

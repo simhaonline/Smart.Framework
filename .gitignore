@@ -2,10 +2,13 @@
 wpub
 tmp
 modules/mod-agile
+modules/mod-barcodes
+modules/mod-captcha
 modules/mod-cloud
 modules/mod-countries
 modules/mod-db-orm-redbean
 modules/mod-dbal-zend
+modules/mod-docs
 modules/mod-documentor
 modules/mod-ecomm-cart
 modules/mod-highlight-syntax

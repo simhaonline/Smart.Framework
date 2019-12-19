@@ -2,18 +2,19 @@
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2019-12-18
+  @version: 2019-12-19
   captcha:
     error: |
       The Captcha session expired ...
       Click on Captcha image to get a new one and try to re-enter the new code.
       If the problem persist please contact the website administrator !
-    confirm: 'Confirm you are not a robot'
-    verify: 'Verification Code'
-    failed: 'Captcha verification Failed'
+    confirm: 'Confirm you are not a Robot'
+    verify: 'Validation Code'
+    failed: 'Captcha Validation Failed'
     click: 'Click to Refresh Image'
     image: 'Captcha Image'
-    enter: 'Enter the code from the image into the verification field'
-    interractive: 'Draw over the box a shape identical with the one in the box starting from the dot to activate the captcha. After this step you have to enter the captcha code from the image that will appear.'
-    helper: 'As alternative you can scan the barcode and find the verification code that you have to fill in the verification input.'
+    enter: 'Enter the code from the image into the validation field.'
+    interractive: 'To validate this captcha draw over the box a fluent shape identical with the one in the box starting from the dot.'
+    helper: 'As alternative you can scan the barcode and find the validation code that you have to fill in the validation input.'
+    passed: 'Validation Completed !'
 #END

@@ -26,17 +26,19 @@ jQuery(function() {
 <h1 class="inline">Barcodes 2D</h1>
 <table cellspacing="0" cellpadding="25" style="background:#FFFFFF;">
 	<tr valign="top">
-		<td><b>Semacode DataMatrix (SVG)</b><div id="test_barcodes_2d_sema"></div></td>
-		<td><b>QR Code (SVG)</b><div id="test_barcodes_2d_qr"></div></td>
+		<td><b>Mini QRCode (SVG)</b><div id="test_barcodes_2d_mqr"></div></td>
+		<td><b>QRCode (SVG)</b><div id="test_barcodes_2d_qr"></div></td>
 		<td><b>Aztec (SVG)</b><div id="test_barcodes_2d_aztec"></div></td>
+		<td><b>Semacode DataMatrix (SVG)</b><div id="test_barcodes_2d_sema"></div></td>
 		<td><b>PDF 417 (PNG)</b><div id="test_barcodes_2d_p417"></div></td>
 	</tr>
 </table>
 <script type="text/javascript">
 $(function() {
-	SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_barcodes_2d_sema', 'lib/framework/img/loading-spokes.svg', TESTUNIT_BASE_URL + 'testunit.barcodes-semcode', 'GET', 'html');
+	SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_barcodes_2d_mqr', 'lib/framework/img/loading-spin.svg', TESTUNIT_BASE_URL + 'testunit.barcodes-mqrcode', 'GET', 'html');
 	SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_barcodes_2d_qr', 'lib/framework/img/loading-spin.svg', TESTUNIT_BASE_URL + 'testunit.barcodes-qrcode', 'GET', 'html');
 	SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_barcodes_2d_aztec', 'lib/framework/img/loading-spin.svg', TESTUNIT_BASE_URL + 'testunit.barcodes-aztec', 'GET', 'html');
+	SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_barcodes_2d_sema', 'lib/framework/img/loading-spokes.svg', TESTUNIT_BASE_URL + 'testunit.barcodes-semcode', 'GET', 'html');
 	SmartJS_BrowserUtils.Load_Div_Content_By_Ajax('test_barcodes_2d_p417', 'lib/framework/img/loading-cylon.svg', TESTUNIT_BASE_URL + 'testunit.barcodes-pdf417', 'GET', 'html');
 });
 </script>

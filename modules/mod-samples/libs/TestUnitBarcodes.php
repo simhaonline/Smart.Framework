@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191214
+ * @version 	v.20191218
  *
  */
 final class TestUnitBarcodes {
@@ -37,17 +37,11 @@ final class TestUnitBarcodes {
 
 
 	//============================================================
-	public static function test2dBarcodeDataMatrix() {
+	public static function test2dBarcodeQRMiniCode() {
 		//--
-		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes2D')) {
-			return 'Barcode Module is missing';
-		} //end if
+		$str = (string) self::generateCodeForBarcode1D();
 		//--
-		$str = 'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
-		//--
-		$use_cache = 60; // cache for 60 seconds
-		//--
-		return (string) \SmartModExtLib\Barcodes\SmartBarcodes2D::getBarcode($str, 'semacode', 'html-svg', 2, '#333333', '', (int)$use_cache);
+		return (new \SmartQR2DBarcode('L'))->renderAsSVG((string)$captcha_code, ['cm'=>'#555555']);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -78,6 +72,23 @@ final class TestUnitBarcodes {
 		$str = 'Smart スマート // Cloud Application Platform クラウドアプリケーションプラットフォーム áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
 		//--
 		return (string) \SmartModExtLib\Barcodes\SmartBarcodes2D::getBarcode($str, 'aztec', 'html-svg', 2, '#333333');
+		//--
+	} //END FUNCTION
+	//============================================================
+
+
+	//============================================================
+	public static function test2dBarcodeDataMatrix() {
+		//--
+		if(!\class_exists('\\SmartModExtLib\\Barcodes\\SmartBarcodes2D')) {
+			return 'Barcode Module is missing';
+		} //end if
+		//--
+		$str = 'áâãäåāăąÁÂÃÄÅĀĂĄćĉčçĆĈČÇďĎèéêëēĕėěęÈÉÊËĒĔĖĚĘĝģĜĢĥħĤĦìíîïĩīĭȉȋįÌÍÎÏĨĪĬȈȊĮĳĵĲĴķĶĺļľłĹĻĽŁñńņňÑŃŅŇòóôõöōŏőøœÒÓÔÕÖŌŎŐØŒŕŗřŔŖŘșşšśŝßȘŞŠŚŜțţťȚŢŤùúûüũūŭůűųÙÚÛÜŨŪŬŮŰŲŵŴẏỳŷÿýẎỲŶŸÝźżžŹŻŽ " <p></p> ? & * ^ $ @ ! ` ~ % () [] {} | \ / + - _ : ; , . #0.97900300';
+		//--
+		$use_cache = 60; // cache for 60 seconds
+		//--
+		return (string) \SmartModExtLib\Barcodes\SmartBarcodes2D::getBarcode($str, 'semacode', 'html-svg', 2, '#333333', '', (int)$use_cache);
 		//--
 	} //END FUNCTION
 	//============================================================

@@ -96,6 +96,7 @@ final class SmartSVGCaptcha {
 		'stroke_opacity' 			=> 0.9, 		// 0.5 .. 1.0 ; default is 0.9
 		'stroke_fill' 				=> '', 			// default is empty string ; can be a hexa color as #777777
 		'stroke_color' 				=> '#999999', 	// stroke hexa color ; default is #999999
+		'stroke_bg_color' 			=> '#FFFFFF', 	// stroke background color ; default is #FFFFFF
 		'stroke_bg_pattern_color' 	=> '#BBBBBB', 	// stroke background pattern color ; default is #BBBBBB
 		'glyph_offsetting' 			=> array('apply' => true,  'h' => 1, 				'v' => 0.5, 'mh' => 8), // Needs to be enabled by default
 		'glyph_fragments' 			=> array('apply' => false, 'r_num_frag' => null, 	'frag_factor' => 2),
@@ -394,6 +395,7 @@ final class SmartSVGCaptcha {
 				'HEIGHT' 					=> (int)    $this->height,
 				'ELEMENT-ID-HASH' 			=> (string) sha1('SVG-Element'.$path_str.SMART_FRAMEWORK_SECURITY_KEY.time()),
 				'ELEMENT-BORDER-COLOR' 		=> (string) $this->dsettings['stroke_border_color'],
+				'BACKGROUND-COLOR' 			=> (string) $this->dsettings['stroke_bg_color'],
 				'PATTERN-ID-HASH' 			=> (string) sha1('SVG-Pattern'.$path_str.SMART_FRAMEWORK_SECURITY_KEY.time()),
 				'PATTERN-COLOR' 			=> (string) $this->dsettings['stroke_bg_pattern_color'],
 				'CAPTCHA-ID-HASH' 			=> (string) sha1('SVG-Path'.$path_str.SMART_FRAMEWORK_SECURITY_KEY.time()),
