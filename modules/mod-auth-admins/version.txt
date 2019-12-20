@@ -1,5 +1,5 @@
 
-# Smart.Framework.Modules: AuthAdmins r.20191219 #
+# Smart.Framework.Modules: AuthAdmins r.20191220 #
 
 // r.5.2.7 / smart.framework.v.5.2
 

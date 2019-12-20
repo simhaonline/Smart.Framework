@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20191216
+ * @version 	v.20191220
  * @package 	@Core:Extra
  *
  */
@@ -2156,6 +2156,27 @@ final class SmartUtils {
 		];
 		//--
 
+		//-- checks
+		if((int)strlen((string)$cmd) > (int)PHP_MAXPATHLEN) {
+			Smart::log_warning(__METHOD__.' # The CMD Path is too long: '.$cmd);
+			$outarr['exitcode'] = -799;
+			return (array) $outarr;
+		} //end if
+		//--
+		if((int)strlen((string)$cwd) > (int)PHP_MAXPATHLEN) {
+			Smart::log_warning(__METHOD__.' # The CWD Path is too long: '.$cwd);
+			$outarr['exitcode'] = -798;
+			return (array) $outarr;
+		} //end if
+		if((string)$cwd != '') {
+			if(!SmartFileSysUtils::check_if_safe_path((string)$cwd, 'yes', 'yes')) { // this is synced with SmartFileSystem::dir_create() ; without this check if non-empty will fail with dir create below
+				Smart::log_warning(__METHOD__.' # The CWD Path is not safe: '.$cwd);
+				$outarr['exitcode'] = -797;
+				return (array) $outarr;
+			} //end if
+		} //end if
+		//--
+
 		//-- exec
 		if((string)$cwd != '') {
 			if(!SmartFileSystem::path_exists((string)$cwd)) {
@@ -2163,7 +2184,7 @@ final class SmartUtils {
 			} //end if
 			if(!SmartFileSystem::is_type_dir((string)$cwd)) {
 				//--
-				Smart::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+				Smart::log_warning(__METHOD__.' # The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
 				//--
 				$outarr['stdout'] 	= '';
 				$outarr['stderr'] 	= '';

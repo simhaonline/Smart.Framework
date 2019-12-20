@@ -11,15 +11,15 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //-----------------------------------------------------
 
 
-//========================================= Testing-ONLY Settings (Samples)
-// !!! REMOVE these Testing-ONLY Settings when using this config in real production environments !!!
+//========================================= Demo-Only Settings (these Settings are only required by ModSamples)
+// !!! REMOVE these Settings when using this config in real production environments !!!
 // ... They are required just for Samples / Testing / Development purposes ...
 define('SMART_FRAMEWORK_TEST_MODE', true);
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_FILESYSTEM_TESTS', true);
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_DATABASE_TESTS', true);
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_PCACHE_TESTS', true); // redis
 //define('SMART_FRAMEWORK_TESTUNIT_ALLOW_WEBDAV_TESTS', true);
-//========================================= END Testing-ONLY Settings
+//========================================= END Demo-Only Settings
 
 
 //--------------------------------------- Info URL

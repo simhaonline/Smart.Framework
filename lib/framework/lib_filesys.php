@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191203
+ * @version 	v.20191220
  * @package 	@Core:FileSystem
  *
  */
@@ -173,7 +173,7 @@ final class SmartFileSysUtils {
 			} //end if
 		} //end if
 		//-- test max path length
-		if((strlen($y_path) > 1024) OR (strlen($y_path) > (int)PHP_MAXPATHLEN)) {
+		if(((int)strlen($y_path) > 1024) OR ((int)strlen($y_path) > (int)PHP_MAXPATHLEN)) {
 			return 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
 		} //end if
 		//--
@@ -1283,7 +1283,7 @@ final class SmartFileSysUtils {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be mostly safe ; Reads can also use optional shared locking if needed
  *
  * @depends 	classes: Smart
- * @version 	v.20191203
+ * @version 	v.20191220
  * @package 	@Core:FileSystem
  *
  */
@@ -3185,7 +3185,7 @@ final class SmartFileSystem {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.20191203
+ * @version 	v.20191220
  * @package 	@Core:FileSystem
  *
  */

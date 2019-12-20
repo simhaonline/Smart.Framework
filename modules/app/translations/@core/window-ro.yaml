@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: RO
   @area: core
-  @version: 2019-11-10
+  @version: 2019-12-20
   window:
     action_back: 'Înapoi (la pagina anterioară)'
     button_back: '[ Înapoi ]'
@@ -10,6 +10,5 @@ TRANSLATIONS:
     button_modal_close: '[ Înapoi la Fereastra Principală ]'
     button_print: '[ Printează ]'
     confirm_action: 'Apăsaţi [OK] pentru a CONFIRMA această Acţiune. Nu se poate Reveni.'
-    pdf: '[ PDF ]'
     form_submit_wait: '... în curs de expediere, aşteptaţi'
 #END

@@ -16,6 +16,7 @@ modules/mod-js-components
 modules/mod-lang-detect
 modules/mod-maps-cache
 modules/mod-media-gallery
+modules/mod-pdf-generate
 modules/mod-sm-facebook
 modules/mod-sm-twitter
 modules/mod-soap

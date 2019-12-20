@@ -145,9 +145,6 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartSpreadSheetImport':
 			require_once('lib/core/plugins/lib_spreadsheet.php');		// spreadsheet export / import
 			break;
-		case 'SmartPdfExport':
-			require_once('lib/core/plugins/lib_export_pdf.php'); 		// pdf export
-			break;
 		//--
 		default:
 			return; // other classes are not managed here ...

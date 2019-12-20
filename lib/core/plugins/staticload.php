@@ -52,7 +52,6 @@ require_once('lib/core/plugins/lib_captcha_image.php'); 	// captcha image
 require_once('lib/core/plugins/lib_viewhelpers.php'); 		// viewhelpers components
 //--
 require_once('lib/core/plugins/lib_spreadsheet.php');		// spreadsheet export / import
-require_once('lib/core/plugins/lib_export_pdf.php'); 		// pdf export
 //--
 
 

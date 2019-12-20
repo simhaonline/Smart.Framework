@@ -26,7 +26,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * Generate SVG (vector graphics) captchas.
  * @author Nikolai Tschacher <admin@incolumitas.com>
  * @copyright (c) 2013, Nikolai Tschacher, incolumitas.com
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license https://github.com/NikolaiT/SVG-Captcha/blob/master/LICENSE # GNU Public License
  * @version head.20191215
  *
  * This implementation will draw the captcha text with help of svg shapes emulated font, that consits of Bezier curvatures and straight lines.

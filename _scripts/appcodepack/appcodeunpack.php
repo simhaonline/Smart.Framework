@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20191217.1427'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20191220.1559'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -986,7 +986,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20191217 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20191220 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2876,7 +2876,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartUtils v.20191216
+	//##### SmartUtils v.20191220
 
 
 	//================================================================
@@ -2959,6 +2959,27 @@ Options -Indexes
 		];
 		//--
 
+		//-- checks
+		if((int)strlen((string)$cmd) > (int)PHP_MAXPATHLEN) {
+			self::log_warning(__METHOD__.' # The CMD Path is too long: '.$cmd);
+			$outarr['exitcode'] = -799;
+			return (array) $outarr;
+		} //end if
+		//--
+		if((int)strlen((string)$cwd) > (int)PHP_MAXPATHLEN) {
+			self::log_warning(__METHOD__.' # The CWD Path is too long: '.$cwd);
+			$outarr['exitcode'] = -798;
+			return (array) $outarr;
+		} //end if
+		if((string)$cwd != '') {
+			if(!self::check_if_safe_path((string)$cwd, 'yes', 'yes')) { // this is synced with SmartFileSystem::dir_create() ; without this check if non-empty will fail with dir create below
+				self::log_warning(__METHOD__.' # The CWD Path is not safe: '.$cwd);
+				$outarr['exitcode'] = -797;
+				return (array) $outarr;
+			} //end if
+		} //end if
+		//--
+
 		//-- exec
 		if((string)$cwd != '') {
 			if(!self::path_exists((string)$cwd)) {
@@ -2966,7 +2987,7 @@ Options -Indexes
 			} //end if
 			if(!self::is_type_dir((string)$cwd)) {
 				//--
-				self::raise_error(__METHOD__.'(): The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
+				self::log_warning(__METHOD__.' # The Proc Open CWD Path: ['.$cwd.'] cannot be created and is not available !', 'See Error Log for more details ...');
 				//--
 				$outarr['stdout'] 	= '';
 				$outarr['stderr'] 	= '';
@@ -3029,7 +3050,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20191105
+	//##### SmartFileSysUtils v.20191220
 
 
 	//================================================================
@@ -3107,7 +3128,7 @@ Options -Indexes
 			} //end if
 		} //end if
 		//-- test max path length
-		if((strlen($y_path) > 1024) OR (strlen($y_path) > (int)PHP_MAXPATHLEN)) {
+		if(((int)strlen($y_path) > 1024) OR ((int)strlen($y_path) > (int)PHP_MAXPATHLEN)) {
 			return 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
 		} //end if
 		//--
@@ -3339,7 +3360,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20191203
+	//##### SmartFileSystem v.20191220
 
 
 	//================================================================

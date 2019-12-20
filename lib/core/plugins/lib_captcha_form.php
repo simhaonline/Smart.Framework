@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartUtils, SmartTextTranslations ; javascript: jquery.js, smart-framework.pak.js ; css: captcha.css
- * @version 	v.20191219
+ * @version 	v.20191220
  * @package 	development:Captcha
  *
  */
@@ -156,8 +156,8 @@ final class SmartCaptcha {
 			} //end if
 			$zsvg_fx = '(function(zSVG){return new zSVG;})(this.key('.(int)$release_time.'));';
 			$captcha_url = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$captcha_url), (string)$zsvg_fx);
-			$captcha_url = (string) base64_encode('if(sim >= 0.9) { zSim = Number(sim); var fldVal = \''.SmartUtils::crypto_blowfish_encrypt((string)$captcha_code, (string)strtoupper((string)$uuid)).'\'; var kZ = String(jQuery(\'#Smart-Captcha-Container-'.strtolower((string)$uuid).'\').find(\'input\').data(\'id\')).toUpperCase(); '.$js_solver.' } else { zSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($captcha_url).'\', \''.Smart::escape_js($zsvg_fx).'\'); }');
-			//--
+			$captcha_url = (string) base64_encode('if((sim >= 0.85) && (sim <= 0.95)) { zSim = Number(sim); var fldVal = \''.SmartUtils::crypto_blowfish_encrypt((string)$captcha_code, (string)strtoupper((string)$uuid)).'\'; var kZ = String(jQuery(\'#Smart-Captcha-Container-'.strtolower((string)$uuid).'\').find(\'input\').data(\'id\')).toUpperCase(); '.$js_solver.' } else { zSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($captcha_url).'\', \''.Smart::escape_js($zsvg_fx).'\'); }');
+			//-- the min sim is 0.75 (but too perfect is not human, so max is 0.95, but trusted is 0.85..0.95)
 			$qsvg_fx = '(function(qSVG){return new qSVG;})(this.key('.(int)$release_time.'));';
 			$qrcode_str = (string) (new SmartQR2DBarcode('L'))->renderAsSVG((string)$captcha_code, ['cm'=>'#777777','wq'=>0]);
 			$qrcode_str = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$qrcode_str), (string)$qsvg_fx);
