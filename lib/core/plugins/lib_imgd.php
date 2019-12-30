@@ -71,7 +71,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends     PHP GD extension with support for: imagecreatetruecolor / imagecreatefromstring / getimagesizefromstring
- * @version 	v.20191111
+ * @version 	v.20191222
  * @package 	Plugins:Image
  *
  */
@@ -357,7 +357,7 @@ final class SmartImageGdProcess {
 				} //end if else
 				break;
 			case 'jpg':
-				@imagejpeg($this->img, $newPath, $quality);
+				@imagejpeg($this->img, null, $quality);
 				break;
 			default:
 				$this->_errMsg((string)__METHOD__.' :: '.'Invalid Image Type'); // this should not happen, it is catched above

@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: RO
   @area: core
-  @version: 2019-12-19
+  @version: 2019-12-22
   captcha:
     error: |
       Sesiunea Captcha a expirat ...
@@ -14,7 +14,7 @@ TRANSLATIONS:
     click: 'Click pentru a re-încărca Imaginea'
     image: 'Imagine Captcha'
     enter: 'Introduceți codul din imagine în câmpul de verificare.'
-    interractive: 'Pentru a valida acest captcha desenați peste imaginea alăturată o formă fluentă cât mai asemănătoare începând de la punct.'
+    interractive: 'Pentru a valida acest captcha desenați fluent peste imaginea alăturată o formă cât mai asemănătoare începând de la punct.'
     helper: 'Ca alternativă scanați codul de bare și aflați codul de verificare pe care trebuie să îl introduceți.'
     passed: 'Verificare reușită !'
 #END

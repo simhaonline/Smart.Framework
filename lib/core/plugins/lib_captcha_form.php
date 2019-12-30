@@ -59,7 +59,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartUtils, SmartTextTranslations ; javascript: jquery.js, smart-framework.pak.js ; css: captcha.css
- * @version 	v.20191220
+ * @version 	v.20191222
  * @package 	development:Captcha
  *
  */
@@ -155,13 +155,13 @@ final class SmartCaptcha {
 				return 'Captcha Form Init ERROR ...';
 			} //end if
 			$zsvg_fx = '(function(zSVG){return new zSVG;})(this.key('.(int)$release_time.'));';
-			$captcha_url = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$captcha_url), (string)$zsvg_fx);
-			$captcha_url = (string) base64_encode('if((sim >= 0.85) && (sim <= 0.95)) { zSim = Number(sim); var fldVal = \''.SmartUtils::crypto_blowfish_encrypt((string)$captcha_code, (string)strtoupper((string)$uuid)).'\'; var kZ = String(jQuery(\'#Smart-Captcha-Container-'.strtolower((string)$uuid).'\').find(\'input\').data(\'id\')).toUpperCase(); '.$js_solver.' } else { zSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($captcha_url).'\', \''.Smart::escape_js($zsvg_fx).'\'); }');
+			$captcha_url = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$captcha_url), (string)$zsvg_fx.'object');
+			$captcha_url = (string) base64_encode('if((sim >= 0.85) && (sim <= 0.95)) { zSim = Number(sim); var fldVal = \''.SmartUtils::crypto_blowfish_encrypt((string)$captcha_code, (string)strtoupper((string)$uuid)).'\'; var kZ = String(jQuery(\'#Smart-Captcha-Container-'.strtolower((string)$uuid).'\').find(\'input\').data(\'id\')).toUpperCase(); '.$js_solver.' } else { zSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($captcha_url).'\', \''.Smart::escape_js($zsvg_fx).'\'+String(typeof([])).toLowerCase()); }');
 			//-- the min sim is 0.75 (but too perfect is not human, so max is 0.95, but trusted is 0.85..0.95)
 			$qsvg_fx = '(function(qSVG){return new qSVG;})(this.key('.(int)$release_time.'));';
-			$qrcode_str = (string) (new SmartQR2DBarcode('L'))->renderAsSVG((string)$captcha_code, ['cm'=>'#777777','wq'=>0]);
-			$qrcode_str = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$qrcode_str), (string)$qsvg_fx);
-			$qrcode_str = (string) base64_encode('qSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($qrcode_str).'\', \''.Smart::escape_js($qsvg_fx).'\');');
+			$qrcode_str = (string) (new SmartQR2DBarcode('L'))->renderAsSVG((string)$captcha_code, ['cm'=>'#888888','wq'=>0]);
+			$qrcode_str = (string) SmartUtils::crypto_blowfish_encrypt('data:image/svg+xml;base64,'.base64_encode((string)$qrcode_str), (string)$qsvg_fx.'string');
+			$qrcode_str = (string) base64_encode('qSVG = SmartJS_CryptoBlowfish.decrypt(\''.Smart::escape_js($qrcode_str).'\', \''.Smart::escape_js($qsvg_fx).'\'+String(typeof(\'\')).toLowerCase());');
 			//--
 			$input_style = 'display:none;';
 			//--
@@ -175,6 +175,7 @@ final class SmartCaptcha {
 				'RELEASE-HASH' 				=> (string) SmartFrameworkRuntime::getAppReleaseHash(),
 				'RELEASE-UUID' 				=> (string) strtolower((string)$uuid),
 				'RELEASE-TIME' 				=> (int)    $release_time,
+				'CAPTCHA-RAND' 				=> (string) '0'.Smart::random_number(10,99), // must start with zero to avoid toFixed(0) roundUp
 				'CAPTCHA-QR-CODE' 			=> (string) $qrcode_str,
 				'CAPTCHA-PASSED' 			=> (string) $translator_core_captcha->text('passed'),
 				'CAPTCHA-QR-HELPER' 		=> (string) $translator_core_captcha->text('helper'),
@@ -186,7 +187,7 @@ final class SmartCaptcha {
 				'CAPTCHA-TXT-INTERRACTIVE' 	=> (string) $translator_core_captcha->text('interractive'),
 				'CAPTCHA-IMG-SRC' 			=> (string) $captcha_url,
 				'CAPTCHA-INPUT-STYLE' 		=> (string) $input_style,
-				'CAPTCHA-JS-FIELD-BLUR' 	=> (string) SmartUtils::crypto_blowfish_encrypt("try { var kZ = String(fld.data('id')).toUpperCase(); var fldVal = SmartJS_CryptoBlowfish.encrypt(fld.val().toUpperCase(),String(kZ)); ".$js_solver." } catch(err) { console.error('Captcha ERROR: ' + err); } if(fld.val()) { fld.val('*******'); }", (string)(int)$release_time)
+				'CAPTCHA-JS-FIELD-BLUR' 	=> (string) SmartUtils::crypto_blowfish_encrypt("try { var kZ = String(fld.data('id')).toUpperCase(); var fldVal = SmartJS_CryptoBlowfish.encrypt(fld.val().toUpperCase(),String(kZ)); ".$js_solver." } catch(err) { console.error('Captcha ERROR: ' + err); } if(fld.val()) { fld.val('*******'); }", strtolower('Object'.'_'.'ID').':'.((string)(int)$release_time).'infinity!=NaN')
 			],
 			'yes' // export to cache
 		);

@@ -68,7 +68,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartSvgCaptchaPoint
- * @version 	v.20191217
+ * @version 	v.20191222
  * @package 	development:Captcha
  */
 final class SmartSVGCaptcha {
@@ -138,7 +138,7 @@ final class SmartSVGCaptcha {
 		// Set the parameters for the algorithms according to the user supplied difficulty.
 		//--
 		$this->dsettings['stroke_width'] = 2;
-		$this->dsettings['stroke_opacity'] = 0.8;
+		$this->dsettings['stroke_opacity'] = 0.55;
 		$this->dsettings['glyph_offsetting']['apply'] = true;
 		$this->dsettings['glyph_offsetting']['h'] = 1.5;
 		$this->dsettings['glyph_offsetting']['v'] = 0.5;
@@ -167,7 +167,7 @@ final class SmartSVGCaptcha {
 			$this->dsettings['shapeify']['apply'] = false;
 			$this->dsettings['change_degree']['apply'] = false;
 			$this->dsettings['split_curve']['apply'] = false;
-			$this->dsettings['stroke_opacity'] = 0.9;
+			$this->dsettings['stroke_opacity'] = 0.7;
 			$this->dsettings['stroke_color'] = '#888888';
 		} elseif($difficulty == 1) { // easy
 			$this->dsettings['stroke_width'] = 2;

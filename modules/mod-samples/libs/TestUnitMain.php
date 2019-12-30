@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191219
+ * @version 	v.20191222
  *
  */
 final class TestUnitMain {
@@ -342,10 +342,8 @@ final class TestUnitMain {
 			//--
 			if($rand == 1) {
 				$mode = 'hashed';
-				$noise = 250;
 			} else {
 				$mode = 'dotted';
-				$noise = 500;
 			} //end if else
 			//--
 			$captcha = new \SmartModExtLib\Captcha\SmartImageCaptcha();
@@ -360,7 +358,7 @@ final class TestUnitMain {
 			$captcha->charspace = 20;
 			$captcha->charxvar = 15;
 			$captcha->charyvar = 7;
-			$captcha->noise = (int) $noise;
+			$captcha->noise = 500;
 			$captcha->colors_chars = [0x111111, 0x333333, 0x778899, 0x666699, 0x003366, 0x669966, 0x006600, 0xFF3300];
 			$captcha->colors_noise = [0x888888, 0x999999, 0xAAAAAA, 0xBBBBBB, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE, 0x8080C0];
 			//--

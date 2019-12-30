@@ -2,7 +2,7 @@
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2019-12-19
+  @version: 2019-12-22
   captcha:
     error: |
       The Captcha session expired ...
@@ -14,7 +14,7 @@ TRANSLATIONS:
     click: 'Click to Refresh Image'
     image: 'Captcha Image'
     enter: 'Enter the code from the image into the validation field.'
-    interractive: 'To validate this captcha draw over the box a fluent shape identical with the one in the box starting from the dot.'
+    interractive: 'To validate this captcha draw fluent over the box a shape similar with the one in the box starting from the dot.'
     helper: 'As alternative you can scan the barcode and find the validation code that you have to fill in the validation input.'
     passed: 'Validation Completed !'
 #END
