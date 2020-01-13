@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20191220.1559'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200113.1055'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -791,7 +791,7 @@ function RunApp() {
 final class AppCodeOptimizer {
 
 	// ->
-	// v.20191110
+	// v.20200113
 
 	private $log;
 	private $err;
@@ -1349,7 +1349,7 @@ final class AppCodeOptimizer {
 final class PhpOptimizer {
 
 	// ::
-	// v.20191110
+	// v.20200113
 
 	private static $strip_autoloaded = false;
 
@@ -1424,7 +1424,7 @@ public static function lint_code($y_script_path) {
 			$parr = (array) AppPackUtils::run_proc_cmd(
 				(string) escapeshellcmd((string)APPCODEPACK_LINT_PHP_UTILITY_BIN).' -l '.escapeshellarg($y_script_path),
 				null,
-				(string) __DIR__,
+				null,
 				null
 			);
 			$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1460,7 +1460,7 @@ public static function lint_code($y_script_path) {
 final class JsOptimizer {
 
 	// ::
-	// v.20191110
+	// v.20200113
 
 	private static $strip_autoloaded = false;
 
@@ -1526,7 +1526,7 @@ public static function minify_code($y_script_path) {
 							$parr = (array) AppPackUtils::run_proc_cmd(
 								(string) escapeshellcmd((string)APPCODEPACK_COMPRESS_UTILITY_BIN).' '.APPCODEPACK_COMPRESS_UTILITY_MODULE_JS.' '.trim((string)APPCODEPACK_COMPRESS_UTILITY_OPTIONS_JS).' -- '.escapeshellarg($y_script_path),
 								null,
-								(string) __DIR__,
+								null,
 								null
 							); // [--beautify beautify=false,ascii-only=true] required to preserve safe unicode sequences ; [--screw-ie8] required to dissalow IE8 hacks to support IE<9 which can break other code
 							$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1538,7 +1538,7 @@ public static function minify_code($y_script_path) {
 							$parr = (array) AppPackUtils::run_proc_cmd(
 								(string) escapeshellcmd((string)APPCODEPACK_COMPRESS_UTILITY_BIN).' -Xmx256m -jar '.APPCODEPACK_COMPRESS_UTILITY_MODULE_JS.' --js '.escapeshellarg($y_script_path).' --jscomp_off \'*\' --warning_level QUIET --env BROWSER --charset UTF-8 '.trim((string)APPCODEPACK_COMPRESS_UTILITY_OPTIONS_JS),
 								null,
-								(string) __DIR__,
+								null,
 								null
 							);
 							$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1549,7 +1549,7 @@ public static function minify_code($y_script_path) {
 							$parr = (array) AppPackUtils::run_proc_cmd(
 								(string) escapeshellcmd((string)APPCODEPACK_COMPRESS_UTILITY_BIN).' -Xmx256m -jar '.APPCODEPACK_COMPRESS_UTILITY_MODULE_JS.' '.escapeshellarg($y_script_path).' '.trim((string)APPCODEPACK_COMPRESS_UTILITY_OPTIONS_JS).' --charset UTF-8 --type js',
 								null,
-								(string) __DIR__,
+								null,
 								null
 							);
 							$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1608,7 +1608,7 @@ public static function lint_code($y_script_path) {
 			$parr = (array) AppPackUtils::run_proc_cmd(
 				(string) escapeshellcmd((string)APPCODEPACK_LINT_NODEJS_UTILITY_BIN).' -c '.escapeshellarg($y_script_path), // nodejs check option ( -c ) is available on newser versions
 				null,
-				(string) __DIR__,
+				null,
 				null
 			);
 			$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1644,7 +1644,7 @@ public static function lint_code($y_script_path) {
 final class CssOptimizer {
 
 	// ::
-	// v.20191110
+	// v.20200113
 
 	private static $strip_autoloaded = false;
 
@@ -1710,7 +1710,7 @@ public static function minify_code($y_stylesheet_path) {
 							$parr = (array) AppPackUtils::run_proc_cmd(
 								(string) escapeshellcmd((string)APPCODEPACK_COMPRESS_UTILITY_BIN).' '.APPCODEPACK_COMPRESS_UTILITY_MODULE_CSS.' '.trim((string)APPCODEPACK_COMPRESS_UTILITY_OPTIONS_CSS).' '.escapeshellarg($y_stylesheet_path),
 								null,
-								(string) __DIR__,
+								null,
 								null
 							);
 							$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1721,7 +1721,7 @@ public static function minify_code($y_stylesheet_path) {
 							$parr = (array) AppPackUtils::run_proc_cmd(
 								(string) escapeshellcmd((string)APPCODEPACK_COMPRESS_UTILITY_BIN).' -Xmx256m -jar '.APPCODEPACK_COMPRESS_UTILITY_MODULE_CSS.' '.escapeshellarg($y_stylesheet_path).' --allow-unrecognized-properties --allow-unrecognized-functions --rename NONE '.trim((string)APPCODEPACK_COMPRESS_UTILITY_OPTIONS_CSS),
 								null,
-								(string) __DIR__,
+								null,
 								null
 							);
 							$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1733,7 +1733,7 @@ public static function minify_code($y_stylesheet_path) {
 							$parr = (array) AppPackUtils::run_proc_cmd(
 								(string) escapeshellcmd((string)APPCODEPACK_COMPRESS_UTILITY_BIN).' -Xmx256m -jar '.APPCODEPACK_COMPRESS_UTILITY_MODULE_CSS.' '.escapeshellarg($y_stylesheet_path).' '.trim((string)APPCODEPACK_COMPRESS_UTILITY_OPTIONS_CSS).' --charset UTF-8 --type css',
 								null,
-								(string) __DIR__,
+								null,
 								null
 							);
 							$exitcode = $parr['exitcode']; // don't make it INT !!!
@@ -1804,7 +1804,7 @@ public static function minify_code($y_stylesheet_path) {
 final class AppNetPackager {
 
 	// ->
-	// v.20191110
+	// v.20200113
 
 //=====================================================================================
 //--
@@ -2272,7 +2272,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20191220 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200113 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
