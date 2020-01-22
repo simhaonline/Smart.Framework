@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / Session Manager]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -65,7 +65,7 @@ if(!function_exists('session_start')) {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP Session Module ; classes: Smart, SmartUtils
- * @version 	v.20191216
+ * @version 	v.20200121
  * @package 	Application:Session
  *
  */
@@ -472,7 +472,7 @@ final class SmartSession {
  * Abstract Class Smart Custom Session
  * This is the abstract for extending the class SmartCustomSession
  *
- * @version 	v.20191207
+ * @version 	v.20200121
  * @package 	development:Application
  */
 abstract class SmartAbstractCustomSession {
@@ -567,4 +567,3 @@ abstract class SmartAbstractCustomSession {
 
 
 // end of php code
-?>

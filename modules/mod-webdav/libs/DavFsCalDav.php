@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Webdav / Library Admin CalDav:Fs]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 // Module Lib: \SmartModExtLib\Webdav\DavFsCalDav
 // Type: Module Library
@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavFsCalDav {
 
 	// ::
-	// v.20191110
+	// v.20200121
 
 	private static $caldav_ns = 'xmlns:cal="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/"';
 	private static $caldav_urn = 'urn:ietf:params:xml:ns:caldav';
@@ -826,5 +826,4 @@ final class DavFsCalDav {
 //=====================================================================================
 
 
-//end of php code
-?>
+// end of php code

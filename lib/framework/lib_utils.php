@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Utils]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20191220
+ * @version 	v.20200121
  * @package 	@Core:Extra
  *
  */
@@ -849,7 +849,7 @@ final class SmartUtils {
 	 *
 	 * @return 	STRING						:: The semantic URL, depends on SMART_FRAMEWORK_SEMANTIC_URL_USE_REWRITE ( '' | 'standard' | 'semantic' ) ; 'standard' and 'semantic' requires Apache Rewrite ; Examples: '' -> (script.php)?/page/(my-module.)my-page/param1/value1/Param2/Value2 ; 'standard' -> (my-module.)my-page.html?param1=value1&Param2=Value2 ; 'semantic' -> (my-module.)my-page.html?/param1/value1/Param2/Value2
 	 */
-	public static function create_semantic_url($y_url) { // v.20191112
+	public static function create_semantic_url($y_url) { // v.20200121
 		//--
 		$y_url = (string) trim((string)$y_url);
 		if((string)$y_url == '') {
@@ -2365,4 +2365,3 @@ final class SmartUtils {
 
 
 // end of php code
-?>

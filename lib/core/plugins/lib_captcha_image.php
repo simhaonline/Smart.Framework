@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / Captcha Image]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -68,7 +68,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartSvgCaptchaPoint
- * @version 	v.20191222
+ * @version 	v.20200121
  * @package 	development:Captcha
  */
 final class SmartSVGCaptcha {
@@ -1540,7 +1540,7 @@ final class SmartSVGCaptcha {
  * @access 		private
  * @internal
  *
- * @version 	v.20191216
+ * @version 	v.20200121
  *
  */
 final class SmartSvgCaptchaPoint {
@@ -1574,4 +1574,3 @@ final class SmartSvgCaptchaPoint {
 
 
 // end of php code
-?>

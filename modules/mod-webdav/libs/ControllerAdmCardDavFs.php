@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Webdav / AbstractController Admin CardDav:Fs]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 // Module Lib: \SmartModExtLib\Webdav\ControllerAdmCardDavFs
 // Type: Module Library
@@ -27,7 +27,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @hint This abstract controller can be used to build a DAV Service / CardDAV over the Admin Middleware service
  *
- * @version		20191110
+ * @version		20200121
  * @package 	development:modules:Webdav
  *
  */
@@ -263,5 +263,4 @@ abstract class ControllerAdmCardDavFs extends \SmartAbstractAppController {
 //=====================================================================================
 
 
-//end of php code
-?>
+// end of php code

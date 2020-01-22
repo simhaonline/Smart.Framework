@@ -1,7 +1,7 @@
 <?php
 // AppCodePack - a PHP, JS and CSS Optimizer / NetArchive Pack Upgrade Script
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('APPCODEPACK_APP_ID')) { // this must be defined in the first line of the application
@@ -10,7 +10,7 @@ if(!defined('APPCODEPACK_APP_ID')) { // this must be defined in the first line o
 //-----------------------------------------------------
 
 //#####
-// Sample AppCodePack Upgrade Script, v.20191217.1427
+// Sample AppCodePack Upgrade Script, v.20200121.1507
 // CUSTOMIZE IT AS NEEDED and rename it to: appcode-upgrade.php
 //#####
 
@@ -55,7 +55,6 @@ if((string)trim((string)$arr['stdout']) != '200') { // expect HTTP Status 200
 final class AppCodePackUpgrade extends AppCodePackAbstractUpgrade {
 
 	// ::
-	// v.20191110
 
 	// customize this as you need
 
@@ -67,5 +66,4 @@ final class AppCodePackUpgrade extends AppCodePackAbstractUpgrade {
 //=====================================================================================
 
 
-//end of php code
-?>
+// end of php code

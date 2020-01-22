@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Base]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20191213
+ * @version     v.20200121
  * @package     @Core
  *
  */
@@ -996,22 +996,22 @@ final class Smart {
 		$yhtmlcode = (string) str_replace([' />', '/>', '>'], ['>', '>', '> '], (string)$yhtmlcode);
 		//-- remove special tags
 		$html_regex_h = [
-			'#<head[^>]*?>.*?</head[^>]*?>#si',				// head
-			'#<style[^>]*?>.*?</style[^>]*?>#si',			// style
-			'#<script[^>]*?>.*?</script[^>]*?>#si',			// script
-			'#<noscript[^>]*?>.*?</noscript[^>]*?>#si',		// noscript
-			'#<frameset[^>]*?>.*?</frameset[^>]*?>#si',		// frameset
-			'#<frame[^>]*?>.*?</frame[^>]*?>#si',			// frame
-			'#<iframe[^>]*?>.*?</iframe[^>]*?>#si',			// iframe
-			'#<canvas[^>]*?>.*?</canvas[^>]*?>#si',			// canvas
-			'#<audio[^>]*?>.*?</audio[^>]*?>#si',			// audio
-			'#<video[^>]*?>.*?</video[^>]*?>#si',			// video
-			'#<applet[^>]*?>.*?</applet[^>]*?>#si',			// applet
-			'#<param[^>]*?>.*?</param[^>]*?>#si',			// param
-			'#<object[^>]*?>.*?</object[^>]*?>#si',			// object
-			'#<form[^>]*?>.*?</form[^>]*?>#si',				// form
-			'#<link[^>]*?>#si',								// link
-			'#<img[^>]*?>#si'								// img
+			'#<head[^>]*?'.'>.*?</head[^>]*?'.'>#si',				// head
+			'#<style[^>]*?'.'>.*?</style[^>]*?'.'>#si',				// style
+			'#<script[^>]*?'.'>.*?</script[^>]*?'.'>#si',			// script
+			'#<noscript[^>]*?'.'>.*?</noscript[^>]*?'.'>#si',		// noscript
+			'#<frameset[^>]*?'.'>.*?</frameset[^>]*?'.'>#si',		// frameset
+			'#<frame[^>]*?'.'>.*?'.'</frame[^>]*?'.'>#si',			// frame
+			'#<iframe[^>]*?'.'>.*?'.'</iframe[^>]*?'.'>#si',		// iframe
+			'#<canvas[^>]*?'.'>.*?'.'</canvas[^>]*?'.'>#si',		// canvas
+			'#<audio[^>]*?'.'>.*?'.'</audio[^>]*?'.'>#si',			// audio
+			'#<video[^>]*?'.'>.*?'.'</video[^>]*?'.'>#si',			// video
+			'#<applet[^>]*?'.'>.*?'.'</applet[^>]*?'.'>#si',		// applet
+			'#<param[^>]*?'.'>.*?'.'</param[^>]*?'.'>#si',			// param
+			'#<object[^>]*?'.'>.*?'.'</object[^>]*?'.'>#si',		// object
+			'#<form[^>]*?'.'>.*?'.'</form[^>]*?'.'>#si',			// form
+			'#<link[^>]*?'.'>#si',									// link
+			'#<img[^>]*?'.'>#si'									// img
 		];
 		$yhtmlcode = (string) preg_replace((array)$html_regex_h, ' ', (string)$yhtmlcode);
 		$yhtmlcode = str_replace(["\r\n", "\r", "\t", "\f"], ["\n", "\n", ' ', ' '], $yhtmlcode);
@@ -1135,7 +1135,7 @@ final class Smart {
 		//-- clean any other remaining html entities
 		$yhtmlcode = (string) preg_replace('/&\#?([0-9a-z]+);/i', ' ', (string)$yhtmlcode);
 		//-- cleanup multiple spaces with just one space
-		$yhtmlcode = (string) preg_replace('/[ \\t]+/', ' ', (string)$yhtmlcode); // replace any horizontal whitespace character ' since PHP 5.2.4 can be /[\h]+/
+		$yhtmlcode = (string) preg_replace('/[ \\t]+/', ' ', (string)$yhtmlcode); // replace any horizontal whitespace character ' since PHP 5.4 can be /[\h]+/
 		$yhtmlcode = (string) preg_replace('/^\s*[\n]{2,}/m', '', (string)$yhtmlcode); // fix: replace multiple consecutive lines that may also contain before optional leading spaces
 		$yhtmlcode = (string) preg_replace('/[^\S\r\n]+$/m', '', (string)$yhtmlcode); // remove trailing spaces on each line
 		//--
@@ -1291,7 +1291,7 @@ final class Smart {
 	 * @return STRING 							:: The safe variable name ; if invalid should return empty value
 	 */
 	public static function safe_varname($y_name, $y_allow_upper=false) {
-		//-- v.20191213
+		//-- v.20200121
 		$y_name = (string) trim((string)$y_name); // force string and trim
 		if((string)$y_name == '') {
 			return '';
@@ -1998,4 +1998,3 @@ final class Smart {
 
 
 // end of php code
-?>

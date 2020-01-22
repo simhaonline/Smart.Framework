@@ -1,7 +1,7 @@
 <?php
 // AppCodeUnPack - Deploy Manager: NetArchive UnPacker
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //##############################################################################
 //############### RUNTIME: DO NOT MODIFY CODE BELOW !!!
@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20200113.1055'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20200121.1507'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -863,7 +863,7 @@ return (string) $tpl;
 abstract class AppCodePackAbstractUpgrade {
 
 	// ::
-	// v.20200113
+	// v.20200121
 
 
 	// exec a command and return the exit status
@@ -986,7 +986,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20200113 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200121 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2078,7 +2078,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### Smart v.20191213
+	//##### Smart v.20200121
 
 
 	//================================================================
@@ -2613,7 +2613,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartHashCrypto v.20190103
+	//##### SmartHashCrypto v.20200121
 
 
 	//==============================================================
@@ -2730,7 +2730,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartHttpUtils v.20191213
+	//##### SmartHttpUtils v.20200121
 
 
 	//==============================================
@@ -2876,7 +2876,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartUtils v.20191220
+	//##### SmartUtils v.20200121
 
 
 	//================================================================
@@ -3050,7 +3050,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20191220
+	//##### SmartFileSysUtils v.20200121
 
 
 	//================================================================
@@ -3360,7 +3360,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20191220
+	//##### SmartFileSystem v.20200121
 
 
 	//================================================================
@@ -4770,5 +4770,4 @@ Options -Indexes
 //=====================================================================================
 
 
-//end of php code
-?>
+// end of php code

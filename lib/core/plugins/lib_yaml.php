@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / YAML Parser]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191124
+ * @version 	v.20200121
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -905,17 +905,17 @@ final class SmartYamlConverter {
 	//================================================================
 	private function startsLiteralBlock($line) {
 		//--
-		$lastChar = substr(trim($line), -1);
+		$lastChar = (string) substr((string)trim((string)$line), -1);
 		//--
 		if($lastChar != '>' && $lastChar != '|') {
 			return false;
 		} //end if
 		//--
-		if($lastChar == '|') {
+		if((string)$lastChar == '|') {
 			return $lastChar;
 		} //end if
 		//-- HTML tags should not be counted as literal blocks.
-		if(preg_match('#<.*?>$#', $line)) {
+		if(preg_match('#<.*'.'?'.'>$#', $line)) {
 			return false;
 		} //end if
 		//--
@@ -928,13 +928,13 @@ final class SmartYamlConverter {
 	//================================================================
 	private function greedilyNeedNextLine($line) {
 		//--
-		$line = trim($line);
+		$line = (string) trim($line);
 		//--
 		if(!strlen($line)) {
 			return false;
 		} //end if
 		//--
-		if(substr($line, -1, 1) == ']') {
+		if((string)substr($line, -1, 1) == ']') {
 			return false;
 		} //end if
 		if($line[0] == '[') {
@@ -959,7 +959,7 @@ final class SmartYamlConverter {
 			$line = $this->stripIndent($line);
 		} //end if
 		//--
-		$line = rtrim ($line, "\r\n\t ")."\n";
+		$line = (string) rtrim($line, "\r\n\t ")."\n";
 		//--
 		if($literalBlockStyle == '|') {
 			return $literalBlock . $line;
@@ -1433,4 +1433,3 @@ databases:
 //=====================================================================================
 
 //end of php code
-?>

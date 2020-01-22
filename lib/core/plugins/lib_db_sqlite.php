@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / SQLite 3 Database Client]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -62,7 +62,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191210
+ * @version 	v.20200121
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -476,7 +476,7 @@ final class SmartSQliteDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20191210
+ * @version 	v.20200121
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -1794,7 +1794,7 @@ final class SmartSQliteUtilDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20191210
+ * @version 	v.20200121
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -2177,4 +2177,3 @@ final class SmartSQliteFunctions {
 
 
 //end of php code
-?>

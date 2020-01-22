@@ -1,7 +1,7 @@
 <?php
 // Class: \SmartModExtLib\PageBuilder\AbstractFrontendController
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 namespace SmartModExtLib\PageBuilder;
 
@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20191115
+ * @version 	v.20200121
  * @package 	development:modules:PageBuilder
  *
  */
@@ -1256,7 +1256,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 										//--
 										if(\is_subclass_of((string)$plugin_class, '\\SmartModExtLib\\PageBuilder\\AbstractFrontendPlugin')) {
 											//--
-											$plugin_obj = new $plugin_class( // fix w. SmartAbstractAppController r.20191028
+											$plugin_obj = new $plugin_class( // fix w. SmartAbstractAppController r.20200121
 												(string) $plugin_modpath, // this should be the module path to plugin's module
 												(string) $this->ControllerGetParam('controller'), // this is the controller path where plugin runs into (it can be used to re-build the path to the current module)
 												(string) $this->ControllerGetParam('url-page'), // the URL Page Param
@@ -1532,5 +1532,4 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 //=====================================================================================
 
 
-//end of php code
-?>
+// end of php code

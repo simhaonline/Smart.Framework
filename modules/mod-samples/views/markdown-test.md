@@ -1,7 +1,7 @@
 # [###TITLE|html###] (H1)
 
-&copy;&nbsp;&nbsp;2015-2019&nbsp;unix-world.org
-Extended Markdown Test :: v.20191126
+&copy;&nbsp;&nbsp;2015-2020&nbsp;unix-world.org
+Extended Markdown Test :: v.20200121
 
 ## H2 (Unicode Test) ăĂîÎâÂşŞţŢ
 

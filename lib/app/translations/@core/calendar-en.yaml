@@ -1,8 +1,8 @@
-# Language File: EN / CORE / Calendar :: r.5.2.7 / smart.framework.v.5.2
+# Language File: EN / CORE / Calendar :: r.5.7.2 / smart.framework.v.5.7
 TRANSLATIONS:
   @language: EN
   @area: core
-  @version: 2019-11-10
+  @version: 2020-01-21
   calendar:
     m_01: 'January'
     m_02: 'February'

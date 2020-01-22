@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Unicode Strings]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -13,7 +13,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //======================================================
 // Smart-Framework - Unicode Strings
-// DEPENDS-PHP: 5.4.7 or later
+// DEPENDS-PHP: 5.6 or later
 // DEPENDS-EXT: MBString, XML
 //======================================================
 
@@ -159,7 +159,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.20190221
+ * @version     v.20200121
  * @package     @Core
  *
  */
@@ -1202,4 +1202,3 @@ final class SmartUnicode {
 
 
 //end of php code
-?>

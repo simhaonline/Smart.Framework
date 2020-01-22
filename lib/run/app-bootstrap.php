@@ -1,7 +1,7 @@
 <?php
 // [APP - Bootstrap / Smart.Framework]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -9,14 +9,14 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 	die('Invalid Runtime Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //-----------------------------------------------------
 
 //======================================================
-// Smart-Framework - App Bootstrap :: r.20191210
+// Smart-Framework - App Bootstrap :: r.20200121
 // DEPENDS: SmartFramework, SmartFrameworkRuntime
 //======================================================
 // This file can be customized per App ...
@@ -412,4 +412,3 @@ final class SmartAppInfo implements SmartInterfaceAppInfo {
 
 
 // end of php code
-?>

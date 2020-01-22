@@ -1,7 +1,7 @@
 <?php
 // [Smart.Framework / App Runtime]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -27,9 +27,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //====================
 
 //--
-if(version_compare((string)phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.6 as minimum ; prefer PHP 7.x instead of 5.6
+if(version_compare((string)phpversion(), '5.6') < 0) { // check PHP version, we need at least 7.1 as minimum ; prefer PHP 7.2 or later
 	@http_response_code(500);
-	die('PHP Runtime not supported: '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 / 7.3 / 7.4 or later');
+	die('PHP Runtime not supported: '.phpversion().' !'.'<br>PHP versions to run this software are: 7.2 / 7.3 / 7.4 or later');
 } //end if
 //--
 if(((int)PHP_INT_SIZE < 8) OR ((string)(int)PHP_INT_MAX < '9223372036854775807')) {
@@ -61,8 +61,8 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 	die('Reserved Constants names have been already defined: SMART_FRAMEWORK_RELEASE_* is reserved');
 } //end if
 //--
-define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.2.7'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2019.12.30'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.7.2'); 	// tag version
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.01.21'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
@@ -293,7 +293,7 @@ require('etc/config.php'); // load the main configuration, after GET/POST regist
 
 //--------------------------------------- LOAD SMART-FRAMEWORK
 require('lib/framework/lib__smart_framework.php');
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -415,7 +415,7 @@ SmartCache::setKey('smart-app-runtime', 'visitor-cookie', (string)SMART_APP_VISI
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	-
- * @version 	v.20191112
+ * @version 	v.20200121
  * @package 	Application
  *
  */
@@ -429,7 +429,7 @@ final class SmartFrameworkSecurity {
 	// Validate variable names (by default allow to register ONLY lowercase variables to avoid interfere with PHP reserved variables !! security fix !! ; allow camel case or upper is optional)
 	public static function ValidateVariableName($y_varname, $y_allow_upper_camelcase=false) {
 
-		// VALIDATE INPUT VARIABLE NAMES v.20190226
+		// VALIDATE INPUT VARIABLE NAMES v.20200121
 
 		//--
 		$y_varname = (string) $y_varname; // force string
@@ -595,7 +595,7 @@ final class SmartFrameworkSecurity {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	-
- * @version 	v.20191112
+ * @version 	v.20200121
  * @package 	Application
  *
  */
@@ -1003,7 +1003,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20191213
+ * @version		v.20200121
  * @package 	Application
  *
  */
@@ -1384,7 +1384,7 @@ final class SmartFrameworkRuntime {
 	// THIS FUNCTION IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
 	public static function Extract_Filtered_Request_Get_Post_Vars($filter_____arr, $filter_____info) {
 
-		// FILTER INPUT GET/POST VARIABLES v.20191112 (with collision fix and private space check)
+		// FILTER INPUT GET/POST VARIABLES v.20200121 (with collision fix and private space check)
 		// This no more limits the input variables as it is handled via prior checks to PHP.INI: max_input_vars and max_input_nesting_level
 		// If any of: GET / POST overflow the max_input_vars and max_input_nesting_level a PHP warning is issued !!
 		// The max_input_vars applies separately to each of the input variables, includding array(s) keys
@@ -1549,7 +1549,7 @@ final class SmartFrameworkRuntime {
 	// this will set the app language by sub-domain (this is a special case because by default the language is set by URL Parameter or Cookie)
 	// if en is the default languages will result something like: (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
 	// the default language will be mapped by default to www sub-domain ; the rest of available languages will be mapped as language code as sub-domain
-	public static function AppSetLanguageBySubdomain() { // r.20190117
+	public static function AppSetLanguageBySubdomain() { // r.20200121
 		//--
 		$sdom = (string) SmartUtils::get_server_current_domain_name();
 		if((string)SmartValidator::validate_filter_ip_address($sdom) != '') {
@@ -2066,5 +2066,4 @@ define('SMART_FRAMEWORK_APP_RUNTIME', 'SET');
 //=========================
 
 
-//end of php code
-?>
+// end of php code

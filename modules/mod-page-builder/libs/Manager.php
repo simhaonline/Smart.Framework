@@ -1,7 +1,7 @@
 <?php
 // Class: \SmartModExtLib\PageBuilder\Manager
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 namespace SmartModExtLib\PageBuilder;
 
@@ -50,7 +50,7 @@ $administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Specia
  * @access 		private
  * @internal
  *
- * @version 	v.20191126
+ * @version 	v.20200121
  * @package 	PageBuilder
  *
  */
@@ -2601,4 +2601,3 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 
 
 // end of php code
-?>

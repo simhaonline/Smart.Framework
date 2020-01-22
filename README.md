@@ -2,7 +2,7 @@
 ## Dual-licensed: under BSD license or GPLv3 license (at your choice)
 ### This software project is open source.
 #### You must choose which license to use depending on your use case: BSD license or GPLv3 license
-<b>(c) 2009 - 2019 unix-world.org</b> / <i>support&#64;unix-world.org</i>
+<b>(c) 2009 - 2020 unix-world.org</b> / <i>support&#64;unix-world.org</i>
 
  &nbsp; | &nbsp;
 ------------- | -------------
@@ -41,26 +41,26 @@ The original software architecture of this web framework allows it to deliver a 
 	- caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
 
 
-#### This software framework is compatible, stable and actively tested with PHP 5.6 / 7.0 / 7.1 / 7.2 / 7.3 / 7.4 versions.
+#### This software framework is compatible, stable and actively tested with PHP 7.1 / 7.2 / 7.3 / 7.4 versions.
 **Prefered PHP versions** are: **7.2 / 7.3** which are currently LTS.
 
 <br>
 ### Benchmark Scenario:
 **Using a simple controller (no Caching) that Outputs: 'Hello World'**
 The benchmark was running using *Apache Benchmark* suite with the following command:
-*ab -n 2500 -c 150 http://{localhost}/{framework}/{benchmark-page}*
+*ab -n 5000 -c 500 http://{localhost}/{framework}/{benchmark-page}*
 
 **Hardware platform**: one physical server (Supermicro):
-* **2 x Intel(R) Xeon(R) CPU E5-2650 v4** @ 2.20GHz 64-bit (Total: 24 cores / 48 threads)
+* **2 x Intel(R) Xeon(R) CPU E5-2699 v4** @ 2.20GHz 64-bit (Total: 44 cores / 88 threads)
 * **256 GB RAM**, DDR4 ECC @ 2133 MHz
-* **HDD 2 x 1TB** SSD
+* **HDD 2 x 1TB** SSD/NVME
 
 **Software**:
-* OS: **Debian 10 Linux 64-bit**, up-to-date 2019-11-10
-* Apps: **Apache 2.4.41**, **PHP 7.3.11 with Opcache enabled**
+* OS: **Debian 10 Linux 64-bit**, up-to-date 2020-01-21
+* Apps: **Apache 2.4.41**, **PHP 7.3.13 with Opcache enabled**
 
 #### Benchmark Results of tested PHP Frameworks:
-* **Smart.Framework v.5.2.7 head@2019.11.10** with MarkersTPL Templating: ~ **_28.7K_** (28987) *requests per second*
-* **Symfony 4.3.5** with Twig Templating: ~ **_9.2K_** (9261) *requests per second* ( **3x slower than Smart.Framework** )
-* **Laravel 6** with Blade Templating ~ **_8.5K_** (8530) *requests per second* ( **3x slower than Smart.Framework** )
-* **Zend Framework 3** with PHP Templating: ~ **_6.1K_** (6122) *requests per second* ( **4x slower than Smart.Framework** )
+* **Smart.Framework v.5.7.2 head@2020.01.21** with MarkersTPL Templating: ~ **_55.77K_** (55778) *requests per second*
+* **Symfony 4.4.2** with Twig Templating: ~ **_16.53K_** (16532) *requests per second* ( **3x slower than Smart.Framework** )
+* **Laravel 6** with Blade Templating ~ **_15.32K_** (15323) *requests per second* ( **3x slower than Smart.Framework** )
+* **Zend Framework 3** with PHP Templating: ~ **_12.17K_** (12170) *requests per second* ( **4x slower than Smart.Framework** )

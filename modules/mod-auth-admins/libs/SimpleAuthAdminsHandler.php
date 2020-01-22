@@ -1,7 +1,7 @@
 <?php
 // Class: \SmartModExtLib\AuthAdmins\SimpleAuthAdminsHandler
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 namespace SmartModExtLib\AuthAdmins;
 
@@ -37,7 +37,7 @@ if(\headers_sent()) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD (must be set in set in config-admin.php)
  * Optional constants: APP_AUTH_PRIVILEGES (set in set in config-admin.php)
  *
- * @version 	v.20191111
+ * @version 	v.20200121
  * @package 	development:modules:AuthAdmins
  *
  */
@@ -133,4 +133,3 @@ final class SimpleAuthAdminsHandler {
 //=====================================================================================
 
 // end of php code
-?>

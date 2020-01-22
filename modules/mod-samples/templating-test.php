@@ -2,8 +2,8 @@
 // [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/TemplatingTest
 // Route: ?/page/samples.templating-test (?page=samples.templating-test)
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -89,7 +89,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 		$title = 'Markers-TPL Templating Render Demo - Syntax';
 		//--
-		$data = [ // v.20191115
+		$data = [ // v.20200121
 			//-- ### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE ; variable names will allow also - (. is reserved for separator as arr[key] is ARR.KEY)
 			'Version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
 			'heLLo__World' => '<h1>Demo: Markers-TPL Templating built-into Smart.Framework</h1>',
@@ -152,5 +152,4 @@ class SmartAppAdminController extends SmartAppIndexController {
 } //END CLASS
 
 
-//end of php code
-?>
+// end of php code

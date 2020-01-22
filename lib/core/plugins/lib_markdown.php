@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / Markdown to HTML Parser]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	Smart, SmartUnicode, SmartUtils
- * @version 	v.20191205
+ * @version 	v.20200121
  * @package 	Plugins:ConvertersAndParsers
  *
  * <code>
@@ -50,7 +50,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.20191205@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
+	private $mkdw_version = 'v.1.5.4-r.20200121@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -887,7 +887,7 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//--
-		if(preg_match('/^<(\w*)(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*(\/)?>/', $Line['text'], $matches)) {
+		if(preg_match('/^<(\w*)(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*(\/)'.'?'.'>/', $Line['text'], $matches)) {
 			//--
 			//if(in_array($matches[1], $this->textLevelElements)) {
 			if(in_array(strtolower($matches[1]), $this->textLevelElements)) { // fix from 1.5.4
@@ -1557,7 +1557,7 @@ final class SmartMarkdownToHTML {
 			);
 		} //end if
 		//--
-		if(($Excerpt['text'][1] !== ' ') AND preg_match('/^<\w*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/?>/s', $Excerpt['text'], $matches)) {
+		if(($Excerpt['text'][1] !== ' ') AND preg_match('/^<\w*(?:[ ]*'.$this->regexHtmlAttribute.')*[ ]*\/'.'?'.'>/s', $Excerpt['text'], $matches)) {
 			return array(
 				'markup' => $matches[0],
 				'extent' => strlen($matches[0]),
@@ -1857,4 +1857,3 @@ final class SmartMarkdownToHTML {
 
 
 //end of php code
-?>

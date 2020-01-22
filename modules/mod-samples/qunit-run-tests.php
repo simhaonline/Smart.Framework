@@ -2,8 +2,8 @@
 // [@[#[!SF.DEV-ONLY!]#]@]
 // Controller: Samples/QunitRunTests
 // Route: ?page=samples.qunit-run-tests
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -24,7 +24,7 @@ define('SMART_APP_MODULE_AREA', 'SHARED'); // INDEX, ADMIN, SHARED
  */
 class SmartAppAdminController extends SmartAbstractAppController {
 
-	public function Run() { // r.20191204
+	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
@@ -109,5 +109,4 @@ class SmartAppIndexController extends SmartAppAdminController {
 } //END CLASS
 
 
-//end of php code
-?>
+// end of php code

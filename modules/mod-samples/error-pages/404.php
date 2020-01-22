@@ -1,7 +1,7 @@
 <?php
 // [CUSTOM 404 Status Code Page]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -14,7 +14,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 /**
  * Function: Custom 404 Answer (can be customized on your needs ...)
  *
- * @version		20191110
+ * @version		20200121
  *
  * @access 		private
  * @internal
@@ -41,7 +41,7 @@ function custom_http_message_404_notfound($y_message, $y_html_message='') {
 /**
  * Class: Custom 404 Answer (used for the advanced implementation)
  *
- * @version		20191110
+ * @version		20200121
  *
  * @access 		private
  * @internal
@@ -54,4 +54,3 @@ class CustomErr404 extends \SmartModExtLib\Samples\ErrorXxx {
 
 
 // end of php code
-?>

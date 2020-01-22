@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / MongoDB Database Client]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -25,7 +25,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 /**
  * Class Smart MongoDB Client (for PHP MongoDB extension v.1.1.0 or later)
- * Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1 / 4.2
+ * Tested and Stable on MongoDB Server versions: 3.2 / 3.4 / 3.6 / 4.0 / 4.1 / 4.2 / 4.3
  *
  * <code>
  *
@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20191212
+ * @version 	v.20200121
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -1311,4 +1311,3 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 //=====================================================================================
 
 // end of php code
-?>

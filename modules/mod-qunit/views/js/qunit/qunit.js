@@ -1,5 +1,5 @@
 /*!
- * QUnit 2.9.2 (modified by unixman r.20191024)
+ * QUnit 2.9.2 (modified by unixman r.20200121)
  * https://qunitjs.com/
  *
  * Copyright jQuery Foundation and other contributors

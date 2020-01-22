@@ -1,7 +1,7 @@
 <?php
 // [CUSTOM 403 Status Code Page]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -24,4 +24,3 @@ function custom_http_message_403_forbidden($y_message, $y_html_message='') {
 } //END FUNCTION
 
 // end of php code
-?>

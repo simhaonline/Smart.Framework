@@ -1,7 +1,7 @@
 <?php
 // Class: \SmartModExtLib\AuthAdmins\AuthAdminsHandler
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 namespace SmartModExtLib\AuthAdmins;
 
@@ -54,7 +54,7 @@ if(!\defined('\\APP_AUTH_DB_SQLITE')) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD, APP_AUTH_PRIVILEGES (must be set in set in config-admin.php)
  * Required configuration: $configs['app-auth']['adm-namespaces'][ 'Admins Manager' => 'admin.php?page=auth-admins.manager.stml', ... ] (must be set in set in config-admin.php)
  *
- * @version 	v.20191218
+ * @version 	v.20200121
  * @package 	development:modules:AuthAdmins
  *
  */
@@ -332,4 +332,3 @@ final class AuthAdminsHandler {
 
 
 // end of php code
-?>

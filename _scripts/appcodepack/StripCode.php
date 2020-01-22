@@ -1,7 +1,7 @@
 <?php
 // Strip Code (PHP, JS, CSS)
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('APPCODEPACK_VERSION')) { // this must be defined in the first line of the application
@@ -29,7 +29,7 @@ if(is_file('modules/vendor/MatthiasMullie/autoload.php')) {
 final class StripCode {
 
 	// ::
-	// v.20191217.1427
+	// v.20200121.1507
 
 	public static function strip_css_code($y_file) {
 		//--
@@ -107,4 +107,3 @@ final class StripCode {
 
 
 // end of php code
-?>

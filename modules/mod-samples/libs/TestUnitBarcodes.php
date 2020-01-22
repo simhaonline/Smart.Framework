@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Samples / Test (1D & 2D) Barcodes]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 // Class: \SmartModExtLib\Samples\TestUnitBarcodes
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20191218
+ * @version 	v.20200121
  *
  */
 final class TestUnitBarcodes {
@@ -41,7 +41,7 @@ final class TestUnitBarcodes {
 		//--
 		$str = (string) self::generateCodeForBarcode1D();
 		//--
-		return (new \SmartQR2DBarcode('L'))->renderAsSVG((string)$captcha_code, ['cm'=>'#555555']);
+		return (new \SmartQR2DBarcode('L'))->renderAsSVG((string)$str, ['cm'=>'#555555','wq'=>0]);
 		//--
 	} //END FUNCTION
 	//============================================================
@@ -222,4 +222,3 @@ final class TestUnitBarcodes {
 
 
 // end of php code
-?>

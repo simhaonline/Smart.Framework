@@ -1,7 +1,7 @@
 <?php
 // AppCodePack - a PHP, JS and CSS Optimizer / NetArchive Pack Upgrade Script
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('APPCODEPACK_PROCESS_EXTRA_RUN')) { // this must be defined in the first line of the application
@@ -10,7 +10,7 @@ if(!defined('APPCODEPACK_PROCESS_EXTRA_RUN')) { // this must be defined in the f
 //-----------------------------------------------------
 
 //#####
-// Sample AppCodePack Extra Script, v.20191217.1427
+// Sample AppCodePack Extra Script, v.20200121.1507
 // CUSTOMIZE IT AS NEEDED and rename it to: appcodepack-extra-run.php ; It also need a corresponding: appcodepack-extra-run.inc.htm
 //#####
 
@@ -30,6 +30,4 @@ switch((string)APPCODEPACK_PROCESS_EXTRA_RUN) {
 } //end switch
 //--
 
-
-//end of php code
-?>
+// end of php code

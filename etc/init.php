@@ -1,7 +1,7 @@
 <?php
 // [@[#[!NO-STRIP!]#]@]
 // [Smart.Framework / INIT]
-// r.5.2.7 / smart.framework.v.5.2
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -238,4 +238,3 @@ define('SMART_FRAMEWORK_INITS', 'SET'); // avoid reload inits again (if accident
 //----------------------------------------
 
 // end of php code
-?>

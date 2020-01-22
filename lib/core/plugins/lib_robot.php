@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / (HTTP) Robot]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.2')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20191023
+ * @version 	v.20200121
  * @package 	Plugins:Network
  *
  */
@@ -50,7 +50,7 @@ final class SmartRobot {
 	 */
 	public static function load_url_img_content($y_img_link, $y_allow_set_credentials='no') {
 		//--
-		// v.2019-03-31
+		// v.20200121
 		//--
 		// ### IMPORTANT ###
 		// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO LOAD A FILE PATH
@@ -185,7 +185,7 @@ final class SmartRobot {
 	 */
 	public static function load_url_content($y_url_or_path, $y_timeout=30, $y_method='GET', $y_ssl_method='', $y_auth_name='', $y_auth_pass='', $y_allow_set_credentials='no') {
 		//--
-		// v.2019-03-31
+		// v.20200121
 		// fixed sessionID with new Dynamic generated
 		//--
 		// ### IMPORTANT ###
@@ -424,7 +424,7 @@ final class SmartRobot {
 	 */
 	private static function get_url_or_path_trust_reference($y_url_or_path) {
 		//--
-		// v.2019-03-31
+		// v.20200121
 		//--
 		// ### SECURITY: IMPORTANT !!! ###
 		// BECAUSE OF SECURITY CONCERNS, NEVER USE OR MODIFY THIS FUNCTION TO USE WITH A FILE SYSTEM PATH
@@ -503,4 +503,3 @@ final class SmartRobot {
 
 
 // end of php code
-?>

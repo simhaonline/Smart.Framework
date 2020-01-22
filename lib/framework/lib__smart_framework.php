@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework]
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the first line of the application
@@ -12,9 +12,9 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 
 
 //======================================================
-// Smart-Framework v.5.2
+// Smart-Framework v.5.7
 //======================================================
-// Requires PHP 5.6 or later
+// Requires PHP 7.2 or later
 //======================================================
 // this library should be loaded from app web root only
 //======================================================
@@ -22,7 +22,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // [REGEX-SAFE-OK]
 
 //--------------------------------------------------
-define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.5.2'); // required for framework to function
+define('SMART_FRAMEWORK_VERSION', 'smart.framework.v.5.7'); // required for framework to function
 //--------------------------------------------------
 
 
@@ -57,7 +57,7 @@ require('lib/framework/lib_utils.php');			// smart utils
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20200121
  *
  */
 interface SmartInterfaceAppBootstrap {
@@ -106,7 +106,7 @@ interface SmartInterfaceAppBootstrap {
  * @access 		private
  * @internal
  *
- * @version 	v.20191110
+ * @version 	v.20200121
  *
  */
 interface SmartInterfaceAppInfo {
@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20191209
+ * @version 	v.20200121
  * @package 	development:Application
  *
  */
@@ -1687,4 +1687,3 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 
 // end of php code
-?>

@@ -1,11 +1,11 @@
 
-// r.5.2.7 / smart.framework.v.5.2
+// r.5.7.2 / smart.framework.v.5.7
 
 /*
  * SmartQUnit 1.2.1
- * @version 20191110
+ * @version 20200121
  *
- * (c) 2018-2019 unix-world.org
+ * (c) 2018-2020 unix-world.org
  * Released under the BSD license
  */
 

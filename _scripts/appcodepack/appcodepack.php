@@ -1,7 +1,7 @@
 <?php
 // AppCodePack - Release Manager: a PHP, JS and CSS Optimizer + NetArchive Packer
-// (c) 2006-2019 unix-world.org - all rights reserved
-// r.5.2.7 / smart.framework.v.5.2
+// (c) 2006-2020 unix-world.org - all rights reserved
+// r.5.7.2 / smart.framework.v.5.7
 
 //===== CODE OPTIMIZATIONS INFO:
 // The AppCodePack optimize will process the following type of source code (php/js/css):
@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20200113.1055'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200121.1507'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -791,7 +791,7 @@ function RunApp() {
 final class AppCodeOptimizer {
 
 	// ->
-	// v.20200113
+	// v.20200121
 
 	private $log;
 	private $err;
@@ -1349,7 +1349,7 @@ final class AppCodeOptimizer {
 final class PhpOptimizer {
 
 	// ::
-	// v.20200113
+	// v.20200121
 
 	private static $strip_autoloaded = false;
 
@@ -1460,7 +1460,7 @@ public static function lint_code($y_script_path) {
 final class JsOptimizer {
 
 	// ::
-	// v.20200113
+	// v.20200121
 
 	private static $strip_autoloaded = false;
 
@@ -1644,7 +1644,7 @@ public static function lint_code($y_script_path) {
 final class CssOptimizer {
 
 	// ::
-	// v.20200113
+	// v.20200121
 
 	private static $strip_autoloaded = false;
 
@@ -1804,7 +1804,7 @@ public static function minify_code($y_stylesheet_path) {
 final class AppNetPackager {
 
 	// ->
-	// v.20200113
+	// v.20200121
 
 //=====================================================================================
 //--
@@ -2272,7 +2272,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20200113 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200121 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3364,7 +3364,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### Smart v.20191213
+	//##### Smart v.20200121
 
 
 	//================================================================
@@ -3899,7 +3899,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartHashCrypto v.20190103
+	//##### SmartHashCrypto v.20200121
 
 
 	//==============================================================
@@ -4016,7 +4016,7 @@ Options -Indexes
 	//==============================================================
 
 
-	//##### SmartHttpUtils v.20191213
+	//##### SmartHttpUtils v.20200121
 
 
 	//==============================================
@@ -4162,7 +4162,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartUtils v.20191220
+	//##### SmartUtils v.20200121
 
 
 	//================================================================
@@ -4336,7 +4336,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20191220
+	//##### SmartFileSysUtils v.20200121
 
 
 	//================================================================
@@ -4646,7 +4646,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20191220
+	//##### SmartFileSystem v.20200121
 
 
 	//================================================================
@@ -6056,5 +6056,4 @@ Options -Indexes
 //=====================================================================================
 
 
-//end of php code
-?>
+// end of php code
