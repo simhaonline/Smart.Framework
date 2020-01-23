@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavFileSystem {
 
 	// ::
-	// v.20200121
+	// v.20200123
 
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	public static function methodOptions() { // 200
@@ -594,7 +594,8 @@ final class DavFileSystem {
 					'type'  => (string) self::mimeTypeDir((string)$files_n_dirs['list-dirs'][$i]),
 					'size'  => '-',
 					'modif' => (string) \date('Y-m-d H:i:s O', (int)\SmartFileSystem::get_file_mtime($fixed_vfs_dir.$files_n_dirs['list-dirs'][$i])),
-					'link'  => (string) $fixed_dav_url.$files_n_dirs['list-dirs'][$i]
+					'link'  => (string) $fixed_dav_url.$files_n_dirs['list-dirs'][$i],
+					'icon'  => (string) \SmartModExtLib\Webdav\DavUtils::getFolderIcon($files_n_dirs['list-dirs'][$i])
 				];
 			} //end for
 			$arr_f_files = array();
@@ -604,7 +605,8 @@ final class DavFileSystem {
 					'type'  => (string) self::mimeTypeFile((string)$files_n_dirs['list-files'][$i]),
 					'size'  => (string) \SmartUtils::pretty_print_bytes((int)\SmartFileSystem::get_file_size($fixed_vfs_dir.$files_n_dirs['list-files'][$i]), 2, ' '),
 					'modif' => (string) \date('Y-m-d H:i:s O', (int)\SmartFileSystem::get_file_mtime($fixed_vfs_dir.$files_n_dirs['list-files'][$i])),
-					'link'  => (string) $fixed_dav_url.$files_n_dirs['list-files'][$i]
+					'link'  => (string) $fixed_dav_url.$files_n_dirs['list-files'][$i],
+					'icon'  => (string) \SmartModExtLib\Webdav\DavUtils::getFileIcon($files_n_dirs['list-files'][$i])
 				];
 			} //end for
 			$detect_dav_url_root = (array) \explode('~', (string)$dav_url);

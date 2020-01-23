@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Smart.Framework::DAV @ UserInfo: [DAV-FsMount] # [###INFO-ROOT|html###] # r.20200121 -->
+<!-- Smart.Framework::DAV @ UserInfo: [DAV-FsMount] # [###INFO-ROOT|html###] # r.20200123 -->
 <html>
 <head>
 	<meta charset="[###CHARSET|html###]">
@@ -113,21 +113,23 @@
 <div id="lst">
 	<table width="100%" border="0"><tbody>
 	<tr>
+		<td style="background:#FFFFFF!important;"><b>Icon</b></td>
 		<td style="background:#FFFFFF!important;"><b>Name</b></td>
 		<td style="background:#FFFFFF!important;"><b>Type</b></td>
 		<td style="background:#FFFFFF!important;"><b>Size</b></td>
 		<td style="background:#FFFFFF!important;"><b>Last modified</b></td>
 	</tr>
 	<tr>
-		<td colspan="4" style="background:#FFFFFF!important;"><hr size="1"></td>
+		<td colspan="5" style="background:#FFFFFF!important;"><hr size="1"></td>
 	</tr>
 [%%%IF:IS-ROOT:!=yes;%%%]
 	<tr>
-		<td colspan="4" style="background:#FFFFFF!important;"><b><a href="[###BACK-PATH|html###]" title="Go to Parent Directory: [###BACK-PATH|html###]">..^..</a></b></td>
+		<td colspan="5" style="background:#FFFFFF!important;"><b><a href="[###BACK-PATH|html###]" title="Go to Parent Directory: [###BACK-PATH|html###]">..^..</a></b></td>
 	</tr>
 [%%%/IF:IS-ROOT%%%]
 [%%%LOOP:LIST-DIRS%%%]
 	<tr>
+		<td width="32"><img src="[###BASE-URL|html###]modules/mod-webdav/libs/img/ftype-icons/[###LIST-DIRS.ICON|html###]" width="16" height="16"></td>
 		<td style="color:#437700;"><b><a href="[###LIST-DIRS.LINK|html###]" style="color:#437700;">[###LIST-DIRS.NAME|html###]</a></b></td>
 		<td style="color:#437700; text-align:center;">[###LIST-DIRS.TYPE|html###]</td>
 		<td style="color:#778899;"><b>[###LIST-DIRS.SIZE|html###]</b></td>
@@ -136,6 +138,7 @@
 [%%%/LOOP:LIST-DIRS%%%]
 [%%%LOOP:LIST-FILES%%%]
 	<tr>
+		<td width="32"><img src="[###BASE-URL|html###]modules/mod-webdav/libs/img/ftype-icons/[###LIST-FILES.ICON|html###]" width="16" height="16"></td>
 		<td style="color:#003399;"><b><a href="[###LIST-FILES.LINK|html###]" style="color:#003399;">[###LIST-FILES.NAME|html###]</a></b></td>
 		<td style="color:#003399; text-align:center;">[###LIST-FILES.TYPE|html###]</td>
 		<td style="color:#778899;"><b>[###LIST-FILES.SIZE|html###]</b></td>

@@ -48,7 +48,7 @@ The original software architecture of this web framework allows it to deliver a 
 ### Benchmark Scenario:
 **Using a simple controller (no Caching) that Outputs: 'Hello World'**
 The benchmark was running using *Apache Benchmark* suite with the following command:
-*ab -n 5000 -c 500 http://{localhost}/{framework}/{benchmark-page}*
+*ab -n 5000 -c 250 http://{localhost}/{framework}/{benchmark-page}*
 
 **Hardware platform**: one physical server (Supermicro):
 * **2 x Intel(R) Xeon(R) CPU E5-2699 v4** @ 2.20GHz 64-bit (Total: 44 cores / 88 threads)
@@ -60,7 +60,7 @@ The benchmark was running using *Apache Benchmark* suite with the following comm
 * Apps: **Apache 2.4.41**, **PHP 7.3.13 with Opcache enabled**
 
 #### Benchmark Results of tested PHP Frameworks:
-* **Smart.Framework v.5.7.2 head@2020.01.21** with MarkersTPL Templating: ~ **_55.77K_** (55778) *requests per second*
-* **Symfony 4.4.2** with Twig Templating: ~ **_16.53K_** (16532) *requests per second* ( **3x slower than Smart.Framework** )
-* **Laravel 6** with Blade Templating ~ **_15.32K_** (15323) *requests per second* ( **3x slower than Smart.Framework** )
-* **Zend Framework 3** with PHP Templating: ~ **_12.17K_** (12170) *requests per second* ( **4x slower than Smart.Framework** )
+* **Smart.Framework v.5.7.2 head@2020.01.21** with MarkersTPL Templating: ~ **_8.77K_** (8771) *requests per second*
+* **Symfony 4.4.2** with Twig Templating: ~ **_1.53K_** (1532) *requests per second* ( **5x slower than Smart.Framework** )
+* **Laravel 6** with Blade Templating ~ **_1.32K_** (1323) *requests per second* ( **6x slower than Smart.Framework** )
+* **Zend Framework 3** with PHP Templating: ~ **_1.17K_** (1175) *requests per second* ( **7x slower than Smart.Framework** )
