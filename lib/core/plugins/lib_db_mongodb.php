@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200217
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -419,8 +419,8 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * @method MIXED		findone(STRING $strCollection, ARRAY $arrQuery, ARRAY $arrProjFields, ARRAY *$arrOptions)	:: find single document in a collection with optional filter criteria / limit
 	 * @method MIXED		bulkinsert(STRING $strCollection, ARRAY $arrMultiDocs)										:: add multiple documents to a collection
 	 * @method MIXED		insert(STRING $strCollection, ARRAY $arrDoc)												:: add single document to a collection
-	 * @method MIXED		upsert(STRING $strCollection, ARRAY $arrFilter, STRING $strUpdOp, ARRAY $arrUpd)			:: insert single or modify single or multi documents in a collection that are matching the filter criteria ; this is always non-fatal, will throw catcheable exception on error ...
-	 * @method MIXED		update(STRING $strCollection, ARRAY $arrFilter, STRING $strUpdOp, ARRAY $arrUpd)			:: modify single or many documents in a collection that are matching the filter criteria
+	 * @method MIXED		upsert(STRING $strCollection, ARRAY $arrFilter, MIXED $strUpdOpOrArrUpd, ARRAY *$arrUpd)	:: insert single or modify single or multi documents in a collection that are matching the filter criteria
+	 * @method MIXED		update(STRING $strCollection, ARRAY $arrFilter, MIXED $strUpdOpOrArrUpd, ARRAY *$arrUpd)	:: modify single or many documents in a collection that are matching the filter criteria
 	 * @method MIXED		delete(STRING $strCollection, ARRAY $arrFilter)												:: delete single or many documents from a collection that are matching the filter criteria
 	 * @method MIXED		command($arrCmd)																			:: run a command over database like: aggregate, distinct, mapReduce, create Collection, drop Collection, ...
 	 * @method MIXED		igcommand($arrCmd)																			:: run a command over database and ignore if error ; in the case of throw error will ignore it and will not stop execution ; will return the errors instead of result like: create Collection which may throw errors if collection already exists, drop Collection, similar if does not exists
@@ -499,7 +499,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * $update = $mongo->update(
 	 * 		'myTestCollection',
 	 * 		[ 'id' => 'XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX' ], 			// filter (update only this)
-	 * 		'$set', 														// increment operation
+	 * 		'$set', 													// increment operation
 	 * 		(array) $doc												// update array
 	 * 	);
 	 * $doc = [];
@@ -509,15 +509,18 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * <code>
 	 * // Sample Upsert
 	 * $doc = [];
-	 * $doc['id']  = 'XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX'; // comes from $mongo->assign_uuid();
+	 * $docID  = 'XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX'; // comes from $mongo->assign_uuid();
 	 * $doc['name'] = 'My Newest Name';
 	 * $doc['description'] = 'Some description goes here ...';
 	 * try {
 	 * 		$upsert = $mongo->upsert(
 	 * 			'myTestCollection',
-	 * 			[ 'id' => $doc['id'] ], 	// filter (update only this)
-	 * 			'$set', 					// increment operation
-	 * 			(array) $doc			// update array
+	 * 			[ 'id' => $docID ], 								// filter (update only this)
+	 * 			[ // also the $mongo->update() can use this style of associative array
+	 * 				'$setOnInsert' 	=> (array) [ 'id' => $docID ], 						// just on insert
+	 * 				'$set' 			=> (array) $doc, 									// update array
+	 * 				'$addToSet' 	=> (array) [ 'updated' => date('Y-m-d H:i:s') ] 	// update array #2 using $addToSet (can be also: $push or $inc, ...)
+	 * 			]
 	 * 		);
 	 * } catch(\Exception $err) {
 	 * 		// if upsert goes wrong ...
@@ -736,8 +739,8 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 			//--
 			case 'bulkinsert': 	// ARGS [ strCollection, arrMultiDocs ] ; can do multiple inserts
 			case 'insert': 		// ARGS [ strCollection, arrDoc ] ; can do just single insert
-			case 'upsert': 		// ARGS [ strCollection, arrDoc ] ; can do just single insert or single/multi update
-			case 'update': 		// ARGS [ strCollection, arrFilter, strUpdOp, arrUpd ] ; can do single or multi update
+			case 'upsert': 		// ARGS [ strCollection, arrFilter, strUpsOp/arrUps, arrUps* ] ; can do just single insert or single/multi update
+			case 'update': 		// ARGS [ strCollection, arrFilter, strUpdOp/arrUpd, arrUpd* ] ; can do single or multi update
 				//--
 				$dcmd = 'write';
 				//--
@@ -793,19 +796,31 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 						$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Invalid Filter provided ...', $args);
 						return array();
 					} //end if
-					$qry = (string) 'update:'.$args[2];
+					$qry = (string) $method.':'.(is_array($args[2]) ? (string)implode(',', array_keys($args[2])) : (string)$args[2]);
 					if((string)$method == 'upsert') {
-						$opts = [ // update options
+						$opts = [ // update options for upsert
 							'multi' 	=> true, // update all the matching documents
 							'upsert' 	=> true // if filter does not match an existing document, do insert a single document
 						];
 					} else { // update
 						$opts = [ // update options
 							'multi' 	=> true, // update all the matching documents
-							'upsert' 	=> false // if filter does not match an existing document, do not insert a single document
+							'upsert' 	=> false // if filter does not match an existing document, do not insert a single document and do no update
 						];
 					} //end if else
-					if(Smart::array_size($args[3]) > 0) {
+					if((Smart::array_size($args[2]) > 0) AND (Smart::array_type_test($args[2]) == 2)) { // expects associative array and the 3rd param as empty
+						if(!empty($args[3])) {
+							$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Document must be combined with Operation if the associative array is passed as operation ...', $args);
+							return array();
+							break;
+						} //end if
+						$write->update(
+							(array) $args[1], 									// filter
+							(array) $args[2], 									// must be in format: [ '$set|$inc|$mul|...' => (array)$doc ]
+							(array) $opts										// options
+						);
+						$num_docs++;
+					} elseif(Smart::array_size($args[3]) > 0) { // non-associative array mapped to $args[2] operation
 						$write->update(
 							(array) $args[1], 									// filter
 							(array) [ (string)$args[2] => (array)$args[3] ], 	// must be in format: [ '$set|$inc|$mul|...' => (array)$doc ]
@@ -866,7 +881,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 					$obj[3] = []; // return extra messages
 					if((string)$method == 'upsert') {
 						$obj[3] = [
-							'upserted-ids' => (array) $result->getUpsertedIds()
+							'upserted-ids' => (array) $result->getUpsertedIds() // this is returned only on INSERT
 						];
 					} //end if
 					$msg = '';

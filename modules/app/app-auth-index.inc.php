@@ -28,6 +28,11 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 // But in the case you need it, see an example here: modules/app/app-auth-admin.inc.php
 //-------------------------------------------
 
+//-- security: click hijacking protection (choose only one from below)
+//@header('X-Frame-Options: SAMEORIGIN'); // basic protection (not working with wildcard domains) ; accepted values: `DENY`, `SAMEORIGIN`, `ALLOWALL`
+//@header('Content-Security-Policy: frame-ancestors \'self\' '.$configs['app']['index-domain'].' *.'.$configs['app']['index-domain']); // advanced protection (allow specific domains or wildcard domains)
+//--
+
 // # Here is a sample code to handle the privileged IP of localhost as client ; the constant APP_INDEX_IPRANGE_PRIVILEGED can be later used for special privileges when running the app on DEV mode
 /*
 if(defined('APP_INDEX_IPRANGE_PRIVILEGED')) {

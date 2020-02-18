@@ -7,6 +7,12 @@
  * instead of the old 'em' (relative to parent size)
  */
 
+/*
+:root {
+	color-scheme: light dark;
+}
+*/
+
 * {
 	font-smooth: always;
 	/* font-size-adjust: 0.55; */
@@ -21,6 +27,7 @@ html, body{
 
 body {
 	background: #FFFFFF;
+	color: #111111;
 }
 
 body {

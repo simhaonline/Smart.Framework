@@ -37,6 +37,8 @@ php_flag zend.multibyte					Off
 #</FilesMatch>
 ###
 
+### To avoid infinite loops with cyclic rewrite redirects it is recommended to set in apache config a reasonable value for LimitInternalRecursion (ex: `LimitInternalRecursion 10`)
+
 ### Rewrite :: For the most basic rewrite version, just uncomment the lines below that start with a single #
 #<IfModule mod_rewrite.c>
 

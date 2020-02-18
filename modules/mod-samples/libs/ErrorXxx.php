@@ -24,10 +24,15 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 /**
  * Sample Helper to implement custom Error Handlers for HTTP Status Errors (4xx, 5xx)
  *
+ * IMPORTANT:
+ * implementing custom handlers needs to avoid internal infinite loops (Ex: a 404 page may require a css that is not available and will call inside another 404 ...)
+ * To avoid infinite loops, apache2 have a core directive as: LimitInternalRecursion
+ * Example: `LimitInternalRecursion 10` is a good value
+ *
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200217
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {

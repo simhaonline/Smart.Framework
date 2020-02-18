@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200217
  *
  */
 final class TestUnitMongoDB {
@@ -228,13 +228,14 @@ final class TestUnitMongoDB {
 			$doc['id']  = $uuid;
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 0;
-			$doc['upsert'] = 'insert';
 			try {
 				$result = $mongo->upsert(
 					'myTestCollection',
-					[ 'id' => $uuid ], 		// filter (update only this)
-					'$set', 				// increment operation
-					(array) $doc			// update array
+					[ 'id' => $uuid ], 			// filter (update only this)
+					[
+						'$setOnInsert' => (array)$doc, // insert array
+						'$set' => [ 'upsert' => 'insert' ] // update array
+					]
 				);
 			} catch(\Exception $err) {
 				\Smart::log_warning(__METHOD__.'() # MongoDB Upsert (#2) :: Exception: '.$err->getMessage());

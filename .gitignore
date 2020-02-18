@@ -11,6 +11,7 @@ modules/mod-dbal-zend
 modules/mod-docs
 modules/mod-documentor
 modules/mod-ecomm-cart
+modules/mod-geoip
 modules/mod-highlight-syntax
 modules/mod-js-components
 modules/mod-lang-detect
