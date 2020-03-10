@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200306
  * @package 	Plugins:ViewComponents
  *
  */
@@ -534,7 +534,7 @@ final class SmartViewHtmlHelpers {
 	 * @param CODE				$y_custom_js			custom js code (Ex: submit on change)
 	 * @param YES/NO			$y_raw					If Yes, the description values will not apply html special chars
 	 * @param YES/NO			$y_allowblank			If Yes, a blank value is allowed in list
-	 * @param CSS/#JS-UI#		$y_extrastyle			Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'
+	 * @param CSS/#JS-UI#		$y_extrastyle			Extra CSS Style | 'class:a-css-class' | '#JS-UI#' or '#JS-UI-FILTER#'
 	 *
 	 * @return STRING 									[HTML Code]
 	 */
@@ -621,7 +621,18 @@ final class SmartViewHtmlHelpers {
 		} else {
 			//--
 			if((string)$y_mode == 'form') {
-				$css_class = 'class="ux-field"';
+				$css_class = 'class="ux-field';
+				if((string)$y_extrastyle != '') {
+					$y_extrastyle = (string) trim((string)$y_extrastyle);
+					if(stripos($y_extrastyle, 'class:') === 0) {
+						$y_extrastyle = (string) trim((string)substr($y_extrastyle, strlen('class:')));
+						if((string)$y_extrastyle != '') {
+							$css_class .= ' '.Smart::escape_html($y_extrastyle);
+						} //end if
+						$y_extrastyle = '';
+					} //end if
+				} //end if else
+				$css_class .= '"';
 			} //end if
 			//--
 		} //end if else
@@ -632,7 +643,14 @@ final class SmartViewHtmlHelpers {
 		//--
 		if((string)$y_mode == 'form') {
 			//--
-			$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" size="1" '.$css_class.' style="width:'.$the_width.'px; '.$y_extrastyle.'" '.$y_custom_js.'>'."\n";
+			$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" size="1" '.$css_class.' style="width:'.$the_width.'px;';
+			//--
+			$y_extrastyle = (string) trim((string)$y_extrastyle);
+			if((string)$y_extrastyle != '') {
+				$out .= ' '.Smart::escape_html($y_extrastyle);
+			} //end if
+			//--
+			$out .= '" '.$y_custom_js.'>'."\n";
 			//--
 			if((string)$y_allowblank == 'yes') {
 				$out .= '<option value="">&nbsp;</option>'."\n"; // we need a blank value to avoid wrong display of selected value
@@ -723,7 +741,7 @@ final class SmartViewHtmlHelpers {
 	 * @param YES/NO 			$y_sync_values			If Yes, sync select similar values used (curently works only for checkboxes)
 	 * @param INTEGER			$y_dimensions			dimensions in pixels (width or width / (list) height for '#JS-UI#' or '#JS-UI-FILTER#')
 	 * @param CODE				$y_custom_js			custom js code (Ex: submit on change)
-	 * @param SPECIAL			$y_extrastyle			Extra Style CSS | '#JS-UI#' or '#JS-UI-FILTER#'
+	 * @param SPECIAL			$y_extrastyle			Extra CSS Style | 'class:a-css-class' | '#JS-UI#' or '#JS-UI-FILTER#'
 	 *
 	 * @return STRING 									[HTML Code]
 	 */
@@ -828,7 +846,18 @@ final class SmartViewHtmlHelpers {
 			$use_blank_value = 'no';
 			//--
 			if((string)$y_mode == 'form') {
-				$css_class = 'class="ux-field"';
+				$css_class = 'class="ux-field';
+				if((string)$y_extrastyle != '') {
+					$y_extrastyle = (string) trim((string)$y_extrastyle);
+					if(stripos($y_extrastyle, 'class:') === 0) {
+						$y_extrastyle = (string) trim((string)substr($y_extrastyle, strlen('class:')));
+						if((string)$y_extrastyle != '') {
+							$css_class .= ' '.Smart::escape_html($y_extrastyle);
+						} //end if
+						$y_extrastyle = '';
+					} //end if
+				} //end if else
+				$css_class .= '"';
 			} //end if
 			//--
 		} //end if else
@@ -840,12 +869,24 @@ final class SmartViewHtmlHelpers {
 		if((string)$y_mode == 'form') {
 			//--
 			if((string)$y_draw == 'checkboxes') { // checkboxes
+				//--
 				$out .= '<input type="hidden" name="'.$y_varname.'" value="">'."\n"; // we need a hidden value
+				//--
 			} else { // list
-				$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" '.$css_class.' style="width:'.$the_width.'px; '.$y_extrastyle.'" '.$use_multi_list_htm.' '.$y_custom_js.'>'."\n";
+				//--
+				$out .= '<select name="'.$y_varname.'" id="'.$element_id.'" '.$css_class.' style="width:'.$the_width.'px;';
+				//--
+				$y_extrastyle = (string) trim((string)$y_extrastyle);
+				if((string)$y_extrastyle != '') {
+					$out .= ' '.Smart::escape_html($y_extrastyle);
+				} //end if
+				//--
+				$out .= '" '.$use_multi_list_htm.' '.$y_custom_js.'>'."\n";
+				//--
 				if((string)$use_blank_value == 'yes') {
 					$out .= '<option value="">&nbsp;</option>'."\n"; // we need a blank value to unselect
 				} //end if
+				//--
 			} //end if else
 			//--
 		} //end if

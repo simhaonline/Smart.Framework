@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavFileSystem {
 
 	// ::
-	// v.20200123
+	// v.20200227
 
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	public static function methodOptions() { // 200
@@ -672,6 +672,9 @@ final class DavFileSystem {
 		\header('Last-Modified: '.\gmdate('D, d M Y H:i:s').' GMT');
 		\header('Content-length: '.(int)\SmartFileSystem::get_file_size($dav_vfs_path));
 		\header('Content-Type: '.(string)self::mimeTypeFile($dav_vfs_path));
+		if(\ob_get_level()) {
+			\ob_end_flush(); // fix to avoid get out of memory with big files
+		} //end if
 		@\readfile($dav_vfs_path);
 		return 200;
 		//--

@@ -31,8 +31,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * // sample mongo config
  * $cfg_mongo = array();
- * $cfg_mongo['type'] 		= 'mongo-standalone'; 				// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
- * $cfg_mongo['server-host']	= '127.0.0.1';							// mongodb host
+ * $cfg_mongo['type'] 		= 'mongo-standalone'; 				// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding) | 'mongo-replica-set:My-Replica' (replica set)
+ * $cfg_mongo['server-host']	= '127.0.0.1';							// mongodb host or comma separed list of multiple hosts
  * $cfg_mongo['server-port']	= '27017';									// mongodb port
  * $cfg_mongo['dbname']		= 'smart_framework';			// mongodb database
  * $cfg_mongo['username'] 		= '';											// mongodb username
@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20200217
+ * @version 	v.20200227
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -141,10 +141,6 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 			return;
 		} //end if
 		//--
-		if((string)$type != 'mongo-cluster') {
-			$type = 'mongo-standalone';
-		} //end if else
-		//--
 		if((string)$password != '') {
 			$password = (string) base64_decode((string)$password);
 		} //end if
@@ -155,7 +151,32 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 		} //end if
 		//--
 		$this->srvver = '';
-		$this->server = (string) $host.':'.$port;
+		//--
+		if(strpos((string)$host, ',') !== false) {
+			$tmp_arr_hosts = (array) explode(',', (string)$host);
+			$arr_hosts = [];
+			$host = '';
+			for($i=0; $i<Smart::array_size($tmp_arr_hosts); $i++) {
+				$tmp_arr_hosts[$i] = (string) trim((string)$tmp_arr_hosts[$i]);
+				if((string)$tmp_arr_hosts[$i] != '') {
+					$arr_hosts[(string)$tmp_arr_hosts[$i]] = (string) $tmp_arr_hosts[$i];
+				} //end if
+			} //end if
+			$tmp_arr_hosts = array();
+			$arr_hosts = (array) array_values((array)$arr_hosts);
+			if(Smart::array_size($arr_hosts) <= 0) {
+				$this->error('[CHECK-CONFIGS]', 'MongoDB Configuration Init', 'CHECK Connection Param Multi-Hosts: '.$host.':'.$port.'@'.$db, 'Invalid Multi-Hosts Parameter');
+				return;
+			} //end if
+			$host = (string) implode(',', (array)$arr_hosts);
+			for($i=0; $i<Smart::array_size($arr_hosts); $i++) {
+				$arr_hosts[$i] = (string) $arr_hosts[$i].':'.(int)$port;
+			} //end if
+			$this->server = (string) implode(',', (array)$arr_hosts);
+		} else {
+			$this->server = (string) $host.':'.(int)$port;
+		} //end if else
+		//--
 		$this->db = (string) $db;
 		//--
 		$this->timeout = Smart::format_number_int($timeout, '+');
@@ -1105,9 +1126,15 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	private function connect($type, $username, $password) {
 
 		//--
+		$replica = false;
 		if((string)$type == 'mongo-cluster') { // cluster (sharding)
 			$concern_rd = 'majority'; // requires the servers to be started with --enableMajorityReadConcern
 			$concern_wr = 'majority'; // make sense if with a sharding cluster
+		} elseif(strpos((string)$type, 'mongo-replica-set:') !== false) { // replica set
+			$replica = (array) explode('mongo-replica-set:', (string)$type);
+			$replica = (string) trim((string)$replica[1]);
+			$concern_rd = 'available';
+			$concern_wr = 'majority';
 		} else { // mongo-standalone
 			$concern_rd = 'local';
 			$concern_wr = 1;
@@ -1125,6 +1152,12 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 			'w' 						=> $concern_wr, // wr concern
 			'wTimeoutMS' 				=> (int) (SMART_FRAMEWORK_NETSOCKET_TIMEOUT * 1000) // if this is 0 (no timeout) the write operation will block indefinitely
 		);
+		if($replica !== false) {
+			$options['replicaSet'] = (string) $replica;
+			$nfo_replica = ' @ [replicaSet='.$replica.']';
+		} else {
+			$nfo_replica = '';
+		} //end if
 		//--
 		if((string)$username != '') {
 			$options['username'] = (string) $username;
@@ -1144,7 +1177,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 					'type' => 'open-close',
-					'data' => 'Re-Using MongoDB Manager Instance :: ServerType ['.$type.']: '.$this->connex_key
+					'data' => 'Re-Using MongoDB Manager Instance :: ServerType ['.$type.']: '.$this->connex_key.$nfo_replica
 				]);
 			} //end if
 			//--
@@ -1164,7 +1197,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('db', 'mongodb|log', [
 					'type' => 'open-close',
-					'data' => 'Creating MongoDB Manager Instance :: ServerType ['.$type.']: '.$this->connex_key
+					'data' => 'Creating MongoDB Manager Instance :: ServerType ['.$type.']: '.$this->connex_key.$nfo_replica
 				]);
 			} //end if
 			//--

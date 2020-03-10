@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200221
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -538,8 +538,8 @@ final class SmartHtmlParser {
 		//--
 		if($this->signature) {
 			if($use_dom) {
-			$start_signature = '<!-- Smart/HTML.Cleaner [@] -->';
-			$end_signature = '<!-- [/@] Smart/HTML.Cleaner -->';
+				$start_signature = '<!-- Smart/HTML.Cleaner [@] -->';
+				$end_signature = '<!-- [/@] Smart/HTML.Cleaner -->';
 			} else {
 				$start_signature = '<!-- Smart/HTML.Cleaner [#] -->';
 				$end_signature = '<!-- [/#] Smart/HTML.Cleaner -->';
@@ -555,36 +555,6 @@ final class SmartHtmlParser {
 		//--
 
 	} //END FUNCTION
-	//=========================================================================
-
-
-	//=========================================================================
-	/*
-	// https://gist.github.com/Xeoncross/5118201
-	public function clean_dom_html($html, array $whitelist) {
-		libxml_use_internal_errors(true) AND libxml_clear_errors();
-		if(is_object($html)) {
-			if ($html->hasChildNodes()) {
-				foreach (range($html->childNodes->length - 1, 0) as $z => $i) {
-					$this->clean_dom_html($html->childNodes->item($i), $whitelist);
-				}
-			}
-			if ( ! in_array($html->nodeName, $whitelist)) {
-				$fragment = $html->ownerDocument->createDocumentFragment();
-				while ($html->childNodes->length > 0) {
-				    $fragment->appendChild($html->childNodes->item(0));
-				}
-				return $html->parentNode->replaceChild($fragment, $html);
-			}
-			while ($html->hasAttributes()) {
-				$html->removeAttributeNode($html->attributes->item(0));
-			}
-		} else if($dom = DOMDocument::loadHTML($html)) {
-			$this->clean_dom_html($dom->documentElement, $whitelist);
-			return preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i', '', $dom->saveHTML());
-		}
-	} //END FUNCTION
-	*/
 	//=========================================================================
 
 

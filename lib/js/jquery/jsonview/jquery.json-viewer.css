@@ -1,6 +1,7 @@
 /**
  * jQuery json-viewer @ r.2016.08.22 # https://github.com/abodelot/jquery.json-viewer
  * @author: Alexandre Bodelot <alexandre.bodelot@gmail.com>
+ * contains fixes by unixman: r.2020.03.06
  */
 
 /* fix by unixman */
@@ -17,12 +18,23 @@ ul.json-dict, ol.json-array {
 	border-left: 1px dotted #ccc;
 	padding-left: 28px;
 }
+.json-key {
+	color: #333333;
+	font-weight: bold;
+}
 .json-string {
 	color: #0B7500;
 }
-.json-literal {
-	color: #1A01CC;
+.json-null {
+	color: #EE293A;
 	font-weight: bold;
+}
+.json-boolean {
+	color: #107DAC;
+	font-weight: bold;
+}
+.json-numeric {
+	color: #005073;
 }
 
 /* Toggle button */

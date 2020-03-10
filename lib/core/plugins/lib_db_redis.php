@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200302
  * @package 	Plugins:Database:Redis
  *
  */
@@ -485,7 +485,7 @@ final class SmartRedisDb {
 		//--
 		if((string)$type == '-') { // error message
 			//--
-			$this->error('Redis Response', 'Invalid Response', 'Method: '.$method); // fatal error
+			$this->error('Redis Response', 'Invalid Response', 'Method: '.$method."\n".'ERR-MSG: `'.$line.'`'); // fatal error
 			return null;
 			//--
 		} elseif((string)$type == '$') { // bulk reply

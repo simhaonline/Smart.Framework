@@ -395,6 +395,9 @@ abstract class SmartAbstractAppMiddleware {
 							SmartFrameworkRuntime::outputHttpSafeHeader('Content-Disposition: '.$mime_disp);
 							SmartFrameworkRuntime::outputHttpSafeHeader('Content-Length: '.$fsize);
 							//--
+							if(ob_get_level()) {
+								ob_end_flush(); // fix to avoid get out of memory with big files
+							} //end if
 							@readfile((string)$filepath); // output without reading all in memory
 							//--
 						} else {

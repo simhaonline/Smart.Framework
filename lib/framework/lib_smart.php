@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200121
+ * @version     v.20200310
  * @package     @Core
  *
  */
@@ -243,7 +243,21 @@ final class Smart {
 			foreach($y_params as $key => $val) {
 				if((string)$key != '') {
 					if(SmartFrameworkSecurity::ValidateVariableName((string)$key, true)) { // {{{SYNC-REQVARS-CAMELCASE-KEYS}}}
-						if((string)$val != '') {
+						$suffix = '';
+						if(is_array($val)) {
+							$arrtype = self::array_type_test($val); // 0: not an array ; 1: non-associative ; 2:associative
+							if($arrtype === 1) { // 1: non-associative
+								for($i=0; $i<Smart::array_size($val); $i++) {
+									$suffix = (string) $key.'[]='.self::escape_url((string)$val[$i]);
+									$url = (string) self::url_add_suffix((string)$url, (string)$suffix);
+								} //end foreach
+							} else { // 2: associative
+								foreach($val as $kk => $vv) {
+									$suffix = (string) $key.'['.self::escape_url((string)$kk).']='.self::escape_url((string)$vv);
+									$url = (string) self::url_add_suffix((string)$url, (string)$suffix);
+								} //end foreach
+							} //end if else
+						} elseif((string)$val != '') {
 							$suffix = (string) $key.'=';
 							if((substr((string)$val, 0, 3) == '{{{') AND (substr((string)$val, -3, 3) == '}}}')) { // this is {{{param}}}
 								$tmp_val = (string) substr((string)$val, 3);

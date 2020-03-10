@@ -2,7 +2,7 @@
  * jQuery Simple Dialog (SmartLightUI)
  * (c) 2015-2017 unix-world.org
  * License: BSD
- * v.20190808
+ * v.20200306
  */
 
 /* Overlay */
@@ -61,9 +61,10 @@
 	padding-right: 10px;
 	padding-top: 2px;
 	padding-bottom: 27px;
-	width: 98%;
-	height: 40%;
 	overflow: auto;
+	height: 40%;
+	width: 97%;
+	width: calc(100% - 20px);
 }
 #simpledialog-container hr {
 	border: 0;

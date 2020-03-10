@@ -95,8 +95,8 @@ $configs['redis']['slowtime']		= 0.0005;								// redis slow query time (for de
 
 //--------------------------------------- MongoDB (Default) BigData Server configuration (standalone or cluster)
 /*
-$configs['mongodb']['type'] 		= 'mongo-standalone'; 					// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding)
-$configs['mongodb']['server-host']	= '127.0.0.1';							// mongodb host
+$configs['mongodb']['type'] 		= 'mongo-standalone'; 					// mongodb server(s) type: 'mongo-standalone' | 'mongo-cluster' (sharding) | 'mongo-replica-set:My-Replica' (replica set)
+$configs['mongodb']['server-host']	= '127.0.0.1';							// mongodb host or comma separed list of multiple hosts
 $configs['mongodb']['server-port']	= 27017;								// mongodb port
 $configs['mongodb']['dbname']		= 'smart_framework';					// mongodb database name
 $configs['mongodb']['username'] 	= '';									// mongodb username
