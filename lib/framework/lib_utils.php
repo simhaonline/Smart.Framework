@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200121
+ * @version 	v.20200324
  * @package 	@Core:Extra
  *
  */
@@ -416,7 +416,7 @@ final class SmartUtils {
 
 
 	//================================================================
-	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ') {
+	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ', $y_base=1000) {
 		//--
 		$y_decimals = (int) $y_decimals;
 		if($y_decimals < 0) {
@@ -426,30 +426,36 @@ final class SmartUtils {
 			$y_decimals = 4;
 		} //end if
 		//--
+		if((int)$y_base === 1024) {
+			$y_base = (int) 1024;
+		} else {
+			$y_base = (int) 1000;
+		} //end if else
+		//--
 		if(!is_int($y_bytes)) {
 			return (string) $y_bytes;
 		} //end if
 		//--
-		if($y_bytes < 1000) {
+		if($y_bytes < $y_base) {
 			return (string) Smart::format_number_int($y_bytes).$y_separator.'bytes';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'KB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'MB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'GB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
+		$y_bytes = $y_bytes / $y_base;
 		//--
 		return (string) Smart::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
 		//--
