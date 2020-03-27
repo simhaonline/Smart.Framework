@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200324
+ * @version 	v.20200327
  * @package 	@Core:Extra
  *
  */
@@ -1543,7 +1543,7 @@ final class SmartUtils {
 	//================================================================
 	public static function get_visitor_signature() {
 		//--
-		return (string) 'Visitor // '.trim((string)$_SERVER['REMOTE_ADDR']).' ; '.trim((string)$_SERVER['HTTP_CLIENT_IP']).' ; '.trim((string)$_SERVER['HTTP_X_FORWARDED_FOR']).' :: '.trim((string)$_SERVER['HTTP_USER_AGENT']);
+		return (string) 'Visitor // '.trim((string)self::get_ip_client()).' ; '.trim((string)self::get_ip_proxyclient()).' :: '.trim((string)$_SERVER['HTTP_USER_AGENT']);
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1925,15 +1925,56 @@ final class SmartUtils {
 
 
 	//================================================================
+	/**
+	 * Get the Client real IP such as: REMOTE_ADDR
+	 * This function should be used always across the Smart.Framework to get the client's real IP and never must use directly REMOTE_ADDR as it may change when using apache/php behind haproxy or varnish and in this case the HTTP_X_FORWARDED_FOR will return client's real IP address by example !
+	 *
+	 * @return 	STRING						:: IP Address ; if no address detected will RAISE an ERROR ...
+	 */
 	public static function get_ip_client() {
 		//--
 		$xout = (string) self::$cache['get_ip_client'];
 		//--
 		if((string)$xout == '') {
 			//--
+			$the_hdr = '';
+			$err = false;
+			//--
+			if(!$err) {
+				if(!defined('SMART_FRAMEWORK_IPDETECT_CLIENT')) {
+					$err = true;
+				} //end if
+			} //end if
+			if(!$err) {
+				$the_hdr = (string) strtoupper((string)trim((string)SMART_FRAMEWORK_IPDETECT_CLIENT));
+				if((string)$the_hdr == '') {
+					$err = true;
+				} //end if
+				if(!preg_match('/^[_A-Z]+$/', (string)$the_hdr)) {
+					$err = true;
+				} //end if
+			} //end if
+			if($err) {
+				Smart::raise_error('Cannot Determine Current Client IP Address', 'Invalid definition for SMART_FRAMEWORK_IPDETECT_CLIENT');
+				return '';
+			} //end if
+			//--
+			self::$cache['get_ip_client:validated-header'] = (string) $the_hdr;
+			//--
 			$ip = '';
 			//--
-			$ip = SmartValidator::validate_filter_ip_address((string)$_SERVER['REMOTE_ADDR']); // no forward or client IP should be considered here as they can be a security risk as they are untrusted !!
+			$ip = SmartValidator::validate_filter_ip_address((string)$_SERVER[(string)$the_hdr]); // if a forward client IP header have to be considered here it must always come from a trusted source only !!
+			//--
+			if(SmartFrameworkRuntime::ifDebug()) {
+				SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-UTILS', [
+					'title' => 'SmartUtils // Get IP Client',
+					'data' => 'Validation Header:'."\n".self::pretty_print_var(self::$cache['get_ip_client:validated-header'])
+				]);
+				SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-UTILS', [
+					'title' => 'SmartUtils // Get IP Client',
+					'data' => 'Validated at Header: `'.self::$cache['get_ip_client:validated-header'].'` = `'.$ip.'`'
+				]);
+			} //end if
 			//--
 			if((string)$ip == '') {
 				Smart::raise_error('Cannot Determine Current Client IP Address', 'Invalid Client IP Address');
@@ -1953,25 +1994,76 @@ final class SmartUtils {
 
 
 	//================================================================
+	/**
+	 * Get the Client Proxy IP if any such as: HTTP_CLIENT_IP or HTTP_X_FORWARDED_FOR
+	 * This function should be used always across the Smart.Framework to get the client's proxy IP and never must use directly HTTP_CLIENT_IP or HTTP_X_FORWARDED_FOR as they may change when using apache/php behind haproxy or varnish !
+	 *
+	 * @return 	STRING						:: IP Address or a space (if no proxy address detected)
+	 */
 	public static function get_ip_proxyclient() {
 		//--
 		$xout = (string) self::$cache['get_ip_proxyclient'];
 		//--
 		if((string)$xout == '') {
 			//--
+			$arr_valid_hdrs = (array) self::_iplist_valid_client_headers();
+			//--
+			$arr_hdrs = [];
+			$err = false;
+			//--
+			if(!$err) {
+				if(!defined('SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT')) {
+					$err = true;
+				} //end if
+			} //end if
+			if(!$err) {
+				$tmp_arr_hdrs = (array) Smart::list_to_array((string)SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT, true);
+				for($i=0; $i<Smart::array_size($tmp_arr_hdrs); $i++) {
+					$tmp_arr_hdrs[$i] = (string) strtoupper((string)$tmp_arr_hdrs[$i]);
+					if(preg_match('/^[_A-Z]+$/', (string)$tmp_arr_hdrs[$i])) {
+						if(in_array((string)$tmp_arr_hdrs[$i], (array)$arr_valid_hdrs)) {
+							$arr_hdrs[] = (string) $tmp_arr_hdrs[$i];
+						} //end if
+					} //end if
+				} //end for
+				$tmp_arr_hdrs = null;
+				if(!defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
+					if(Smart::array_size($arr_hdrs) <= 0) {
+						$err = true; // this must not be an error, if using a proxy there are situations when no client proxy may be returned ...
+					} //end if
+				} //end if
+			} //end if
+			//--
+			if($err) {
+				Smart::raise_error('Cannot Determine Current Client Proxy IP Address', 'Invalid definition for SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT');
+				return '';
+			} //end if
+			//--
+			self::$cache['get_ip_proxyclient:validated-headers'] = (array) $arr_hdrs;
+			if(SmartFrameworkRuntime::ifDebug()) {
+				SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-UTILS', [
+					'title' => 'SmartUtils // Get IP Proxy Client',
+					'data' => 'Validation Headers:'."\n".self::pretty_print_var(self::$cache['get_ip_proxyclient:validated-headers'])
+				]);
+			} //end if
+			//--
 			$proxy = '';
 			//--
-			if((string)$proxy == '') {
-				if((string)$_SERVER['HTTP_CLIENT_IP'] != '') {
-					$proxy = (string) self::_iplist_get_last_address((string)$_SERVER['HTTP_CLIENT_IP']);
+			for($i=0; $i<Smart::array_size($arr_hdrs); $i++) {
+				if((string)$proxy == '') {
+					if((string)$_SERVER[(string)$arr_hdrs[$i]] != '') {
+						$proxy = (string) self::_iplist_get_last_address((string)$_SERVER[(string)$arr_hdrs[$i]]);
+						if(SmartFrameworkRuntime::ifDebug()) {
+							SmartFrameworkRegistry::setDebugMsg('extra', 'SMART-UTILS', [
+								'title' => 'SmartUtils // Get IP Proxy Client',
+								'data' => 'Validated at Header: `'.$arr_hdrs[$i].'` = `'.$proxy.'`'
+							]);
+						} //end if
+					} //end if
+				} else {
+					break;
 				} //end if
-			} //end if
-			//--
-			if((string)$proxy == '') {
-				if((string)$_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
-					$proxy = (string) self::_iplist_get_last_address((string)$_SERVER['HTTP_X_FORWARDED_FOR']);
-				} //end if
-			} //end if
+			} //end for
 			//--
 			if((string)$proxy == '') {
 				$proxy = ' '; // use a space for cache to avoid re-running it
@@ -2292,6 +2384,15 @@ final class SmartUtils {
 		} //end if
 		//--
 		return (string) $ip;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	private static function _iplist_valid_client_headers() {
+		//--
+		return array('REMOTE_ADDR', 'HTTP_CLIENT_IP', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED');
 		//--
 	} //END FUNCTION
 	//================================================================

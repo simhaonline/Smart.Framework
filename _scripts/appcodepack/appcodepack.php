@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20200121.1507'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200327.1535'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2272,7 +2272,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20200121 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200327 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2900,7 +2900,7 @@ Options -Indexes
 			//--
 			$the_log_txt = [];
 			$the_log_txt[] = '##### AppCodePack/Unpack ('.APPCODEUNPACK_VERSION.') - Log (for AppID: '.(string)APPCODEPACK_APP_ID.') @ '.$the_tmp_netarch_versions_hash;
-			$the_log_txt[] = '##### IP: '.(string)$_SERVER['REMOTE_ADDR'].' @ Client-Signature: '.(string)$_SERVER['HTTP_USER_AGENT'];
+			$the_log_txt[] = '##### IP: '.trim($_SERVER['REMOTE_ADDR'].' ; '.$_SERVER['HTTP_CLIENT_IP'].' ; '.$_SERVER['HTTP_X_FORWARDED_FOR'], '; ').' @ Client-Signature: '.(string)$_SERVER['HTTP_USER_AGENT'];
 			$the_log_txt[] = '### NetArchive Package: '.$the_pack_name;
 			if(self::array_size($not_restored_files) > 0) {
 				$the_log_txt[] = '### NOT OK: There are some Not Restored Files / Dirs ('.self::array_size($not_restored_files).'): '.'['."\n".implode("\n", (array)$not_restored_files)."\n".']';

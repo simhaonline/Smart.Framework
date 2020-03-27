@@ -54,7 +54,7 @@ if(!\defined('\\APP_AUTH_DB_SQLITE')) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD, APP_AUTH_PRIVILEGES (must be set in set in config-admin.php)
  * Required configuration: $configs['app-auth']['adm-namespaces'][ 'Admins Manager' => 'admin.php?page=auth-admins.manager.stml', ... ] (must be set in set in config-admin.php)
  *
- * @version 	v.20200121
+ * @version 	v.20200327
  * @package 	development:modules:AuthAdmins
  *
  */
@@ -190,7 +190,7 @@ final class AuthAdminsHandler {
 			//-- try to check the failed logins
 			if((string)$auth_user_name != '') {
 				//--
-				$check_fail = (int) $db->checkFailLoginData((string)$auth_user_name, (string)$_SERVER['REMOTE_ADDR']);
+				$check_fail = (int) $db->checkFailLoginData((string)$auth_user_name, (string)\SmartUtils::get_ip_client());
 				$retry_seconds = (int) \Smart::format_number_int(($check_fail - \time()), '+');
 				//--
 				if($check_fail > 0) {
@@ -243,14 +243,14 @@ final class AuthAdminsHandler {
 				//--
 				$db->logSuccessfulLoginData(
 					(string) $admin_login['id'], 			// successful auth account ID
-					(string) $_SERVER['REMOTE_ADDR'] 		// client IP
+					(string) \SmartUtils::get_ip_client() 	// client IP
 				);
 				//--
 			} else { // log unsuccessful login
 				//--
 				$db->logUnsuccessfulLoginData(
 					(string) $auth_user_name, 				// failed auth account ID
-					(string) $_SERVER['REMOTE_ADDR'], 		// client IP
+					(string) \SmartUtils::get_ip_client(), 	// client IP
 					(string) $_SERVER['HTTP_USER_AGENT'] 	// client Browser Signature
 				);
 				//--

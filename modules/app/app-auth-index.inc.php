@@ -38,7 +38,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 if(defined('APP_INDEX_IPRANGE_PRIVILEGED')) {
 	die('The constant `APP_INDEX_IPRANGE_PRIVILEGED` MUST NOT BE Defined outside AppAuthIndex');
 } //end if
-if((string)$_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
+if((string)SmartUtils::get_ip_client() === '127.0.0.1') {
 	define('APP_INDEX_IPRANGE_PRIVILEGED', false);
 } else {
 	define('APP_INDEX_IPRANGE_PRIVILEGED', true);

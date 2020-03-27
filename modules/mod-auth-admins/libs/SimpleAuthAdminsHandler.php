@@ -37,7 +37,7 @@ if(\headers_sent()) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD (must be set in set in config-admin.php)
  * Optional constants: APP_AUTH_PRIVILEGES (set in set in config-admin.php)
  *
- * @version 	v.20200121
+ * @version 	v.20200327
  * @package 	development:modules:AuthAdmins
  *
  */
@@ -110,7 +110,7 @@ final class SimpleAuthAdminsHandler {
 			if((string)$_SERVER['PHP_AUTH_USER'] != '') {
 				@\file_put_contents(
 					'tmp/logs/adm/'.'simple-auth-fail-'.\date('Y-m-d@H').'.log',
-					'[ERR]'."\t".\Smart::normalize_spaces((string)\date('Y-m-d H:i:s O'))."\t".\Smart::normalize_spaces((string)$_SERVER['PHP_AUTH_USER'])."\t".\Smart::normalize_spaces((string)$_SERVER['REMOTE_ADDR'])."\t".\Smart::normalize_spaces((string)$_SERVER['HTTP_USER_AGENT'])."\n",
+					'[ERR]'."\t".\Smart::normalize_spaces((string)\date('Y-m-d H:i:s O'))."\t".\Smart::normalize_spaces((string)$_SERVER['PHP_AUTH_USER'])."\t".\Smart::normalize_spaces((string)\SmartUtils::get_ip_client())."\t".\Smart::normalize_spaces((string)$_SERVER['HTTP_USER_AGENT'])."\n",
 					\FILE_APPEND | \LOCK_EX
 				);
 			} //end if

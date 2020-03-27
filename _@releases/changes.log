@@ -2,6 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+March 27, 2020 :: Version 5.7.2 rev.20200327
+	* Add support to safe detect client IP address (allow set which trusted header to use for detect real IP) if running behind a proxy such as varnish or haproxy
+
 February 17, 2020 :: Version 5.7.2 rev.20200217
 	* Improve MongoDB update/upsert to support associative array to combine more operations
 

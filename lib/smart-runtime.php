@@ -62,8 +62,22 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.7.2'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.03.10'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.03.27'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
+//--
+if(defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
+	if((!defined('SMART_FRAMEWORK_IPDETECT_CLIENT')) OR (!defined('SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT'))) {
+		@http_response_code(500);
+		die('The following constants must be defined when SMART_FRAMEWORK_IPDETECT_CUSTOM is set: SMART_FRAMEWORK_IPDETECT_CLIENT, SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT');
+	} //end if
+} else {
+	if((defined('SMART_FRAMEWORK_IPDETECT_CLIENT')) OR (defined('SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT'))) {
+		@http_response_code(500);
+		die('The following constants must NOT be defined when SMART_FRAMEWORK_IPDETECT_CUSTOM is not set: SMART_FRAMEWORK_IPDETECT_CLIENT, SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT');
+	} //end if
+	define('SMART_FRAMEWORK_IPDETECT_CLIENT', 'REMOTE_ADDR');
+	define('SMART_FRAMEWORK_IPDETECT_PROXY_CLIENT', '<HTTP_CLIENT_IP>,<HTTP_X_FORWARDED_FOR>');
+} //end if else
 //--
 if(!defined('SMART_FRAMEWORK_ADMIN_AREA')) {
 	@http_response_code(500);
