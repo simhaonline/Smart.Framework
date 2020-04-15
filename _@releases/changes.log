@@ -2,6 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+April 15, 2020 :: Version 5.7.2 rev.20200415
+	* Rework and fixes for Mail Send / Get / Decode
+
 March 27, 2020 :: Version 5.7.2 rev.20200327
 	* Add support to safe detect client IP address (allow set which trusted header to use for detect real IP) if running behind a proxy such as varnish or haproxy
 

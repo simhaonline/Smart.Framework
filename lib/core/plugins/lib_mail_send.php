@@ -24,8 +24,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 
 //===========================================================================
-// php class for sending mail messages (sendmail or SMTP w. SSL/TLS/STARTTLS)
-// send multipart e-mail base64 encoded
+// php class for sending email messages (sendmail or SMTP w. SSL/TLS/STARTTLS)
+// send multipart e-mail base64 or quoted-printable encoded
 // added CID parts extractor and re-embedd
 //===========================================================================
 
