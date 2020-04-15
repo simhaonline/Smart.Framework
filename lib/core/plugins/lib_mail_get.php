@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		After each operation on the IMAP4 Server should check the $imap4->error string and if non-empty stop and disconnect to free the socket
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200414
  * @package 	Plugins:Mailer
  *
  */
@@ -93,6 +93,11 @@ final class SmartMailerImap4Client {
 	private $cafile = '';		// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
 	//--
 
+	//--
+	private $is_connected_and_logged_in = false;
+	private $selected_box = '';
+	//--
+
 
 	//=====================================================================================
 	/**
@@ -117,6 +122,53 @@ final class SmartMailerImap4Client {
 		} //end if else
 		//--
 		$this->log = '';
+		$this->error = '';
+		//--
+		$this->is_connected_and_logged_in = false;
+		$this->selected_box = '';
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Get The Connected + Logged In Status
+	 */
+	public function is_connected_and_logged_in() {
+		//--
+		if(($this->is_connected_and_logged_in === true) AND (is_resource($this->socket))) {
+			return true;
+		} else {
+			return false;
+		} //end if else
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Get The Selected MailBox (on IMAP4 will be available just after connect + login + select mailbox)
+	 */
+	public function get_selected_mailbox() {
+		//--
+		if($this->is_connected_and_logged_in() !== true) {
+			return '';
+		} //end if
+		//--
+		return (string) $this->selected_box;
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Clear the Last Error
+	 */
+	public function clear_last_error() {
+		//--
 		$this->error = '';
 		//--
 	} //END FUNCTION
@@ -160,8 +212,8 @@ final class SmartMailerImap4Client {
 		//--
 
 		//-- checks
-		$server = trim($server);
-		if((strlen($server) <= 0) OR (strlen($server) > 255)) {
+		$server = (string) trim((string)$server);
+		if((strlen((string)$server) <= 0) OR (strlen((string)$server) > 255)) {
 			$this->error = '[ERR] Invalid Server to Connect ! ['.$server.']';
 			return 0;
 		} //end if
@@ -183,7 +235,7 @@ final class SmartMailerImap4Client {
 				return 0;
 			} //end if
 			//--
-			switch(strtolower($sslversion)) {
+			switch((string)strtolower((string)$sslversion)) {
 				case 'ssl':
 					$protocol = 'ssl://';
 					break;
@@ -266,7 +318,7 @@ final class SmartMailerImap4Client {
 		//--
 		$reply = $this->strip_clf($reply);
 		//--
-		if(substr($reply, 0, 5) != '* OK ') {
+		if((string)substr((string)$reply, 0, 5) != '* OK ') {
 			//--
 			$this->error = '[ERR] Server Reply is NOT OK // '.$test.' // '.$reply;
 			//--
@@ -302,12 +354,12 @@ final class SmartMailerImap4Client {
 			$this->log .= '[INF] Ping the Mail Server // NOOP'."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
 		$reply = $this->send_cmd('NOOP');
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -346,7 +398,10 @@ final class SmartMailerImap4Client {
 	 * Closes the communication socket after sending LOGOUT command
 	 * @return INTEGER+ 1 on Success or 0 on Error
 	 */
-	public function quit() { // IMAP4
+	public function quit($expunge=false) { // IMAP4
+		//--
+		$this->selected_box = '';
+		$this->is_connected_and_logged_in = false; // must be at the top of this function
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Sending QUIT to Mail Server !'."\n";
@@ -357,8 +412,11 @@ final class SmartMailerImap4Client {
 			return 0;
 		} //end if
 		//--
-		//$this->send_cmd('EXPUNGE'); // delete messages marked as Deleted (overall)
-		$this->send_cmd('CLOSE'); // delete messages marked as Deleted (from selected mailbox only)
+		if($expunge === true) {
+			$this->send_cmd('EXPUNGE'); // delete messages marked as Deleted (overall)
+		} else {
+			$this->send_cmd('CLOSE'); // delete messages marked as Deleted (from selected mailbox only)
+		} //end if else
 		$this->send_cmd('UNSELECT'); // some servers req. this (dovecot to avoid throw CLIENTBUG warnings)
 		//--
 		$reply = $this->send_cmd('LOGOUT'); // imap4
@@ -388,7 +446,19 @@ final class SmartMailerImap4Client {
 	 */
 	public function login($username, $pass, $mode='') { // IMAP4
 		//--
-		$this->tag = 'smart77'.strtolower(Smart::uuid_10_seq()).'7framework';
+		$username = (string) Smart::normalize_spaces(SmartUnicode::utf8_to_iso($username)); // {{{SYNC-MAILGET-SAFE-FIX-NAMES}}}
+		$pass = (string) Smart::normalize_spaces(SmartUnicode::utf8_to_iso($pass)); // {{{SYNC-MAILGET-SAFE-FIX-NAMES}}}
+		//--
+		if((string)trim((string)$username) == '') {
+			$this->error = '[ERR] IMAP4 Login Username is Empty';
+			return 0;
+		} //end if
+		if((string)trim((string)$pass) == '') {
+			$this->error = '[ERR] IMAP4 Login Password is Empty';
+			return 0;
+		} //end if
+		//--
+		$this->tag = 'smart77'.strtolower((string)Smart::uuid_10_seq()).'7framework';
 		$this->username = (string) $username;
 		$this->authmec = 'PLAIN';
 		//--
@@ -396,7 +466,7 @@ final class SmartMailerImap4Client {
 			$this->log .= '[INF] Login to Mail Server (TAG='.$this->tag.' ; MODE='.$mode.' ; USER='.$username.')'."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//-- normal login
@@ -408,16 +478,18 @@ final class SmartMailerImap4Client {
 		if((string)$mode == 'login') {
 			$reply = $this->send_cmd('LOGIN '.$username.' '.$pass);
 		} else {
-			$reply = $this->send_cmd('AUTHENTICATE '.$this->authmec.' '.(string)base64_encode("\0".$username."\0".$pass));
+			$reply = $this->send_cmd('AUTHENTICATE '.$this->authmec.' '.(string)base64_encode((string)"\0".$username."\0".$pass));
 		} //end if else
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		$test = $this->is_ok($reply);
 		if((string)$test != 'ok') {
-			$this->error = '[ERR] IMAP4 User or Password Failed ['.$reply.']';
+			$this->error = '[ERR] IMAP4 Login: User or Password Failed ['.$reply.']';
 			return 0;
 		} //end if
+		//--
+		$this->is_connected_and_logged_in = true;
 		//--
 		return 1;
 		//--
@@ -435,11 +507,19 @@ final class SmartMailerImap4Client {
 	 */
 	public function select_mailbox($mbox_name, $allow_create=false) { // this is just for IMAP4, n/a for POP3
 		//--
+		$this->inf_count = 0;
+		$this->inf_recent = 0;
+		$this->inf_size = 0;
+		//--
 		if($this->debug) {
 			$this->log .= '[INF] Select MailBox // '.$mbox_name."\n";
 		} //end if
+		if((string)trim((string)$mbox_name) == '') {
+			$this->error = '[ERR] Select MailBox: Empty MailBox Name';
+			return 0;
+		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -448,7 +528,7 @@ final class SmartMailerImap4Client {
 		} //end if
 		//--
 		$reply = $this->send_cmd('SELECT "'.$this->mailbox_escape($mbox_name).'"');
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -461,58 +541,96 @@ final class SmartMailerImap4Client {
 		$this->crr_mbox = (string) $mbox_name;
 		//--
 		$tmp_arr = (array) explode('* OK [UIDVALIDITY ', (string)$reply);
-		$tmp_uiv = $tmp_arr['1'];
+		$tmp_uiv = (string) trim((string)$tmp_arr['1']);
+		if((string)$tmp_uiv == '') {
+			$this->error = '[ERR] Select MailBox ('.$mbox_name.') Failed :: Cannot Determine the UIDVALIDITY';
+			return 0;
+		} //end if
 		$tmp_arr = array();
 		$tmp_arr = (array) explode('] UIDs', (string)$tmp_uiv);
-		$this->crr_uiv = trim($tmp_arr[0]);
+		$this->crr_uiv = (string) trim((string)$tmp_arr[0]);
 		//--
-		$size = 0; // we can't determine in IMAP except situation below
-		//--
-		$count = 0;
-		$recent = 0;
+		$count = -1;
+		$recent = -1;
 		$tmp_arr = (array) explode("\r\n", (string)$reply);
 		for($i=0; $i<count($tmp_arr); $i++) {
-			$tmp_arr[$i] = trim($tmp_arr[$i]);
-			if(strlen($tmp_arr[$i]) > 0) {
-				if(($count == 0) AND (strpos($tmp_arr[$i], ' EXISTS') !== false) AND (substr($tmp_arr[$i], 0, 2) == '* ')) {
+			$tmp_arr[$i] = (string) trim((string)$tmp_arr[$i]);
+			if((string)$tmp_arr[$i] != '') {
+				if(($count < 0) AND (strpos((string)$tmp_arr[$i], ' EXISTS') !== false) AND ((string)substr((string)$tmp_arr[$i], 0, 2) == '* ')) {
 					$tmp_x_arr = array();
 					$tmp_txt = $tmp_arr[$i];
 					$tmp_x_arr = (array) explode('* ', (string)$tmp_txt);
-					$tmp_txt = trim($tmp_x_arr[1]);
+					$tmp_txt = (string) trim((string)$tmp_x_arr[1]);
 					$tmp_x_arr = array();
 					$tmp_x_arr = (array) explode(' EXISTS', (string)$tmp_txt);
-					$tmp_txt = trim($tmp_x_arr[0]);
+					$tmp_txt = (string) trim((string)$tmp_x_arr[0]);
 					$count = (int) $tmp_txt;
-				} elseif(($recent == 0) AND (strpos($tmp_arr[$i], ' RECENT') !== false) AND (substr($tmp_arr[$i], 0, 2) == '* ')) {
+					if((int)$count < 0) {
+						$count = -1; // invalid
+					} //end if
+				} elseif(($recent < 0) AND (strpos((string)$tmp_arr[$i], ' RECENT') !== false) AND ((string)substr((string)$tmp_arr[$i], 0, 2) == '* ')) {
 					$tmp_x_arr = array();
 					$tmp_txt = $tmp_arr[$i];
 					$tmp_x_arr = (array) explode('* ', (string)$tmp_txt);
-					$tmp_txt = trim($tmp_x_arr[1]);
+					$tmp_txt = (string) trim((string)$tmp_x_arr[1]);
 					$tmp_x_arr = array();
 					$tmp_x_arr = (array) explode(' RECENT', (string)$tmp_txt);
-					$tmp_txt = trim($tmp_x_arr[0]);
+					$tmp_txt = (string) trim((string)$tmp_x_arr[0]);
 					$recent = (int) $tmp_txt;
+					if((int)$recent < 0) {
+						$recent = -1; // invalid
+					} //end if
 				} //end if
 			} //end if
 		} //end for
 		$tmp_arr = array();
 		//--
+		$size = -1; // we can't determine in IMAP except situation below if the server have STATUS=SIZE Extension
 		$reply = $this->send_cmd('STATUS "'.$this->mailbox_escape($mbox_name).'" (MESSAGES UIDNEXT SIZE)'); // example: '* STATUS Inbox (MESSAGES 8 UIDNEXT 12345 SIZE 45678)';
 		$test = $this->is_ok($reply);
 		if((string)$test == 'ok') {
-			$tmp_arr = (array) explode(' SIZE ', (string)$reply);
-			$count = (int) rtrim((string)$tmp_arr[1], ') ');
-			if($count < 0) {
-				$count = 0;
+			//--
+			$tmp_arr = (array) explode(' (MESSAGES ', (string)$reply);
+			$tmp_arr = (string) trim((string)$tmp_arr[1]);
+			$tmp_arr = (array) explode(' SIZE ', (string)$tmp_arr);
+			//--
+			if((int)$count < 0) { // bug fix: if could not get count from above, try here
+				$count = (int) trim((string)$tmp_arr[0]);
+				if((int)$count < 0) {
+					$count = -1; // invalid
+				} //end if
 			} //end if
+			//--
+			$size = (int) trim((string)rtrim((string)$tmp_arr[1], ')'));
+			if((int)$size < 0) {
+				$size = -1; // invalid
+			} //end if
+			//--
 			$tmp_arr = array();
+			//--
 		} //end if
 		//--
-		$this->inf_count = $count;
-		$this->inf_recent = $recent;
-		$this->inf_size = 0; // imap size is not reported except if server have STATUS=SIZE Extension, so try below
+		if((int)$count < 0) {
+			$count = 0;
+		} //end if
+		if((int)$recent < 0) {
+			$recent = 0;
+		} //end if
+		if((int)$size < 0) {
+			$size = 0;
+		} //end if
+		//--
+		$this->inf_count = (int) $count;
+		$this->inf_recent = (int) $recent;
+		$this->inf_size = (int) $size; // imap size is not reported except if the server have STATUS=SIZE Extension
 		//--
 		$this->send_cmd('CHECK'); // maintenance over mailbox
+		if((string)$this->error != '') {
+			$this->error = '[ERR] Select MailBox ('.$mbox_name.') Failed :: Errors for the CHECK command ...';
+			return 0;
+		} //end if
+		//--
+		$this->selected_box = (string) $mbox_name;
 		//--
 		return 1;
 		//--
@@ -570,34 +688,39 @@ final class SmartMailerImap4Client {
 	//=====================================================================================
 	/**
 	 * Get the list of UIDs or a specific UID for the selected message
+	 * The UID(s) will be formated as this library does: 'IMAP4-UIV-@num@-UID-@uid@'
 	 * A list with multiple UIDs provided by this method can be parsed using $imap4->parse_uidls($list)
 	 * @param STRING $msg_num *Optional* A specific UID for a specific message or leave empty to get the list with all UIDs
 	 * @return STRING A unique UID or a list with multiple (ar all) UIDs ; returns empty string on error
 	 */
 	public function uid($msg_num='') { // IMAP4
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
+		if((string)trim((string)$this->crr_mbox) == '') {
 			$this->error = '[ERR] IMAP4 UID // No MailBox Selected ...';
 		} //end if
 		//--
 		if($this->debug) {
-			if(strlen($msg_num) > 0) {
+			if((string)trim((string)$msg_num) != '') {
 				$this->log .= '[INF] IMAP4 UID Message Number: '.$msg_num."\n";
 			} else {
 				$this->log .= '[INF] IMAP4 UID for all Messages'."\n";
 			} //end if else
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
-		if(strlen($msg_num) > 0) {
+		if((string)trim((string)$msg_num) != '') {
+			if($this->is_safe_uid_or_msgnum($msg_num) !== true) { // must check UID to avoid inject search expressions in this function as IMAP Search must escape the search expressions to avoid security issues ; Ex: UID SEARCH HEADER Message-Id <abc>
+				$this->error = '[ERR] IMAP4 UID Message Failed [Invalid Characters in UID: '.$msg_num.']';
+				return '';
+			} //end if
 			$reply = $this->send_cmd('UID SEARCH '.$msg_num);
 		} else {
 			$reply = $this->send_cmd('UID SEARCH ALL');
 		} //end if else
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -607,14 +730,14 @@ final class SmartMailerImap4Client {
 			return '';
 		} //end if
 		//--
-		if(strlen($msg_num) > 0) {
+		if((string)trim((string)$msg_num) != '') {
 			//--
 			$uid = '';
 			$tmp_arr = (array) explode("\r\n", (string)$reply);
 			for($i=0; $i<count($tmp_arr); $i++) {
 				$tmp_line = trim($tmp_arr[$i]);
-				if(substr($tmp_line, 0, 9) == '* SEARCH ') {
-					$uid = 'IMAP4-UIV-'.$this->crr_uiv.'-UID-'.trim(substr($tmp_line, 9));
+				if((string)substr((string)$tmp_line, 0, 9) == '* SEARCH ') {
+					$uid = 'IMAP4-UIV-'.$this->crr_uiv.'-UID-'.trim((string)substr((string)$tmp_line, 9)); // {{{SYNC-IMAP4-SAFE-UIDS}}}
 					break;
 				} //end if
 			} //end for
@@ -625,18 +748,18 @@ final class SmartMailerImap4Client {
 			$tmp_arr = (array) explode("\r\n", (string)$reply);
 			for($i=0; $i<count($tmp_arr); $i++) {
 				$tmp_line = (string) trim((string)$tmp_arr[$i]);
-				if(substr($tmp_line, 0, 9) == '* SEARCH ') {
-					$uid = (string) trim(substr($tmp_line, 9));
+				if((string)substr((string)$tmp_line, 0, 9) == '* SEARCH ') {
+					$uid = (string) trim((string)substr((string)$tmp_line, 9));
 				} //end if
 			} //end for
 			//--
-			if(strlen($uid) > 0) {
+			if((string)trim((string)$uid) != '') {
 				$tmp_arr = (array) explode(' ', (string)$uid);
 				$uid = '';
 				for($i=0; $i<count($tmp_arr); $i++) {
-					$tmp_line = trim($tmp_arr[$i]);
-					if(strlen($tmp_line) > 0) { // keep sense with POP3 format which is: ID[SPACE]UID\n
-						$uid .= (string) $i.' '.'IMAP4-UIV-'.$this->crr_uiv.'-UID-'.$tmp_line."\n";
+					$tmp_line = (string) trim((string)$tmp_arr[$i]);
+					if((string)$tmp_line != '') {
+						$uid .= (string) $i.' '.'IMAP4-UIV-'.$this->crr_uiv.'-UID-'.trim((string)$tmp_line)."\n"; // {{{SYNC-IMAP4-SAFE-UIDS}}} ; keep sync with POP3 format which is: ID[SPACE]UID\n
 					} //end if
 				} //end for
 			} else {
@@ -646,7 +769,7 @@ final class SmartMailerImap4Client {
 		} //end if
 		//--
 		if($this->debug) {
-			if(strlen($msg_num) > 0) {
+			if((string)trim((string)$msg_num) != '') {
 				$this->log .= '[INF] UID For Message #'.$msg_num.' is: ['.$uid.']'."\n";
 			} else {
 				$this->log .= '[INF] UID For Messages are: [(LIST)]'."\n";
@@ -662,9 +785,10 @@ final class SmartMailerImap4Client {
 	//=====================================================================================
 	/**
 	 * Parse the (standard) list of UIDs supplied IMAP4 protocol
+	 * The UIDs will be formated as this library does: 'IMAP4-UIV-@num@-UID-@uid@'
 	 * @hints Some IMAP4 servers have non-standard responses for the format of $mailget->uid() and in this case you may have to build your own parser ...
 	 * @param STRING $y_list The UIDs list given by the IMAP4 server with command: $mailget->uid() ; Expects a format similar with: ID[SPACE]UID\n
-	 * @return ARRAY the list of parsed UIDs as [ id1 => uid1, id2 => uid2, ..., idN => uidN ]
+	 * @return ASSOCIATIVE ARRAY the list of parsed UIDs as [ id1 => uid1, id2 => uid2, ..., idN => uidN ]
 	 */
 	public function parse_uidls($y_list) { // this is just for IMAP4, n/a for POP3
 
@@ -691,12 +815,10 @@ final class SmartMailerImap4Client {
 					$tmp_arr[0] = (string) trim((string)$tmp_arr[0]);
 					$tmp_arr[1] = (string) trim((string)$tmp_arr[1]);
 					//--
-					if(preg_match('/^([0-9])+$/', (string)$tmp_arr[0])) {
-						//--
-						if((string)$tmp_arr[1] != '') {
-							$new_uidls[(string)$tmp_arr[0]] = (string) $tmp_arr[1];
+					if(preg_match('/^([0-9])+$/', (string)$tmp_arr[0])) { // message ID, always numeric
+						if($this->is_safe_uid_or_msgnum((string)$tmp_arr[1]) === true) { // message UID ; numeric, but can be a hash
+							$new_uidls[(string)$tmp_arr[0]] = (string) $tmp_arr[1]; // arr[id] = uid
 						} //end if
-						//--
 					} //end if
 					//--
 				} //end if
@@ -721,24 +843,33 @@ final class SmartMailerImap4Client {
 	 * Get the size for the selected message
 	 * @hints Some servers may not comply with this method and may return empty result
 	 * @param STRING $msg_num The Message Number
+	 * @param BOOLEAN $by_uid *Optional* ; Default is FALSE ; If TRUE a Message UID should be supplied for 1st param ; If FALSE a Message Number should be supplied for 1st param
 	 * @return STRING the size of the selected message (ussualy in Bytes) or empty string if Error
 	 */
-	public function size($msg_num) { // IMAP4
+	public function size($msg_num, $by_uid=false) { // IMAP4
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
+		if((string)trim((string)$this->crr_mbox) == '') {
 			$this->error = '[ERR] IMAP4 Size // No MailBox Selected ...';
+		} //end if
+		if($this->is_safe_uid_or_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] IMAP4 Size // Empty or Invalid Message NUM / UID provided ...';
 		} //end if
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] IMAP4 Size Message Number: '.$msg_num."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
-		$reply = $this->send_cmd('FETCH '.$msg_num.' RFC822.SIZE');
-		if(strlen($this->error) > 0) {
+		if($by_uid) {
+			$reply = $this->send_cmd('UID FETCH '.$msg_num.' RFC822.SIZE');
+		} else {
+			$reply = $this->send_cmd('FETCH '.$msg_num.' RFC822.SIZE');
+		} //end if else
+		//--
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -773,8 +904,11 @@ final class SmartMailerImap4Client {
 	 */
 	public function delete($msg_num, $by_uid=false) { // IMAP4
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
+		if((string)trim((string)$this->crr_mbox) == '') {
 			$this->error = '[ERR] IMAP4 Delete // No MailBox Selected ...';
+		} //end if
+		if($this->is_safe_uid_or_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] IMAP4 Delete // Empty or Invalid Message NUM / UID provided ...';
 		} //end if
 		//--
 		if($this->debug) {
@@ -785,7 +919,7 @@ final class SmartMailerImap4Client {
 			} //end if else
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -795,7 +929,7 @@ final class SmartMailerImap4Client {
 			$reply = $this->send_cmd('STORE '.$msg_num.' +FLAGS.SILENT (\Deleted)');
 		} //end if else
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -815,25 +949,37 @@ final class SmartMailerImap4Client {
 	/**
 	 * Get the Message Head Lines (first lines of the message body)
 	 * @param STRING $msg_num The Message Number
+	 * @param BOOLEAN $by_uid *Optional* ; Default is FALSE ; If TRUE a Message UID should be supplied for 1st param ; If FALSE a Message Number should be supplied for 1st param
 	 * @param INTEGER+ $read_lines The number of lines to retrieve 1..255
 	 * @return STRING The first lines of the message body or empty string on ERROR
 	 */
-	public function header($msg_num, $read_lines=5) { // IMAP4
+	public function header($msg_num, $by_uid=false, $read_lines=5) { // IMAP4
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
+		if((string)trim((string)$this->crr_mbox) == '') {
 			$this->error = '[ERR] IMAP4 Header // No MailBox Selected ...';
+		} //end if
+		if($this->is_safe_uid_or_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] IMAP4 Header // Empty or Invalid Message NUM / UID provided ...';
 		} //end if
 		//--
 		if($this->debug) {
-			$this->log .= '[INF] IMAP4 Header Message Number: '.$msg_num.' // Lines: n/a'."\n";
+			if($by_uid) {
+				$this->log .= '[INF] IMAP4 Header Message by UID: '.$msg_num.' // Lines: '.(int)$read_lines."\n";
+			} else {
+				$this->log .= '[INF] IMAP4 Header Message by Number: '.$msg_num.' // Lines: '.(int)$read_lines."\n";
+			} //end if else
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
-		$reply = $this->send_cmd('FETCH '.$msg_num.' BODY.PEEK[HEADER]');
-		if(strlen($this->error) > 0) {
+		if($by_uid) {
+			$reply = $this->send_cmd('UID FETCH '.$msg_num.' BODY.PEEK[HEADER]');
+		} else {
+			$reply = $this->send_cmd('FETCH '.$msg_num.' BODY.PEEK[HEADER]');
+		} //end if else
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -846,10 +992,10 @@ final class SmartMailerImap4Client {
 		$header_out = '';
 		//--
 		$mark_ok = ')'."\r\n".$this->tag.' OK ';
-		if(strpos($reply, $mark_ok) !== false) {
+		if(strpos((string)$reply, (string)$mark_ok) !== false) {
 			//--
 			$tmp_repl_arr = (array) explode((string)$mark_ok, (string)$reply);
-			$tmp_repl_txt = $tmp_repl_arr[0];
+			$tmp_repl_txt = (string) $tmp_repl_arr[0];
 			$tmp_repl_arr = (array) explode("\r\n", trim((string)$tmp_repl_txt));
 			$tmp_repl_arr[0] = ''; // the 1st line is the IMAP Answer
 			//--
@@ -888,8 +1034,11 @@ final class SmartMailerImap4Client {
 	 */
 	public function read($msg_num, $by_uid=false) { // IMAP4
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
+		if((string)trim((string)$this->crr_mbox) == '') {
 			$this->error = '[ERR] IMAP4 Read // No MailBox Selected ...';
+		} //end if
+		if($this->is_safe_uid_or_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] IMAP4 Read // Empty or Invalid Message NUM / UID provided ...';
 		} //end if
 		//--
 		if($this->debug) {
@@ -900,7 +1049,7 @@ final class SmartMailerImap4Client {
 			} //end if
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -909,7 +1058,7 @@ final class SmartMailerImap4Client {
 		} else {
 			$reply = $this->send_cmd('FETCH '.$msg_num.' BODY[]');
 		} //end if else
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -922,10 +1071,10 @@ final class SmartMailerImap4Client {
 		$msg_out = '';
 		//--
 		$mark_ok = ')'."\r\n".$this->tag.' OK ';
-		if(strpos($reply, $mark_ok) !== false) {
+		if(strpos((string)$reply, (string)$mark_ok) !== false) {
 			//--
 			$tmp_repl_arr = (array) explode((string)$mark_ok, (string)$reply);
-			$tmp_repl_txt = $tmp_repl_arr[0];
+			$tmp_repl_txt = (string) $tmp_repl_arr[0];
 			$tmp_repl_arr = (array) explode("\r\n", trim((string)$tmp_repl_txt));
 			$tmp_repl_arr[0] = ''; // the 1st line is the IMAP Answer
 			//--
@@ -951,8 +1100,11 @@ final class SmartMailerImap4Client {
 	 */
 	public function copy($msg_uid, $dest_mbox, $by_uid=false) { // IMAP4
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
-			$this->error = '[ERR] IMAP4 Append // No MailBox Selected ...';
+		if((string)trim((string)$this->crr_mbox) == '') {
+			$this->error = '[ERR] IMAP4 Copy // No MailBox Selected ...';
+		} //end if
+		if($this->is_safe_uid_or_msgnum($msg_uid) !== true) {
+			$this->error = '[ERR] IMAP4 Copy // Empty or Invalid Message UID provided ...';
 		} //end if
 		//--
 		if($this->debug) {
@@ -963,7 +1115,7 @@ final class SmartMailerImap4Client {
 			} //end if else
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//-- UID COPY {uid} {mbox} is to copy by UID ; COPY {num} {mbox} is to copy by number
@@ -973,7 +1125,7 @@ final class SmartMailerImap4Client {
 			$reply = $this->send_cmd('COPY '.$msg_uid.' "'.$this->mailbox_escape($dest_mbox).'"');
 		} //end if else
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -997,28 +1149,30 @@ final class SmartMailerImap4Client {
 	 */
 	public function append($message) {
 		//--
-		if(strlen($this->crr_mbox) <= 0) {
+		if((string)trim((string)$this->crr_mbox) == '') {
 			$this->error = '[ERR] IMAP4 Append // No MailBox Selected ...';
+		} //end if
+		if((string)trim((string)$message) == '') {
+			$this->error = '[ERR] IMAP4 Append // Message is Empty ...';
 		} //end if
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Appending a Message to MailBox ('.$this->crr_mbox.') ...'."\n";
 		} //end if
 		//--
-		$checksum = sha1($message);
-		$message = str_replace("\r", '', $message);
-		$message = str_replace("\n", "\r\n", $message);
-		$len = strlen($message);
+		$message = (string) trim((string)str_replace([ "\r", "\n" ], [ '', "\r\n" ], (string)$message)); // {{{SYNC-MAIL-MSG-IMAP4-STORE}}} ; to be compliant with all IMAP servers, this is a fix (make all lines \r\n instead of \r or \n)
+		$checksum = (string) sha1((string)$message);
+		$len = (int) strlen((string)$message);
 		//--
-		if($len <= 0) {
+		if((int)$len <= 0) {
 			$this->error = '[ERR] IMAP4 Append // Message is Empty ...';
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
-		if(!fputs($this->socket, $this->tag.' APPEND "'.$this->mailbox_escape($this->crr_mbox).'" (\\Seen) {'.$len.'}'."\r\n")) {
+		if(!fputs($this->socket, (string)$this->tag.' APPEND "'.$this->mailbox_escape($this->crr_mbox).'" (\\Seen) {'.$len.'}'."\r\n")) {
 			$this->error = '[ERR] IMAP4 Append CMD // Failed ...';
 			return '';
 		} //end if
@@ -1032,11 +1186,11 @@ final class SmartMailerImap4Client {
 		//--
 		while(1) {
 			//--
-			$line = $this->get_answer_line();
+			$line = (string) $this->get_answer_line();
 			//--
-			$data .= $line;
+			$data .= (string) $line;
 			//--
-			if(substr(trim($line), 0, (strlen($this->tag) + 1)) == $this->tag.' ') {
+			if((string)substr((string)trim((string)$line), 0, (int)((int)strlen((string)$this->tag) + 1)) == (string)$this->tag.' ') {
 				break;
 			} //end if
 			//--
@@ -1059,10 +1213,10 @@ final class SmartMailerImap4Client {
 		$tmp_uid = (string) trim((string)$tmp_arr_uid[0]);
 		$tmp_arr_uid = array();
 		$tmp_arr_uid = (array) explode(' ', (string)$tmp_uid);
-		if(trim($tmp_arr_uid[0]) == $this->crr_uiv) {
-			$tmp_uid = 'IMAP4-UIV-'.trim($this->crr_uiv).'-UID-'.trim($tmp_arr_uid[1]);
+		if((string)trim((string)$tmp_arr_uid[0]) == (string)$this->crr_uiv) {
+			$tmp_uid = 'IMAP4-UIV-'.trim((string)$this->crr_uiv).'-UID-'.trim((string)$tmp_arr_uid[1]); // {{{SYNC-IMAP4-SAFE-UIDS}}}
 		} else {
-			$tmp_uid = 'IMAP4-UIV-'.trim($this->crr_uiv).'-UIDSHA1-'.trim($checksum);
+			$tmp_uid = 'IMAP4-UIV-'.trim((string)$this->crr_uiv).'-UIDSHA1-'.trim((string)$checksum); // {{{SYNC-IMAP4-SAFE-FALLBACK-UIDS}}}
 		} //end if else
 		//--
 		$this->log .= '[INF] Appended Completed and the UID is: '.$tmp_uid."\n";
@@ -1080,9 +1234,34 @@ final class SmartMailerImap4Client {
 
 	//=====================================================================================
 	// [PRIVATE]
+	// security check: UID must contain *ONLY* 0-9 ; extended support can contain: a-z A-Z _ - . and these are all !
+	// important: it must support the extended charset to be compatible with webmail imap clients !!!
+	private function is_safe_uid_or_msgnum($msg_num) {
+		//--
+		$msg_num = (string) trim((string)$msg_num);
+		if((string)$msg_num == '') {
+			return false;
+		} //end if
+		//--
+		if(!preg_match('/^[_a-zA-Z0-9\-\.]+$/', (string)$msg_num)) {
+			return false;
+		} //end if
+		//--
+		return true;
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	// [PRIVATE]
 	// escapes a mailbox name (get from roundcube class)
-	private function mailbox_escape($string) { // escape the name of a mailbox
-		return strtr($string, array('"'=>'\\"', '\\' => '\\\\'));
+	private function mailbox_escape($mboxname) { // escape the name of a mailbox
+		//--
+		$mboxname = (string) Smart::normalize_spaces(SmartUnicode::utf8_to_iso($mboxname)); // {{{SYNC-MAILGET-SAFE-FIX-NAMES}}}
+		//--
+		return (string) strtr((string)$mboxname, [ '"'=>'\\"', '\\' => '\\\\' ]);
+		//--
 	} //END FUNCTION
 	//=====================================================================================
 
@@ -1103,23 +1282,23 @@ final class SmartMailerImap4Client {
 	// Return 'ok' on +OK or 'error#' on -ERR
 	private function is_ok($reply) { // IMAP4
 		//--
+		$reply = (string)trim((string)$reply);
+		//--
 		$ok = 'ERROR: Reply is not OK !';
 		//--
-		if(strlen($reply) <= 0)	{
+		if((string)$reply == '') {
 			$ok = 'ERROR: Reply is Empty !';
 		} //end if
-		//--
-		$reply = trim($reply);
 		//--
 		$arr_lines = (array) explode("\r\n", (string)$reply);
 		//--
 		for($i=0; $i<count($arr_lines); $i++) {
 			//--
-			$tmp_line = trim($arr_lines[$i]);
+			$tmp_line = (string) trim((string)$arr_lines[$i]);
 			//--
-			if(strlen($tmp_line) > 0) {
-				if(substr($tmp_line, 0, 1) != '*') {
-					if(substr($tmp_line, 0, strlen($this->tag)+4) == $this->tag.' OK ') {
+			if((string)$tmp_line != '') {
+				if((string)substr((string)$tmp_line, 0, 1) != '*') {
+					if((string)substr((string)$tmp_line, 0, (int)((int)strlen((string)$this->tag) + 4)) == (string)$this->tag.' OK ') {
 						$ok = 'ok';
 					} //end if
 				} //end if
@@ -1127,7 +1306,7 @@ final class SmartMailerImap4Client {
 			//--
 		} //end for
 		//--
-		return $ok;
+		return (string) $ok;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1148,13 +1327,13 @@ final class SmartMailerImap4Client {
 			return '';
 		} //end if
 		//--
-		if(strlen($cmd) <= 0) {
+		if((string)trim((string)$cmd) == '') {
 			$this->error = '[ERR] IMAP4 Send Command: Empty command to send !';
 			return '';
 		} //end if
 		//--
 		$original_cmd = (string) $cmd;
-		$cmd = $this->tag.' '.$cmd;
+		$cmd = (string) $this->tag.' '.$cmd;
 		//--
 		if(!@fputs($this->socket, $cmd."\r\n")) {
 			$this->error = '[ERR] IMAP4 Send Command: FAILED !';
@@ -1166,9 +1345,9 @@ final class SmartMailerImap4Client {
 		//--
 		if($this->debug) {
 			//--
-			if(substr(trim($original_cmd), 0, 6) == 'LOGIN ') {
+			if((string)substr((string)trim((string)$original_cmd), 0, 6) == 'LOGIN ') {
 				$tmp_cmd = $this->tag.' LOGIN '.$this->username.' *****'; // hide the password protection
-			} elseif(substr(trim($original_cmd), 0, 13) == 'AUTHENTICATE ') {
+			} elseif((string)substr((string)trim((string)$original_cmd), 0, 13) == 'AUTHENTICATE ') {
 				$tmp_cmd = $this->tag.' AUTHENTICATE '.$this->authmec.' ['.$this->username.':*****]'; // hide the password protection
 			} else {
 				$tmp_cmd = $cmd;
@@ -1178,7 +1357,7 @@ final class SmartMailerImap4Client {
 			//--
 		} //end if
 		//--
-		return $reply;
+		return (string) $reply;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1197,9 +1376,9 @@ final class SmartMailerImap4Client {
 		//--
 		while(!feof($this->socket)) {
 			//--
-			$line .= fgets($this->socket, $this->buffer);
+			$line .= (string) fgets($this->socket, $this->buffer);
 			//--
-			if((strlen($line) >= 2) && (substr($line, -2) == "\r\n")) {
+			if((strlen((string)$line) >= 2) && ((string)substr((string)$line, -2) == "\r\n")) {
 				//--
 				break;
 				//--
@@ -1207,7 +1386,7 @@ final class SmartMailerImap4Client {
 			//--
 		} //end while
 		//--
-		return $line;
+		return (string) $line;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1221,17 +1400,17 @@ final class SmartMailerImap4Client {
 		//--
 		while(1) {
 			//--
-			$line = $this->get_answer_line();
+			$line = (string) $this->get_answer_line();
 			//--
 			$data .= $line;
 			//--
-			if(substr(trim($line), 0, (strlen($this->tag) + 1)) == $this->tag.' ') {
+			if((string)substr((string)trim((string)$line), 0, (int)((int)strlen((string)$this->tag) + 1)) == (string)$this->tag.' ') {
 				break;
 			} //end if
 			//--
 		} //end while
 		//--
-		return $data;
+		return (string) $data;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1258,7 +1437,7 @@ final class SmartMailerImap4Client {
  * @hints 		After each operation on the POP3 Server should check the $pop3->error string and if non-empty stop and disconnect to free the socket
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200413
  * @package 	Plugins:Mailer
  *
  */
@@ -1312,6 +1491,11 @@ final class SmartMailerPop3Client {
 	private $cafile = '';		// Certificate Authority File (instead of using the global SMART_FRAMEWORK_SSL_CA_FILE can use a private cafile
 	//--
 
+	//--
+	private $is_connected_and_logged_in = false;
+	private $selected_box = '';
+	//--
+
 
 	//=====================================================================================
 	/**
@@ -1332,6 +1516,53 @@ final class SmartMailerPop3Client {
 		} //end if else
 		//--
 		$this->log = '';
+		$this->error = '';
+		//--
+		$this->is_connected_and_logged_in = false;
+		$this->selected_box = '';
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Get The Connected + Logged In Status
+	 */
+	public function is_connected_and_logged_in() {
+		//--
+		if(($this->is_connected_and_logged_in === true) AND (is_resource($this->socket))) {
+			return true;
+		} else {
+			return false;
+		} //end if else
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Get The Selected MailBox (on POP3 will be available just after connect + login, no need to select mailbox, there is only one: INBOX)
+	 */
+	public function get_selected_mailbox() {
+		//--
+		if($this->is_connected_and_logged_in() !== true) {
+			return '';
+		} //end if
+		//--
+		return (string) $this->selected_box;
+		//--
+	} //END FUNCTION
+	//=====================================================================================
+
+
+	//=====================================================================================
+	/**
+	 * Clear the Last Error
+	 */
+	public function clear_last_error() {
+		//--
 		$this->error = '';
 		//--
 	} //END FUNCTION
@@ -1374,8 +1605,8 @@ final class SmartMailerPop3Client {
 		//--
 
 		//-- checks
-		$server = trim($server);
-		if((strlen($server) <= 0) OR (strlen($server) > 255)) {
+		$server = (string) trim((string)$server);
+		if((strlen((string)$server) <= 0) OR (strlen((string)$server) > 255)) {
 			$this->error = '[ERR] Invalid Server to Connect ! ['.$server.']';
 			return 0;
 		} //end if
@@ -1397,7 +1628,7 @@ final class SmartMailerPop3Client {
 				return 0;
 			} //end if
 			//--
-			switch(strtolower($sslversion)) {
+			switch((string)strtolower((string)$sslversion)) {
 				case 'ssl':
 					$protocol = 'ssl://';
 					break;
@@ -1526,12 +1757,12 @@ final class SmartMailerPop3Client {
 			$this->log .= '[INF] Ping the Mail Server // NOOP'."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
 		$reply = $this->send_cmd('NOOP');
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -1558,12 +1789,12 @@ final class SmartMailerPop3Client {
 			$this->log .= '[INF] Reset the Connection to Mail Server'."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
 		$reply = $this->send_cmd('RSET');
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -1586,6 +1817,9 @@ final class SmartMailerPop3Client {
 	 * @return INTEGER+ 1 on Success or 0 on Error
 	 */
 	public function quit() {
+		//--
+		$this->selected_box = '';
+		$this->is_connected_and_logged_in = false; // must be at the top of this function
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Sending QUIT to Mail Server !'."\n";
@@ -1624,6 +1858,18 @@ final class SmartMailerPop3Client {
 	 */
 	public function login($username, $pass, $mode='') {
 		//--
+		$username = (string) Smart::normalize_spaces(SmartUnicode::utf8_to_iso($username)); // {{{SYNC-MAILGET-SAFE-FIX-NAMES}}}
+		$pass = (string) Smart::normalize_spaces(SmartUnicode::utf8_to_iso($pass)); // {{{SYNC-MAILGET-SAFE-FIX-NAMES}}}
+		//--
+		if((string)trim((string)$username) == '') {
+			$this->error = '[ERR] POP3 Auth: Username is Empty';
+			return 0;
+		} //end if
+		if((string)trim((string)$pass) == '') {
+			$this->error = '[ERR] POP3 Auth: Password is Empty';
+			return 0;
+		} //end if
+		//--
 		$apop = false;
 		if((string)$mode == 'apop') {
 			$apop = true;
@@ -1633,24 +1879,29 @@ final class SmartMailerPop3Client {
 			$this->log .= '[INF] Login to Mail Server (MODE='.$mode.' ; USER='.$username.')'."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
-		if(($apop == true) AND (strlen($this->apop_banner) > 0)) {
+		if($apop == true) {
 			//-- apop login
 			if($this->debug) {
 				$this->log .= '[INF] Login Method: APOP // Banner = ['.$this->apop_banner.']'."\n";
 			} //end if
 			//--
-			$reply = $this->send_cmd('APOP '.$username.' '.md5($this->apop_banner.$pass));
-			if(strlen($this->error) > 0) {
+			if((string)trim((string)$this->apop_banner) == '') {
+				$this->error = '[ERR] POP3 Auth: APOP Method Failed, Server Banner is Empty';
+				return 0;
+			} //end if
+			//--
+			$reply = $this->send_cmd('APOP '.$username.' '.md5((string)$this->apop_banner.$pass));
+			if((string)$this->error != '') {
 				return 0;
 			} //end if
 			//--
 			$test = $this->is_ok($reply);
 			if((string)$test != 'ok') {
-				$this->error = '[ERR] POP3 APOP Failed ['.$reply.']';
+				$this->error = '[ERR] POP3 Auth: APOP Failed ['.$reply.']';
 				return 0;
 			} //end if
 			//--
@@ -1661,28 +1912,31 @@ final class SmartMailerPop3Client {
 			} //end if
 			//--
 			$reply = $this->send_cmd('USER '.$username);
-			if(strlen($this->error) > 0) {
+			if((string)$this->error != '') {
 				return 0;
 			} //end if
 			//--
 			$test = $this->is_ok($reply);
 			if((string)$test != 'ok') {
-				$this->error = '[ERR] POP3 User Failed ['.$reply.']';
+				$this->error = '[ERR] POP3 Auth: User Failed ['.$reply.']';
 				return 0;
 			} //end if
 			//--
 			$reply = $this->send_cmd('PASS '.$pass);
-			if(strlen($this->error) > 0) {
+			if((string)$this->error != '') {
 				return 0;
 			} //end if
 			//--
 			$test = $this->is_ok($reply);
 			if((string)$test != 'ok') {
-				$this->error = '[ERR] POP3 Pass Failed ['.$reply.']';
+				$this->error = '[ERR] POP3 Auth: Pass Failed ['.$reply.']';
 				return 0;
 			} //end if
 			//--
 		} //end if else
+		//--
+		$this->is_connected_and_logged_in = true;
+		$this->selected_box = 'INBOX'; // on POP3 there is only INBOX ...
 		//--
 		return 1;
 		//--
@@ -1701,12 +1955,12 @@ final class SmartMailerPop3Client {
 			$this->log .= '[INF] Reading the Messages Count and Size for MailBox ...'."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
 		$reply = $this->send_cmd('STAT');
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -1742,23 +1996,27 @@ final class SmartMailerPop3Client {
 	public function uid($msg_num='') {
 		//--
 		if($this->debug) {
-			if(strlen($msg_num) > 0) {
+			if((string)trim((string)$msg_num) != '') {
 				$this->log .= '[INF] POP3 UID Message Number: '.$msg_num."\n";
 			} else {
 				$this->log .= '[INF] POP3 UID for all Messages'."\n";
 			} //end if else
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
-		if(strlen($msg_num) > 0) {
+		if((string)trim((string)$msg_num) != '') {
+			if($this->is_safe_msgnum($msg_num) !== true) {
+				$this->error = '[ERR] POP3 UID Message(s) Failed [Invalid Message Num: '.$msg_num.']';
+				return '';
+			} //end if
 			$reply = $this->send_cmd('UIDL '.$msg_num);
 		} else {
 			$reply = $this->send_cmd('UIDL'); // returns: ID[SPACE]UID\n
 		} //end if else
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -1768,25 +2026,25 @@ final class SmartMailerPop3Client {
 			return '';
 		} //end if
 		//--
-		if(strlen($msg_num) > 0) {
+		if((string)trim((string)$msg_num) != '') {
 			$tmp_arr = (array) explode(' ', (string)$reply); // The answer is like [OK] [MSGNUM] [UIDL]
-			$uid = trim($tmp_arr[2]);
+			$uid = (string) trim((string)$tmp_arr[2]);
 		} else {
-			$uid = $this->retry_data();
-			if(strlen($this->error) > 0) {
+			$uid = (string) $this->retry_data();
+			if((string)$this->error != '') {
 				return '';
 			} //end if
 		} //end if
 		//--
 		if($this->debug) {
-			if(strlen($msg_num) > 0) {
+			if((string)trim((string)$msg_num) != '') {
 				$this->log .= '[INF] UID For Message #'.$msg_num.' is: ['.$uid.']'."\n";
 			} else {
 				$this->log .= '[INF] UID For Messages are: [(LIST)]'."\n";
 			} //end if else
 		} //end if
 		//--
-		return $uid;
+		return (string) $uid;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1801,16 +2059,21 @@ final class SmartMailerPop3Client {
 	 */
 	public function size($msg_num) {
 		//--
+		if($this->is_safe_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] POP3 Size Message: NUM is Empty or Invalid';
+			return 0;
+		} //end if
+		//--
 		if($this->debug) {
 			$this->log .= '[INF] POP3 Size Message Number: '.$msg_num."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
 		$reply = $this->send_cmd('LIST '.$msg_num);
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -1841,16 +2104,21 @@ final class SmartMailerPop3Client {
 	 */
 	public function delete($msg_num) {
 		//--
+		if($this->is_safe_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] POP3 Delete Message: NUM is Empty or Invalid';
+			return 0;
+		} //end if
+		//--
 		if($this->debug) {
 			$this->log .= '[INF] POP3 Delete Message Number: '.$msg_num."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
 		$reply = $this->send_cmd('DELE '.$msg_num);
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		//--
@@ -1875,16 +2143,21 @@ final class SmartMailerPop3Client {
 	 */
 	public function header($msg_num, $read_lines=5) {
 		//--
+		if($this->is_safe_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] POP3 Header Message: NUM is Empty or Invalid';
+			return 0;
+		} //end if
+		//--
 		if($this->debug) {
 			$this->log .= '[INF] POP3 Header Message Number: '.$msg_num.' // Lines: '.$read_lines."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
 		$reply = $this->send_cmd('TOP '.$msg_num.' '.$read_lines);
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -1900,7 +2173,7 @@ final class SmartMailerPop3Client {
 		} //end if
 		//--
 		$header_out = (string) $this->retry_data();
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -1918,16 +2191,21 @@ final class SmartMailerPop3Client {
 	 */
 	public function read($msg_num) {
 		//--
+		if($this->is_safe_msgnum($msg_num) !== true) {
+			$this->error = '[ERR] POP3 Read Message: NUM is Empty or Invalid';
+			return 0;
+		} //end if
+		//--
 		if($this->debug) {
 			$this->log .= '[INF] POP3 Read Message Number: '.$msg_num."\n";
 		} //end if
 		//--
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
 		$reply = $this->send_cmd('RETR '.$msg_num);
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -1943,7 +2221,7 @@ final class SmartMailerPop3Client {
 		} //end if
 		//--
 		$msg_out = $this->retry_data();
-		if(strlen($this->error) > 0) {
+		if((string)$this->error != '') {
 			return '';
 		} //end if
 		//--
@@ -1955,6 +2233,26 @@ final class SmartMailerPop3Client {
 
 	//=====================================================================================
 	// :: PRIVATES ::
+	//=====================================================================================
+
+
+	//=====================================================================================
+	// [PRIVATE]
+	// for POP3 only numeric IDs can be used on server ; the UID is just for get as reply and store it, cannot issue commands by UID in POP3 protocol
+	private function is_safe_msgnum($msg_num) {
+		//--
+		$msg_num = (int) $msg_num;
+		if($msg_num <= 0) { // POP3 Message Num starts at 1
+			return false;
+		} //end if
+		//--
+		if(!preg_match('/^[0-9]+$/', (string)$msg_num)) {
+			return false;
+		} //end if
+		//--
+		return true;
+		//--
+	} //END FUNCTION
 	//=====================================================================================
 
 
@@ -1974,9 +2272,11 @@ final class SmartMailerPop3Client {
 	// Return 'ok' on +OK or 'error#' on -ERR
 	private function is_ok($reply) {
 		//--
+		$reply = (string)trim((string)$reply);
+		//--
 		$ok = 'ok';
 		//--
-		if(strlen((string)$reply) <= 0)	{
+		if((string)$reply == '') {
 			$ok = 'ERROR: Reply is Empty !';
 		} //end if
 		//--
@@ -1984,7 +2284,7 @@ final class SmartMailerPop3Client {
 			$ok = 'ERROR: Reply is not OK !';
 		} //end if
 		//--
-		return $ok;
+		return (string) $ok;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1998,13 +2298,16 @@ final class SmartMailerPop3Client {
 		$outside = true;
 		$banner = '';
 		//--
-		$reply = trim($reply);
+		$reply = (string) trim((string)$reply);
+		if((string)trim((string)$reply) == '') {
+			return '';
+		} //end if
 		//--
 		for($i=0; $i<SmartUnicode::str_len($reply); $i++) {
 			//--
 			$digit = SmartUnicode::sub_str($reply, $i, 1);
 			//--
-			if(strlen($digit) > 0) {
+			if((string)$digit != '') {
 				//--
 				if((!$outside) AND ((string)$digit != '<') AND ((string)$digit != '>')) {
 					$banner .= $digit;
@@ -2022,12 +2325,12 @@ final class SmartMailerPop3Client {
 			//--
 		} //end for
 		//--
-		$banner = trim($this->strip_clf($banner)); // just in case
-		if(strlen($banner) > 0) {
+		$banner = (string) trim((string)$this->strip_clf($banner)); // just in case
+		if((string)$banner != '') {
 			$banner = '<'.$banner.'>';
 		} //end if
 		//--
-		return $banner;
+		return (string) $banner;
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -2048,7 +2351,7 @@ final class SmartMailerPop3Client {
 			return '';
 		} //end if
 		//--
-		if(strlen($cmd) <= 0) {
+		if((string)trim((string)$cmd) == '') {
 			$this->error = '[ERR] POP3 Send Command: Empty command to send !';
 			return '';
 		} //end if
@@ -2063,7 +2366,7 @@ final class SmartMailerPop3Client {
 		//--
 		if($this->debug) {
 			//--
-			if(substr(trim($cmd), 0, 5) == 'PASS ') {
+			if((string)substr((string)trim((string)$cmd), 0, 5) == 'PASS ') {
 				$tmp_cmd = 'PASS *****'; // hide the password protection
 			} else {
 				$tmp_cmd = $cmd;
@@ -2090,14 +2393,14 @@ final class SmartMailerPop3Client {
 		} //end if
 		//--
 		$data = '';
-		$line = @fgets($this->socket, $this->buffer);
-		if(strlen($line) > 0) {
+		$line = (string) @fgets($this->socket, $this->buffer);
+		if((string)$line != '') { // don't trim
 			while(!preg_match("/^\.\r\n/", (string)$line)) {
 				//--
-				$data .= $line;
+				$data .= (string) $line;
 				//--
-				$line = @fgets($this->socket, $this->buffer);
-				if(strlen($line) <= 0) {
+				$line = (string) @fgets($this->socket, $this->buffer);
+				if((string)$line == '') { // don't trim
 					break;
 				} //end if
 				//--

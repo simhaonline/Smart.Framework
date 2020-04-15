@@ -42,16 +42,18 @@ $languages = [ 'en' => '[EN]' ];											// default associative array of avail
 
 //--------------------------------------- MAIL SEND (SMTP) related configuration
 /*
-$configs['sendmail']['server-mx-domain'] 	= 'yourdomain.tld';				// mx hello domain ; this is used for smtp send validations via HELO method, can be different from the server domain
-$configs['sendmail']['server-host'] 		= 'yourdomain.tld';				// `` | SMTP Server Host (IP or Domain)
-$configs['sendmail']['server-port']			= '465';						// `` | SMTP Server Port
-$configs['sendmail']['server-ssl']			= 'tls';						// `` | SSL Mode: starttls | tls | sslv3
-$configs['sendmail']['auth-user']			= 'user@yourdomain.tld';		// `` | smtp auth user (SMTP auth)
-$configs['sendmail']['auth-password']		= '';							// `` | smtp auth password (SMTP auth)
-$configs['sendmail']['from-address']		= 'user@yourdomain.tld';		// the email address From:
-$configs['sendmail']['from-name'] 			= 'Your Name';					// the from name to be set in From:
-$configs['sendmail']['log-messages']		= 'no';							// `no` | `yes` :: // Log Send Messages
-//$configs['sendmail']['use-qp-encoding'] 	= true; 						// if TRUE will use QuotedPrintable encoding instead of Base64 for email message text/html bodies
+$configs['sendmail']['server-mx-domain'] 		= 'yourdomain.tld';			// mx hello domain ; this is used for smtp send validations via HELO method, can be different from the server domain
+$configs['sendmail']['server-host'] 			= 'yourdomain.tld';			// `` | SMTP Server Host (IP or Domain)
+$configs['sendmail']['server-port']				= '465';					// `` | SMTP Server Port
+$configs['sendmail']['server-ssl']				= 'tls';					// `` | SSL Mode: starttls | tls | sslv3
+$configs['sendmail']['auth-user']				= 'user@yourdomain.tld';	// `` | smtp auth user (SMTP auth)
+$configs['sendmail']['auth-password']			= '';						// `` | smtp auth password (SMTP auth)
+$configs['sendmail']['from-address']			= 'user@yourdomain.tld';	// the email address From:
+$configs['sendmail']['from-name'] 				= 'Your Name';				// the from name to be set in From:
+$configs['sendmail']['log-messages']			= 'no';						// `no` | `yes` :: // Log Send Messages
+//$configs['sendmail']['use-qp-encoding'] 		= true; 					// if TRUE will use QuotedPrintable encoding instead of Base64 for email message text/html bodies
+//$configs['sendmail']['use-min-enc-subj'] 		= true; 					// if TRUE will try to use minimal encoding on subjects (Base64 or QuotedPrintable if use-qp-encoding is set to TRUE), may mix unencoded with encoded parts and split on many lines ; some AntiSPAM filters are more satisfied with this approach but some non-standard email clients may complain of this ...
+//$configs['sendmail']['use-antispam-rules'] 	= false; 					// if FALSE will not use the safe Anti-SPAM rules when sending the messages (make messages shorter by avoid embedding extra stuff that are required to better pass AntiSPAM Filters)
 */
 //---------------------------------------
 

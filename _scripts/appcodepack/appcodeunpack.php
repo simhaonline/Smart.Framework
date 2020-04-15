@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20200327.1535'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20200410.1607'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -986,7 +986,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20200327 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200410 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3360,7 +3360,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20200121
+	//##### SmartFileSystem v.20200410
 
 
 	//================================================================
@@ -4278,6 +4278,7 @@ Options -Indexes
 					$f_cx = @unlink($file_name);
 					//--
 					if(self::path_exists($file_name)) {
+						$f_cx = false;
 						self::log_warning(__METHOD__.'() // DeleteFile // FAILED to delete this file: '.$file_name);
 					} //end if
 					//--

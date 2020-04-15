@@ -1283,7 +1283,7 @@ final class SmartFileSysUtils {
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be mostly safe ; Reads can also use optional shared locking if needed
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200410
  * @package 	@Core:FileSystem
  *
  */
@@ -2380,6 +2380,7 @@ final class SmartFileSystem {
 					$f_cx = @unlink($file_name);
 					//--
 					if(self::path_exists($file_name)) {
+						$f_cx = false;
 						Smart::log_warning(__METHOD__.'() // DeleteFile // FAILED to delete this file: '.$file_name);
 					} //end if
 					//--

@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200331
  * @package 	Plugins:Network
  *
  */
@@ -422,7 +422,7 @@ final class SmartRobot {
 	 * @param $y_url_or_path 	STRING 	:: the absolute URL or RELATIVE URL (as path)
 	 * @return ARRAY					:: fixed URL, reference elements
 	 */
-	private static function get_url_or_path_trust_reference($y_url_or_path) {
+	public static function get_url_or_path_trust_reference($y_url_or_path) {
 		//--
 		// v.20200121
 		//--

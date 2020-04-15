@@ -35,13 +35,12 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * It automatically includes the SmartMailerSmtpClient class when sending via SMTP method.
  *
  * This class is a low level message composer and send utility for advanced usage.
- * If defined the SMART_SOFTWARE_MAILSEND_SAFE_RULES and set to TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages)
  * To easy send email messages use: SmartMailerUtils::send_email() / SmartMailerUtils::send_extended_email() functions.
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200415
  * @package 	Plugins:Mailer
  *
  */
@@ -55,6 +54,7 @@ final class SmartMailerSend {
 	private $parts;					// init array
 	private $atts;					// init array
 	private $composed;				// init flag
+	private $msgid; 				// init message ID
 	//--
 	//==================================================== PUBLIC vars
 
@@ -88,12 +88,31 @@ final class SmartMailerSend {
 	//-- how to encode
 
 	/**
-	 * If set to TRUE will encode using Base64Encode (the most safe)
-	 * Otherwise will use QuotePrintableEncode (the most used)
+	 * If set to TRUE will encode using Base64 Encode for Subject, Body Parts and Attachments (the most safe)
+	 * Otherwise will use Q Encode for Subject, QuotePrintable Encode for Body Parts and Base64 Encode for Attachments (the most used)
 	 * @var BOOLEAN
 	 * @default TRUE
 	 */
 	public $usealways_b64 = true;
+
+	/**
+	 * If set to TRUE will use oportunistic encode of Subject (all or just parts) in a minimal way, using an auto algorithm to analyze it ; encode entire Subject or some parts of it ; and only if necessary ; it also may apply line wrapping on long subjects if necessary
+	 * Otherwise will use Base64 (if usealways_b64 is TRUE) or Q Encode (if usealways_b64 is FALSE)
+	 * Setting this to true may be a better choice for Anti-SPAM filters but some non-compliant email clients may not display the subjects correctly when encoded this way ...
+	 * @var BOOLEAN
+	 * @default TRUE
+	 */
+	public $use_min_enc_subj = true;
+
+
+	/**
+	 * If set to TRUE will use extra safe rules when composing email mime messages to be sent (Ex: adding alternate TEXT body to HTML email messages ; adding the X-AntiAbuse headers, ...)
+	 * Otherwise will make messages shorter by avoid embedding extra stuff that are required to better pass AntiSPAM Filters
+	 * Setting this to false may be a better choice for local messages but a bad choice for real world messages ...
+	 * @var BOOLEAN
+	 * @default TRUE
+	 */
+	public $use_antispam_rules = true;
 
 	//-- method (smtp or mail)
 
@@ -183,7 +202,7 @@ final class SmartMailerSend {
 	public $priority;
 
 	/**
-	 * Message Subject ; Ex: 'This is the subject of the email Message'
+	 * Message Subject (max 127 characters) ; Ex: 'This is the subject of the email Message'
 	 * @var STRING
 	 * @default ''
 	 */
@@ -378,13 +397,15 @@ final class SmartMailerSend {
 				$this->mime_message .= 'X-Priority: 3'."\r\n"; // normal
 		} //end switch
 		//--
-		$this->mime_message .= 'X-Mailer: '.'Smart.Framework Mailer ('.$this->safe_header_str((string)SMART_FRAMEWORK_VERSION).')'."\r\n";
-		$this->mime_message .= 'MIME-Version: 1.0 '.'(Smart.Framework Mime-Message v.2018.11.23)'."\r\n";
-		$this->mime_message .= 'Message-Id: '.'<ID-'.$this->safe_header_str((string)Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain)).'>'."\r\n";
-		//--
-		if((string)trim((string)$this->headers) != '') {
-			$this->mime_message .= (string) trim((string)$this->headers)."\r\n"; // all lines must end with: \r\n !!! IF THIS IS MALFORMED THERE IS A RISK TO BREAK THE MIME MESSAGE !!
+		if((string)$this->msgid == '') { // ensure the same message ID on multiple sends
+			$this->msgid = (string) Smart::uuid_10_seq().'-'.Smart::uuid_10_str().'-'.Smart::uuid_10_num().'@'.Smart::safe_validname($tmp_domain);
 		} //end if
+		//--
+		$this->mime_message .= 'X-Mailer: '.'Smart.Framework Mailer ('.$this->safe_header_str((string)SMART_FRAMEWORK_VERSION).')'."\r\n";
+		$this->mime_message .= 'MIME-Version: 1.0 '.'(Smart.Framework Mime-Message '.$this->safe_header_str((string)SMART_FRAMEWORK_RELEASE_VERSION).')'."\r\n";
+		$this->mime_message .= 'Message-Id: '.'<ID-'.$this->safe_header_str($this->msgid).'>'."\r\n";
+		//--
+		$this->mime_message .= (string) $this->prepare_headers((string)$this->headers)."\r\n"; // do not test if headers are empty here, as prepare headers will also add some anti-spam stuff even if the headers are empty ; must add CRLF \r\n at the end
 		//--
 		if((string)$raw_message == '') {
 			//--
@@ -392,14 +413,9 @@ final class SmartMailerSend {
 				//--
 				if($this->composed !== true) { // prevent reattach body on re-send
 					//--
-					if($this->is_html == false) {
+					if($this->is_html === false) {
 						$this->add_attachment($this->body, '', 'text/plain', 'inline');
 					} else {
-						if(defined('SMART_SOFTWARE_MAILSEND_SAFE_RULES')) {
-							if(SMART_SOFTWARE_MAILSEND_SAFE_RULES === true) {
-								$this->add_attachment('This is a MIME Message in HTML Format.', 'alternative-part.txt', 'text/plain', 'inline'); // antiSPAM needs an alternate body
-							} //end if
-						} //end if
 						$this->add_attachment($this->body, '', 'text/html', 'inline');
 					} //end else
 					//--
@@ -696,6 +712,7 @@ final class SmartMailerSend {
 		$this->parts = array();
 		$this->atts = array();
 		$this->composed = false;
+		$this->msgid = '';
 		$this->mime_message = '';
 		//--
 		$this->usealways_b64 = true;
@@ -734,20 +751,102 @@ final class SmartMailerSend {
 
 
 	//=====================================================================================
+	// v.20200415, fix build headers (must operate over a copy of $this->headers ...)
+	private function prepare_headers($headers) {
+		//--
+		$tmp_my_uid = (int) getmyuid();
+		$tmp_my_gid = (int) getmygid();
+		$tmp_my_pid = (int) getmypid();
+		//--
+		$tmp_domain = (array) explode('@', (string)$this->from);
+		$tmp_domain = (string) trim((string)$tmp_domain[1]);
+		//-- normalize headers if set
+		$headers = (string) str_replace(["\r\n", "\r"], "\n", (string)$headers); // normalize line endings to LF
+		$headers = (string) str_replace(["\n", "\t"], ["\r\n", ' '], (string)$headers); // re-normalize line endings from LF to CRLF and TAB to SPACE
+		$headers = (string) trim((string)$headers)."\r\n"; // add termination CRLF, to be compatible with below sequence (will be trimmed at the end)
+		//-- antiSPAM Header - AntiAbuse
+		if($this->use_antispam_rules !== false) {
+			$headers .= 'X-AntiAbuse: This header was added to track abuse, please include it with any abuse report'."\r\n";
+			$headers .= 'X-AntiAbuse: Primary Hostname - '.$this->safe_header_str($this->smtp_helo ? $this->smtp_helo : 'localhost')."\r\n";
+			$headers .= 'X-AntiAbuse: Original Domain - '.$this->safe_header_str($this->smtp_server ? $this->smtp_server : 'localhost')."\r\n";
+			$headers .= 'X-AntiAbuse: Originator/Caller UID/GID - ['.$this->safe_header_str($tmp_my_pid).' '.$this->safe_header_str($tmp_my_pid).'] / ['.$this->safe_header_str($tmp_my_uid).' '.$this->safe_header_str($tmp_my_gid).']'."\r\n";
+			$headers .= 'X-AntiAbuse: Sender Address Domain - '.$this->safe_header_str($tmp_domain)."\r\n";
+		} //end if
+		//--
+		return (string) trim((string)$headers);
+		//--
+	} //END FUNCTION
+
+
+	//=====================================================================================
+	// v.20200415, fix qp
 	private function prepare_subject($subject) {
 		//--
-		$subject = (string) $this->safe_header_str((string)$subject);
+		$subject = (string) trim((string)$subject);
+		if((string)$subject == '') {
+			return 'No Subject';
+		} //end if
+		$subject = (string) SmartUnicode::sub_str((string)$subject, 0, 127); // {{{SYNC-MAIL-SEND-SUBJ-SIZE}}} max subject bytes is 255 but if all chars are unicode, is 255 / 2 =~ 127
 		//--
-		$charset = (string) $this->safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
-		//--
-		if((string)$charset != 'ISO-8859-1') {
-			if($this->usealways_b64 === false) { // quote printable encoded subject
-				$subject = (string) str_replace(["\r\n", "\r"], "\n", (string)quoted_printable_encode((string)$subject)); // encode QP
-				$subject = (string) str_replace(' ', '_', (string)$subject); // {{{SYNC-QUOTED-PRINTABLE-FIX}}} Reverse Fix: as google mail subjects ; normally on QP the _ must be encoded as =5F ; because google mail use the _ instead of space in all emails subject, it is considered a major enforcement to support this replacement
-				$subject = (string) '=?'.$charset.'?Q?'.$subject.'?=';
+		if((string)$charset == 'ISO-8859-1') {
+			//--
+			$subject = (string) SmartUnicode::deaccent_str((string)$subject);
+			$subject = (string) $this->safe_header_str((string)$subject);
+			//--
+		} else {
+			//--
+			$charset = (string) $this->safe_header_str((string)strtoupper((string)trim((string)$this->charset)));
+			//--
+			$subject = (string) $this->safe_header_str((string)$subject);
+			//--
+			if($this->usealways_b64 === false) { // Q Encoded subject: a subset of Quoted Printable, but spaces of an encoded part must be as underscore (if mixing encoded parts with non-encoded parts, spaces can remain as space on non-encoded parts)
+				//-- https://tools.ietf.org/html/rfc2047 # The "Q" encoding
+				if(($this->use_min_enc_subj === true) AND (function_exists('mb_encode_mimeheader'))) {
+					//--
+					$subject = (string) @mb_encode_mimeheader((string)$subject, (string)$charset, 'Q', "\r\n", 0); // this will encode in QuotedPrintable mode but just on need, and may encode only parts of the subject ; will always split long subjects in a safe mode on many lines
+					$subject = (string) str_replace('=20', '_', (string)$subject); // fix for Q Encoding ; do not replace spaces here because it may mix QP encoded with unencoded parts which may break subject if spaces of a non-encoded part are encoded as underscore
+					//--
+				} else {
+					//--
+					$subject = (string) quoted_printable_encode((string)$subject); // {{{SYNC-MAIL-QP-ENCODE+NORMALIZE-AFTER-LINE-BREAKS}}} ; '=' is converted to '=3D' always
+					$subject = (string) str_replace(["\r\n", "\r"], "\n", (string)$subject); // normalize breaks
+					//--
+					$subject = (string) str_replace('='."\n", '', (string)$subject); // RFC 2822 Fix (prevent subject go on many lines, it is not safe in this context)
+					$subject = (string) $this->safe_header_str((string)$subject); // fix weird \r \n \t, ... and the rest with a space
+					//--
+					$subject = (string) str_replace( // furthermore fixes for subject only
+						[
+							'_', 	// [_] underscore is also a special character that need to be encoded because later all spaces will be replaced with underscore (google mail standard ...)
+							'=20',	// [space, encoded: =20] is a special character, encode it as _ (underscore)
+							' ' 	// [space, not encoded] is a special character, encode it as _ (underscore)
+						],
+						[
+							'=5F', 	// [_]                   ; since _ is a special character below, encode it !!
+							'_', 	// [space, encoded: =20] ; {{{SYNC-QUOTED-PRINTABLE-FIX}}} Fix Spaces and replace with '_' instead of encoded space '=20' ; as google mail standard
+							'_' 	// [space, not encoded]  ; {{{SYNC-QUOTED-PRINTABLE-FIX}}} Fix Spaces and replace with '_' instead of space ' '           ; as google mail standard
+						],
+						(string) $subject
+					);
+					//--
+					$subject = (string) str_replace('?', '=3F', (string)$subject); // must enquote also the question marks in subject to avoid interferences with below questionmarks which are special characters in an encoded mime subject
+					$subject = (string) '=?'.$charset.'?Q?'.$subject.'?=';
+					//--
+				} //end if else
+				//--
 			} else { // prefer base64 encoded subjects
-				$subject = (string) '=?'.$charset.'?B?'.base64_encode((string)$subject).'?=';
+				//--
+				if(($this->use_min_enc_subj === true) AND (function_exists('mb_encode_mimeheader'))) {
+					//--
+					$subject = (string) @mb_encode_mimeheader((string)$subject, (string)$charset, 'B', "\r\n", 0); // this will encode in B64 mode but just on need, and may encode only parts of the subject ; will always split long subjects in a safe mode on many lines
+					//--
+				} else {
+					//--
+					$subject = (string) '=?'.$charset.'?B?'.base64_encode((string)$subject).'?=';
+					//--
+				} //end if else
+				//--
 			} //end if else
+			//--
 		} //end if
 		//--
 		return (string) $subject;
@@ -757,22 +856,21 @@ final class SmartMailerSend {
 
 
 	//=====================================================================================
-	// v.20200121, added content length and safe values {{{SYNC-MULTIPART-BUILD}}}
-	private function build_message($part) {
+	// v.20200415, fix qp, added content length and safe values {{{SYNC-MULTIPART-BUILD}}}
+	private function build_part($part) {
 		//--
 		$part = (array) $part;
 		//--
-		$checksum = (string) sha1((string)$part['message']);
-		//--
-		if((string)$part['encode'] == '7bit') {
-			// leave as is
+		if((string)$part['encode'] == '7bit') { // leave as is
+			$part['message'] = (string) str_replace(["\r\n", "\r"], "\n", (string)$part['message']); // normalize breaks
+			$checksum = (string) sha1((string)$part['message']); // calculate checksum after line fixing
 		} elseif((string)$part['encode'] == 'quoted-printable') { // quoted printable encode specific for email body
-			$part['message'] = (string) str_replace(["\r\n", "\r"], "\n", (string)quoted_printable_encode((string)$part['message'])); // see PHP Mailer ; no need for chunk split
-	//		$part['message'] = (string) str_replace(' ', '-', (string)$part['message']); // {{{SYNC-QUOTED-PRINTABLE-FIX}}} ; this appear to be a fix just for email subject that must be not applied to email bodies
-	//	} elseif((string)$part['encode'] == 'uuencode') { // currently this is not tested an may not work with modern antispam filters !!
-	//		$part['message'] = (string) convert_uuencode((string)$part['message']); // uuencode
-	//		$part['message'] = (string) trim((string)chunk_split((string)$part['message'], 76, "\r\n"));
+			$part['message'] = (string) str_replace(["\r\n", "\r"], "\n", (string)$part['message']); // normalize breaks
+			$checksum = (string) sha1((string)$part['message']); // calculate checksum after line fixing
+			$part['message'] = (string) quoted_printable_encode((string)$part['message']); // {{{SYNC-MAIL-QP-ENCODE+NORMALIZE-AFTER-LINE-BREAKS}}} :: see PHP Mailer: no need for chunk split but just normalize breaks after encoding (below), it does it whenever is possible
+			$part['message'] = (string) str_replace(["\r\n", "\r"], "\n", (string)$part['message']); // re-normalize breaks, after QP encoding, see PHP Mailer
 		} else { // base64 encode
+			$checksum = (string) sha1((string)$part['message']); // calculate checksum prior to encode
 			$part['encode'] = 'base64'; // rewrite this for all other cases
 			$part['message'] = (string) base64_encode((string)$part['message']); // encode b64
 			$part['message'] = (string) trim((string)chunk_split((string)$part['message'], 76, "\r\n"));
@@ -784,44 +882,72 @@ final class SmartMailerSend {
 				'Content-Disposition: '.$this->safe_value_str($part['disp']).';'.($part['filename'] ? ' filename="'.$this->safe_value_str($part['filename']).'"' : '')."\r\n".
 				'Content-Length: '.(int)strlen((string)$part['message'])."\r\n".
 				'Content-Decoded-Checksum-SHA1: '.$this->safe_value_str($checksum)."\r\n".
-				"\r\n".$part['message']; //."\r\n";
+				"\r\n".$part['message']."\r\n";
 		//--
 	} //END FUNCTION
 	//=====================================================================================
 
 
 	//=====================================================================================
-	// v.20200121 (multipart/mixed + multipart/related) {{{SYNC-MULTIPART-BUILD}}}
+	// v.20200415 (multipart/mixed + multipart/related) {{{SYNC-MULTIPART-BUILD}}}
 	private function build_multipart() {
 		//--
 		$timeduid = (string) Smart::uuid_10_seq(); // 10 chars, timed based, can repeat only once in 1000 years for the same millisecond
 		$timedrid = (string) strrev((string)$timeduid);
 		$entropy = (string) Smart::unique_entropy('mail/send'); // this generate a very random value
-		$boundary 			= '_===-Mime.Part____.'.$timeduid.'_'.md5('@MimePart---#Boundary@'.$entropy).'_P_.-=_'; // 69 chars of 70 max
-		$relatedboundary 	= '_-==-Mime.Related_.'.$timedrid.'_'.md5('@MimeRelated#Boundary@'.$entropy).'_R_.=-_'; // 69 chars of 70 max
+		$numuniq = (string) Smart::uuid_10_num();
+		$rnumunq = (string) strrev((string)$numuniq);
+		//--
+		$boundary 			= '_===-Mime.Part_______.0000000000'.$numuniq.$timeduid.SmartHashCrypto::crc32b('@MimePart---#Boundary@'.$entropy).'_P_.-===_'; // 69 chars of 70 max
+		$alternateboundary 	= '_=-=-Mime.AltPart____.0000000000'.$rnumunq.$timedrid.SmartHashCrypto::crc32b('@MimeAltPart#Boundary@'.$entropy).'_A_.=-=-_'; // 69 chars of 70 max
+		$relatedboundary 	= '_-==-Mime.Related____.0000000000'.$numuniq.$timedrid.SmartHashCrypto::crc32b('@MimeRelated#Boundary@'.$entropy).'_R_.-==-_'; // 69 chars of 70 max
 		//--
 		$multipart = '';
 		//--
 		$multipart .= 'Content-Type: multipart/mixed; boundary="'.$boundary.'"'."\r\n"."\r\n";
 		$multipart .= 'This is a multi-part message in MIME format.'."\r\n"."\r\n";
 		$multipart .= '--'.$boundary."\r\n";
+		//-- encapsulate in altertane container if HTML to add text alternative
+		if($this->use_antispam_rules !== false) { // antiSPAM rules needs an alternate body
+			if($this->is_html !== false) { // AntiSPAM filters (SpamAssassin, RSpamd) will generally prefer having a text alternate part to a HTML one ; the following message was taken from RSpamd v.2.5: 'MIME_HTML_ONLY (0.2) / Messages that have only HTML part'
+				$multipart .= 'Content-Type: multipart/alternative; boundary="'.$alternateboundary.'"'."\r\n";
+				$multipart .= "\r\n";
+				$multipart .= '--'.$alternateboundary."\r\n";
+				$multipart .= $this->build_part([
+					'encode' 	=> '7bit',
+					'ctype' 	=> 'text/plain',
+					'disp' 		=> 'inline',
+					'message' 	=> 'This is a MIME Message in HTML Format.'
+				]);
+				$multipart .= '--'.$alternateboundary."\r\n";
+			} //end if
+		} //end if
+		//	$multipart .= "\r\n";
+		//-- main part
 		$multipart .= 'Content-Type: multipart/related; boundary="'.$relatedboundary.'"'."\r\n";
-		//-- cid parts
+		//-- cid parts (of main part)
 		$multipart .= "\r\n";
 		for($i=Smart::array_size($this->parts)-1; $i>=0; $i--) {
 			$multipart .= '--'.$relatedboundary."\r\n";
-			$multipart .= (string) $this->build_message($this->parts[$i]);
+			$multipart .= (string) $this->build_part($this->parts[$i]);
 		} //end for
-		$multipart .= "\r\n";
+	//	$multipart .= "\r\n";
 		$multipart .= '--'.$relatedboundary.'--'."\r\n";
+		//-- finalize alternate if used
+		if($this->use_antispam_rules !== false) {
+			if($this->is_html !== false) {
+				//	$multipart .= "\r\n";
+				$multipart .= '--'.$alternateboundary.'--'."\r\n";
+			} //end if
+		} //end if
 		//-- attachments
 		$multipart .= "\r\n";
 		for($i=Smart::array_size($this->atts)-1; $i>=0; $i--) {
 			$multipart .= '--'.$boundary."\r\n";
-			$multipart .= (string) $this->build_message($this->atts[$i]);
+			$multipart .= (string) $this->build_part($this->atts[$i]);
 		} //end for
 		//--
-		$multipart .= "\r\n";
+	//	$multipart .= "\r\n";
 		$multipart .= '--'.$boundary.'--'."\r\n";
 		//--
 		return (string) $multipart;
@@ -855,7 +981,7 @@ final class SmartMailerSend {
 //$mail->priority = '1'; // high=1 | low=5 | normal=3
 //$mail->from = "address@yourdomain.ext";
 //$mail->from_return="address@yourdomain.ext";
-//$mail->headers = "Errors-To: postmaster@yourdomain.ext";
+//$mail->headers = "Errors-To: postmaster@yourdomain.ext\r\nIn-Reply-To: test@yourdomain.ext\r\n";
 //$mail->to = "another-address@yourdomain.ext";
 //$mail->cc = "address@yourdomain.ext";
 //$mail->subject = "Testing...";

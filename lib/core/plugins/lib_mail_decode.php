@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200415
  * @package 	Plugins:Mailer
  *
  */
@@ -543,9 +543,9 @@ final class SmartMailerMimeDecode {
 				//--
 			} elseif(is_array($value)) {
 				//-- get params from pre-body-arrays
-				if ($key === 'ctype_parameters') {
+				if((string)$key === 'ctype_parameters') {
 					//--
-					if(trim($value['charset']) != '') {
+					if((string)trim($value['charset']) != '') {
 						//--
 						$tmp_charset = SmartUnicode::str_tolower($value['charset']);
 						//--
@@ -553,16 +553,16 @@ final class SmartMailerMimeDecode {
 							$tmp_charset = 'iso-8859-1'; // correction :: {{{SYNC-CHARSET-FIX}}}
 						} //end if
 						//--
-						$this->last_charset = $tmp_charset;
+						$this->last_charset = (string) $tmp_charset;
 						//--
 					} //end if
 					//--
-				} elseif($key === 'headers') {
+				} elseif((string)$key === 'headers') {
 					//--
 					$this->arr_heads[] = $value;
 					//--
-					if(trim($value['content-id']) != '') {
-						$this->last_cid = str_replace(array(' ', '<', '>'), array('', '', ''), (string)$value['content-id']);
+					if((string)trim($value['content-id']) != '') {
+						$this->last_cid = (string) str_replace([' ', '<', '>'], ['', '', ''], (string)$value['content-id']);
 					} //end if
 					//--
 				} //end if
@@ -583,7 +583,7 @@ final class SmartMailerMimeDecode {
 					} //end if
 				} elseif($key === 'body') {
 					//-- calculate part id
-					if ((string)$vxf_mail_part_type == 'text') {
+					if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
 						//--
 						$tmp_part_id = 'txt_'.md5((string)trim((string)$value)); // text parts are not very long
 						//--
@@ -595,21 +595,43 @@ final class SmartMailerMimeDecode {
 							$tmp_part_id = 'att_'.sha1((string)$this->last_fname.$tmp_part_len.SmartUnicode::sub_str((string)$value, 0, 8192).SmartUnicode::sub_str((string)$value, -8192, 8192)); // try to be unique
 							$tmp_att_mod = 'normal';
 						} else {
-							$tmp_part_id = 'cid_'.$this->last_cid; // we have an ID from cid ...
-							$tmp_att_mod = 'cid';
+							if((string)$this->last_fname != '') {
+								switch((string)SmartFileSysUtils::get_file_extension_from_path($this->last_fname)) {
+									// {{{SYNC-MAIL-CID-IMGS}}} @ Get :: allow cids only for several types of images that can be displayed inline
+									case 'svg':
+									case 'gif':
+									case 'png':
+									case 'jpg':
+									//-- + allow several other types ...
+									case 'jpe':
+									case 'jpeg':
+									case 'webp':
+										$tmp_part_id = 'cid_'.$this->last_cid; // we have an ID from cid ...
+										$tmp_att_mod = 'cid';
+										break;
+									// FIX: apple mail adds PDF as inline CID but browsers cannot display as this !
+									default:
+										$tmp_part_id = 'att_cid_'.$this->last_cid; // we have an ID from cid ...
+										$tmp_att_mod = 'normal';
+								} //end switch
+							} //end if
 						} //end if else
 						//--
 					} //end if else
 					//--
 					$tmp_part_id = (string) strtolower((string)$tmp_part_id);
 					//--
-					if(((string)$tmp_part_id != '') AND (((string)$part_id == '') OR ((trim(strtolower($part_id)) == (string)$tmp_part_id) OR (trim(strtolower(str_replace(' ', '', $part_id))) == (string)$tmp_part_id)))) {
+					if(((string)$tmp_part_id != '') AND (((string)$part_id == '') OR (((string)trim((string)strtolower((string)$part_id)) == (string)$tmp_part_id) OR ((string)trim((string)strtolower((string)str_replace(' ', '', (string)$part_id))) == (string)$tmp_part_id)))) {
 						// DEFAULT
-						if((string)$vxf_mail_part_type == 'text') {
+						if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
 							//--
 							// TEXT / HTML PART
 							//--
 							$value = (string) SmartUnicode::convert_charset((string)$value, $this->last_charset, $this->local_charset); // {{{SYNC-CHARSET-CONVERT}}}
+							//--
+							if(((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted')) { // {{{SYNC-EMAIL-DECODE-SMIME}}}
+								$value = '----- S/MIME: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype.' -----'."\n".$value;
+							} //end if
 							//--
 							if((string)trim((string)$value) != '') { // avoid empty text parts
 								$this->arr_parts[(string)$tmp_part_id] = array(
@@ -617,7 +639,8 @@ final class SmartMailerMimeDecode {
 									'mode'			=> (string) $vxf_mail_part_type.'/'.$vxf_mail_part_stype,
 									'charset'		=> (string) $this->last_charset,
 									'description'	=> (string) 'Text Part: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype,
-									'content'		=> (string) trim((string)$value)
+									'content'		=> (string) trim((string)$value),
+									'@smart-log' 	=> (((string)$this->last_fname == 'smart-framework-email-send.log') ? (string)$this->last_fname : '') // the smart send log is the last part in a mime
 								);
 							} //end if
 							//--
@@ -705,7 +728,7 @@ final class SmartMailerMimeDecode {
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200415
  *
  */
 final class SmartMailerMimeExtract {
@@ -910,7 +933,7 @@ final class SmartMailerMimeExtract {
 					//-- the default part is text/plain, except for message/digest where is message/rfc822
 					$default_ctype = (SmartUnicode::str_tolower($content_type['value']) === 'multipart/digest') ? 'message/rfc822' : 'text/plain';
 					//--
-					$parts = $this->_boundarySplit($body, $content_type['other']['boundary']);
+					$parts = (array) $this->_boundarySplit($body, $content_type['other']['boundary']);
 					//--
 					for($i=0; $i<Smart::array_size($parts); $i++) {
 						//--
@@ -950,8 +973,8 @@ final class SmartMailerMimeExtract {
 		} else {
 			//--
 			$ctype = (array) explode('/', (string)$default_ctype);
-			$return->ctype_primary   = $ctype[0];
-			$return->ctype_secondary = $ctype[1];
+			$return->ctype_primary   = (string) trim((string)$ctype[0]);
+			$return->ctype_secondary = (string) trim((string)$ctype[1]);
 			$this->_include_bodies ? $return->body = ($this->_decode_bodies ? $this->_decodeBody($body) : $body) : null;
 			//--
 		} //end if else
@@ -1055,14 +1078,14 @@ final class SmartMailerMimeExtract {
 					$param_value = (string) trim(SmartUnicode::sub_str($parameters[$i], $pos + 1)); // added TRIM to fix invalid ' = ' case
 					//--
 					if((string)$param_value[0] == '"') {
-						$param_value = SmartUnicode::sub_str($param_value, 1, -1);
+						$param_value = (string) SmartUnicode::sub_str($param_value, 1, -1);
 					} //end if
 					//--
 					if(!is_array($return['other'])) {
 						$return['other'] = [];
 					} //end if
-					$return['other'][(string)$param_name] = $param_value;
-					$return['other'][(string)SmartUnicode::str_tolower($param_name)] = $param_value;
+					$return['other'][(string)$param_name] = (string) $param_value;
+					$return['other'][(string)SmartUnicode::str_tolower((string)$param_name)] = (string) $param_value;
 					//--
 				} //end for
 				//--
@@ -1090,13 +1113,15 @@ final class SmartMailerMimeExtract {
 	// @access private
 	private function _boundarySplit($input, $boundary) {
 		//--
-		$tmp = (array) explode('--'.$boundary, (string)$input);
+		$tmp = (array) explode((string)'--'.$boundary, (string)$input);
+		//--
+		$parts = [];
 		//--
 		for($i=1; $i<Smart::array_size($tmp); $i++) {
-			$parts[] = $tmp[$i];
+			$parts[] = (string) $tmp[$i];
 		} //end for
 		//--
-		return $parts;
+		return (array) $parts;
 		//--
 	} //END FUNCTION
 	//================================================================

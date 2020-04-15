@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200327
+ * @version 	v.20200403
  * @package 	@Core:Extra
  *
  */
@@ -57,6 +57,26 @@ final class SmartUtils {
 	// ::
 
 	private static $cache = array();
+
+
+	//================================================================
+	// return the size of all current used cookies for the current domain
+	public static function cookies_current_size_used_on_domain() {
+		//--
+		return (int) strlen((string)$_SERVER['HTTP_COOKIE']);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	// return the max size of all current used cookies for the current domain
+	public static function cookie_size_max() {
+		//--
+		return (int) SMART_FRAMEWORK_MAX_BROWSER_COOKIE_SIZE; // the max cookie size is 4096 includding name, time, domain, ... and the rest of cookie data, thus use max safe is 3072 bytes per cookie
+		//--
+	} //END FUNCTION
+	//================================================================
 
 
 	//================================================================

@@ -37,7 +37,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20200121
+ * @version 	v.20200415
  * @package 	Plugins:Mailer
  *
  */
@@ -287,7 +287,7 @@ final class SmartMailerUtils {
 	 * Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory
 	 * It will use custom server settings as 1st parameter: $mail_config
 	 *
-	 * @param ARRAY 		$mail_config 		config array: [ server-mx-domain, server-host, server-port, server-ssl, server-cafile, auth-user, auth-password, from-address, from-name, use-qp-encoding ]
+	 * @param ARRAY 		$mail_config 		config array: [ server-mx-domain, server-host, server-port, server-ssl, server-cafile, auth-user, auth-password, from-address, from-name, use-qp-encoding, use-min-enc-subj, use-antispam-rules ]
 	 * @param STRING 		$logsend_dir 		A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'
 	 * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
 	 * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
@@ -310,16 +310,18 @@ final class SmartMailerUtils {
 
 		//-- SMTP connection vars
 		$server_settings = [
-			'smtp_mxdomain' 	=> (string) $mail_config['server-mx-domain'],
-			'server_name' 		=> (string) $mail_config['server-host'],
-			'server_port' 		=> (string) $mail_config['server-port'],
-			'server_sslmode' 	=> (string) $mail_config['server-ssl'],
-			'server_cafile' 	=> (string) $mail_config['server-cafile'],
-			'server_auth_user' 	=> (string) $mail_config['auth-user'],
-			'server_auth_pass' 	=> (string) $mail_config['auth-password'],
-			'send_from_addr' 	=> (string) $mail_config['from-address'],
-			'send_from_name' 	=> (string) $mail_config['from-name'],
-			'use_qp_encoding' 	=> (string) $mail_config['use-qp-encoding']
+			'smtp_mxdomain' 		=> (string) $mail_config['server-mx-domain'],
+			'server_name' 			=> (string) $mail_config['server-host'],
+			'server_port' 			=> (string) $mail_config['server-port'],
+			'server_sslmode' 		=> (string) $mail_config['server-ssl'],
+			'server_cafile' 		=> (string) $mail_config['server-cafile'],
+			'server_auth_user' 		=> (string) $mail_config['auth-user'],
+			'server_auth_pass' 		=> (string) $mail_config['auth-password'],
+			'send_from_addr' 		=> (string) $mail_config['from-address'],
+			'send_from_name' 		=> (string) $mail_config['from-name'],
+			'use_qp_encoding' 		=> (bool)   $mail_config['use-qp-encoding'],
+			'use_min_enc_subj'		=> (bool)   $mail_config['use-min-enc-subj'],
+			'use_antispam_rules'	=> (bool)   $mail_config['use-antispam-rules']
 		];
 		//--
 
@@ -397,7 +399,7 @@ final class SmartMailerUtils {
 	 * Send Email Mime Message from Smart.Framework to a destination with many options that can be customized
 	 * This is for very advanced use only.
 	 *
-	 * @param ARRAY			$y_server_settings	smtp cfg array: [ smtp_mxdomain, server_name, server_port, server_sslmode, server_cafile, server_auth_user, server_auth_pass, send_from_addr, send_from_name, use_qp_encoding ]
+	 * @param ARRAY			$y_server_settings	smtp cfg array: [ smtp_mxdomain, server_name, server_port, server_sslmode, server_cafile, server_auth_user, server_auth_pass, send_from_addr, send_from_name, use_qp_encoding, use_min_enc_subj, use_antispam_rules ]
 	 * @param ENUM			$y_mode				mode: 'send' = do send | 'send-return' = do send + return | 'return' = no send, just return mime formated mail
 	 * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
 	 * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
@@ -422,24 +424,32 @@ final class SmartMailerUtils {
 		$y_server_settings = (array) $y_server_settings;
 		//--
 
-		//-- SMTP Hello
+		//-- SMTP HELO
 		$server_helo 	= (string) trim((string)$y_server_settings['smtp_mxdomain']);
-		//-- SMTP connection vars
-		$server_name 	= (string) trim((string)$y_server_settings['server_name']);
-		$server_port 	= (string) trim((string)$y_server_settings['server_port']);
-		$server_sslmode = (string) trim((string)$y_server_settings['server_sslmode']);
-		$server_cafile 	= (string) trim((string)$y_server_settings['server_cafile']);
-		$server_user 	= (string) trim((string)$y_server_settings['server_auth_user']);
-		$server_pass 	= (string) trim((string)$y_server_settings['server_auth_pass']);
+		if((string)$server_helo == '') {
+			$server_helo = (string) SmartUtils::get_ip_client();
+		} //end if
+		//-- SMTP CONNECTION VARS
+		$server_name 		= (string) trim((string)$y_server_settings['server_name']);
+		$server_port 		= (string) trim((string)$y_server_settings['server_port']);
+		$server_sslmode 	= (string) trim((string)$y_server_settings['server_sslmode']);
+		$server_cafile 		= (string) trim((string)$y_server_settings['server_cafile']);
+		$server_user 		= (string) trim((string)$y_server_settings['server_auth_user']);
+		$server_pass 		= (string) trim((string)$y_server_settings['server_auth_pass']);
 		//-- SEND FROM
-		$send_from_addr = (string) trim((string)$y_server_settings['send_from_addr']);
-		$send_from_name = (string) trim((string)$y_server_settings['send_from_name']);
-		$usealways_b64 	= (bool)   ($y_server_settings['use_qp_encoding'] === true ? false : true);
+		$send_from_addr 	= (string) trim((string)$y_server_settings['send_from_addr']);
+		$send_from_name 	= (string) trim((string)$y_server_settings['send_from_name']);
+		//-- MIME COMPOSE SETTINGS
+		$usealways_b64 		= (bool)   ($y_server_settings['use_qp_encoding'] === true ? false : true);
+		$use_min_enc_subj 	= (bool)   ($y_server_settings['use_min_enc_subj'] === false ? false : true);
+		$use_antispam_rules = (bool)   ($y_server_settings['use_antispam_rules'] === false ? false : true);
 		//--
 
 		//-- mail send class init
 		$mail = new SmartMailerSend();
 		$mail->usealways_b64 = (bool) $usealways_b64;
+		$mail->use_min_enc_subj = (bool) $use_min_enc_subj;
+		$mail->use_antispam_rules = (bool) $use_antispam_rules;
 		//--
 		if((string)$server_name == '@mail') {
 			//--
@@ -504,16 +514,6 @@ final class SmartMailerUtils {
 		} //end if
 		//--
 
-		//--
-		$tmp_explode_arr = (array) explode('@', (string)$send_from_addr);
-		$tmp_name = (string) trim((string)$tmp_explode_arr[0]); // not used
-		$tmp_domain = (string) trim((string)$tmp_explode_arr[1]); // used for message ID
-		//--
-		$tmp_my_uid = (int) getmyuid();
-		$tmp_my_gid = (int) getmygid();
-		$tmp_my_pid = (int) getmypid();
-		//--
-
 		//-- Extra Mail Headers
 		$mail->headers = '';
 		//-- Errors Reporting Header
@@ -525,16 +525,6 @@ final class SmartMailerUtils {
 		//-- Reply-To Header
 		if((string)$replytoaddr != '') {
 			$mail->headers .= 'Reply-To: '.$mail->safe_header_str($replytoaddr)."\r\n";
-		} //end if
-		//-- antiSPAM Header
-		if(defined('SMART_SOFTWARE_MAILSEND_SAFE_RULES')) {
-			if(SMART_SOFTWARE_MAILSEND_SAFE_RULES === true) {
-				$mail->headers .= 'X-AntiAbuse: This header was added to track abuse, please include it with any abuse report'."\r\n";
-				$mail->headers .= 'X-AntiAbuse: Primary Hostname - '.$mail->safe_header_str($server_helo)."\r\n";
-				$mail->headers .= 'X-AntiAbuse: Original Domain - '.$mail->safe_header_str($server_helo)."\r\n";
-				$mail->headers .= 'X-AntiAbuse: Originator/Caller UID/GID - ['.$mail->safe_header_str($tmp_my_pid).' 48880] / ['.$mail->safe_header_str($tmp_my_uid).' '.$mail->safe_header_str($tmp_my_gid).']'."\r\n";
-				$mail->headers .= 'X-AntiAbuse: Sender Address Domain - '.$mail->safe_header_str($tmp_domain)."\r\n";
-			} //end if
 		} //end if
 		//--
 
@@ -559,7 +549,7 @@ final class SmartMailerUtils {
 			//-- embed all images
 			$htmlparser = new SmartHtmlParser($message);
 			$htmlparser->get_clean_html(); // clean html before ; don't care of html comments
-			$arr_links = $htmlparser->get_tags('img');
+			$arr_links = $htmlparser->get_tags('img'); // {{{SYNC-CHECK-ROBOT-TRUST-IMG-LINKS}}}
 			$htmlparser = '';
 			unset($htmlparser);
 			//--
@@ -580,14 +570,14 @@ final class SmartMailerUtils {
 					$tmp_fake_fname = '';
 					$tmp_img_ext = ''; // extension
 					//--
-					$tmp_getimg_arr = (array) SmartRobot::load_url_img_content($tmp_imglink, 'auto');
+					$tmp_getimg_arr = (array) SmartRobot::load_url_img_content($tmp_imglink, 'auto'); // {{{SYNC-CHECK-ROBOT-TRUST-IMG-LINKS}}}
 					if($tmp_getimg_arr['result'] == 1) {
 						$tmp_fcontent = (string) $tmp_getimg_arr['content'];
 						$tmp_fake_fname = (string) $tmp_getimg_arr['filename'];
 						$tmp_img_ext = (string) $tmp_getimg_arr['extension'];
 					} //end if
 					$tmp_getimg_arr = null;
-					//--
+					//-- {{{SYNC-MAIL-CID-IMGS}}} @ Send
 					if(((string)$tmp_fcontent != '') AND ((string)$tmp_fake_fname != '') AND (((string)$tmp_img_ext == '.svg') OR ((string)$tmp_img_ext == '.png') OR ((string)$tmp_img_ext == '.gif') OR ((string)$tmp_img_ext == '.jpg'))) {
 						//--
 						$tmp_arr_fmime = array();
@@ -779,7 +769,7 @@ final class SmartMailerUtils {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.20200121
+ * @version 	v.20200415
  * @package 	Plugins:Mailer
  *
  */
@@ -830,7 +820,7 @@ final class SmartMailerMimeParser {
 			trim((string)$y_msg_file)."\n". 		// file
 			trim((string)$access_key)."\n". 		// access key based on UniqueID cookie
 			trim((string)$unique_key)."\n". 		// unique key based on: AuthUserID, User-Agent and IP
-			trim((string)$self_robot_key)."\n", 		// self robot browser UserAgentName/ID key
+			trim((string)$self_robot_key)."\n", 	// self robot browser UserAgentName/ID key
 			'Smart.Framework//MimeLink'.SMART_FRAMEWORK_SECURITY_KEY
 		);
 		//--
@@ -1139,7 +1129,7 @@ final class SmartMailerMimeParser {
 				} //end switch
 				//--
 				if((string)$skip_part_linking != 'yes') { // avoid display the print link when only a part is displayed
-					$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, $eval_arr[0], $eval_arr[1], 'print').'" target="'.Smart::escape_html($y_target).'__mimepart" data-smart="open.popup">'.'<img align="right" src="lib/core/plugins/img/email/bttn-print.svg" title="Print View" alt="Print View">'.'</a>';
+					$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, $eval_arr[0], $eval_arr[1], 'print').'" target="'.Smart::escape_html($y_target).'__mimepart" data-smart="open.popup">'.'<img align="right" src="lib/core/plugins/img/email/print-view.svg" title="Print View" alt="Print View">'.'</a>';
 				} //end if
 				//--
 				switch((string)$y_show_headers) {
@@ -1194,7 +1184,7 @@ final class SmartMailerMimeParser {
 					$atts = ''; // atts with link
 					$xatts = ''; // atts without link
 					//--
-					$tmp_att_img = '<img src="lib/core/plugins/img/email/attachment.svg">';
+					$tmp_att_img = '<img src="lib/core/plugins/img/email/attachment.svg" alt="Attachment" title="Attachment">';
 					//--
 					foreach($msg['attachments'] as $key => $val) {
 						//--
@@ -1252,6 +1242,7 @@ final class SmartMailerMimeParser {
 				$xbuff_id = '';
 				$skips = array();
 				$numparts = 0;
+				//--
 				foreach($msg['texts'] as $key => $val) {
 					//--
 					$key = (string) $key;
@@ -1262,25 +1253,31 @@ final class SmartMailerMimeParser {
 					if((string)$val['type'] == 'text') { // assure we don't print other things
 						//--
 						if((string)$val['mode'] == 'text/x-watch-html') { // Apple watch Text: skip
+							//--
 							$val['skip'] = true;
 							$msg['texts'][$key]['skip'] = true; // write back
-						} elseif((string)$val['mode'] == 'text/plain') { // Plain TEXT
+							//--
+						} elseif(((string)$val['mode'] == 'text/plain') OR ((string)$val['mode'] == 'application/pgp-encrypted')) { // Plain TEXT ; {{{SYNC-EMAIL-DECODE-SMIME}}}
 							//-- sanitize text
 							$val['content'] = '<!-- MIMEREAD:PART:TEXT -->'.Smart::escape_html($val['content']);
 							$val['content'] = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", '<br>'), $val['content']);
 							$val['content'] = SmartParser::text_urls($val['content']);
 							//--
-							$msg['texts'][$key]['content'] = $val['content']; // rewrite back
+							if((string)$val['mode'] == 'application/pgp-encrypted') { // {{{SYNC-EMAIL-DECODE-SMIME}}}
+								$val['content'] = '<img src="lib/core/plugins/img/email/mime-encrypted.svg" align="right" alt="S.MIME" title="S.MIME">'.$val['content'];
+							} //end if
+							//--
+							$msg['texts'][$key]['content'] = (string) $val['content']; // rewrite back
 							//-- assign buffer
-							$buff = SmartUnicode::sub_str($val['content'], 0, 16384);
-							$buff_id = $key;
+							$buff = (string) SmartUnicode::sub_str($val['content'], 0, 16384);
+							$buff_id = (string) $key;
 							//--
 							$percent_similar = 0;
 							if((string)$the_part_id == '') {
 							//	@similar_text($buff, $markup_multipart, $percent_similar);
 								$percent_similar = 99; // {{{SYNC-FIX-EML-HIDE-ALTERNATE-PARTS}}}
 								if($percent_similar >= 25) { // 25% at least similarity
-									$skips[$buff_id] = $percent_similar; // skip this alternate html part ...
+									$skips[(string)$buff_id] = (int) ceil((float)$percent_similar); // skip this alternate html part ...
 								} //end if
 							} //end if
 							//--
@@ -1294,20 +1291,24 @@ final class SmartMailerMimeParser {
 							//--
 							if((SmartUnicode::str_contains($val['content'], '<'.'?')) OR (SmartUnicode::str_contains($val['content'], '?'.'>')) OR (SmartUnicode::str_contains($val['content'], '<'.'%')) OR (SmartUnicode::str_contains($val['content'], '%'.'>'))) {
 								//--
-								$val['content'] = @highlight_string($val['content'], 1); // highlight the PHP* code & sanitize the parts
+								$val['content'] = (string) @highlight_string($val['content'], 1); // highlight the PHP* code & sanitize the parts
 								//--
 							} else {
 								//-- sanitize this html part
 								$val['content'] = (string) self::mime_fix_clean_html($val['content']);
+								//-- {{{SYNC-CHECK-ROBOT-TRUST-IMG-LINKS}}} :: fix back unsafe images replaced by mime_fix_clean_html() if default or print mode (not for 'data-reply' or 'data-full' or other modes)
+								if(((string)$y_process_mode == 'default') OR ((string)$y_process_mode == 'print')) {
+									$val['content'] = (string) str_replace('data-title="WebMail :: Disabled UNSAFE Image" src="#smart-framework-webmail-unsafe-image"', 'title="Smart.Framework.WebMail :: Disabled UNSAFE Image @ '.date('Y-m-d H:i:s O').'" src="lib/core/plugins/img/email/unsafe-image.svg"', (string)$val['content']);
+								} //end if
 								//-- replace cid images
 								$val['content'] = (string) self::mime_fix_cids($the_message_eml, $val['content'], $y_ctrl_key, $y_link);
 								//--
 							} //end if else
 							//--
-							$msg['texts'][$key]['content'] = $val['content']; // rewrite back
+							$msg['texts'][$key]['content'] = (string) $val['content']; // rewrite back
 							//--
-							$xbuff = SmartUnicode::sub_str(Smart::striptags($val['content']), 0, 16384);
-							$xbuff_id = $key;
+							$xbuff = (string) SmartUnicode::sub_str(Smart::striptags($val['content']), 0, 16384);
+							$xbuff_id = (string) $key;
 							//--
 							$percent_similar = 0;
 							if((string)$the_part_id == '') {
@@ -1317,8 +1318,7 @@ final class SmartMailerMimeParser {
 									$skips[$buff_id] = $percent_similar; // skip this alternate text part ...
 								} //end if
 							} //end if
-							//--
-							// clean buffer
+							//-- clean buffer
 							$buff = '';
 							$buff_id = '';
 							//--
@@ -1355,7 +1355,7 @@ final class SmartMailerMimeParser {
 							if((string)$skip_part_linking == 'yes') { // avoid display sub-text part links when only a part is displayed
 								$tmp_pict_img = '';
 							} else {
-								$tmp_pict_img = '<div align="right">'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mime-part.svg">'.$tmp_link_pst.'</div>';
+								$tmp_pict_img = '<div align="right">'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mime-part.svg" alt="Mime Part" title="Mime Part">'.$tmp_link_pst.'</div>';
 							} //end if
 							//--
 							if((string)$y_process_mode == 'data-reply') {
@@ -1369,7 +1369,7 @@ final class SmartMailerMimeParser {
 								if(((string)$val['mode'] == 'text/plain') OR ((string)$y_process_mode == 'print')) {
 									$out .= $val['content'];
 								} else { // for non text/plain parts, use sandbox iframe if non-print mode ; for print mode the iframe sandbox must be manually added to ensure safety !
-									$out .= '<div title="MimeMessage HTML Safe SandBox / iFrame" style="position:relative;"><img height="16" src="lib/core/plugins/img/email/safe.svg" style="cursor:help; position:absolute; top:5px; left:49vw; opacity:0.25;"><iframe name="'.Smart::escape_html($htmid).'" id="'.Smart::escape_html($htmid).'" width="100%" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="min-height:75vh; height:max-content; border:1px solid #ECECEC;" srcdoc="'.Smart::escape_html('<!DOCTYPE html><html><head><title>Mime Message</title><meta charset="'.Smart::escape_html(SMART_FRAMEWORK_CHARSET).'">'.SmartFileSystem::read('lib/core/templates/base-html-styles.inc.htm').'</head><body>'.$val['content'].'<script>alert(\'If you can see this alert the Mime Message iFrame Sandbox is unsafe ...\');</script></body></html>').'" sandbox></iframe></div>';
+									$out .= '<div title="Mime Message HTML Safe SandBox / iFrame" style="position:relative;"><img height="16" src="lib/core/plugins/img/email/safe.svg" style="cursor:help; position:absolute; top:5px; left:49vw; opacity:0.25;"><iframe name="'.Smart::escape_html($htmid).'" id="'.Smart::escape_html($htmid).'" width="100%" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="min-height:75vh; height:max-content; border:1px solid #ECECEC;" srcdoc="'.Smart::escape_html('<!DOCTYPE html><html><head><title>Mime Message</title><meta charset="'.Smart::escape_html(SMART_FRAMEWORK_CHARSET).'">'.SmartFileSystem::read('lib/core/templates/base-html-styles.inc.htm').'</head><body>'.$val['content'].'<script>alert(\'If you can see this alert the Mime Message iFrame Sandbox is unsafe ...\');</script></body></html>').'" sandbox></iframe></div>';
 								} //end if else
 								$out .= '<br><hr><br>';
 							} //end if
@@ -1378,9 +1378,13 @@ final class SmartMailerMimeParser {
 							//--
 							if((string)$skip_part_linking != 'yes') { // for replies, avoid display sub-text part links when only a part is displayed
 								if((string)$y_process_mode == 'data-reply') {
-									// nothing
+									// display nothing
 								} else {
-									$out .= '<div align="right">'.'<span title="'.'~'.Smart::escape_html(Smart::format_number_dec($skips[$key], 0, '.', ',').'%').'">&nbsp;</span>'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mime-alt-part.svg">'.$tmp_link_pst.'</div>';
+									if((string)$val['@smart-log'] != '') {
+										$out .= '<div align="right">'.'<span title="'.Smart::escape_html($val['@smart-log']).'">&nbsp;</span>'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mime-log-part.svg" alt="Message Send Log" title="Message Send Log">'.$tmp_link_pst.'</div>';
+									} else {
+										$out .= '<div align="right">'.'<span title="'.'~'.Smart::escape_html(Smart::format_number_dec($skips[$key], 0, '.', ',').'%').'">&nbsp;</span>'.$tmp_link_pre.'<img src="lib/core/plugins/img/email/mime-alt-part.svg" alt="Alternative Mime Part" title="Alternative Mime Part">'.$tmp_link_pst.'</div>';
+									} //end if else
 								} //end if else
 							} //end if
 							//--
@@ -1449,7 +1453,44 @@ final class SmartMailerMimeParser {
 	// [PRIVATE]
 	private static function mime_fix_clean_html($y_mime_part) {
 		//--
-		return (new SmartHtmlParser((string)$y_mime_part))->get_clean_html(false); // clean, without html comments
+		// 1. clean HTML and strip comments
+		// 2. extract all image tags to be checked and deactivate unsafe img links, since robot re-composes a message and only embed img tags {{{SYNC-CHECK-ROBOT-TRUST-IMG-LINKS}}}
+		// 3. images with unsafe img src links that point to index.php / admin.php will be deactivated to prevent robot to be fooled by inserting back links that point to unwanted areas when the robot re-compose back a mime message on reply by example and to avoid embedd unwanted things
+		//--
+		$htmlparser = new SmartHtmlParser((string)$y_mime_part);
+		$y_mime_part = (string) $htmlparser->get_clean_html(false); // clean, without html comments
+		$arr_links = (array) $htmlparser->get_tags('img'); // {{{SYNC-CHECK-ROBOT-TRUST-IMG-LINKS}}}
+		$htmlparser = '';
+		unset($htmlparser);
+		//--
+		for($i=0; $i<Smart::array_size($arr_links); $i++) {
+			//--
+			$tmp_link = (string) trim((string)$arr_links[$i]['src']); // trim any possible spaces
+			//--
+			if((stripos((string)$tmp_link, 'data:') === 0) OR (stripos((string)$tmp_link, 'cid:') === 0)) {
+				//--
+				// data: images are embedded, they are safe
+				// cid: images are replaced after this step, they are safe
+				//--
+			} else {
+				//--
+				// for any other images test if they match a trusted robot reference
+				// if they are trusted by robot, they are UNSAFE because they can fool the robot to replace them back as a CID attachment when an email message is re-composed (ex: reply to a message, can embedd an unwanted image or other unwanted things ...)
+				// to avoid any hack that can fool the robot, simply disable below any image link that can be trusted by robot !
+				//--
+				$arr_robot_test = (array) SmartRobot::get_url_or_path_trust_reference($tmp_link); // {{{SYNC-CHECK-ROBOT-TRUST-IMG-LINKS}}}
+				//--
+				if(((string)$arr_robot_test['allow-credentials'] == 'yes') OR ((string)$arr_robot_test['trust-headers'] == 'yes')) {
+					//-- replace robot trusted img links
+					$y_mime_part = (string) str_ireplace('src="'.$tmp_link.'"', 'alt="UNSAFE Image Disabled: `'.$tmp_link.'`" data-title="WebMail :: Disabled UNSAFE Image" src="#smart-framework-webmail-unsafe-image"', (string)$y_mime_part);
+					//--
+				} //end if
+				//--
+			} //end if
+			//--
+		} //end for
+		//--
+		return (string) $y_mime_part;
 		//--
 	} //END FUNCTION
 	//==================================================================
@@ -1461,7 +1502,7 @@ final class SmartMailerMimeParser {
 		//--
 		$matches = array(); // init
 		//--
-		preg_match_all('/<img[^>]+src=[\'"]?(cid:)([^\'"]*)[\'"]?[^>]*>/si', (string)$y_mime_part, $matches, PREG_SET_ORDER, 0); // fix: previous was just i (not si) ; modified on 160205
+		preg_match_all('/<img[^>]+src=[\'"]?(cid\:)([^\'"]*)[\'"]?[^>]*>/si', (string)$y_mime_part, $matches, PREG_SET_ORDER, 0); // fix: previous was just i (not si) ; modified on 20200331
 		// $matches[i][0] : the full link
 		// $matches[i][1] : 'cid:'
 		// $matches[i][2] : cid part id

@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20200327.1535'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200410.1607'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2272,7 +2272,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20200327 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200410 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -4646,7 +4646,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSystem v.20200121
+	//##### SmartFileSystem v.20200410
 
 
 	//================================================================
@@ -5564,6 +5564,7 @@ Options -Indexes
 					$f_cx = @unlink($file_name);
 					//--
 					if(self::path_exists($file_name)) {
+						$f_cx = false;
 						self::log_warning(__METHOD__.'() // DeleteFile // FAILED to delete this file: '.$file_name);
 					} //end if
 					//--
