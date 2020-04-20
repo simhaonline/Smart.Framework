@@ -1,3 +1,4 @@
+[@@@SUB-TEMPLATE:admin-form-styles.mtpl.htm@@@]
 <div align="center"><table><tr><td>
 	<form id="edit_form" name="edit_form" class="ux-form ux-form-aligned" onSubmit="return false;">
 	<legend><h1>Edit Account</h1></legend><br>
@@ -22,6 +23,15 @@
 			<label>Password:</label>
 			<a href="[###ACTIONS-URL|html###]change-pass-form&id=[###ID|url|html###]" class="ux-button ux-button-small">Change the Password</a>
 		</div>
+		[%%%IF:SELF-KEYS:==yes;%%%]
+		<input type="hidden" name="frm[upd-keys]" value="yes">
+		<div class="ux-control-group">
+			<label>Privacy Keys</label>
+			<textarea name="frm[keys]" class="ux-input-1-2" placeholder="Keys" spellcheck="false" maxlength="512" style="height:75px;">[###KEYS|html###]</textarea>
+		</div>
+		[%%%ELSE:SELF-KEYS%%%]
+		<input type="hidden" name="frm[upd-keys]" value="no">
+		[%%%/IF:SELF-KEYS%%%]
 		<div class="ux-control-group">
 			<label>Privileges</label>
 			<div style="display:inline-block;">[###PRIV-LIST-HTML###]</div>

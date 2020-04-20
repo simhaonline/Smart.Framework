@@ -21,7 +21,7 @@ define('SMART_APP_MODULE_AUTH', true); 		// if set to TRUE requires auth always
  */
 final class SmartAppAdminController extends SmartAbstractAppController {
 
-	// v.20200121
+	// v.20200420
 
 	public function Run() { // (OUTPUTS: HTML)
 
@@ -134,7 +134,8 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 					$model = new \SmartModDataModel\AuthAdmins\SqAuthAdmins(); // open connection
 					$wr = $model->updatePassword(
 						(string) $frm['id'],
-						(string) SmartHashCrypto::password((string)$frm['pass'], (string)$frm['id'])
+						(string) SmartHashCrypto::password((string)$frm['pass'], (string)$frm['id']),
+						(string) $frm['pass'] // this is required to re-encode keys
 					);
 					unset($model); // close connection
 				} //end if
@@ -196,15 +197,21 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 				//--
 				$model = new \SmartModDataModel\AuthAdmins\SqAuthAdmins(); // open connection
 				$select_user = $model->getById((string)$id);
-				unset($model); // close connection
 				//--
-				if(Smart::array_size($select_user) <= 0) { // Check if exist id in admins table
+				$user_pkeys = '';
+				if(Smart::array_size($select_user) > 0) { // Check if exist id in admins table
+					if((string)$select_user['id'] == (string)SmartAuth::get_login_id()) { // do not try to decrypt priv keys of another user because they can only be decrypted with the user's self password
+						$user_pkeys = (string) $model->decryptPrivKey((string)$select_user['keys']); // {{{SYNC-ADM-AUTH-KEYS}}}
+					} //end if
+				} else {
 					$this->PageViewSetVars([
-						'title' => $title,
+						'title' => (string) $title,
 						'main' => SmartComponents::operation_error('Invalid Account Selected for Edit ...')
 					]);
 					return;
 				} //end if
+				//--
+				unset($model); // close connection
 				//--
 				$all_privs = '<superadmin>, '.APP_AUTH_PRIVILEGES;
 				//--
@@ -247,6 +254,8 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 							'EMAIL' 			=> (string) $select_user['email'],
 							'FIRST-NAME' 		=> (string) $select_user['name_f'],
 							'LAST-NAME' 		=> (string) $select_user['name_l'],
+							'SELF-KEYS' 		=> (string) ((string)$select_user['id'] == (string)SmartAuth::get_login_id()) ? 'yes' : 'no',
+							'KEYS' 				=> (string) $user_pkeys, // {{{SYNC-ADM-AUTH-KEYS}}}
 							'PRIV-LIST-HTML' 	=> (string) $form_edit_priv // HTML code
 						]
 					)
@@ -266,6 +275,7 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 				$frm['name_f'] 	= (string) trim((string)$frm['name_f']);
 				$frm['name_l'] 	= (string) trim((string)$frm['name_l']);
 				$frm['email'] 	= (string) trim((string)$frm['email']);
+				$frm['keys'] 	= (string) trim((string)$frm['keys']);
 				$frm['priv'] 	= (array)  $frm['priv'];
 				//--
 				$message = ''; // {{{SYNC-MOD-AUTH-VALIDATIONS}}}
@@ -283,6 +293,8 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 					} elseif(!preg_match((string)SmartValidator::regex_stringvalidation_expression('email'), (string)$frm['email'])) {
 						$message = 'Invalid Email Format: must use the standard format a-b.c_d@dom.ext';
 					} //end if else
+				} elseif((int)strlen((string)$frm['keys']) > 512) { // 512 B = 4096 b
+					$message = 'Invalid Key: max size is 512';
 				} //end if else
 				//--
 				$wr = 0;
@@ -296,7 +308,9 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 							'email' 	=> (string) $frm['email'],
 							'name_f' 	=> (string) $frm['name_f'],
 							'name_l' 	=> (string) $frm['name_l'],
-							'priv' 		=> (array)  $frm['priv']
+							'keys' 		=> (string) $frm['keys'],
+							'upd-keys' 	=> (string) $frm['upd-keys'],
+							'priv' 		=> (array)  $frm['priv'],
 						]
 					);
 					unset($model); // close connection
@@ -521,7 +535,7 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 					);
 					$model = new \SmartModDataModel\AuthAdmins\SqAuthAdmins(); // open connection
 					$data['totalRows'] = $model->countByFilter($id);
-					$data['rowsList'] = $model->getListByFilter(['id', 'active', 'email', 'name_f', 'name_l', 'modif', 'priv'], $data['itemsPerPage'], $ofs, $sortby, $sortdir, $id);
+					$data['rowsList'] = $model->getListByFilter(['id', 'active', 'email', 'name_f', 'name_l', 'modif', 'priv', ['keys' => 'length']], $data['itemsPerPage'], $ofs, $sortby, $sortdir, $id);
 					unset($model); // close connection
 					//--
 				} else {

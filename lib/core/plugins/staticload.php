@@ -22,6 +22,7 @@ require_once('lib/core/plugins/lib_ftp_cli.php');			// ftp client
 require_once('lib/core/plugins/lib_mail_send.php');			// mail send client (sendmail, smtp)
 require_once('lib/core/plugins/lib_mail_get.php'); 			// mail get client (pop3, imap4)
 require_once('lib/core/plugins/lib_mail_decode.php'); 		// mail message decoder (mime)
+require_once('lib/core/plugins/lib_mail_notes.php');		// mail notes (mime parsing fixes, decode, encode)
 require_once('lib/core/plugins/lib_mail_utils.php');		// mail utils (verify, parse)
 //--
 require_once('lib/core/plugins/lib_yaml.php');				// yaml converter

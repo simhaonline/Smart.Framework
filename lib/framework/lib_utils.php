@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200403
+ * @version 	v.20200419
  * @package 	@Core:Extra
  *
  */
@@ -627,8 +627,8 @@ final class SmartUtils {
 		$y_limit = Smart::format_number_int($y_limit, '+');
 		if($y_limit < 10) {
 			$y_limit = 10;
-		} elseif($y_limit > 128) {
-			$y_limit = 128;
+		} elseif($y_limit > 255) { // for other purposes, leave a max of 255
+			$y_limit = 255;
 		} //end if
 		//--
 		return (string) trim((string)Smart::text_cut_by_limit((string)$ytxt, (int)$y_limit, false, ''));
@@ -650,8 +650,8 @@ final class SmartUtils {
 		if($y_limit < 10) {
 			$y_limit = 10;
 		} //end if
-		if($y_limit > 256) {
-			$y_limit = 256;
+		if($y_limit > 1024) { // for other purposes, leave a max of 1024
+			$y_limit = 1024;
 		} //end if
 		//--
 		$arr = (array) self::extract_words_from_text_html($ytxt); // will do strip tags + normalize spaces
@@ -670,7 +670,7 @@ final class SmartUtils {
 
 	//================================================================
 	// prepare HTML compliant keywords from a string
-	// max is 128 words, recommended is 97 words
+	// max is 1024 words, recommended is 97 words
 	// will find the keywords listed descending by the occurence number
 	// keywords with higher frequency will be listed first
 	// We add Strategy: Max 2% up to 7% of keywords from existing text (SEO req.)
@@ -685,8 +685,8 @@ final class SmartUtils {
 		if($y_count < 10) {
 			$y_count = 10;
 		} //end if
-		if($y_count > 128) {
-			$y_count = 128;
+		if($y_count > 2048) { // for other purposes, leave a max of 4096
+			$y_count = 2048;
 		} //end if
 		//--
 		$ytxt = str_replace(',', ' ', SmartUnicode::str_tolower($ytxt));
@@ -1340,7 +1340,7 @@ final class SmartUtils {
 	 * @return MIXED								:: '' (empty string) if all OK ; FALSE (boolean) if upload failed ; otherwise will return a non-empty string with the ERROR / WARNING message if the file was not successfuly stored in the destination directory
 	 */
 	public static function store_uploaded_file($dest_dir, $var_name, $var_index=-1, $allow_rewrite=true, $max_size=0, $allowed_extensions='', $new_name='', $enforce_lowercase=false) {
-		//-- {{{SYNC-HANDLE-F-UPLOADS}}}
+		//-- {{{SYNC-HANDLE-F-UPLOADS}}} v.20200419
 		$dest_dir = (string) $dest_dir;
 		$var_name = (string) trim((string)$var_name);
 		$var_index = (int) $var_index;
@@ -1357,7 +1357,7 @@ final class SmartUtils {
 		$new_name = (string) $new_name; // an optional override file name (NO extension !!! The extension will be preserved from the uploaded file)
 		//--
 		if(Smart::array_size($_FILES) <= 0) {
-			return false; // no files uploads detected ; should return no error ...
+			return false; // {{{SYNC-FILE-UPLD-FALSE-RET}}} no files uploads detected ; should return no error ...
 		} //end if
 		//--
 		if((string)$var_name == '') {
@@ -1375,6 +1375,20 @@ final class SmartUtils {
 			return 'Invalid Destination Dir: Path must exist and it must be a directory';
 		} //end if
 		//--
+		if(is_array($_FILES[$var_name]['tmp_name'])) { // if detected multi file uploads sent by client, index must be >= 0 to explicit allow this
+			if($var_index >= 0) {
+				// OK
+			} else {
+				return false;
+			} //end if
+		} else { // client sent a single file upload (if PHP code expects multi, need to fix the var index as 0 = -1 to handle this
+			if($var_index === 0) {
+				$var_index = -1; // fix: support the upload of single file when support many
+			} elseif($var_index > 0) {
+				return false; // {{{SYNC-FILE-UPLD-FALSE-RET}}} should return no error because the file may not be uploaded
+			} //end if
+		} //end if
+		//--
 		if($var_index >= 0) {
 			$the_upld_file_name 	= (string) $_FILES[$var_name]['name'][$var_index];
 			$the_upld_file_tmpname 	= (string) $_FILES[$var_name]['tmp_name'][$var_index];
@@ -1387,7 +1401,7 @@ final class SmartUtils {
 		//-- check uploaded tmp name
 		$the_upld_file_tmpname = (string) trim((string)$the_upld_file_tmpname);
 		if((string)$the_upld_file_tmpname == '') {
-			return false; // should return no error because the file may not be uploaded
+			return false; // {{{SYNC-FILE-UPLD-FALSE-RET}}} should return no error because the file may not be uploaded
 		} //end if
 		//-- fix file name
 		$the_upld_file_name = (string) SmartUnicode::deaccent_str($the_upld_file_name);
@@ -1481,6 +1495,10 @@ final class SmartUtils {
 		if((string)$up_err != '') {
 			return (string) $up_err.' for file: '.$the_upld_file_name;
 		} //end if
+		//-- bug-fix: check if uploaded file before re-versioning
+		if(!is_uploaded_file((string)$the_upld_file_tmpname)) {
+			return 'UPLOAD ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name.' at: '.$the_upld_file_tmpname;
+		} //end if
 		//-- if there is an existing file already with the same name
 		if(SmartFileSystem::is_type_file($dest_dir.$the_upld_file_name)) {
 			if((string)$allow_rewrite === 'versioning') {
@@ -1496,9 +1514,6 @@ final class SmartUtils {
 			} //end if else
 		} //end if
 		//-- do upload
-		if(!is_uploaded_file((string)$the_upld_file_tmpname)) {
-			return 'UPLOAD ERROR: Cannot find the uploaded data for file: '.$the_upld_file_name.' at: '.$the_upld_file_tmpname;
-		} //end if
 		$fsize_upld = (int) SmartFileSystem::get_file_size($the_upld_file_tmpname);
 		if((int)$fsize_upld <= 0) { // dissalow upload empty files, does not make sense or there was an error !!!
 			return 'Upload Failed: File is empty: '.$the_upld_file_name;

@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200415
+ * @version 	v.20200418
  * @package 	Plugins:Mailer
  *
  */
@@ -139,7 +139,7 @@ final class SmartMailerMimeDecode {
 		$structure = $obj->decode($params);
 		//-- get decode arrays
 		$this->reset();
-		$this->printarray($structure, $part_id);
+		$this->expand_structure($structure, $part_id);
 		//-- free memory
 		unset($structure);
 		unset($obj);
@@ -230,7 +230,7 @@ final class SmartMailerMimeDecode {
 		$structure = $obj->decode($params);
 		//--
 		$this->reset();
-		$this->printarray($structure, ''); // this will be free after trying to guess atatchments
+		$this->expand_structure($structure, ''); // this will be free after trying to guess atatchments
 		//-- free memory
 		unset($structure);
 		unset($obj);
@@ -246,24 +246,24 @@ final class SmartMailerMimeDecode {
 		$from = '';
 		//--
 		if(is_array($headers['from'])) {
-			$from = trim($headers['from'][0]);
+			$from = (string) trim((string)$headers['from'][0]);
 		} else {
-			$from = trim($headers['from']);
+			$from = (string) trim((string)$headers['from']);
 		} //end if else
 		//--
 		if((string)$from == '') { // if from is not specified we use return path
 			if(is_array($headers['return-path'])) {
-				$from = trim($headers['return-path'][0]);
+				$from = (string) trim((string)$headers['return-path'][0]);
 			} else {
-				$from = trim($headers['return-path']);
+				$from = (string) trim((string)$headers['return-path']);
 			} //end if else
 		} //end if
 		//--
 		$tmp_arr = array();
 		$tmp_arr = $this->separe_email_from_name($from);
 		//--
-		$export_from_addr = trim($tmp_arr[0]);
-		$export_from_name = trim($tmp_arr[1]);
+		$export_from_addr = (string) trim((string)$tmp_arr[0]);
+		$export_from_name = (string) trim((string)$tmp_arr[1]);
 		//--
 		$tmp_arr = array();
 		$from = '';
@@ -277,16 +277,16 @@ final class SmartMailerMimeDecode {
 		$to = '';
 		//--
 		if(is_array($headers['to'])) {
-			$to = trim($headers['to'][0]);
+			$to = (string) trim((string)$headers['to'][0]);
 		} else {
-			$to = trim($headers['to']);
+			$to = (string) trim((string)$headers['to']);
 		} //end if else
 		//--
 		$tmp_arr = array();
 		$tmp_arr = $this->separe_email_from_name($to);
 		//--
-		$export_to_addr = trim($tmp_arr[0]);
-		$export_to_name = trim($tmp_arr[1]);
+		$export_to_addr = (string) trim((string)$tmp_arr[0]);
+		$export_to_name = (string) trim((string)$tmp_arr[1]);
 		//--
 		if(SmartUnicode::str_contains($to, '[::@::]')) { // fix for netoffice :: Multi-Message
 			$export_to_addr = '[@]';
@@ -311,9 +311,9 @@ final class SmartMailerMimeDecode {
 		$export_cc_name = array();
 		//--
 		if(is_array($headers['cc'])) {
-			$cc = trim($headers['cc'][0]);
+			$cc = (string) trim((string)$headers['cc'][0]);
 		} else {
-			$cc = trim($headers['cc']);
+			$cc = (string) trim((string)$headers['cc']);
 		} //end if else
 		//--
 		$arr_cc = array();
@@ -329,15 +329,15 @@ final class SmartMailerMimeDecode {
 			$tmp_arr = array();
 			$tmp_arr = $this->separe_email_from_name($arr_cc[$z]);
 			//--
-			$export_cc_addr[] = trim($tmp_arr[0]);
-			$export_cc_name[] = trim($tmp_arr[1]);
+			$export_cc_addr[] = (string) trim((string)$tmp_arr[0]);
+			$export_cc_name[] = (string) trim((string)$tmp_arr[1]);
 			//--
 			$tmp_arr = array();
 			//--
 		} //end for
 		//--
-		$export_cc_addr = implode(', ', $export_cc_addr);
-		$export_cc_name = implode(', ', $export_cc_name);
+		$export_cc_addr = (string) implode(', ', (array) $export_cc_addr);
+		$export_cc_name = (string) implode(', ', (array) $export_cc_name);
 		//--
 		$cc = '';
 		//--
@@ -347,16 +347,16 @@ final class SmartMailerMimeDecode {
 		$bcc = '';
 		//--
 		if(is_array($headers['bcc'])) {
-			$bcc = trim($headers['bcc'][0]);
+			$bcc = (string) trim((string)$headers['bcc'][0]);
 		} else {
-			$bcc = trim($headers['bcc']);
+			$bcc = (string) trim((string)$headers['bcc']);
 		} //end if else
 		//--
 		$tmp_arr = array();
 		$tmp_arr = $this->separe_email_from_name($bcc);
 		//--
-		$export_bcc_addr = trim($tmp_arr[0]);
-		$export_bcc_name = trim($tmp_arr[1]);
+		$export_bcc_addr = (string) trim((string)$tmp_arr[0]);
+		$export_bcc_name = (string) trim((string)$tmp_arr[1]);
 		//--
 		$tmp_arr = array();
 		//--
@@ -368,12 +368,12 @@ final class SmartMailerMimeDecode {
 		$subj = '';
 		//--
 		if(is_array($headers['subject'])) {
-			$subj = trim($headers['subject'][0]);
+			$subj = (string) trim((string)$headers['subject'][0]);
 		} else {
-			$subj = trim($headers['subject']);
+			$subj = (string) trim((string)$headers['subject']);
 		} //end if else
 		//--
-		$export_subject = trim($subj);
+		$export_subject = (string) trim((string)$subj);
 		//--
 		if((string)$export_subject == '') {
 			$export_subject = '[?]';
@@ -405,15 +405,15 @@ final class SmartMailerMimeDecode {
 		//== [MESSAGE-UID]
 		$msguid = '';
 		//--
-		if(is_array($headers['message-uid'])) {
-			$msguid = trim($headers['message-uid'][0]);
+		if(is_array($headers['x-universally-unique-identifier'])) {
+			$msguid = (string) trim((string)$headers['x-universally-unique-identifier'][0]);
 		} else {
-			$msguid = trim($headers['message-uid']);
+			$msguid = (string) trim((string)$headers['x-universally-unique-identifier']);
 		} //end if else
 		//--
-		$msguid = trim(str_replace(array('<', '>'), array('', ''), (string)$msguid));
+		$msguid = (string) trim((string)str_replace(array('<', '>'), array('', ''), (string)$msguid));
 		//--
-		$export_msguid = trim($msguid);
+		$export_msguid = (string) trim((string)$msguid);
 		//--
 		$msguid = '';
 		//--
@@ -423,14 +423,14 @@ final class SmartMailerMimeDecode {
 		$msgid = '';
 		//--
 		if(is_array($headers['message-id'])) {
-			$msgid = trim($headers['message-id'][0]);
+			$msgid = (string) trim((string)$headers['message-id'][0]);
 		} else {
-			$msgid = trim($headers['message-id']);
+			$msgid = (string) trim((string)$headers['message-id']);
 		} //end if else
 		//--
-		$msgid = trim(str_replace(array('<', '>'), array('', ''), (string)$msgid));
+		$msgid = (string) trim((string)str_replace(array('<', '>'), array('', ''), (string)$msgid));
 		//--
-		$export_msgid = trim($msgid);
+		$export_msgid = (string) trim((string)$msgid);
 		//--
 		$msgid = '';
 		//--
@@ -440,14 +440,14 @@ final class SmartMailerMimeDecode {
 		$inreplyto = '';
 		//--
 		if(is_array($headers['in-reply-to'])) {
-			$inreplyto = trim($headers['in-reply-to'][0]);
+			$inreplyto = (string) trim((string)$headers['in-reply-to'][0]);
 		} else {
-			$inreplyto = trim($headers['in-reply-to']);
+			$inreplyto = (string) trim((string)$headers['in-reply-to']);
 		} //end if else
 		//--
-		$inreplyto = trim(str_replace(array('<', '>'), array('', ''), (string)$inreplyto));
+		$inreplyto = (string) trim((string)str_replace(array('<', '>'), array('', ''), (string)$inreplyto));
 		//--
-		$export_inreplyto = trim($inreplyto);
+		$export_inreplyto = (string) trim((string)$inreplyto);
 		//--
 		$inreplyto = '';
 		//--
@@ -457,12 +457,12 @@ final class SmartMailerMimeDecode {
 		$priority = '';
 		//--
 		if(is_array($headers['x-priority'])) {
-			$priority = trim($headers['x-priority'][0]);
+			$priority = (string) trim((string)$headers['x-priority'][0]);
 		} else {
-			$priority = trim($headers['x-priority']);
+			$priority = (string) trim((string)$headers['x-priority']);
 		} //end if else
 		//--
-		switch(strtolower($priority)) {
+		switch((string)strtolower((string)$priority)) {
 			case 'high':
 			case '0':
 			case '1':
@@ -522,7 +522,7 @@ final class SmartMailerMimeDecode {
 
 	//================================================================
 	// PRIVATE
-	private function printarray($array, $part_id) {
+	private function expand_structure($data, $part_id) {
 
 		//--
 		$this->cycle += 1;
@@ -534,156 +534,188 @@ final class SmartMailerMimeDecode {
 		//--
 
 		//--
-		//while(list($key,$value) = @each($array)) {
-		foreach($array as $key => $value) { // Fix: the above is deprecated as of PHP 7.2
+		if(is_object($data)) {
+			$data = (array) get_object_vars($data);
+		} //end if
+		//--
+
+		//--
+		if(is_array($data)) {
 			//--
-			if(is_object($value)) {
+			//while(list($key,$value) = @each($data)) {
+			foreach($data as $key => $value) { // Fix: the above is deprecated as of PHP 7.2
 				//--
-				$this->printarray(get_object_vars($value), $part_id);
-				//--
-			} elseif(is_array($value)) {
-				//-- get params from pre-body-arrays
-				if((string)$key === 'ctype_parameters') {
+				if(is_object($value)) {
 					//--
-					if((string)trim($value['charset']) != '') {
+					$this->expand_structure($value, (string)$part_id);
+					//--
+				} elseif(is_array($value)) {
+					//-- get params from pre-body-arrays
+					if((string)$key === 'ctype_parameters') {
 						//--
-						$tmp_charset = SmartUnicode::str_tolower($value['charset']);
-						//--
-						if(((string)$tmp_charset == '') OR ((string)$tmp_charset == 'us-ascii')) {
-							$tmp_charset = 'iso-8859-1'; // correction :: {{{SYNC-CHARSET-FIX}}}
+						if((string)trim($value['charset']) != '') {
+							//--
+							$tmp_charset = SmartUnicode::str_tolower($value['charset']);
+							//--
+							if(((string)$tmp_charset == '') OR ((string)$tmp_charset == 'us-ascii')) {
+								$tmp_charset = 'iso-8859-1'; // correction :: {{{SYNC-CHARSET-FIX}}}
+							} //end if
+							//--
+							$this->last_charset = (string) $tmp_charset;
+							//--
 						} //end if
 						//--
-						$this->last_charset = (string) $tmp_charset;
+					} elseif((string)$key === 'headers') {
+						//--
+						$this->arr_heads[] = $value;
+						//--
+						if((string)trim($value['content-id']) != '') {
+							$this->last_cid = (string) str_replace([' ', '<', '>'], ['', '', ''], (string)$value['content-id']);
+						} //end if
 						//--
 					} //end if
 					//--
-				} elseif((string)$key === 'headers') {
-					//--
-					$this->arr_heads[] = $value;
-					//--
-					if((string)trim($value['content-id']) != '') {
-						$this->last_cid = (string) str_replace([' ', '<', '>'], ['', '', ''], (string)$value['content-id']);
-					} //end if
-					//--
-				} //end if
-				//--
-				$this->printarray($value, $part_id); //recursive array
-				//--
-			} else {
-				//--
-				if($key === 'ctype_primary') {
-					$vxf_mail_part_type = SmartUnicode::str_tolower((string)$value);
-				} elseif($key === 'ctype_secondary') {
-					$vxf_mail_part_stype = SmartUnicode::str_tolower((string)$value);
-				} elseif(($key === 'name') OR ($key === 'filename')){
-					$this->last_fname = (string) str_replace(' ', '_', (string)$value); // fix invalid spaces in file names
-				} elseif($key === 'disposition') {
-					if(SmartUnicode::str_tolower((string)$value) === 'attachment') {
-						$vxf_mail_part_type = 'attachment';
-					} //end if
-				} elseif($key === 'body') {
-					//-- calculate part id
-					if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
-						//--
-						$tmp_part_id = 'txt_'.md5((string)trim((string)$value)); // text parts are not very long
-						//--
-					} else {
-						//--
-						$tmp_part_len = (int) strlen((string)$value); // this is the file size in bytes
-						//--
-						if((string)$this->last_cid == '') {
-							$tmp_part_id = 'att_'.sha1((string)$this->last_fname.$tmp_part_len.SmartUnicode::sub_str((string)$value, 0, 8192).SmartUnicode::sub_str((string)$value, -8192, 8192)); // try to be unique
-							$tmp_att_mod = 'normal';
-						} else {
-							if((string)$this->last_fname != '') {
-								switch((string)SmartFileSysUtils::get_file_extension_from_path($this->last_fname)) {
-									// {{{SYNC-MAIL-CID-IMGS}}} @ Get :: allow cids only for several types of images that can be displayed inline
-									case 'svg':
-									case 'gif':
-									case 'png':
-									case 'jpg':
-									//-- + allow several other types ...
-									case 'jpe':
-									case 'jpeg':
-									case 'webp':
-										$tmp_part_id = 'cid_'.$this->last_cid; // we have an ID from cid ...
-										$tmp_att_mod = 'cid';
-										break;
-									// FIX: apple mail adds PDF as inline CID but browsers cannot display as this !
-									default:
-										$tmp_part_id = 'att_cid_'.$this->last_cid; // we have an ID from cid ...
-										$tmp_att_mod = 'normal';
-								} //end switch
-							} //end if
-						} //end if else
-						//--
-					} //end if else
-					//--
-					$tmp_part_id = (string) strtolower((string)$tmp_part_id);
-					//--
-					if(((string)$tmp_part_id != '') AND (((string)$part_id == '') OR (((string)trim((string)strtolower((string)$part_id)) == (string)$tmp_part_id) OR ((string)trim((string)strtolower((string)str_replace(' ', '', (string)$part_id))) == (string)$tmp_part_id)))) {
-						// DEFAULT
-						if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
-							//--
-							// TEXT / HTML PART
-							//--
-							$value = (string) SmartUnicode::convert_charset((string)$value, $this->last_charset, $this->local_charset); // {{{SYNC-CHARSET-CONVERT}}}
-							//--
-							if(((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted')) { // {{{SYNC-EMAIL-DECODE-SMIME}}}
-								$value = '----- S/MIME: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype.' -----'."\n".$value;
-							} //end if
-							//--
-							if((string)trim((string)$value) != '') { // avoid empty text parts
-								$this->arr_parts[(string)$tmp_part_id] = array(
-									'type'			=> (string) 'text',
-									'mode'			=> (string) $vxf_mail_part_type.'/'.$vxf_mail_part_stype,
-									'charset'		=> (string) $this->last_charset,
-									'description'	=> (string) 'Text Part: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype,
-									'content'		=> (string) trim((string)$value),
-									'@smart-log' 	=> (((string)$this->last_fname == 'smart-framework-email-send.log') ? (string)$this->last_fname : '') // the smart send log is the last part in a mime
-								);
-							} //end if
-							//--
-						} else {
-							//--
-							// ATTACHMENT / CID PART
-							//--
-							$this->arr_atts[(string)$tmp_part_id] = array(
-								'type'		=> (string) 'attachment',
-								'mode'		=> (string) $tmp_att_mod,
-								'filename'	=> (string) $this->last_fname,
-								'filesize'	=> (int)    $tmp_part_len
-							);
-							if((string)$part_id == '') { // avoid include bodies for attachments except when they are express required
-								$this->arr_atts[(string)$tmp_part_id]['description'] = 'Attachment: not includded (by default...)';
-								$this->arr_atts[(string)$tmp_part_id]['content'] = '';
-							} else {
-								$this->arr_atts[(string)$tmp_part_id]['description'] = 'Attachment: includded';
-								$this->arr_atts[(string)$tmp_part_id]['content'] = $value;
-							} //end if else
-							//--
-						} //end else
-						//--
-					} //end if else
-					//--
-					//-- the body is always last in one cycle ; at the end of one cycle we reset types
-					//--
-					$value = ''; // free memory
-					//--
-					$this->last_charset = '';
-					$this->last_fname = 'attachment.file';
-					$this->last_cid = '';
-					//--
-					$vxf_mail_part_type = '';
-					$vxf_mail_part_stype = '';
+					$this->expand_structure($value, (string)$part_id); //recursive array
 					//--
 				} else {
-					// don't know how to handle this ...
-				} //end if else
+					//--
+					if($key === 'ctype_primary') {
+						$vxf_mail_part_type = SmartUnicode::str_tolower((string)$value);
+					} elseif($key === 'ctype_secondary') {
+						$vxf_mail_part_stype = SmartUnicode::str_tolower((string)$value);
+					} elseif(($key === 'name') OR ($key === 'filename')){
+						$this->last_fname = (string) str_replace(' ', '_', (string)$value); // fix invalid spaces in file names
+					} elseif($key === 'disposition') {
+						if(SmartUnicode::str_tolower((string)$value) === 'attachment') {
+							$vxf_mail_part_type = 'attachment';
+						} //end if
+					} elseif($key === 'body') {
+						//-- calculate part id
+						if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
+							//--
+							$tmp_part_id = 'txt_'.md5((string)trim((string)$value)); // text parts are not very long
+							//--
+						} else {
+							//--
+							$tmp_part_len = (int) strlen((string)$value); // this is the file size in bytes
+							//--
+							if((string)$this->last_cid == '') {
+								$tmp_part_id = 'att_'.sha1((string)$this->last_fname.$tmp_part_len.SmartUnicode::sub_str((string)$value, 0, 8192).SmartUnicode::sub_str((string)$value, -8192, 8192)); // try to be unique
+								$tmp_att_mod = 'normal';
+							} else {
+								$tmp_img_lfname_ext = '';
+								$tmp_img_bycontent_ext = '';
+								if((string)$this->last_fname != '') {
+									$tmp_img_lfname_ext = (string) SmartFileSysUtils::get_file_extension_from_path($this->last_fname);
+									$tmp_img_bycontent_ext = (string) SmartDetectImages::guess_image_extension_by_img_content((string)$value, false); // do not use GD here, is too expensive ...
+									$tmp_img_bycontent_ext = (string) trim((string)trim((string)$tmp_img_bycontent_ext, '.'));
+									// FIXES BY DOING A QUICK IMG DETECTION HERE:
+									// * apple mail adds PDF as inline CID but browsers cannot display as this
+									// * some cids don't have a file name so need to detect by content
+									switch((string)$tmp_img_lfname_ext) {
+										// {{{SYNC-MAIL-CID-IMGS}}} @ Get :: allow cids only for several types of images that can be displayed inline
+										case 'svg':
+										case 'gif':
+										case 'png':
+										case 'jpg':
+										//-- + allow several other types ...
+										case 'jpe':
+										case 'jpeg':
+											if((string)$tmp_img_bycontent_ext != '') {
+												$tmp_part_id = 'cid_'.$this->last_cid; // we have an ID from cid ...
+												$tmp_att_mod = 'cid';
+											} else {
+												$tmp_part_id = 'att_cid_'.$tmp_img_lfname_ext.'_'.$this->last_cid; // we have an ID from cid ...
+												$tmp_att_mod = 'normal';
+											} //end if else
+											break;
+										case 'webp': // TODO: fix webp detection in guess_image_extension_by_img_content() without using GD
+												$tmp_part_id = 'cid_'.$this->last_cid; // we have an ID from cid ...
+												$tmp_att_mod = 'cid';
+											break;
+										default:
+											if((string)$tmp_img_bycontent_ext != '') {
+												$tmp_part_id = 'cid_'.$this->last_cid; // we have an ID from cid ...
+												$tmp_att_mod = 'cid';
+											} else {
+												$tmp_part_id = 'att_cid_'.$this->last_cid; // we have an ID from cid ...
+												$tmp_att_mod = 'normal';
+											} //end if
+									} //end switch
+								} //end if
+							} //end if else
+							//--
+						} //end if else
+						//--
+						$tmp_part_id = (string) strtolower((string)$tmp_part_id);
+						//--
+						if(((string)$tmp_part_id != '') AND (((string)$part_id == '') OR (((string)trim((string)strtolower((string)$part_id)) == (string)$tmp_part_id) OR ((string)trim((string)strtolower((string)str_replace(' ', '', (string)$part_id))) == (string)$tmp_part_id)))) {
+							// DEFAULT
+							if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
+								//--
+								// TEXT / HTML PART
+								//--
+								$value = (string) SmartUnicode::convert_charset((string)$value, $this->last_charset, $this->local_charset); // {{{SYNC-CHARSET-CONVERT}}}
+								//--
+								if(((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted')) { // {{{SYNC-EMAIL-DECODE-SMIME}}}
+									$value = '----- S/MIME: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype.' -----'."\n".$value;
+								} //end if
+								//--
+								if((string)trim((string)$value) != '') { // avoid empty text parts
+									$this->arr_parts[(string)$tmp_part_id] = array(
+										'type'			=> (string) 'text',
+										'mode'			=> (string) $vxf_mail_part_type.'/'.$vxf_mail_part_stype,
+										'charset'		=> (string) $this->last_charset,
+										'description'	=> (string) 'Text Part: '.$vxf_mail_part_type.'/'.$vxf_mail_part_stype,
+										'content'		=> (string) trim((string)$value),
+										'@smart-log' 	=> (((string)$this->last_fname == 'smart-framework-email-send.log') ? (string)$this->last_fname : '') // the smart send log is the last part in a mime
+									);
+								} //end if
+								//--
+							} else {
+								//--
+								// ATTACHMENT / CID PART
+								//--
+								$this->arr_atts[(string)$tmp_part_id] = array(
+									'type'		=> (string) 'attachment',
+									'mode'		=> (string) $tmp_att_mod,
+									'filename'	=> (string) $this->last_fname,
+									'filesize'	=> (int)    $tmp_part_len
+								);
+								if((string)$part_id == '') { // avoid include bodies for attachments except when they are express required
+									$this->arr_atts[(string)$tmp_part_id]['description'] = 'Attachment: not includded (by default...)';
+									$this->arr_atts[(string)$tmp_part_id]['content'] = '';
+								} else {
+									$this->arr_atts[(string)$tmp_part_id]['description'] = 'Attachment: includded';
+									$this->arr_atts[(string)$tmp_part_id]['content'] = $value;
+								} //end if else
+								//--
+							} //end else
+							//--
+						} //end if else
+						//--
+						//-- the body is always last in one cycle ; at the end of one cycle we reset types
+						//--
+						$value = ''; // free memory
+						//--
+						$this->last_charset = '';
+						$this->last_fname = 'attachment.file';
+						$this->last_cid = '';
+						//--
+						$vxf_mail_part_type = '';
+						$vxf_mail_part_stype = '';
+						//--
+					} else {
+						// don't know how to handle this ...
+					} //end if else
+					//--
+				} //end else
 				//--
-			} //end else
-		} //end while
+			} //end foreach
+			//--
+		} //end if
 		//--
+
 	} //END FUNCTION
 	//================================================================
 
@@ -728,7 +760,7 @@ final class SmartMailerMimeDecode {
  * @access 		private
  * @internal
  *
- * @version 	v.20200415
+ * @version 	v.20200418
  *
  */
 final class SmartMailerMimeExtract {
@@ -777,7 +809,16 @@ final class SmartMailerMimeExtract {
 		$this->_decode_bodies  	= false;
 		$this->_decode_headers 	= false;
 		//--
-		$this->errors 			= '';
+		$this->errors 			= [];
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	public function get_errors() {
+		//--
+		return (array) $this->errors;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -810,7 +851,7 @@ final class SmartMailerMimeExtract {
 		$structure = $this->_decode($this->_header, $this->_body);
 		//--
 		if($structure === false) {
-			$structure = $this->raiseError($this->_error);
+			$structure = $this->registerError($this->_error);
 		} //end if
 		//--
 
@@ -818,6 +859,15 @@ final class SmartMailerMimeExtract {
 		return $structure;
 		//--
 
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	private function _re_encode_part_as_b64($part) {
+		//--
+		return (string) trim((string)chunk_split((string)base64_encode((string)$part), 76, "\r\n"));
+		//--
 	} //END FUNCTION
 	//================================================================
 
@@ -902,9 +952,15 @@ final class SmartMailerMimeExtract {
 		//--
 
 		//--
+		if($this->_include_bodies !== true) {
+			return $return; // fix by unixman: stop here if not include bodies
+		} //end if
+		//--
+
+		//--
 		if(isset($content_type)) {
 			//--
-			switch(strtolower($content_type['value'])) {
+			switch((string)strtolower((string)$content_type['value'])) {
 				case 'text/plain':
 					//--
 					$encoding = isset($content_transfer_encoding) ? $content_transfer_encoding['value'] : '7bit';
@@ -931,7 +987,7 @@ final class SmartMailerMimeExtract {
 						return false;
 					} //end if
 					//-- the default part is text/plain, except for message/digest where is message/rfc822
-					$default_ctype = (SmartUnicode::str_tolower($content_type['value']) === 'multipart/digest') ? 'message/rfc822' : 'text/plain';
+					$default_ctype = ((string)strtolower((string)$content_type['value']) === 'multipart/digest') ? 'message/rfc822' : 'text/plain';
 					//--
 					$parts = (array) $this->_boundarySplit($body, $content_type['other']['boundary']);
 					//--
@@ -941,12 +997,59 @@ final class SmartMailerMimeExtract {
 						$part = $this->_decode($part_header, $part_body, $default_ctype);
 						//--
 						if($part === false) {
-							$part = $this->raiseError($this->_error);
+							$part = $this->registerError($this->_error);
 						} //end if
 						//--
 						$return->parts[] = $part;
 						//--
 					} //end for
+					//--
+					break;
+				case 'message/smart-framework-msg-notes-bfenc-by-acc':
+					//--
+					$len_body = (int) strlen((string)$body);
+					if((string)trim((string)strtolower((string)$content_transfer_encoding['value'])) == 'base64') {
+						$body = (string) SmartMailerNotes::decrypt_apple_notes_as_eml_message($body, true); // decrypt and get back b64 encoded
+					} else {
+						$body = '[ERROR] Content Transfer Encoding for Notes must be Base64'; // invalid body encoding, expects base64
+					} //end if
+					//--
+					if(((string)trim((string)$body) == '') OR (strpos((string)$body, (string)SmartMailerNotes::encrypted_eml_message_as_apple_notes_signature()."\r\n") !== 0)) { // on error, display an error message (if failed to decode)
+						//-- if error, re-compose a mime message to display this error because at this stage requires the part to be message/rfc822, as it is expected below
+						$newboundary = '_=====-_MimePart._0000000000_.-0000000000-_-=====_';
+						$errbody = (string) SmartUnicode::sub_str($body, 0, 2048); // {{{SYNC-INVALID-APPLENOTE-MAXLEN-BODY-ERR}}} ; must be 1024 + something, but not too much
+						$body = ''; // reset body and re-compose below
+						$body .= 'Mime-Version: 1.0'."\r\n";
+						$body .= 'From: <mail.decode@smart.framework>'."\r\n";
+						$body .= 'To: <mail.display@smart.framework>'."\r\n";
+						$body .= 'Subject: Decrypt Errors for mime part type ('.Smart::normalize_spaces($content_type['value'].' / '.$content_transfer_encoding['value']).')'."\r\n";
+						$body .= 'Date: '.Smart::normalize_spaces(date('D, d M Y H:i:s O'))."\r\n";
+						$body .= 'Content-Type: multipart/mixed; boundary="'.$newboundary.'"'."\r\n";
+						$body .= "\r\n";
+						$body .= 'This is a Smart.Framework re-encrypted multi-part apple/note in MIME format to display decrypt errors.'."\r\n";
+						$body .= "\r\n";
+						$body .= '--'.$newboundary."\r\n";
+						$body .= 'Content-Type: text/html'."\r\n";
+						$body .= 'Content-Transfer-Encoding: base64'."\r\n";
+						$body .= 'Content-Disposition: inline; filename="mime-decoding-errors.html"'."\r\n";
+						$body .= "\r\n";
+						$body .= (string) $this->_re_encode_part_as_b64('<br><img alt="Mime Decoding Error" title="Mime Decoding Error" align="right" width="96" height="96" src="data:image/svg+xml;base64,'.Smart::escape_html(base64_encode(SmartFileSystem::read('lib/core/plugins/img/email/mime-part-error.svg'))).'"><div title="'.Smart::escape_html(Smart::normalize_spaces($content_type['value'])).'" style="text-align:left; background:#FCFCFC; border: 1px solid #ECECEC; border-radius:3px;"><h1 style="color:#FF3300;">Smart.Framework :: MIME DECODE ERROR :: Encrypted Apple/Note</h1><h2>Failed to decrypt the main part of this note</h2><h3>Technical Info: [&nbsp;Bytes='.(int)$len_body.'&nbsp;/&nbsp;Encoding='.Smart::escape_html(Smart::normalize_spaces($content_transfer_encoding['value'])).'&nbsp;]</h3><pre style="white-space: pre-wrap;">'.Smart::escape_html($errbody).'</pre>')."\r\n";
+						$body .= "\r\n";
+						$body .= '--'.$newboundary.'--'."\r\n";
+						$errbody = '';
+						$newboundary = '';
+						$content_transfer_encoding['value'] = 'base64';
+						//--
+					} //end if
+					//--
+					$body = (string) $this->_re_encode_part_as_b64($body); // after decrypt or error re-compose need to encode back to base64 as it is expected below
+					//--
+					$len_body = 0;
+					$content_type['value'] = 'message/rfc822';
+					$obj = new SmartMailerMimeExtract($this->_decodeBody($body, $content_transfer_encoding['value']), $this->charset); // [OK]
+					$return->parts[] = $obj->decode(array('include_bodies' => $this->_include_bodies, 'decode_bodies' => $this->_decode_bodies));
+					//--
+					unset($obj);
 					//--
 					break;
 				case 'message/rfc822':
@@ -999,13 +1102,13 @@ final class SmartMailerMimeExtract {
 		//--
 		$match = array();
 		if(preg_match("/^(.*?)\r?\n\r?\n(.*)/s", (string)$input, $match)) {
-			return array($match[1], $match[2]);
+			return array((string)$match[1], (string)$match[2]);
 		} //end if
 		//--
 		$this->_error = 'Could not split header and body';
 		//--
 		//return false;
-		return array($input, ''); // bug fix: in the case the header is not separed by body we consider the message is only a header with empty body
+		return array((string)$input, ''); // bug fix: in the case the header is not separed by body we consider the message is only a header with empty body
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1019,22 +1122,37 @@ final class SmartMailerMimeExtract {
 	// @access private
 	private function _parseHeaders($input) {
 		//--
+		$return = array();
+		//--
 		if((string)$input !== '') {
 			//-- Unfold the input
-			$input   = preg_replace("/\r?\n/", "\r\n", (string)$input);
-			$input   = preg_replace("/\r\n(\t| )+/", ' ', (string)$input);
-			$headers = explode("\r\n", trim($input));
+			$input   = (string) preg_replace("/\r?\n/", "\r\n", (string)$input);
+			$input   = (string) preg_replace("/\r\n(\t| )+/", ' ', (string)$input);
+			$headers = (array)  explode("\r\n", (string)trim((string)$input));
 			//--
 			foreach($headers as $u => $value) {
 				//--
-				$hdr_name = SmartUnicode::sub_str($value, 0, $pos = SmartUnicode::str_pos($value, ':'));
-				$hdr_value = SmartUnicode::sub_str($value, $pos+1);
+				$pos = SmartUnicode::str_pos($value, ':'); // return mixed: INTEGER or FALSE
 				//--
-				if((string)$hdr_value[0] == ' ') {
-					$hdr_value = SmartUnicode::sub_str($hdr_value, 1);
+				if($pos) { // if not false and not zero
+					//--
+					$hdr_name  = (string) SmartUnicode::sub_str((string)$value, 0, $pos);
+					$hdr_value = (string) SmartUnicode::sub_str((string)$value, $pos+1);
+					//--
+					/*
+					if((string)$hdr_value[0] == ' ') {
+						$hdr_value = (string) SmartUnicode::sub_str($hdr_value, 1);
+					} //end if
+					*/
+					$hdr_name  = (string) trim((string)$hdr_name);
+					$hdr_value = (string) trim((string)$hdr_value, ' '); // trim spaces on both sides ; this is a bug fix of the above commented code
+					//--
+					$return[] = [
+						'name'  => (string) $hdr_name,
+						'value' => (string) ($this->_decode_headers ? (string)$this->_decodeHeader($hdr_value) : (string)$hdr_value)
+					];
+					//--
 				} //end if
-				//--
-				$return[] = array('name'=>$hdr_name, 'value'=>$this->_decode_headers ? $this->_decodeHeader($hdr_value) : $hdr_value);
 				//--
 			} //end foreach
 			//--
@@ -1044,7 +1162,7 @@ final class SmartMailerMimeExtract {
 			//--
 		} //end if else
 		//--
-		return $return;
+		return (array) $return;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1063,29 +1181,40 @@ final class SmartMailerMimeExtract {
 		//--
 		$return = [];
 		//--
-		if(($pos = SmartUnicode::str_pos($input, ';')) !== false) {
+		$pos = SmartUnicode::str_pos($input, ';'); // mixed: INTEGER or FALSE
+		//--
+		if($pos !== false) {
 			//--
 			$return['value'] = (string) trim(SmartUnicode::sub_str($input, 0, $pos));
-			$input = trim(SmartUnicode::sub_str($input, $pos+1));
+			$input = (string) trim(SmartUnicode::sub_str($input, $pos+1));
 			//--
 			if((string)$input != '') {
 				//-- This splits on a semi-colon, if there's no preceeding backslash. Can't handle if it's in double quotes however. (Of course anyone sending that needs a good slap).
-				$parameters = preg_split('/\s*(?<!\\\\);\s*/i', (string)$input);
+				$parameters = (array) preg_split('/\s*(?<!\\\\);\s*/i', (string)$input);
 				//--
 				for($i=0; $i<Smart::array_size($parameters); $i++) {
 					//--
-					$param_name  = (string) trim(SmartUnicode::sub_str($parameters[$i], 0, $pos = SmartUnicode::str_pos($parameters[$i], '='))); // added TRIM to fix invalid ' = ' case
-					$param_value = (string) trim(SmartUnicode::sub_str($parameters[$i], $pos + 1)); // added TRIM to fix invalid ' = ' case
+					$pos = SmartUnicode::str_pos($parameters[$i], '='); // mixed: INTEGER or FALSE
 					//--
-					if((string)$param_value[0] == '"') {
-						$param_value = (string) SmartUnicode::sub_str($param_value, 1, -1);
+					if($pos !== false) {
+						//--
+						$param_name  = (string) trim(SmartUnicode::sub_str($parameters[$i], 0, $pos)); // added TRIM to fix invalid ' = ' case
+						$param_value = (string) trim(SmartUnicode::sub_str($parameters[$i], $pos + 1)); // added TRIM to fix invalid ' = ' case
+						//--
+						/*
+						if((string)$param_value[0] == '"') {
+							$param_value = (string) SmartUnicode::sub_str($param_value, 1, -1);
+						} //end if
+						*/
+						$param_value = (string) trim((string)$param_value, '"'); // trim quotes on both sides ; this is a bug fix of the above commented code
+						//--
+						if(!is_array($return['other'])) {
+							$return['other'] = [];
+						} //end if
+						$return['other'][(string)$param_name] = (string) $param_value;
+						$return['other'][(string)SmartUnicode::str_tolower((string)$param_name)] = (string) $param_value;
+						//--
 					} //end if
-					//--
-					if(!is_array($return['other'])) {
-						$return['other'] = [];
-					} //end if
-					$return['other'][(string)$param_name] = (string) $param_value;
-					$return['other'][(string)SmartUnicode::str_tolower((string)$param_name)] = (string) $param_value;
 					//--
 				} //end for
 				//--
@@ -1096,11 +1225,9 @@ final class SmartMailerMimeExtract {
 			$return['value'] = (string) trim((string)$input);
 			//--
 		} //end if else
-
 		//--
 		return (array) $return;
 		//--
-
 	} //END FUNCTION
 	//================================================================
 
@@ -1195,10 +1322,10 @@ final class SmartMailerMimeExtract {
 			case 'x-uuencode':
 				$input = (string) convert_uudecode((string)$input);
 				break;
-			case '7bit':
 			case '8bit':
+			case '7bit':
 			default:
-				// as is
+				// leave as is
 		} //end switch
 		//--
 		// {{{SYNC-CHARSET-CONVERT}}} :: only text bodies will be converted using SmartUnicode::convert_charset(), but later as we do not know yet what they are really are
@@ -1213,8 +1340,14 @@ final class SmartMailerMimeExtract {
 	// error handler
 	// return the error
 	// @access private
-	private function raiseError($error) {
-		$this->errors .= $error."\n";
+	private function registerError($error) {
+		//--
+		$error = (string) trim((string)$error);
+		//--
+		if((string)$error == '') {
+			$this->errors[] = (string) $error;
+		} //end if
+		//--
 	} //END FUNCTION
 	//================================================================
 

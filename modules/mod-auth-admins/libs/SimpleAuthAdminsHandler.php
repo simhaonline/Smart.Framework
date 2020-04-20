@@ -34,10 +34,10 @@ if(\headers_sent()) {
  * Simple Auth Admins Handler
  * This class provide a very simple authentication for admin area (admin.php) using a single account with username/password set in config-admin.php
  *
- * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD (must be set in set in config-admin.php)
+ * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD and *optional* the APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY ; they must be set in set in config-admin.php
  * Optional constants: APP_AUTH_PRIVILEGES (set in set in config-admin.php)
  *
- * @version 	v.20200327
+ * @version 	v.20200420
  * @package 	development:modules:AuthAdmins
  *
  */
@@ -87,6 +87,12 @@ final class SimpleAuthAdminsHandler {
 				(string) $privileges,
 				true
 			);
+			$priv_keys = '';
+			if(\defined('\\APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY')) { // need to be stored as encrypted
+				if((string)\trim((string)\APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY) != '') {
+					$priv_keys = (string)\trim((string)\APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY);
+				} //end if
+			} //end if
 			//--
 			\SmartAuth::set_login_data(
 				(string) $_SERVER['PHP_AUTH_USER'], 	// this should be always the user login ID (login user name)
@@ -102,7 +108,8 @@ final class SimpleAuthAdminsHandler {
 				],
 				'ADMINS-AREA-SIMPLE', // realm
 				'HTTP-BASIC', // method
-				(string) $_SERVER['PHP_AUTH_PW'] // safe store password
+				(string) $_SERVER['PHP_AUTH_PW'], 		// safe store password
+				(string) $priv_keys 					// safe store privacy-keys as encrypted (will be decrypted in-memory) {{{SYNC-ADM-AUTH-KEYS}}}
 			);
 			//--
 		} else {

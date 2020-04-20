@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavFileSystem {
 
 	// ::
-	// v.20200227
+	// v.20200419
 
 	//-- SECURITY CHECK: OK @ safe against .ht* names
 	public static function methodOptions() { // 200

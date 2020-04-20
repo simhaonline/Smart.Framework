@@ -21,6 +21,7 @@ $configs['app']['admin-template-file'] 				= 'template.htm';			// default admin 
 //-- sample auth credentials for the admin area (admin.php) ; change them !!!
 define('APP_AUTH_ADMIN_USERNAME', 'admin');
 define('APP_AUTH_ADMIN_PASSWORD', 'the-pass');
+//define('APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY', ''); // this is *optional* and used just by the Simple Admin Auth (hardcoded account) and may be required just for some extra modules
 /* uncomment these for advanced authentication (must switch from simple to advanced authentication in modules/app/app-auth-admin.inc.php)
 define('APP_AUTH_PRIVILEGES', '<admin>,<custom-priv1>,<custom-priv...>,<custom-privN>');
 $configs['app-auth']['adm-namespaces'] = [

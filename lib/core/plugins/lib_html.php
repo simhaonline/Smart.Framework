@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200221
+ * @version 	v.20200415
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -114,15 +114,19 @@ final class SmartHtmlParser {
 		$this->standardize_html();
 		$this->parse_elements();
 		//--
-		$tag = strtolower('<'.$tag);
-		$len = strlen((string)$tag) + 1; // will add ' ' or \t or or / '>' at the end for testing
+		if((string)trim((string)$tag) == '') {
+			return array();
+		} //end if
+		//--
+		$tag = (string) strtolower('<'.$tag);
+		$len = (int) (strlen((string)$tag) + 1); // will add ' ' or \t or or / '>' at the end for testing
 		$attrib_arr = array();
 		if(is_array($this->elements)) {
 			//while(list($key, $code) = @each($this->elements)) { // Fix: this is deprecated as of PHP 7.2
 			foreach($this->elements as $key => $code) {
 				if((strpos($code, '<') !== false) OR (strpos($code, '>') !== false)) { // if valid tag
-					$code = trim(str_replace(array("\t", "\n", "\r"), array(' ', ' ', ' '), (string)$code)); // make tabs and new lines as simple space
-					$tmp_test = strtolower(substr((string)$code, 0, $len));
+					$code = (string) trim((string)str_replace(array("\t", "\n", "\r"), array(' ', ' ', ' '), (string)$code)); // make tabs and new lines as simple space
+					$tmp_test = (string) strtolower((string)substr((string)$code, 0, $len));
 					if(((string)$tmp_test == (string)$tag.' ') OR ((string)$tmp_test == (string)$tag.'/') OR ((string)$tmp_test == (string)$tag.'>')) {
 						$attrib_arr[] = (array) $this->get_attributes($code);
 					} //end if
@@ -130,7 +134,7 @@ final class SmartHtmlParser {
 			} //end while
 		} //end if
 		//--
-		return $attrib_arr;
+		return (array) $attrib_arr;
 		//--
 	} //END FUNCTION
 	//=========================================================================
@@ -442,7 +446,7 @@ final class SmartHtmlParser {
 		} //end for
 		//--
 
-		//--
+		//-- {{{SYNC-HTMP-PARSER-RECOMPOSE}}}
 		$this->html = (string) SmartUnicode::convert_charset((string)implode('', (array)$this->elements), 'UTF-8', 'HTML-ENTITIES');
 		//--
 

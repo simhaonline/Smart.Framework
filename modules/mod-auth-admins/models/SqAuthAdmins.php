@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class SqAuthAdmins {
 
 	// ->
-	// v.20200121
+	// v.20200420
 
 	private $db;
 
@@ -258,7 +258,14 @@ final class SqAuthAdmins {
 			$tmp_arr = (array) $fields;
 			$fields = array();
 			for($i=0; $i<\Smart::array_size($tmp_arr); $i++) {
-				$fields[] = '`'.$tmp_arr[$i].'`';
+				if(\is_array($tmp_arr[$i])) {
+					foreach($tmp_arr[$i] as $kk => $vv) {
+						$fields[] = $vv.'('.'`'.$kk.'`'.') AS `'.$kk.'-'.$vv.'`';
+						break;
+					} //end foreach
+				} else {
+					$fields[] = '`'.$tmp_arr[$i].'`';
+				} //end if else
 			} //end for
 			unset($tmp_arr);
 			$fields = (string) \implode(', ', (array) $fields);
@@ -427,7 +434,37 @@ final class SqAuthAdmins {
 	} //END FUNCTION
 
 
-	public function updatePassword($id, $hash) {
+	public function decryptPrivKey($pkey_enc) { // {{{SYNC-ADM-AUTH-KEYS}}}
+		//--
+		$pass = (string) \SmartAuth::get_login_password();
+		//--
+		if((string)trim((string)$pass) == '') {
+			return '';
+		} //end if
+		//--
+		return (string) \SmartAuth::decrypt_privkey((string)$pkey_enc, (string)$pass);
+		//--
+	} //END FUNCTION
+
+
+	public function encryptPrivKey($pkey_plain, $newpass=null) { // {{{SYNC-ADM-AUTH-KEYS}}}
+		//--
+		if($newpass !== null) {
+			$pass = (string) $newpass; // used only when a user changes his/her account password by him(her)self ; if so, re-encrypt the private key with this new password
+		} else {
+			$pass = (string) \SmartAuth::get_login_password();
+		} //end if else
+		//--
+		if((string)trim((string)$pass) == '') {
+			return '';
+		} //end if
+		//--
+		return (string) \SmartAuth::encrypt_privkey((string)$pkey_plain, (string)$pass);
+		//--
+	} //END FUNCTION
+
+
+	public function updatePassword($id, $hash, $pass) {
 		//--
 		if(!$this->db instanceof \SmartSQliteDb) {
 			\Smart::raise_error('Invalid AUTH DB Connection !');
@@ -439,8 +476,20 @@ final class SqAuthAdmins {
 		} //end if
 		//--
 		if((string)$id == '') {
-			return -10; // invalid username length
+			return -10; // invalid username ID length
 		} //end if
+		//--
+		$rd_arr = (array) $this->getById($id);
+		if(\Smart::array_size($rd_arr) <= 0) {
+			return -11; // invalid username ID (does not exists)
+		} //end if
+		//--
+		$pkeys = '';
+		if((string)$id == (string)\SmartAuth::get_login_id()) { // for current logged in user, get his keys, oterwise don't as they can't be updated ... the password of each user is stored as ireversible hash format !
+			$pkeys = (string) \trim((string)$rd_arr['keys']);
+		} //end if
+		//--
+		$rd_arr = null;
 		//--
 		$hash = (string) $hash;
 		if(!\preg_match('/^[a-f0-9]+$/', (string)$hash)) {
@@ -450,16 +499,31 @@ final class SqAuthAdmins {
 			return -13; // invalid password, must be sha512 (128 chars)
 		} //end if
 		//--
+		$arr = [
+			'modif' 	=> (int)    \time(),
+			'pass' 		=> (string) $hash
+		];
+		//--
+		if((string)$id == (string)\SmartAuth::get_login_id()) { // for current logged in user, get his keys, oterwise don't as they can't be updated ...
+			//--
+			if((string)$pkeys != '') {
+				$pkeys = (string) $this->decryptPrivKey((string)$pkeys); // {{{SYNC-ADM-AUTH-KEYS}}}
+				if((string)$pkeys != '') {
+					$pkeys = (string) $this->encryptPrivKey((string)$pkeys, (string)$pass); // {{{SYNC-ADM-AUTH-KEYS}}} :: re-encode keys with the new pass (not with hash which is visible in the DB !!!)
+				} //end if
+			} //end if
+			//--
+			$arr['keys'] = (string) $pkeys;
+			//--
+		} //end if
+		//--
 		$out = -1;
 		//--
 		$this->db->write_data('BEGIN');
 		//--
 		$wr = $this->db->write_data(
 			'UPDATE `admins` '.$this->db->prepare_statement(
-				(array) [
-					'modif' 	=> \time(),
-					'pass' 		=> (string) $hash
-				],
+				(array) $arr,
 				'update'
 			).' '.$this->db->prepare_param_query('WHERE (`id` = ?)', [(string)$id])
 		);
@@ -514,12 +578,16 @@ final class SqAuthAdmins {
 				$out = -3; // invalid account id
 			} else {
 				$arr = [
-					'modif' 	=> \time(),
+					'modif' 	=> (int)    \time(),
 					'name_f' 	=> (string) $data['name_f'],
 					'name_l' 	=> (string) $data['name_l'],
 					'email' 	=>          $data['email'] // mixed: false (NULL) or string
 				];
-				if((string)$id != (string)\SmartAuth::get_login_id()) {
+				if((string)$id == (string)\SmartAuth::get_login_id()) { // for current logged in user
+					if((string)$data['upd-keys'] == 'yes') {
+						$arr['keys'] = (string) $this->encryptPrivKey((string)$data['keys']); // avoid update keys for other user since the password of other users in completely unknown, it is stored in an ireversible hash format
+					} //end if
+				} else { // for editing other users, if they have no restrict modify on privileges (superadmin have restrict modify !!!), update the privileges
 					if(\strpos((string)$test['restrict'], '<modify>') === false) {
 						$arr['priv'] = (array) $data['priv'];
 					} //end if

@@ -80,11 +80,12 @@ final class SmartAuth {
 	 * @param 	ARRAY 	$y_user_metadata 		:: *OPTIONAL* The user metainfo, associative array key => value
 	 * @param 	STRING 	$y_realm 				:: *OPTIONAL* The user Authentication Realm(s)
 	 * @param 	ENUM 	$y_method 				:: *OPTIONAL* The authentication method used: HTTP-BASIC / HTTP-DIGEST / OTHER
-	 * @param 	STRING 	$y_pass					:: *OPTIONAL* The user login password (will be stored in memory as Blowfish encrypted to avoid exposure)
+	 * @param 	STRING 	$y_pass					:: *OPTIONAL* The user login password (will be stored in memory as encrypted to avoid exposure)
+	 * @param 	STRING 	$y_keys 				:: *OPTIONAL* The encrypted user privacy-keys (will be stored in memory as encrypted to avoid exposure)
 	 *
 	 * @return 	BOOLEAN							:: TRUE if all data is OK, FALSE if not or try to reauthenticate under the same execution (which is not allowed ; must be just once per execution)
 	 */
-	public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='', $y_user_fullname='', $y_user_privileges_list=array('none','no-privilege'), $y_user_quota=-1, $y_user_metadata=array(), $y_realm='DEFAULT', $y_method='', $y_pass='') {
+	public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='', $y_user_fullname='', $y_user_privileges_list=array('none','no-privilege'), $y_user_quota=-1, $y_user_metadata=array(), $y_realm='DEFAULT', $y_method='', $y_pass='', $y_keys='') {
 		//--
 		if(self::$AuthCompleted !== false) { // avoid to re-auth
 			Smart::log_warning('Re-Authentication is not allowed ...');
@@ -120,9 +121,25 @@ final class SmartAuth {
 		} //end switch
 		//--
 		$the_key = '#'.Smart::random_number(10000,99999).'#';
+		//--
 		$the_pass = '';
 		if((string)$y_pass != '') {
 			$the_pass = (string) SmartCipherCrypto::encrypt('hash/sha1', (string)$the_key, (string)$y_pass);
+		} //end if
+		//--
+		$the_privkey = '';
+		if((string)trim((string)$y_pass) != '') {
+			$the_privkey = (string) trim((string)$y_keys);
+			if((string)$the_privkey != '') {
+				$the_privkey = (string) self::decrypt_privkey($y_keys, $y_pass);
+				if((string)trim((string)$the_privkey) != '') { // store the pkey only if non-empty string
+					$the_privkey = (string) SmartCipherCrypto::encrypt('hash/sha1', (string)$the_key, (string)$the_privkey);
+				} else {
+					$the_privkey = '';
+				} //end if else
+			} else {
+				$the_privkey = '';
+			} //end if
 		} //end if
 		//--
 		if((string)$y_user_id != '') {
@@ -137,6 +154,7 @@ final class SmartAuth {
 			self::$AuthData['USER_LOGIN_REALM'] 	= (string) $y_realm;
 			self::$AuthData['USER_LOGIN_METHOD'] 	= (string) $y_method;
 			self::$AuthData['USER_LOGIN_PASS'] 		= (string) $the_pass;
+			self::$AuthData['USER_PRIV_KEYS'] 		= (string) $the_privkey;
 			self::$AuthData['KEY'] 					= (string) $the_key;
 			//--
 			return true;
@@ -205,6 +223,24 @@ final class SmartAuth {
 
 	//================================================================
 	/**
+	 * Get the auth (safe) stored privacy-key from (in-memory)
+	 *
+	 * @return 	STRING		:: The plain privacy-key if was set and valid or empty string
+	 */
+	public static function get_login_privkey() {
+		//--
+		if((string)trim((string)self::$AuthData['USER_PRIV_KEYS']) == '') {
+			return ''; // empty priv-key
+		} else {
+			return (string) SmartCipherCrypto::decrypt('hash/sha1', (string)self::$AuthData['KEY'], (string)self::$AuthData['USER_PRIV_KEYS']);
+		} // end if else
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
 	 * Get the (in-memory) Auth Login Data
 	 *
 	 * @return 	ARRAY		:: a complete array containing all the meta-data of the current auth user
@@ -222,6 +258,7 @@ final class SmartAuth {
 			'login-metadata' 	=> self::get_login_metadata(),
 			'login-realm' 		=> self::get_login_realm(),
 			'login-method' 		=> self::get_login_method(),
+			'login-privkey' 	=> self::get_login_privkey(),
 			'login-password' 	=> self::get_login_password()
 		);
 		//--
@@ -418,6 +455,52 @@ final class SmartAuth {
 		} //end for
 		//--
 		return (array) $out_arr;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Decrypt a private key using a password, using Blowfish CBC
+	 * The provided password have to be the same as the login password for the user is being used to avoid decryption of the key by other users
+	 * This is completely safe as long as the users login passwords are supposed to be stored as ireversible hashes (by default they are ... but with custom login implementations they can be or not, depending the developer's choice)
+	 *
+	 * @param 	STRING 	$y_pkey 		:: The private key to be decrypted
+	 * @param 	STRING 	$y_pass 		:: The encryption password
+	 *
+	 * @return 	STRING					:: returns a string with the privacy-key (decrypted, if any, and if valid) which was supposed to be provided as encrypted
+	 */
+	public static function decrypt_privkey($y_pkey, $y_pass) {
+		//--
+		if((string)trim((string)$y_pkey) == '') {
+			return '';
+		} //end if
+		//--
+		return (string) SmartUtils::crypto_blowfish_decrypt((string)$y_pkey, (string)$y_pass); // {{{SYNC-ADM-AUTH-KEYS}}}
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Safe Encrypt a private key using a password, using Blowfish CBC
+	 * The provided password have to be the same as the login password for the user is being used to avoid decryption of the key by other users
+	 * This is completely safe as long as the users login passwords are supposed to be stored as ireversible hashes (by default they are ... but with custom login implementations they can be or not, depending the developer's choice)
+	 *
+	 * @param 	STRING 	$y_pkey 		:: The private key to be safe encrypted
+	 * @param 	STRING 	$y_pass 		:: The encryption password
+	 *
+	 * @return 	STRING					:: returns a string with the safe encrypted privacy-key or empty string if was empty
+	 */
+	public static function encrypt_privkey($y_pkey, $y_pass) {
+		//--
+		if((string)trim((string)$y_pkey) == '') {
+			return '';
+		} //end if
+		//--
+		return (string) SmartUtils::crypto_blowfish_encrypt((string)$y_pkey, (string)$y_pass); // {{{SYNC-ADM-AUTH-KEYS}}}
 		//--
 	} //END FUNCTION
 	//================================================================

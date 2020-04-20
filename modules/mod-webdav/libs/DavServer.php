@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavServer {
 
 	// ::
-	// v.20200121
+	// v.20200419
 
 	const DAV_RESOURCE_TYPE_COLLECTION = 'collection';
 	const DAV_RESOURCE_TYPE_NONCOLLECTION = 'noncollection';

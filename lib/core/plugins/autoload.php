@@ -59,6 +59,9 @@ function autoload__SmartFrameworkPlugins($classname) {
 		case 'SmartMailerMimeExtract':
 			require_once('lib/core/plugins/lib_mail_decode.php'); 		// mail message decoder (mime)
 			break;
+		case 'SmartMailerNotes':
+			require_once('lib/core/plugins/lib_mail_notes.php');		// mail notes (mime parsing fixes, decode, encode)
+			break;
 		case 'SmartMailerMimeParser':
 		case 'SmartMailerUtils':
 			require_once('lib/core/plugins/lib_mail_utils.php');		// mail utils (send, verify, parse)

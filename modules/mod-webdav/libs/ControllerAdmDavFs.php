@@ -27,7 +27,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @hint This abstract controller can be used to build a DAV Service / WebDAV over the Admin Middleware service
  *
- * @version		20200121
+ * @version		20200419
  * @package 	development:modules:Webdav
  *
  */
@@ -241,6 +241,7 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 
 			case 'POST':
 				$webdav_action = $this->RequestVarGet('webdav_action', '', 'string');
+				$webdav_mode = $this->RequestVarGet('webdav_mode', '', 'string');
 				$new_dir_name  = $this->RequestVarGet('name', '', 'string');
 				switch((string)$webdav_action) {
 					case 'mkd':
@@ -259,8 +260,11 @@ abstract class ControllerAdmDavFs extends \SmartAbstractAppController {
 					default:
 						// do nothing
 				} //end switch
-				\http_response_code(302); // force redirect to get
-				\header('Location: '.(string)$this->dav_url);
+				//--
+				if((string)$webdav_mode == 'bw') { // for browsers only
+					\http_response_code(302); // force redirect to get to avoid refresh post file
+					\header('Location: '.(string)$this->dav_url);
+				} //end if
 				break;
 
 			default:

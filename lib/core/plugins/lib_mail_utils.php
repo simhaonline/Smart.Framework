@@ -20,6 +20,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 //	* SmartFileSystem::
 //	* SmartMailerSend::
 //	* SmartMailerMimeDecode::
+//	* SmartMailerNotes::
 // REQUIRED CSS:
 //	* email.css
 //======================================================
@@ -37,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20200415
+ * @version 	v.20200420
  * @package 	Plugins:Mailer
  *
  */
@@ -287,7 +288,7 @@ final class SmartMailerUtils {
 	 * Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory
 	 * It will use custom server settings as 1st parameter: $mail_config
 	 *
-	 * @param ARRAY 		$mail_config 		config array: [ server-mx-domain, server-host, server-port, server-ssl, server-cafile, auth-user, auth-password, from-address, from-name, use-qp-encoding, use-min-enc-subj, use-antispam-rules ]
+	 * @param ARRAY 		$mail_config 		send config array (keys that start with * are optional): [ server-mx-domain, server-host, server-port, server-ssl, server-cafile, auth-user, auth-password, *from-return, from-address, from-name, *use-qp-encoding, *use-min-enc-subj, *use-antispam-rules ]
 	 * @param STRING 		$logsend_dir 		A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'
 	 * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
 	 * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
@@ -317,11 +318,12 @@ final class SmartMailerUtils {
 			'server_cafile' 		=> (string) $mail_config['server-cafile'],
 			'server_auth_user' 		=> (string) $mail_config['auth-user'],
 			'server_auth_pass' 		=> (string) $mail_config['auth-password'],
+			'send_from_return' 		=> (string) $mail_config['from-return'], // optional (if empty, will use send_from_addr)
 			'send_from_addr' 		=> (string) $mail_config['from-address'],
 			'send_from_name' 		=> (string) $mail_config['from-name'],
-			'use_qp_encoding' 		=> (bool)   $mail_config['use-qp-encoding'],
-			'use_min_enc_subj'		=> (bool)   $mail_config['use-min-enc-subj'],
-			'use_antispam_rules'	=> (bool)   $mail_config['use-antispam-rules']
+			'use_qp_encoding' 		=> (bool)   $mail_config['use-qp-encoding'], // optional
+			'use_min_enc_subj'		=> (bool)   $mail_config['use-min-enc-subj'], // optional
+			'use_antispam_rules'	=> (bool)   $mail_config['use-antispam-rules'] // optional
 		];
 		//--
 
@@ -399,7 +401,7 @@ final class SmartMailerUtils {
 	 * Send Email Mime Message from Smart.Framework to a destination with many options that can be customized
 	 * This is for very advanced use only.
 	 *
-	 * @param ARRAY			$y_server_settings	smtp cfg array: [ smtp_mxdomain, server_name, server_port, server_sslmode, server_cafile, server_auth_user, server_auth_pass, send_from_addr, send_from_name, use_qp_encoding, use_min_enc_subj, use_antispam_rules ]
+	 * @param ARRAY			$y_server_settings	send config array (keys that start with * are optional): [ smtp_mxdomain, server_name, server_port, server_sslmode, server_cafile, server_auth_user, server_auth_pass, *send_from_return, send_from_addr, send_from_name, *use_qp_encoding, *use_min_enc_subj, *use_antispam_rules ]
 	 * @param ENUM			$y_mode				mode: 'send' = do send | 'send-return' = do send + return | 'return' = no send, just return mime formated mail
 	 * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
 	 * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
@@ -438,6 +440,10 @@ final class SmartMailerUtils {
 		$server_pass 		= (string) trim((string)$y_server_settings['server_auth_pass']);
 		//-- SEND FROM
 		$send_from_addr 	= (string) trim((string)$y_server_settings['send_from_addr']);
+		$send_from_return 	= (string) trim((string)$y_server_settings['send_from_return']);
+		if((string)$send_from_return == '') {
+			$send_from_return = (string) $send_from_addr;
+		} //end if
 		$send_from_name 	= (string) trim((string)$y_server_settings['send_from_name']);
 		//-- MIME COMPOSE SETTINGS
 		$usealways_b64 		= (bool)   ($y_server_settings['use_qp_encoding'] === true ? false : true);
@@ -669,10 +675,10 @@ final class SmartMailerUtils {
 				} //end if else
 				//--
 				$tmp_send_log = '';
-				$tmp_send_log .= '-----------------------------------------------------------------------'."\n";
+				$tmp_send_log .= str_repeat('-', 100)."\n";
 				$tmp_send_log .= 'Smart.Framework / eMail Send Log :: '.$send_from_addr.' ['.$send_from_name.']'."\n";
 				$tmp_send_log .= $server_sslmode.'://'.$server_name.':'.$server_port.' # '.$server_user.' :: '.$server_helo."\n";
-				$tmp_send_log .= '-----------------------------------------------------------------------'."\n";
+				$tmp_send_log .= str_repeat('-', 100)."\n";
 				//--
 				$counter_sent = 0;
 				for($i=0; $i<Smart::array_size($arr_to); $i++) {
@@ -721,7 +727,7 @@ final class SmartMailerUtils {
 					$out = 1;
 				} //end if
 				//--
-				$tmp_send_log .= '-----------------------------------------------------------------------'."\n\n";
+				$tmp_send_log .= str_repeat('-', 100)."\n\n";
 				if(SmartFrameworkRuntime::ifDebug()) {
 					SmartFrameworkRegistry::setDebugMsg('mail', 'SEND', 'Send eMail Operations Log: '.$tmp_send_log);
 				} //end if
@@ -768,8 +774,8 @@ final class SmartMailerUtils {
  *
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
- * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode
- * @version 	v.20200415
+ * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode, SmartMailerNotes
+ * @version 	v.20200420
  * @package 	Plugins:Mailer
  *
  */
@@ -947,7 +953,7 @@ final class SmartMailerMimeParser {
 	 * Get an Email Message (.eml) as HTML
 	 * @return STRING the HTML view of the message linked with all sub-parts in a safe way by making use of encode_mime_fileurl() and decode_mime_fileurl()
 	 */
-	public static function display_message($y_enc_msg_file, $y_ctrl_key, $y_link, $y_target='', $y_title='', $y_process_mode='', $y_show_headers='') {
+	public static function display_message($y_msg_type, $y_enc_msg_file, $y_ctrl_key, $y_link, $y_target='', $y_title='', $y_process_mode='', $y_show_headers='') {
 		//--
 		if((string)$y_process_mode != 'print') {
 			$y_process_mode = 'default';
@@ -959,7 +965,7 @@ final class SmartMailerMimeParser {
 			$y_target = '_blank';
 		} //end if
 		//--
-		return (string) self::read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_show_headers, $y_title, $y_link, $y_target);
+		return (string) self::read_mime_message($y_msg_type, $y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_show_headers, $y_title, $y_link, $y_target);
 		//--
 	} //END FUNCTION
 	//==================================================================
@@ -971,13 +977,13 @@ final class SmartMailerMimeParser {
 	 * This can be used to re-compose a Mime Message for Reply or Forward
 	 * @return ARRAY with the full message structure as parts and all sub-parts in a safe way by making use of encode_mime_fileurl() and decode_mime_fileurl()
 	 */
-	public static function get_message_data_structure($y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_link='', $y_target='') {
+	public static function get_message_data_structure($y_msg_type, $y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_link='', $y_target='') {
 		//--
 		if((string)$y_process_mode != 'data-reply') {
 			$y_process_mode = 'data-full';
 		} //end if
 		//--
-		return (array) self::read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_process_mode, '', '', $y_link, $y_target);
+		return (array) self::read_mime_message($y_msg_type, $y_enc_msg_file, $y_ctrl_key, $y_process_mode, '', '', $y_link, $y_target);
 		//--
 	} //END FUNCTION
 	//==================================================================
@@ -987,8 +993,9 @@ final class SmartMailerMimeParser {
 	// the link can be empty as '' just for 'reply' process mode when forwards
 	// for the rest of cases the link is something like: yourscript?page=your.action&your_url_param_message={{{MESSAGE}}}&your_url_param_rawmode={{{RAWMODE}}}&your_url_param_mime={{{MIME}}}&your_url_param_disp={{{DISP}}}&&your_url_param_mode={{{MODE}}}
 	// [PRIVATE]
-	private static function read_mime_message($y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_show_headers, $y_title, $y_link, $y_target) {
+	private static function read_mime_message($y_msg_type, $y_enc_msg_file, $y_ctrl_key, $y_process_mode, $y_show_headers, $y_title, $y_link, $y_target) {
 
+		// $y_msg_type     : 'message' | 'apple-note'
 		// $y_process_mode : 'default' | 'print' | 'data-full' | 'data-reply'
 		// $y_show_headers : 'default' | 'subject' (just for mode: 'default' | 'print')
 
@@ -1075,9 +1082,9 @@ final class SmartMailerMimeParser {
 			//--
 			if(substr($the_part_id, 0, 4) == 'txt_') {
 				//-- text part
-				$tmp_part = $msg['texts'][$the_part_id];
+				$tmp_part = (array) $msg['texts'][(string)$the_part_id];
 				$msg = array();
-				$msg['texts'][$the_part_id] = (array) $tmp_part;
+				$msg['texts'][(string)$the_part_id] = (array) $tmp_part;
 				unset($tmp_part);
 				//--
 			} else {
@@ -1085,7 +1092,7 @@ final class SmartMailerMimeParser {
 				$skip_part_processing = 'yes';
 				//--
 				if(!is_array($msg['attachments'][$the_part_id])) { // try to normalize name
-					$the_part_id = trim(str_replace(' ', '', $the_part_id));
+					$the_part_id = (string) trim((string)str_replace(' ', '', (string)$the_part_id));
 				} //end if
 				//--
 				$out = (string) $msg['attachments'][$the_part_id]['content']; // DO NO MORE ADD ANYTHING TO $out ... downloading, there are no risk of code injection
@@ -1114,29 +1121,37 @@ final class SmartMailerMimeParser {
 			//--
 			if((string)$the_part_id == '') {
 				//--
+				$tmp_ittl = '';
 				$priority_img = '';
-				switch((string)$head['priority']) {
-					case '1': // high
-						$priority_img = '<img src="lib/core/plugins/img/email/priority-high.svg" align="left" alt="High Priority" title="High Priority">';
-						break;
-					case '5': // low
-						$priority_img = '<img src="lib/core/plugins/img/email/priority-low.svg" align="left" alt="Low Priority" title="Low Priority">';
-						break;
-					case '3': // medium
-					default:
-						//$priority_img = '';
-						$priority_img = '<img src="lib/core/plugins/img/email/priority-normal.svg" align="left" alt="Normal Priority" title="Normal Priority">';
-				} //end switch
+				if((string)$y_msg_type == 'apple-note') {
+					$tmp_ittl = (string) ucwords((string)str_replace('-', ' ', $y_msg_type)).' / UUID: '.$head['message-uid'];
+					$priority_img = '<img src="lib/core/plugins/img/email/note.svg" align="left" alt="'.Smart::escape_html($tmp_ittl).'" title="'.Smart::escape_html($tmp_ittl).'">';
+				} else {
+					$tmp_ittl = ' / Message-ID: '.$head['message-id'];
+					switch((string)$head['priority']) {
+						case '1': // high
+							$priority_img = '<img src="lib/core/plugins/img/email/priority-high.svg" align="left" alt="High Priority'.Smart::escape_html($tmp_ittl).'" title="High Priority'.Smart::escape_html($tmp_ittl).'">';
+							break;
+						case '5': // low
+							$priority_img = '<img src="lib/core/plugins/img/email/priority-low.svg" align="left" alt="Low Priority'.Smart::escape_html($tmp_ittl).'" title="Low Priority'.Smart::escape_html($tmp_ittl).'">';
+							break;
+						case '3': // medium
+						default:
+							//$priority_img = '';
+							$priority_img = '<img src="lib/core/plugins/img/email/priority-normal.svg" align="left" alt="Normal Priority'.Smart::escape_html($tmp_ittl).'" title="Normal Priority'.Smart::escape_html($tmp_ittl).'">';
+					} //end switch
+				} //end if
+				$tmp_ittl = '';
 				//--
-				if((string)$skip_part_linking != 'yes') { // avoid display the print link when only a part is displayed
-					$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, $eval_arr[0], $eval_arr[1], 'print').'" target="'.Smart::escape_html($y_target).'__mimepart" data-smart="open.popup">'.'<img align="right" src="lib/core/plugins/img/email/print-view.svg" title="Print View" alt="Print View">'.'</a>';
+				if((string)$skip_part_linking != 'yes') { // avoid display the print link when only a part is displayed ; print view is HTML so need no mimetype
+					$out .= '<a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $the_part_id, $y_link, '', '', 'print').'" target="'.Smart::escape_html($y_target).'__mimepart" data-smart="open.popup">'.'<img align="right" src="lib/core/plugins/img/email/print-view.svg" title="Print View" alt="Print View">'.'</a>';
 				} //end if
 				//--
 				switch((string)$y_show_headers) {
 					case 'subject':
 						//--
 						if((string)$head['subject'] != '[?]') {
-							$out .= '<h1 style="display:inline-block!important; line-height:16px;"><font size="4">'.Smart::escape_html($head['subject']).'</font></h1><br>';
+							$out .= '<h1 style="display:inline-block!important; line-height:16px;"><span style="font-size:1.25rem;">'.Smart::escape_html($head['subject']).'</span></h1><br>';
 						} //end if
 						//--
 						break;
@@ -1144,36 +1159,44 @@ final class SmartMailerMimeParser {
 					default:
 						//--
 						if((string)$head['subject'] != '[?]') {
-							$out .= '<h1 style="display:inline-block!important; line-height:16px;"><font size="4">&nbsp;'.Smart::escape_html($head['subject']).'</font>'.$priority_img.'</h1><hr>';
+							$out .= '<h1 style="display:inline-block!important; line-height:16px;">'.$priority_img.'<span style="font-size:1.25rem;">&nbsp;&nbsp;'.Smart::escape_html($head['subject']).'</span></h1><hr>';
 						} //end if
 						//--
 						if((string)$head['date'] != '(?)') {
-							$out .= '<font size="3"><b>Date:</b> '.Smart::escape_html(date('Y-m-d H:i:s O', @strtotime($head['date']))).'</font><br>';
+							$out .= '<span style="font-size:1.125rem;"><b>Date:</b> '.Smart::escape_html(date('Y-m-d H:i:s O', @strtotime($head['date']))).'</span><br>';
 						} //end if
 						//--
-						$out .= '<font size="2"><b>From:</b> '.Smart::escape_html($head['from_addr']).' &nbsp; <i>'.Smart::escape_html($head['from_name']).'</i>'.'</font><br>';
-						$out .= '<font size="2"><b>To:</b> '.Smart::escape_html($head['to_addr']).' &nbsp; <i>'.Smart::escape_html($head['to_name']).'</i>'.'</font><br>';
-						//--
-						if((string)$head['cc_addr'] != '') {
-							$out .= '<font size="2"><b>Cc:</b> ';
-							if(SmartUnicode::str_contains($head['cc_addr'], ',')) {
-								$arr_cc_addr = (array) explode(',', (string)$head['cc_addr']);
-								$arr_cc_name = (array) explode(',', (string)$head['cc_name']);
-								$out .= '[@]';
-								for($z=0; $z<Smart::array_size($arr_cc_addr); $z++) {
-									$out .= '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.Smart::escape_html(trim($arr_cc_addr[$z])).' &nbsp; <i>'.Smart::escape_html(trim($arr_cc_name[$z])).'</i>';
-								} //end for
-							} else {
-								$out .= Smart::escape_html($head['cc_addr']).' &nbsp; <i>'.Smart::escape_html($head['cc_name']).'</i>';
-							} //end if else
-							$out .= '</font><br>';
-						} //end if
-						//--
-						if((string)$head['bcc_addr'] != '') {
-							$out .= '<font size="2"><b>Bcc:</b> ';
-							$out .= Smart::escape_html($head['bcc_addr']).' &nbsp; <i>'.Smart::escape_html($head['bcc_name']).'</i>';
-							$out .= '</font><br>';
-						} //end if
+						if((string)$y_msg_type == 'apple-note') {
+							//--
+							$out .= '<span style="font-size:1rem;"><b>Notes.Author:</b> '.Smart::escape_html($head['from_addr']).((((string)$head['from_addr'] != (string)$head['from_name']) && ((string)trim((string)$head['from_name']) != '')) ? ' &nbsp; <i>'.Smart::escape_html($head['from_name']).'</i>' : '').'</span><br>';
+							//--
+						} else {
+							//--
+							$out .= '<span style="font-size:1rem;"><b>From:</b> '.Smart::escape_html($head['from_addr']).' &nbsp; <i>'.Smart::escape_html($head['from_name']).'</i>'.'</span><br>';
+							$out .= '<span style="font-size:1rem;"><b>To:</b> '.Smart::escape_html($head['to_addr']).' &nbsp; <i>'.Smart::escape_html($head['to_name']).'</i>'.'</span><br>';
+							//--
+							if((string)$head['cc_addr'] != '') {
+								$out .= '<span style="font-size:1rem;"><b>Cc:</b> ';
+								if(SmartUnicode::str_contains($head['cc_addr'], ',')) {
+									$arr_cc_addr = (array) explode(',', (string)$head['cc_addr']);
+									$arr_cc_name = (array) explode(',', (string)$head['cc_name']);
+									$out .= '[@]';
+									for($z=0; $z<Smart::array_size($arr_cc_addr); $z++) {
+										$out .= '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.Smart::escape_html(trim($arr_cc_addr[$z])).' &nbsp; <i>'.Smart::escape_html(trim($arr_cc_name[$z])).'</i>';
+									} //end for
+								} else {
+									$out .= Smart::escape_html($head['cc_addr']).' &nbsp; <i>'.Smart::escape_html($head['cc_name']).'</i>';
+								} //end if else
+								$out .= '</span><br>';
+							} //end if
+							//--
+							if((string)$head['bcc_addr'] != '') {
+								$out .= '<span style="font-size:1rem;"><b>Bcc:</b> ';
+								$out .= Smart::escape_html($head['bcc_addr']).' &nbsp; <i>'.Smart::escape_html($head['bcc_name']).'</i>';
+								$out .= '</span><br>';
+							} //end if
+							//--
+						} //end if else
 						//--
 				} //end switch
 				//-- print attachments
@@ -1204,8 +1227,8 @@ final class SmartMailerMimeParser {
 							$reg_atts_num += 1;
 							$reg_atts_list .= str_replace(array("\r", "\n", "\t"), array('', '', ''), (string)$tmp_arr['filename'])."\n";
 							//--
-							$atts .= '<div align="left"><table border="0" cellpadding="2" cellspacing="0" title="Attachment #'.$cnt.'"><tr><td>'.$tmp_att_img.'</td><td>&nbsp;</td><td><a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $key, $y_link, $eval_arr[0], $eval_arr[1]).'" target="'.$y_target.'__mimepart" data-smart="open.popup"><font size="1"><b>'.$tmp_att_name.'</b></font></a></td><td><font size="1"> &nbsp;<b><i>'.$tmp_att_size.'</i></b></font></td></tr></table></div>';
-							$xatts .= '<div align="left">'.$tmp_att_img.'&nbsp;&nbsp;<font size="1">'.$tmp_att_name.'&nbsp;&nbsp;<i>'.$tmp_att_size.'</i></font></div>';
+							$atts .= '<div align="left"><table border="0" cellpadding="2" cellspacing="0" title="Attachment #'.$cnt.'"><tr><td>'.$tmp_att_img.'</td><td>&nbsp;</td><td><a href="'.self::mime_link($y_ctrl_key, $the_message_eml, $key, $y_link, $eval_arr[0], $eval_arr[1]).'" target="'.$y_target.'__mimepart" data-smart="open.popup"><span style="font-size:0.875rem;"><b>'.$tmp_att_name.'</b></span></a></td><td><span style="font-size:0.875rem;"> &nbsp;<b><i>'.$tmp_att_size.'</i></b></span></td></tr></table></div>';
+							$xatts .= '<div align="left">'.$tmp_att_img.'&nbsp;&nbsp;<span style="font-size:0.875rem;">'.$tmp_att_name.'&nbsp;&nbsp;<i>'.$tmp_att_size.'</i></span></div>';
 							//--
 						} //end if
 						//--
@@ -1229,7 +1252,7 @@ final class SmartMailerMimeParser {
 				//--
 			} else {
 				//--
-				$out .= '<div align="right"><font size="1">'.Smart::escape_html($head['subject']).' // '.'MIME Part ID : <i>'.Smart::escape_html($the_part_id).'</i></font></div>';
+				$out .= '<div style="text-align:right; color:#999999; font-size:0.625rem;">'.Smart::escape_html($head['subject']).' // '.'MIME Part ID : <i>'.Smart::escape_html($the_part_id).'</i></div>';
 				//--
 			} //end if
 			//-- print text bodies
@@ -1295,6 +1318,9 @@ final class SmartMailerMimeParser {
 								//--
 							} else {
 								//-- sanitize this html part
+								if((string)$y_msg_type == 'apple-note') {
+									$val['content'] = (string) SmartMailerNotes::mime_fix_apple_notes_objects_in_html($val['content']); // must be done before cleanup
+								} //end if
 								$val['content'] = (string) self::mime_fix_clean_html($val['content']);
 								//-- {{{SYNC-CHECK-ROBOT-TRUST-IMG-LINKS}}} :: fix back unsafe images replaced by mime_fix_clean_html() if default or print mode (not for 'data-reply' or 'data-full' or other modes)
 								if(((string)$y_process_mode == 'default') OR ((string)$y_process_mode == 'print')) {
@@ -1514,7 +1540,7 @@ final class SmartMailerMimeParser {
 			);
 			$tmp_replace_cid_link = (string) str_replace(
 				(string) $matches[$i][1].$matches[$i][2],
-				(string) self::mime_link($y_ctrl_key, $y_msg_file, 'cid_'.$matches[$i][2], $y_link, 'image', 'inline'),
+				(string) self::mime_link($y_ctrl_key, $y_msg_file, 'cid_'.$matches[$i][2], $y_link, 'image', 'inline'), // for cids send a generic type as image and later before servibg try to detect the real mime type {{{SYNC-BETTER-CID-IMGS-DETECTION-OF-MIMETYPE}}} ; why need fixing ? SVGs don't function with mime type 'image', they need 'image/svg+xml'
 				(string) $tmp_replace_cid_link
 			);
 			$y_mime_part = (string) str_replace(

@@ -54,7 +54,7 @@ if(!\defined('\\APP_AUTH_DB_SQLITE')) {
  * Required constants: APP_AUTH_ADMIN_USERNAME, APP_AUTH_ADMIN_PASSWORD, APP_AUTH_PRIVILEGES (must be set in set in config-admin.php)
  * Required configuration: $configs['app-auth']['adm-namespaces'][ 'Admins Manager' => 'admin.php?page=auth-admins.manager.stml', ... ] (must be set in set in config-admin.php)
  *
- * @version 	v.20200327
+ * @version 	v.20200420
  * @package 	development:modules:AuthAdmins
  *
  */
@@ -233,12 +233,12 @@ final class AuthAdminsHandler {
 						'zip' 		=> (string) $admin_login['zip'],
 						'phone' 	=> (string) $admin_login['phone'],
 						'restrict' 	=> (string) $admin_login['restrict'],
-						'settings' 	=> (string) $admin_login['settings'],
-						'keys' 		=> (string) $admin_login['keys']
+						'settings' 	=> (string) $admin_login['settings']
 					],
 					'ADMINS-AREA', // realm
 					'HTTP-BASIC', // method
-					(string) $auth_user_pass // safe store password
+					(string) $auth_user_pass, // safe store password
+					(string) $admin_login['keys'] // safe store privacy-keys as encrypted (will be decrypted in-memory) {{{SYNC-ADM-AUTH-KEYS}}}
 				);
 				//--
 				$db->logSuccessfulLoginData(
@@ -301,6 +301,10 @@ final class AuthAdminsHandler {
 		if(\defined('\\APP_AUTH_ADMIN_PASSWORD')) {
 			\http_response_code(503);
 			die(\SmartComponents::http_error_message('Unset from config: APP_AUTH_ADMIN_PASSWORD.', 'You must finally unset the APP_AUTH_ADMIN_PASSWORD constant from config after Auth Initialization. Manually REFRESH this page after by pressing F5 ...'));
+		} //end if
+		if(\defined('\\APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY')) {
+			\http_response_code(503);
+			die(\SmartComponents::http_error_message('Unset from config: APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY.', 'The APP_AUTH_ADMIN_ENCRYPTED_PRIVKEY is not used for this type of authentication ... Manually REFRESH this page after by pressing F5 ...'));
 		} //end if
 		//--
 

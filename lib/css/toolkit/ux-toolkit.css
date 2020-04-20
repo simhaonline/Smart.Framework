@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20200331), (c) 2015-2020 unix-world.org
+	extended by unixman, (stable.20200420), (c) 2015-2020 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -892,8 +892,9 @@ since IE8 won't execute CSS that contains a CSS3 selector.
 	*zoom: 1;
 	vertical-align: middle;
 }
-.ux-form-aligned textarea {
-	vertical-align: top;
+.ux-form-aligned textarea,
+.ux-form-aligned label {
+	vertical-align: top !important;
 }
 
 /* Aligned Forms */
