@@ -35,7 +35,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * <code>
  * // Sample GET
- * $browser = new SmartHttpClient();
+ * $browser = new SmartHttpClient(); // HTTP 1.0
  * $browser->connect_timeout = 20;
  * print_r(
  * 		$browser->browse_url('https://some-website.ext:443/some-path/', 'GET', 'tls')
@@ -65,7 +65,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * );
  *
  * // Sample PUT
- * $browser = new SmartHttpClient('1.1');
+ * $browser = new SmartHttpClient('1.1'); // HTTP 1.1
  * $browser->connect_timeout = 20;
  * $browser->putbodyres = 'tmp/test-file.txt'; // using a file
  * $browser->putbodymode = 'file';
@@ -94,7 +94,7 @@ final class SmartHttpClient {
 	/**
 	 * User agent (if used as robot, it must have the robot in the name to avoid start un-necessary sessions)
 	 * @var STRING
-	 * @default 'NetSurf/3.7 (Smart.Framework {version}; {OS} {Release} {Arch}; PHP/{php-ver})'
+	 * @default 'NetSurf/3.9 (Smart.Framework {version}; {OS} {Release} {Arch}; PHP/{php-ver})'
 	 */
 	public $useragent;
 
@@ -221,12 +221,12 @@ final class SmartHttpClient {
 	/**
 	 * Class constructor
 	 *
-	 * @param ENUM $http_protocol The HTTP protocol version to use ; can be set to 1.0 or 1.1 ; default is 1.0 (HTTP 1.0) which is fastest for single requests, especially in simple situations like GET or POST ; can be set to 1.1 (HTTP 1.1) which may be required in special situations for more complex requests
+	 * @param ENUM $http_protocol The HTTP protocol version to use ; can be set to 1.0 or 1.1 ; default is 1.0 (HTTP 1.0) which is fastest for single requests, especially in simple situations like GET or POST ; can be set to 1.1 (HTTP 1.1) which may be required in special situations for more complex requests ; HTTP 1.1 mostly will serve transfer content chunked on GET/POST so for GET/POST is better to sue 1.0 if supported by server
 	 */
 	public function __construct($http_protocol='1.0') {
 
 		//-- signature (fake) as NetSurf Browser - which is a real browser but have no default support for Javascript
-		$this->useragent = 'NetSurf/3.7 ('.'Smart.Framework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.'; '.php_uname('s').' '.php_uname('r').' '.php_uname('m').'; '.'PHP/'.PHP_VERSION.')';
+		$this->useragent = 'NetSurf/3.9 ('.'Smart.Framework '.SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION.'; '.php_uname('s').' '.php_uname('r').' '.php_uname('m').'; '.'PHP/'.PHP_VERSION.')';
 		//--
 
 		//-- connection timeout
@@ -240,7 +240,7 @@ final class SmartHttpClient {
 				break;
 			case '1.0':
 			default:
-				$this->protocol = '1.0'; // default is 1.0 (is faster than 1.1 for GET / POST)
+				$this->protocol = '1.0'; // default is 1.0 (is faster than 1.1 for GET / POST ; 1.1 mostly will return chunked transfer which is costly to parse on client side ...)
 		} //end switch
 		//--
 

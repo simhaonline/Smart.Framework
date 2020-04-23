@@ -2,6 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+April 23, 2020 :: Version 5.7.2 rev.20200423
+	* HTTP Client Class support chunked transfer for HTTP 1.1
+
 April 15, 2020 :: Version 5.7.2 rev.20200415
 	* Rework and fixes for Mail Send / Get / Decode
 
