@@ -46,7 +46,7 @@ if(!function_exists('hash_algos')) {
  *
  * @access      PUBLIC
  * @depends     PHP hash_algos() / hash()
- * @version     v.20200121
+ * @version     v.20200424
  * @package     @Core:Crypto
  *
  */
@@ -74,10 +74,10 @@ final class SmartHashCrypto {
 		// SHA512 is high complexity: O(2^n/2) # http://stackoverflow.com/questions/6776050/how-long-to-brute-force-a-salted-sha-512-hash-salt-provided
 		//--
 		if((string)$y_custom_salt != '') {
-			$y_custom_salt = md5((string)'$1'.$y_custom_salt.'$2'.$y_pass);
+			$y_custom_salt = (string) md5((string)'$1'.$y_custom_salt.'$2'.$y_pass);
 		} //end if
 		//--
-		return self::sha512((string)$y_custom_salt.'@ Smart Framework :'.$y_pass.': スマート フレームワーク # 170115%!Password.512/($Auth)*'.strtoupper(sha1($y_pass.'&$'.$y_custom_salt)).'^#[?]');
+		return self::sha512((string)$y_custom_salt.'@ Smart Framework :'.$y_pass.': スマート フレームワーク # 170115%!Password.512/($Auth)*'.strtoupper((string)sha1((string)$y_pass.'&$'.$y_custom_salt)).'^#[?]');
 		//--
 	} //END FUNCTION
 	//==============================================================
@@ -292,7 +292,7 @@ final class SmartHashCrypto {
  * @hints       Blowfish is a 64-bit (8 bytes) block cipher. Max Key is up to 56 chars length (56 bytes = 448 bits). The CBC mode requires a initialization vector (iv).
  *
  * @depends     classes: Smart
- * @version     v.20200121
+ * @version     v.20200424
  * @package     @Core:Crypto
  *
  */
@@ -387,7 +387,7 @@ final class SmartCipherCrypto {
  * @internal
  *
  * @depends     extensions: PHP OpenSSL ; classes: Smart
- * @version     v.20200121
+ * @version     v.20200424
  *
  */
 final class SmartCryptoOpenSSLCipher {
@@ -423,14 +423,14 @@ final class SmartCryptoOpenSSLCipher {
 		} //end if
 		//-- Blowfish uses a variable size key, ranging from 32 to 448 bits (4 to 56 characters)
 		$key = (string) $key;
-		if((string)$key == '') {
-			$key = SMART_FRAMEWORK_SECURITY_KEY;
+		if((string)trim((string)$key) == '') {
+			$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
 		} //end if
 		//--
-		$tmp_mode_crypto 	= (array) explode('/', (string)$runmode); // Example: 'openssl/blowfish/CBC'
-		$tmp_expl_check 	= (string) trim(strtolower($tmp_mode_crypto[0]));
-		$tmp_expl_algo 		= (string) trim(strtolower($tmp_mode_crypto[1]));
-		$tmp_expl_method 	= (string) trim(strtoupper($tmp_mode_crypto[2]));
+		$tmp_mode_crypto 	= (array)  explode('/', (string)$runmode); // Example: 'openssl/blowfish/CBC'
+		$tmp_expl_check 	= (string) trim((string)strtolower((string)$tmp_mode_crypto[0]));
+		$tmp_expl_algo 		= (string) trim((string)strtolower((string)$tmp_mode_crypto[1]));
+		$tmp_expl_method 	= (string) trim((string)strtoupper((string)$tmp_mode_crypto[2]));
 		//--
 		if((string)$tmp_expl_check != 'openssl') {
 			Smart::raise_error('SmartCryptoOpenSSLCipher // Invalid Run Mode: '.$tmp_mode_crypto);
@@ -457,9 +457,9 @@ final class SmartCryptoOpenSSLCipher {
 						$this->crypto_cipher = 'BF-CBC'; // Blowfish CBC (default mode)
 				} //end switch
 				//-- Blowfish key {{{SYNC-BLOWFISH-KEY}}} ; key size: 32 .. 448 bits (4 .. 56 chars) ; default used is 384 bits = 48 chars.
-				$this->crypto_key = (string) substr(SmartHashCrypto::sha512($key), 13, 29).substr(sha1($key), 13, 10).substr(md5($key), 13, 9);
+				$this->crypto_key = (string) substr((string)SmartHashCrypto::sha512((string)$key), 13, 29).strtoupper((string)substr((string)sha1((string)$key), 13, 10)).substr((string)md5((string)$key), 13, 9);
 				//-- Blowfish iv {{{SYNC-BLOWFISH-IV}}} ; block size: 64 bits = 8 chars
-				$this->crypto_iv = (string) substr((string)base64_encode(sha1('@Smart.Framework-Crypto/BlowFish:'.$key.'#'.sha1('BlowFish-iv-SHA1'.$key).'-'.md5('BlowFish-iv-MD5'.$key).'#')), 1, 8);
+				$this->crypto_iv = (string) substr((string)base64_encode((string)sha1('@Smart.Framework-Crypto/BlowFish:'.$key.'#'.sha1('BlowFish-iv-SHA1'.$key).'-'.strtoupper((string)md5('BlowFish-iv-MD5'.$key)).'#')), 1, 8);
 				//--
 				break;
 			case 'aes256':
@@ -478,9 +478,9 @@ final class SmartCryptoOpenSSLCipher {
 						$this->crypto_cipher = 'AES-256-CBC'; // AES-256 CBC (default mode)
 				} //end switch
 				//-- key sizes: 128, 192 or 256 bits = max 32 chars
-				$this->crypto_key = (string) substr(SmartHashCrypto::sha512($key), 13, 20).substr(sha1($key), 13, 10).substr(md5($key), 13, 2);
+				$this->crypto_key = (string) substr((string)SmartHashCrypto::sha512((string)$key), 13, 20).strtoupper((string)substr((string)sha1((string)$key), 13, 10)).substr((string)md5((string)$key), 13, 2);
 				//-- block sizes: 128 bits = 16 chars
-				$this->crypto_iv = (string) substr((string)base64_encode(sha1('@Smart.Framework-Crypto/AES256:'.$key.'#'.sha1('AES256-iv-SHA1'.$key).'-'.md5('AES256-iv-MD5'.$key).'#')), 1, 16);
+				$this->crypto_iv = (string) substr((string)base64_encode((string)sha1('@Smart.Framework-Crypto/AES256:'.$key.'#'.sha1('AES256-iv-SHA1'.$key).'-'.strtoupper((string)md5('AES256-iv-MD5'.$key)).'#')), 1, 16);
 				//--
 				break;
 			case 'camellia256':
@@ -499,9 +499,9 @@ final class SmartCryptoOpenSSLCipher {
 						$this->crypto_cipher = 'CAMELLIA-256-CBC'; // CAMELLIA-256 CBC (default mode)
 				} //end switch
 				//-- key sizes: 128, 192 or 256 bits = max 32 chars
-				$this->crypto_key = (string) substr(SmartHashCrypto::sha512($key), 13, 20).substr(sha1($key), 13, 10).substr(md5($key), 13, 2);
+				$this->crypto_key = (string) substr((string)SmartHashCrypto::sha512((string)$key), 13, 20).strtoupper((string)substr((string)sha1((string)$key), 13, 10)).substr((string)md5((string)$key), 13, 2);
 				//-- block sizes: 128 bits = 16 chars
-				$this->crypto_iv = (string) substr((string)base64_encode(sha1('@Smart.Framework-Crypto/Camellia256:'.$key.'#'.sha1('Camellia256-iv-SHA1'.$key).'-'.md5('Camellia256-iv-MD5'.$key).'#')), 19, 16);
+				$this->crypto_iv = (string) substr((string)base64_encode((string)sha1('@Smart.Framework-Crypto/Camellia256:'.$key.'#'.sha1('Camellia256-iv-SHA1'.$key).'-'.strtoupper((string)md5('Camellia256-iv-MD5'.$key)).'#')), 19, 16);
 				//--
 				break;
 			default:
@@ -651,7 +651,7 @@ final class SmartCryptoOpenSSLCipher {
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.20200121
+ * @version     v.20200424
  *
  */
 final class SmartCryptoCipherBlowfishCBC {
@@ -661,7 +661,7 @@ final class SmartCryptoCipherBlowfishCBC {
 
 	//==============================================================
 	//--
-	private $_P = array(); 	//P-Array contains 18 32-bit subkeys
+	private $_P = array(); 	// P-Array contains 18 32-bit subkeys
 	private $_S = array(); 	// Array of four S-Blocks each containing 256 32-bit entries
 	//--
 	private $_iv = null;	// Initialization vector
@@ -681,13 +681,13 @@ final class SmartCryptoCipherBlowfishCBC {
 	 */
 	public function __construct($key) {
 		//-- Blowfish uses a variable size key, ranging from 32 to 448 bits (4 to 56 characters)
-		if((string)$key == '') {
-			$key = SMART_FRAMEWORK_SECURITY_KEY;
+		if((string)trim((string)$key) == '') {
+			$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
 		} //end if
 		//-- Blowfish key {{{SYNC-BLOWFISH-KEY}}}
-		$this->_key = (string) substr(SmartHashCrypto::sha512($key), 13, 29).substr(sha1($key), 13, 10).substr(md5($key), 13, 9);
+		$this->_key = (string) substr((string)SmartHashCrypto::sha512((string)$key), 13, 29).strtoupper((string)substr((string)sha1((string)$key), 13, 10)).substr((string)md5((string)$key), 13, 9);
 		//-- Blowfish iv {{{SYNC-BLOWFISH-IV}}}
-		$this->_iv = (string) substr((string)base64_encode(sha1('@Smart.Framework-Crypto/BlowFish:'.$key.'#'.sha1('BlowFish-iv-SHA1'.$key).'-'.md5('BlowFish-iv-MD5'.$key).'#')), 1, 8);
+		$this->_iv = (string) substr((string)base64_encode((string)sha1('@Smart.Framework-Crypto/BlowFish:'.$key.'#'.sha1('BlowFish-iv-SHA1'.$key).'-'.strtoupper((string)md5('BlowFish-iv-MD5'.$key)).'#')), 1, 8);
 		//--
 		$this->init();
 		//--
@@ -704,7 +704,9 @@ final class SmartCryptoCipherBlowfishCBC {
 	 *
 	 */
 	public function getKey() {
+		//--
 		return (string) $this->_key;
+		//--
 	} //END FUNCTION
 	//==============================================================
 
@@ -718,7 +720,9 @@ final class SmartCryptoCipherBlowfishCBC {
 	 *
 	 */
 	public function getIv() {
+		//--
 		return (string) $this->_iv;
+		//--
 	} //END FUNCTION
 	//==============================================================
 
@@ -735,7 +739,7 @@ final class SmartCryptoCipherBlowfishCBC {
 		//--
 		$plainText = (string) $plainText;
 		//--
-		$plainText = base64_encode((string)$plainText); // b64 because is not UTF-8 safe and may corrupt unicode characters
+		$plainText = (string) base64_encode((string)$plainText); // b64 because is not UTF-8 safe and may corrupt unicode characters
 		//-- {{{SYNC-BLOWFISH-CHECKSUM}}}
 		$plainText .= '#CHECKSUM-SHA1#'.sha1($plainText);
 		//--
@@ -749,7 +753,7 @@ final class SmartCryptoCipherBlowfishCBC {
 		//==
 		//--
 		$cipherText = '';
-		$len = strlen($plainText);
+		$len = (int) strlen((string)$plainText);
 		$plainText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 		//list(, $Xl, $Xr) = unpack('N2', substr($plainText, 0, 8) ^ $this->_iv);
 		list($kk, $Xl, $Xr) = unpack('N2', substr($plainText, 0, 8) ^ $this->_iv); // FIX to be compatible with the upcoming PHP 7
@@ -790,7 +794,7 @@ final class SmartCryptoCipherBlowfishCBC {
 			return '';
 		} //end if
 		//--
-		$len = strlen($cipherText);
+		$len = (int) strlen((string)$cipherText);
 		$cipherText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 		//list(, $Xl, $Xr) = unpack('N2', substr($cipherText, 0, 8));
 		list($kk, $Xl, $Xr) = unpack('N2', substr($cipherText, 0, 8)); // FIX to be compatible with the upcoming PHP 7
@@ -805,7 +809,7 @@ final class SmartCryptoCipherBlowfishCBC {
 		//-- {{{SYNC-BLOWFISH-PADDING-TRIM}}} :: trim padding spaces
 		$plainText = trim($plainText);
 		//-- {{{SYNC-BLOWFISH-CHECKSUM}}}
-		$arr = explode('#CHECKSUM-SHA1#', $plainText);
+		$arr = (array) explode('#CHECKSUM-SHA1#', $plainText);
 		$plainText = (string) trim((string)$arr[0]);
 		$checksum = (string) trim((string)$arr[1]);
 		if((string)sha1($plainText) != (string)$checksum) {
@@ -1248,6 +1252,8 @@ echo "plain text: $plaintext";
 
 /**
  * Class Smart Crypto Hash Encryption
+ * This class uses a dynamic generated initialization vector based on Visitor Data thus will cannot be used between different visits ...
+ * The purpose of this class is to encrypt / decrypt just per visit data
  *
  * @usage       dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
@@ -1255,7 +1261,7 @@ echo "plain text: $plaintext";
  * @internal
  *
  * @depends     classes: Smart
- * @version     v.20200121
+ * @version     v.20200424
  *
  */
 final class SmartCryptoCipherHash {
@@ -1280,8 +1286,14 @@ final class SmartCryptoCipherHash {
 	 // @return mixed
 	public function __construct($key, $mode='sha256') {
 
+		// fix for empty key
+		$key = (string) $key;
+		if((string)trim((string)$key) == '') {
+			$key = (string) SMART_FRAMEWORK_SECURITY_KEY;
+		} //end if
+
 		// for the case: hash/sha256
-		if(substr((string)$mode, 0, 5) == 'hash/') {
+		if((string)substr((string)$mode, 0, 5) == 'hash/') {
 			$cfgcrypto = '';
 			if(defined('SMART_FRAMEWORK_SECURITY_CRYPTO')) {
 				$cfgcrypto = (string) SMART_FRAMEWORK_SECURITY_CRYPTO;
@@ -1310,10 +1322,10 @@ final class SmartCryptoCipherHash {
 		} //end switch
 
 		// Instead of using the key directly we compress it using a hash function
-		$this->hash_key = $this->_hash($key);
+		$this->hash_key = (string) $this->_hash($key);
 
 		// Remember length of hashvalues for later use
-		$this->hash_length = strlen($this->hash_key);
+		$this->hash_length = (int) strlen((string)$this->hash_key);
 
 	} //END FUNCTION
 	//==============================================================
@@ -1326,8 +1338,8 @@ final class SmartCryptoCipherHash {
 	 // @return string	Encrypted message
 	public function encrypt($string) {
 
-		$string = base64_encode($string); // this is required because it cannot handle unicode characters
-		$string = $string.'#CHECKSUM-MD5#'.md5($string);
+		$string = (string) base64_encode((string)$string); // this is required because it cannot handle unicode characters
+		$string = (string) $string.'#CHECKSUM-MD5#'.md5((string)$string);
 
 		// gen IV
 		$iv = $this->_generate_iv();
@@ -1405,9 +1417,9 @@ final class SmartCryptoCipherHash {
 		//--
 
 		//--
-		$arr = explode('#CHECKSUM-MD5#', $out);
-		$out = trim($arr[0]);
-		$chk = trim($arr[1]);
+		$arr = (array) explode('#CHECKSUM-MD5#', $out);
+		$out = (string) trim((string)$arr[0]);
+		$chk = (string) trim((string)$arr[1]);
 		//--
 		if((string)md5($out) == (string)$chk) {
 			$out = (string) base64_decode((string)$out);
@@ -1465,7 +1477,7 @@ final class SmartCryptoCipherHash {
 				break;
 			default:
 				Smart::log_warning('ERROR: Invalid mode for: SmartCryptoCipherHash / _hash: '.$this->mode.' ; Using sha1()');
-				$result = sha1($string);
+				$result = (string) sha1((string)$string);
 		} //end switch
 
 		return (string) @hex2bin((string)$result); // convert hexadecimal hash value to binary string
@@ -1492,11 +1504,11 @@ final class SmartCryptoCipherHash {
 		// Collect very random data.
 		// Add as many "pseudo" random sources as you can find.
 		// Possible sources: Memory usage, diskusage, file and directory content...
-		$iv = Smart::random_number();
-		$iv .= Smart::unique_entropy();
-		$iv .= SmartUtils::get_visitor_tracking_uid();
-		$iv .= implode("\r", (array)$_SERVER);
-		$iv .= implode("\r", (array)$_COOKIE);
+		$iv =  (string) Smart::random_number();
+		$iv .= (string) Smart::unique_entropy();
+		$iv .= (string) SmartUtils::get_visitor_tracking_uid();
+		$iv .= (string) implode("\r", (array)$_SERVER);
+		$iv .= (string) implode("\r", (array)$_COOKIE);
 
 		return $this->_hash($iv);
 

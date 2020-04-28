@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.20200302
+ * @version 	v.20200428
  * @package 	Plugins:Database:Redis
  *
  */
@@ -227,10 +227,17 @@ final class SmartRedisDb {
 	 * This is the Magic Method (Call) that maps the PHP class extra methods to Redis methods.
 	 * It have variadic parameters mapped to Redis sub-calls.
 	 * The most common Redis methods are documented here. For the rest of the Redis methods see: https://redis.io/commands
+	 * There are some methods that are not available in this driver because they need to use more than one database and this is not supported (this driver binds to only one database at a time). Example: MOVE (but MOVE can be emulated with an example by using two Redis instances that will GET the key from DB#1/connection#1 SET the key in DB#2/connection#2 and if successful UNSET the key from DB#1/connection#1)
+	 * NOTICE: Not all Redis methods were ported to this driver but the most essential methods are available.
 	 *
 	 * @magic
 	 *
 	 * @method	STRING		ping()										:: Ping the Redis server ; returns: the test answer which is always PONG
+	 * @method	STRING		watch(STRING $keys)							:: Must be used before starting the transaction (MULTI) ; Marks the given key(s) to be watched for conditional execution of a transaction ; A single key can be passed as 'key1'; If multiple keys have to be passed they have to be separed by comma as: 'key1, key2' ; This method always return: OK
+	 * @method	STRING		unwatch()									:: Can be used after ending the transaction (EXEC) ; Flushes all the previously watched keys for a transaction ; If EXEC or DISCARD, there's not mandatory to manually call UNWATCH ; This method always return: OK
+	 * @method	STRING		multi()										:: Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using EXEC ; This method always return: OK ; NOTICE: all subsequent commands when used in a transaction block will return: QUEUED (instead of OK, 1, ... or other responses)
+	 * @method	ARRAY		exec()										:: Executes all previously queued commands in a transaction started by MULTI ; When using WATCH before MULTI, EXEC will execute commands only if the watched keys were not modified, allowing for a check-and-set mechanism ; if using DISCARD all the statements before DISCARD will be discarded and will not be executed ; When using WATCH, EXEC can return a Null reply if the execution was aborted ; If not a Null reply the returned array looks like [ 0 => OK, 1 => OK, ..., 2 => 1, ..., 5 => OK ] (non-associative array), each entry represent the result of each statement after EXEC
+	 * @method	STRING		discard()									:: Flushes all previously queued commands in a transaction ; If required, must be called withing transaction (after MULTI and before EXEC) ; This method always return: OK
 	 * @method	INT			exists(STRING $key)							:: Determine if a key exists ; returns 1 if the key exists or 0 if does not exists
 	 * @method	MIXED		get(STRING $key) 							:: Get a Redis Key ; returns: the value of key as STRING or NULL if not exists
 	 * @method	MIXED	 	set(STRING $key, STRING $value)				:: Set a Redis Key ; returns: OK on success or NULL on failure
@@ -245,7 +252,7 @@ final class SmartRedisDb {
 	 * @method	INT			expire(STRING $key, INT $expireinseconds)	:: Set the Expiration time for a Redis Key in seconds ; returns: 0 if not successful or 1 if successful
 	 * @method	INT			expireat(STRING $key, INT $expirationtime)	:: Set the Expiration time for a Redis Key at unixtimestamp ; returns: 0 if not successful or 1 if successful
 	 * @method	INT			persist(STRING $key)						:: Remove the existing expiration timeout on a key ; returns: 0 if not successful or 1 if successful
-	 * @method	STRING		type(STRING $key) 							:: Returns the string representation of the type of the value stored at key (string, list, set, zset, hash and stream)
+	 * @method	STRING		type(STRING $key)							:: Returns the string representation of the type of the value stored at key (string, list, set, zset, hash and stream)
 	 * @method	INT			strlen(STRING $key) 						:: Returns the length of the string value stored at key. An error is returned when key holds a non-string value
 	 * @method	MIXED		keys(STRING $pattern)						:: Get all keys matching a pattern ; return array of all keys matching a pattern or null if no key
 	 * @method	MIXED		randomkey()									:: Return a random key from the currently selected database ; if no key exist, returns NULL
@@ -268,8 +275,10 @@ final class SmartRedisDb {
 		switch((string)$method) {
 			//--
 			case 'MULTI': // start transaction
-			case 'EXEC': // commit transaction
-			case 'DISCARD': // discard transaction
+			case 'EXEC': // commit transaction ; when using WATCH, EXEC will execute commands only if the watched keys were not modified, allowing for a check-and-set mechanism
+			case 'DISCARD': // flushes all previously queued commands in a transaction
+			case 'WATCH': // arguments (key) or (key1) marks the given keys to be watched for conditional execution of a transaction ; if key is modified meanwhile it will not be operated by EXEC
+			case 'UNWATCH': // (no arguments) ; flushes all the previously watched keys for a transaction
 			//--
 			case 'EXISTS': // determine if a key exists ; returns 1 if the key exists or 0 if does not exists
 			case 'TYPE': // determine the type of the given key
@@ -286,7 +295,7 @@ final class SmartRedisDb {
 			case 'DEL': // delete a key ; a key is ignored if does not exists ; return (integer) the number of keys that have been deleted
 			//--
 			case 'RENAME': // renames key to newkey ; returns an error when the source and destination names are the same, or when key does not exist
-		//	case 'MOVE': // move a key to the given DB ; returns 1 on success or 0 on failure ; !!! this is unsafe because operates on many databases !!!
+		//	case 'MOVE': // move a key to the given DB ; returns 1 on success or 0 on failure ; !!! this is not implemented because operates on many databases and the current driver allow just per database management !!!
 			//--
 			case 'INCR': // increments a key that have an integer value with 1 ; max is 64-bit int ; if the value is non integer returns error ; returns the value after increment
 			case 'INCRBY': // increments a key that have an integer value with the given int value ; max is 64-bit int ; if the value is non integer returns error ; returns the value after increment

@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	Smart, SmartRedisDb
- * @version 	v.20200121
+ * @version 	v.20200428
  * @package 	Plugins:PersistentCache:Redis
  *
  */
@@ -134,11 +134,13 @@ class SmartRedisPersistentCache extends SmartAbstractPersistentCache {
 			return false;
 		} //end if
 		//--
-		if((string)$y_realm == '') {
-			return (bool) self::$redis->exists((string)$y_key);
+		if((string)$y_realm != '') {
+			$real_key = (string) $y_realm.':'.$y_key;
 		} else {
-			return (bool) self::$redis->exists((string)$y_realm.':'.$y_key);
+			$real_key = (string) $y_key;
 		} //end if else
+		//--
+		return (bool) self::$redis->exists((string)$real_key);
 		//--
 	} //END FUNCTION
 
@@ -163,11 +165,13 @@ class SmartRedisPersistentCache extends SmartAbstractPersistentCache {
 			return -3;
 		} //end if
 		//--
-		if((string)$y_realm == '') {
-			return (int) self::$redis->ttl((string)$y_key);
+		if((string)$y_realm != '') {
+			$real_key = (string) $y_realm.':'.$y_key;
 		} else {
-			return (int) self::$redis->ttl((string)$y_realm.':'.$y_key);
+			$real_key = (string) $y_key;
 		} //end if else
+		//--
+		return (int) self::$redis->ttl((string)$real_key);
 		//--
 	} //END FUNCTION
 
@@ -192,11 +196,13 @@ class SmartRedisPersistentCache extends SmartAbstractPersistentCache {
 			return null;
 		} //end if
 		//--
-		if((string)$y_realm == '') {
-			return self::$redis->get((string)$y_key);
+		if((string)$y_realm != '') {
+			$real_key = (string) $y_realm.':'.$y_key;
 		} else {
-			return self::$redis->get((string)$y_realm.':'.$y_key);
+			$real_key = (string) $y_key;
 		} //end if else
+		//--
+		return self::$redis->get((string)$real_key);
 		//--
 	} //END FUNCTION
 
@@ -229,24 +235,52 @@ class SmartRedisPersistentCache extends SmartAbstractPersistentCache {
 		$y_value = (string) SmartUnicode::fix_charset((string)$y_value); // fix
 		$y_expiration = Smart::format_number_int($y_expiration, '+');
 		//--
-		$resexp = 1;
-		if((string)$y_realm == '') {
-			$result = self::$redis->set((string)$y_key, (string)$y_value);
-			if($y_expiration > 0) {
-				$resexp = self::$redis->expire((string)$y_key, (int)$y_expiration);
-			} //end if
+		if((string)$y_realm != '') {
+			$real_key = (string) $y_realm.':'.$y_key;
 		} else {
-			$result = self::$redis->set((string)$y_realm.':'.$y_key, (string)$y_value);
-			if($y_expiration > 0) {
-				$resexp = self::$redis->expire((string)$y_realm.':'.$y_key, (int)$y_expiration);
-			} //end if
+			$real_key = (string) $y_key;
 		} //end if else
 		//--
-		if(((string)strtoupper((string)trim((string)$result)) == 'OK') AND ($resexp == 1)) {
-			return true;
+		$transact_test_arr = [
+			'result' => '?',
+			'resexp' => '?'
+		];
+		//--
+		self::$redis->watch((string)$real_key); // if key is modified after transaction start and before transaction commit will skip to be updated
+		self::$redis->multi();
+		$result = self::$redis->set((string)$real_key, (string)$y_value); // returns: OK or if in transaction: QUEUED
+		if((string)strtoupper((string)trim((string)$result)) == 'QUEUED') {
+			$result = 'OK'; // fix for in-transaction result
+		} //end if
+		if($y_expiration > 0) {
+			$resexp = self::$redis->expire((string)$real_key, (int)$y_expiration); // returns: 0/1 or if in transaction: QUEUED
+			if((string)strtoupper((string)trim((string)$resexp)) == 'QUEUED') {
+				$resexp = '1'; // fix for in-transaction result
+			} //end if
 		} else {
-			return false;
+			$resexp = '1';
+		} //end if
+		$transact_arr = (array) self::$redis->exec();
+		$transact_test_arr['result'] = (string) $transact_arr[0];
+		if($y_expiration > 0) {
+			$transact_test_arr['resexp'] = (string) $transact_arr[1];
+		} else {
+			if((string)$resexp == '1') {
+				$transact_test_arr['resexp'] = '1';
+			} //end if
 		} //end if else
+		$transact_arr = array();
+		self::$redis->unwatch(); // normally there's no need to manually call UNWATCH after EXEC, but just in case, to avoid locks ...
+		//--
+		if(
+			(((string)strtoupper((string)trim((string)$result)) == 'OK') AND ((string)strtoupper((string)trim((string)$transact_test_arr['result'])) == 'OK'))
+			AND
+			(((string)trim((string)$resexp) == '1') AND ((string)trim((string)$transact_test_arr['resexp']) == '1'))
+		) {
+			return true;
+		} //end if
+		//--
+		return false;
 		//--
 	} //END FUNCTION
 

@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200419
+ * @version 	v.20200424
  * @package 	@Core:Extra
  *
  */
@@ -228,15 +228,15 @@ final class SmartUtils {
 		//-- checksum of original data
 		$chksum = SmartHashCrypto::sha1((string)$y_str);
 		//-- prepare data and add checksum
-		$y_str = trim(strtoupper(bin2hex((string)$y_str))).'#CHECKSUM-SHA1#'.$chksum;
-		$out = @gzdeflate($y_str, -1, ZLIB_ENCODING_RAW); // don't make it string, may return false ; -1 = default compression of the zlib library is used which is 6
+		$y_str = (string) trim((string)strtoupper((string)bin2hex((string)$y_str))).'#CHECKSUM-SHA1#'.$chksum;
+		$out = @gzdeflate((string)$y_str, -1, ZLIB_ENCODING_RAW); // don't make it string, may return false ; -1 = default compression of the zlib library is used which is 6
 		//-- check for possible deflate errors
 		if(($out === false) OR ((string)$out == '')) {
 			Smart::log_warning('Smart.Framework Utils / Data Archive :: ZLib Deflate ERROR ! ...');
 			return '';
 		} //end if
-		$len_data = strlen((string)$y_str);
-		$len_arch = strlen((string)$out);
+		$len_data = (int) strlen((string)$y_str);
+		$len_arch = (int) strlen((string)$out);
 		if(($len_data > 0) AND ($len_arch > 0)) {
 			$ratio = $len_data / $len_arch;
 		} else {
@@ -271,7 +271,7 @@ final class SmartUtils {
 	// Unarchive data (string) from B64/Zlib-Raw/Hex
 	public static function data_unarchive($y_enc_data) {
 		//--
-		$y_enc_data = trim((string)$y_enc_data);
+		$y_enc_data = (string) trim((string)$y_enc_data);
 		//--
 		if((string)$y_enc_data == '') {
 			return '';
@@ -280,10 +280,10 @@ final class SmartUtils {
 		$out = ''; // initialize output
 		//-- pre-process
 		$arr = array();
-		$arr = explode("\n", (string)$y_enc_data);
+		$arr = (array) explode("\n", (string)$y_enc_data);
 		$y_enc_data = ''; // free mem
-		$arr[0] = trim((string)$arr[0]); // is the data packet
-		$arr[1] = trim((string)$arr[1]); // signature
+		$arr[0] = (string) trim((string)$arr[0]); // is the data packet
+		$arr[1] = (string) trim((string)$arr[1]); // signature
 		//-- check signature
 		if((string)$arr[1] != 'PHP.SF.151129/B64.ZLibRaw.HEX') { // signature is different, try to decode but log the error
 			Smart::log_notice('Smart.Framework // Data Unarchive // Invalid Package Signature: '.$arr[1]);

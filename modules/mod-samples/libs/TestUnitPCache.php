@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200428
  *
  */
 final class TestUnitPCache {
@@ -125,10 +125,19 @@ final class TestUnitPCache {
 		if((string)$err == '') {
 			$cachePathPrefix = (string) \SmartPersistentCache::cachePathPrefix(3, $the_test_realm);
 			$cacheTestPrefix = (string) \str_replace('/', '', (string)$cachePathPrefix);
-			$tests[] = 'Get the Cache Prefix, must be exactly 3 alphanumeric characters containing 0..9 a..z separed by slash: `'.$cacheTestPrefix.'` (`'.$cachePathPrefix.'`)';
+			$tests[] = 'Get the Cache Prefix, must be exactly 3 alphanum chars containing 0..9 a..z separed by slash: `'.$cacheTestPrefix.'` (`'.$cachePathPrefix.'`)';
 			if((\strlen((string)\trim((string)$cacheTestPrefix)) != 3) OR (!\preg_match('/^[a-z0-9]{3}$/', (string)$cacheTestPrefix))) {
-				$err = 'The Cache Prefix `'.$cacheTestPrefix.'` must have only 3 alphanumeric characters as 0-9 a-z, separed by slashes (`'.$cachePathPrefix.'`)';
+				$err = 'The Cache Prefix `'.$cacheTestPrefix.'` must have only 3 alphanum chars as 0-9 a-z, separed by slashes (`'.$cachePathPrefix.'`)';
 			} //end if
+		} //end if
+		//--
+
+		//--
+		if(\Smart::random_number(0,1) == 1) {
+			$the_test_realm = '';
+			$tests[] = 'The Testing Realm is EMPTY';
+		} else {
+			$tests[] = 'The Testing Realm is NON-EMPTY: `'.$the_test_realm.'`';
 		} //end if
 		//--
 
