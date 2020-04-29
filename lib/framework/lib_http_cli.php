@@ -79,7 +79,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.20200423
+ * @version 	v.20200429
  * @package 	@Core:Network
  *
  */
@@ -240,7 +240,7 @@ final class SmartHttpClient {
 				break;
 			case '1.0':
 			default:
-				$this->protocol = '1.0'; // default is 1.0 (is faster than 1.1 for GET / POST ; 1.1 mostly will return chunked transfer which is costly to parse on client side ...)
+				$this->protocol = '1.0'; // default is 1.0 (is faster than 1.1 for GET / POST because HTTP 1.1 will mostly return chunked transfer which is costly to parse on client side ...)
 		} //end switch
 		//--
 
@@ -470,11 +470,13 @@ final class SmartHttpClient {
 			} //end if
 			//--
 		} //end while
-		//--
-		if((string)trim((string)$this->header) != '') {
-			if((string)trim((string)$this->body) != '') {
-				if(((string)$this->protocol == '1.1') AND (stripos((string)$this->header, 'Transfer-Encoding: chunked') !== false)) {
-					$this->body = (string) $this->chunked_part_decode($this->body);
+		//-- if HTTP 1.1 Transfer Chunked, try to parse the chunked body
+		if((string)$this->protocol == '1.1') {
+			if((string)trim((string)$this->header) != '') {
+				if(stripos((string)$this->header, 'Transfer-Encoding: chunked') !== false) {
+					if((string)trim((string)$this->body) != '') {
+						$this->body = (string) $this->chunked_part_decode($this->body);
+					} //end if
 				} //end if
 			} //end if
 		} //end if
