@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Smart.Framework::DAV @ UserInfo: [DAV-FsMount] # [###INFO-ROOT|html###] # r.20200419 -->
+<!-- Smart.Framework::DAV @ UserInfo: [DAV-FsMount] # [###INFO-ROOT|html###] # r.20200430 -->
 <html>
 <head>
 	<meta charset="[###CHARSET|html###]">
@@ -156,7 +156,7 @@
 [%%%IF:DISPLAY-QUOTA:==yes;%%%]
 	!storage!:&lt;DAV&gt;:{overall.statistics} : Dirs:&nbsp;[###NUM-DIRS|int###] ; Files:&nbsp;[###NUM-FILES|int###] ; UsedSpace:&nbsp;[###QUOTA-USED|html###] ; FreeSpace:&nbsp;[###QUOTA-FREE|html###] ; QuotaSpace:&nbsp;[###QUOTA-SPACE|html###]
 [%%%ELSE:DISPLAY-QUOTA%%%]
-	!storage!:&lt;DAV&gt;:{overall.statistics} : N/A
+	!storage!:&lt;DAV&gt;:{overall.statistics} : FreeSpace:&nbsp;[###QUOTA-FREE|html###] ; QuotaSpace:&nbsp;[###QUOTA-SPACE|html###]
 [%%%/IF:DISPLAY-QUOTA%%%]
 </div>
 </div>

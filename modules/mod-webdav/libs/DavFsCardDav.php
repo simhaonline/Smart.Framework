@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavFsCardDav {
 
 	// ::
-	// v.20200419
+	// v.20200430
 
 	private static $carddav_ns = 'xmlns:card="urn:ietf:params:xml:ns:carddav"';
 	private static $carddav_urn = 'urn:ietf:params:xml:ns:carddav';
@@ -138,7 +138,7 @@ final class DavFsCardDav {
 
 
 	//-- SECURITY CHECK: OK @ safe against .ht* names
-	public static function methodPut($dav_vfs_path) { // 201 | 405 | 415 | 423 | 500
+	public static function methodPut($dav_vfs_path) { // 201 | 400 | 405 | 406 | 409 | 411 | 415 | 423 | 500
 		//--
 		$dav_vfs_path = (string) $dav_vfs_path; // safe on .ht* names
 		//--
@@ -167,13 +167,19 @@ final class DavFsCardDav {
 			return 411;
 		} //end if
 		$head_content_length = (int) $head_content_length;
-	/*	if($head_content_length < 0) {
+	/*	if($head_content_length < 0) { // this check is disabled in order to allow empty files
 			\http_response_code(400); // invalid content length
 			return 400;
 		} //end if */
 		if($head_content_length <= 0) {
 			\http_response_code(411); // dissalow empty files (0 bytes)
 			return 411;
+		} //end if
+		//-- TODO: MacOS Finder with PUT files > 8.5 MB still fails ... ; !! without the below restriction, the MacOS Finder works with files under the above limit !!
+		if(\stripos((string)$heads['transfer-encoding'], 'chunked') !== false) {
+			\header('Accept-Encoding: gzip, deflate, identity'); // {{{SYNC-WEBDAV-CHUNKED-RESTRICTION}}} ; chunked content is unsafe to dechunk ... it may fail, thus on webdav is not acceptable
+			\http_response_code(406); // not acceptable
+			return 406; // this check must be performed after checking the content length header
 		} //end if
 		//--
 		if(!\SmartFileSysUtils::check_if_safe_path($dav_vfs_path)) {
@@ -587,14 +593,21 @@ final class DavFsCardDav {
 			return array();
 		} //end if
 		//--
+		$free_space = (int) \floor((float)\disk_free_space((string)$dav_vfs_root));
+		//--
 		if((!\defined('\\SMART_WEBDAV_SHOW_USAGE_QUOTA')) OR (\SMART_WEBDAV_SHOW_USAGE_QUOTA !== true)) {
-			return array(); // skip quota info if not express specified
+			//-- need to report at least the free space ...
+			return array( // skip quota info if not express specified
+				'root-dir' 		=> (string) $dav_vfs_root, 		// vfs root dir ; safe on .ht* names
+				'quota' 		=> (int) 0, 					// total quota (0 is unlimited)
+				'free' 			=> (int) $free_space 			// free space (free) in bytes,
+			);
+			//--
 		} //end if
 		//--
 		$arr_storage = (new \SmartGetFileSystem())->get_storage((string)$dav_vfs_root, true, true, ''); // recuring, with dot files ; safe on .ht* names as it only calculate sizes
 		// \Smart::log_notice(\print_r($arr_storage,1));
 		$used_space = (int) $arr_storage['size-files']; // 'size'
-		$free_space = (int) \floor(\disk_free_space((string)$dav_vfs_root));
 		//--
 		return array(
 			'root-dir' 		=> (string) $dav_vfs_root, 		// vfs root dir ; safe on .ht* names
