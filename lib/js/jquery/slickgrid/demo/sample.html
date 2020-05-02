@@ -24,6 +24,12 @@
 		<script type="text/javascript" src="../../jquery.sparkline.js"></script>
 
 		<script type="text/javascript" src="../slick.editors.js"></script>
+		<style>
+		.style-id {
+			background: #333333 !important;
+			color:#FFFFFF !important;
+		}
+		</style>
 	</head>
 	<body>
 		<table width="100%">
@@ -71,8 +77,8 @@
 		var grid;
 
 		var columns = [
-			{id:"id", name:"ID", field:"id", sortable:false, formatter:displayID},
-			{id:"title", name:"Title", field:"title", sortable:true, editor:TextCellSelector},
+			{id:"id", name:"ID", field:"id", sortable:false, formatter:displayID, cssHeadClass:"style-id"},
+			{id:"title", name:"&raquo; Title &laquo;", field:"title", sortable:true, editor:TextCellSelector},
 			{id:"duration", name:"Duration", field:"duration", sortable:false},
 			{id:"percent", name:"% Complete", field:"percentComplete", sortable:true, editor:IntegerCellEditor},
 			{id:"start", name:"Start", field:"start", sortable:true, editor:LongTextCellEditor},

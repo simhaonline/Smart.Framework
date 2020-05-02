@@ -22,8 +22,6 @@
 		color: #FFFFFF !important;
 	}
 </style>
-<link rel="stylesheet" type="text/css" href="lib/js/jquery/pager/simplePagination.css">
-<script type="text/javascript" src="lib/js/jquery/pager/jquery.simplePagination.js"></script>
 <script type="text/javascript" src="lib/js/jquery/jquery.event.drag.js"></script>
 <script type="text/javascript" src="lib/js/jquery/jquery.event.drop.js"></script>
 <script type="text/javascript" src="lib/js/jquery/jquery.simulate.js"></script>
@@ -32,6 +30,8 @@
 <script type="text/javascript" src="lib/js/jquery/slickgrid/slick.grid.js"></script>
 <script type="text/javascript" src="lib/js/jquery/slickgrid/slick.editors.js"></script>
 <script type="text/javascript" src="lib/js/jquery/slickgrid/smart-grid.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/js/jquery/pager/simplePagination.css">
+<script type="text/javascript" src="lib/js/jquery/pager/jquery.simplePagination.js"></script>
 <script type="text/javascript">
 	//--
 	var IdOfGrid = 'SmartTestSlickGrid';
@@ -88,24 +88,27 @@ $(function() {
 		asyncEditorLoading: false
 	};
 
-	// Grid sizing
-	var winW = $(window).width();
-	var winH = $(window).height();
-	$('#' + IdOfGrid).css({ 'width': parseInt(winW - 75), 'height': parseInt(winH - 275) });
-	$(window).resize(function() {
-		winW = $(window).width();
-		winH = $(window).height();
-		$('#' + IdOfGrid).css({ 'width': parseInt(winW - 75), 'height': parseInt(winH - 275) });
-		TheGrid.grid.resizeCanvas();
-		TheGrid.grid.autosizeColumns();
-	});
-
-	// Runtime
+	//-- Runtime
 	TheGrid.initNavPager('SmartTestNavPager', 3);
 	TheGrid.initGrid(columns, options);
-	TheGrid.grid.resizeCanvas();
-	TheGrid.grid.autosizeColumns();
 	TheGrid.loadGridData(0);
+
+	//-- Grid Sizing
+	var resizeTheGrid = function() {
+		var winW = $(window).width();
+		var winH = $(window).height();
+		$('#' + IdOfGrid).css({ 'width': Math.floor(parseInt(winW) - 75) + 'px', 'height': Math.floor(parseInt(winH) - 275) + 'px' });
+		TheGrid.grid.resizeCanvas();
+		TheGrid.grid.autosizeColumns();
+	} //end function
+
+	//-- Grid Re-Sizing
+	$(window).resize(function() {
+		resizeTheGrid();
+	});
+
+	//-- Render
+	setTimeout(function(){ resizeTheGrid(); }, 100);
 
 });
 //--

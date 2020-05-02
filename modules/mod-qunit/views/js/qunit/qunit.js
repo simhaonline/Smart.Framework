@@ -1,5 +1,5 @@
 /*!
- * QUnit 2.9.2 (modified by unixman r.20200121)
+ * QUnit 2.9.2 (modified by unixman r.20200501)
  * https://qunitjs.com/
  *
  * Copyright jQuery Foundation and other contributors
@@ -8,6 +8,11 @@
  *
  * Date: 2019-02-21T22:49Z
  */
+
+// Fixes by unixman:
+//	* added several features
+//	* jQuery 3.5.0 ready (fixed XHTML Tags)
+
 (function (global$1) {
 	'use strict';
 
@@ -766,7 +771,7 @@
 
 			separator: function separator() {
 				if (this.multiline) {
-					return this.HTML ? "<br />" : "\n";
+					return this.HTML ? "<br>" : "\n";
 				} else {
 					return this.HTML ? "&#160;" : " ";
 				}
@@ -4657,7 +4662,7 @@
 				escapedTooltip = escapeText(val.tooltip);
 
 				if (!val.value || typeof val.value === "string") {
-					urlConfigHtml += "<label for='qunit-urlconfig-" + escaped + "' title='" + escapedTooltip + "'><input id='qunit-urlconfig-" + escaped + "' name='" + escaped + "' type='checkbox'" + (val.value ? " value='" + escapeText(val.value) + "'" : "") + (config[val.id] ? " checked='checked'" : "") + " title='" + escapedTooltip + "' />" + escapeText(val.label) + "</label>";
+					urlConfigHtml += "<label for='qunit-urlconfig-" + escaped + "' title='" + escapedTooltip + "'><input id='qunit-urlconfig-" + escaped + "' name='" + escaped + "' type='checkbox'" + (val.value ? " value='" + escapeText(val.value) + "'" : "") + (config[val.id] ? " checked='checked'" : "") + " title='" + escapedTooltip + "'>" + escapeText(val.label) + "</label>";
 				} else {
 					urlConfigHtml += "<label for='qunit-urlconfig-" + escaped + "' title='" + escapedTooltip + "'>" + val.label + ": </label><select id='qunit-urlconfig-" + escaped + "' name='" + escaped + "' title='" + escapedTooltip + "'><option></option>";
 
@@ -4868,7 +4873,7 @@
 			for (i = 0; i < config.modules.length; i++) {
 				if (config.modules[i].name !== "") {
 					checked = config.moduleId.indexOf(config.modules[i].moduleId) > -1;
-					html += "<li><label class='clickable" + (checked ? " checked" : "") + "'><input type='checkbox' " + "value='" + config.modules[i].moduleId + "'" + (checked ? " checked='checked'" : "") + " />" + escapeText(config.modules[i].name) + "</label></li>";
+					html += "<li><label class='clickable" + (checked ? " checked" : "") + "'><input type='checkbox' " + "value='" + config.modules[i].moduleId + "'" + (checked ? " checked='checked'" : "") + ">" + escapeText(config.modules[i].name) + "</label></li>";
 				}
 			}
 
@@ -5075,7 +5080,7 @@
 				result.id = "qunit-testresult";
 				result.className = "result";
 				tests.parentNode.insertBefore(result, tests);
-				result.innerHTML = "<div id=\"qunit-testresult-display\">Running...<br />&#160;</div>" + "<div id=\"qunit-testresult-controls\"></div>" + "<div class=\"clearfix\"></div>";
+				result.innerHTML = "<div id=\"qunit-testresult-display\">Running...<br>&#160;</div>" + "<div id=\"qunit-testresult-controls\"></div>" + "<div class=\"clearfix\"></div>";
 				controls = id("qunit-testresult-controls");
 			}
 
@@ -5172,7 +5177,7 @@
 					tests = id("qunit-tests"),
 					abortButton = id("qunit-abort-tests-button"),
 					totalTests = stats.passedTests + stats.skippedTests + stats.todoTests + stats.failedTests,
-					html = [totalTests, " tests completed in ", details.runtime, " milliseconds, with ", stats.failedTests, " failed, ", stats.skippedTests, " skipped, and ", stats.todoTests, " todo.<br />", "<span class='passed'>", details.passed, "</span> assertions of <span class='total'>", details.total, "</span> passed, <span class='failed'>", details.failed, "</span> failed."].join(""),
+					html = [totalTests, " tests completed in ", details.runtime, " milliseconds, with ", stats.failedTests, " failed, ", stats.skippedTests, " skipped, and ", stats.todoTests, " todo.<br>", "<span class='passed'>", details.passed, "</span> assertions of <span class='total'>", details.total, "</span> passed, <span class='failed'>", details.failed, "</span> failed."].join(""),
 					test,
 					assertLi,
 					assertList;
@@ -5244,7 +5249,7 @@
 
 				bad = QUnit.config.reorder && details.previousFailure;
 
-				running.innerHTML = [bad ? "Rerunning previously failed test: <br />" : "Running: <br />", getNameHtml(details.name, details.module)].join("");
+				running.innerHTML = [bad ? "Rerunning previously failed test: <br>" : "Running: <br>", getNameHtml(details.name, details.module)].join("");
 			}
 		});
 

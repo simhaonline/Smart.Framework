@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>jQuery Unveil</title>
+	<script src="../../jquery.js"></script>
+	<script src="../../jquery.unveil.js"></script>
+	<style type="text/css">
+	</style>
+</head>
+<body>
+<h1>A very lightweight plugin to lazy load images (scroll down, there are 3 images that will load just before seeing them)</h1>
+<div class="test">
+	<img class="unveil" src="" data-src="http://t.wallpaperweb.org/wallpaper/digital_art/1280x720/theroadfromnewjerseywallpaper1566_1280x720.jpg" alt="Gallery image 1" width="1024">
+	<div style="height:1024px;"></div>
+	<img class="unveil" src="" data-src="http://t.wallpaperweb.org/wallpaper/development/1280x720/thelastonewallpaper2525_1280x720.jpg" alt="Gallery image 2" width="1024">
+	<div style="height:1024px;"></div>
+	<img class="unveil" src="" data-src="http://t.wallpaperweb.org/wallpaper/nature/1280x720/vintagebridgewallpaper4201_1280x720.jpg" alt="Gallery image 3" width="1024">
+</div>
+<script>
+$(function() {
+
+$(document).ready(function() {
+	$(".unveil").unveil({
+		threshold: 5, // unveil if 5px above image
+	//	attribute: 'data-src-alt' // if this is not present will fallback to 'data-src' attribute
+	});
+});
+
+});
+</script>
+</body>
+</html>
