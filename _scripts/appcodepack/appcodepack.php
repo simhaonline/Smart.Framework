@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20200410.1607'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200504.1045'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2272,7 +2272,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20200410 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200504.r2 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -4336,7 +4336,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20200121
+	//##### SmartFileSysUtils v.20200504
 
 
 	//================================================================
@@ -4598,9 +4598,16 @@ Options -Indexes
 	// returns 1 if OK
 	private static function test_absolute_path($y_path) {
 		//--
-		$y_path = (string) $y_path;
+		$y_path = (string) trim((string)$y_path);
 		//--
-		if((string)substr((string)trim($y_path), 0, 1) == '/') {
+		$c1 = (string) substr((string)$y_path, 0, 1);
+		$c2 = (string) substr((string)$y_path, 1, 1);
+		//--
+		if(
+			((string)$c1 == '/') OR // unix / linux
+			((string)$c1 == ':') OR // windows
+			((string)$c2 == ':')    // windows
+		) {
 			return 0;
 		} //end if
 		//--

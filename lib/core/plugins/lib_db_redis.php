@@ -51,7 +51,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP Sockets ; classes: Smart
- * @version 	v.20200428
+ * @version 	v.20200504
  * @package 	Plugins:Database:Redis
  *
  */
@@ -488,9 +488,14 @@ final class SmartRedisDb {
 			return null;
 		} //end if
 		//--
-		$line = @fgets($this->socket, $this->recvbuf);
+		$line = (string) @fgets($this->socket, $this->recvbuf);
+		if((string)$line == '') {
+			$this->error('Redis Response', 'Empty Response', 'Method: '.$method."\n".'ERR-MSG: `UNKNOWN ERROR`'); // fatal error
+			return null;
+		} //end if
 		//--
-		list($type, $result) = array($line[0], substr($line, 1, (strlen($line) - 3)));
+		$type = (string) substr($line, 0, 1);
+		$result = (string) substr($line, 1, (strlen($line) - 3));
 		//--
 		if((string)$type == '-') { // error message
 			//--
@@ -499,7 +504,7 @@ final class SmartRedisDb {
 			//--
 		} elseif((string)$type == '$') { // bulk reply
 			//--
-			if($result == -1) {
+			if((string)$result == '-1') {
 				//--
 				$result = null;
 				//--
@@ -527,7 +532,7 @@ final class SmartRedisDb {
 					$result .= (string) $chunk;
 					$bytes_left = (int) $size - strlen($result);
 				} while($bytes_left > 0);
-				$result = substr($result, 0, -2);
+				$result = (string) substr((string)$result, 0, -2);
 				//###
 				//--
 			} //end if else

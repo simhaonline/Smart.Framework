@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200504.r2
  * @package 	@Core:FileSystem
  *
  */
@@ -355,9 +355,16 @@ final class SmartFileSysUtils {
 	// returns 1 if OK
 	private static function test_absolute_path($y_path) {
 		//--
-		$y_path = (string) $y_path;
+		$y_path = (string) trim((string)$y_path);
 		//--
-		if((string)substr((string)trim($y_path), 0, 1) == '/') {
+		$c1 = (string) substr((string)$y_path, 0, 1);
+		$c2 = (string) substr((string)$y_path, 1, 1);
+		//--
+		if(
+			((string)$c1 == '/') OR // unix / linux
+			((string)$c1 == ':') OR // windows
+			((string)$c2 == ':')    // windows
+		) {
 			return 0;
 		} //end if
 		//--
