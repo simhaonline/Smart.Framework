@@ -68,7 +68,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20200121
+ * @version 	v.20200505
  * @package 	Plugins:Database:PostgreSQL
  *
  */
@@ -1399,16 +1399,16 @@ final class SmartPgsqlDb {
 			$queryval = (string) self::prepare_param_query((string)$queryval, (array)$params_or_title, $y_connection);
 		} //end if
 		//--
-		$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_10_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
+		$unique_id = 'WrIgData_PgSQL_'.Smart::uuid_12_seq().'_'.Smart::uuid_10_str().'_'.Smart::uuid_10_num().'_'.sha1(SmartUtils::client_ident_private_key()).'_'.sha1(SmartUtils::get_visitor_tracking_uid().':'.Smart::uuid_36('pgsql-write-ig').':'.Smart::uuid_45('pgsql-write-ig')).'_Func'; // this must be a unique that cannot guess to avoid dollar escaping injections
 		//--
 		$prep_query = (string) '
 		DO LANGUAGE plpgsql
 		$'.$unique_id.'$
 		DECLARE affected_rows BIGINT;
 		BEGIN
-			-- do the query an safe catch exceptions (unique key, foreign key)
+			-- execute the query with a safe catch exceptions (unique key, foreign key), v.20200505
 				affected_rows := 0;
-		'."\t\t".trim(rtrim($queryval, ';')).';'.'
+		'."\t\t".trim((string)rtrim((string)$queryval, ';')).';'.'
 				GET DIAGNOSTICS affected_rows = ROW_COUNT;
 				RAISE NOTICE \'SMART-FRAMEWORK-PGSQL-NOTICE: AFFECTED ROWS #%\', affected_rows;
 				RETURN;
@@ -1771,7 +1771,7 @@ final class SmartPgsqlDb {
 	/**
 	 * Get A UNIQUE (SAFE) ID for DB Tables / Schema
 	 *
-	 * @param ENUM 		$y_mode 					:: mode: uid10str | uid10num | uid10seq | uid36 | uid45
+	 * @param ENUM 		$y_mode 					:: mode: uid10str | uid10num | uid10seq | uid12seq | uid13seq | uid15seq | uid32 | uid34 | uid35 | uid37 | uid36 | uid45
 	 * @param STRING 	$y_field_name 				:: the field name
 	 * @param STRING 	$y_table_name 				:: the table name
 	 * @param STRING 	$y_schema 					:: the schema
@@ -1823,7 +1823,7 @@ final class SmartPgsqlDb {
 			//--
 		} //end if
 		//--
-		$tmp_result = 'NO-ID-INIT'; //init (must be not empty)
+		$tmp_result = 'NO-ID-INIT'; // init (must be not empty)
 		$counter = 0;
 		$id_is_ok = false;
 		//--
@@ -1842,23 +1842,40 @@ final class SmartPgsqlDb {
 			//--
 			$new_id = 'NO-ID-ALGO';
 			switch((string)$y_mode) {
-				case 'uid45':
-					$new_id = (string) Smart::uuid_45(SMART_FRAMEWORK_NETSERVER_ID.SmartUtils::get_server_current_url()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
+				case 'uid45': // standard
+					$new_id = (string) Smart::uuid_45((string)Smart::net_server_id()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
 					break;
-				case 'uid36':
-					$new_id = (string) Smart::uuid_36(SMART_FRAMEWORK_NETSERVER_ID.SmartUtils::get_server_current_url()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
+				case 'uid36': // standard
+					$new_id = (string) Smart::uuid_36((string)Smart::net_server_id()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
 					break;
-				case 'uid10seq':
-					if($use_safe_id_record === true) { // sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
-						$new_id = (string) Smart::uuid_10_seq();
-					} else {
-						$new_id = (string) Smart::uuid_10_str();
-					} //end if else
+				case 'uid37': // for cluster, case sensitive
+					$new_id = (string) Smart::uuid_37();
 					break;
-				case 'uid10num':
+				case 'uid35': // case sensitive
+					$new_id = (string) Smart::uuid_35();
+					break;
+				case 'uid34': // for cluster
+					$new_id = (string) Smart::uuid_34();
+					break;
+				case 'uid32':
+					$new_id = (string) Smart::uuid_32();
+					break;
+				case 'uid15seq': // for cluster, case sensitive ; if SMART_SOFTWARE_DB_DISABLE_SAFE_IDS is defined (that means the Use Safe ID Record is disabled) sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
+					$new_id = (string) Smart::uuid_15_seq();
+					break;
+				case 'uid13seq': // case sensitive ; if SMART_SOFTWARE_DB_DISABLE_SAFE_IDS is defined (that means the Use Safe ID Record is disabled) sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
+					$new_id = (string) Smart::uuid_13_seq();
+					break;
+				case 'uid12seq': // for cluster ; if SMART_SOFTWARE_DB_DISABLE_SAFE_IDS is defined (that means the Use Safe ID Record is disabled) sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
+					$new_id = (string) Smart::uuid_12_seq();
+					break;
+				case 'uid10seq': // if SMART_SOFTWARE_DB_DISABLE_SAFE_IDS is defined (that means the Use Safe ID Record is disabled) sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
+					$new_id = (string) Smart::uuid_10_seq();
+					break;
+				case 'uid10num': // numeric, small scale
 					$new_id = (string) Smart::uuid_10_num();
 					break;
-				case 'uid10str':
+				case 'uid10str': // medium scale, string
 				default:
 					$new_id = (string) Smart::uuid_10_str();
 			} //end switch
@@ -1876,7 +1893,7 @@ final class SmartPgsqlDb {
 					$uniqueness_mark = (string) $y_schema.'.'.$y_table_name.':'.$y_id_field;
 					$write_res = self::write_igdata(
 						'INSERT INTO "smart_runtime"."_safe_id_records" ("id", "table_space", "date_time") ( SELECT \''.self::escape_str($new_id, '', $y_connection).'\', \''.self::escape_str($uniqueness_mark, '', $y_connection).'\', \''.self::escape_str(date('Y-m-d H:i:s'), '', $y_connection).'\' WHERE (NOT EXISTS ( SELECT 1 FROM "smart_runtime"."_safe_id_records" WHERE (("id" = \''.self::escape_str($new_id, '', $y_connection).'\') AND ("table_space" = \''.self::escape_str($uniqueness_mark, '', $y_connection).'\')) LIMIT 1 OFFSET 0 ) AND NOT EXISTS ('.$chk_uniqueness.') ) )',
-						'Safe Record of NEW ID of Table into Zone Control',
+						'Safe Record for NEW ID of Table into Zone Control',
 						$y_connection
 					);
 					//--
@@ -2270,7 +2287,7 @@ $sql = <<<'SQL'
 CREATE TABLE smart_runtime._safe_id_records (
     id character varying(45) NOT NULL,
     table_space character varying(512) NOT NULL,
-    date_time character varying(22) NOT NULL,
+    date_time character varying(128) NOT NULL,
     CONSTRAINT _safe_id_records__check__id CHECK ((char_length((id)::text) >= 10)),
     CONSTRAINT _safe_id_records__check__table_space CHECK ((char_length((table_space)::text) >= 1)),
     CONSTRAINT _safe_id_records__check__date_time CHECK ((char_length((date_time)::text) >= 19))
@@ -2278,7 +2295,7 @@ CREATE TABLE smart_runtime._safe_id_records (
 ALTER TABLE ONLY smart_runtime._safe_id_records ADD CONSTRAINT _safe_id_records__id PRIMARY KEY (id);
 CREATE INDEX _safe_id_records__table_space 	ON smart_runtime._safe_id_records USING btree (table_space);
 CREATE INDEX _safe_id_records__date_time 	ON smart_runtime._safe_id_records USING btree (date_time);
-COMMENT ON TABLE smart_runtime._safe_id_records IS 'Smart.Framework Safe-ID Records v.2015.03.25';
+COMMENT ON TABLE smart_runtime._safe_id_records IS 'Smart.Framework Safe-ID Records v.2020.05.05';
 COMMENT ON COLUMN smart_runtime._safe_id_records.id IS 'ID';
 COMMENT ON COLUMN smart_runtime._safe_id_records.table_space IS 'Table Space as: schema.table:field';
 COMMENT ON COLUMN smart_runtime._safe_id_records.date_time IS 'Date and Time ( yyyy-mm-dd hh:ii:ss)';
@@ -2334,7 +2351,7 @@ SQL;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20200121
+ * @version 	v.20200505
  * @package 	Plugins:Database:PostgreSQL
  *
  */
@@ -2673,7 +2690,7 @@ final class SmartPgsqlExtDb {
 	/**
 	 * Get A UNIQUE (SAFE) ID for DB Tables / Schema
 	 *
-	 * @param ENUM 		$y_mode 					:: mode: uid10str | uid10num | uid10seq | uid36 | uid45
+	 * @param ENUM 		$y_mode 					:: mode: uid10str | uid10num | uid10seq | uid12seq | uid13seq | uid15seq | uid32 | uid34 | uid35 | uid37 | uid36 | uid45
 	 * @param STRING 	$y_field_name 				:: the field name
 	 * @param STRING 	$y_table_name 				:: the table name
 	 * @param STRING 	$y_schema 					:: the schema (default is: public)

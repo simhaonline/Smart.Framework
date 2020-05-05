@@ -62,7 +62,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20200121
+ * @version 	v.20200505
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -371,7 +371,7 @@ final class SmartSQliteDb {
 	/**
 	 * Get A UNIQUE (SAFE) ID for DB Tables / Schema
 	 *
-	 * @param ENUM $mode 							:: mode: uid10str | uid10num
+	 * @param ENUM $mode 							:: mode: uid10str | uid10num | uid10seq | uid12seq | uid32 | uid34
 	 * @param STRING $id_field 						:: the field name
 	 * @param STRING $table_name 					:: the table name
 	 * @return STRING 								:: the generated Unique ID
@@ -476,7 +476,7 @@ final class SmartSQliteDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20200121
+ * @version 	v.20200505
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -656,6 +656,10 @@ final class SmartSQliteUtilDb {
 				'date' 						=> -1, // can have 1 or 2 args
 				'date_diff' 				=>  2,
 				'period_diff' 				=>  2,
+				'urlencode' 				=>  1,
+				'urldecode' 				=>  1,
+				'rawurlencode' 				=>  1,
+				'rawurldecode' 				=>  1,
 				'base64_encode' 			=>  1,
 				'base64_decode' 			=>  1,
 				'bin2hex' 					=>  1,
@@ -663,13 +667,16 @@ final class SmartSQliteUtilDb {
 				'crc32b' 					=>  1,
 				'md5' 						=>  1,
 				'sha1' 						=>  1,
+				'sha256' 					=>  1,
 				'sha512' 					=>  1,
 				'strlen' 					=>  1,
-				'charlen' 					=>  1,
+				'charlen' 					=>  1, // mbstring
 				'str_wordcount' 			=>  1,
-				'strip_tags' 				=> -1, // can have 1 or 2 args
-				'striptags' 				=>  1,
+				'strip_tags' 				=> -1, // can have 1 or 2 args (PHP)
+				'striptags' 				=>  1, // Smart
 				'deaccent_str' 				=>  1,
+				'utf8_encode' 				=>  1,
+				'utf8_decode' 				=>  1,
 				'json_arr_contains' 		=>  2,
 				'json_obj_contains' 		=>  3,
 				'json_arr_delete' 			=>  2,
@@ -1579,6 +1586,16 @@ final class SmartSQliteUtilDb {
 			//--
 			$new_id = 'NO-ID-ALGO';
 			switch((string)$y_mode) {
+				// IMPORTANT: SQlite is not cross-platform safe for case sensitive UUIDs such as base62 ...
+				case 'uid34': // for cluster, this should be safe enough !!
+					$new_id = (string) Smart::uuid_34();
+					break;
+				case 'uid32': // this should be safe enough !!
+					$new_id = (string) Smart::uuid_32();
+					break;
+				case 'uid12seq': // ! sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999 per server in a cluster
+					$new_id = (string) Smart::uuid_12_seq();
+					break;
 				case 'uid10seq': // ! sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
 					$new_id = (string) Smart::uuid_10_seq();
 					break;
@@ -1794,7 +1811,7 @@ final class SmartSQliteUtilDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20200121
+ * @version 	v.20200505
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -1941,6 +1958,13 @@ final class SmartSQliteFunctions {
 	public static function sha1($str) {
 		//--
 		return (string) SmartHashCrypto::sha1((string)$str);
+		//--
+	} //END FUNCTION
+
+
+	public static function sha256($str) {
+		//--
+		return (string) SmartHashCrypto::sha256((string)$str);
 		//--
 	} //END FUNCTION
 

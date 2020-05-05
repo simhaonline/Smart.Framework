@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200310
+ * @version     v.20200505
  * @package     @Core
  *
  */
@@ -1559,15 +1559,76 @@ final class Smart {
 
 	//================================================================
 	/**
+	 * Returns the valid Net Server ID (to be used in a cluster)
+	 * Valid values are 0..1295 (or 00..ZZ if BASE36)
+	 */
+	public static function net_server_id($base36=false) { // {{{SYNC-MIN-MAX-NETSERVER-ID}}}
+		//--
+		$netserverid = (int) 0;
+		if(defined('SMART_FRAMEWORK_NETSERVER_ID')) {
+			$netserverid = (int) SMART_FRAMEWORK_NETSERVER_ID;
+		} //end if
+		//--
+		if($netserverid < 0) {
+			$netserverid = 0;
+		} elseif($netserverid > 1295) {
+			$netserverid = 1295;
+		} //end if else
+		//--
+		if($base36 === true) {
+			$netserverid = strtoupper((string)sprintf('%02s', base_convert($netserverid, 10, 36))); // 00..ZZ
+		} //end if
+		//--
+		return (string) $netserverid; // return int as string
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
 	 * Generates a time based entropy as replacement for uniqid() to ensure is unique in time and space.
 	 * It is based on a full unique signature in space and time: server name, server unique id, a unique time sequence that repeats once in 1000 years and 2 extremely large (fixed length) random values .
 	 * If a suffix is provided will append it.
 	 *
 	 * @return STRING 						:: variable length Unique Entropy string
 	 */
-	public static function unique_entropy($y_suffix='') {
+	public static function unique_entropy($y_suffix='', $y_use_net_server_id=true) {
 		//--
-		return (string) 'Namespace:'.SMART_SOFTWARE_NAMESPACE.'NetServer#'.SMART_FRAMEWORK_NETSERVER_ID.';UUIDSequence='.self::uuid_10_seq().';UUIDRandStr='.self::uuid_10_str().';UUIDRandNum='.self::uuid_10_num().';'.$y_suffix;
+		$netserverid = '';
+		if($y_use_net_server_id !== false) {
+			$netserverid = (string) self::net_server_id();
+		} //end if
+		//--
+		return (string) 'Namespace:'.SMART_SOFTWARE_NAMESPACE.'NetServer#'.$netserverid.'UUIDUSequence='.self::uuid_13_seq().';UUIDSequence='.self::uuid_10_seq().';UUIDRandStr='.self::uuid_10_str().';UUIDRandNum='.self::uuid_10_num().';'.$y_suffix;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	// converts a 64-bit integer number to base62 (string)
+	private static function int10_to_base62_str($num) {
+		//--
+		$num = (int) $num;
+		if($num < 0) {
+			$num = 0;
+		} //end if
+		//--
+		$b = 62;
+		$base = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		//--
+		$r = (int) $num % $b;
+		$res = (string) $base[$r];
+		//--
+		$q = (int) floor($num / $b);
+		while ($q) {
+			$r = (int) $q % $b;
+			$q = (int) floor($q / $b);
+			$res = (string) $base[$r].$res;
+		} //end while
+		//--
+		return (string) $res;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1575,63 +1636,8 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Generates a random string (base36) UUID of 10 characters [0..9A..Z] ; Example: 0G1G74W362 .
-	 * Intended usage: Medium scale / Sequential / Non-Repeating (never repeats in a period cycle of 1000 years).
-	 * This is sequential, date and time based with miliseconds and a randomizer factor to ensure an ~ unique ID.
-	 * Duplicate values can occur just in the same milisecond (1000 miliseconds = 1 second) with a chance of ~ 3%
-	 * Values: 34k / sec ; 200k / min ; 120 mil / hour .
-	 *
-	 * Advantages: This is one of the most powerful UUID system as the ID will never repeat in a huge period of time.
-	 * Compared with the classic autoincremental IDs this UUID is much better as on the next cycle can fill up unallocated
-	 * values and more, because the next cycle occur after so many time there is no risk to re-use some IDs if they were
-	 * previous deleted or deactivated in terms of generating confusions with previous records.
-	 * The classic autoincremental systems can NOT do this and also, once the max ID is reached the DB table is blocked
-	 * as autoincremental records reach the max ID !!!
-	 *
-	 * Disadvantages: The database connectors require more complexity and must be able to retry within a cycle with
-	 * double check before alocating, such UUIDs and must use a pre-alocation table since the UUIDs are time based and if
-	 * in the same milisecond more than 1 inserts is allocated they can conflict each other without such pre-alocation !
-	 *
-	 * Smart.Framework implements the retry + cycle + pre-alocating table as a standard feature
-	 * in the bundled PostgreSQL library (connector/plugin) as PostgreSQL can do DDLs in transactions.
-	 * Using such functionality with MySQL would be tricky as DDLs will break the transactions ;-).
-	 * And for SQLite it does not make sense since SQLite is designed for small DBs thus no need for such high scalability ...
-	 *
-	 * @return STRING 						:: the UUID
-	 */
-	public static function uuid_10_seq() { // v7
-		//-- 00 .. RR
-		$b10_thousands_year = (int) substr(date('Y'), -3, 3); // get last 3 digits from year 000 .. 999
-		$b36_thousands_year = sprintf('%02s', base_convert($b10_thousands_year, 10, 36));
-		//-- 00000 .. ITRPU
-		$b10_day_of_year = (int) (date('z') + 1); // 1 .. 366
-		$b10_second_of_day = (int) ((((int)date('H')) * 60 * 60) + ((int)date('i') * 60) + ((int)date('s'))); // 0 .. 86399
-		$b10_second_of_year = (int) ($b10_day_of_year * $b10_second_of_day); // 0 .. 31622034
-		$b36_second_of_year = sprintf('%05s', base_convert($b10_second_of_year, 10, 36));
-		//-- 00 .. RR
-		$microtime = explode('.', microtime(true));
-		$b10_microseconds = (int) substr(trim($microtime[1]), 0, 3); // 000 .. 999
-		$b36_microseconds = sprintf('%02s', base_convert($b10_microseconds, 10, 36));
-		//-- 1 .. Z
-		if(($b10_thousands_year == 0) AND ($b10_second_of_year == 0) AND ($b10_microseconds == 0)) {
-			$rand = self::random_number(1,35); // avoid 0000000000
-		} else {
-			$rand = self::random_number(0,35);
-		} //end if else
-		$b36_randomizer = sprintf('%01s', base_convert($rand, 10, 36));
-		//--
-		$uid = trim($b36_thousands_year.$b36_second_of_year.$b36_microseconds.$b36_randomizer);
-		//--
-		return (string) strtoupper($uid);
-		//--
-	} //END FUNCTION
-	//================================================================
-
-
-	//================================================================
-	/**
-	 * Generates a random, almost unique numeric UUID of 10 characters [0..9] ; Example: 5457229400 .
 	 * Intended usage: Small scale.
+	 * Generates a random, almost unique numeric UUID of 10 characters [0..9] ; Example: 5457229400 .
 	 * For the same time moment, duplicate values can happen with a chance of 1 in a 9 million.
 	 * Min is: 0000000001 ; Max id: 9999999999 .
 	 * Values: 9999999998 .
@@ -1656,8 +1662,8 @@ final class Smart {
 
 	//================================================================
 	/**
+	 * Intended usage: Medium scale.
 	 * Generates a random, almost unique string (base36) UUID of 10 characters [0..9A..Z] ; Example: Z4C9S6F1H1 .
-	 * Intended usage: Large scale.
 	 * For the same time moment, duplicate values can occur with a chance of ~ 1 in a 3000 trillion.
 	 * Min is: 0A0A0A0A0A (28232883707050) ; Max id: Z9Z9Z9Z9Z9 (3582752942424645) .
 	 * Values YZYZYZYZYZ (3554520058717595) .
@@ -1675,7 +1681,7 @@ final class Smart {
 			} else { // alternate nums with chars (this avoid to have ugly words)
 				$rand = self::random_number(10,35);
 			} //end if else
-			$uid .= base_convert($rand, 10, 36);
+			$uid .= (string) base_convert($rand, 10, 36);
 		} //end for
 		//--
 		return (string) strtoupper((string)$uid);
@@ -1686,16 +1692,228 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Generates an almost unique MD5 based UUID of 36 characters [0..9a..f] ; Example: cfcb6c2a-a6e0-f539-141d-083abee19a4e .
-	 * The uniqueness of this is based on a full unique signature in space and time: 2 random UUIDS, server name, server unique id, year/day/month hour:minute:seconds, time, microseconds, a random value 0...9999 .
-	 * For the same time moment, duplicates values can occur with a chance of 1 in ~ a 340282366920938586008062602462446642046 .
+	 * Intended usage: Large scale.
+	 * Generates a random string (base36) UUID of 10 characters [0..9A..Z] ; Example: 0G1G74W362 .
+	 * Intended usage: Medium scale / Sequential / Non-Repeating (never repeats in a period cycle of 1000 years).
+	 * This is sequential, date and time based with miliseconds and a randomizer factor to ensure an ~ unique ID.
+	 * Duplicate values can occur just in the same milisecond (1000 miliseconds = 1 second) with a chance of ~ 3%
+	 * Values: 34 k / sec ; 200 k / min ; 120 mil / hour .
+	 *
+	 * Advantages: This is one of the most powerful UUID system for medium scale as the ID will never repeat in a large period of time.
+	 * Compared with the classic autoincremental IDs this UUID is much better as on the next cycle can fill up unallocated
+	 * values and more, because the next cycle occur after so many time there is no risk to re-use some IDs if they were
+	 * previous deleted or deactivated in terms of generating confusions with previous records.
+	 * The classic autoincremental systems can NOT do this and also, once the max ID is reached the DB table is blocked
+	 * as autoincremental records reach the max ID !!!
+	 *
+	 * Disadvantages: The database connectors require more complexity and must be able to retry within a cycle with
+	 * double check before alocating, such UUIDs and must use a pre-alocation table since the UUIDs are time based and if
+	 * in the same milisecond more than 1 inserts is allocated they can conflict each other without such pre-alocation !
+	 *
+	 * Smart.Framework implements the retry + cycle + pre-alocating table as a standard feature
+	 * in the bundled PostgreSQL library (connector/plugin) as PostgreSQL can do DDLs in transactions.
+	 * Using such functionality with MySQL would be tricky as DDLs will break the transactions, but still usable ;-).
+	 * And for SQLite it does not make sense since SQLite is designed for small DBs thus no need for such high scalability ...
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_10_seq() { // v7
+		//-- 00 .. RR
+		$b10_thousands_year = (int) substr(date('Y'), -3, 3); // get last 3 digits from year 000 .. 999
+		$b36_thousands_year = (string) sprintf('%02s', base_convert($b10_thousands_year, 10, 36));
+		//-- 00000 .. ITRPU
+		$b10_day_of_year = (int) (date('z') + 1); // 1 .. 366
+		$b10_second_of_day = (int) ((((int)date('H')) * 60 * 60) + ((int)date('i') * 60) + ((int)date('s'))); // 0 .. 86399
+		$b10_second_of_year = (int) ($b10_day_of_year * $b10_second_of_day); // 0 .. 31622399
+		$b36_second_of_year = (string) sprintf('%05s', base_convert($b10_second_of_year, 10, 36));
+		//-- 00 .. RR
+		$microtime = (array) explode('.', (string)microtime(true));
+		$b10_microseconds = (int) substr((string)trim((string)$microtime[1]), 0, 3); // 0 .. 999
+		$b36_microseconds = (string) sprintf('%02s', base_convert($b10_microseconds, 10, 36));
+		//-- 1 .. Z
+		$rand = self::random_number(1, 35); // trick: avoid 0000000000
+		$b36_randomizer = (string) sprintf('%01s', base_convert($rand, 10, 36));
+		//--
+		$uid = (string) trim((string)$b36_thousands_year.$b36_second_of_year.$b36_microseconds.$b36_randomizer);
+		//--
+		return (string) strtoupper((string)$uid);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Intended usage: Large scale, in a cluster.
+	 * Generates a random string (base62) UUID of 15 characters [0..9a..zA..Z] ; Example: 0K4M6V04JM01 .
+	 * It is based on Smart::uuid_10_seq() but will append the last two characters in base36 00..ZZ using Smart::net_server_id(true) that represent the Net Server ID in a cluster.
+	 * To set the Net Server ID as unique per each running instance of Smart.Framework under the same domain,
+	 * set the constant SMART_FRAMEWORK_NETSERVER_ID in etc/init.php with a number between 0..1295 to have a unique number for each instance of Smart.Framework
+	 * where supposed all this instances will run in a cluster.
+	 * If there is only one instance running and no plans at all to implement a multi-server cluster, makes non-sense to use this function, use instead the Smart::uuid_10_seq()
+	 * For how is implemented, read the documentation for the functions: Smart::uuid_10_seq() and Smart::net_server_id(true)
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_12_seq() { // v7
+		//--
+		return (string) self::uuid_10_seq().self::net_server_id(true);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Intended usage: Very Large scale. Case sensitive.
+	 * Generates a random string (base62) UUID of 13 characters [0..9a..zA..Z] ; Example: 00wA0whhw2e9L .
+	 * Intended usage: Very Large scale / Sequential / Non-Repeating (never repeats in a period cycle of 9999999 years).
+	 * This is sequential, date and time based with miliseconds and a randomizer factor to ensure an ~ unique ID.
+	 * Duplicate values can occur just in the same milisecond (1000 miliseconds = 1 second) with a chance of ~ 0.3%
+	 * Values: 340000 k / sec ; 2000000 k / min ; 1200000 mil / hour .
+	 *
+	 * Advantages: This is one of the most powerful UUID system for large scale as the ID will never repeat in a huge period of time.
+	 * Compared with the classic autoincremental IDs this UUID is much better as on the next cycle can fill up unallocated
+	 * values and more, because the next cycle occur after so many time there is no risk to re-use some IDs if they were
+	 * previous deleted or deactivated in terms of generating confusions with previous records.
+	 * The classic autoincremental systems can NOT do this and also, once the max ID is reached the DB table is blocked
+	 * as autoincremental records reach the max ID !!!
+	 *
+	 * Disadvantages: The database connectors require more complexity and must be able to retry within a cycle with
+	 * double check before alocating, such UUIDs and must use a pre-alocation table since the UUIDs are time based and if
+	 * in the same milisecond more than 1 inserts is allocated they can conflict each other without such pre-alocation !
+	 *
+	 * Smart.Framework implements the retry + cycle + pre-alocating table as a standard feature
+	 * in the bundled PostgreSQL library (connector/plugin) as PostgreSQL can do DDLs in transactions.
+	 * Using such functionality with MySQL would be tricky as DDLs will break the transactions, but still usable ;-).
+	 * And for SQLite it does not make sense since SQLite is designed for small DBs thus no need for such high scalability ...
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_13_seq() { // v1
+		//-- YEAR: 0 .. 9999999 in base62 is 0000 .. FXsj
+		$b10_10milion_year = (int) substr(date('Y'), -7, 7); // get last 7 digits of year
+		$b62_10milion_year = (string) sprintf('%04s', self::int10_to_base62_str($b10_10milion_year));
+		//-- SECOND OF YEAR: 0 .. 31622399 in base62 is 00000 .. 28GqH
+		$b10_day_of_year = (int) (date('z') + 1); // 1 .. 366
+		$b10_second_of_day = (int) ((((int)date('H')) * 60 * 60) + ((int)date('i') * 60) + ((int)date('s'))); // 0 .. 86399
+		$b10_second_of_year = (int) ($b10_day_of_year * $b10_second_of_day); // 0 .. 31622399
+		$b62_second_of_year = (string) sprintf('%05s', self::int10_to_base62_str($b10_second_of_year));
+		//-- MICROSECOND: 0 .. 9999999 in base62 is 0000 .. FXsj
+		$microtime = (array) explode('.', (string)microtime(true));
+
+		$b10_microseconds = (string) sprintf('%04s', (int)substr((string)trim((string)$microtime[1]), 0, 4)); // 0000 .. 9999
+		$rand = self::random_number(1, 999); // trick: avoid 0000000000000
+		$b10_randomizer = (string) sprintf('%03s', $rand);
+		$b10_microseconds .= $b10_randomizer; // append 0000 .. 9999 with 3 more digits 000 .. 999
+		$b62_microseconds = (string) sprintf('%04s', self::int10_to_base62_str((int)$b10_microseconds));
+		//--
+		return (string) $b62_10milion_year.$b62_second_of_year.$b62_microseconds;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Intended usage: Very Large scale, in a cluster. Case sensitive.
+	 * Generates a random string (base62) UUID of 15 characters [0..9a..zA..Z] ; Example: 00wA0whhw2e9L01 .
+	 * It is based on Smart::uuid_13_seq() but will append the last two characters in base36 00..ZZ using Smart::net_server_id(true) that represent the Net Server ID in a cluster.
+	 * To set the Net Server ID as unique per each running instance of Smart.Framework under the same domain,
+	 * set the constant SMART_FRAMEWORK_NETSERVER_ID in etc/init.php with a number between 0..1295 to have a unique number for each instance of Smart.Framework
+	 * where supposed all this instances will run in a cluster.
+	 * If there is only one instance running and no plans at all to implement a multi-server cluster, makes non-sense to use this function, use instead the Smart::uuid_13_seq()
+	 * For how is implemented, read the documentation for the functions: Smart::uuid_13_seq() and Smart::net_server_id(true)
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_15_seq() { // v1
+		//--
+		return (string) self::uuid_13_seq().self::net_server_id(true);
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Generates an almost unique BASE36 based UUID of 32 characters [0..9A..Z] ; Example: Y123AY7WK5-9187139702-Z98W7T091K .
+	 * This compose as: Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str()
 	 * Intended usage: Very Large scale.
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_32() {
+		//--
+		return (string) self::uuid_10_seq().'-'.self::uuid_10_num().'-'.self::uuid_10_str();
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Generates an almost unique BASE36 based UUID of 34 characters [0..9A..Z] ; Example: Y123AY7WK501-9187139702-Z98W7T091K .
+	 * This compose as: Smart::uuid_12_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str()
+	 * Intended usage: Very Large scale, in a cluster.
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_34() {
+		//--
+		return (string) self::uuid_12_seq().'-'.self::uuid_10_num().'-'.self::uuid_10_str();
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Generates an almost unique BASE62 + BASE36 based UUID of 35 characters [0..9a..zA..Z] ; Example: 00wA0whhw2e9L-9187139702-Z98W7T091K .
+	 * This compose as: Smart::uuid_13_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str()
+	 * Intended usage: Extremely Large scale. Case sensitive.
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_35() {
+		//--
+		return (string) self::uuid_13_seq().'-'.self::uuid_10_num().'-'.self::uuid_10_str();
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Generates an almost unique BASE62 + BASE36 based UUID of 35 characters [0..9a..zA..Z] ; Example: 00wA0whhw2e9L01-9187139702-Z98W7T091K .
+	 * This compose as: Smart::uuid_15_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str()
+	 * Intended usage: Extremely Large scale, in a cluster. Case sensitive.
+	 *
+	 * @return STRING 						:: the UUID
+	 */
+	public static function uuid_37() {
+		//--
+		return (string) self::uuid_15_seq().'-'.self::uuid_10_num().'-'.self::uuid_10_str();
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Generates an almost unique MD5 based UUID of 36 characters [0..9a..f] ; Example: cfcb6c2a-a6e0-f539-141d-083abee19a4e .
+	 * The uniqueness of this is based on a full unique signature in space and time: 2 random UUIDS, server name, year/day/month hour:minute:seconds, time, microseconds, a random value 0...9999 .
+	 * For the same time moment, duplicates values can occur with a chance of 1 in ~ a 340282366920938586008062602462446642046 .
+	 * The Net Server ID can be passed via the $prefix parameter
+	 * Intended usage: Large scale. Standard.
+	 *
+	 * @param STRING $prefix 				:: A prefix to use for more uniqueness entropy ; Ex: can use the Smart::net_server_id()
 	 *
 	 * @return STRING 						:: the UUID
 	 */
 	public static function uuid_36($prefix='') {
 		//--
-		$hash = md5($prefix.self::unique_entropy('uid36'));
+		$hash = (string) md5($prefix.self::unique_entropy('uid36', false)); // by default use no reference to net server id, which can be passed via prefix
 		//--
 		$uuid  = substr($hash,0,8).'-';
 		$uuid .= substr($hash,8,4).'-';
@@ -1703,7 +1921,7 @@ final class Smart {
 		$uuid .= substr($hash,16,4).'-';
 		$uuid .= substr($hash,20,12);
 		//--
-		return (string) strtolower($uuid);
+		return (string) strtolower((string)$uuid);
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1712,15 +1930,18 @@ final class Smart {
 	//================================================================
 	/**
 	 * Generates an almost unique SHA1 based UUID of 45 characters [0..9a..f] ; Example: c02acc84-97f4-0807-b12c-ed6f28dd2078-400c1baf .
-	 * The uniqueness of this is based on a full unique signature in space and time: 2 random UUIDS, server name, server unique id, year/day/month hour:minute:seconds, time, microseconds, a random value 0...9999 .
+	 * The uniqueness of this is based on a full unique signature in space and time: 2 random UUIDS, server name, year/day/month hour:minute:seconds, time, microseconds, a random value 0...9999 .
 	 * For the same time moment, duplicates values can occur with a chance of 1 in ~ a 1461501637330903466848266086008062602462446642046 .
-	 * Intended usage: Huge scale.
+	 * The Net Server ID can be passed via the $prefix parameter
+	 * Intended usage: Large scale. Standard.
+	 *
+	 * @param STRING $prefix 				:: A prefix to use for more uniqueness entropy ; Ex: can use the Smart::net_server_id()
 	 *
 	 * @return STRING 						:: the UUID
 	 */
 	public static function uuid_45($prefix='') {
 		//--
-		$hash = sha1($prefix.self::unique_entropy('uid45'));
+		$hash = (string) sha1($prefix.self::unique_entropy('uid45', false)); // by default use no reference to net server id, which can be passed via prefix
 		//--
 		$uuid  = substr($hash,0,8).'-';
 		$uuid .= substr($hash,8,4).'-';
@@ -1729,7 +1950,7 @@ final class Smart {
 		$uuid .= substr($hash,20,12);
 		$uuid .= '-'.substr($hash,32,8);
 		//--
-		return (string) strtolower($uuid);
+		return (string) strtolower((string)$uuid);
 		//--
 	} //END FUNCTION
 	//================================================================

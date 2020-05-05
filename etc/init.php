@@ -50,7 +50,7 @@ define('SMART_FRAMEWORK_PERSISTENT_CACHE_HANDLER', false); 									// Persisten
 define('SMART_FRAMEWORK_MEMORY_LIMIT', 		'256M');										// Memory Limit Per Script (via PHP.INI) ; sync this with the value in .htaccess if defined ; a good value for production is 256M or 384M ; for development, with Debugging turned ON be sure to set a big value like 512M or 1024M !!
 define('SMART_FRAMEWORK_EXECUTION_TIMEOUT', 610);											// Script Max Execution Time (Sync with the web server Timeout and PHP.INI)
 define('SMART_FRAMEWORK_NETSOCKET_TIMEOUT', 120); 											// Network Socket (Stream) TimeOut in Seconds
-define('SMART_FRAMEWORK_NETSERVER_ID', 		'1'); 											// Load Balancing: Unique ID, integer+ (this is used for the main purpose to be able to generate very unique UUIDS in a cluster of apps ; every server in the cluster running the same app must have a different ID)
+define('SMART_FRAMEWORK_NETSERVER_ID', 		'1'); 											// Load Balancing: Unique ID, integer+ (min=0 ; max=1295) ; this is used for the main purpose to be able to generate very unique UUIDS in a cluster of apps ; every server in the cluster running the same app must have a different ID
 //define('SMART_FRAMEWORK_NETSERVER_MAXLOAD', 0);											// Load Balancing and DDOS Protection against High Loads :: if set to 0 will be ignored ; if set to a value > 0 if server load go over this value the server will enter in BUSY state (503 Too busy) ; by example a value of 90 means 90% load over 1 CPU core ; on multi cpus/cores value must be 90 * number of cpus/cores
 //--------------------------------------- SSL CRYPTO OVERALL TUNNINGS
 define('SMART_FRAMEWORK_SSL_MODE', 				'tls');										// SSL/TLS Mode: tls | sslv3

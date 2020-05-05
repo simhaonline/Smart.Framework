@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20200227
+ * @version 	v.20200505
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -268,7 +268,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	public function assign_uuid() {
 
 		//--
-		return (string) Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str();
+		return (string) Smart::uuid_32();
 		//--
 
 	} //END FUNCTION

@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.7.2'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.05.04'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.05.05'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
@@ -193,6 +193,10 @@ if(!defined('SMART_FRAMEWORK_NETSOCKET_TIMEOUT')) {
 if(!defined('SMART_FRAMEWORK_NETSERVER_ID')) {
 	@http_response_code(500);
 	die('A required INIT constant has not been defined: SMART_FRAMEWORK_NETSERVER_ID');
+} //end if
+if(((int)SMART_FRAMEWORK_NETSERVER_ID < 0) OR ((int)SMART_FRAMEWORK_NETSERVER_ID > 1295)) { // {{{SYNC-MIN-MAX-NETSERVER-ID}}}
+	@http_response_code(500);
+	die('The required INIT constant SMART_FRAMEWORK_NETSERVER_ID can have values between 0 and 1295');
 } //end if
 if(!defined('SMART_FRAMEWORK_SSL_MODE')) {
 	@http_response_code(500);

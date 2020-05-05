@@ -2,6 +2,12 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply onlt for for Milestone Releases
 
+May 05, 2020 :: Version 5.7.2 rev.20200505
+	* Added Base62 Sequential UUIDs: Smart::uuid_13_seq() ; Smart::uuid_35_seq()
+	* Added Base62 Sequential UUIDs for cluster: Smart::uuid_15_seq() ; Smart::uuid_37_seq()
+	* Added Base36 Sequential UUID: Smart::uuid_32_seq()
+	* Added Base36 Sequential UUIDs for cluster: Smart::uuid_12_seq() ; Smart::uuid_34_seq()
+
 May 02, 2020 :: Version 5.7.2 rev.20200502
 	* Upgrade jQuery to 3.5.0
 	* Fix all broken javascripts that depend on jQuery and were affected by the major breaking changes in jQuery 3.5.0: xhtml tags converted to html tags ; object hasOwnProperty over {}

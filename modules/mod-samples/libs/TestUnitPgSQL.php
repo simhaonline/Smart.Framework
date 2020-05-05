@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200505
  *
  */
 final class TestUnitPgSQL {
@@ -101,7 +101,7 @@ final class TestUnitPgSQL {
 		//--
 
 		//--
-		$variable = '"'.'Ș'."'".\substr(\SmartPgsqlDb::new_safe_id('uid10seq', 'variable', '_test_unit_db_server_tests', 'public'), 3, 7);
+		$variable = '"'.'Ș'."'".\substr(\SmartPgsqlDb::new_safe_id('uid15seq', 'variable', '_test_unit_db_server_tests', 'public'), 3, 5).\substr(\SmartPgsqlDb::new_safe_id('uid12seq', 'variable', '_test_unit_db_server_tests', 'public'), 3, 2);
 		//--
 
 		//--

@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20200121
+ * @version		20200505
  *
  */
 abstract class SmartAbstractAppMiddleware {
@@ -499,7 +499,7 @@ abstract class SmartAbstractAppMiddleware {
 			return false;
 		} //end if
 		//--
-		self::$DEBUG_COOKIE_DATA = (string) $area.'-'.Smart::uuid_10_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str();
+		self::$DEBUG_COOKIE_DATA = (string) $area.'-'.Smart::uuid_32();
 		//--
 		return (bool) SmartUtils::set_cookie((string)$cookie_name, (string)self::$DEBUG_COOKIE_DATA, 0, '/', '@');
 		//--

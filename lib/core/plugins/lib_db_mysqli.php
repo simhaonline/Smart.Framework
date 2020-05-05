@@ -71,7 +71,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20200121
+ * @version 	v.20200505
  * @package 	Plugins:Database:MySQL
  *
  */
@@ -1348,7 +1348,7 @@ final class SmartMysqliDb {
 	/**
 	 * Get A UNIQUE (SAFE) ID for DB Tables
 	 *
-	 * @param ENUM $y_mode 							:: mode: uid10str | uid10num | uid36 | uid45
+	 * @param ENUM $y_mode 							:: mode: uid10str | uid10num | uid10seq | uid12seq | uid32 | uid34 | uid36 | uid45
 	 * @param STRING $y_field_name 					:: the field name
 	 * @param STRING $y_table_name 					:: the table name
 	 * @param RESOURCE $y_connection 				:: the connection to Server
@@ -1391,11 +1391,21 @@ final class SmartMysqliDb {
 			//--
 			$new_id = 'NO-ID-ALGO';
 			switch((string)$y_mode) {
+				// IMPORTANT: MySQL is not always safe for case sensitive UUIDs (depends how collation is set for the ID field) such as base62 ...
 				case 'uid45':
-					$new_id = (string) Smart::uuid_45(SMART_FRAMEWORK_NETSERVER_ID.SmartUtils::get_server_current_url()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
+					$new_id = (string) Smart::uuid_45((string)Smart::net_server_id()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
 					break;
 				case 'uid36':
-					$new_id = (string) Smart::uuid_36(SMART_FRAMEWORK_NETSERVER_ID.SmartUtils::get_server_current_url()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
+					$new_id = (string) Smart::uuid_36((string)Smart::net_server_id()); // will use the server ID.Host as Prefix to ensure it is true unique in a cluster
+					break;
+				case 'uid34': // for cluster
+					$new_id = (string) Smart::uuid_34();
+					break;
+				case 'uid32':
+					$new_id = (string) Smart::uuid_32();
+					break;
+				case 'uid12seq': // for cluster ; ! sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
+					$new_id = (string) Smart::uuid_12_seq();
 					break;
 				case 'uid10seq': // ! sequences are not safe without a second registry allocation table as the chance to generate the same ID in the same time moment is just 1 in 999
 					$new_id = (string) Smart::uuid_10_seq();
@@ -1792,7 +1802,7 @@ final class SmartMysqliDb {
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20200121
+ * @version 	v.20200505
  * @package 	Plugins:Database:MySQL
  *
  */
@@ -2025,7 +2035,7 @@ final class SmartMysqliExtDb {
 	/**
 	 * Get A UNIQUE (SAFE) ID for DB Tables
 	 *
-	 * @param ENUM $y_mode 							:: mode: uid10str | uid10num | uid36 | uid45
+	 * @param ENUM $y_mode 							:: mode: uid10str | uid10num | uid10seq | uid12seq | uid32 | uid34 | uid36 | uid45
 	 * @param STRING $y_field_name 					:: the field name
 	 * @param STRING $y_table_name 					:: the table name
 	 * @return STRING 								:: the generated Unique ID

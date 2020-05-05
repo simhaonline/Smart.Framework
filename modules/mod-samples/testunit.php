@@ -70,6 +70,8 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		//--
 
 		//--
+		$extra_main = '';
+		//--
 		$release_hash = (string) $this->ControllerGetParam('release-hash');
 		//--
 		$op = $this->RequestVarGet('op', 'testunit.main', 'string');
@@ -285,6 +287,12 @@ class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'testunit.main':
 				//--
+				$unique_entropy 		= (string) sha1(Smart::unique_entropy('testunit', false));
+				$unique_cluster_entropy = (string) sha1(Smart::unique_entropy('testunit', true));
+				//--
+				$overall_entropy = (string) 'UUID32:'.Smart::uuid_32()."\n".'UUID34:'.Smart::uuid_34()."\n".'UUID35:'.Smart::uuid_35()."\n".'UUID37:'.Smart::uuid_37()."\n".'UUID36:'.Smart::uuid_36($unique_entropy)."\n".'UUID45:'.Smart::uuid_45($unique_cluster_entropy);
+				//--
+				$extra_main = '<div style="color:#999999;"><small><b>Unique Entropy Test Values:</b><br>'.Smart::nl_2_br(Smart::escape_html($overall_entropy)).'</small></div><br><br>';
 				$is_modal = $this->RequestVarGet('winmod', '', 'string');
 				$is_printable = $this->RequestVarGet('print', '', 'string');
 				if(((string)$is_modal == 'yes') OR ((string)$is_printable == 'yes')) {
@@ -483,8 +491,8 @@ class SmartAppAdminController extends SmartAbstractAppController {
 		$custom_ui 		= $the_semaphore ? 'jqueryui' : '';
 		//--
 		$this->PageViewSetVars([
-			'title' 		=> 'Smart.Framework Test and Demo Suite',
-			'main' 			=> (string) $main,
+			'title' 		=> 'Smart.Framework Test and Demo Suite '.' / NetServerID: '.Smart::net_server_id().' ('.Smart::net_server_id(true).')',
+			'main' 			=> (string) $main.$extra_main,
 			'semaphore' 	=> (string) $the_semaphore, // skip load the default JS-UI if jQueryUI is available
 			'custom-js-ui' 	=> (string) $custom_ui // load custom JS-UI (jqueryUI if available)
 		]);
