@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200505
+ * @version     v.20200507
  * @package     @Core
  *
  */
@@ -432,7 +432,7 @@ final class Smart {
 		//-- encode as json
 		$encoded = (string) @json_encode((string)$str, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); // encode the string includding unicode chars, with all possible: < > ' " &
 		//-- the above will provide a json encoded string as: "mystring" ; we get just what's between double quotes as: mystring
-		return (string) substr(trim((string)$encoded), 1, -1);
+		return (string) substr((string)trim((string)$encoded), 1, -1);
 		//--
 	} //END FUNCTION
 	//================================================================
