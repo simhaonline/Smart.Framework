@@ -10,7 +10,7 @@ if(!defined('APPCODEPACK_APP_ID')) { // this must be defined in the first line o
 //-----------------------------------------------------
 
 //#####
-// Sample AppCodePack Upgrade Script, v.20200121.1507
+// Sample AppCodePack Upgrade Script, v.20200507.0957
 // CUSTOMIZE IT AS NEEDED and rename it to: appcode-upgrade.php
 //#####
 

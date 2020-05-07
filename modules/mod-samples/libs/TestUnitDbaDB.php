@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200507
  *
  */
 final class TestUnitDbaDB {
@@ -305,7 +305,7 @@ final class TestUnitDbaDB {
 		$img_check = 'lib/core/img/db/dba-logo.svg';
 		if((string)$err == '') {
 			$img_sign = 'lib/framework/img/sign-info.svg';
-			$text_main = '<span style="color:#83B953;">Test OK: PHP Dba DB ['.\Smart::escape_html($cfg_dba['handler']).'].</span>'; // must show what is in config
+			$text_main = '<span style="color:#83B953;">Test OK: PHP Dba DB ['.\Smart::escape_html(\SmartDbaUtilDb::getDbaHandler()).'].</span>'; // must show what is in config
 			$text_info = '<h2><span style="color:#83B953;">All</span> the SmartFramework Dba DB Operations <span style="color:#83B953;">Tests PASSED on PHP</span><hr></h2><span style="font-size:14px;">'.\Smart::nl_2_br(\Smart::escape_html(\implode("\n".'* ', $tests)."\n".$end_tests)).'</span>';
 		} else {
 			$img_sign = 'lib/framework/img/sign-error.svg';

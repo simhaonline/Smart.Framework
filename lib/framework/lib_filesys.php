@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200504.r2
+ * @version 	v.20200507
  * @package 	@Core:FileSystem
  *
  */
@@ -361,9 +361,9 @@ final class SmartFileSysUtils {
 		$c2 = (string) substr((string)$y_path, 1, 1);
 		//--
 		if(
-			((string)$c1 == '/') OR // unix / linux
-			((string)$c1 == ':') OR // windows
-			((string)$c2 == ':')    // windows
+			((string)$c1 == '/') OR // unix/linux # /path/to/
+			((string)$c1 == ':') OR // windows # :/path/to/
+			((string)$c2 == ':')    // windows # c:/path/to
 		) {
 			return 0;
 		} //end if

@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20200504.1045'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200507.0957'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -499,19 +499,21 @@ function RunApp() {
 		//--
 		echo (string) $code_loading_start;
 		//--
-		echo '<hr><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / deploy &nbsp;&nbsp;::&nbsp;&nbsp; '.'#START: '.date('Y-m-d H:i:s O').'<i><br> # App-ID: '.AppPackUtils::escape_html((string)APPCODEPACK_APP_ID).'<br> # AppID-Hash: '.APPCODEPACK_APP_HASH_ID.'<br> # Release Server Deploy URL: '.AppPackUtils::escape_html((string)APPCODEPACK_APP_UNPACK_URL.' ['.(string)APPCODEPACK_APP_UNPACK_USER.']').'</i></div><hr>';
+		echo '<hr><div style="padding:4px; background:#DDEEFF; font-weight:bold;">'.'TASK / deploy &nbsp;&nbsp;::&nbsp;&nbsp; '.'#START: '.date('Y-m-d H:i:s O').'<i><br> # App-ID: '.AppPackUtils::escape_html((string)APPCODEPACK_APP_ID).'<br> # AppID-Hash: '.APPCODEPACK_APP_HASH_ID.'<br> # Release Server Deploy URL(s): '.AppPackUtils::escape_html((string)APPCODEPACK_APP_UNPACK_URL.' ['.(string)APPCODEPACK_APP_UNPACK_USER.']').'</i></div><hr>';
 		AppPackUtils::InstantFlush();
 		//--
 		if(((string)APPCODEPACK_APP_UNPACK_URL != '') AND ((string)APPCODEPACK_APP_UNPACK_USER != '') AND ((string)APPCODEPACK_APP_UNPACK_PASSWORD != '')) {
 			//--
 			if(
-				((string)$_POST['netarch_package'] != '') AND
+				((string)trim((string)$_POST['netarch_package']) != '') AND
+				(((string)trim((string)$_POST['netarch_deploy_url']) != '') AND (strpos((string)APPCODEPACK_APP_UNPACK_URL, (string)$_POST['netarch_deploy_url']) !== false)) AND
 				((string)substr((string)$_POST['netarch_package'], -10, 10) == '.z-netarch') AND
+				(((string)substr((string)$_POST['netarch_deploy_url'], 0, 7) == 'http://') OR ((string)substr((string)$_POST['netarch_deploy_url'], 0, 8) == 'https://')) AND
 				(AppPackUtils::check_if_safe_path((string)$_POST['netarch_package'])) AND
 				(AppPackUtils::is_type_file((string)$_POST['netarch_package']))
 			) {
 				$browser = AppPackUtils::browse_url(
-					(string) APPCODEPACK_APP_UNPACK_URL, // url
+					(string) $_POST['netarch_deploy_url'], // url
 					'POST', // method
 					(string) APPCODEPACK_APP_UNPACK_USER, // user
 					(string) base64_decode((string)APPCODEPACK_APP_UNPACK_PASSWORD), // pass
@@ -524,7 +526,7 @@ function RunApp() {
 						'appid' 		=> (string) APPCODEPACK_APP_ID,
 						'apphashid' 	=> (string) APPCODEPACK_APP_HASH_ID,
 						'remoteinfo' 	=> [
-							'url' => (string) APPCODEPACK_APP_UNPACK_URL,
+							'url' => (string) $_POST['netarch_deploy_url'],
 							'user' => (string) APPCODEPACK_APP_UNPACK_USER
 						]
 					],
@@ -544,13 +546,13 @@ function RunApp() {
 					if(($browser['status'] != 1) OR ($browser['errno']) OR ($browser['ermsg']) OR ($browser['http-status'] != 200)) {
 						echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'Package Deploy Failed with ERRORS: '.AppPackUtils::escape_html($browser['errno']).' # '.AppPackUtils::escape_html($browser['ermsg']).' / HTTP Status Code '.(int)$browser['http-status'].'</div>'."\n";
 					} else {
-						echo '<div style="margin-bottom:20px; padding:7px; line-height:1.125em; font-weight:bold; color: #FFFFFF; background:#009ACE; border:1px solid #0089BD; border-radius:6px; box-shadow: 2px 2px 3px #D2D2D2;">'.'Deploy Result'.' # HTTP Status Code: '.(int)$browser['http-status'].'</div>';
+						echo "\n".'<div style="padding:7px; line-height:1.125em; font-weight:bold; color: #FFFFFF; background:#009ACE; border:1px solid #0089BD; border-radius:6px; box-shadow: 2px 2px 3px #D2D2D2;">'.'Deploy Result'.' # HTTP Status Code: '.(int)$browser['http-status'].'</div>';
 					} //end if else
 				} //end if else
-				echo '<div align="center"><iframe name="UnpackDeployOnServerResponseSandBox" id="UnpackDeployOnServerResponseSandBox" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="width:70vw; min-width:920px; min-height:50vh; height:max-content; border:1px solid #CCCCCC;" srcdoc="'.AppPackUtils::escape_html($browser['http-body']).'" sandbox></iframe></div>';
+				echo '<div style="margin-top:5px; padding:7px; line-height:1.125em; font-size:1.25rem; font-weight:bold; text-align:center; background:#778899; color:#FFFFFF; border-radius:5px;">Selected Release Server URL: `'.AppPackUtils::escape_html((string)$_POST['netarch_deploy_url']).'`</div><br><div align="center"><iframe name="UnpackDeployOnServerResponseSandBox" id="UnpackDeployOnServerResponseSandBox" scrolling="auto" marginwidth="5" marginheight="5" hspace="0" vspace="0" frameborder="0" style="width:70vw; min-width:920px; min-height:50vh; height:max-content; border:1px solid #CCCCCC;" srcdoc="'.AppPackUtils::escape_html($browser['http-body']).'" sandbox></iframe></div>';
 				unset($browser);
 			} else {
-				echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'Invalid Release Package or No Package Selected.'.'</div>'."\n";
+				echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'Invalid/Empty Release Package Selected or Invalid/Empty Release Server URL Selected.'.'</div>'."\n";
 			} //end if else
 		} else {
 			echo "\n".'<div title="Status / Errors" style="background:#FF3300; color:#FFFFFF; font-weight:bold; padding:5px; border-radius:5px;">'.'The Release Server Deploy URL and Authentication Credentials must be non-empty (APPCODEPACK_APP_UNPACK_URL / APPCODEPACK_APP_UNPACK_USER / APPCODEPACK_APP_UNPACK_PASSWORD).'.'</div>'."\n";
@@ -711,7 +713,7 @@ function RunApp() {
 					echo '<tr valign="top"><td>Secret AppID-Hash: </td><td> &nbsp; &nbsp; </td><td>'.AppPackUtils::escape_html(APPCODEPACK_APP_HASH_ID).'</td></tr>';
 				} //end if
 				if(((string)APPCODEPACK_APP_UNPACK_URL != '') AND ((string)APPCODEPACK_APP_UNPACK_USER != '') AND ((string)APPCODEPACK_APP_UNPACK_PASSWORD != '')) {
-					echo '<tr valign="top"><td>Release Server Deploy URL: </td><td> &nbsp; &nbsp; </td><td>'.'['.AppPackUtils::escape_html(APPCODEPACK_APP_UNPACK_USER).':*****'.'] @ '.AppPackUtils::escape_html(APPCODEPACK_APP_UNPACK_URL).'</td></tr>';
+					echo '<tr valign="top"><td>Release Server Deploy URL(s): </td><td> &nbsp; &nbsp; </td><td>'.'['.AppPackUtils::escape_html(APPCODEPACK_APP_UNPACK_USER).':*****'.'] @ '.AppPackUtils::escape_html(APPCODEPACK_APP_UNPACK_URL).'</td></tr>';
 				} //end if
 				echo '</table></div>';
 			} //end if
@@ -758,8 +760,18 @@ function RunApp() {
 								} //end if
 							} //end if
 						} //end for
-						if(((string)APPCODEPACK_APP_UNPACK_URL != '') AND ((string)APPCODEPACK_APP_UNPACK_USER != '') AND ((string)APPCODEPACK_APP_UNPACK_PASSWORD != '')) {
-							echo '<br><button type="submit" style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#FF9900 !important; border:1px solid #FFAA00 !important; border-radius:3px !important; cursor: pointer !important;" title="Click this button to proceed">Deploy the selected Package and Unpack the Code on the Release Server</button><br><br>';
+						$arr_pack_urls = (string) trim((string)APPCODEPACK_APP_UNPACK_URL);
+						if(((string)$arr_pack_urls != '') AND ((string)APPCODEPACK_APP_UNPACK_USER != '') AND ((string)APPCODEPACK_APP_UNPACK_PASSWORD != '')) {
+							$arr_pack_urls = (array) explode('|', (string)$arr_pack_urls);
+							echo '<br><div><select name="netarch_deploy_url" style="min-width:300px;"><option value="">----- Select a Release Server URL for this Package (from this list) -----</option>'."\n";
+							for($z=0; $z<count($arr_pack_urls); $z++) {
+								$arr_pack_urls[$z] = (string) trim((string)$arr_pack_urls[$z]);
+								if((string)$arr_pack_urls[$z] != '') {
+									echo ' <option value="'.AppPackUtils::escape_html((string)$arr_pack_urls[$z]).'">'.'Release Server @'.($z+1).'. '.AppPackUtils::escape_html((string)$arr_pack_urls[$z]).'</option>'."\n";
+								} //end if
+							} //end for
+							echo '</select></div>'."\n";
+							echo '<br><button type="submit" style="padding: 3px 12px 3px 12px !important; font-size:1em !important; font-weight:bold !important; color:#FFFFFF !important; background-color:#FF9900 !important; border:1px solid #FFAA00 !important; border-radius:3px !important; cursor: pointer !important;" title="Click this button to proceed">Deploy the selected Package and Unpack the Code on the selected Release Server</button><br><br>';
 						} //end if
 						echo '<br></div><br>'."\n";
 						echo '</form>'."\n";
@@ -2272,7 +2284,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20200504.r2 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200507 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2953,7 +2965,7 @@ Options -Indexes
 		//--
 		if(self::is_type_file((string)$path_to_upgrade_script)) {
 			//--
-			$upgr_lint_test = php_strip_whitespace((string)$path_to_upgrade_script);
+			$upgr_lint_test = (string) php_strip_whitespace((string)$path_to_upgrade_script);
 			//--
 			if((string)$upgr_lint_test != '') {
 				//--
@@ -3364,7 +3376,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### Smart v.20200121
+	//##### Smart v.20200505
 
 
 	//================================================================
@@ -3899,7 +3911,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartHashCrypto v.20200121
+	//##### SmartHashCrypto v.20200424
 
 
 	//==============================================================
@@ -4162,11 +4174,11 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartUtils v.20200121
+	//##### SmartUtils v.20200424
 
 
 	//================================================================
-	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ') {
+	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ', $y_base=1000) {
 		//--
 		$y_decimals = (int) $y_decimals;
 		if($y_decimals < 0) {
@@ -4176,30 +4188,36 @@ Options -Indexes
 			$y_decimals = 4;
 		} //end if
 		//--
+		if((int)$y_base === 1024) {
+			$y_base = (int) 1024;
+		} else {
+			$y_base = (int) 1000;
+		} //end if else
+		//--
 		if(!is_int($y_bytes)) {
 			return (string) $y_bytes;
 		} //end if
 		//--
-		if($y_bytes < 1000) {
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_int($y_bytes).$y_separator.'bytes';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'KB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'MB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'GB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
+		$y_bytes = $y_bytes / $y_base;
 		//--
 		return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
 		//--
@@ -4336,7 +4354,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20200504
+	//##### SmartFileSysUtils v.20200507
 
 
 	//================================================================
@@ -4604,9 +4622,9 @@ Options -Indexes
 		$c2 = (string) substr((string)$y_path, 1, 1);
 		//--
 		if(
-			((string)$c1 == '/') OR // unix / linux
-			((string)$c1 == ':') OR // windows
-			((string)$c2 == ':')    // windows
+			((string)$c1 == '/') OR // unix/linux # /path/to/
+			((string)$c1 == ':') OR // windows # :/path/to/
+			((string)$c2 == ':')    // windows # c:/path/to
 		) {
 			return 0;
 		} //end if

@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20200504.1045'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20200507.0957'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -986,7 +986,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20200504.r2 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200507 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -1667,7 +1667,7 @@ Options -Indexes
 		//--
 		if(self::is_type_file((string)$path_to_upgrade_script)) {
 			//--
-			$upgr_lint_test = php_strip_whitespace((string)$path_to_upgrade_script);
+			$upgr_lint_test = (string) php_strip_whitespace((string)$path_to_upgrade_script);
 			//--
 			if((string)$upgr_lint_test != '') {
 				//--
@@ -2078,7 +2078,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### Smart v.20200121
+	//##### Smart v.20200505
 
 
 	//================================================================
@@ -2613,7 +2613,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartHashCrypto v.20200121
+	//##### SmartHashCrypto v.20200424
 
 
 	//==============================================================
@@ -2876,11 +2876,11 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartUtils v.20200121
+	//##### SmartUtils v.20200424
 
 
 	//================================================================
-	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ') {
+	public static function pretty_print_bytes($y_bytes, $y_decimals=1, $y_separator=' ', $y_base=1000) {
 		//--
 		$y_decimals = (int) $y_decimals;
 		if($y_decimals < 0) {
@@ -2890,30 +2890,36 @@ Options -Indexes
 			$y_decimals = 4;
 		} //end if
 		//--
+		if((int)$y_base === 1024) {
+			$y_base = (int) 1024;
+		} else {
+			$y_base = (int) 1000;
+		} //end if else
+		//--
 		if(!is_int($y_bytes)) {
 			return (string) $y_bytes;
 		} //end if
 		//--
-		if($y_bytes < 1000) {
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_int($y_bytes).$y_separator.'bytes';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'KB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'MB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
-		if($y_bytes < 1000) {
+		$y_bytes = $y_bytes / $y_base;
+		if($y_bytes < $y_base) {
 			return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'GB';
 		} //end if
 		//--
-		$y_bytes = $y_bytes / 1000;
+		$y_bytes = $y_bytes / $y_base;
 		//--
 		return (string) self::format_number_dec($y_bytes, $y_decimals, '.', '').$y_separator.'TB';
 		//--
@@ -3050,7 +3056,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### SmartFileSysUtils v.20200504
+	//##### SmartFileSysUtils v.20200507
 
 
 	//================================================================
@@ -3318,9 +3324,9 @@ Options -Indexes
 		$c2 = (string) substr((string)$y_path, 1, 1);
 		//--
 		if(
-			((string)$c1 == '/') OR // unix / linux
-			((string)$c1 == ':') OR // windows
-			((string)$c2 == ':')    // windows
+			((string)$c1 == '/') OR // unix/linux # /path/to/
+			((string)$c1 == ':') OR // windows # :/path/to/
+			((string)$c2 == ':')    // windows # c:/path/to
 		) {
 			return 0;
 		} //end if

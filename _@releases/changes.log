@@ -1,6 +1,12 @@
 
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
-## This apply onlt for for Milestone Releases
+## This apply only for for Milestone Releases
+
+May 05, 2020 :: Version 5.7.2 rev.20200507
+	* Minor fix in DBA QUnit test
+	* Upgrade jQuery to 3.5.1
+	* Fix back upstream fix introduced in jQuery 3.5.0 as this will be back introduced in jQuery 4.0 and later (all scripts tested and stable) [ {} -> Object.create( null ) ]
+	* AppCodePack - add support for multiple deployment URLs
 
 May 05, 2020 :: Version 5.7.2 rev.20200505
 	* Added Base62 Sequential UUIDs: Smart::uuid_13_seq() ; Smart::uuid_35_seq()
