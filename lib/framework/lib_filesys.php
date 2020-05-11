@@ -60,7 +60,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200507
+ * @version 	v.20200511
  * @package 	@Core:FileSystem
  *
  */
@@ -736,6 +736,7 @@ final class SmartFileSysUtils {
 			'readme',
 			'makefile',
 			'cmake',
+			'meson.build',
 			'.htaccess',
 			'.htpasswd'
 		])) {
@@ -833,6 +834,7 @@ final class SmartFileSysUtils {
 			case 'hh': // hip-hop (a kind of PHP for HipHop VM)
 			case 'vala': // vala language
 			case 'vapi': // vala vapi
+			case 'deps': // vala deps
 			case 'hx': // haxe
 			case 'hxml': // haxe compiler arguments
 			case 'hs': // haskell

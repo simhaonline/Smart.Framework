@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class DavUtils {
 
 	// ::
-	// v.20200430
+	// v.20200511
 
 
 	//============================================================
@@ -79,7 +79,8 @@ final class DavUtils {
 		//--
 		if(\in_array((string)\strtolower((string)$file), [
 			'makefile',
-			'cmake'
+			'cmake',
+			'meson.build'
 		])) {
 			return 'mk';
 		} //end if
@@ -106,6 +107,11 @@ final class DavUtils {
 			case 'sha384':
 			case 'sha512':
 				$type = 'checksum';
+				break;
+			case 'vala': // Vala
+			case 'vapi': // Vala Vapi
+			case 'deps': // Vala Deps
+				$type = 'vala';
 				break;
 			case 'cs': // C#
 			case 'csproj':
