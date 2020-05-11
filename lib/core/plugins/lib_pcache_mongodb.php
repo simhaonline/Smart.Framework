@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	Smart, SmartMongoDb
- * @version 	v.20200121
+ * @version 	v.20200511
  * @package 	Plugins:PersistentCache:MongoDB
  *
  */
@@ -47,7 +47,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 	// !!! THIS CLASS MUST NOT BE MARKED AS FINAL to allow the class SmartPersistentCache@DBA to be extended from this !!!
 	// But this class have all PUBLIC Methods marked as FINAL to avoid being rewritten ...
 
-	private static $mongo 		= null; 							// MongoDB Object ; by default is null
+	private static $mongo 		= null; 							// MongoDB Object ; by default is null ; will be set to false on connect errors to avoid trying to re-connect on each statement ...
 	private static $collection 	= 'SmartFrameworkPersistentCache'; 	// The MongoDB Collection
 	private static $is_active 	= null;								// Cache Active State ; by default is null ; on 1st check must set to TRUE or FALSE
 
@@ -60,6 +60,10 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 
 
 	final public static function isActive() {
+		//--
+		if(self::$mongo === false) {
+			return false; // if errors encountered, deactivate mongo for this session !! {{{SYNC-PCACHE-MONGO-FAILURE}}}
+		} //end if
 		//--
 		if(self::$is_active !== null) {
 			return (bool) self::$is_active;
@@ -499,6 +503,10 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 
 	private static function initCacheManager() {
 		//--
+		if(self::$mongo === false) {
+			return false; //no need to register any more errors, they have already been registered !! {{{SYNC-PCACHE-MONGO-FAILURE}}}
+		} //end if
+		//--
 		if(!self::isActive()) {
 			Smart::log_warning(__METHOD__.' # MongoDB does not appear to be active in configs');
 			return false;
@@ -512,10 +520,16 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 			//--
 			$is_fatal_err = false; // for a persistent cache do not use fatal errors, just log them
 			//--
-			self::$mongo = new SmartMongoDb(
-				array(), 				// no custom config
-				(bool) $is_fatal_err 	// fatal err
-			); // use the connection values from configs
+			try {
+				self::$mongo = new SmartMongoDb(
+					array(), 				// no custom config
+					(bool) $is_fatal_err 	// fatal err
+				); // use the connection values from configs
+			} catch(Exception $err) { // don't throw if MongoDB error !
+				self::$mongo = false; // connection failed, don't try again this session again !! {{{SYNC-PCACHE-MONGO-FAILURE}}}
+				Smart::log_warning(__METHOD__.' # Mongo DB PCache Failed to connect: '.$err->getMessage());
+				return false;
+			} //end try catch
 			//--
 			$ping = self::$mongo->igcommand(
 				[
@@ -524,7 +538,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 			);
 			if(!self::$mongo->is_command_ok($ping)) {
 				Smart::log_warning(__METHOD__.' # Server Failed to answer to ping after connect ...');
-				self::$mongo = null;
+				self::$mongo = false; // ping failed, do not use mongo as pcache this session again !! {{{SYNC-PCACHE-MONGO-FAILURE}}}
 				return false;
 			} //end if
 			//--
@@ -583,7 +597,7 @@ class SmartMongoDbPersistentCache extends SmartAbstractPersistentCache {
 						]
 					);
 					Smart::log_warning(__METHOD__.' # Failed to create collection indexes, dropping collection: '.(int)self::$mongo->is_command_ok($drop_collection));
-					self::$mongo = null;
+					self::$mongo = null; // reset mongo after drop the collection ; here must NOT be false
 					return false;
 				} //end if
 				//--

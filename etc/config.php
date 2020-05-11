@@ -103,7 +103,7 @@ $configs['mongodb']['server-port']	= 27017;								// mongodb port
 $configs['mongodb']['dbname']		= 'smart_framework';					// mongodb database name
 $configs['mongodb']['username'] 	= '';									// mongodb username
 $configs['mongodb']['password'] 	= '';									// mongodb Base64-Encoded password
-$configs['mongodb']['timeout']		= 10;									// mongodb connect timeout in seconds
+$configs['mongodb']['timeout']		= 5;									// mongodb connect timeout in seconds
 $configs['mongodb']['slowtime']		= 0.0035;								// mongodb slow query time (for debugging) 0.0025 .. 0.0090
 */
 //---------------------------------------
@@ -116,7 +116,7 @@ $configs['pgsql']['server-port']	= 5432;									// postgresql port (default is 
 $configs['pgsql']['dbname']			= 'smart_framework';					// postgresql database name
 $configs['pgsql']['username']		= 'pgsql';								// postgresql server username
 $configs['pgsql']['password']		= base64_encode('pgsql');				// postgresql server Base64-Encoded password for that user name B64
-$configs['pgsql']['timeout']		= 15;									// postgresql connection timeout (how many seconds to wait for a valid PgSQL Connection)
+$configs['pgsql']['timeout']		= 10;									// postgresql connection timeout (how many seconds to wait for a valid PgSQL Connection)
 $configs['pgsql']['slowtime']		= 0.0050; 								// postgresql slow query time (for debugging) 0.0025 .. 0.0090
 $configs['pgsql']['transact']		= 'READ COMMITTED';						// postgresql session Default Transaction Level: 'READ COMMITTED' | 'REPEATABLE READ' | 'SERIALIZABLE' | '' to leave it as default
 */
@@ -130,7 +130,7 @@ $configs['mysqli']['server-port']	= 3306;									// server port (default is 330
 $configs['mysqli']['dbname']		= 'smart_framework';					// database name
 $configs['mysqli']['username']		= 'root';								// server username
 $configs['mysqli']['password']		= base64_encode('root');				// server Base64-Encoded password for that user name B64
-$configs['mysqli']['timeout']		= 15;									// server connection timeout (how many seconds to wait for a valid MySQL Connection)
+$configs['mysqli']['timeout']		= 10;									// server connection timeout (how many seconds to wait for a valid MySQL Connection)
 $configs['mysqli']['slowtime']		= 0.0050; 								// server slow query time (for debugging) 0.0025 .. 0.0090
 $configs['mysqli']['transact']		= 'REPEATABLE READ';					// session Default Transaction Level: 'REPEATABLE READ' | 'READ COMMITTED' | '' to leave it as default
 */
