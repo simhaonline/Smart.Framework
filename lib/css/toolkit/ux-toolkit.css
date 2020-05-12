@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20200420), (c) 2015-2020 unix-world.org
+	extended by unixman, (stable.20200512), (c) 2015-2020 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -1379,6 +1379,17 @@ nav.ux-navbar div#logo {
 	font-size: 20px;
 	line-height: 50px;
 	color: #FFFFFF;
+	cursor: default;
+}
+nav.ux-navbar label#alt-logo {
+	font-weight: bold;
+}
+nav.ux-navbar img#img-logo {
+	display: block;
+	float: left;
+	margin-top: 1px;
+	width: 48px;
+	height: 48px;
 }
 nav::after {
 	content: "";
@@ -1392,13 +1403,16 @@ nav.ux-navbar ul {
 	list-style: none;
 	position: relative;
 }
+nav.ux-navbar li.parent {
+	display: none;
+}
 nav.ux-navbar ul li {
 	margin: 0px;
 	display: inline-block;
 	float: left;
 	background-color: #3f51b5;
 }
-nav.ux-navbar a {
+nav.ux-navbar a, nav.ux-navbar label.notoggle {
 	display: block;
 	padding: 0 20px;
 	color: #FFFFFF;
@@ -1423,15 +1437,20 @@ nav.ux-navbar ul li:hover > ul {
 	display: inherit;
 }
 nav.ux-navbar ul ul li {
-	width: 170px;
+	min-width: 170px;
 	float: none;
 	display: list-item;
 	position: relative;
 }
+nav.ux-navbar ul ul ul {
+	min-width: 170px;
+	width: 100%;
+	position: absolute;
+	top: 10px;
+	left: 170px;
+}
 nav.ux-navbar ul ul ul li {
 	position: relative;
-	top: -50px;
-	left: 170px;
 }
 nav.ux-navbar li > a::after {
 	content: ' ▾';

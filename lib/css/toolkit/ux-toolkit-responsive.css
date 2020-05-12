@@ -2,11 +2,11 @@
 
 /*
 License: BSD
-	extended by unixman (stable.20200420), (c) 2015-2020 unix-world.org
+	extended by unixman (stable.20200512), (c) 2015-2020 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
-@media all and (max-width:767px) {
+@media all and (max-width:767px) { /* screens with a width lower than 768 */
 
 	/* All buttons Responsive and Forms */
 
@@ -151,6 +151,44 @@ License: BSD
 		padding: 0.2rem 0 0.8rem;
 	}
 
+	/* DropDown (by Unixman) */
+
+	div.ux-dropdown,
+	div.ux-dropdown span.ux-dropbutton,
+	div.ux-dropdown span.ux-droparea {
+		width: calc(98% - 10px) !important;
+		min-width: calc(98% - 10px) !important;
+		font-size: 0.9rem !important;
+	}
+	div.ux-dropdown span.ux-droparea {
+		line-height: 1.5;
+	}
+	div.ux-dropdown {
+		margin: 5px 0 5px 0 !important;
+	}
+	div.ux-dropdown ul {
+		width: calc(98% - 20px) !important;
+		max-width: calc(98% - 20px) !important;
+		left: 5px;
+	}
+
+	/* Steps Bar (by Unixman) */
+
+	.ux-stepsbar a {
+		width: 100%;
+	}
+	.ux-stepsbar a:first-child {
+		padding-left: 60px;
+		border-radius: 0 0 0 0;
+	}
+	.ux-stepsbar a:first-child::before {
+		left: 30px;
+	}
+
+}
+
+@media (hover: none), all and (max-width:767px) { /* touchscreens or screens with a width lower than 768 */
+
 	/* Menu Bars (by Unixman) */
 
 	.ux-menubar-bar .ux-menubar-bar-item,
@@ -171,15 +209,24 @@ License: BSD
 
 	/* Responsive NavBar Menu (by Unixman) */
 
-	nav.ux-navbar div#logo span {
+	nav.ux-navbar div#logo span:not(.display) {
 		display: none;
 	}
 	nav.ux-navbar div#logo {
 		display: block;
 		padding: 0;
-		width: 100%;
-		text-align: center;
+		padding-left: 10px;
+		width: calc(100% - 70px);
+		text-align: left;
+		float: left;
+	}
+	nav.ux-navbar label#alt-logo {
+		display: block;
+		padding: 0;
+		padding-left: 20px;
+		padding-right: 10px;
 		float: none;
+		clear: both;
 	}
 	nav.ux-navbar {
 		margin: 0;
@@ -199,7 +246,7 @@ License: BSD
 		border: none;
 	}
 	nav.ux-navbar label.toggle::after {
-		content: ' ▾';
+		content: '\00a0\00a0⧎'; /* ▸ */
 	}
 	nav.ux-navbar label.toggle:hover {
 		color: #FFFFFF;
@@ -214,6 +261,15 @@ License: BSD
 	nav.ux-navbar ul li {
 		display: block;
 		width: 100%;
+	}
+	nav.ux-navbar li.parent {
+		display: block;
+		width: 100%;
+	}
+	nav.ux-navbar ul ul ul {
+		position: relative;
+		top: 0px;
+		left: 0px;
 	}
 	nav.ux-navbar ul ul .toggle,
 	nav.ux-navbar ul ul a {
@@ -250,6 +306,9 @@ License: BSD
 	nav.ux-navbar ul ul ul li {
 		position: static;
 	}
+	nav.ux-navbar ul ul ul li * {
+		background-color: #1d3093 !important;
+	}
 	/*
 	nav.ux-navbar ul li {
 		display: block;
@@ -273,6 +332,9 @@ License: BSD
 	nav.ux-navbar.navbar-green ul ul a {
 		background-color: #598c3d;
 	}
+	nav.ux-navbar.navbar-green ul ul ul li * {
+		background-color: #487b2c !important;
+	}
 
 	nav.ux-navbar.navbar-black label.toggle {
 		background-color: #3b4250;
@@ -290,41 +352,24 @@ License: BSD
 	nav.ux-navbar.navbar-black ul ul a {
 		background-color: #2a3140;
 	}
-
-	/* DropDown (by Unixman) */
-
-	div.ux-dropdown,
-	div.ux-dropdown span.ux-dropbutton,
-	div.ux-dropdown span.ux-droparea {
-		width: calc(98% - 10px) !important;
-		min-width: calc(98% - 10px) !important;
-		font-size: 0.9rem !important;
-	}
-	div.ux-dropdown span.ux-droparea {
-		line-height: 1.5;
-	}
-	div.ux-dropdown {
-		margin: 5px 0 5px 0 !important;
-	}
-	div.ux-dropdown ul {
-		width: calc(98% - 20px) !important;
-		max-width: calc(98% - 20px) !important;
-		left: 5px;
-	}
-
-	/* Steps Bar (by Unixman) */
-
-	.ux-stepsbar a {
-		width: 100%;
-	}
-	.ux-stepsbar a:first-child {
-		padding-left: 60px;
-		border-radius: 0 0 0 0;
-	}
-	.ux-stepsbar a:first-child::before {
-		left: 30px;
+	nav.ux-navbar.navbar-black ul ul ul li * {
+		background-color: #192030 !important;
 	}
 
 }
+
+
+/* smartphones, touchscreens
+@media (hover: none) and (pointer: coarse) {} */
+
+/* stylus-based screens
+@media (hover: none) and (pointer: fine) {} */
+
+/* Nintendo Wii controller, Microsoft Kinect
+@media (hover: hover) and (pointer: coarse) {} */
+
+/* mouse, touch pad
+@media (hover: hover) and (pointer: fine) {} */
+
 
 /***** END *****/

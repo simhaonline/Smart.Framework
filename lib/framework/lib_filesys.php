@@ -749,6 +749,11 @@ final class SmartFileSysUtils {
 			//-------------- html / css
 			case 'htm':
 			case 'html':
+			case 'mtpl': // marker tpl templating
+			case 'tpl':  // tpl templating
+			case 'dust': // tpl dust
+			case 'twig': // twig templating
+			case 't3fluid': // typo3 fluid templating
 				$type = 'text/html';
 				$disp = 'attachment';
 				break;
@@ -779,7 +784,8 @@ final class SmartFileSysUtils {
 			case 'xsl':
 			case 'dtd':
 			case 'sgml': // Standard Generalized Markup Language
-			case 't3fluid': // typo3 fluid templating
+			case 'glade': // glade UI XML file
+			case 'ui': // qt ui XML file
 				$type = 'application/xml';
 				$disp = 'attachment';
 				break;
@@ -809,6 +815,7 @@ final class SmartFileSysUtils {
 			case 'r': // R language
 			case 'diff': // Diff File
 			case 'patch': // Diff Patch
+			case 'pro': // QT project file
 			case 'cpp': // C++
 			case 'hpp': // C++ header
 			case 'ypp': // Bison source code file
@@ -856,6 +863,8 @@ final class SmartFileSysUtils {
 			case 'license': // license
 			case 'readme': // license
 			case 'makefile': // makefile
+			case 'cmake': // cmake file
+			case 'meson.build': // meson build file
 			case '.htaccess': // .htaccess
 			case '.htpasswd': // .htpasswd
 			case 'pem': // PEM Certificate File
@@ -865,9 +874,6 @@ final class SmartFileSysUtils {
 			case 'dns': // DNS Config
 			case 'csp': // Content Security Policy
 			case 'httph': // HTTP Header
-			case 'tpl': // tpl templating
-			case 'mtpl': // marker tpl templating
-			case 'twig': // twig templating
 				$type = 'text/plain';
 				$disp = 'attachment';
 				break;

@@ -1,4 +1,4 @@
-<!-- Partial Template: Plugins.SyntaxHighlight r.20200121 -->
+<!-- Partial Template: Plugins.SyntaxHighlight r.20200511 -->
 <link rel="stylesheet" href="lib/core/css/tpl-highlight.css">
 <link rel="stylesheet" href="lib/core/plugins/fonts/typo/mono/ibm-plex-mono.css">
 <style>
@@ -16,27 +16,6 @@ code.hljs, code.hljs * {
 <script type="text/javascript" src="lib/js/jshighlight/[###SYNTAX-PLUGINS._-VAL-_|html###].js"></script>[%%%IF:SYNTAX-PLUGINS._-ITERATOR-_:<###SYNTAX-PLUGINS._-MAXCOUNT-_###;%%%][%%%|N%%%][%%%/IF:SYNTAX-PLUGINS._-ITERATOR-_%%%]
 [%%%/LOOP:SYNTAX-PLUGINS%%%]
 <!-- HLjs Async Render -->
-<script type="text/javascript">
-if(typeof SmartJS_Custom_Syntax_Highlight != 'function') {
-	var SmartJS_Custom_Syntax_Highlight = function(elem) {
-		setTimeout(function(){
-			jQuery(elem + ' pre code').each(function(i, block) {
-				var theObj = jQuery(this);
-				var theClass = theObj.attr('class');
-				if((typeof theClass != 'undefined') && (theClass != 'undefined') && (theClass != '')) {
-					theObj.attr('title', 'Syntax: ' + String(theClass));
-					try {
-						hljs.highlightBlock(block);
-					} catch(err) {
-						console.error('HighlightJs Failed to instantiate on selector #' + i + ' @ for class: ' + String(theClass));
-					}
-				} //end if
-				theObj = null;
-				theClass = null;
-			});
-		}, 50);
-	}
-}
-</script>
+<script type="text/javascript" src="lib/js/jshighlight/smart-highlight.js"></script>
 [@@@SUB-TEMPLATE:!lib/core/plugins/templates/syntax-highlight-process.inc.htm!@@@]
 <!-- #END :: Partial Template: Plugins.SyntaxHighlight -->

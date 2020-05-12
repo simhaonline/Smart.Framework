@@ -125,6 +125,7 @@ final class DavUtils {
 			case 'cxx': // C++
 			case 'yxx': // Bison source code file
 			case 'm': // Objective-C Method
+			case 'pro': // QT project file
 				$type = 'c';
 				break;
 			case 'h': // C header
@@ -158,6 +159,8 @@ final class DavUtils {
 			case 'xml':
 			case 'xsl':
 			case 'dtd':
+			case 'glade': // gnome glade
+			case 'ui': // qt ui
 				$type = 'xml';
 				break;
 			case 'htm':
@@ -307,10 +310,11 @@ final class DavUtils {
 				$type = 'archive';
 				break;
 			case 'csh': // C-Shell script
-			case 'sh': // shell script
+			case 'sh':  // shell script
 			case 'awk': // AWK script
 			case 'cmd': // windows command file
 			case 'bat': // windows batch file
+			case 'tcl': // tcl script
 				$type = 'shell';
 				break;
 			case 'rb':

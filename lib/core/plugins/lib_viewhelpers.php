@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200306
+ * @version 	v.20200511
  * @package 	Plugins:ViewComponents
  *
  */
@@ -228,6 +228,7 @@ final class SmartViewHtmlHelpers {
 			case 'php5':
 			case 'php6': // n/a
 			case 'php7':
+			case 'php8':
 			case 'hh': // hip hop, a kind of static PHP
 				$fpack = 'web';
 				$ftype = 'php';
@@ -249,6 +250,8 @@ final class SmartViewHtmlHelpers {
 			case 'xml':
 			case 'svg':
 			case 'html':
+			case 'glade': // gnome glade xml
+			case 'ui': // qt ui xml
 				$fpack = 'web';
 				$ftype = 'xml';
 				break;

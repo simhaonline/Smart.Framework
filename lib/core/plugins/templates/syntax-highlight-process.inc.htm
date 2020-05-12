@@ -1,8 +1,8 @@
-<!-- HLjs PostProcessing r.20200121 -->
+<!-- HLjs PostProcessing r.20200511 -->
 [%%%IF:AREAS-SELECTOR:!=;%%%]
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	SmartJS_Custom_Syntax_Highlight('[###AREAS-SELECTOR|js###]');
+	if(typeof SmartJS_Custom_Syntax_Highlight == 'function') { SmartJS_Custom_Syntax_Highlight('[###AREAS-SELECTOR|js###]'); } else { console.error('Missing Syntax Highlight Smart Helper'); }
 });
 </script>
 [%%%/IF:AREAS-SELECTOR%%%]
