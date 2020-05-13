@@ -644,24 +644,32 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 			$arr_cfg = array();
 		} //end if
 		//--
-		$syntax = (string) $arr_cfg['syntax'];
-		$escape = (string) $arr_cfg['escape'];
+		$syntax = (string) \trim((string)$arr_cfg['syntax']);
+		$escape = (string) \trim((string)$arr_cfg['escape']);
 		//--
-		switch((string)$escape) {
+
+		//--
+		switch((string)$escape) { // {{{SYNC-PAGEBUILDER-DATA.VALUE-ESCAPINGS}}}
+			case 'url':
 			case 'js':
+			case 'num':
+			case 'dec1':
+			case 'dec2':
+			case 'dec3':
+			case 'dec4':
+			case 'int':
+			case 'bool':
 				break;
 			default:
-				$escape = '';
+				$escape = ''; // must reset escape if not validated above
 		} //end if
 		//--
-		$uid = (string) 'val.'.\Smart::uuid_10_num().'-'.\sha1((string)\print_r($arr,1)).'-'.$escape;
-		//--
-		if((string)$syntax == 'html') {
-			$syntax = 'html';
-			$arr['mode'] = 'html';
+		if((string)$syntax == 'text') {
+			$syntax = 'text';
+			$arr['mode'] = 'text:rendered';
 			$arr['id'] = (string) \trim((string)$arr['id']); // trim
 			if((string)$arr['id'] != '') {
-				$arr['id'] = (string) \SmartModExtLib\PageBuilder\Utils::fixSafeCode((string)$arr['id']); // {{{SYNC-PAGEBUILDER-HTML-SAFETY}}} avoid PHP code + cleanup XHTML tag style
+				$arr['id'] = (string) \Smart::escape_html((string)$arr['id']); // escape text to HTML
 			} //end if
 		} elseif((string)$syntax == 'markdown') {
 			$syntax = 'markdown';
@@ -670,18 +678,66 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 			if((string)$arr['id'] != '') {
 				$arr['id'] = (string) \SmartModExtLib\PageBuilder\Utils::renderMarkdown((string)$arr['id']); // render as markdown
 			} //end if
-		} else {
-			$syntax = 'text';
-			$arr['mode'] = 'text:rendered';
+		} elseif((string)$syntax == 'html') {
+			$syntax = 'html';
+			$arr['mode'] = 'html';
 			$arr['id'] = (string) \trim((string)$arr['id']); // trim
 			if((string)$arr['id'] != '') {
-				$arr['id'] = (string) \Smart::escape_html((string)$arr['id']); // escape text to HTML
+				$arr['id'] = (string) \SmartModExtLib\PageBuilder\Utils::fixSafeCode((string)$arr['id']); // {{{SYNC-PAGEBUILDER-HTML-SAFETY}}} avoid PHP code + cleanup XHTML tag style
+			} //end if
+		} elseif((string)$syntax == 'jsval') {
+			$syntax = 'jsval';
+			$arr['mode'] = 'jsval:escaped';
+			$arr['id'] = (string) \Smart::escape_js((string)$arr['id']); // JS escape text, do not trim, preserve as is
+		} elseif((string)$syntax == 'urlpart') {
+			$syntax = 'urlpart';
+			$arr['mode'] = 'urlpart:escaped';
+			$arr['id'] = (string) \Smart::escape_url((string)$arr['id']); // RawURL escape text, do not trim, preserve as is
+		} else { // 'raw'
+			if((string)$escape == '') { // if no escape provided force it to url escape which is safe in all contexts (html / js / text / markdown / url)
+				$escape = 'url'; // protect !! raw values always require an escape
 			} //end if
 		} //end if else
 		//--
-		if((string)$escape == 'js') {
-			$arr['id'] = (string) \Smart::escape_js((string)$arr['id']);
+		switch((string)$escape) { // {{{SYNC-PAGEBUILDER-DATA.VALUE-ESCAPINGS}}}
+			case 'url': // this must be the fallback case also for raw values that miss any escapings
+				$arr['id'] = (string) \Smart::escape_url((string)$arr['id']); // RawURL escape text
+				break;
+			case 'js':
+				$arr['id'] = (string) \Smart::escape_js((string)$arr['id']);
+				break;
+			case 'num':
+				$arr['id'] = (float) \trim((string)$arr['id']); // force value as float
+				break;
+			case 'dec1':
+				$arr['id'] = (string) \Smart::format_number_dec((string)\trim((string)$arr['id']), 1, '.', ''); // force value as decimal1
+				break;
+			case 'dec2':
+				$arr['id'] = (string) \Smart::format_number_dec((string)\trim((string)$arr['id']), 2, '.', ''); // force value as decimal2
+				break;
+			case 'dec3':
+				$arr['id'] = (string) \Smart::format_number_dec((string)\trim((string)$arr['id']), 3, '.', ''); // force value as decimal3
+				break;
+			case 'dec4':
+				$arr['id'] = (string) \Smart::format_number_dec((string)\trim((string)$arr['id']), 4, '.', ''); // force value as decimal4
+				break;
+			case 'int':
+				$arr['id'] = (int) \trim((string)$arr['id']); // force value as int
+				break;
+			case 'bool':
+				if(((string)$arr['id'] == '') OR ((string)$arr['id'] == '0') OR ((string)\strtolower((string)$arr['id']) == 'f') OR ((string)\strtolower((string)$arr['id']) == 'false')) {
+					$arr['id'] = 'false';
+				} else {
+					$arr['id'] = 'true';
+				} //end if else
+				break;
+			default:
+				// no escaping
 		} //end if
+		//--
+
+		//--
+		$uid = (string) 'val.'.\Smart::uuid_32().':'.\sha1((string)\print_r($arr,1)).':'.$escape; // uid must be generated here as raw can change the empty escape tu url escape if no escape provided !
 		//--
 		$out_arr = [
 			'id' 	=> (string) $uid.'.'.$id,
@@ -985,6 +1041,14 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 						foreach($val[$i] as $k => $v) {
 							//--
 							if(\Smart::array_size($v) > 0) {
+								//-- bugfix: when ID is used for `type: value` and is false or null, it will break the code
+								if($v['id'] === null) {
+									$v['id'] = 'NULL';
+								} elseif($v['id'] === true) {
+									$v['id'] = 'TRUE';
+								} elseif($v['id'] === false) {
+									$v['id'] = 'FALSE';
+								} //end if
 								//--
 								$v['id'] = (string) \trim((string)$v['id']);
 								//--

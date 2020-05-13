@@ -2,6 +2,11 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+May 13, 2020 :: Version 5.7.2 rev.20200513
+	* New Features for PageBuilder
+	* Bug Fixes for PageBuilder
+	* Several fixes for LibYAML parser and composer
+
 May 11, 2020 :: Version 5.7.2 rev.20200511
 	* Fix bug in MongoDB PCache, if connection fails once will disable the PCache MongoDB as backend for the current session to avoid display website errors
 

@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200513
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -256,20 +256,42 @@ final class SmartYamlConverter {
 	 */
 	private function _dumpNode($key, $value, $indent, $previous_key=-1, $first_key=0, $source_array=null) {
 		//-- do some folding here, for blocks
-		if(is_string($value) && ((strpos($value, "\n") !== false || strpos($value, ": ") !== false || strpos($value, "- ") !== false || strpos($value, "*") !== false || strpos($value, "#") !== false || strpos($value, "<") !== false || strpos($value, ">") !== false || strpos($value, '  ') !== false || strpos($value, "[") !== false || strpos($value, "]") !== false || strpos($value, "{") !== false || strpos($value, "}") !== false) || strpos($value, "&") !== false || strpos($value, "'") !== false || strpos($value, "!") === 0 || substr($value, -1, 1) == ':')) {
-			$value = $this->_doLiteralBlock($value,$indent);
+		if(
+			is_string($value) &&
+			(
+				(
+					strpos((string)$value, "\n") !== false ||
+					strpos((string)$value, ": ") !== false ||
+					strpos((string)$value, "- ") !== false ||
+					strpos((string)$value, "*") !== false  ||
+					strpos((string)$value, "#") !== false  ||
+					strpos((string)$value, "<") !== false  ||
+					strpos((string)$value, ">") !== false  ||
+					strpos((string)$value, '  ') !== false ||
+					strpos((string)$value, "[") !== false  ||
+					strpos((string)$value, "]") !== false  ||
+					strpos((string)$value, "{") !== false  ||
+					strpos((string)$value, "}") !== false
+				) ||
+				strpos((string)$value, "&") !== false  ||
+				strpos((string)$value, "'") !== false  ||
+				strpos((string)$value, "!") === 0      ||
+				substr((string)$value, -1, 1) == ':'
+			)
+		) {
+			$value = $this->_doLiteralBlock($value, $indent);
 		} else {
-			$value  = $this->_doFolding($value,$indent);
+			$value  = $this->_doFolding($value, $indent);
 		} //end if else
 		//--
 		if($value === array()) {
 			$value = '[ ]';
 		} //end if
-		if(in_array($value, array ('true', 'TRUE', 'false', 'FALSE', 'y', 'Y', 'n', 'N', 'null', 'NULL'), true)) {
-			$value = $this->_doLiteralBlock($value,$indent);
+		if(in_array($value, array('true', 'TRUE', 'false', 'FALSE', 'y', 'Y', 'n', 'N', 'null', 'NULL'), true)) {
+			$value = $this->_doLiteralBlock($value, $indent);
 		} //end if
-		if(trim($value) != $value) {
-			$value = $this->_doLiteralBlock($value,$indent);
+		if((string)trim((string)$value) != (string)$value) {
+			$value = $this->_doLiteralBlock($value, $indent);
 		} //end if
 		if(is_bool($value)) {
 			$value = ($value) ? "true" : "false";
@@ -320,10 +342,10 @@ final class SmartYamlConverter {
 			return '\n';
 		} //end if
 		//--
-		if(strpos($value, "\n") === false && strpos($value, "'") === false) {
+		if(strpos((string)$value, "\n") === false && strpos((string)$value, "'") === false) {
 			return sprintf("'%s'", $value);
 		} //end if
-		if(strpos($value, "\n") === false && strpos($value, '"') === false) {
+		if(strpos((string)$value, "\n") === false && strpos((string)$value, '"') === false) {
 			return sprintf('"%s"', $value);
 		} //end if
 		//--
@@ -336,7 +358,7 @@ final class SmartYamlConverter {
 			$newValue .= "\n".$spaces.($line);
 		} //end foreach
 		//--
-		return $newValue;
+		return (string) $newValue;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -497,61 +519,65 @@ final class SmartYamlConverter {
 			return null;
 		} //end if
 		//--
-		$first_character = $value[0];
-		$last_character = substr($value, -1, 1);
+	//	$first_character = $value[0];
+		$first_character = (string) substr((string)$value,  0, 1);
+		$last_character  = (string) substr((string)$value, -1, 1);
 		//--
 		$is_quoted = false;
 		do {
-			if(!$value) {
+		//	if(!$value) {
+			if((string)$value == '') {
 				break;
 			} //end if
-			if($first_character != '"' && $first_character != "'") {
+			if(((string)$first_character != '"') && ((string)$first_character != "'")) {
 				break;
 			} //end if
-			if($last_character != '"' && $last_character != "'") {
+			if(((string)$last_character != '"') && ((string)$last_character != "'")) {
 				break;
 			} //end if
 			$is_quoted = true;
-		} while (0);
+		} while(0);
 		//--
 		if($is_quoted) {
-			return strtr(substr($value, 1, -1), array ('\\"' => '"', '\'\'' => '\'', '\\\'' => '\''));
+			return strtr((string)substr((string)$value, 1, -1), array ('\\"' => '"', '\'\'' => '\'', '\\\'' => '\''));
 		} //end if
 		//--
-		if(strpos($value, ' #') !== false && !$is_quoted) {
-			$value = preg_replace('/\s+#(.+)$/','',$value);
+		if(strpos((string)$value, ' #') !== false && !$is_quoted) {
+			$value = (string) preg_replace('/\s+#(.+)$/', '', (string)$value);
 		} //end if
 		//--
 		if(!$is_quoted) {
-			$value = str_replace('\n', "\n", $value);
+			$value = (string) str_replace('\n', "\n", (string)$value);
 		} //end if
 		//--
-		if($first_character == '[' && $last_character == ']') {
-			// Take out strings sequences and mappings
-			$innerValue = trim(substr($value, 1, -1));
+		if(((string)$first_character == '[') && ((string)$last_character == ']')) {
+			//-- Take out strings sequences and mappings
+			$innerValue = (string) trim((string)substr((string)$value, 1, -1));
 			if($innerValue === '') {
 				return array();
 			} //end if
 			$explode = $this->_inlineEscape($innerValue);
-			// Propagate value array
+			//-- Propagate value array
 			$value  = array();
 			foreach($explode as $z => $v) {
 				$value[] = $this->_toType($v);
 			} //end foreach
+			//-- return
 			return $value;
+			//--
 		} //end if
 		//--
-		if(strpos($value, ': ') !== false && $first_character != '{') {
+		if((strpos((string)$value, ': ') !== false) && ((string)$first_character != '{')) {
 			$array = explode(': ', $value);
-			$key   = trim($array[0]);
+			$key   = (string) trim((string)$array[0]);
 			array_shift($array);
-			$value = trim(implode(': ', $array));
+			$value = (string) trim((string)implode(': ', $array));
 			$value = $this->_toType($value);
 			return array($key => $value);
 		} //end if
 		//--
-		if($first_character == '{' && $last_character == '}') {
-			$innerValue = trim(substr($value, 1, -1));
+		if(((string)$first_character == '{') && ((string)$last_character == '}')) {
+			$innerValue = (string) trim((string)substr((string)$value, 1, -1));
 			if($innerValue === '') {
 				return array();
 			} //end if
@@ -565,8 +591,9 @@ final class SmartYamlConverter {
 				if(empty($SubArr)) {
 					continue;
 				} //end if
-				if(is_array ($SubArr)) {
-					$array[key($SubArr)] = $SubArr[key($SubArr)]; continue;
+				if(is_array($SubArr)) {
+					$array[key($SubArr)] = $SubArr[key($SubArr)];
+					continue;
 				} //end if
 				$array[] = $SubArr;
 			} //end foreach
@@ -577,12 +604,12 @@ final class SmartYamlConverter {
 			return '';
 		} //end if
 		//--
-		if(strtolower($value) == 'null' || $value == '~') {
+		if(((string)strtolower((string)$value) == 'null') || ((string)$value == '~')) {
 			return null;
 		} //end if
 		//--
-		if(is_numeric($value) && preg_match('/^(-|)[1-9]+[0-9]*$/', $value)){
-			$intvalue = (int)$value;
+		if(is_numeric($value) && preg_match('/^(-|)[1-9]+[0-9]*$/', (string)$value)){
+			$intvalue = (int) $value;
 			if($intvalue != PHP_INT_MAX) {
 				$value = $intvalue;
 			} //end if
@@ -596,11 +623,11 @@ final class SmartYamlConverter {
 		} //end if
 		*/
 		//--
-		if(in_array(strtolower($value), array('true', 'on', '+', 'yes', 'y'))) {
+		if(in_array((string)strtolower((string)$value), array('true', 'on', '+', 'yes', 'y'))) {
 			return true;
 		} //end if
 		//--
-		if(in_array(strtolower($value), array('false', 'off', '-', 'no', 'n'))) {
+		if(in_array((string)strtolower((string)$value), array('false', 'off', '-', 'no', 'n'))) {
 			return false;
 		} //end if
 		//--
@@ -608,14 +635,14 @@ final class SmartYamlConverter {
 			if((string)$value == '0') {
 				return 0;
 			} //end if
-			if(rtrim($value, 0) === $value) {
-				$value = (float)$value;
+			if((string)rtrim((string)$value, 0) === (string)$value) {
+				$value = (float) $value;
 			} //end if
 			return $value;
 		} //end if
 		//--
 		return $value;
-		//-- $k
+		//--
 	} //END FUNCTION
 	//================================================================
 

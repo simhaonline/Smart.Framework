@@ -1,5 +1,5 @@
 
-# Using the Smart PageBuilder Module for Smart.Framework
+# Using the Smart PageBuilder Module for Smart.Framework, rev.20200513
 
 ## required settings in etc/config.php
 ```php
@@ -88,8 +88,8 @@ RENDER:
       type: value
       id: 'Some <b>Bold Text</b>'
       config:
-        syntax: html # can be also text or markdown
-#       escape: js
+        syntax: html # valid values here are: 'text' | 'markdown' | 'html' | 'jsval' | 'urlpart' | 'raw' ; 'html' will be trimmed + safe filtered ; 'text' (will be trimmed + escaped as html ; 'markdown' will be trimmed + rendered as html ; jsval will not be trimmed, will be escaped as JS ; 'urlpart' will not be trimmed, will be escaped as RawUrl ; 'raw' will be preserved but requires to be escaped somehow ...
+#       escape: js   # valid values here are: 'url' | 'js' | 'num' | 'dec1' | 'dec2' | 'dec3' | 'dec4' | 'int' | 'bool'
   AREA-SEVEN:
     content:
       type: translation
@@ -132,4 +132,4 @@ SETTINGS:
 {{=#SAMPLE-MARKER2|js#=}}
 ...
 
-##### rev.20200513
+##### END
