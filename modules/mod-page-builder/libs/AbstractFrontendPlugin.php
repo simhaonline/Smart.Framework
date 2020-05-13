@@ -25,17 +25,17 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200121
+ * @version 	v.20200513
  * @package 	development:modules:PageBuilder
  *
  */
 abstract class AbstractFrontendPlugin extends \SmartAbstractAppController {
 
 
-	private $plugin_initialized = false;
-	private $plugin_name = 'ERROR-NO-PLUGIN-NAME';
-	private $plugin_config = array();
-	private $plugin_caller_module_path = 'modules/app/';
+	private $plugin_initialized 		= false;
+	private $plugin_name 				= 'ERROR-NO-PLUGIN-NAME';
+	private $plugin_config 				= array();
+	private $plugin_caller_module_path 	= 'modules/app/';
 
 
 	//=====

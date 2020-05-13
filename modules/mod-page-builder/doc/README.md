@@ -126,3 +126,10 @@ SETTINGS:
     b: 'this is'
 ```
 
+## Sample code with extra markers (the extra markers have to be supplied on render page/segment) as [ 'SAMPLE-MARKER1' => 'this is a sample marker that have been post-rendered (will be html escaped in code)', 'SAMPLE-MARKER2' => 'other marker (will be js escaped in code)', ... ]
+
+{{=#SAMPLE-MARKER1|html#=}}
+{{=#SAMPLE-MARKER2|js#=}}
+...
+
+##### rev.20200513

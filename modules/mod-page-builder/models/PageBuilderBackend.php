@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderBackend {
 
 	// ::
-	// v.20200121
+	// v.20200513
 
 
 	private static $db = null;
@@ -45,6 +45,8 @@ final class PageBuilderBackend {
 					);
 					return;
 				} //end if
+				//--
+				// MUST NOT CHECK HERE IF SQLITE FILE EXISTS ... IF DO NOT WILL BE CREATED AND INSTANTIATED !
 				//--
 				self::$db = new \SmartSQliteDb((string)$sqlitedbfile);
 				self::$db->open();

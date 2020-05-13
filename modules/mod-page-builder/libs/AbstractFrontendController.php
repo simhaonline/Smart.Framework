@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200121
+ * @version 	v.20200513
  * @package 	development:modules:PageBuilder
  *
  */
@@ -58,7 +58,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	final public function renderBuilderPage($page_id, $tpl_path, $tpl_file, $markers) { // (OUTPUTS: HTML)
+	final public function renderBuilderPage($page_id, $tpl_path, $tpl_file, $markers, $arr_markers=array()) { // (OUTPUTS: HTML)
 
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
@@ -197,6 +197,20 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 		//-- render the page
 		$arr = (array) $this->doRenderPage($page_id, $arr);
 		//--
+
+		//-- process extra markers if supplied
+		if(\Smart::array_size($arr_markers) > 0) {
+			if(\Smart::array_size($arr) > 0) {
+				foreach($arr as $kk => $vv) {
+					if(!\is_array($vv)) {
+						$arr[(string)$kk] = (string) $this->renderSegmentMarkers((string)$vv, (array)$arr_markers);
+					} //end if
+				} //end foreach
+			} //end if
+		} //end if
+		//--
+
+		//--
 		$this->PageViewSetVars((array)$arr);
 		$arr = array(); // free mem
 		//--
@@ -206,7 +220,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	final public function getRenderedBuilderSegmentCode($segment_id) { // (OUTPUTS: HTML)
+	final public function getRenderedBuilderSegmentCode($segment_id, $arr_markers=array()) { // (OUTPUTS: HTML)
 
 		// CHECK: $this->rendered_segments[]
 
@@ -314,6 +328,14 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 			return '';
 		} //end if */
 		//--
+
+		//-- process extra markers if supplied
+		if(\Smart::array_size($arr_markers) > 0) {
+			$arr['code'] = (string) $this->renderSegmentMarkers((string)$arr['code'], (array)$arr_markers);
+		} //end if
+		//--
+
+		//--
 		return (string) $arr['code'];
 		//--
 
@@ -321,8 +343,8 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 	//=====
 
 
-	//===== !!! this feature have to be provided as separate since a segment cannot be rendered more than once per controller !!!
-	final public function renderSegmentMarkers($segment_code, $markers) { // (OUTPUTS: HTML)
+	//===== !!! this feature can be used separately, thus it is implemented already on render page or segment if extra arr markers is provided ; but perhaps there are cases when this have to be used separately !!!
+	final public function renderSegmentMarkers($segment_code, $arr_markers) { // (OUTPUTS: HTML)
 
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
@@ -335,7 +357,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 		//--
 		$segment_code = (string) \SmartMarkersTemplating::prepare_nosyntax_content($segment_code); // Safe Fix: comment out any of: [###*###] [%%%*%%%] [@@@*@@@]
 		//--
-		if((\Smart::array_size($markers) > 0) AND (\strpos((string)$segment_code, '{{=#') !== false)) { // if we provide express markers for replacing
+		if((\Smart::array_size($arr_markers) > 0) AND (\strpos((string)$segment_code, '{{=#') !== false)) { // if we provide express markers for replacing
 			//--
 			$segment_code = (string) \str_replace( // Pre-Render: replace {{=#MARKER|escapings#=}} with [###MARKER|escapings###]
 				[
@@ -349,7 +371,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 				(string) $segment_code
 			);
 			//--
-			$segment_code = (string) \SmartMarkersTemplating::render_template((string)$segment_code, (array)$markers, 'yes');
+			$segment_code = (string) \SmartMarkersTemplating::render_template((string)$segment_code, (array)$arr_markers, 'yes'); // ignore if empty
 			//--
 		} //end if
 		//--
@@ -358,6 +380,32 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 		return (string) $segment_code;
 		//--
 
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	final public function checkIfPageExist($y_id) {
+		//--
+		if((string)$this->ControllerGetParam('module-area') != 'index') {
+			return false;
+		} //end if
+		//--
+		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, true, false);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	final public function checkIfSegmentExist($y_id) {
+		//--
+		if((string)$this->ControllerGetParam('module-area') != 'index') {
+			return false;
+		} //end if
+		//--
+		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, false, true);
+		//--
 	} //END FUNCTION
 	//=====
 

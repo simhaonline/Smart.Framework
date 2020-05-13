@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="unix-world.org">
 	<meta name="description" content="\SmartModExtLib\PageBuilder\AbstractFrontendController        abstract class \SmartModExtLib\PageBuilder\ AbstractFrontendController  extends">
-	<meta name="keywords" content="smartmodextlib pagebuilder abstractfrontendcontroller, abstract, class, smartmodextlib pagebuilder, abstractfrontendcontroller, extends, smartabstractappcontroller, -, class, -, frontend, controller, provides, the, definitions, to, create, pagebuilder, frontend, controllers., language, php, located, at, modules mod-page-builder libs abstractfrontendcontroller.php, package, development modules pagebuilder, namespace, name, version, v, hints, extend, controllers, from, this, one, usage, dynamic, object, new, class   - method, only, methods, inheritance, chart, →, ↳, final, public, function, renderbuilderpage, page id, tpl path, tpl file, markers, -, getrenderedbuildersegmentcode, segment id, rendersegmentmarkers, segment code, checkifpageorsegmentexist, y id, getlistofsegmentsbyarea, y area, y orderby, id, y orderdir, asc, y limit, y ofs, construct, string, y module path, y controller, y url page, y hardcoded area, inherited, param, string, y module path, relative, path, followed, by, a, trailing, slash, current, module, containing, be, served, middleware, service, ex, modules mod-mytest">
+	<meta name="keywords" content="smartmodextlib pagebuilder abstractfrontendcontroller, abstract, class, smartmodextlib pagebuilder, abstractfrontendcontroller, extends, smartabstractappcontroller, -, class, -, frontend, controller, provides, the, definitions, to, create, pagebuilder, frontend, controllers., language, php, located, at, modules mod-page-builder libs abstractfrontendcontroller.php, package, development modules pagebuilder, namespace, name, version, v, hints, extend, controllers, from, this, one, usage, dynamic, object, new, class   - method, only, methods, inheritance, chart, →, ↳, final, public, function, renderbuilderpage, page id, tpl path, tpl file, markers, arr markers, array, -, getrenderedbuildersegmentcode, segment id, rendersegmentmarkers, segment code, checkifpageexist, y id, checkifsegmentexist, checkifpageorsegmentexist, getlistofsegmentsbyarea, y area, y orderby, id, y orderdir, asc, y limit, y ofs, construct, string, y module path, y controller, y url page, y hardcoded area, inherited, param, string, y module path, relative, path, followed, by, a, trailing, slash, current, module, containing, be, served">
 	<meta name="summary" content="Smart.Framework.Modules : PHP Documentation:">
 	<title>PHP Documentation for: \SmartModExtLib\PageBuilder\AbstractFrontendController</title>
 	<!-- CSS and Fonts -->
@@ -693,7 +693,7 @@ select#select-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \SmartModExtLib\PageBuilder\</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> AbstractFrontendController</span></li>
 		
-		<li><b>Version:</b> v.20200121</li>
+		<li><b>Version:</b> v.20200513</li>
 		
 		<li><b>Hints:</b> extend  frontend controllers from this one</li>
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -719,7 +719,8 @@ select#select-summary {
 				<span class="doc-param-name"><b><span title="`$page_id` Parameter is REQUIRED">$page_id</span></b></span>, 
 			<span class="doc-param-name"><b><span title="`$tpl_path` Parameter is REQUIRED">$tpl_path</span></b></span>, 
 			<span class="doc-param-name"><b><span title="`$tpl_file` Parameter is REQUIRED">$tpl_file</span></b></span>, 
-			<span class="doc-param-name"><b><span title="`$markers` Parameter is REQUIRED">$markers</span></b></span>
+			<span class="doc-param-name"><b><span title="`$markers` Parameter is REQUIRED">$markers</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$arr_markers` Parameter is OPTIONAL, with the Default Value: array()">$arr_markers</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
@@ -731,7 +732,8 @@ select#select-summary {
 	
 </div><div class="doc-container" id="Method--getRenderedBuilderSegmentCode">
 	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getRenderedBuilderSegmentCode</b></span>&nbsp;(
-				<span class="doc-param-name"><b><span title="`$segment_id` Parameter is REQUIRED">$segment_id</span></b></span>
+				<span class="doc-param-name"><b><span title="`$segment_id` Parameter is REQUIRED">$segment_id</span></b></span>, 
+			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$arr_markers` Parameter is OPTIONAL, with the Default Value: array()">$arr_markers</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
@@ -744,7 +746,31 @@ select#select-summary {
 </div><div class="doc-container" id="Method--renderSegmentMarkers">
 	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>renderSegmentMarkers</b></span>&nbsp;(
 				<span class="doc-param-name"><b><span title="`$segment_code` Parameter is REQUIRED">$segment_code</span></b></span>, 
-			<span class="doc-param-name"><b><span title="`$markers` Parameter is REQUIRED">$markers</span></b></span>
+			<span class="doc-param-name"><b><span title="`$arr_markers` Parameter is REQUIRED">$arr_markers</span></b></span>
+	
+	
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
+	
+	
+	
+	
+	
+	
+</div><div class="doc-container" id="Method--checkIfPageExist">
+	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>checkIfPageExist</b></span>&nbsp;(
+				<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>
+	
+	
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
+	
+	
+	
+	
+	
+	
+</div><div class="doc-container" id="Method--checkIfSegmentExist">
+	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>checkIfSegmentExist</b></span>&nbsp;(
+				<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
@@ -1545,6 +1571,12 @@ function smartHandleDocSelector(obj) {
 									<option value="Method--renderSegmentMarkers"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;renderSegmentMarkers()</option>
 			
 			
+									<option value="Method--checkIfPageExist"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;checkIfPageExist()</option>
+			
+			
+									<option value="Method--checkIfSegmentExist"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;checkIfSegmentExist()</option>
+			
+			
 									<option value="Method--checkIfPageOrSegmentExist"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;checkIfPageOrSegmentExist()</option>
 			
 			
@@ -1700,7 +1732,7 @@ function smartHandleDocSelector(obj) {
 
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2020-05-11 14:10:19 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2020-05-13 11:53:23 +0000</small>
 <hr>
 <br>
 <!-- # -->

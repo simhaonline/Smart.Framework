@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderFrontend {
 
 	// ::
-	// v.20200121
+	// v.20200513
 
 
 	private static $db = null;
@@ -42,6 +42,14 @@ final class PageBuilderFrontend {
 					\Smart::raise_error(
 						__CLASS__.': SQLite DB PATH is UNSAFE !',
 						'PageBuilder ERROR: UNSAFE DB ACCESS (1)'
+					);
+					return;
+				} //end if
+				//--
+				if(!\SmartFileSystem::is_type_file((string)$sqlitedbfile)) {
+					\Smart::raise_error(
+						__CLASS__.': SQLite DB File does NOT Exists !',
+						'PageBuilder ERROR: Please set the DB first by using first the PageBuilder Backend ...'
 					);
 					return;
 				} //end if
@@ -86,14 +94,25 @@ final class PageBuilderFrontend {
 	} //END FUNCTION
 
 
-	public static function checkIfPageOrSegmentExist($y_id) {
+	public static function checkIfPageOrSegmentExist($y_id, $y_check_pages=true, $y_check_segments=true) {
+		//--
+		if(($y_check_pages !== true) AND ($y_check_segments !== true)) {
+			\Smart::log_warning(__METHOD__.' # Check for pages is DISABLED ; Check for segments is DISABLED ; In this case this function will always return FALSE. Object id is: '.$y_id);
+			return false;
+		} //end if
 		//--
 		$y_id = (string) \trim((string)$y_id);
 		//--
 		if((string)self::dbType() == 'pgsql') {
 			if((string)\substr($y_id, 0, 1) == '#') { // segment
+				if($y_check_segments !== true) {
+					return false; // disallowed by params
+				} //end if
 				$query = 'SELECT "id" FROM "web"."page_builder" WHERE ("id" = $1) LIMIT 1 OFFSET 0';
 			} else { // page
+				if($y_check_pages !== true) {
+					return false; // disallowed by params
+				} //end if
 				$query = 'SELECT "id" FROM "web"."page_builder" WHERE (("id" = $1) AND ("active" = 1)) LIMIT 1 OFFSET 0';
 			} //end if else
 			$arr = (array) \SmartPgsqlDb::read_asdata(
@@ -104,8 +123,14 @@ final class PageBuilderFrontend {
 			);
 		} elseif((string)self::dbType() == 'sqlite') {
 			if((string)\substr($y_id, 0, 1) == '#') { // segment
+				if($y_check_segments !== true) {
+					return false; // disallowed by params
+				} //end if
 				$query = 'SELECT `id` FROM `page_builder` WHERE (`id` = ?) LIMIT 1 OFFSET 0';
 			} else { // page
+				if($y_check_pages !== true) {
+					return false; // disallowed by params
+				} //end if
 				$query = 'SELECT `id` FROM `page_builder` WHERE ((`id` = ?) AND (`active` = 1)) LIMIT 1 OFFSET 0';
 			} //end if else
 			$arr = (array) self::$db->read_asdata(

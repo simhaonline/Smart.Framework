@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200513
  * @package 	PageBuilder
  *
  */
@@ -118,6 +118,7 @@ final class Utils {
 							case '.gif':
 							case '.png':
 							case '.jpg':
+							// TODO: add support for webp
 								$arr_imgs[] = [
 									'img' 	=> (string) $y_media_dir.$files_n_dirs['list-files'][$i],
 									'file' 	=> (string) $files_n_dirs['list-files'][$i],

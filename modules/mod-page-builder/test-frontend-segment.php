@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_AREA', 'INDEX');
  */
 final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\AbstractFrontendController {
 
-	// r.20200121
+	// r.20200513
 
 	public function Run() {
 
@@ -41,16 +41,17 @@ final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\Abstract
 		$this->PageViewSetCfg('template-path', '@');
 		$this->PageViewSetCfg('template-file', 'template-test-frontend.htm');
 
-		$top = $this->getRenderedBuilderSegmentCode('#website-menu');
-		$main = $this->getRenderedBuilderSegmentCode('#seg-plug');
-		$foot = $this->getRenderedBuilderSegmentCode('#website-footer');
+		// IMPORTANT: trying to render a segment more than once per execution will raise fatal error !
+		$top  = (string) $this->getRenderedBuilderSegmentCode('#website-menu');
+		$main = (string) $this->getRenderedBuilderSegmentCode('#seg-plug');
+		$foot = (string) $this->getRenderedBuilderSegmentCode('#website-footer');
 
 		$this->PageViewSetVars([
-			'AREA.TOP' => (string) $top,
-			'MAIN' => (string) $main,
-			'AREA.FOOTER' => (string) $foot,
-			'META-DESCRIPTION' => '',
-			'META-KEYWORDS' => ''
+			'AREA.TOP' 			=> (string) $top,
+			'MAIN' 				=> (string) $main,
+			'AREA.FOOTER' 		=> (string) $foot,
+			'META-DESCRIPTION' 	=> '',
+			'META-KEYWORDS' 	=> ''
 		]);
 
 	} //END FUNCTION

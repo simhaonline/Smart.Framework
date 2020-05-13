@@ -1,7 +1,7 @@
 
 #####
 ### Smart.Framework .htaccess sample for Apache 2.2 / 2.4
-### r.5.7.2 / smart.framework.v.5.7
+### r.5.7.2 / smart.framework.v.5.7 @ 20200513
 ### (c) 2015-2020 unix-world.org
 #####
 
@@ -74,7 +74,9 @@ php_flag zend.multibyte					Off
 	##RewriteCond 		%{QUERY_STRING} !^\/
 #	RewriteCond 		%{REQUEST_FILENAME} !-f
 #	RewriteCond 		%{REQUEST_FILENAME} !-d
-#	RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 		index.php?page=$1 [QSA,L]
+#	RewriteRule 		^([a-z0-9_\-\.]+)\.[a-z0-9\-]{1,9}$ 									index.php?page=$1 [QSA,L]
+### or a more general rule
+##	RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 				index.php?page=$1 [QSA,L]
 	###
 
 	### sample: alternate URLs to use in combination with sub-domains (This is only for very very advanced use of URL Rewrites ... !!!)
@@ -84,9 +86,9 @@ php_flag zend.multibyte					Off
 	##### module.smart-framework/controller
 	##RewriteRule 		^(.*)?/?$ 						index.php?page=%1.$1 [QSA,L]
 	##### controller.smart-framework/module(.seo-text)(.ext)
-	##RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 		index.php?page=$1.%1 [QSA,L]
+	##RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 				index.php?page=$1.%1 [QSA,L]
 	##### module.smart-framework/controller(.ext)
-	##RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 		index.php?page=%1.$1 [QSA,L]
+	##RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 				index.php?page=%1.$1 [QSA,L]
 	###
 
 	### sample: custom 404 error page with fallback

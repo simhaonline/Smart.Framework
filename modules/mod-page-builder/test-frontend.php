@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_AREA', 'INDEX');
  */
 final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\AbstractFrontendController {
 
-	// r.20200121
+	// r.20200513
 
 	public function Run() {
 
@@ -35,17 +35,19 @@ final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\Abstract
 
 		$section = $this->RequestVarGet('section', 'test-page', 'string');
 		if((string)$section == 'test-page') {
-			if(!$this->checkIfPageOrSegmentExist('test-page')) {
+		//	if(!$this->checkIfPageOrSegmentExist('test-page')) {
+			if(!$this->checkIfPageExist('test-page')) {
 				$this->PageViewSetErrorStatus(404, 'PageBuilder SampleData Not Found ...');
 				return;
 			} //end if
 		} //end if
 
-		$this->renderBuilderPage(
+		$this->renderBuilderPage( // it does not output but set all the vars directly in the controller
 			(string)$section,				// page ID
 			'@',							// TPL Path
 			'template-test-frontend.htm', 	// TPL File
-			[ 'AREA.TOP', 'MAIN', 'AREA.FOOTER', 'TITLE', 'META-DESCRIPTION', 'META-KEYWORDS' ] // Allowed TPL Markers
+			[ 'AREA.TOP', 'MAIN', 'AREA.FOOTER', 'TITLE', 'META-DESCRIPTION', 'META-KEYWORDS' ], // Allowed TPL Markers in page Data
+			[ 'SAMPLE-MARKER' => 'this is a sample marker that have been post-rendered ... and perhaps escaped ...' ] // extra markers to render: {{=#SAMPLE-MARKER|html#=}}
 		);
 		$this->PageViewSetVar('title', 'Sample PageBuilder Frontend Page', false); // fallback title
 

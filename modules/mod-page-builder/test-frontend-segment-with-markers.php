@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_AREA', 'INDEX');
  */
 final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\AbstractFrontendController {
 
-	// r.20200121
+	// r.20200513
 
 	public function Run() {
 
@@ -41,21 +41,35 @@ final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\Abstract
 		$this->PageViewSetCfg('template-path', '@');
 		$this->PageViewSetCfg('template-file', 'template-test-frontend.htm');
 
-		$top = $this->getRenderedBuilderSegmentCode('#website-menu');
-		$main = $this->renderSegmentMarkers(
-			$this->getRenderedBuilderSegmentCode('#segment-with-markers'),
+		$top = (string) $this->getRenderedBuilderSegmentCode('#website-menu');
+		$foot = (string) $this->getRenderedBuilderSegmentCode('#website-footer');
+
+		// IMPORTANT: trying to render a segment more than once per execution will raise fatal error !
+		// thus if you have to render a sement multiple times with different extra markers can be done as this instead of the below line
+		/*
+		$segment = (string) $this->getRenderedBuilderSegmentCode('#segment-with-markers');
+		$render1 = (string) $this->renderSegmentMarkers(
+			(string) $segment,
 			[
 				'THE-MARKER' => '<b>This is a marker that should be HTML escaped</b>'
 			]
 		);
-		$foot = $this->getRenderedBuilderSegmentCode('#website-footer');
+		$render2 = (string) $this->renderSegmentMarkers(
+			(string) $segment,
+			[
+				'THE-MARKER' => 'Alternate content ...'
+			]
+		);
+		$main = (string) $render1.$render2;
+		*/
+		$main = (string) $this->getRenderedBuilderSegmentCode('#segment-with-markers', [ 'THE-MARKER' => '<b>This is a marker that should be HTML escaped</b>' ]); // render segment with extra-markers to be replaced: {{=#MODULE|html#=}}
 
 		$this->PageViewSetVars([
-			'AREA.TOP' => (string) $top,
-			'MAIN' => (string) $main,
-			'AREA.FOOTER' => (string) $foot,
-			'META-DESCRIPTION' => '',
-			'META-KEYWORDS' => ''
+			'AREA.TOP' 			=> (string) $top,
+			'MAIN' 				=> (string) $main,
+			'AREA.FOOTER' 		=> (string) $foot,
+			'META-DESCRIPTION' 	=> '',
+			'META-KEYWORDS' 	=> ''
 		]);
 
 	} //END FUNCTION
