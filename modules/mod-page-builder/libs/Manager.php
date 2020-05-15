@@ -50,7 +50,7 @@ $administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Specia
  * @access 		private
  * @internal
  *
- * @version 	v.20200513
+ * @version 	v.20200515
  * @package 	PageBuilder
  *
  */
@@ -1868,7 +1868,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 		return (string) \SmartMarkersTemplating::render_file_template(
 			self::$ModulePath.'libs/views/manager/view-list-tree.mtpl.htm',
 			[
-				'IS-DEV-MODE' 		=> (string) ((\defined('\\SMART_ERROR_HANDLER') && \SMART_ERROR_HANDLER === 'dev') ? 'yes' : 'no'),
+				'IS-DEV-MODE' 		=> (string) ((\SmartFrameworkRuntime::ifProdEnv() !== true) ? 'yes' : 'no'),
 				'SHOW-FILTER-TYPE' 	=> 'no',
 				'SHOW-TRANSLATIONS' => (string) $show_translations,
 				'ALLOW-PAGES' 		=> (string) $allow_pages,
@@ -1960,7 +1960,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 		return (string) \SmartMarkersTemplating::render_file_template(
 			(string) self::$ModulePath.'libs/views/manager/view-list.mtpl.htm',
 			[
-				'IS-DEV-MODE' 		=> (string) ((\defined('\\SMART_ERROR_HANDLER') && \SMART_ERROR_HANDLER === 'dev') ? 'yes' : 'no'),
+				'IS-DEV-MODE' 		=> (string) ((\SmartFrameworkRuntime::ifProdEnv() !== true) ? 'yes' : 'no'),
 				'SHOW-FILTER-TYPE' 	=> 'yes',
 				'SHOW-TRANSLATIONS' => (string) $show_translations,
 				'ALLOW-PAGES' 		=> (string) $allow_pages,

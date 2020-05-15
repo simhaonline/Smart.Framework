@@ -1,7 +1,7 @@
 
 #####
 ### Smart.Framework .htaccess sample for Apache 2.2 / 2.4
-### r.5.7.2 / smart.framework.v.5.7 @ 20200513
+### r.5.7.2 / smart.framework.v.5.7 @ 20200514
 ### (c) 2015-2020 unix-world.org
 #####
 
@@ -46,6 +46,7 @@ php_flag zend.multibyte					Off
 #	RewriteEngine 		On
 	###
 
+	### If a 503 document have to be set, the full request path must be provided as prefix to the document
 	### Maintenance 503 (Mod Rewrite)
 	##ErrorDocument 503 "<h1>Under Maintenance</h1>"
 	###ErrorDocument 503 /maintenance.html
@@ -91,18 +92,21 @@ php_flag zend.multibyte					Off
 	##RewriteRule 		^(.*)\.(html|stml|json|xml|rss|csv|txt|png|gif|jpg|pdf)$ 				index.php?page=%1.$1 [QSA,L]
 	###
 
-	### sample: custom 404 error page with fallback
-	##RewriteCond 		%{REQUEST_FILENAME} !-f
-	##RewriteCond 		%{REQUEST_FILENAME} !-d
-	##RewriteRule 		^(.*)\.(.*)$ 					index.php?page=$1 [QSA,L]
-	##ErrorDocument 404 								index.php?page=samples.404
+	### sample: custom 404 error page mapped via smart framework custom 404 internal handler ; it must point to some non-existing page controller ; this can be enabled only if all the above rules must solve the request and if none match then is 404, otherwise
+	#RewriteCond 		%{REQUEST_FILENAME} !-f
+	#RewriteCond 		%{REQUEST_FILENAME} !-d
+	#RewriteRule 		^(.*)$ 							index.php?page=404.not-found&req=$1 [QSA,L]
 	###
 
 #</IfModule>
 ##<IfModule !mod_rewrite.c>
-##	ErrorDocument 404 "Path not found ... Mod Rewrite is missing ..."
+##	ErrorDocument 404 	"Path not found ... Mod Rewrite is missing ..."
 ##</IfModule>
 
+### If can not map 404 through internal smart framework's custom 404 handler (only when using apache rewrite) then any of the below lines can be uncommented
+### the full request path must be provided as prefix to the document
+##ErrorDocument 404 /404.html
+##ErrorDocument 404 /index.php?page=module.404
 ###
 
 #####

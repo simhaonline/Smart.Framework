@@ -32,7 +32,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200217
+ * @version 	v.20200515
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {
@@ -201,8 +201,23 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 			} //end if
 		} //end if
 		//--
-		$template_path = (string) \SmartFileSysUtils::add_dir_last_slash(\SMART_APP_TEMPLATES_DIR.\Smart::get_from_config('app.index-template-path'));
-		$template_file = (string) \Smart::get_from_config('app.index-template-file');
+		$template_path = (string) $this->PageViewGetCfg('template-path');
+		$template_file = (string) $this->PageViewGetCfg('template-file');
+		if(((string)$template_path == '') OR ((string)$template_file == '')) {
+			$template_path = (string) \Smart::get_from_config('app.index-template-path');
+			$template_file = (string) \Smart::get_from_config('app.index-template-file');
+		} //end if
+		//--
+		if((string)$template_path == '@') {
+			$template_path = (string) $this->ControllerGetParam('module-tpl-path');
+		} else {
+			$template_path = (string) \SmartFileSysUtils::add_dir_last_slash(\SMART_APP_TEMPLATES_DIR.$template_path);
+		} //end if
+		//--
+		if($this->IfProdEnv() === true) { // avoid display details on prod env
+			$y_message = '';
+			$y_html_message = '';
+		} //end if
 		//--
 		$vars['FOOTER'] = (string) \SmartMarkersTemplating::render_file_template(
 			$this->tpldir.'error-xxx-footer.mtpl.htm',

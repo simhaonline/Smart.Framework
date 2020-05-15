@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_AREA', 'INDEX');
  */
 final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\AbstractFrontendController {
 
-	// r.20200513
+	// r.20200515
 
 	public function Run() {
 

@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.7.2'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.05.13'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.05.15'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
@@ -1027,7 +1027,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20200121
+ * @version		v.20200515
  * @package 	Application
  *
  */
@@ -1038,6 +1038,7 @@ final class SmartFrameworkRuntime {
 
 	private static $AppReleaseHash = '';
 	private static $isDebugOn = null;
+	private static $isProdEnv = null;
 	private static $isAdminArea = null;
 
 	private static $NoCacheHeadersSent = false;
@@ -1090,6 +1091,27 @@ final class SmartFrameworkRuntime {
 		} else {
 			return false;
 		} //end if else
+		//--
+	} //END FUNCTION
+	//======================================================================
+
+
+	//======================================================================
+	// if Prod Environment is ON will return TRUE, else will return FALSE
+	public static function ifProdEnv() {
+		//--
+		if(self::$isProdEnv !== null) {
+			return (bool) self::$isProdEnv;
+		} //end if
+		//--
+		self::$isProdEnv = false;
+		if(defined('SMART_ERROR_HANDLER')) {
+			if((string)SMART_ERROR_HANDLER == 'log') {
+				self::$isProdEnv = true;
+			} //end if
+		} //end if
+		//--
+		return (bool) self::$isProdEnv;
 		//--
 	} //END FUNCTION
 	//======================================================================

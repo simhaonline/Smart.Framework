@@ -48,7 +48,7 @@ define('SMART_TPL_COMPONENTS_APP_ERROR_MSG', (string)SmartFileSystem::read('lib/
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSystem, SmartTextTranslations
- * @version 	v.20200121
+ * @version 	v.20200515
  * @package 	Application:ViewComponents
  *
  */
@@ -672,42 +672,42 @@ final class SmartComponents {
 		$srvport = (string) ((($netport == 80) || ($netport == 443)) ? '' : ':'.$netport);
 		$srvproto = (string) SmartUtils::get_server_current_protocol();
 		//--
-		$arr_data['release-hash'] 				= (string) SmartFrameworkRuntime::getAppReleaseHash(); // the release hash based on app framework version, framework release and modules version
-		$arr_data['lang'] 						= (string) SmartTextTranslations::getLanguage(); 					// current language (ex: en)
-		$arr_data['charset'] 					= (string) SMART_FRAMEWORK_CHARSET;									// current charset (ex: UTF-8)
-		$arr_data['timezone'] 					= (string) SMART_FRAMEWORK_TIMEZONE; 								// current timezone (ex: UTC)
-		$arr_data['client-ip'] 					= (string) $os_bw['ip']; 											// client browser IP (ex: 127.0.0.1)
-		$arr_data['client-os'] 					= (string) $os_bw['os']; 											// client browser OS (ex: bsd)
-		$arr_data['client-is-mobile'] 			= (string) $os_bw['mobile']; 										// client browser is Mobile (yes/no)
-		$arr_data['client-class'] 				= (string) $os_bw['bc']; 											// client browser Class (ex: gk)
-		$arr_data['client-browser'] 			= (string) $os_bw['bw']; 											// client browser (ex: fox)
-		$arr_data['client-uid-cookie-name'] 	= (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME;					// client browser UID Cookie Name (as defined in etc/init.php) ; it may be required to pass this cookie name to the Javascript ...)
-		$arr_data['client-uid-cookie-domain'] 	= (string) SmartUtils::cookie_default_domain(); 					// client browser UID Cookie Domain (as defined in etc/init.php) ; it may be required to pass this cookie domain to the Javascript ...)
-		$arr_data['app-env'] 					= (string) (SMART_ERROR_HANDLER === 'log') ? 'prod' : 'dev'; 		// App Environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
-		$arr_data['app-namespace'] 				= (string) SMART_SOFTWARE_NAMESPACE;								// NameSpace from configs (as defined in etc/init.php)
-		$arr_data['app-realm'] 					= (string) $the_realm; 												// IDX (for index.php area) ; ADM (for admin.php area)
-		$arr_data['app-domain'] 				= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 		// the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain']
-		$arr_data['base-url'] 					= (string) SmartUtils::get_server_current_url(); 					// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
-		$arr_data['base-path'] 					= (string) SmartUtils::get_server_current_path(); 					// / | /sites/frameworks/smart-framework/
-		$arr_data['base-domain'] 				= (string) SmartUtils::get_server_current_basedomain_name(); 		// crr-domain.ext | IP (ex: 127.0.0.1)
-		$arr_data['srv-domain'] 				= (string) SmartUtils::get_server_current_domain_name(); 			// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
-		$arr_data['srv-ip-addr'] 				= (string) SmartUtils::get_server_current_ip(); 					// current server IP (ex: 127.0.0.1)
-		$arr_data['srv-proto'] 					= (string) $srvproto; 												// http:// | https://
-		$arr_data['net-proto'] 					= (string) ((string)$srvproto == 'https://') ? 'https' : 'http'; 	// http | https
-		$arr_data['srv-port'] 					= (string) $srvport; 												// '' | ''  | ':8080' ... (the current server port address ; empty for port 80 and 443 ; for the rest of ports will be :portnumber)
-		$arr_data['net-port'] 					= (string) $netport; 												// 80 | 443 | 8080 ... (the current server port)
-		$arr_data['srv-script'] 				= (string) SmartUtils::get_server_current_script(); 				// index.php | admin.php
-		$arr_data['srv-urlquery'] 				= (string) SmartUtils::get_server_current_queryurl(); 				// ?page=some.page&ofs=...
-		$arr_data['srv-requri'] 				= (string) SmartUtils::get_server_current_request_uri(); 			// page.html
-		$arr_data['timeout-execution'] 			= (int)    SMART_FRAMEWORK_EXECUTION_TIMEOUT; 						// execution timeout
-		$arr_data['timeout-netsocket'] 			= (int)    SMART_FRAMEWORK_NETSOCKET_TIMEOUT; 						// netsocket timeout
-		$arr_data['time-date-start'] 			= (string) date('Y-m-d H:i:s O'); 									// date time start
-		$arr_data['auth-login-ok'] 				= (string) (SmartAuth::check_login() === true ? 'yes' : 'no'); 		// Auth Login OK: yes/no
-		$arr_data['auth-login-id'] 				= (string) SmartAuth::get_login_id(); 								// Auth Login ID
-		$arr_data['auth-login-alias'] 			= (string) SmartAuth::get_login_alias(); 							// Auth Login Alias (UserName)
-		$arr_data['auth-login-fullname'] 		= (string) SmartAuth::get_login_fullname(); 						// Auth Login FullName
-		$arr_data['auth-login-privileges'] 		= (string) SmartAuth::get_login_privileges(); 						// Auth Login Privileges
-		$arr_data['debug-mode'] 				= (string) (SmartFrameworkRuntime::ifDebug() ? 'yes' : 'no'); 		// yes | no
+		$arr_data['release-hash'] 				= (string) SmartFrameworkRuntime::getAppReleaseHash(); 						// the release hash based on app framework version, framework release and modules version
+		$arr_data['lang'] 						= (string) SmartTextTranslations::getLanguage(); 							// current language (ex: en)
+		$arr_data['charset'] 					= (string) SMART_FRAMEWORK_CHARSET;											// current charset (ex: UTF-8)
+		$arr_data['timezone'] 					= (string) SMART_FRAMEWORK_TIMEZONE; 										// current timezone (ex: UTC)
+		$arr_data['client-ip'] 					= (string) $os_bw['ip']; 													// client browser IP (ex: 127.0.0.1)
+		$arr_data['client-os'] 					= (string) $os_bw['os']; 													// client browser OS (ex: bsd)
+		$arr_data['client-is-mobile'] 			= (string) $os_bw['mobile']; 												// client browser is Mobile (yes/no)
+		$arr_data['client-class'] 				= (string) $os_bw['bc']; 													// client browser Class (ex: gk)
+		$arr_data['client-browser'] 			= (string) $os_bw['bw']; 													// client browser (ex: fox)
+		$arr_data['client-uid-cookie-name'] 	= (string) SMART_FRAMEWORK_UNIQUE_ID_COOKIE_NAME;							// client browser UID Cookie Name (as defined in etc/init.php) ; it may be required to pass this cookie name to the Javascript ...)
+		$arr_data['client-uid-cookie-domain'] 	= (string) SmartUtils::cookie_default_domain(); 							// client browser UID Cookie Domain (as defined in etc/init.php) ; it may be required to pass this cookie domain to the Javascript ...)
+		$arr_data['app-env'] 					= (string) (SmartFrameworkRuntime::ifProdEnv() === true) ? 'prod' : 'dev'; 	// App Environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
+		$arr_data['app-namespace'] 				= (string) SMART_SOFTWARE_NAMESPACE;										// NameSpace from configs (as defined in etc/init.php)
+		$arr_data['app-realm'] 					= (string) $the_realm; 														// IDX (for index.php area) ; ADM (for admin.php area)
+		$arr_data['app-domain'] 				= (string) Smart::get_from_config('app.'.$the_area.'-domain'); 				// the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain']
+		$arr_data['base-url'] 					= (string) SmartUtils::get_server_current_url(); 							// http(s)://crr-subdomain.crr-domain.ext/ | http(s)://crr-domain.ext/ | http(s)://127.0.0.1/sites/frameworks/smart-framework/
+		$arr_data['base-path'] 					= (string) SmartUtils::get_server_current_path(); 							// / | /sites/frameworks/smart-framework/
+		$arr_data['base-domain'] 				= (string) SmartUtils::get_server_current_basedomain_name(); 				// crr-domain.ext | IP (ex: 127.0.0.1)
+		$arr_data['srv-domain'] 				= (string) SmartUtils::get_server_current_domain_name(); 					// crr-subdomain.crr-domain.ext | crr-domain.ext | IP
+		$arr_data['srv-ip-addr'] 				= (string) SmartUtils::get_server_current_ip(); 							// current server IP (ex: 127.0.0.1)
+		$arr_data['srv-proto'] 					= (string) $srvproto; 														// http:// | https://
+		$arr_data['net-proto'] 					= (string) ((string)$srvproto == 'https://') ? 'https' : 'http'; 			// http | https
+		$arr_data['srv-port'] 					= (string) $srvport; 														// '' | ''  | ':8080' ... (the current server port address ; empty for port 80 and 443 ; for the rest of ports will be :portnumber)
+		$arr_data['net-port'] 					= (string) $netport; 														// 80 | 443 | 8080 ... (the current server port)
+		$arr_data['srv-script'] 				= (string) SmartUtils::get_server_current_script(); 						// index.php | admin.php
+		$arr_data['srv-urlquery'] 				= (string) SmartUtils::get_server_current_queryurl(); 						// ?page=some.page&ofs=...
+		$arr_data['srv-requri'] 				= (string) SmartUtils::get_server_current_request_uri(); 					// page.html
+		$arr_data['timeout-execution'] 			= (int)    SMART_FRAMEWORK_EXECUTION_TIMEOUT; 								// execution timeout
+		$arr_data['timeout-netsocket'] 			= (int)    SMART_FRAMEWORK_NETSOCKET_TIMEOUT; 								// netsocket timeout
+		$arr_data['time-date-start'] 			= (string) date('Y-m-d H:i:s O'); 											// date time start
+		$arr_data['auth-login-ok'] 				= (string) (SmartAuth::check_login() === true ? 'yes' : 'no'); 				// Auth Login OK: yes/no
+		$arr_data['auth-login-id'] 				= (string) SmartAuth::get_login_id(); 										// Auth Login ID
+		$arr_data['auth-login-alias'] 			= (string) SmartAuth::get_login_alias(); 									// Auth Login Alias (UserName)
+		$arr_data['auth-login-fullname'] 		= (string) SmartAuth::get_login_fullname(); 								// Auth Login FullName
+		$arr_data['auth-login-privileges'] 		= (string) SmartAuth::get_login_privileges(); 								// Auth Login Privileges
+		$arr_data['debug-mode'] 				= (string) (SmartFrameworkRuntime::ifDebug() ? 'yes' : 'no'); 				// yes | no
 		//--
 		return (array) $arr_data;
 		//--

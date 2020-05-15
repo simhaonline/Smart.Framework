@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderFrontend {
 
 	// ::
-	// v.20200513
+	// v.20200515
 
 
 	private static $db = null;
@@ -177,7 +177,7 @@ final class PageBuilderFrontend {
 			return array();
 		} //end if else
 		//--
-		if((string)\SMART_ERROR_HANDLER == 'dev') {
+		if(\SmartFrameworkRuntime::ifProdEnv() !== true) {
 			if((string)self::dbType() == 'pgsql') {
 				\SmartPgsqlDb::write_data(
 					'UPDATE "web"."page_builder" SET "counter" = "counter" + 1 WHERE (("id" = $1) AND ("active" = 1))',
@@ -237,7 +237,7 @@ final class PageBuilderFrontend {
 			return array();
 		} //end if else
 		//--
-		if((string)\SMART_ERROR_HANDLER == 'dev') {
+		if(\SmartFrameworkRuntime::ifProdEnv() !== true) {
 			if((string)self::dbType() == 'pgsql') {
 				\SmartPgsqlDb::write_data(
 					'UPDATE "web"."page_builder" SET "counter" = "counter" + 1 WHERE ("id" = $1)',

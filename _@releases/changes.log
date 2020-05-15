@@ -2,6 +2,12 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+May 15, 2020 :: Version 5.7.2 rev.20200515
+	* New Features for PageBuilder
+	* New functionaluty to test if DEV or PROD environment
+	* Several small fixes and optimizations
+	* Update all documentation
+
 May 13, 2020 :: Version 5.7.2 rev.20200513
 	* New Features for PageBuilder
 	* Bug Fixes for PageBuilder

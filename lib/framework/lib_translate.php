@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartPersistentCache, SmartAdapterTextTranslations
- * @version 	v.20200121
+ * @version 	v.20200515
  * @package 	@Core:Translations
  *
  */
@@ -623,7 +623,7 @@ final class SmartTextTranslations {
 			$the_lang = (string) self::getLanguage(); // use default language
 		} //end if else
 		//--
-		if((string)SMART_ERROR_HANDLER == 'dev') {
+		if(SmartFrameworkRuntime::ifProdEnv() !== true) {
 			if(self::checkSourceParser() === true) {
 				SmartAdapterTextTranslations::setTranslationsKeyUsageCount($the_lang, $y_area, $y_subarea, $y_textkey);
 			} //end if
@@ -939,7 +939,7 @@ final class SmartTextTranslations {
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartTextTranslations
- * @version 	v.20200121
+ * @version 	v.20200515
  * @package 	@Core:Translations
  *
  */
@@ -1051,7 +1051,7 @@ final class SmartTextTranslator {
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200515
  * @package 	development:@Core
  *
  */
@@ -1087,7 +1087,7 @@ interface SmartInterfaceAdapterTextTranslations {
 	/**
 	 * Register the usage (increment counter or register in logs) for a Regional Text Translation into Source or alternate source by: Language, Area, Subarea, Key
 	 * This function must implement a way to increment or register the usage of every used pair of Language/Area/Subarea/Key as it was used to help the cleanup of unused translations.
-	 * This function will operate only in DEV mode (SMART_ERROR_HANDLER == 'dev') and add in init.php: define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS', true);
+	 * This function will operate only in DEV mode (SmartFrameworkRuntime::ifProdEnv() !== true) and add in init.php: define('SMART_FRAMEWORK__DEBUG__TEXT_TRANSLATIONS', true);
 	 * It can be implemented to write into one of the variety of sources: Text/CSV, Database, ...
 	 * RETURN: N/A
 	 */

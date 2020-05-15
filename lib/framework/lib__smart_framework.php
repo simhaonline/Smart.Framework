@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20200121
+ * @version 	v.20200515
  * @package 	development:Application
  *
  */
@@ -392,7 +392,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		//--
 		$ctrl_arr = (array) explode('.', (string)$y_controller);
 		//--
-		$this->appenv 			= (string) (SMART_ERROR_HANDLER === 'log') ? 'prod' : 'dev'; 				// app environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
+		$this->appenv 			= (string) (SmartFrameworkRuntime::ifProdEnv() === true) ? 'prod' : 'dev'; 	// app environment: dev | prod :: {{{SYNC-APP-ENV-SETT}}}
 		$this->releasehash 		= (string) SmartFrameworkRuntime::getAppReleaseHash(); 						// the release hash based on app framework version, framework release and modules version
 		$this->modulearea 		= (string) $param_area; 													// index | admin
 		$this->modulepath 		= (string) $y_module_path; 													// modules/mod-something/
@@ -442,9 +442,23 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
+	 * Test if Prod Environment is On
+	 *
+	 * @return 	BOOLEAN					:: TRUE if 'prod' environment is ON, FALSE if not (FALSE if 'dev')
+	 */
+	final public function IfProdEnv() {
+		//--
+		return (bool) SmartFrameworkRuntime::ifProdEnv();
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Test if Debug is On
 	 *
-	 * @return 	BOOLEAN					:: TRUE if Debug is ON, FALSE if not
+	 * @return 	BOOLEAN					:: TRUE if DEBUG is ON, FALSE if not
 	 */
 	final public function IfDebug() {
 		//--
@@ -565,7 +579,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @param 	ENUM 		$param 		:: The selected parameter
 	 * The valid param values are:
-	 * 		app-env 					:: 		ex: dev | prod (based on SMART_ERROR_HANDLER)
+	 * 		app-env 					:: 		ex: dev | prod ; based on: SmartFrameworkRuntime::ifProdEnv()
 	 * 		app-namespace 				:: 		ex: smartframework.default (the app namespace as defined in etc/init.php)
 	 * 		app-domain 					:: 		ex: 127.0.0.1|localhost|sdom.dom.ext|dom.ext (the domain set in configs, that may differ by area: $configs['app']['index-domain'] | $configs['app']['admin-domain'])
 	 * 		release-hash 				:: 		ex: 29bp3w (the release hash based on app framework version, framework release and modules version)
@@ -1009,6 +1023,34 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 		$this->pageheaders = array();
 		//--
 		return true;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get a specific value of the current controller from PageView Settings (Cfgs)
+	 *
+	 * @param 	STRING 		$param		:: the parameter to be get
+	 *
+	 * @return 	STRING					:: The value currently set in CFGs if any or an empty string
+	 */
+	final public function PageViewGetCfg($param) {
+		//--
+		if((is_array($param)) OR (is_object($param)) OR ((string)$param == '')) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # '.__METHOD__.'(): Invalid Parameter Type: '.$param);
+			return '';
+		} //end if
+		//--
+		$param = (string) strtolower((string)$param);
+		//--
+		if(!in_array((string)$param, (array)$this->availsettings)) {
+			Smart::log_notice('Page Controller: '.$this->controller.' # '.__METHOD__.'(): Invalid Parameter: '.$param);
+			return '';
+		} //end if
+		//--
+		return (string) $this->pagesettings[(string)$param];
 		//--
 	} //END FUNCTION
 	//=====

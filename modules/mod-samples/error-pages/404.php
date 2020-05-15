@@ -14,7 +14,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 /**
  * Function: Custom 404 Answer (can be customized on your needs ...)
  *
- * @version		20200121
+ * @version		20200515
  *
  * @access 		private
  * @internal
@@ -41,15 +41,25 @@ function custom_http_message_404_notfound($y_message, $y_html_message='') {
 /**
  * Class: Custom 404 Answer (used for the advanced implementation)
  *
- * @version		20200121
+ * @version		20200515
  *
  * @access 		private
  * @internal
  *
  */
 class CustomErr404 extends \SmartModExtLib\Samples\ErrorXxx {
+
 	protected $errcode = 404;
 	protected $errtext = 'Not Found';
+
+//	public function Initialize() {
+//		//--
+//		$this->PageViewSetCfg('template-path', '@'); 					// set template path to this module
+//		$this->PageViewSetCfg('template-file', 'template-err-xxx.htm'); // the default template
+//		//--
+//	} //END FUNCTION
+
+
 } //END CLASS
 
 
