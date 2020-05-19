@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200519
  *
  */
 final class TestUnitFileSystem {
@@ -642,6 +642,28 @@ final class TestUnitFileSystem {
 				$the_test = 'GET STORAGE DIR [DEVELOPMENT]: get_storage() : '.'_scripts/';
 				$tests[] = $the_test;
 				$result = (new \SmartGetFileSystem(true))->get_storage('_scripts/', true, true);
+				if(\Smart::array_size($result) <= 0) {
+					$err = 'ERROR :: '.$the_test.' #RESULT=NOT-ARRAY';
+				} else {
+					if(\Smart::array_size($result['list-dirs']) <= 0) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-dirs]=NOT-ARRAY';
+					} //end if
+					if(\Smart::array_size($result['list-dirs']) != (int)$result['dirs']) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-dirs]!=RESULT[dirs]';
+					} //end if
+					if(\Smart::array_size($result['list-files']) <= 0) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-files]=NOT-ARRAY';
+					} //end if
+					if(\Smart::array_size($result['list-files']) != (int)$result['files']) {
+						$err = 'ERROR :: '.$the_test.' #RESULT[list-files]!=RESULT[files]';
+					} //end if
+				} //end if
+			} //end if
+			//--
+			if((string)$err == '') {
+				$the_test = 'SEARCH DIR [DEVELOPMENT]: search_files() : '.'_scripts/';
+				$tests[] = $the_test;
+				$result = (new \SmartGetFileSystem(true))->search_files(true, '_scripts', false, '.sh', 0, '', '', true);
 				if(\Smart::array_size($result) <= 0) {
 					$err = 'ERROR :: '.$the_test.' #RESULT=NOT-ARRAY';
 				} else {

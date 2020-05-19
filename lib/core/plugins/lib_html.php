@@ -30,7 +30,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200415
+ * @version 	v.20200519
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -509,7 +509,7 @@ final class SmartHtmlParser {
 						$notice_log = '';
 						foreach($errors as $z => $error) {
 							if(is_object($error)) {
-								$notice_log .= 'PARSE-ERROR: ['.$the_ercode.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Code: '.$error->code.' / Message: '.$error->message."\n";
+								$notice_log .= 'FORMAT-ERROR: ['.$error->code.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Message: '.trim((string)$error->message)."\n";
 							} //end if
 						} //end foreach
 						if((string)$notice_log != '') {

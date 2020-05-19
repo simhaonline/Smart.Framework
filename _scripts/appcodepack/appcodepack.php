@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20200511.1855'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200519.0933'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2284,7 +2284,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20200511 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200519 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3376,7 +3376,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### Smart v.20200505
+	//##### Smart v.20200519
 
 
 	//================================================================
@@ -3541,7 +3541,7 @@ Options -Indexes
 	 */
 	public static function real_path($y_path) {
 		//--
-		$y_path = (string) trim((string)$y_path);
+		$y_path = (string) $y_path; // do not TRIM !!
 		//--
 		$the_path = (string) @realpath((string)$y_path);
 		//--
@@ -3561,7 +3561,7 @@ Options -Indexes
 	 */
 	public static function dir_name($y_path) {
 		//--
-		$y_path = (string) trim((string)$y_path);
+		$y_path = (string) $y_path; // do not TRIM !!
 		//--
 		$dir_name = (string) dirname((string)$y_path);
 		//--
@@ -3583,8 +3583,8 @@ Options -Indexes
 	 */
 	public static function base_name($y_path, $y_suffix='') {
 		//--
-		$y_path = (string) trim((string)$y_path);
-		$y_suffix = (string) trim((string)$y_suffix);
+		$y_path = (string) $y_path; // do not TRIM !!
+		$y_suffix = (string) $y_suffix; // do not TRIM !!
 		//--
 		if((string)$y_suffix != '') {
 			$base_name = (string) basename($y_path, $y_suffix);

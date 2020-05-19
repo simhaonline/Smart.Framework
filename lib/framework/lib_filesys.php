@@ -173,7 +173,7 @@ final class SmartFileSysUtils {
 			} //end if
 		} //end if
 		//-- test max path length
-		if(((int)strlen($y_path) > 1024) OR ((int)strlen($y_path) > (int)PHP_MAXPATHLEN)) {
+		if(((int)strlen($y_path) > 1024) OR ((int)strlen($y_path) > (int)PHP_MAXPATHLEN)) { // IMPORTANT: this also protects against cycled loops that can occur when scanning linked folders
 			return 0; // path is longer than the allowed path max length by PHP_MAXPATHLEN between 512 to 4096 (safe is 1024)
 		} //end if
 		//--
@@ -3191,17 +3191,24 @@ final class SmartFileSystem {
  * Files and Folders must contain ONLY safe characters as: `[a-z] [A-Z] [0-9] _ - . @ #` ; folders can also contain slashes `/` (as path separators); no spaces are allowed in paths !!
  *
  * <code>
- * // Usage example:
+ *
+ * // Get Storage example:
  * $filesys = new SmartGetFileSystem(true);
  * $data = $filesys->get_storage('my_dir/my_subdir');
  * print_r($data);
+ *
+ * // Search for Files example:
+ * $obj = new SmartGetFileSystem();
+ * $arr = $obj->search_files(true, 'uploads/', false, '.svg', '100');
+ * print_r($arr);
+ *
  * </code>
  *
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  * @hints 		This class can handle thread concurency to the filesystem in a safe way by using the LOCK_EX (lock exclusive) feature on each file written / appended thus making also reads to be safe
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200519
  * @package 	@Core:FileSystem
  *
  */
@@ -3222,6 +3229,7 @@ final class SmartGetFileSystem {
 	private $num_files 				= 0;
 	private $pattern_file_matches 	= array();
 	private $pattern_dir_matches 	= array();
+	private $scanned_folders 		= array();
 	private $errors_arr 			= array();
 	//--
 	private $pattern_search_str		= '';
@@ -3256,6 +3264,7 @@ final class SmartGetFileSystem {
 		$this->num_files = 0;
 		$this->pattern_file_matches = array();
 		$this->pattern_dir_matches = array();
+		$this->scanned_folders = array();
 		$this->errors_arr = array();
 		//--
 	} //END FUNCTION
@@ -3293,7 +3302,7 @@ final class SmartGetFileSystem {
 		$arr = array(); // {{{SYNC-SmartGetFileSystem-Output}}}
 		//--
 		$arr['quota'] 		= 0; //this will be set later
-		$arr['path'] 		= $dir_name;
+		$arr['path'] 		= (string) $dir_name;
 		$arr['reccuring'] 	= (string) $recurring;
 		$arr['search@max-files'] = $this->limit_search_files;
 		$arr['search@pattern'] = $this->pattern_search_str;
@@ -3349,14 +3358,14 @@ final class SmartGetFileSystem {
 		$arr = array(); // {{{SYNC-SmartGetFileSystem-Output}}}
 		//--
 		$arr['quota'] 		= 0; //this will be set later
-		$arr['path'] 		= $dir_name;
+		$arr['path'] 		= (string) $dir_name;
 		$arr['reccuring'] 	= (string) $recurring;
 		$arr['search@max-files'] = $this->limit_search_files;
 		$arr['search@pattern'] = $this->pattern_search_str;
 		$arr['restrict@dir-containing-file'] = $this->search_prevent_file;
 		$arr['restrict@dir-override'] = $this->search_prevent_override;
 		//--
-		$arr['errors'] 		= $this->errors_arr;
+		$arr['errors'] 		= (array) $this->errors_arr;
 		//--
 		$arr['size']		= $this->num_size;
 		$arr['size-dirs']	= $this->num_dirs_size;
@@ -3370,6 +3379,23 @@ final class SmartGetFileSystem {
 		$arr['list-files'] 	= $this->pattern_file_matches;
 		//--
 		return (array) $arr ;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	private function get_std_real_dir_path($relative_or_linked_path) {
+		//--
+		$relative_or_linked_path = (string) $relative_or_linked_path;
+		if((string)$relative_or_linked_path == '') {
+			return '';
+		} //end if
+		//--
+		$relative_or_linked_path = (string) Smart::real_path((string)$relative_or_linked_path);
+		$relative_or_linked_path = (string) rtrim($relative_or_linked_path, '/');
+		//--
+		return (string) $relative_or_linked_path;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -3401,8 +3427,13 @@ final class SmartGetFileSystem {
 		$this->search_prevent_override = $search_prevent_override;
 		//--
 		if((SmartFileSystem::path_exists($dir_name)) AND (!SmartFileSystem::is_type_file($dir_name))) { // can be dir or link
-			//list
-			//--
+			//-- circular reference check for linked dirs that can trap execution into an infinite loop ; catch here ... otherwise will be catched by the max path lenth allowance
+			if(((int)$this->scanned_folders[(string)$this->get_std_real_dir_path($dir_name)] > 1)) {
+			//	Smart::log_notice(__METHOD__.'() // ReadsFolderRecurring // Cycle Trap Linked Dir Detected for: '.$dir_name);
+				$this->errors_arr[] = (string) $dir_name;
+				return; // this function does not return anything, but just stop here in this case
+			} //end if
+			//-- list
 			$arr_dir_files = scandir((string)$dir_name); // mixed: can be array or false
 			//--
 			//if($handle = opendir($dir_name)) {
@@ -3441,7 +3472,28 @@ final class SmartGetFileSystem {
 								} //end if
 							} else {
 								if(($this->limit_search_files <= 0) OR (Smart::array_size($this->pattern_file_matches) < $this->limit_search_files)) {
-									if(((string)$search_pattern == '*') OR (((string)$search_pattern == '[image]') AND ((substr($file, -4, 4) == '.png') OR (substr($file, -4, 4) == '.gif') OR (substr($file, -4, 4) == '.jpg') OR (substr($file, -5, 5) == '.jpeg'))) OR (((string)$search_pattern != '*') AND ((string)$search_pattern != '[image]') AND (stripos($file, $search_pattern) !== false))) {
+									if(
+										((string)$search_pattern == '*') OR
+										(
+											((string)$search_pattern == '[image]') AND
+											(
+												(substr($file, -4, 4) == '.png') OR
+												(substr($file, -4, 4) == '.gif') OR
+												(substr($file, -4, 4) == '.jpg') OR
+												(substr($file, -5, 5) == '.jpeg')
+												// TODO: add support for .webp
+											)
+										) OR
+										(
+											((string)$search_pattern != '*') AND
+											((string)$search_pattern != '[image]') AND
+											(
+												((strpos($search_pattern, '*') !== false) AND (stripos($file, str_replace('*', '', $search_pattern)) !== false)) // search for file contains the pattern # TODO: try to parse this in a more fancy way ...
+												OR
+												((strpos($search_pattern, '*') === false) AND (stripos(strrev($file), strrev($search_pattern)) === 0)) // search for file ends with pattern
+											)
+										)
+									) {
 										if($tmp_allow_addition) {
 											if($this->list_files_and_dirs) {
 												$tmp_add_pattern = 1;
@@ -3483,6 +3535,8 @@ final class SmartGetFileSystem {
 										//--
 									} //end if
 									//--
+									$this->scanned_folders[(string)$this->get_std_real_dir_path($dir_name.$file)]++;
+									//--
 									if($recurring) {
 										//-- we go search inside even if this folder name may not match the search pattern, it is a folder, except if dissalow addition from above
 										$this->folder_iterator($recurring, SmartFileSysUtils::add_dir_last_slash($dir_name.$file), $include_dot_files, $search_pattern, $search_prevent_file, $search_prevent_override);
@@ -3514,7 +3568,7 @@ final class SmartGetFileSystem {
 								} //end else
 								//--
 							} else {
-								//-- link
+								//-- link: dir or file or broken link
 								if($tmp_allow_addition) {
 									//--
 									$link_origin = (string) SmartFileSystem::link_get_origin($dir_name.$file);
@@ -3537,6 +3591,7 @@ final class SmartGetFileSystem {
 											$this->num_size += $tmp_fsize;
 											if($tmp_add_pattern) {
 												if(SmartFileSystem::is_type_dir($dir_name.$file)) {
+													//--
 													$this->num_dirs++;
 													$this->num_dirs_size += $tmp_fsize;
 													if($recurring) { // if recurring, add the full path
@@ -3544,7 +3599,20 @@ final class SmartGetFileSystem {
 													} else { // if not recurring, add just base path, without dir name prefix
 														$this->pattern_dir_matches[$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
 													} //end if else
+													//--
+													if((string)$this->get_std_real_dir_path($link_origin) != (string)$this->get_std_real_dir_path($dir_name.$file)) { // avoid register if this is the same as the linked folder (this happen in rare situations ; ex: with the 1st sub-level linked folders)
+														$this->scanned_folders[(string)$this->get_std_real_dir_path($link_origin)]++; // if link origin real path is different, register it too
+													} //end if
+													$this->scanned_folders[(string)$this->get_std_real_dir_path($dir_name.$file)]++;
+													//--
+													if($recurring) {
+														//-- we go search inside even if this folder name may not match the search pattern, it is a folder, except if dissalow addition from above
+														$this->folder_iterator($recurring, SmartFileSysUtils::add_dir_last_slash($dir_name.$file), $include_dot_files, $search_pattern, $search_prevent_file, $search_prevent_override);
+														//--
+													} //end if
+													//--
 												} else {
+													//--
 													$this->num_files++;
 													$this->num_files_size += $tmp_fsize;
 													if($recurring) { // if recurring, add the full path
@@ -3552,6 +3620,7 @@ final class SmartGetFileSystem {
 													} else { // if not recurring, add just base path, without dir name prefix
 														$this->pattern_file_matches[$file] = SmartFileSystem::get_file_mtime($dir_name.$file);
 													} //end if else
+													//--
 												} //end if else
 											} //end if
 											//--
@@ -3576,7 +3645,7 @@ final class SmartGetFileSystem {
 				//---------------------------------------
 			} else {
 				//---------------------------------------
-				$this->errors_arr[] = $dir_name;
+				$this->errors_arr[] = (string) $dir_name;
 				//---------------------------------------
 			} //end else
 			//--
@@ -3591,13 +3660,6 @@ final class SmartGetFileSystem {
 
 
 } //END CLASS
-
-//----- USAGE
-// $obj = new SmartGetFileSystem();
-// $arr = $obj->get_storage('uploads/');
-// $arr = $obj->search_files(true, 'uploads/', false, 'part of file', '100');
-// print_r($arr);
-//-----
 
 
 //=====================================================================================

@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200507
+ * @version     v.20200519
  * @package     @Core
  *
  */
@@ -147,7 +147,7 @@ final class Smart {
 	 */
 	public static function real_path($y_path) {
 		//--
-		$y_path = (string) trim((string)$y_path);
+		$y_path = (string) $y_path; // do not TRIM !!
 		//--
 		$the_path = (string) @realpath((string)$y_path);
 		//--
@@ -167,7 +167,7 @@ final class Smart {
 	 */
 	public static function dir_name($y_path) {
 		//--
-		$y_path = (string) trim((string)$y_path);
+		$y_path = (string) $y_path; // do not TRIM !!
 		//--
 		$dir_name = (string) dirname((string)$y_path);
 		//--
@@ -189,8 +189,8 @@ final class Smart {
 	 */
 	public static function base_name($y_path, $y_suffix='') {
 		//--
-		$y_path = (string) trim((string)$y_path);
-		$y_suffix = (string) trim((string)$y_suffix);
+		$y_path = (string) $y_path; // do not TRIM !!
+		$y_suffix = (string) $y_suffix; // do not TRIM !!
 		//--
 		if((string)$y_suffix != '') {
 			$base_name = (string) basename($y_path, $y_suffix);
@@ -214,7 +214,7 @@ final class Smart {
 	 */
 	public static function path_info($y_path) {
 		//--
-		$y_path = trim((string)$y_path);
+		$y_path = (string) $y_path; // do not TRIM !!
 		//--
 		$path_info = (array) pathinfo($y_path, PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME);
 		//--

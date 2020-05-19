@@ -194,7 +194,7 @@ function app__err__handler__catch_fatal_errs() {
 //##### #END: SHARED INIT
 
 //==
-define('APPCODEUNPACK_VERSION', 'v.20200511.1855'); // current version of this script
+define('APPCODEUNPACK_VERSION', 'v.20200519.0933'); // current version of this script
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
 header('Pragma: no-cache'); 																// HTTP 1.0
@@ -986,7 +986,7 @@ abstract class AppCodePackAbstractUpgrade {
 final class AppPackUtils {
 
 	// ::
-	// v.20200511 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200519 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -2078,7 +2078,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### Smart v.20200505
+	//##### Smart v.20200519
 
 
 	//================================================================
@@ -2243,7 +2243,7 @@ Options -Indexes
 	 */
 	public static function real_path($y_path) {
 		//--
-		$y_path = (string) trim((string)$y_path);
+		$y_path = (string) $y_path; // do not TRIM !!
 		//--
 		$the_path = (string) @realpath((string)$y_path);
 		//--
@@ -2263,7 +2263,7 @@ Options -Indexes
 	 */
 	public static function dir_name($y_path) {
 		//--
-		$y_path = (string) trim((string)$y_path);
+		$y_path = (string) $y_path; // do not TRIM !!
 		//--
 		$dir_name = (string) dirname((string)$y_path);
 		//--
@@ -2285,8 +2285,8 @@ Options -Indexes
 	 */
 	public static function base_name($y_path, $y_suffix='') {
 		//--
-		$y_path = (string) trim((string)$y_path);
-		$y_suffix = (string) trim((string)$y_suffix);
+		$y_path = (string) $y_path; // do not TRIM !!
+		$y_suffix = (string) $y_suffix; // do not TRIM !!
 		//--
 		if((string)$y_suffix != '') {
 			$base_name = (string) basename($y_path, $y_suffix);

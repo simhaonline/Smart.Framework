@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access      PUBLIC
  * @depends     extensions: PHP XML ; classes: Smart
- * @version     v.20200121
+ * @version     v.20200519
  * @package     Plugins:ConvertersAndParsers
  *
  */
@@ -151,7 +151,7 @@ final class SmartXmlParser {
 				$notice_log = '';
 				foreach($errors as $z => $error) {
 					if(is_object($error)) {
-						$notice_log .= 'FORMAT-ERROR: ['.$error->code.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Message: '.$error->message."\n";
+						$notice_log .= 'FORMAT-ERROR: ['.$error->code.'] / Level: '.$error->level.' / Line: '.$error->line.' / Column: '.$error->column.' / Message: '.trim((string)$error->message)."\n";
 					} //end if
 				} //end foreach
 				if((string)$notice_log != '') {
@@ -675,7 +675,7 @@ final class SmartXmlParser {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.20200121
+ * @version     v.20200519
  * @package     Plugins:ConvertersAndParsers
  *
  */
@@ -755,7 +755,7 @@ final class SmartXmlComposer {
 				} else {
 					$out .= '<'.Smart::escape_html($key).'>'."\n".$this->CreateFromArr($val).'</'.Smart::escape_html($key).'>'."\n";
 				} //end if else
-			} elseif((string)$val != '') {
+			} elseif((string)trim((string)$val) != '') {
 				$out .= '<'.Smart::escape_html($key).'>'.Smart::escape_html($val).'</'.Smart::escape_html($key).'>'."\n";
 			} else {
 				$out .= '<'.Smart::escape_html($key).' />'."\n";
