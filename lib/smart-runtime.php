@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.7.2'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.05.19'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.06.03'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
@@ -1595,7 +1595,8 @@ final class SmartFrameworkRuntime {
 	// this will set the app language by sub-domain (this is a special case because by default the language is set by URL Parameter or Cookie)
 	// if en is the default languages will result something like: (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
 	// the default language will be mapped by default to www sub-domain ; the rest of available languages will be mapped as language code as sub-domain
-	public static function AppSetLanguageBySubdomain() { // r.20200121
+	// Example: $arr_skip_subdomains = [ 'sdom1', 'sdom2', ... ]; // the list of subdomains that are excepted
+	public static function AppSetLanguageBySubdomain($arr_skip_subdomains=[]) { // r.20200603
 		//--
 		$sdom = (string) SmartUtils::get_server_current_domain_name();
 		if((string)SmartValidator::validate_filter_ip_address($sdom) != '') {
@@ -1610,13 +1611,21 @@ final class SmartFrameworkRuntime {
 		$pdom = (string) substr($sdom, 0, (strlen($sdom)-strlen($dom)-1));
 		//--
 		SmartTextTranslations::setLanguage((string)SmartTextTranslations::getDefaultLanguage()); // EN
+		//--
 		if((string)$pdom != 'www') {
+			//--
 			if(SmartTextTranslations::validateLanguage($pdom)) {
 				SmartTextTranslations::setLanguage($pdom); // set only other languages if valid: RO, DE, ...
 			} else {
+				if(Smart::array_size($arr_skip_subdomains) > 0) {
+					if(in_array((string)$pdom, (array)$arr_skip_subdomains)) {
+						return;
+					} //end if
+				} //end if
 				http_response_code(301); // permanent redirect if the language code is not valid
 				self::outputHttpSafeHeader('Location: '.SmartUtils::get_server_current_protocol().'www.'.SmartUtils::get_server_current_basedomain_name()); // force redirect
 			} //end if
+			//--
 		} //end if else
 		//--
 	} //END FUNCTION
