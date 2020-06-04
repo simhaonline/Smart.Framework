@@ -71,7 +71,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:MySQL
  *
  */
@@ -1802,7 +1802,7 @@ final class SmartMysqliDb {
  * @hints		This class have no catcheable Exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just Exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP MySQLi ; classes: Smart, SmartUnicode, SmartUtils, SmartComponents
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:MySQL
  *
  */
@@ -1822,7 +1822,7 @@ final class SmartMysqliExtDb {
 	 * @param ARRAY $y_configs_arr 					:: The Array of Configuration parameters - the ARRAY STRUCTURE should be identical with the default config.php: $configs['mysqli'].
 	 *
 	 */
-	public function __construct($y_configs_arr) {
+	public function __construct(array $y_configs_arr) {
 		//--
 		$y_configs_arr = (array) $y_configs_arr;
 		//-- {{{SYNC-CONNECTIONS-IDS}}}

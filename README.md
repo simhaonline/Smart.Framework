@@ -41,7 +41,7 @@ The original software architecture of this web framework allows it to deliver a 
 	- caching policies can be controlled to expire based on content / GET or POST variables INPUT even with changing COOKIES
 
 
-#### This software framework is compatible, stable and actively tested with PHP 7.1 / 7.2 / 7.3 / 7.4 versions.
+#### This software framework is compatible, stable and actively tested with PHP 7.2 / 7.3 / 7.4 versions.
 **Prefered PHP versions** are: **7.2 / 7.3** which are currently LTS.
 
 <br>
@@ -56,12 +56,12 @@ The benchmark was running using *Apache Benchmark* suite with the following comm
 * **HDD 2 x 1TB** SSD/NVME
 
 **Software**:
-* OS: **Debian 10 Linux 64-bit**, up-to-date 2020-01-21
-* Apps: **Apache 2.4.41**, **PHP 7.3.13 with Opcache enabled**
+* OS: **Debian 10 Linux 64-bit**, up-to-date 2020-06-03
+* Apps: **Apache 2.4.43**, **PHP 7.3.18 with Opcache enabled**
 
 #### Benchmark Results of tested PHP Frameworks:
-* **Smart.Framework v.5.7.2 head@2020.01.27** with MarkersTPL Templating: ~ **_8.77K_** (8771) *requests per second*
-* **CodeIgniter v.4.0 rc3** with PHP Templating: ~ **_5.37K_** (5378) *requests per second* ( **1.3x slower than Smart.Framework** )
-* **Symfony 4.4.2** with Twig Templating: ~ **_1.53K_** (1532) *requests per second* ( **5x slower than Smart.Framework** )
-* **Laravel 6** with Blade Templating ~ **_1.32K_** (1323) *requests per second* ( **6x slower than Smart.Framework** )
-* **Zend Framework 3** with PHP Templating: ~ **_1.17K_** (1175) *requests per second* ( **7x slower than Smart.Framework** )
+* **Smart.Framework v.5.7.2 head@2020.06.03** with MarkersTPL Templating: ~ **_8.77K_** (8771) *requests per second*
+* **CodeIgniter v.4.0** with PHP Templating: ~ **_5.38K_** (5378) *requests per second* ( **1.3x slower than Smart.Framework** )
+* **Symfony 4.4.2** with Twig Templating: ~ **_1.54K_** (1532) *requests per second* ( **5x slower than Smart.Framework** )
+* **Laravel 6** with Blade Templating ~ **_1.33K_** (1323) *requests per second* ( **6x slower than Smart.Framework** )
+* **Zend Framework 3** with PHP Templating: ~ **_1.16K_** (1175) *requests per second* ( **7x slower than Smart.Framework** )

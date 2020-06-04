@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20200515
+ * @version 	v.20200604
  * @package 	development:Application
  *
  */
@@ -870,7 +870,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
-	final public function PageViewSetData($data) {
+	final public function PageViewSetData($data) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO WORK ALSO NON-ARRAY VARS !!!
 		//--
 		if($this->directoutput === true) {
 			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
@@ -1078,7 +1078,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
-	final public function PageViewSetCfgs($params) {
+	final public function PageViewSetCfgs($params) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO WORK ALSO NON-ARRAY VARS !!!
 		//--
 		if($this->directoutput === true) {
 			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');
@@ -1335,7 +1335,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @return 	BOOL					:: TRUE if OK, FALSE if not
 	 */
-	final public function PageViewSetVars($params) {
+	final public function PageViewSetVars($params) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO WORK ALSO NON-ARRAY VARS !!!
 		//--
 		if($this->directoutput === true) {
 			Smart::log_warning('Page Controller: '.$this->controller.' # '.__METHOD__.'(): This method is not available for Direct Output Mode ...');

@@ -68,7 +68,7 @@ ini_set('pgsql.ignore_notice', '0'); // this is REQUIRED to be set to 0 in order
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:PostgreSQL
  *
  */
@@ -495,7 +495,7 @@ final class SmartPgsqlDb {
 	 */
 	public static function json_encode($y_mixed_content) {
 		//--
-		$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); // Fix: must return a string ; depth was added in PHP 5.5 only !
+		$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE); // Fix: must return a string ; depth was added in PHP 5.5 only !
 		if((string)$json == '') {
 			Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($y_mixed_content,1)); // this should not happen except if PHP's json encode fails !!!
 			$json = '[]'; // FIX: in PostgreSQL JSON/JSON-B fields cannot be empty, thus consider empty array
@@ -2351,7 +2351,7 @@ SQL;
  * @hints		This class have no catcheable exception because the ONLY errors will raise are when the server returns an ERROR regarding a malformed SQL Statement, which is not acceptable to be just exception, so will raise a fatal error !
  *
  * @depends 	extensions: PHP PostgreSQL ; classes: Smart, SmartUnicode, SmartUtils
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:PostgreSQL
  *
  */
@@ -2375,7 +2375,7 @@ final class SmartPgsqlExtDb {
 	 * @param ARRAY $y_configs_arr 					:: The Array of Configuration parameters for the connection - the ARRAY STRUCTURE should be identical with the default config.php: $configs['pgsql'].
 	 *
 	 */
-	public function __construct($y_configs_arr) {
+	public function __construct(array $y_configs_arr) {
 		//--
 		$y_configs_arr = (array) $y_configs_arr;
 		//-- {{{SYNC-CONNECTIONS-IDS}}}

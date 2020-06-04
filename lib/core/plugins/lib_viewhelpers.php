@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200511
+ * @version 	v.20200604
  * @package 	Plugins:ViewComponents
  *
  */
@@ -85,7 +85,7 @@ final class SmartViewHtmlHelpers {
 	 *
 	 * @return STRING						[HTML Code]
 	 */
-	public static function html_jsload_highlightsyntax($dom_selector, $plugins=['web'], $theme='github', $loadpacks=true) {
+	public static function html_jsload_highlightsyntax($dom_selector, array $plugins=['web'], $theme='github', $loadpacks=true) {
 		//--
 		$theme = (string) strtolower((string)$theme);
 		switch((string)$theme) {
@@ -382,8 +382,8 @@ final class SmartViewHtmlHelpers {
 	 *
 	 * @return STRING 							[HTML Code]
 	 */
-	public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', $y_extra_options=array(), $y_js_evcode='') {
-		//-- v.190226
+	public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', array $y_extra_options=[], $y_js_evcode='') {
+		//-- v.20200604
 		if((string)$yvalue != '') {
 			$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
 		} //end if
@@ -468,8 +468,8 @@ final class SmartViewHtmlHelpers {
 	 *
 	 * @return STRING 							[HTML Code]
 	 */
-	public static function html_js_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', $y_extra_options=array(), $y_js_evcode='') {
-		//-- v.190226
+	public static function html_js_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', array $y_extra_options=[], $y_js_evcode='') {
+		//-- v.20200604
 		if((string)$yvalue != '') {
 			$yvalue = date('H:i', @strtotime(date('Y-m-d').' '.$yvalue)); // enforce this time format for internals and be sure is valid
 		} //end if
@@ -1002,7 +1002,7 @@ final class SmartViewHtmlHelpers {
 	 * @return STRING 		[HTML Code]
 	 *
 	 */
-	public static function html_navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=[]) {
+	public static function html_navpager($link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, array $options=[]) {
 		//--
 		$styles = '';
 		//--
@@ -1038,7 +1038,7 @@ final class SmartViewHtmlHelpers {
 
 	//================================================================
 	// $link = 'some-script.php?ofs={{{offset}}}';
-	private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=[]) {
+	private static function html_navpager_type_arrows($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, array $options=[]) {
 		//--
 		$tpl = (string) $tpl;
 		$link = (string) $link;
@@ -1250,7 +1250,7 @@ final class SmartViewHtmlHelpers {
 
 	//================================================================
 	// $link = 'some-script.php?ofs={{{offset}}}';
-	private static function html_navpager_type_numeric($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, $options=[]) {
+	private static function html_navpager_type_numeric($tpl, $link, $total, $limit, $current, $display_if_empty=false, $adjacents=3, array $options=[]) {
 		//--
 		$tpl = (string) $tpl;
 		$link = (string) $link;

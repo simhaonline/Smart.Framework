@@ -27,7 +27,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
 //====================
 
 //--
-if(version_compare((string)phpversion(), '5.6') < 0) { // check PHP version, we need at least 7.1 as minimum ; prefer PHP 7.2 or later
+if(version_compare((string)phpversion(), '7.2') < 0) { // check for PHP 7.2 or later
 	@http_response_code(500);
 	die('PHP Runtime not supported: '.phpversion().' !'.'<br>PHP versions to run this software are: 7.2 / 7.3 / 7.4 or later');
 } //end if
@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.5.7.2'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.06.03'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.06.04'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
@@ -1596,7 +1596,7 @@ final class SmartFrameworkRuntime {
 	// if en is the default languages will result something like: (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
 	// the default language will be mapped by default to www sub-domain ; the rest of available languages will be mapped as language code as sub-domain
 	// Example: $arr_skip_subdomains = [ 'sdom1', 'sdom2', ... ]; // the list of subdomains that are excepted
-	public static function AppSetLanguageBySubdomain($arr_skip_subdomains=[]) { // r.20200603
+	public static function AppSetLanguageBySubdomain(array $arr_skip_subdomains=[]) { // r.20200603
 		//--
 		$sdom = (string) SmartUtils::get_server_current_domain_name();
 		if((string)SmartValidator::validate_filter_ip_address($sdom) != '') {

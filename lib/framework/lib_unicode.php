@@ -13,7 +13,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 
 //======================================================
 // Smart-Framework - Unicode Strings
-// DEPENDS-PHP: 5.6 or later
+// DEPENDS-PHP: 7.2 or later
 // DEPENDS-EXT: MBString, XML
 //======================================================
 
@@ -159,7 +159,7 @@ if(mb_substitute_character() !== 63) {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP MBString, PHP XML
- * @version     v.20200121
+ * @version     v.20200604
  * @package     @Core
  *
  */
@@ -544,9 +544,9 @@ final class SmartUnicode {
 		} //end if
 		//--
 		if($y_charset_from) { // avoid make it string if bool FALSE !!
-			$y_charset_from = strtoupper((string)$y_charset_from);
+			$y_charset_from = (string) strtoupper((string)$y_charset_from);
 		} //end if
-		$y_charset_to = strtoupper((string)$y_charset_to);
+		$y_charset_to = (string) strtoupper((string)$y_charset_to);
 		//--
 		if(($y_charset_from) AND ((string)$y_charset_to != '')) {
 			//--

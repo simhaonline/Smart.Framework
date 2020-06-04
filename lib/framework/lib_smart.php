@@ -15,16 +15,16 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - Base
 // DEPENDS:
 //  * SmartUnicode::
-// DEPENDS-PHP: 5.6 or later
+// DEPENDS-PHP: 7.2 or later
 // DEPENDS-EXT: XML, Json
 //======================================================
 
 // [REGEX-SAFE-OK]
 
 //================================================================
-if((!function_exists('json_encode')) OR (!function_exists('json_decode'))) {
+if((!function_exists('json_encode')) OR (!function_exists('json_decode')) OR (!defined('JSON_INVALID_UTF8_SUBSTITUTE'))) {
 	@http_response_code(500);
-	die('ERROR: The PHP JSON Extension is required for the Smart.Framework / Base');
+	die('ERROR: The PHP JSON Extension with JSON_INVALID_UTF8_SUBSTITUTE support is required for the Smart.Framework / Base');
 } //end if
 if(!function_exists('hex2bin')) {
 	@http_response_code(500);
@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200519
+ * @version     v.20200604
  * @package     @Core
  *
  */
@@ -235,7 +235,7 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The prepared URL in the standard RFC3986 format (all values are escaped using rawurlencode() to be Unicode full compliant
 	 */
-	public static function url_add_params($y_url, $y_params) {
+	public static function url_add_params($y_url, array $y_params) {
 		//--
 		$url = (string) $y_url;
 		//--
@@ -421,7 +421,7 @@ final class Smart {
 	 * @return 	STRING						:: The escaped string using a json_encode() standard to be injected between single quotes '' or double quotes ""
 	 */
 	public static function escape_js($str) {
-		//-- v.151129
+		//-- v.20200604
 		// Prepare a string to pass in JavaScript Single or Double Quotes
 		// By The Situation:
 		// * Using inside tags as <a onClick="self.location = \''.Smart::escape_js($str).'\';"></a>
@@ -430,7 +430,7 @@ final class Smart {
 		// WARNING: strings may contain HTML Tags ... which if apply Smart::escape_html() may break them.
 		// str_replace(array("\\", "\n", "\t", "\r", "\b", "\f", "'"), array('\\\\', '\\n', '\\t', '\\r', '', '', '\\\''), $str); // array('\\\\', '', ' ', '', '', '', '\\\'')
 		//-- encode as json
-		$encoded = (string) @json_encode((string)$str, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); // encode the string includding unicode chars, with all possible: < > ' " &
+		$encoded = (string) @json_encode((string)$str, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE); // encode the string includding unicode chars, with all possible: < > ' " &
 		//-- the above will provide a json encoded string as: "mystring" ; we get just what's between double quotes as: mystring
 		return (string) substr((string)trim((string)$encoded), 1, -1);
 		//--
@@ -450,34 +450,34 @@ final class Smart {
 	 * @return 	STRING							:: The JSON encoded string
 	 */
 	public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true, $htmlsafe=true) {
-		// encode json v.170503
+		// encode json v.20200604
 		$options = 0;
 		if(!$unescaped_unicode) {
 			if($prettyprint) {
 				if($htmlsafe) {
-					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_PRETTY_PRINT;
+					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE;
 				} else {
-					$options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
+					$options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE;
 				} //end if else
 			} else {
 				if($htmlsafe) {
-					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE;
 				} else {
-					$options = JSON_UNESCAPED_SLASHES;
+					$options = JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
 				} //end if else
 			} //end if else
 		} else { // default
 			if($prettyprint) {
 				if($htmlsafe) {
-					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE;
 				} else {
-					$options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
+					$options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE;
 				} //end if else
 			} else {
 				if($htmlsafe) {
-					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+					$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE;
 				} else {
-					$options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+					$options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE;
 				} //end if else
 			} //end if else
 		} //end if else
@@ -596,7 +596,7 @@ final class Smart {
 	 *
 	 * @return INTEGER 						:: The array COUNT of elements, or zero if array is empty or non-array is provided
 	 */
-	public static function array_size($y_arr) {
+	public static function array_size($y_arr) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO TEST ALSO NON-ARRAY VARS !!!
 		//--
 		if(is_array($y_arr)) {
 			return count($y_arr);
@@ -617,7 +617,7 @@ final class Smart {
 	 *
 	 * @return ARRAY 						:: The sorted array
 	 */
-	public static function array_sort($y_arr, $y_mode) {
+	public static function array_sort(array $y_arr, $y_mode) {
 		//--
 		if(self::array_size($y_arr) <= 0) {
 			return array();
@@ -667,7 +667,7 @@ final class Smart {
 	 *
 	 * @return ARRAY 						:: The sorted array
 	 */
-	public static function array_shuffle($y_arr) {
+	public static function array_shuffle(array $y_arr) {
 		//--
 		if(self::array_size($y_arr) <= 0) {
 			return array();
@@ -691,7 +691,7 @@ final class Smart {
 	 *
 	 * @return MIXED [ NUMERIC / STRING / ARRAY ] 	:: The array value of the specified key path
 	 */
-	public static function array_get_by_key_path($y_arr, $y_key_path, $y_path_separator) {
+	public static function array_get_by_key_path(array $y_arr, $y_key_path, $y_path_separator) {
 		//--
 		if(self::array_size($y_arr) <= 0) {
 			return '';
@@ -749,7 +749,7 @@ final class Smart {
 	 *
 	 * @return BOOL 								:: TRUE if Key Exist / FALSE if NOT
 	 */
-	public static function array_test_key_by_path_exists($y_arr, $y_key_path, $y_path_separator) {
+	public static function array_test_key_by_path_exists(array $y_arr, $y_key_path, $y_path_separator) {
 		//--
 		if(self::array_size($y_arr) <= 0) {
 			return false;
@@ -797,7 +797,7 @@ final class Smart {
 	 *
 	 * @return ARRAY 								:: The modified array
 	 */
-	public static function array_change_key_case_recursive($y_arr, $y_mode) {
+	public static function array_change_key_case_recursive(array $y_arr, $y_mode) {
 		//--
 		if(self::array_size($y_arr) <= 0) { // fix bug if empty array / max nested level
 			return array();
@@ -836,7 +836,7 @@ final class Smart {
 	 *
 	 * @return ENUM 						:: The array type as: 0 = not an array ; 1 = non-associative (sequential) array or empty array ; 2 = associative array or non-sequential, must be non-empty
 	 */
-	public static function array_type_test($y_arr) {
+	public static function array_type_test($y_arr) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO TEST ALSO NON-ARRAY VARS !!!
 		//--
 		if(!is_array($y_arr)) {
 			return 0; // not an array
@@ -867,7 +867,7 @@ final class Smart {
 	 *
 	 * @return ARRAY
 	 */
-	public static function array_diff_assoc_recursive($array1, $array2) {
+	public static function array_diff_assoc_recursive(array $array1, array $array2) {
 		//--
 		if(!is_array($array1)) {
 			self::log_warning('WARNING: '.__CLASS__.'::'.__FUNCTION__.'()'.' array#1 is not array !');
@@ -896,7 +896,7 @@ final class Smart {
 	 *
 	 * @return ARRAY
 	 */
-	public static function array_diff_assoc_oneway_recursive($array1, $array2) {
+	public static function array_diff_assoc_oneway_recursive(array $array1, array $array2) {
 		//--
 		if(!is_array($array1)) {
 			self::log_warning('WARNING: '.__CLASS__.'::'.__FUNCTION__.'()'.' array#1 is not array !');
@@ -2023,7 +2023,7 @@ final class Smart {
 	 *
 	 * @return STRING 					:: The List String: '<elem1>, <elem2>, ..., <elemN>'
 	 */
-	public static function array_to_list($y_arr) {
+	public static function array_to_list($y_arr) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO WORK ALSO NON-ARRAY VARS !!!
 		//--
 		$out = '';
 		//--

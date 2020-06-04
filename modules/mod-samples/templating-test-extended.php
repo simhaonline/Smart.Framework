@@ -142,7 +142,8 @@ class SmartAppIndexController extends SmartAbstractAppController {
 						'TEST-STRTOTRIM' => ' abc ',
 						'TEST-EMPTY' => ''
 						//--
-					]
+					],
+					'yes' // enable caching because the 'templating-test-extended.inc.htm' is includded twice into the 'templating-test-extended.mtpl.htm'
 				)
 		]);
 		//--

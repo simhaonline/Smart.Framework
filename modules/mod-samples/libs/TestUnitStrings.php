@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200604
  *
  */
 final class TestUnitStrings {
@@ -56,6 +56,7 @@ final class TestUnitStrings {
 
 		//--
 		$unicode_text = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド';
+		$invalid_string = $unicode_text.pack("H*" ,'c32e').'#';
 		//--
 		$idn_domain_unicode = 'jösefsson.tßst123.org';
 		$idn_domain_iso = 'xn--jsefsson-n4a.xn--tst123-bta.org';
@@ -102,6 +103,20 @@ final class TestUnitStrings {
 						$err = 'ERROR: '.$the_test.' FAILED ...';
 					} //end if
 				} //end if
+			} //end if
+		} //end if
+		if((string)$err == '') {
+			$the_test = 'Unicode Json Encode / Decode Test';
+			$tests[] = $the_test;
+			if((string)\Smart::json_decode(\Smart::json_encode($unicode_text)) !== (string)$unicode_text) {
+				$err = 'ERROR: '.$the_test.' FAILED ...';
+			} //end if
+		} //end if
+		if((string)$err == '') {
+			$the_test = 'Unicode Json Encode / Decode Test with Invalid (out of Unicode Range) String';
+			$tests[] = $the_test;
+			if((int)\strlen((string)\Smart::json_decode(\Smart::json_encode($invalid_string))) <= 0) {
+				$err = 'ERROR: '.$the_test.' FAILED ...';
 			} //end if
 		} //end if
 		if((string)$err == '') {

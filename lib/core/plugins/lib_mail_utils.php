@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20200420
+ * @version 	v.20200604
  * @package 	Plugins:Mailer
  *
  */
@@ -246,7 +246,7 @@ final class SmartMailerUtils {
 	 * @param ENUM			$charset			* charset :: default is UTF-8
 	 * @return TRUE/FALSE	OPERATION RESULT [1 = OK ; 0 = send error ; -1 = error, empty config ]
 	 */
-	public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority='3', $charset='UTF-8') {
+	public static function send_email($logsend_dir, $to, $cc, $bcc, $subj, $message, $is_html, array $attachments=[], $replytoaddr='', $inreplyto='', $priority='3', $charset='UTF-8') {
 
 		//-- Get Default SMTP from configs
 		$def_mail_cfg = Smart::get_from_config('sendmail');
@@ -303,7 +303,7 @@ final class SmartMailerUtils {
 	 * @param ENUM			$charset			* charset :: default is UTF-8
 	 * @return ARRAY							[ 'result' => 'Operation RESULT', 'error' => 'ERROR Message if any', 'log' => 'Send LOG', 'message' => 'The Mime MESSAGE' ]
 	 */
-	public static function send_custom_email($mail_config, $logsend_dir, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority='3', $charset='UTF-8') {
+	public static function send_custom_email($mail_config, $logsend_dir, $to, $cc, $bcc, $subj, $message, $is_html, array $attachments=[], $replytoaddr='', $inreplyto='', $priority='3', $charset='UTF-8') {
 
 		//--
 		$mail_config = (array) $mail_config;
@@ -420,7 +420,7 @@ final class SmartMailerUtils {
 	 * @internal
 	 *
 	 */
-	public static function send_extended_email($y_server_settings, $y_mode, $to, $cc, $bcc, $subj, $message, $is_html, $attachments=[], $replytoaddr='', $inreplyto='', $priority=3, $charset='UTF-8') {
+	public static function send_extended_email($y_server_settings, $y_mode, $to, $cc, $bcc, $subj, $message, $is_html, array $attachments=[], $replytoaddr='', $inreplyto='', $priority=3, $charset='UTF-8') {
 
 		//--
 		$y_server_settings = (array) $y_server_settings;

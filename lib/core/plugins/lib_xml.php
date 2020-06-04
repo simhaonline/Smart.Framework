@@ -15,7 +15,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // Smart-Framework - XMLToArray / ArrayToXML
 // DEPENDS:
 //	* Smart::
-// DEPENDS-EXT: PHP XML Extension
+// DEPENDS-EXT: PHP 7+ (option: LIBXML_BIGLINES) ; PHP XML Extension
 //======================================================
 
 
@@ -675,7 +675,7 @@ final class SmartXmlParser {
  *
  * @access      PUBLIC
  * @depends     classes: Smart
- * @version     v.20200519
+ * @version     v.20200604
  * @package     Plugins:ConvertersAndParsers
  *
  */
@@ -706,7 +706,7 @@ final class SmartXmlComposer {
 
 
 	//===============================
-	public function transform($y_array, $xmlroot='xml') {
+	public function transform(array $y_array, $xmlroot='xml') {
 		//--
 		$xmlroot = (string) trim((string)$xmlroot);
 		if((string)$xmlroot == '') {

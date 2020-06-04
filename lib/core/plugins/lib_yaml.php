@@ -44,7 +44,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200513
+ * @version 	v.20200604
  * @package 	Plugins:ConvertersAndParsers
  *
  */
@@ -137,7 +137,7 @@ final class SmartYamlConverter {
 	 * @param int $indent Pass in false to use the default, which is 2
 	 * @return string YAML
 	 */
-	public function compose($array, $indent=2) {
+	public function compose(array $array, $indent=2) {
 		//--
 		// Dumps to some very clean YAML.  We'll have to add some more features
 		// and options soon.  And better support for folding.

@@ -62,7 +62,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage 		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -476,7 +476,7 @@ final class SmartSQliteDb {
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	extensions: PHP SQLite (3) ; classes: Smart, SmartUnicode, SmartUtils, SmartFileSystem
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:SQLite
  *
  */
@@ -1342,7 +1342,7 @@ final class SmartSQliteUtilDb {
 	//======================================================
 	public static function json_encode($y_mixed_content) {
 		//--
-		$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); // Fix: must return a string ; depth was added in PHP 5.5 only !
+		$json = (string) @json_encode($y_mixed_content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE); // Fix: must return a string ; depth was added in PHP 5.5 only !
 		if((string)$json == '') {
 			Smart::log_warning('Invalid Encoded Json in '.__METHOD__.'() for input: '.print_r($y_mixed_content,1)); // this should not happen except if PHP's json encode fails !!!
 			$json = '[]'; // FIX: to make compatible with PostgreSQL JSON/JSON-B fields that cannot be empty, consider empty array
@@ -1811,7 +1811,7 @@ final class SmartSQliteUtilDb {
  *
  * @usage 		static object: Class::method() - This class provides only STATIC methods
  *
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:SQLite
  *
  */

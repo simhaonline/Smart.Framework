@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20200505
+ * @version 	v.20200604
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -104,7 +104,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * @param 	BOOLEAN 	$y_fatal_err 		:: *Optional* ; Set if Errors handling mode ; Default is TRUE ; if set to FALSE will throw Exception instead of Raise a Fatal Error
 	 *
 	 */
-	public function __construct($y_configs_arr=array(), $y_fatal_err=true) {
+	public function __construct(array $y_configs_arr=[], $y_fatal_err=true) {
 
 		//--
 		$this->extver = (string) phpversion('mongodb');

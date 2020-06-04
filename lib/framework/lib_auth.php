@@ -53,7 +53,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20200121
+ * @version 	v.20200604.r2
  * @package 	@Core:Authentication
  *
  */
@@ -71,22 +71,22 @@ final class SmartAuth {
 	 * It can be used just once per execution (session) as it stores the data using constants,
 	 * and the data cannot be changed after a successful or failed authentication has set.
 	 *
-	 * @param 	STRING 	$y_user_id 				:: The user (login) ID used to authenticate the user ; Mandatory ; it can be the UserID from DB or if not using a DB must supply a unique ID to identify the user like username
-	 * @param 	STRING 	$y_user_alias			:: The user (login) Alias (aka Username), used to display the logged in user ; Mandatory ; can be the same as the login ID or different (Ex: login ID can be 'myUserName' and this 'myUserName' ; or: login ID can be 5017 and this 'myUserName')
-	 * @param 	STRING 	$y_user_email 			:: *OPTIONAL* The user Email ; if email is used as login ID this may be redundant !
-	 * @param 	STRING 	$y_user_fullname 		:: *OPTIONAL* The user Full Name (First Name + Last Name)
-	 * @param 	ARRAY 	$y_user_privileges_list :: *OPTIONAL* The user Privileges List as array that list all the current user privileges
-	 * @param 	STRING 	$y_user_quota 			:: *OPTIONAL* The user (storage) Quota
-	 * @param 	ARRAY 	$y_user_metadata 		:: *OPTIONAL* The user metainfo, associative array key => value
-	 * @param 	STRING 	$y_realm 				:: *OPTIONAL* The user Authentication Realm(s)
-	 * @param 	ENUM 	$y_method 				:: *OPTIONAL* The authentication method used: HTTP-BASIC / HTTP-DIGEST / OTHER
-	 * @param 	STRING 	$y_pass					:: *OPTIONAL* The user login password (will be stored in memory as encrypted to avoid exposure)
-	 * @param 	STRING 	$y_keys 				:: *OPTIONAL* The encrypted user privacy-keys (will be stored in memory as encrypted to avoid exposure)
+	 * @param 	STRING 			$y_user_id 				:: The user (login) ID used to authenticate the user ; Mandatory ; it can be the UserID from DB or if not using a DB must supply a unique ID to identify the user like username
+	 * @param 	STRING 			$y_user_alias			:: The user (login) Alias (aka Username), used to display the logged in user ; Mandatory ; can be the same as the login ID or different (Ex: login ID can be 'myUserName' and this 'myUserName' ; or: login ID can be 5017 and this 'myUserName')
+	 * @param 	STRING 			$y_user_email 			:: *OPTIONAL* The user Email ; if email is used as login ID this may be redundant !
+	 * @param 	STRING 			$y_user_fullname 		:: *OPTIONAL* The user Full Name (First Name + Last Name)
+	 * @param 	ARRAY/STRING 	$y_user_privileges_list :: *OPTIONAL* The user Privileges List as string '<priv1><priv2>,...' or array ['priv1','priv2'] that list all the current user privileges
+	 * @param 	STRING 			$y_user_quota 			:: *OPTIONAL* The user (storage) Quota
+	 * @param 	ARRAY 			$y_user_metadata 		:: *OPTIONAL* The user metainfo, associative array key => value
+	 * @param 	STRING 			$y_realm 				:: *OPTIONAL* The user Authentication Realm(s)
+	 * @param 	ENUM 			$y_method 				:: *OPTIONAL* The authentication method used: HTTP-BASIC / HTTP-DIGEST / OTHER
+	 * @param 	STRING 			$y_pass					:: *OPTIONAL* The user login password (will be stored in memory as encrypted to avoid exposure)
+	 * @param 	STRING 			$y_keys 				:: *OPTIONAL* The encrypted user privacy-keys (will be stored in memory as encrypted to avoid exposure)
 	 *
-	 * @return 	BOOLEAN							:: TRUE if all data is OK, FALSE if not or try to reauthenticate under the same execution (which is not allowed ; must be just once per execution)
+	 * @return 	BOOLEAN									:: TRUE if all data is OK, FALSE if not or try to reauthenticate under the same execution (which is not allowed ; must be just once per execution)
 	 */
-	public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='', $y_user_fullname='', $y_user_privileges_list=array('none','no-privilege'), $y_user_quota=-1, $y_user_metadata=array(), $y_realm='DEFAULT', $y_method='', $y_pass='', $y_keys='') {
-		//--
+	public static function set_login_data($y_user_id, $y_user_alias, $y_user_email='', $y_user_fullname='', $y_user_privileges_list=['none','no-privilege'], $y_user_quota=-1, array $y_user_metadata=[], $y_realm='DEFAULT', $y_method='', $y_pass='', $y_keys='') {
+		//-- !!! IMPORTANT !!! $y_user_privileges_list can be string or array !!!
 		if(self::$AuthCompleted !== false) { // avoid to re-auth
 			Smart::log_warning('Re-Authentication is not allowed ...');
 			return;
