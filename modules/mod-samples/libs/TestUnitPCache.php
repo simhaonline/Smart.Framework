@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200505
+ * @version 	v.20200605
  *
  */
 final class TestUnitPCache {
@@ -82,7 +82,7 @@ final class TestUnitPCache {
 		//--
 		$pcache_test_key = 'pcache-test-key_'.\SmartPersistentCache::safeKey(\Smart::uuid_10_num().'-'.\Smart::uuid_36((string)\Smart::net_server_id()).'-'.\Smart::uuid_45((string)\Smart::net_server_id()));
 		$pcache_test_value = array(
-			'unicode-test' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド', // unicode value
+			'unicode-test' => '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド'.'🚕🚓🚗🚑🚒🚒🚛🚜🚘🚔🚔🚖🚎🏍🛵🚲', // unicode value
 			'big-key-test' => (string) $pcache_big_content, // a big key
 			'random-key' => \Smart::uuid_10_str().'.'. \Smart::uuid_10_seq().'.'.\Smart::random_number(1000,9999) // a very random key
 		);

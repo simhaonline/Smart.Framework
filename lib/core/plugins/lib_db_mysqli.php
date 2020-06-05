@@ -46,9 +46,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * This class can be used just with the DEFAULT connection which must be set in etc/config.php: $configs['mysqli'].
  * It connects automatically, when needed (the connection is lazy, and is made just when is needed to avoid permanent connections to MySQL which slower down the app and takes busy the slots).
  *
- * Tested and Stable with MariaDB versions: 5.1.x / 5.5.x / 10.x
- * Tested and Stable on MySQL versions: 5.0.x / 5.1.x / 5.5.x / 5.6.x / 5.7.x
- * Tested and Stable with Percona Server versions: 5.5.x / 5.6.x
+ * Tested and Stable with MariaDB versions: 5.5.x / 10.x
+ * Tested and Stable on MySQL versions: 5.5.x / 5.6.x / 5.7.x / 6.x / 7.x / 8.x
  *
  * <code>
  *
@@ -224,29 +223,29 @@ final class SmartMysqliDb {
 		//--
 		if((string)SMART_FRAMEWORK_DBSQL_CHARSET == 'UTF8') {
 			//--
-			@mysqli_query($connection, "SET CHARACTER SET 'utf8'", MYSQLI_STORE_RESULT);
+			@mysqli_query($connection, "SET CHARACTER SET 'utf8mb4'", MYSQLI_STORE_RESULT);
 			if(@mysqli_errno($connection) !== 0) {
-				self::error(self::get_connection_id($connection), 'Encoding-Charset', 'Failed to set Encoding on Server', 'Error='.@mysqli_error($connection), 'Set=utf8');
+				self::error(self::get_connection_id($connection), 'Encoding-Charset', 'Failed to set Encoding on Server', 'Error='.@mysqli_error($connection), 'Set=utf8mb4');
 				return;
 			} //end if else
 			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('db', 'mysqli|log', [
 					'type' => 'set',
-					'data' => 'SET Character Set to: utf8',
+					'data' => 'SET Character Set to: utf8mb4',
 					'connection' => (string) self::get_connection_id($connection),
 					'skip-count' => 'yes'
 				]);
 			} //end if
 			//--
-			@mysqli_query($connection, "SET COLLATION_CONNECTION = 'utf8_bin'", MYSQLI_STORE_RESULT);
+			@mysqli_query($connection, "SET COLLATION_CONNECTION = 'utf8mb4_bin'", MYSQLI_STORE_RESULT);
 			if(@mysqli_errno($connection) !== 0) {
-				self::error(self::get_connection_id($connection), 'Encoding-Collation', 'Failed to set Collation on Server', 'Error='.@mysqli_error($connection), 'Set=utf8_bin');
+				self::error(self::get_connection_id($connection), 'Encoding-Collation', 'Failed to set Collation on Server', 'Error='.@mysqli_error($connection), 'Set=utf8mb4_bin');
 				return;
 			} //end if else
 			if(SmartFrameworkRuntime::ifDebug()) {
 				SmartFrameworkRegistry::setDebugMsg('db', 'mysqli|log', [
 					'type' => 'set',
-					'data' => 'SET Connection Collation to: utf8_bin',
+					'data' => 'SET Connection Collation to: utf8mb4_bin',
 					'connection' => (string) self::get_connection_id($connection),
 					'skip-count' => 'yes'
 				]);
@@ -254,7 +253,7 @@ final class SmartMysqliDb {
 			//--
 		} else {
 			//--
-			self::error(self::get_connection_id($connection), 'Encoding-Charset', 'Wrong Client Encoding for Server', 'Server=UTF8', 'Client='.SMART_FRAMEWORK_DBSQL_CHARSET);
+			self::error(self::get_connection_id($connection), 'Encoding-Charset', 'Wrong Client Encoding for Server', 'Server=UTF8.MB4', 'Client='.SMART_FRAMEWORK_DBSQL_CHARSET);
 			return;
 			//--
 		} //end if
@@ -1776,9 +1775,8 @@ final class SmartMysqliDb {
  * Class: SmartMysqliExtDb - provides a Dynamic (Extended) Client for MariaDB Server / MySQL that can be used with custom made connections.
  * This class is made to be used with custom made MySQLi connections (other servers than default).
  *
- * Tested and Stable with MariaDB versions: 5.1.x / 5.5.x / 10.x
- * Tested and Stable on MySQL versions: 5.0.x / 5.1.x / 5.5.x / 5.6.x / 5.7.x
- * Tested and Stable with Percona Server versions: 5.5.x / 5.6.x
+ * Tested and Stable with MariaDB versions: 5.5.x / 10.x
+ * Tested and Stable on MySQL versions: 5.5.x / 5.6.x / 5.7.x / 6.x / 7.x / 8.x
  *
  * <code>
  * // Sample config array for this class constructor:

@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200121
+ * @version 	v.20200605
  *
  */
 final class TestUnitMySQLi {
@@ -64,7 +64,7 @@ final class TestUnitMySQLi {
 
 		//--
 		$value = \date('Y-m-d H:i:s');
-		$comments = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド'.'-'.\Smart::random_number(1000,9999)."'";
+		$comments = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド'.'-'.\Smart::random_number(1000,9999)."'".'🚕🚓🚗🚑🚒🚒🚛🚜🚘🚔🚔🚖🚎🏍🛵🚲';
 		//--
 
 		//--
@@ -92,7 +92,7 @@ final class TestUnitMySQLi {
 		if(\SmartMysqliDb::check_if_table_exists('_test_unit_db_server_tests') == 1) {
 			\SmartMysqliDb::write_data('DROP TABLE `_test_unit_db_server_tests`');
 		} //end if
-		\SmartMysqliDb::write_data('CREATE TABLE `_test_unit_db_server_tests` ( `id` int AUTO_INCREMENT, `variable` varchar(100) COLLATE utf8_bin NOT NULL, `value` text CHARACTER SET utf8 DEFAULT NULL, `comments` mediumtext CHARACTER SET utf8 NOT NULL DEFAULT \'\', `a_null_column` text NULL, PRIMARY KEY (`id`), UNIQUE (`variable`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
+		\SmartMysqliDb::write_data('CREATE TABLE `_test_unit_db_server_tests` ( `id` int AUTO_INCREMENT, `variable` varchar(100) COLLATE utf8mb4_bin NOT NULL, `value` text CHARACTER SET utf8mb4 DEFAULT NULL, `comments` mediumtext CHARACTER SET utf8mb4 NOT NULL DEFAULT \'\', `a_null_column` text NULL, PRIMARY KEY (`id`), UNIQUE (`variable`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;');
 		//--
 
 		//--
