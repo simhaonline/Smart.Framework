@@ -1,7 +1,7 @@
 <?php
 // AppCodePack - Release Manager: a PHP, JS and CSS Optimizer + NetArchive Packer
 // (c) 2006-2020 unix-world.org - all rights reserved
-// r.5.7.2 / smart.framework.v.5.7
+// r.7.2.1 / smart.framework.v.7.2
 
 //===== CODE OPTIMIZATIONS INFO:
 // The AppCodePack optimize will process the following type of source code (php/js/css):
@@ -35,9 +35,9 @@ define('SMART_FRAMEWORK_CHARSET', 			'UTF-8'); 				// App Charset: UTF-8
 define('SMART_FRAMEWORK_CHMOD_DIRS', 		0770);					// Folder Permissions: 0770 | 0700
 define('SMART_FRAMEWORK_CHMOD_FILES', 		0660);					// File Permissions: 0660 | 0600
 //--
-if(version_compare(phpversion(), '5.6') < 0) { // check PHP version, we need at least 5.6  as minimum for latest optimizations
+if(version_compare(phpversion(), '7.2') < 0) { // check for PHP 7.2 or later
 	@http_response_code(500);
-	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 5.6 / 7.0 / 7.1 / 7.2 / 7.3 / 7.4 or later');
+	die('PHP Runtime not supported : '.phpversion().' !'.'<br>PHP versions to run this software are: 7.2 / 7.3 / 7.4 or later');
 } //end if
 //--
 date_default_timezone_set('UTC');
@@ -203,7 +203,7 @@ function app__err__handler__catch_fatal_errs() {
 define('APPCODEPACK_UNPACK_TESTONLY', true); 												// default is TRUE ; set to FALSE for archive full test + uncompress + replace ; required just for AppCodePack (not for AppCodeUnpack)
 define('APPCODE_REGEX_STRIP_MULTILINE_CSS_COMMENTS', "`\/\*(.+?)\*\/`ism"); 				// regex for remove multi-line comments (by now used just for CSS ...) ; required just for AppCodePack (not for AppCodeUnpack)
 //==
-define('APPCODEPACK_VERSION', 'v.20200519.0933'); 											// current version of this script
+define('APPCODEPACK_VERSION', 'v.20200605.1157'); 											// current version of this script
 define('APPCODEUNPACK_VERSION', (string)APPCODEPACK_VERSION); 								// current version of unpack script (req. for unpack class)
 //==
 header('Cache-Control: no-cache'); 															// HTTP 1.1
@@ -2284,7 +2284,7 @@ private function conform_column($y_text) {
 final class AppPackUtils {
 
 	// ::
-	// v.20200519 {{{SYNC-CLASS-APP-PACK-UTILS}}}
+	// v.20200605 {{{SYNC-CLASS-APP-PACK-UTILS}}}
 
 	private static $cache = [];
 
@@ -3376,7 +3376,7 @@ Options -Indexes
 	//================================================================
 
 
-	//##### Smart v.20200519
+	//##### Smart v.20200605
 
 
 	//================================================================
@@ -3424,7 +3424,7 @@ Options -Indexes
 	 *
 	 * @return INTEGER 						:: The array COUNT of elements, or zero if array is empty or non-array is provided
 	 */
-	public static function array_size($y_arr) {
+	public static function array_size($y_arr) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO TEST ALSO NON-ARRAY VARS !!!
 		//--
 		if(is_array($y_arr)) {
 			return count($y_arr);
@@ -3444,7 +3444,7 @@ Options -Indexes
 	 *
 	 * @return ENUM 						:: The array type as: 0 = not an array ; 1 = non-associative (sequential) array or empty array ; 2 = associative array or non-sequential, must be non-empty
 	 */
-	public static function array_type_test($y_arr) {
+	public static function array_type_test($y_arr) { // !!! DO NOT FORCE ARRAY TYPE ON METHOD PARAMETER AS IT HAVE TO TEST ALSO NON-ARRAY VARS !!!
 		//--
 		if(!is_array($y_arr)) {
 			return 0; // not an array

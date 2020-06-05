@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Base]
 // (c) 2006-2020 unix-world.org - all rights reserved
-// r.5.7.2 / smart.framework.v.5.7
+// r.7.2.1 / smart.framework.v.7.2
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.7.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200604
+ * @version     v.20200605
  * @package     @Core
  *
  */
@@ -421,7 +421,7 @@ final class Smart {
 	 * @return 	STRING						:: The escaped string using a json_encode() standard to be injected between single quotes '' or double quotes ""
 	 */
 	public static function escape_js($str) {
-		//-- v.20200604
+		//-- v.20200605
 		// Prepare a string to pass in JavaScript Single or Double Quotes
 		// By The Situation:
 		// * Using inside tags as <a onClick="self.location = \''.Smart::escape_js($str).'\';"></a>
@@ -450,7 +450,7 @@ final class Smart {
 	 * @return 	STRING							:: The JSON encoded string
 	 */
 	public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true, $htmlsafe=true) {
-		// encode json v.20200604
+		// encode json v.20200605
 		$options = 0;
 		if(!$unescaped_unicode) {
 			if($prettyprint) {

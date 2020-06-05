@@ -1,10 +1,10 @@
 <?php
 // [LIB - Smart.Framework / Plugins / SpreadSheet Import/Export]
 // (c) 2006-2020 unix-world.org - all rights reserved
-// r.5.7.2 / smart.framework.v.5.7
+// r.7.2.1 / smart.framework.v.7.2
 
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.7.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200604
+ * @version 	v.20200605
  * @package 	Plugins:ViewComponents
  *
  */
@@ -383,7 +383,7 @@ final class SmartViewHtmlHelpers {
 	 * @return STRING 							[HTML Code]
 	 */
 	public static function html_js_date_field($y_id, $y_var, $yvalue, $y_text_select='', $yjs_mindate='', $yjs_maxdate='', array $y_extra_options=[], $y_js_evcode='') {
-		//-- v.20200604
+		//-- v.20200605
 		if((string)$yvalue != '') {
 			$yvalue = date('Y-m-d', @strtotime($yvalue)); // enforce this date format for internals and be sure is valid
 		} //end if
@@ -469,7 +469,7 @@ final class SmartViewHtmlHelpers {
 	 * @return STRING 							[HTML Code]
 	 */
 	public static function html_js_time_field($y_id, $y_var, $yvalue, $y_text_select='', $y_h_st='0', $y_h_end='23', $y_i_st='0', $y_i_end='55', $y_i_step='5', $y_rows='2', array $y_extra_options=[], $y_js_evcode='') {
-		//-- v.20200604
+		//-- v.20200605
 		if((string)$yvalue != '') {
 			$yvalue = date('H:i', @strtotime(date('Y-m-d').' '.$yvalue)); // enforce this time format for internals and be sure is valid
 		} //end if

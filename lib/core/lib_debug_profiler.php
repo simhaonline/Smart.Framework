@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Debug Profiler]
 // (c) 2006-2020 unix-world.org - all rights reserved
-// r.5.7.2 / smart.framework.v.5.7
+// r.7.2.1 / smart.framework.v.7.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the f
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.7.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -338,7 +338,7 @@ public static function display_debug_page($title, $content) {
 
 //==================================================================
 // reads and display a Markers-TPL file template for debug {{{SYNC-DEBUG-TPL-FILES}}}
-public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_templates=[], $y_use_decrypt=true) {
+public static function display_marker_tpl_debug($y_tpl_file, array $y_arr_sub_templates=[], $y_use_decrypt=true) {
 
 	//--
 	if(!SmartFrameworkRuntime::ifDebug()) {
@@ -356,7 +356,7 @@ public static function display_marker_tpl_debug($y_tpl_file, $y_arr_sub_template
 
 	//--
 	if(self::test_tpl_file_for_debug($y_tpl_file) === true) {
-		$content = (string) SmartMarkersTemplating::analyze_debug_file_template((string)$y_tpl_file, $y_arr_sub_templates);
+		$content = (string) SmartMarkersTemplating::analyze_debug_file_template((string)$y_tpl_file, (array)$y_arr_sub_templates);
 		if(class_exists('SmartViewHtmlHelpers')) {
 			$content .= (string) SmartViewHtmlHelpers::html_jsload_highlightsyntax('',['web','tpl']);
 			$content .= "\n".'<!-- SmartProfiler div-id:tpl-display-for-highlight -->'."\n";

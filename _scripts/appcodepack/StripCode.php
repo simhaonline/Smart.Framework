@@ -1,7 +1,7 @@
 <?php
 // Strip Code (PHP, JS, CSS)
 // (c) 2006-2020 unix-world.org - all rights reserved
-// r.5.7.2 / smart.framework.v.5.7
+// r.7.2.1 / smart.framework.v.7.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('APPCODEPACK_VERSION')) { // this must be defined in the first line of the application

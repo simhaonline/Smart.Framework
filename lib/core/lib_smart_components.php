@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Smart Components]
 // (c) 2006-2020 unix-world.org - all rights reserved
-// r.5.7.2 / smart.framework.v.5.7
+// r.7.2.1 / smart.framework.v.7.2
 
 //----------------------------------------------------- PREVENT EXECUTION BEFORE RUNTIME READY
 if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the first line of the application
@@ -9,7 +9,7 @@ if(!defined('SMART_FRAMEWORK_APP_BOOTSTRAP')) { // this must be defined in the f
 	die('Invalid Runtime App Bootstrap Status in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
 //----------------------------------------------------- PREVENT SEPARATE EXECUTION WITH VERSION CHECK
-if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.5.7')) {
+if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 'smart.framework.v.7.2')) {
 	@http_response_code(500);
 	die('Invalid Framework Version in PHP Script: '.@basename(__FILE__).' ...');
 } //end if
@@ -478,7 +478,7 @@ final class SmartComponents {
 	 * @internal
 	 *
 	 */
-	public static function app_powered_info($y_show_versions='no', $y_plugins=array()) {
+	public static function app_powered_info($y_show_versions='no', array $y_plugins=[]) {
 		//--
 		global $configs;
 		//--
@@ -651,7 +651,7 @@ final class SmartComponents {
 
 	//================================================================
 	// This conform the var names to lowercase and set the meta vars into a template array context (by default this is used by ::render_app_template() but can be used outside if needed ...
-	public static function set_app_template_conform_metavars($arr_data=[]) {
+	public static function set_app_template_conform_metavars(array $arr_data=[]) {
 		//--
 		if(!is_array($arr_data)) {
 			return array();
@@ -717,7 +717,7 @@ final class SmartComponents {
 
 	//================================================================
 	// This renders the App Main Template (should be used only on custom developments ...)
-	public static function render_app_template($template_path, $template_file, $arr_data) { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
+	public static function render_app_template($template_path, $template_file, array $arr_data) { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 		//--
 		$template_path = (string) Smart::safe_pathname((string)SmartFileSysUtils::add_dir_last_slash((string)trim((string)$template_path)));

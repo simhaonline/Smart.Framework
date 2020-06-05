@@ -1,7 +1,7 @@
 <?php
 // [LIB - Smart.Framework / Samples / Test Unit Main]
 // (c) 2006-2020 unix-world.org - all rights reserved
-// r.5.7.2 / smart.framework.v.5.7
+// r.7.2.1 / smart.framework.v.7.2
 
 // Class: \SmartModExtLib\Samples\TestUnitMain
 // Type: Module Library
@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200604
+ * @version 	v.20200605
  *
  */
 final class TestUnitMain {
