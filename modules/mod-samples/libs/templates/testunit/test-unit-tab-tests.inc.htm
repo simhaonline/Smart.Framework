@@ -6,7 +6,7 @@
 			<button class="ux-button ux-button-secondary" id="btn_loader_test_qunit"><i class="sfi sfi-hour-glass" style="color:#dddddd;"></i> &nbsp; All Tests: QUnit</button>
 			<button class="ux-button" id="btn_loader_test_strings" title="Unicode Strings Tests"><i class="sfi sfi-sphere" style="color:#555555;"></i> &nbsp; Test: Unicode Strings</button>
 			<button class="ux-button" id="btn_loader_test_crypto" title="Cryptography Tests"><i class="sfi sfi-make-group" style="color:#555555;"></i> &nbsp; Test: Cryptography</button>
-			<button class="ux-button" id="btn_loader_test_mtpl"><i class="sfi sfi-stack" style="color:#555555;"></i> &nbsp; Test: Markers-TPL</button>
+			<button class="ux-button" id="btn_loader_test_mtpl"><i class="sfi sfi-stack" style="color:#555555;"></i> &nbsp; Test: Marker-TPL</button>
 			<button class="ux-button" id="btn_loader_test_fs"><i class="sfi sfi-folder-open" style="color:#555555;"></i> &nbsp; Test: FileSystem Operations</button>
 			<br>
 			<button class="ux-button" id="btn_loader_test_dba"><i class="sfi sfi-library" style="color:#555555;"></i> &nbsp; Test: Dba DB</button>
@@ -49,7 +49,7 @@
 				//--
 				$('#btn_loader_test_mtpl').click(function() {
 					$('#test_div_by_ajax').html('<span style="color: #003399; font-size: 27px; font-weight: bold;"></span>');
-					SmartJS_BrowserUtils.PopUpLink('?page=samples.templating-test-extended&time=[###NO-CACHE-TIME|url|js###]', 'markerstpl-ext-test', null, null, -1, 1);
+					SmartJS_BrowserUtils.PopUpLink('?page=samples.templating-test-extended&time=[###NO-CACHE-TIME|url|js###]', 'markertpl-ext-test', null, null, -1, 1);
 				});
 				//--
 				$('#btn_loader_test_fs').click(function() {

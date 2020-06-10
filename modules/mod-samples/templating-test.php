@@ -87,12 +87,12 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$title = 'Markers-TPL Templating Render Demo - Syntax';
+		$title = 'Marker-TPL Templating Render Demo - Syntax';
 		//--
 		$data = [ // v.20200121
 			//-- ### ALL VARIABLE KEYS ARE CASE INSENSITIVE IN CONTROLLERS ; IN TEMPLATES ALL VARIABLE NAME / KEYS ARE UPPERCASE ; variable names will allow also - (. is reserved for separator as arr[key] is ARR.KEY)
 			'Version' => (string) SMART_FRAMEWORK_RELEASE_TAGVERSION.' '.SMART_FRAMEWORK_RELEASE_VERSION,
-			'heLLo__World' => '<h1>Demo: Markers-TPL Templating built-into Smart.Framework</h1>',
+			'heLLo__World' => '<h1>Demo: Marker-TPL Templating built-into Smart.Framework</h1>',
 			'NaViGaTiOn' => [
 				array('href' => '#link1', 'caption' => 'Sample Link <1>'),
 				array('href' => '#link2', 'caption' => 'Sample Link <2>'),
@@ -116,7 +116,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			$this->PageViewSetVars([
 				'title' => $title.' (autodetect file extension)',
 				'main' => SmartMarkersTemplating::render_file_template(
-					(string) $tpl, // the TPL view (syntax: Markers-TPL ; ; must contain '.mtpl.' in the file name)
+					(string) $tpl, // the TPL view (syntax: Marker-TPL ; ; must contain '.mtpl.' in the file name)
 					(array)  $data // the Variables array
 				)
 			]);
@@ -124,7 +124,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 			$this->PageViewSetVars([
 				'title' => $title,
 				'main' => SmartMarkersTemplating::render_file_template(
-					(string) $tpl, // the TPL view (syntax: Markers-TPL)
+					(string) $tpl, // the TPL view (syntax: Marker-TPL)
 					(array)  $data // the Variables array
 				)
 			]);

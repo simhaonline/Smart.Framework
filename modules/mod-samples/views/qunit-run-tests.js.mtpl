@@ -1,7 +1,7 @@
 [%%%COMMENT%%%]
 // IMPORTANT: use only JavaScript code here, no HTML !
 [%%%/COMMENT%%%]
-//===== QUnit Tests: START :: r.20200121
+//===== QUnit Tests: START :: r.20200610
 
 (function() {
 
@@ -39,14 +39,14 @@
 	});
 
 	// Smart.Framework Tests (incl Smart.Framework.Modules Tests by Area)
-	[@@@SUB-TEMPLATE:!modules/mod-samples/tests/core-tests.mtpl.js.inc!@@@]
-	[@@@SUB-TEMPLATE:!modules/mod-samples/tests/templating-tests.mtpl.js.inc!@@@]
-	[@@@SUB-TEMPLATE:!modules/mod-samples/tests/database-tests.mtpl.js.inc!@@@]
+	[@@@SUB-TEMPLATE:!modules/mod-samples/tests/core-tests.js.mtpl!@@@]
+	[@@@SUB-TEMPLATE:!modules/mod-samples/tests/templating-tests.js.mtpl!@@@]
+	[@@@SUB-TEMPLATE:!modules/mod-samples/tests/database-tests.js.mtpl!@@@]
 
 	// Smart.Framework.Modules Tests (optional)
-	[@@@SUB-TEMPLATE:?!modules/mod-highlight-syntax/tests/module-test.mtpl.js.inc!@@@]
-	[@@@SUB-TEMPLATE:?!modules/mod-lang-detect/tests/module-test.mtpl.js.inc!@@@]
-	[@@@SUB-TEMPLATE:?!modules/mod-zzz-tests/tests/module-test.mtpl.js.inc!@@@]
+	[@@@SUB-TEMPLATE:?!modules/mod-highlight-syntax/tests/module-test.js.mtpl!@@@]
+	[@@@SUB-TEMPLATE:?!modules/mod-lang-detect/tests/module-test.js.mtpl!@@@]
+	[@@@SUB-TEMPLATE:?!modules/mod-zzz-tests/tests/module-test.js.mtpl!@@@]
 
 })();
 

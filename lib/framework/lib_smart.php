@@ -16,7 +16,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
 // DEPENDS:
 //  * SmartUnicode::
 // DEPENDS-PHP: 7.2 or later
-// DEPENDS-EXT: XML, Json
+// DEPENDS-EXT: PHP XML, PHP JSON
 //======================================================
 
 // [REGEX-SAFE-OK]
@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200605
+ * @version     v.20200610
  * @package     @Core
  *
  */
@@ -159,7 +159,7 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Return the FIXED dirname(), also with fix on Windows
+	 * Return the FIXED dirname(), safe on Linux and Unix and with safety fix on Windows
 	 *
 	 * @param 	STRING 	$y_path 			:: The path name from to extract dirname()
 	 *
@@ -767,7 +767,7 @@ final class Smart {
 		} //end if
 		//--
 		$arr = (array) explode((string)$y_path_separator, (string)$y_key_path);
-		$max = count($arr);
+		$max = (int) count($arr);
 		$tarr = (array) $y_arr;
 		for($i=0; $i<$max; $i++) {
 			$arr[$i] = (string) trim((string)$arr[$i]);
@@ -1745,7 +1745,7 @@ final class Smart {
 	//================================================================
 	/**
 	 * Intended usage: Large scale, in a cluster.
-	 * Generates a random string (base62) UUID of 15 characters [0..9a..zA..Z] ; Example: 0K4M6V04JM01 .
+	 * Generates a random string (base62) UUID of 12 characters [0..9a..zA..Z] ; Example: 0K4M6V04JM01 .
 	 * It is based on Smart::uuid_10_seq() but will append the last two characters in base36 00..ZZ using Smart::net_server_id(true) that represent the Net Server ID in a cluster.
 	 * To set the Net Server ID as unique per each running instance of Smart.Framework under the same domain,
 	 * set the constant SMART_FRAMEWORK_NETSERVER_ID in etc/init.php with a number between 0..1295 to have a unique number for each instance of Smart.Framework
@@ -1885,7 +1885,7 @@ final class Smart {
 
 	//================================================================
 	/**
-	 * Generates an almost unique BASE62 + BASE36 based UUID of 35 characters [0..9a..zA..Z] ; Example: 00wA0whhw2e9L01-9187139702-Z98W7T091K .
+	 * Generates an almost unique BASE62 + BASE36 based UUID of 37 characters [0..9a..zA..Z] ; Example: 00wA0whhw2e9L01-9187139702-Z98W7T091K .
 	 * This compose as: Smart::uuid_15_seq().'-'.Smart::uuid_10_num().'-'.Smart::uuid_10_str()
 	 * Intended usage: Extremely Large scale, in a cluster. Case sensitive.
 	 *
@@ -2035,8 +2035,8 @@ final class Smart {
 				//--
 				if(!is_array($val)) {
 					//--
-					$val = trim((string)$val); // must not do strtolower as it is used to store both cases
-					$val = str_replace(array('<', '>', ','), array('‹', '›', ';'), $val);
+					$val = (string) trim((string)$val); // must not do strtolower as it is used to store both cases
+					$val = (string) str_replace(array('<', '>', ','), array('‹', '›', ';'), (string)$val);
 					if((string)$val != '') {
 						if(!in_array('<'.$val.'>', $arr)) {
 							$arr[] = '<'.$val.'>';
@@ -2047,7 +2047,7 @@ final class Smart {
 				//--
 			} //end foreach
 			//--
-			$out = implode(', ', $arr);
+			$out = (string) implode(', ', (array)$arr);
 			//--
 			$arr = array();
 			//--

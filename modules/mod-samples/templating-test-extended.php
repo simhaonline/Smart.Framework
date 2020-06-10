@@ -87,7 +87,7 @@ class SmartAppIndexController extends SmartAbstractAppController {
 		//--
 
 		//--
-		$title = 'Markers-TPL Templating Render Demo - Extended Syntax';
+		$title = 'Marker-TPL Templating Render Demo - Extended Syntax';
 		//--
 		$test_switch_arr = ['a', 'b', 'c', 'd'];
 		$txtstr = '1234567890 . コアテスト·スイート . / \\ abcdefghijklmniopqrstuvwxyz';
