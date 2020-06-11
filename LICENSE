@@ -14,6 +14,13 @@ Smart.Framework is dual-licensed, as open source, under any of BSD license or GP
 OR
 * GPLv3 license: LICENSE-GPLv3 # https://opensource.org/licenses/GPL-3.0
 
+Why a dual license ?
+First of all, you have many options.
+Second, some modules from the extra project Smart.Framework.Modules requires explicit GPLv3 license to be used.
+The BSD licensed parts can be used with GPLv3 licensed parts under a GPLv3 license but the viceversa because of extra restrictions required by the GPLv3 license.
+Anyway, all the code in the Smart.Framework standalone project can be used with any of BSD or GPLv3 licenses with no restrictions.
+The above explanations refer just if you need to use some modules from the external project Smart.Framework.Modules which may not be BSD licensed but they are explicit GPLv3 licensed.
+
 =========================================================================
 
 Choosing your license for Smart.Framework:

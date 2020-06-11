@@ -5,10 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="SmartJS_CryptoBlowfish        static class SmartJS_CryptoBlowfish  {  } .    CLASS :: Blowfish (CBC) :: encrypt / decrypt Blowfish (CBC) for JavaScript">
-	<meta name="keywords" content="smartjs cryptoblowfish, static, class, ., blowfish, cbc, encrypt, decrypt, for, javascript, language, located, at, lib js framework smart-framework.pak.js, crypt utils.js, package, sf.javascript crypto, name, usage, smartjs cryptoblowfish.method, version, depends, smartjs coreutils">
-	<meta name="summary" content="Smart.Framework : Javascript Documentation:">
-	<title>JS Documentation for: SmartJS_CryptoBlowfish</title>
+	<meta name="description" content="SmartJS_CryptoHash        static class SmartJS_CryptoHash  {  } .    CLASS :: Hash Crypto Hash Crypto for JavaScript: CRC32B / MD5 / SHA1 / SHA512">
+	<meta name="keywords" content="smartjs cryptohash, static, class, ., hash, crypto, for, javascript, cr, m, sh, sh, language, javascript, located, at, lib js framework smart-framework.pak.js, crypt utils.js, package, sf.javascript crypto, name, usage, smartjs cryptohash.method, throws, smartjs testcrypto.raiseerror, version, depends, smartjs coreutils">
+	<meta name="summary" content="Smart.Framework : Javascript Documentation: SmartJS_CryptoHash">
+	<title>JS Documentation for: SmartJS_CryptoHash</title>
 	<!-- CSS and Fonts -->
 		<!-- skip fonts -->
 	
@@ -677,26 +677,26 @@ select#select-summary {
 
 </style>
 <!-- Headings -->
-<h1 title="PHP class: `SmartJS_CryptoBlowfish` @ JavaScript" id="Class--Summary-">
-	<span class="doc-modifiers">static</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-name">SmartJS_CryptoBlowfish</span><br>
+<h1 title="PHP class: `SmartJS_CryptoHash` @ JavaScript" id="Class--Summary-">
+	<span class="doc-modifiers">static</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-name">SmartJS_CryptoHash</span><br>
 	{
 	}&nbsp;.
 </h1>
 <!-- Description -->
-<div class="doc-comments">CLASS :: Blowfish (CBC) :: encrypt / decrypt<br>
-Blowfish  (CBC) for JavaScript</div><br>
+<div class="doc-comments">CLASS :: Hash Crypto<br>
+Hash Crypto for JavaScript: CRC32B / MD5 / SHA1 / SHA512</div><br>
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
 		<li><span class="doc-language"><b>Language:</b> Javascript<span></li>
 		<li><span class="doc-located"><b>Located at:</b> lib/js/framework/smart-framework.pak.js; crypt_utils.js</span></li>
 		<li><span class="doc-package"><b>Package:</b> Sf.Javascript:Crypto</span></li>
-		<li><span class="doc-name"><b>Class Name:</b> SmartJS_CryptoBlowfish</span></li>
-		<li><b>Usage:</b> SmartJS_CryptoBlowfish.method();</li>
+		<li><span class="doc-name"><b>Class Name:</b> SmartJS_CryptoHash</span></li>
+		<li><b>Usage:</b> SmartJS_CryptoHash.method();</li>
+		<li><span class="doc-throws"><b>Throws:</b> SmartJS_TestCrypto.raiseError</span></li>
 		
 		
-		
-		<li><b>Version:</b> 20200424</li>
+		<li><b>Version:</b> 20200121</li>
 		<li><b>Depends:</b> SmartJS_CoreUtils</li>
 		
 	</ul>
@@ -707,46 +707,84 @@ Blowfish  (CBC) for JavaScript</div><br>
 	<h2 class="doc-header">class Methods</h2>
 </div>
 <!-- methods r.20200121 -->
-<div class="doc-container" id="Method--encrypt">
-	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>encrypt</b></span>&nbsp;(
-			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`plaintext` Parameter">plaintext</span></b></span>, 
-			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`key` Parameter">key</span></b></span>
+<div class="doc-container" id="Method--crc32b">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>crc32b</b></span>&nbsp;(
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`s` Parameter">s</span></b></span>
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{String}
 	<div class="doc-method-ret-params">
 	
+			@throws: SmartJS_TestCrypto.raiseError<br>
 	
-			@return: {String} The Blowfish encrypted string<br>
+			@return: {String} The CRC32B hash of the string<br>
 	
 	
 	
-			@param: {String} plaintext The plain string<br>
-			@param: {String} key The encryption key<br>
+			@param: {String} s The string<br>
 	
 	
 	</div>
-			<div class="doc-method-comments">Blowfish encrypts (CBC) plaintext using an encryption key</div>
+			<div class="doc-method-comments">Returns the CRC32B hash of a string</div>
 	
 	
-</div><div class="doc-container" id="Method--decrypt">
-	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>decrypt</b></span>&nbsp;(
-			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`ciphertext` Parameter">ciphertext</span></b></span>, 
-			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`key` Parameter">key</span></b></span>
+</div><div class="doc-container" id="Method--md5">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>md5</b></span>&nbsp;(
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`s` Parameter">s</span></b></span>
 	
 	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{String}
 	<div class="doc-method-ret-params">
 	
+			@throws: SmartJS_TestCrypto.raiseError<br>
 	
-			@return: {String} The decrypted string<br>
+			@return: {String} The MD5 hash of the string<br>
 	
 	
 	
-			@param: {String} ciphertext The Blowfish encrypted string<br>
-			@param: {String} key The encryption key<br>
+			@param: {String} s The string<br>
 	
 	
 	</div>
-			<div class="doc-method-comments">Blowfish decrypts (CBC) ciphertext using the encryption key</div>
+			<div class="doc-method-comments">Returns the MD5 hash of a string</div>
+	
+	
+</div><div class="doc-container" id="Method--sha1">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>sha1</b></span>&nbsp;(
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`s` Parameter">s</span></b></span>
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{String}
+	<div class="doc-method-ret-params">
+	
+			@throws: SmartJS_TestCrypto.raiseError<br>
+	
+			@return: {String} The SHA1 hash of the string<br>
+	
+	
+	
+			@param: {String} s The string<br>
+	
+	
+	</div>
+			<div class="doc-method-comments">Returns the SHA1 hash of a string</div>
+	
+	
+</div><div class="doc-container" id="Method--sha512">
+	<span class="doc-modifiers">public static</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>sha512</b></span>&nbsp;(
+			<i>{String}</i>&nbsp;<span class="doc-param-name"><b><span title="`s` Parameter">s</span></b></span>
+	
+	)&nbsp;{}&nbsp;<span title="Static Method"><b>.</b></span>&nbsp;{String}
+	<div class="doc-method-ret-params">
+	
+			@throws: SmartJS_TestCrypto.raiseError<br>
+	
+			@return: {String} The SHA512 hash of the string<br>
+	
+	
+	
+			@param: {String} s The string<br>
+	
+	
+	</div>
+			<div class="doc-method-comments">Returns the SHA512 hash of a string</div>
 	
 	
 </div>
@@ -791,15 +829,19 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* Javascript Class SmartJS_CryptoBlowfish # Documentation Index *</option>
-		<optgroup label="Class SmartJS_CryptoBlowfish">
+		<option value="" selected>* Javascript Class SmartJS_CryptoHash # Documentation Index *</option>
+		<optgroup label="Class SmartJS_CryptoHash">
 			<option value="Class--Summary-">Class definition</option>
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">Methods list</option>
-									<option value="Method--encrypt"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;encrypt()</option>
+									<option value="Method--crc32b"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;crc32b()</option>
 			
-									<option value="Method--decrypt"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;decrypt()</option>
+									<option value="Method--md5"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;md5()</option>
+			
+									<option value="Method--sha1"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;sha1()</option>
+			
+									<option value="Method--sha512"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;sha512()</option>
 			
 			
 		</optgroup>

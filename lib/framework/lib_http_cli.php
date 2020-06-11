@@ -79,7 +79,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.20200429
+ * @version 	v.20200611
  * @package 	@Core:Network
  *
  */
@@ -475,7 +475,7 @@ final class SmartHttpClient {
 			if((string)trim((string)$this->header) != '') {
 				if(stripos((string)$this->header, 'Transfer-Encoding: chunked') !== false) {
 					if((string)trim((string)$this->body) != '') {
-						$this->body = (string) $this->chunked_part_decode($this->body);
+						$this->body = (string) SmartHttpUtils::chunked_part_decode($this->body);
 					} //end if
 				} //end if
 			} //end if
@@ -1020,82 +1020,6 @@ final class SmartHttpClient {
 	//==============================================
 
 
-	//==============================================
-	/**
-	 * Dechunk an HTTP 'transfer-encoding: chunked' part (Ex: Body)
-	 * If The Chunked Part was not encoded properly it will be returned it unmodified.
-	 *
-	 * @param string $chunk the encoded message
-	 * @return string the decoded message.
-	 */
-	function chunked_part_decode($chunk) {
-		//--
-		$chunk = (string) trim((string)$chunk);
-		if((string)$chunk == '') {
-			return (string) $chunk;
-		} //end if
-		//--
-		$pos = 0;
-		$len = (int) strlen((string)$chunk);
-		//--
-		$newlineAt = strpos((string)$chunk, "\n", ((int)$pos + 1)); // return mixed: int / false
-		if($newlineAt === false) {
-			return (string) $chunk; // failed, chunked content is broken
-		} //end if
-		//--
-		$dechunk = '';
-		while(($pos < $len) && ($chunkLenHex = (string)substr((string)$chunk, (int)$pos, ((int)$newlineAt - (int)$pos)))) {
-			//--
-			if($newlineAt === false) {
-				return (string) $chunk; // failed, chunked content is broken
-			} //end if
-			//--
-			if($this->is_hex((string)$chunkLenHex) !== true) {
-				return (string) $chunk; // failed, chunked content is broken
-			} //end if
-			//--
-			$pos = (int) ((int)$newlineAt + 1);
-			$chunkLen = (int) hexdec((string)rtrim((string)$chunkLenHex, "\r\n"));
-			$dechunk .= (string) substr((string)$chunk, (int)$pos, (int)$chunkLen);
-			//--
-			$pos = strpos((string)$chunk, "\n", (int)((int)$pos + (int)$chunkLen)); // return mixed: int / false
-			if($pos === false) {
-				return (string) $chunk; // failed, chunked content is broken
-			} //end if
-			$pos = (int) ((int)$pos + 1);
-			//--
-			$newlineAt = strpos((string)$chunk, "\n", ((int)$pos + 1)); // return mixed: int / false
-			//--
-		} //end while
-		//--
-		return (string) $dechunk;
-		//--
-	} //END FUNCTION
-	//==============================================
-
-
-	//==============================================
-	/**
-	 * determine if a string can represent a number in hexadecimal
-	 *
-	 * @param string $hex
-	 * @return boolean true if the string is a hex, otherwise false
-	 */
-	function is_hex($hex) {
-		//--
-		$hex = (string) strtolower((string)trim((string)ltrim((string)$hex, '0')));
-		if(empty($hex)) {
-			$hex = 0;
-		} //end if
-		//--
-		$dec = (int) hexdec($hex);
-		//--
-		return (bool) ((string)$hex == (string)dechex((int)$dec));
-		//--
-	} //END FUNCTION
-	//==============================================
-
-
 } //END CLASS
 
 
@@ -1122,7 +1046,7 @@ final class SmartHttpClient {
  *
  * @access 		PUBLIC
  * @depends 	classes: Smart, SmartHashCrypto
- * @version 	v.20200121
+ * @version 	v.20200611
  * @package 	@Core:Network
  *
  */
@@ -1271,6 +1195,82 @@ final class SmartHttpUtils {
 		//--
 	} //END FUNCTION
 	//================================================================
+
+
+	//==============================================
+	/**
+	 * Dechunk a HTTP 'transfer-encoding: chunked' part (Ex: Body)
+	 * If The Chunked Part was not encoded properly it will be returned it unmodified.
+	 *
+	 * @param string $chunk the encoded message
+	 * @return string the decoded message.
+	 */
+	public static function chunked_part_decode($chunk) {
+		//--
+		$chunk = (string) trim((string)$chunk);
+		if((string)$chunk == '') {
+			return (string) $chunk;
+		} //end if
+		//--
+		$pos = 0;
+		$len = (int) strlen((string)$chunk);
+		//--
+		$newlineAt = strpos((string)$chunk, "\n", ((int)$pos + 1)); // return mixed: int / false
+		if($newlineAt === false) {
+			return (string) $chunk; // failed, chunked content is broken
+		} //end if
+		//--
+		$dechunk = '';
+		while(($pos < $len) && ($chunkLenHex = (string)substr((string)$chunk, (int)$pos, ((int)$newlineAt - (int)$pos)))) {
+			//--
+			if($newlineAt === false) {
+				return (string) $chunk; // failed, chunked content is broken
+			} //end if
+			//--
+			if(self::is_hex((string)$chunkLenHex) !== true) {
+				return (string) $chunk; // failed, chunked content is broken
+			} //end if
+			//--
+			$pos = (int) ((int)$newlineAt + 1);
+			$chunkLen = (int) hexdec((string)rtrim((string)$chunkLenHex, "\r\n"));
+			$dechunk .= (string) substr((string)$chunk, (int)$pos, (int)$chunkLen);
+			//--
+			$pos = strpos((string)$chunk, "\n", (int)((int)$pos + (int)$chunkLen)); // return mixed: int / false
+			if($pos === false) {
+				return (string) $chunk; // failed, chunked content is broken
+			} //end if
+			$pos = (int) ((int)$pos + 1);
+			//--
+			$newlineAt = strpos((string)$chunk, "\n", ((int)$pos + 1)); // return mixed: int / false
+			//--
+		} //end while
+		//--
+		return (string) $dechunk;
+		//--
+	} //END FUNCTION
+	//==============================================
+
+
+	//==============================================
+	/**
+	 * determine if a string can represent a number in hexadecimal
+	 *
+	 * @param string $hex
+	 * @return boolean true if the string is a hex, otherwise false
+	 */
+	private static function is_hex($hex) {
+		//--
+		$hex = (string) strtolower((string)trim((string)ltrim((string)$hex, '0')));
+		if(empty($hex)) {
+			$hex = 0;
+		} //end if
+		//--
+		$dec = (int) hexdec($hex);
+		//--
+		return (bool) ((string)$hex == (string)dechex((int)$dec));
+		//--
+	} //END FUNCTION
+	//==============================================
 
 
 } //END CLASS
