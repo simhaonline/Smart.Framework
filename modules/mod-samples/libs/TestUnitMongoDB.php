@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200605
+ * @version 	v.20200615
  *
  */
 final class TestUnitMongoDB {
@@ -532,7 +532,7 @@ final class TestUnitMongoDB {
 
 		//--
 		if((string)$err == '') {
-			$tst = 'Aggregate Find / GroupBy with Filter, Sort and Limit';
+			$tst = 'Aggregate Find / GroupBy with Filter, Sort, Limit and Projection';
 			$tests[] = (string) $tst;
 			$result = $mongo->command(
 				[
@@ -542,6 +542,12 @@ final class TestUnitMongoDB {
 							'$match' => [ // query
 								'id' => [ '$exists' => true ],
 								'cost' => [ '$gte' => 0, '$lte' => 10 ]
+							]
+						],
+						[
+							'$project' => [ // projection
+								'id' => '$id',
+								'cost' => '$cost'
 							]
 						],
 						[

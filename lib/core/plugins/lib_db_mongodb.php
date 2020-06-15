@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20200605
+ * @version 	v.20200615
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -580,6 +580,10 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 *
 	 */
 	public function __call($method, array $args) {
+
+		//--
+		$this->collection = ''; // initialize and clear
+		//--
 
 		//--
 		$method = (string) $method;
