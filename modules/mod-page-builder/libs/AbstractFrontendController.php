@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200515
+ * @version 	v.20200612
  * @package 	development:modules:PageBuilder
  *
  */
@@ -384,40 +384,40 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 	//=====
 
 
-	//=====
-	final public function checkIfPageExist($y_id) {
+	//===== $y_ctrl can be: NULL / STRING / ARRAY
+	final public function checkIfPageExist($y_id, $y_ctrl=null) {
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
 			return false;
 		} //end if
 		//--
-		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, true, false);
+		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, true, false, $y_ctrl);
 		//--
 	} //END FUNCTION
 	//=====
 
 
-	//=====
-	final public function checkIfSegmentExist($y_id) {
+	//===== $y_ctrl can be: NULL / STRING / ARRAY
+	final public function checkIfSegmentExist($y_id, $y_ctrl=null) {
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
 			return false;
 		} //end if
 		//--
-		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, false, true);
+		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, false, true, $y_ctrl);
 		//--
 	} //END FUNCTION
 	//=====
 
 
-	//=====
-	final public function checkIfPageOrSegmentExist($y_id) {
+	//===== $y_ctrl can be: NULL / STRING / ARRAY
+	final public function checkIfPageOrSegmentExist($y_id, $y_ctrl=null) {
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
 			return false;
 		} //end if
 		//--
-		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id);
+		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, true, true, $y_ctrl);
 		//--
 	} //END FUNCTION
 	//=====

@@ -2,6 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+June 12, 2020 :: Version 7.2.1 rev.20200612
+	* PageBuilder: new feature / frontend: Can Check if Page/Segment exists also by controller name
+
 June 05, 2020 :: Version 7.2.1 rev.20200605
 	* PHP 7.2+ Optimizations
 	* Set MySQL Library to use utf8mb4 instead of utf8 by default on all connections

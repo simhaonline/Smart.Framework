@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderFrontend {
 
 	// ::
-	// v.20200515
+	// v.20200612
 
 
 	private static $db = null;
@@ -94,7 +94,7 @@ final class PageBuilderFrontend {
 	} //END FUNCTION
 
 
-	public static function checkIfPageOrSegmentExist($y_id, $y_check_pages=true, $y_check_segments=true) {
+	public static function checkIfPageOrSegmentExist($y_id, $y_check_pages=true, $y_check_segments=true, $y_ctrl=null) {
 		//--
 		if(($y_check_pages !== true) AND ($y_check_segments !== true)) {
 			\Smart::log_warning(__METHOD__.' # Check for pages is DISABLED ; Check for segments is DISABLED ; In this case this function will always return FALSE. Object id is: '.$y_id);
@@ -108,12 +108,12 @@ final class PageBuilderFrontend {
 				if($y_check_segments !== true) {
 					return false; // disallowed by params
 				} //end if
-				$query = 'SELECT "id" FROM "web"."page_builder" WHERE ("id" = $1) LIMIT 1 OFFSET 0';
+				$query = 'SELECT "id", "ctrl" FROM "web"."page_builder" WHERE ("id" = $1) LIMIT 1 OFFSET 0';
 			} else { // page
 				if($y_check_pages !== true) {
 					return false; // disallowed by params
 				} //end if
-				$query = 'SELECT "id" FROM "web"."page_builder" WHERE (("id" = $1) AND ("active" = 1)) LIMIT 1 OFFSET 0';
+				$query = 'SELECT "id", "ctrl" FROM "web"."page_builder" WHERE (("id" = $1) AND ("active" = 1)) LIMIT 1 OFFSET 0';
 			} //end if else
 			$arr = (array) \SmartPgsqlDb::read_asdata(
 				(string) $query,
@@ -126,12 +126,12 @@ final class PageBuilderFrontend {
 				if($y_check_segments !== true) {
 					return false; // disallowed by params
 				} //end if
-				$query = 'SELECT `id` FROM `page_builder` WHERE (`id` = ?) LIMIT 1 OFFSET 0';
+				$query = 'SELECT `id`, `ctrl` FROM `page_builder` WHERE (`id` = ?) LIMIT 1 OFFSET 0';
 			} else { // page
 				if($y_check_pages !== true) {
 					return false; // disallowed by params
 				} //end if
-				$query = 'SELECT `id` FROM `page_builder` WHERE ((`id` = ?) AND (`active` = 1)) LIMIT 1 OFFSET 0';
+				$query = 'SELECT `id`, `ctrl` FROM `page_builder` WHERE ((`id` = ?) AND (`active` = 1)) LIMIT 1 OFFSET 0';
 			} //end if else
 			$arr = (array) self::$db->read_asdata(
 				(string) $query,
@@ -144,6 +144,15 @@ final class PageBuilderFrontend {
 		} //end if else
 		//--
 		if((string)$arr['id'] === (string)$y_id) {
+			if($y_ctrl !== null) {
+				if(\is_array($y_ctrl)) {
+					if(!\in_array((string)\SmartUnicode::str_tolower((string)\trim((string)$arr['ctrl'])), (array)$y_ctrl)) {
+						return false; // exists but the controller does not match
+					} //end if
+				} elseif((string)\SmartUnicode::str_tolower((string)\trim((string)$arr['ctrl'])) !== (string)\SmartUnicode::str_tolower((string)\trim((string)$y_ctrl))) {
+					return false; // exists but the controller does not match
+				} //end if
+			} //end if
 			return true; // exists
 		} else {
 			return false; // does not exists

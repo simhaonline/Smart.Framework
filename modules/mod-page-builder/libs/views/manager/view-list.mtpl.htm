@@ -84,13 +84,18 @@ jQuery(function() {
 		return html;
 	}
 
+	var displayCtrl = function(row, cell, value, columnDef, dataContext) {
+		value = String(value);
+		return '<span style="color:#778899;">' + SmartJS_CoreUtils.escape_html(value) + '</span>';
+	}
+
 	var displayID = function(row, cell, value, columnDef, dataContext) {
 		value = String(value);
 		var style = '';
 		if(value.substr(0, 1) == '#') {
 			style = ' font-style:italic;';
 		}
-		return '<div align="left" style="display:inline-block; padding-left:15px; padding-top:0px;' + style + '" title="' + SmartJS_CoreUtils.escape_html(dataContext['ref']) + '">' + SmartJS_CoreUtils.escape_html(value) + '</div>';
+		return '<div align="left" style="display:inline-block; padding-left:10px; padding-right:10px; padding-top:0px;' + style + '" title="' + SmartJS_CoreUtils.escape_html(dataContext['ref']) + '">' + SmartJS_CoreUtils.escape_html(value) + '</div>';
 	}
 
 	var displayCodeType = function(row, cell, value, columnDef, dataContext) {
@@ -166,7 +171,7 @@ jQuery(function() {
 
 	var displayName = function(row, cell, value, columnDef, dataContext) {
 		value = String(value);
-		return '<span title="' + SmartJS_CoreUtils.escape_html(dataContext['ctrl']) + '">' + SmartJS_CoreUtils.escape_html(value) + '</span>';
+		return '<span style="color:#555555;">' + SmartJS_CoreUtils.escape_html(value) + '</span>';
 	}
 
 	var diffColSize = function(colName) {
@@ -176,16 +181,19 @@ jQuery(function() {
 		[%%%/IF:LIST-DELETE-URL%%%]
 		var size = parseInt(jQuery(window).width() - szDiff - 50 - 75 - 75 - 75 - 75 - 75 - 75) - 100;
 		switch(String(colName)) {
+			case 'ctrl':
+				size = size * 0.25;
+				break;
 			case 'id':
-				size = size * 0.33
+				size = size * 0.25;
 				break;
 			case 'name':
-				size = size * 0.66;
+				size = size * 0.50;
 				break;
 			default:
 				size = size * 0;
 		}
-		size = parseInt(size);
+		size = Math.floor(size);
 		if(size < 10) {
 			size = 10;
 		}
@@ -198,9 +206,10 @@ jQuery(function() {
 		{id:'x-del', 		field:'id', 			name:'#', 								sortable:false, 	width:50, 					formatter:displayDel},
 		[%%%/IF:LIST-DELETE-URL%%%]
 		{id:'x-ops', 		field:'id', 			name:'@', 								sortable:false, 	width:50, 					formatter:displayOps},
+		{id:'ctrl', 		field:'ctrl', 			name:'[###TXT-COL-CTRL|js###]', 		sortable:true, 		width:diffColSize('ctrl'), 	formatter:displayCtrl, editor:TextCellSelector, cssClass:'smartGrid_Important'},
 		{id:'id', 			field:'id', 			name:'[###TXT-COL-ID|js###]', 			sortable:true, 		width:diffColSize('id'), 	formatter:displayID, editor:TextCellSelector, cssClass:'smartGrid_Important'},
 		{id:'mode', 		field:'mode', 			name:'[###TXT-COL-SYNTAX|js###]', 		sortable:true, 		width:75, 					formatter:displayCodeType, editor:TextCellSelector},
-		{id:'name', 		field:'name', 			name:'[###TXT-COL-NAME|js###]', 		sortable:true, 		width:diffColSize('name'), 	formatter:displayName, editor:TextCellSelector},
+		{id:'name', 		field:'name', 			name:'[###TXT-COL-NAME|js###]', 		sortable:true, 		width:diffColSize('name'), 	formatter:displayName, editor:TextCellSelector, cssClass:'smartGrid_Important'},
 		{id:'special', 		field:'special',		name:'[###TXT-COL-SPECIAL|js###]', 		sortable:true, 		width:75, 					formatter:displaySpecial, editor:TextCellSelector},
 		{id:'active', 		field:'active', 		name:'[###TXT-COL-ACTIVE|js###]', 		sortable:true, 		width:75, 					formatter:displayActive, editor:TextCellSelector},
 		{id:'auth', 		field:'auth', 			name:'[###TXT-COL-AUTH|js###]', 		sortable:true, 		width:75, 					formatter:displayAuth, editor:TextCellSelector},
