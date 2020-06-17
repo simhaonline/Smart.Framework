@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200424
+ * @version 	v.20200617
  * @package 	@Core:Extra
  *
  */
@@ -1649,7 +1649,7 @@ final class SmartUtils {
 
 
 	//================================================================
-	// Ex: localhost or IP
+	// get the current domain or IP (Ex: localhost or mydom.ext or IP address)
 	public static function get_server_current_domain_name() {
 		//--
 		return (string) trim((string)$_SERVER['SERVER_NAME']);
@@ -1659,7 +1659,7 @@ final class SmartUtils {
 
 
 	//================================================================
-	// get main domain without sub-domain
+	// get base domain without sub-domain (Ex: mydom.ext or IP address)
 	public static function get_server_current_basedomain_name() {
 		//--
 		$xout = (string) self::$cache['get_server_current_basedomain_name'];
@@ -1681,6 +1681,34 @@ final class SmartUtils {
 			} //end if
 			//--
 			self::$cache['get_server_current_basedomain_name'] = (string) $xout;
+			//--
+		} //end if
+		//--
+		return (string) $xout;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	// get sub-domain without base domain (Ex: www) ; works with subdom.domain.ext or sub.dom.domain.ext ; If IP address or no-extension domain, will return empty string
+	public static function get_server_current_subdomain_name() {
+		//--
+		$xout = self::$cache['get_server_current_subdomain_name']; // return mixed: null or empty string or the subdomain
+		//--
+		if($xout === null) {
+			//--
+			$the_dom_crr = (string) SmartUtils::get_server_current_domain_name();
+			if((string)SmartValidator::validate_filter_ip_address($the_dom_crr) == '') { // if not IP address
+				//--
+				$the_dom_base = (string) SmartUtils::get_server_current_basedomain_name();
+				if((strpos((string)$the_dom_base, '.') !== false) AND ((string)$the_dom_base != (string)$the_dom_crr)) { // for sub-domain the base domain must contain a dot
+					$xout = (string) trim((string)substr((string)$the_dom_crr, 0, (int)((int)strlen((string)$the_dom_crr) - (int)strlen((string)$the_dom_base) - 1)));
+				} //end if
+				//--
+			} //end if
+			//--
+			self::$cache['get_server_current_subdomain_name'] = (string) $xout;
 			//--
 		} //end if
 		//--
@@ -1714,7 +1742,7 @@ final class SmartUtils {
 	// Ex: /sites/test/script.php
 	public static function get_server_current_full_script() {
 		//--
-		return (string) Smart::fix_path_separator(trim((string)$_SERVER['SCRIPT_NAME'])); // Fix: on Windows it can contain \ instead of /
+		return (string) Smart::fix_path_separator((string)trim((string)$_SERVER['SCRIPT_NAME'])); // Fix: on Windows it can contain \ instead of /
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1730,14 +1758,14 @@ final class SmartUtils {
 			//--
 			$current_path = '/'; // this is default
 			if((string)self::get_server_current_full_script() != '') {
-				$current_path = Smart::dir_name(self::get_server_current_full_script()); // may return '' or .
+				$current_path = (string) Smart::dir_name(self::get_server_current_full_script()); // may return '' or .
 				if(((string)$current_path == '') OR ((string)$current_path == '.') OR ((string)$current_path == '//')) {
 					$current_path = '/';
 				} //end if
-				if(substr($current_path, 0, 1) != '/') {
+				if((string)substr((string)$current_path, 0, 1) != '/') {
 					$current_path = '/'.$current_path;
 				} //end if
-				if(substr($current_path, -1, 1) != '/') {
+				if((string)substr((string)$current_path, -1, 1) != '/') {
 					$current_path .= '/';
 				} //end if
 			} //end if
@@ -1812,7 +1840,7 @@ final class SmartUtils {
 			//--
 			$current_script = '';
 			if((string)self::get_server_current_full_script() != '') {
-				$current_script = basename(self::get_server_current_full_script());
+				$current_script = (string) basename(self::get_server_current_full_script());
 			} //end if
 			if((string)$current_script == '') {
 				Smart::raise_error('Cannot Determine Current WebServer Script', 'Invalid Current WebServer Script');

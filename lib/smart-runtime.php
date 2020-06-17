@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.7.2.1'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.06.15'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.06.17'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
@@ -1027,7 +1027,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20200515
+ * @version		v.20200617
  * @package 	Application
  *
  */
@@ -1596,37 +1596,30 @@ final class SmartFrameworkRuntime {
 	// if en is the default languages will result something like: (www.dom.ext | ro.dom.ext | de.dom.ext ...): www => en ; ro => ro ; de => de ...
 	// the default language will be mapped by default to www sub-domain ; the rest of available languages will be mapped as language code as sub-domain
 	// Example: $arr_skip_subdomains = [ 'sdom1', 'sdom2', ... ]; // the list of subdomains that are excepted
-	public static function AppSetLanguageBySubdomain(array $arr_skip_subdomains=[]) { // r.20200605
+	public static function AppSetLanguageBySubdomain(string $default_subdomain='www', array $arr_skip_subdomains=[]) { // r.20200617
 		//--
-		$sdom = (string) SmartUtils::get_server_current_domain_name();
-		if((string)SmartValidator::validate_filter_ip_address($sdom) != '') {
-			return; // if no domain but only IP, stop
+		$default_subdomain = (string) trim((string)$default_subdomain);
+		if(strpos((string)$default_subdomain, '.') !== false) {
+			return; // invalid default domain
 		} //end if
 		//--
-		$dom = (string) SmartUtils::get_server_current_basedomain_name();
-		if((string)$dom == (string)$sdom) {
-			return; // if not using sub-domain of domain, stop
-		} //end if
-		//--
-		$pdom = (string) substr($sdom, 0, (strlen($sdom)-strlen($dom)-1));
-		//--
-		SmartTextTranslations::setLanguage((string)SmartTextTranslations::getDefaultLanguage()); // EN
-		//--
-		if((string)$pdom != 'www') {
+		$pdom = (string) trim((string)SmartUtils::get_server_current_subdomain_name());
+		if(((string)$pdom != '') AND ((string)$pdom != (string)$default_subdomain)) {
 			//--
-			if(SmartTextTranslations::validateLanguage($pdom)) {
+			if(((string)$pdom != (string)SmartTextTranslations::getDefaultLanguage()) AND (SmartTextTranslations::validateLanguage($pdom))) {
 				SmartTextTranslations::setLanguage($pdom); // set only other languages if valid: RO, DE, ...
+				return;
 			} else {
-				if(Smart::array_size($arr_skip_subdomains) > 0) {
-					if(in_array((string)$pdom, (array)$arr_skip_subdomains)) {
-						return;
-					} //end if
+				if(!in_array((string)$pdom, (array)$arr_skip_subdomains)) {
+					http_response_code(301); // permanent redirect if the language code is not valid
+					self::outputHttpSafeHeader('Location: '.SmartUtils::get_server_current_protocol().($default_subdomain ? $default_subdomain.'.' : '').SmartUtils::get_server_current_basedomain_name().SmartUtils::get_server_current_request_uri()); // force redirect
+					die('');
 				} //end if
-				http_response_code(301); // permanent redirect if the language code is not valid
-				self::outputHttpSafeHeader('Location: '.SmartUtils::get_server_current_protocol().'www.'.SmartUtils::get_server_current_basedomain_name()); // force redirect
 			} //end if
 			//--
 		} //end if else
+		//--
+		SmartTextTranslations::setLanguage((string)SmartTextTranslations::getDefaultLanguage()); // set default language: EN
 		//--
 	} //END FUNCTION
 	//======================================================================
