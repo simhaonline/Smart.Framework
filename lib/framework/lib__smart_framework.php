@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20200610
+ * @version 	v.20200619
  * @package 	development:Application
  *
  */
@@ -1687,7 +1687,7 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 * This is the pre Run() function
 	 * This function will be called before Run()
 	 *
-	 * @return VOID :: This function does not return anything
+	 * @return BOOL 					:: *OPTIONAL* If an ERROR occurs during initialize it can return FALSE to avoid continue and call the Run() method ; ShutDown() method will still be called ; otherwise it can return TRUE or VOID
 	 */
 	public function Initialize() {
 		// *** optional*** can be redefined in a controller (as a pre-run init, if required) but is not mandatory ...

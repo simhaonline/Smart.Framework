@@ -696,7 +696,7 @@ select#select-summary {
 		<li><span class="doc-ns"><b>Namespace:</b> \</span></li>
 		<li><span class="doc-name"><b>Class Name:</b> SmartAbstractAppController</span></li>
 		
-		<li><b>Version:</b> v.20200610</li>
+		<li><b>Version:</b> v.20200619</li>
 		<li><b>Depends:</b> -</li>
 		<li><b>Hints:</b> needs  to be extended as: SmartAppIndexController (as a controller of index.php) or SmartAppAdminController (as a controller of admin.php)</li>
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
@@ -1392,10 +1392,10 @@ This is based on PersistentCache</div>
 	<span class="doc-modifiers">public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>Initialize</b></span>&nbsp;(
 		
 	
-	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;VOID
+	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;BOOL
 	
 	
-			<div class="doc-method-ret-params">@return: {VOID} This function does not return anything</div>
+			<div class="doc-method-ret-params">@return: {BOOL} *OPTIONAL* If an ERROR occurs during initialize it can return FALSE to avoid continue and call the Run() method ; ShutDown() method will still be called ; otherwise it can return TRUE or VOID</div>
 	
 			<div class="doc-method-comments">This is the pre Run() function<br>
 This function will be called before Run()</div>
@@ -1649,7 +1649,7 @@ function smartHandleDocSelector(obj) {
 
 
 <hr>
-<small style="color:#BBBBBB;">documentation generated on: 2020-06-19 12:17:40 +0000</small>
+<small style="color:#BBBBBB;">documentation generated on: 2020-06-19 14:14:15 +0000</small>
 <hr>
 <br>
 <!-- # -->

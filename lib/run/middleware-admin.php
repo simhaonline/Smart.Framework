@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.7.2.1');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20200121
+ * @version		20200619
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -278,12 +278,19 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 		if(!defined('SMART_APP_MODULE_DIRECT_OUTPUT') OR SMART_APP_MODULE_DIRECT_OUTPUT !== true) {
 			ob_start();
 		} //end if
-		$appModule->Initialize();
-		$appStatusCode = (int) $appModule->Run();
+		$appTestInit = $appModule->Initialize(); // mixed: null (void) / FALSE
+		if($appTestInit !== false) {
+			$appStatusCode = (int) $appModule->Run();
+		} //end if
 		$appModule->ShutDown();
 		$appSettings = (array) $appModule->PageViewGetCfgs();
 		if(array_key_exists('status-code', $appSettings)) {
 			$appStatusCode = (int) $appSettings['status-code']; // this rewrites what the Run() function returns, which is very OK as this is authoritative !
+		} //end if
+		if($appTestInit === false) {
+			if($appStatusCode < 400) { // {{{SYNC-MIDDLEWARE-MIN-ERR-STATUS-CODE}}}
+				$appStatusCode = 500; // if Initialize returns FALSE then expects also and explicit error code (>= 400) and perhaps a message set via $appSettings['status-code'] ; if none implemented, raise the 500 HTTP Status Code
+			} //end if
 		} //end if
 		$appRawHeads = (array) $appModule->PageViewGetRawHeaders();
 		$appData = (array) $appModule->PageViewGetVars();
@@ -302,7 +309,7 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 		//--
 		//== CACHE CONTROL
 		//--
-		if((int)$appStatusCode < 400) {
+		if((int)$appStatusCode < 400) { // {{{SYNC-MIDDLEWARE-MIN-ERR-STATUS-CODE}}}
 			if(((int)$appSettings['expires'] > 0) AND (!SmartFrameworkRuntime::ifDebug())) {
 				SmartFrameworkRuntime::outputHttpHeadersNoCache((int)$appSettings['expires'], (int)$appSettings['modified'], (string)$appSettings['c-control']); // headers: cache expiration control
 			} else {
