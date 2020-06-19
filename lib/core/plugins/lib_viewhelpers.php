@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200605
+ * @version 	v.20200619
  * @package 	Plugins:ViewComponents
  *
  */
@@ -78,14 +78,21 @@ final class SmartViewHtmlHelpers {
 	 * If a valid DOM Selector is specified all code areas in that dom selector will be highlighted
 	 * This function should not be rendered more than once in a HTML page
 	 *
-	 * @param STRING 	$dom_selector		A valid jQuery HTML-DOM Selector as container(s) for Pre>Code (see jQuery ...)
-	 * @param ARRAY 	$plugins 			The Array with enum of packages to load
-	 * @param ENUM 		$theme 				The Visual CSS Theme to Load
-	 * @param BOOLEAN 	$loadpacks 			If TRUE will load syntax packed files instead of syntax single files which are many
+	 * @param STRING 	$dom_selector			A valid jQuery HTML-DOM Selector as container(s) for Pre>Code (see jQuery ...)
+	 * @param ARRAY 	$plugins 				The Array with enum of packages to load
+	 * @param ENUM 		$theme 					The Visual CSS Theme to Load
+	 * @param BOOL 		$loadpacks 				If TRUE will load syntax packed files instead of syntax single files which are many
+	 * @param BOOL 		$use_absolute_url 		If TRUE will use full URL prefix to load CSS and Javascripts ; Default is FALSE
 	 *
-	 * @return STRING						[HTML Code]
+	 * @return STRING							[HTML Code]
 	 */
-	public static function html_jsload_highlightsyntax($dom_selector, array $plugins=['web'], $theme='github', $loadpacks=true) {
+	public static function html_jsload_highlightsyntax($dom_selector, array $plugins=['web'], $theme='github', $loadpacks=true, $use_absolute_url=false) {
+		//--
+		if($use_absolute_url !== true) {
+			$the_abs_url = '';
+		} else {
+			$the_abs_url = (string) SmartUtils::get_server_current_url();
+		} //end if else
 		//--
 		$theme = (string) strtolower((string)$theme);
 		switch((string)$theme) {
@@ -155,6 +162,7 @@ final class SmartViewHtmlHelpers {
 		return (string) SmartMarkersTemplating::render_file_template(
 			'lib/core/plugins/templates/syntax-highlight-init.inc.htm',
 			[
+				'HLJS-PREFIX-URL' 	=> (string) $the_abs_url,
 				'CSS-THEME' 		=> (string) $theme,
 				'SYNTAX-PLUGINS' 	=> (array)  $arr_stx_plugs,
 				'SYNTAX-PACKS' 		=> (string) $syntax_packs,
@@ -1656,14 +1664,23 @@ final class SmartViewHtmlHelpers {
 	 * Return the HTML / Javascript code to Load the required Javascripts for the Code Editor (Edit Area).
 	 * Should be called just once, before calling one or many ::html_js_editarea()
 	 *
-	 * @return STRING						[HTML Code]
+	 * @param $y_use_absolute_url 	BOOL 		If TRUE will use full URL prefix to load CSS and Javascripts ; Default is FALSE
+	 *
+	 * @return STRING							[HTML Code]
 	 */
-	public static function html_jsload_editarea() {
+	public static function html_jsload_editarea($y_use_absolute_url=false) {
+		//--
+		if($y_use_absolute_url !== true) {
+			$the_abs_url = '';
+		} else {
+			$the_abs_url = (string) SmartUtils::get_server_current_url();
+		} //end if else
 		//--
 		return (string) SmartMarkersTemplating::render_file_template(
 			'lib/core/plugins/templates/code-editor-init.inc.htm',
 			[
-				'LANG' => (string) SmartTextTranslations::getLanguage()
+				'LANG' 				=> (string) SmartTextTranslations::getLanguage(),
+				'CODEED-PREFIX-URL' => (string) $the_abs_url
 			],
 			'yes' // export to cache
 		);
@@ -1812,16 +1829,24 @@ final class SmartViewHtmlHelpers {
 	 *
 	 * @param $y_filebrowser_link 	STRING 		URL to Image Browser (Example: script.php?op=image-gallery&type=images)
 	 * @param $y_styles 			ENUM 		Can be '' or 'a/path/to/styles.css'
+	 * @param $y_use_absolute_url 	BOOL 		If TRUE will use full URL prefix to load CSS and Javascripts ; Default is FALSE
 	 *
 	 * @return STRING							[HTML Code]
 	 */
-	public static function html_jsload_htmlarea($y_filebrowser_link='', $y_stylesheet='') {
+	public static function html_jsload_htmlarea($y_filebrowser_link='', $y_stylesheet='', $y_use_absolute_url=false) {
+		//--
+		if($y_use_absolute_url !== true) {
+			$the_abs_url = '';
+		} else {
+			$the_abs_url = (string) SmartUtils::get_server_current_url();
+		} //end if else
 		//--
 		return (string) SmartMarkersTemplating::render_file_template(
 			'lib/core/plugins/templates/html-editor-init.inc.htm',
 			[
-				'LANG' => (string) SmartTextTranslations::getLanguage(),
-				'STYLESHEET' => (string) $y_stylesheet,
+				'LANG' 						=> (string) SmartTextTranslations::getLanguage(),
+				'HTMED-PREFIX-URL' 			=> (string) $the_abs_url,
+				'STYLESHEET' 				=> (string) $y_stylesheet,
 				'FILE-BROWSER-CALLBACK-URL' => (string) $y_filebrowser_link
 			],
 			'yes' // export to cache

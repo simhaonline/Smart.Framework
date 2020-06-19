@@ -39,7 +39,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @access 		private
  * @internal
  *
- * @version 	v.20200609
+ * @version 	v.20200619
  * @package 	Application:Development
  *
  */
@@ -89,9 +89,10 @@ public static function js_headers_debug($y_profiler_url) {
 	//--
 	return SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/debug-profiler-head.inc.htm',
-		array(
-			'DEBUG-PROFILER-URL' => (string) $y_profiler_url
-		),
+		[
+			'BASE-URL' 				=> (string) SmartUtils::get_server_current_url(),
+			'DEBUG-PROFILER-URL' 	=> (string) $y_profiler_url
+		],
 		'no' // no cache
 	);
 	//--
@@ -325,6 +326,7 @@ public static function display_debug_page($title, $content) {
 	return (string) SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/debug-profiler-util.htm',
 		[
+			'BASE-URL' 	=> (string) SmartUtils::get_server_current_url(),
 			'CHARSET' 	=> (string) SmartUtils::get_encoding_charset(),
 			'TITLE' 	=> (string) $title,
 			'MAIN' 		=> (string) $content
@@ -528,21 +530,22 @@ public static function print_debug_info($y_area, $y_debug_token) {
 	//--
 	return SmartMarkersTemplating::render_file_template(
 		'lib/core/templates/debug-profiler-footer.inc.htm',
-		array(
-			'DEBUG-TIME' => date('Y-m-d H:i:s O'),
-			'DEBUG-RUNTIME' => $start_marker.self::print_log_runtime().$end_marker, // ok
-			'DEBUG-CONFIGS' => $start_marker.self::print_log_configs().$end_marker, // ok
-			'DEBUG-RESOURCES' => $debug_resources.$end_marker, // ok
-			'DEBUG-HEADERS' => $debug_response.$end_marker, // ok
-			'DEBUG-ENVIRONMENT' => $debug_environment.$end_marker, // ok
-			'DEBUG-SESSION' => $debug_session.$end_marker, // ok
-			'DEBUG-AUTH' => $debug_auth.$end_marker,
-			'DEBUG-OPTIMIZATIONS' => $debug_optimizations, // ok
-			'DEBUG-MAIL' => $debug_mail,
-			'DEBUG-DATABASE' => $debug_dbqueries, // ok
-			'DEBUG-EXTRA' => $debug_extra, // ok
-			'DEBUG-MODULES' => $debug_modules // ok
-		),
+		[
+			'BASE-URL' 				=> (string) SmartUtils::get_server_current_url(),
+			'DEBUG-TIME' 			=> (string) date('Y-m-d H:i:s O'),
+			'DEBUG-RUNTIME' 		=> (string) $start_marker.self::print_log_runtime().$end_marker,
+			'DEBUG-CONFIGS' 		=> (string) $start_marker.self::print_log_configs().$end_marker,
+			'DEBUG-RESOURCES' 		=> (string) $debug_resources.$end_marker,
+			'DEBUG-HEADERS' 		=> (string) $debug_response.$end_marker,
+			'DEBUG-ENVIRONMENT' 	=> (string) $debug_environment.$end_marker,
+			'DEBUG-SESSION' 		=> (string) $debug_session.$end_marker,
+			'DEBUG-AUTH' 			=> (string) $debug_auth.$end_marker,
+			'DEBUG-OPTIMIZATIONS' 	=> (string) $debug_optimizations,
+			'DEBUG-MAIL' 			=> (string) $debug_mail,
+			'DEBUG-DATABASE' 		=> (string) $debug_dbqueries,
+			'DEBUG-EXTRA' 			=> (string) $debug_extra,
+			'DEBUG-MODULES' 		=> (string) $debug_modules
+		],
 		'no' // no cache
 	);
 	//--

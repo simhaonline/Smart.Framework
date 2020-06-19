@@ -2,6 +2,10 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+June 19, 2020 :: Version 7.2.1 rev.20200619
+	* Add Optional Absolute URL Prefixes in Captcha Form and ViewHelpers (HighlightJs, HtmlEditor, CodeEditor)
+	* Fix: use absolute URL Prefixes in Debug Profiler templates
+
 June 12, 2020 :: Version 7.2.1 rev.20200612
 	* PageBuilder: new feature / frontend: Can Check if Page/Segment exists also by controller name
 
