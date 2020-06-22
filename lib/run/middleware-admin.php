@@ -39,7 +39,7 @@ define('SMART_FRAMEWORK_RELEASE_MIDDLEWARE', '[A]@v.7.2.1');
  * @internal
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY BY SMART-FRAMEWORK.RUNTIME !!!
  *
- * @version		20200619
+ * @version		20200622
  *
  */
 final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
@@ -161,13 +161,16 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 		//--
 		//== LOAD THE MODULE (OR DEFAULT MODULE)
 		//--
-		$reserved_controller_names = [ 'php', 'html', 'stml', 'css', 'js', 'json', 'xml', 'rss', 'txt', 'md', 'csv', 'sql', 'png', 'gif', 'jpg', 'pdf', 'svg', 'zip', '7z', 'netarch' ]; // these are reserved extensions and cannot be used as controller names because they need to be used also with friendly URLs as the 2nd param if module is missing from URL page param
+		$reserved_controller_names = []; // these are reserved extensions and cannot be used as controller names because they need to be used also with friendly URLs as the 2nd param if module is missing from URL page param
+		if(defined('SMART_FRAMEWORK_RESERVED_CONTROLLER_NAMES')) {
+			$reserved_controller_names = (array) Smart::list_to_array((string)SMART_FRAMEWORK_RESERVED_CONTROLLER_NAMES, true);
+		} //end if
 		//--
 		$err404 = '';
 		$arr = array();
 		//--
 		$page = (string) SmartUnicode::utf8_to_iso((string)SmartFrameworkRegistry::getRequestVar('page'));
-		$page = trim(str_replace(array('/', '\\', ':', '?', '&', '=', '%'), array('', '', '', '', '', '', ''), $page)); // fix for get as it automatically replaces . with _ (so, reverse), but also fix some invalid characters ...
+		$page = (string) trim((string)str_replace(array('/', '\\', ':', '?', '&', '=', '%'), array('', '', '', '', '', '', ''), $page)); // fix for get as it automatically replaces . with _ (so, reverse), but also fix some invalid characters ...
 		if((string)$page == '') {
 			$page = (string) $configs['app']['admin-home'];
 		} //end if
@@ -178,8 +181,8 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 			//--
 			//#
 			//#
-			$arr[0] = trim(strtolower((string)$arr[0])); // module
-			$arr[1] = trim(strtolower((string)$arr[1])); // controller
+			$arr[0] = (string) trim((string)strtolower((string)$arr[0])); // module
+			$arr[1] = (string) trim((string)strtolower((string)$arr[1])); // controller
 			//#
 			//# Admin will NOT integrate with friendly URLs SMART_FRAMEWORK_SEMANTIC_URL_SKIP_MODULE
 			//# that feature is just for Index
@@ -187,8 +190,8 @@ final class SmartAppAdminMiddleware extends SmartAbstractAppMiddleware {
 			//--
 		} elseif((string)$configs['app']['admin-default-module'] != '') {
 			//--
-			$arr[0] = trim(strtolower((string)$configs['app']['admin-default-module'])); // get default module
-			$arr[1] = trim(strtolower((string)$page)); // controller
+			$arr[0] = (string) trim((string)strtolower((string)$configs['app']['admin-default-module'])); // get default module
+			$arr[1] = (string) trim((string)strtolower((string)$page)); // controller
 			//--
 		} else {
 			//--
