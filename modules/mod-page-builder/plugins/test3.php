@@ -23,7 +23,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 final class PageBuilderFrontendPluginPageBuilderTest3 extends \SmartModExtLib\PageBuilder\AbstractFrontendPlugin {
 
-	// r.20200515
+	// r.20200624
 
 	public function Run() {
 		//--
@@ -37,7 +37,7 @@ final class PageBuilderFrontendPluginPageBuilderTest3 extends \SmartModExtLib\Pa
 			'content' 	=> '<div>this is Plugin3 Test :: '.Smart::escape_html(implode(' ; ', (array)$txt_cfg)).'</div>'
 		]);
 		//--
-	}//END FUNCTION
+	} //END FUNCTION
 
 
 	public function ShutDown() {

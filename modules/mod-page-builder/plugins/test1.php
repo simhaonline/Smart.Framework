@@ -23,7 +23,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 final class PageBuilderFrontendPluginPageBuilderTest1 extends \SmartModExtLib\PageBuilder\AbstractFrontendPlugin {
 
-	// r.20200515
+	// r.20200624
 
 	public function Run() {
 
@@ -44,7 +44,7 @@ final class PageBuilderFrontendPluginPageBuilderTest1 extends \SmartModExtLib\Pa
 		//$this->PageViewSetErrorStatus(503, 'Test Err');
 		//return 503;
 
-	}//END FUNCTION
+	} //END FUNCTION
 
 
 	public function ShutDown() {

@@ -1,5 +1,5 @@
 
-# Smart.Framework.Modules: PageBuilder r.20200612 #
+# Smart.Framework.Modules: PageBuilder r.20200624 #
 
 // r.7.2.1 / smart.framework.v.7.2
 

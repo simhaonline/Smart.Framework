@@ -108,6 +108,9 @@ RENDER:
     content:
       type: value
       id: This is the page <title>
+      translations:
+        de: Dies ist die Seite <titel>
+        ro: Aceasta este pagina <titlu>
       config:
         syntax: text
 ```

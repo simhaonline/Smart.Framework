@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200515
+ * @version 	v.20200624
  * @package 	development:modules:PageBuilder
  *
  */
@@ -46,7 +46,7 @@ abstract class AbstractFrontendPlugin extends \SmartAbstractAppController {
 	 * @internal
 	 *
 	 */
-	final public function initPlugin($plugin_name, $plugin_config, $plugin_caller_module_path) {
+	final public function initPlugin(string $plugin_name, array $plugin_config, string $plugin_caller_module_path) {
 		//--
 		if($this->plugin_initialized === true) {
 			return;

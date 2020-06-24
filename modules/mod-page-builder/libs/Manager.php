@@ -50,7 +50,7 @@ $administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Specia
  * @access 		private
  * @internal
  *
- * @version 	v.20200515
+ * @version 	v.20200624
  * @package 	PageBuilder
  *
  */
@@ -2066,7 +2066,7 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 			$message = 'There was an error trying to reset the Hit Counter on all PageBuilder Objects';
 		} //end if else
 		//--
-		return (string) \SmartComponents:: js_ajax_replyto_html_form(
+		return (string) \SmartViewHtmlHelpers::js_ajax_replyto_html_form(
 			(string) $status,
 			'Reset Hit Counter on All PageBuilder Objects',
 			(string) $message,

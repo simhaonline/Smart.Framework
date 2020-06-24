@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200612
+ * @version 	v.20200624
  * @package 	development:modules:PageBuilder
  *
  */
@@ -58,7 +58,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	final public function renderBuilderPage($page_id, $tpl_path, $tpl_file, $markers, $arr_markers=array()) { // (OUTPUTS: HTML)
+	final public function renderBuilderPage(string $page_id, string $tpl_path, string $tpl_file, array $markers, array $arr_markers=[]) { // (OUTPUTS: HTML)
 
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
@@ -220,7 +220,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	final public function getRenderedBuilderSegmentCode($segment_id, $arr_markers=array()) { // (OUTPUTS: HTML)
+	final public function getRenderedBuilderSegmentCode(string $segment_id, array $arr_markers=[]) { // (OUTPUTS: HTML)
 
 		// CHECK: $this->rendered_segments[]
 
@@ -344,7 +344,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//===== !!! this feature can be used separately, thus it is implemented already on render page or segment if extra arr markers is provided ; but perhaps there are cases when this have to be used separately !!!
-	final public function renderSegmentMarkers($segment_code, $arr_markers) { // (OUTPUTS: HTML)
+	final public function renderSegmentMarkers(string $segment_code, array $arr_markers) { // (OUTPUTS: HTML)
 
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
@@ -385,7 +385,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//===== $y_ctrl can be: NULL / STRING / ARRAY
-	final public function checkIfPageExist($y_id, $y_ctrl=null) {
+	final public function checkIfPageExist(string $y_id, $y_ctrl=null) {
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
 			return false;
@@ -398,7 +398,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//===== $y_ctrl can be: NULL / STRING / ARRAY
-	final public function checkIfSegmentExist($y_id, $y_ctrl=null) {
+	final public function checkIfSegmentExist(string $y_id, $y_ctrl=null) {
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
 			return false;
@@ -411,7 +411,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//===== $y_ctrl can be: NULL / STRING / ARRAY
-	final public function checkIfPageOrSegmentExist($y_id, $y_ctrl=null) {
+	final public function checkIfPageOrSegmentExist(string $y_id, $y_ctrl=null) {
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
 			return false;
@@ -424,7 +424,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	final public function getListOfSegmentsByArea($y_area, $y_orderby='id', $y_orderdir='ASC', $y_limit=0, $y_ofs=0) {
+	final public function getListOfSegmentsByArea(string $y_area, string $y_orderby='id', string $y_orderdir='ASC', int $y_limit=0, int $y_ofs=0) {
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
 			return array();
@@ -440,7 +440,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	private function fixRenderMaxDepth($maxdepth) {
+	private function fixRenderMaxDepth(int $maxdepth) {
 		//--
 		$maxdepth = (int) $maxdepth;
 		if($maxdepth <= 0) {
@@ -456,7 +456,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	private function fixPCacheTime($time) {
+	private function fixPCacheTime(int $time) {
 		//--
 		$time = (int) $time;
 		//--
@@ -473,7 +473,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	private function fixAllowedTemplateMarkers($markers) {
+	private function fixAllowedTemplateMarkers(array $markers) {
 		//--
 		if(!\is_array($markers)) {
 			$markers = array();
@@ -508,7 +508,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 	//=====
 	// load settings segment
-	private function loadSegmentSettingsOnly($id) {
+	private function loadSegmentSettingsOnly(string $id) {
 
 		//--
 		$id = (string) \trim((string)$id);
@@ -565,7 +565,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 	//=====
 	// load a text translation key mapped from YAML Data
-	private function loadTranslation($id, $arr_cfg, $arr, $lang) {
+	private function loadTranslation(string $id, array $arr_cfg, array $arr, string $lang) {
 
 		//--
 		if(!\is_array($arr_cfg)) {
@@ -637,7 +637,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 	//=====
 	// load a text value from YAML Data
-	private function loadValue($id, $arr_cfg, $arr) {
+	private function loadValue(string $id, array $arr_cfg, array $arr, array $translations_arr) {
 
 		//--
 		if(!\is_array($arr_cfg)) {
@@ -646,6 +646,16 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 		//--
 		$syntax = (string) \trim((string)$arr_cfg['syntax']);
 		$escape = (string) \trim((string)$arr_cfg['escape']);
+		//--
+
+		//--
+		if((string)\SmartTextTranslations::getLanguage() !== (string)\SmartTextTranslations::getDefaultLanguage()) {
+			if(\Smart::array_size($translations_arr) > 0) {
+				if(\array_key_exists((string)\SmartTextTranslations::getLanguage(), (array)$translations_arr)) {
+					$arr['id'] = (string) $translations_arr[(string)\SmartTextTranslations::getLanguage()];
+				} //end if
+			} //end if
+		} //end if
 		//--
 
 		//--
@@ -760,7 +770,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 	//=====
 	// load page or segment ; page is level -1 ; segment is higher level
 	// the execution of this method is pcached thus it never returns to re-render if pcached
-	private function loadSegmentOrPage($id, $type, $level=-1) {
+	private function loadSegmentOrPage(string $id, string $type, int $level=-1) {
 
 		//--
 		$this->recursion_control = (int) \max($this->recursion_control, $level);
@@ -1061,7 +1071,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 									//--
 									if((string)$v['type'] == 'value') {
 										//--
-										$arr_tmp_item = (array) $this->loadValue((string)$id, (array)$v['config'], (array)$arr_tmp_item);
+										$arr_tmp_item = (array) $this->loadValue((string)$id, (array)$v['config'], (array)$arr_tmp_item, (array)(\is_array($v['translations']) ? $v['translations'] : []));
 										//--
 									} elseif((string)$v['type'] == 'translation') {
 										//--
@@ -1187,7 +1197,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	private function doRenderPage($id, $data_arr) {
+	private function doRenderPage(string $id, array $data_arr) {
 
 		//--
 		return (array) $this->doRenderObject($id, $data_arr, -1); // pages MUST START AT -1 !!! {{{SYNC-PAGEBUILDER-RENDER-LEVELS}}}
@@ -1198,7 +1208,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	private function doRenderSegment($id, $data_arr) {
+	private function doRenderSegment(string $id, array $data_arr) {
 
 		//--
 		return (array) $this->doRenderObject($id, $data_arr, 0); // segments MUST START AT 0 !!! {{{SYNC-PAGEBUILDER-RENDER-LEVELS}}}
@@ -1209,9 +1219,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 
 
 	//=====
-	private function doRenderObject($id, $data_arr, $level) {
-
-		// TODO: ? escape for markers: js, html ... ?
+	private function doRenderObject(string $id, array $data_arr, int $level) {
 
 		//--
 		$level = (int) ((int)$level + 1); // must increment at start (pages default start at: -1 ; segments default start at : 0) {{{SYNC-PAGEBUILDER-RENDER-LEVELS}}}
@@ -1321,7 +1329,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 		} //end if
 		//--
 
-	//	\print_r($data_arr); die(); // aaa
+	//	\print_r($data_arr); die();
 
 		//--
 		$arr_replacements = [];
@@ -1376,8 +1384,12 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 											);
 											$plugin_obj->initPlugin((string)$plugin_fname, (array)$plugin_cfg, (string)$this->ControllerGetParam('module-path')); // initialize before run !
 											//--
-											$plugin_obj->Initialize(); // pre-run
-											$plugin_status = (int) $plugin_obj->Run(); // run
+											$plugin_test_init = $plugin_obj->Initialize(); // pre-run
+											if($plugin_test_init !== false) {
+												$plugin_status = (int) $plugin_obj->Run(); // run
+											} else {
+												$plugin_status = 500;
+											} //end if else
 											$plugin_obj->ShutDown(); // post run
 											//--
 											$plugin_raw_heads = (array) $plugin_obj->PageViewGetRawHeaders();
@@ -1406,6 +1418,13 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 													} //end if
 												} //end if
 											} //end if
+											//--
+											if($plugin_test_init === false) {
+												if((int)$plugin_page_settings['status-code'] < 400) { // {{{SYNC-MIDDLEWARE-MIN-ERR-STATUS-CODE}}}
+													$plugin_page_settings['status-code'] = 500; // if Initialize returns FALSE then expects also and explicit error code (>= 400) and perhaps a message set via $appSettings['status-code'] ; if none implemented, raise the 500 HTTP Status Code
+												} //end if
+											} //end if
+											//--
 											if((int)$plugin_page_settings['status-code'] >= 400) {
 												//--
 												if((int)$this->PageViewGetStatusCode() < (int)$plugin_page_settings['status-code']) {

@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderFrontend {
 
 	// ::
-	// v.20200612
+	// v.20200624
 
 
 	private static $db = null;
@@ -146,7 +146,14 @@ final class PageBuilderFrontend {
 		if((string)$arr['id'] === (string)$y_id) {
 			if($y_ctrl !== null) {
 				if(\is_array($y_ctrl)) {
-					if(!\in_array((string)\SmartUnicode::str_tolower((string)\trim((string)$arr['ctrl'])), (array)$y_ctrl)) {
+					$found = false;
+					foreach($y_ctrl as $kk => $vv) {
+						if((string)\SmartUnicode::str_tolower((string)\trim((string)$arr['ctrl'])) === (string)\SmartUnicode::str_tolower((string)\trim((string)$vv))) {
+							$found = true;
+							break;
+						} //end if
+					} //end foreach
+					if($found !== true) {
 						return false; // exists but the controller does not match
 					} //end if
 				} elseif((string)\SmartUnicode::str_tolower((string)\trim((string)$arr['ctrl'])) !== (string)\SmartUnicode::str_tolower((string)\trim((string)$y_ctrl))) {

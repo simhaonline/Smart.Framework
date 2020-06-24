@@ -23,7 +23,11 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 final class PageBuilderFrontendPluginPageBuilderTest4 extends \SmartModExtLib\PageBuilder\AbstractFrontendPlugin {
 
-	// r.20200515
+	// r.20200624
+
+	public function Initialize() {
+		// *** optional*** can be redefined in a plugin
+	} //END FUNCTION
 
 	public function Run() {
 		//--
@@ -33,7 +37,7 @@ final class PageBuilderFrontendPluginPageBuilderTest4 extends \SmartModExtLib\Pa
 			'content' 	=> '<div>this is Plugin4 Test</div>'
 		]);
 		//--
-	}//END FUNCTION
+	} //END FUNCTION
 
 
 	public function ShutDown() {
