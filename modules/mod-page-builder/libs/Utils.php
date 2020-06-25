@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200515
+ * @version 	v.20200625
  * @package 	PageBuilder
  *
  */
@@ -92,6 +92,13 @@ final class Utils {
 		} //end if
 		//--
 		return (array) $layouts;
+		//--
+	} //END FUNCTION
+
+
+	public static function getMediaFolderRoot() {
+		//--
+		return (string) \Smart::safe_pathname('wpub/media-pbld/');
 		//--
 	} //END FUNCTION
 

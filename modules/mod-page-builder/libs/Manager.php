@@ -50,7 +50,7 @@ $administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Specia
  * @access 		private
  * @internal
  *
- * @version 	v.20200624
+ * @version 	v.20200625
  * @package 	PageBuilder
  *
  */
@@ -1072,6 +1072,15 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 		} //end if
 		//--
 		if(!$err) {
+			$rdir = (string) \SmartModExtLib\PageBuilder\Utils::getMediaFolderRoot();
+			if(\SmartFileSystem::is_type_dir($rdir)) {
+				if(!\SmartFileSystem::is_type_file($rdir.'index.html')) {
+					\SmartFileSystem::write($rdir.'index.html', '');
+				} //end if
+			} //end if
+		} //end if
+		//--
+		if(!$err) {
 			$status = 'OK';
 			$message = 'Operation Completed: '.$img_ext;
 		} else {
@@ -1149,6 +1158,18 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 		if(!$err) {
 			if(\SmartFileSystem::is_type_file($fdir.$y_filename)) {
 				$err = 'FAILED to Delete the File';
+			} //end if
+		} //end if
+		//--
+		// getMediaFolderContent
+		if(!$err) {
+			if(\SmartFileSystem::is_type_dir($fdir)) {
+				$remaining_imgs_arr = (array) \SmartModExtLib\PageBuilder\Utils::getMediaFolderContent($fdir);
+				if(\Smart::array_size($remaining_imgs_arr) <= 0) {
+					if(!\SmartFileSystem::dir_delete($fdir)) {
+						$err = 'FAILED to Delete the (Empty) Media Container for this Object';
+					} //end if
+				} //end if
 			} //end if
 		} //end if
 		//--

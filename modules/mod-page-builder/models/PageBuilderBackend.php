@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderBackend {
 
 	// ::
-	// v.20200515
+	// v.20200625
 
 
 	private static $db = null;
