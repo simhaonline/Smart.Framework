@@ -1,4 +1,4 @@
-<!-- Pagebuilder / Manage @ View Record / Props :: v.20200625 -->
+<!-- Pagebuilder / Manage @ View Record / Props :: v.20200629 -->
 <style>
 ul#lang-list {
 	display: inline;
@@ -154,6 +154,19 @@ ul#related-objects li a:hover {
 	</tr>
 	[%%%/IF:MODE-PAGETYPE%%%]
 [%%%/IF:IS-SEGMENT%%%]
+	<tr>
+		<td colspan="2">
+			<hr id="dark">
+		</td>
+	</tr>
+	<tr valign="top">
+		<td>
+			<b>[###TEXT-TAGS###]:</b>
+		</td>
+		<td>
+			[###FIELD-TAGS###]
+		</td>
+	</tr>
 [%%%IF:MODE:!=form;%%%][%%%IF:ARR-REFS:@>0;%%%]
 	<tr>
 		<td colspan="2">
@@ -172,4 +185,15 @@ ul#related-objects li a:hover {
 	</tr>
 [%%%/IF:ARR-REFS%%%][%%%/IF:MODE%%%]
 </table>
+<script>
+jQuery(document).ready(function(){
+	jQuery('#the-tags').tagEdit({
+		items: [###JSON-TAGS|json###],
+		tagMaxChars: 25,
+		tagMaxNum: 20,
+		tagNamePattern: /^[a-z0-9\-]+$/g,
+		readOnly: [%%%IF:MODE:!=form;%%%]true[%%%ELSE:MODE%%%]false[%%%/IF:MODE%%%],
+	});
+});
+</script>
 <!-- #END -->

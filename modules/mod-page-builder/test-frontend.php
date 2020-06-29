@@ -22,14 +22,14 @@ define('SMART_APP_MODULE_AREA', 'INDEX');
  */
 final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\AbstractFrontendController {
 
-	// r.20200625
+	// r.20200629
 
 	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
-			$this->PageViewSetErrorStatus(503, 'ERROR: Test mode is disabled ...');
-			return;
+		//	$this->PageViewSetErrorStatus(503, 'ERROR: Test mode is disabled ...');
+		//	return;
 		} //end if
 		//--
 
@@ -52,8 +52,14 @@ final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\Abstract
 		$this->PageViewSetVar('title', 'Sample PageBuilder Frontend Page', false); // fallback title
 
 		$test_segments = (array) $this->getListOfSegmentsByArea('%', 'name', 'DESC', 2, 2); // just for test ...
-		//print_r($test_segments); die();
-		$this->PageViewAppendVar('main', 'List of segments By Area %: '.SmartUtils::pretty_print_var($test_segments));
+		$this->PageViewAppendVar('main', 'List of segments By Area %: '.Smart::escape_html(SmartUtils::pretty_print_var($test_segments)).'<br>');
+
+		$test_segments = (array) $this->getListOfSegmentsByTag('abc', 'name', 'DESC', 0, 2); // just for test ...
+		$this->PageViewAppendVar('main', 'List of segments By Tag `abc`: '.Smart::escape_html(SmartUtils::pretty_print_var($test_segments)).'<br>');
+
+		$test_segments = (array) $this->getListOfPagesByTag('abc', 'name', 'DESC', 0, 2); // just for test ...
+		$this->PageViewAppendVar('main', 'List of pages By Tag `abc`: '.Smart::escape_html(SmartUtils::pretty_print_var($test_segments)).'<br>');
+
 
 		//-- INTERNAL DEBUG
 		/*

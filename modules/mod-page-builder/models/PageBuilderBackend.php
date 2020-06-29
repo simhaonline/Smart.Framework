@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderBackend {
 
 	// ::
-	// v.20200625
+	// v.20200629
 
 
 	private static $db = null;
@@ -439,14 +439,14 @@ final class PageBuilderBackend {
 		//--
 		if((string)self::dbType() == 'pgsql') {
 			return (array) \SmartPgsqlDb::read_asdata(
-				'SELECT "id", "ref", "special", "mode", "name", "ctrl", "active", "auth", "translations", "layout", OCTET_LENGTH("code") AS "len_code", OCTET_LENGTH("data") AS "len_data", "checksum", md5("id" || "data" || "code") AS "calc_checksum" FROM "web"."page_builder" WHERE ("id" = $1) LIMIT 1 OFFSET 0',
+				'SELECT "id", "ref", "special", "mode", "name", "ctrl", "active", "auth", "translations", "layout", OCTET_LENGTH("code") AS "len_code", OCTET_LENGTH("data") AS "len_data", "checksum", md5("id" || "data" || "code") AS "calc_checksum", "tags" FROM "web"."page_builder" WHERE ("id" = $1) LIMIT 1 OFFSET 0',
 				[
 					(string) $y_id
 				]
 			);
 		} elseif((string)self::dbType() == 'sqlite') {
 			return (array) self::$db->read_asdata(
-				'SELECT `id`, `ref`, `special`, `mode`, `name`, `ctrl`, `active`, `auth`, `translations`, `layout`, smart_strlen(`code`) AS `len_code`, smart_strlen(`data`) AS `len_data`, `checksum`, smart_md5(`id` || `data` || `code`) AS `calc_checksum` FROM `page_builder` WHERE (`id` = ?) LIMIT 1 OFFSET 0',
+				'SELECT `id`, `ref`, `special`, `mode`, `name`, `ctrl`, `active`, `auth`, `translations`, `layout`, smart_strlen(`code`) AS `len_code`, smart_strlen(`data`) AS `len_data`, `checksum`, smart_md5(`id` || `data` || `code`) AS `calc_checksum`, `tags` FROM `page_builder` WHERE (`id` = ?) LIMIT 1 OFFSET 0',
 				[
 					(string) $y_id
 				]
@@ -462,14 +462,14 @@ final class PageBuilderBackend {
 		//--
 		if((string)self::dbType() == 'pgsql') {
 			return (array) \SmartPgsqlDb::read_asdata(
-				'SELECT "id", "ref", "special", "mode", "published", "admin", "modified", "checksum", "counter" FROM "web"."page_builder" WHERE ("id" = $1) LIMIT 1 OFFSET 0',
+				'SELECT "id", "ref", "special", "mode", "published", "admin", "modified", "checksum", "counter", "name" FROM "web"."page_builder" WHERE ("id" = $1) LIMIT 1 OFFSET 0',
 				[
 					(string) $y_id
 				]
 			);
 		} elseif((string)self::dbType() == 'sqlite') {
 			return (array) self::$db->read_asdata(
-				'SELECT `id`, `ref`, `special`, `mode`, `published`, `admin`, `modified`, `checksum`, `counter` FROM `page_builder` WHERE (`id` = ?) LIMIT 1 OFFSET 0',
+				'SELECT `id`, `ref`, `special`, `mode`, `published`, `admin`, `modified`, `checksum`, `counter`, `name` FROM `page_builder` WHERE (`id` = ?) LIMIT 1 OFFSET 0',
 				[
 					(string) $y_id
 				]
@@ -581,6 +581,13 @@ final class PageBuilderBackend {
 		$rd = (array) self::getRecordIdsById((string)$y_id);
 		if((string)$rd['id'] == '') {
 			return -4;
+		} //end if
+		//--
+		if(\array_key_exists('tags', $y_arr_data)) {
+			if(\Smart::array_type_test($y_arr_data['tags']) != '1') {
+				$y_arr_data['tags'] = [];
+			} //end if
+			$y_arr_data['tags'] = (string) \Smart::json_encode($y_arr_data['tags']);
 		} //end if
 		//--
 		$tmp_refs = \Smart::json_decode((string)$rd['ref']);
@@ -895,7 +902,7 @@ final class PageBuilderBackend {
 		} //end if
 		//--
 		switch((string)\strtoupper((string)$y_xsort)){
-			case 'DESC':
+			case 'ASC':
 				$xsort = 'ASC';
 				break;
 			default:
@@ -1120,6 +1127,27 @@ final class PageBuilderBackend {
 							$where = 'WHERE (smart_base64_decode(a.`data`) LIKE \'%'.self::$db->escape_str((string)$y_src, 'likes').'%\')';
 						} //end if else
 					} //end if
+					break;
+				case 'tags':
+					if((string)$y_src == '[]') { // empty
+						if((string)self::dbType() == 'pgsql') {
+							$where = 'WHERE (a."tags" = \'[]\')';
+						} elseif((string)self::dbType() == 'sqlite') {
+							$where = 'WHERE (a.`tags` = \'[]\')';
+						} //end if else
+					} elseif((string)$y_src == '![]') { // non empty
+						if((string)self::dbType() == 'pgsql') {
+							$where = 'WHERE (a."tags" != \'[]\')';
+						} elseif((string)self::dbType() == 'sqlite') {
+							$where = 'WHERE (a.`tags` != \'[]\')';
+						} //end if else
+					} else {
+						if((string)self::dbType() == 'pgsql') {
+							$where = 'WHERE (a."tags" ? \''.\SmartPgsqlDb::escape_str((string)$y_src).'\')';
+						} elseif((string)self::dbType() == 'sqlite') {
+							$where = 'WHERE (smart_json_arr_contains(a.`tags`, \''.self::$db->escape_str((string)$y_src).'\') = 1)';
+						} //end if else
+					} //end if else
 					break;
 				case 'translations':
 					$is_positive = false;

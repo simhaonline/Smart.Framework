@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200625
+ * @version 	v.20200629
  * @package 	development:modules:PageBuilder
  *
  */
@@ -430,7 +430,33 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 			return array();
 		} //end if
 		//--
-		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfSegmentsByArea((string)$y_area, (string)$y_orderby, (string)$y_orderdir, (int)$y_limit, (int)$y_ofs);
+		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('segments', 'area', (string)$y_area, (string)$y_orderby, (string)$y_orderdir, (int)$y_limit, (int)$y_ofs);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	final public function getListOfSegmentsByTag(string $y_tag, string $y_orderby='id', string $y_orderdir='ASC', int $y_limit=0, int $y_ofs=0) {
+		//--
+		if((string)$this->ControllerGetParam('module-area') != 'index') {
+			return array();
+		} //end if
+		//--
+		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('segments', 'tags', (string)$y_tag, (string)$y_orderby, (string)$y_orderdir, (int)$y_limit, (int)$y_ofs);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	final public function getListOfPagesByTag(string $y_tag, string $y_orderby='id', string $y_orderdir='ASC', int $y_limit=0, int $y_ofs=0) {
+		//--
+		if((string)$this->ControllerGetParam('module-area') != 'index') {
+			return array();
+		} //end if
+		//--
+		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('pages', 'tags', (string)$y_tag, (string)$y_orderby, (string)$y_orderdir, (int)$y_limit, (int)$y_ofs);
 		//--
 	} //END FUNCTION
 	//=====
@@ -849,6 +875,15 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 			$data_arr['auth'] = (int) $this->auth_required;
 			//--
 		} //end if
+		//--
+
+		//--
+		$data_arr['ctrl-area'] 					= (string) $arr['ctrl'];
+		//--
+		$data_arr['publisher-date-created'] 	= (string) \date('Y-m-d H:i:s', (int)(((int)$arr['published'] > 0) ? $arr['published'] : \time()));
+		$data_arr['publisher-date-modified'] 	= (string) \date('Y-m-d H:i:s', (string)\strtotime((string)($arr['modified'] ? $arr['modified'] : \date('Y-m-d H:i:s'))));
+		//--
+		$data_arr['publisher-id'] 				= (string) $arr['admin'];
 		//--
 
 		//--
@@ -1382,7 +1417,7 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 												(string) $this->ControllerGetParam('url-page'), // the URL Page Param
 												(string) 'index' // $this->ControllerGetParam('module-area') // the hard-coded Area
 											);
-											$plugin_obj->initPlugin((string)$plugin_fname, (array)$plugin_cfg, (string)$this->ControllerGetParam('module-path')); // initialize before run !
+											$plugin_obj->initPlugin((string)$plugin_fname, (array)$plugin_cfg, (string)$this->ControllerGetParam('module-path'), (array)$data_arr); // initialize before run !
 											//--
 											$plugin_test_init = $plugin_obj->Initialize(); // pre-run
 											if($plugin_test_init !== false) {

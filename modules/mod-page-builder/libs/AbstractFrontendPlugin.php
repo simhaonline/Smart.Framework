@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200625
+ * @version 	v.20200629
  * @package 	development:modules:PageBuilder
  *
  */
@@ -37,6 +37,8 @@ abstract class AbstractFrontendPlugin extends \SmartAbstractAppController {
 	private $plugin_config 				= array();
 	private $plugin_caller_module_path 	= 'modules/app/';
 
+	private $plugin_data 					= [];
+
 
 	//=====
 	/**
@@ -46,7 +48,7 @@ abstract class AbstractFrontendPlugin extends \SmartAbstractAppController {
 	 * @internal
 	 *
 	 */
-	final public function initPlugin(string $plugin_name, array $plugin_config, string $plugin_caller_module_path) {
+	final public function initPlugin(string $plugin_name, array $plugin_config, string $plugin_caller_module_path, array $plugin_data) {
 		//--
 		if($this->plugin_initialized === true) {
 			return;
@@ -63,6 +65,19 @@ abstract class AbstractFrontendPlugin extends \SmartAbstractAppController {
 		if(\SmartFileSysUtils::check_if_safe_path((string)$plugin_caller_module_path)) {
 			$this->plugin_caller_module_path = (string) $plugin_caller_module_path;
 		} //end if
+		//--
+		$this->plugin_data = [
+			'ID' 			=> (string) $plugin_data['id'],
+			'NAME' 			=> (string) $plugin_data['name'],
+			'AUTH' 			=> (int)    $plugin_data['auth'],
+			'TYPE' 			=> (string) $plugin_data['type'],
+			'MODE' 			=> (string) $plugin_data['mode'],
+			'CTRL-AREA' 	=> (string) $plugin_data['ctrl-area'],
+			'LAYOUT' 		=> (string) $plugin_data['layout'],
+			'DATE-CREATED' 	=> (string) $plugin_data['publisher-date-created'],
+			'DATE-MODIFIED' => (string) $plugin_data['publisher-date-modified'],
+			'AUTHOR-ID' 	=> (string) $plugin_data['publisher-id'],
+		];
 		//--
 		$this->plugin_initialized = true;
 		//--
@@ -101,6 +116,18 @@ abstract class AbstractFrontendPlugin extends \SmartAbstractAppController {
 	final public function getPluginCallerModulePath() {
 		//--
 		return (string) $this->plugin_caller_module_path;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get Plugin Data as Array
+	 */
+	final public function getPluginData() {
+		//--
+		return (array) $this->plugin_data;
 		//--
 	} //END FUNCTION
 	//=====

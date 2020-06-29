@@ -23,7 +23,7 @@ define('SMART_APP_MODULE_AUTH', true);
  */
 final class SmartAppAdminController extends SmartAbstractAppController {
 
-	// r.20200625
+	// r.20200629
 
 	public function Run() {
 
@@ -60,7 +60,7 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 			case 'records-list-json': // JSON: for list
 				$ofs = $this->RequestVarGet('ofs', 0, 'integer+');
 				$sortby = $this->RequestVarGet('sortby', 'id', 'string');
-				$sortdir = $this->RequestVarGet('sortdir', 'ASC', 'string');
+				$sortdir = $this->RequestVarGet('sortdir', '', 'string');
 				$srcby = $this->RequestVarGet('srcby', '', 'string');
 				$src = $this->RequestVarGet('src', '', 'string');
 				$this->PageViewSetCfg('rawpage', true);
@@ -240,6 +240,15 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 				$this->PageViewSetVar(
 					'main',
 					\SmartModExtLib\PageBuilder\Manager::ViewDisplayHighlightData($id)
+				);
+				break;
+			case 'record-view-media': // HTML: preview media
+				$id = $this->RequestVarGet('id', '', 'string');
+				$this->PageViewSetCfg('template-path', 'default');
+				$this->PageViewSetCfg('template-file', 'template-modal.htm');
+				$this->PageViewSetVar(
+					'main',
+					\SmartModExtLib\PageBuilder\Manager::ViewDisplayMedia($id)
 				);
 				break;
 			case 'record-edit-do': // HTML

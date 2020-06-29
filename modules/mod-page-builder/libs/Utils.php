@@ -26,7 +26,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200625
+ * @version 	v.20200629
  * @package 	PageBuilder
  *
  */
@@ -45,7 +45,7 @@ final class Utils {
 		if(\defined('\\SMART_PAGEBUILDER_DB_TYPE')) {
 			if((string)\SMART_PAGEBUILDER_DB_TYPE == 'sqlite') {
 				$type = 'sqlite';
-			} elseif((string)\SMART_PAGEBUILDER_DB_TYPE == 'pgsql') {
+			} elseif(((string)\SMART_PAGEBUILDER_DB_TYPE == 'pgsql') AND (\Smart::array_size(\Smart::get_from_config('pgsql')) > 0)) {
 				$type = 'pgsql';
 			} //end if
 		} //end if
