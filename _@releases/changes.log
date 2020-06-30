@@ -2,6 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+June 30, 2020 :: Version 7.2.1 rev.20200630
+	* PageBuilder: new feature: Tags
+
 June 19, 2020 :: Version 7.2.1 rev.20200619
 	* Implement New Feature for Controllers ; If Initialize() returns FALSE, this a mandatory error code is expected
 	* Add Optional Absolute URL Prefixes in Captcha Form and ViewHelpers (HighlightJs, HtmlEditor, CodeEditor)

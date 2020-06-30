@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderFrontend {
 
 	// ::
-	// v.20200629
+	// v.20200630
 
 
 	private static $db = null;
@@ -353,7 +353,7 @@ final class PageBuilderFrontend {
 		if((string)self::dbType() == 'pgsql') {
 			if((string)$y_fld == 'area') {
 				$arr = (array) \SmartPgsqlDb::read_adata(
-					'SELECT "id" FROM "web"."page_builder" WHERE (("layout" LIKE $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY "'.$y_orderby.'" '.$y_orderdir.$qry_limit,
+					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("layout" LIKE $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY "'.$y_orderby.'" '.$y_orderdir.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'
@@ -361,7 +361,7 @@ final class PageBuilderFrontend {
 				);
 			} elseif((string)$y_fld == 'tags') {
 				$arr = (array) \SmartPgsqlDb::read_adata(
-					'SELECT "id" FROM "web"."page_builder" WHERE (("tags" ? $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY "'.$y_orderby.'" '.$y_orderdir.$qry_limit,
+					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("tags" ? $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY "'.$y_orderby.'" '.$y_orderdir.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'
@@ -373,7 +373,7 @@ final class PageBuilderFrontend {
 		} elseif((string)self::dbType() == 'sqlite') {
 			if((string)$y_fld == 'area') {
 				$arr = (array) self::$db->read_adata(
-					'SELECT `id` FROM `page_builder` WHERE ((`layout` LIKE ?) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY `'.$y_orderby.'` '.$y_orderdir.$qry_limit,
+					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((`layout` LIKE ?) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY `'.$y_orderby.'` '.$y_orderdir.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'
@@ -381,7 +381,7 @@ final class PageBuilderFrontend {
 				);
 			} elseif((string)$y_fld == 'tags') {
 				$arr = (array) self::$db->read_adata(
-					'SELECT `id` FROM `page_builder` WHERE ((smart_json_arr_contains(`tags`, ?) = 1) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY `'.$y_orderby.'` '.$y_orderdir.$qry_limit,
+					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((smart_json_arr_contains(`tags`, ?) = 1) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY `'.$y_orderby.'` '.$y_orderdir.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'
@@ -394,16 +394,7 @@ final class PageBuilderFrontend {
 			$arr = array();
 		} //end if else
 		//--
-		$out_arr = [];
-		for($i=0; $i<\Smart::array_size($arr); $i++) {
-			if(\is_array($arr[$i])) {
-				if((string)$arr[$i]['id'] != '') {
-					$out_arr[] = (string) $arr[$i]['id'];
-				} //end if
-			} //end if
-		} //end for
-		//--
-		return (array) $out_arr;
+		return (array) $arr;
 		//--
 	} //END FUNCTION
 

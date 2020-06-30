@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20200619
+ * @version 	v.20200630
  * @package 	development:Application
  *
  */
@@ -436,6 +436,25 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 */
 	final public function __destruct() {
 		// This is not safe so we define it as final to avoid re-define later, see function ShutDown() below !!!
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Test if Raw Page in ON
+	 *
+	 * @return 	BOOLEAN					:: TRUE if 'rawpage' is 'yes' or true ; FALSE otherwise
+	 */
+	final public function IsRawPage() {
+		//--
+		$is_raw = false;
+		if((string)strtolower((string)$this->pagesettings['rawpage']) == 'yes') {
+			$is_raw = true;
+		} //end if
+		//--
+		return (bool) $is_raw;
+		//--
 	} //END FUNCTION
 	//=====
 

@@ -22,7 +22,7 @@ define('SMART_APP_MODULE_AREA', 'INDEX');
  */
 final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\AbstractFrontendController {
 
-	// r.20200629
+	// r.20200630
 
 	public function Run() {
 
@@ -60,6 +60,10 @@ final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\Abstract
 		$test_segments = (array) $this->getListOfPagesByTag('abc', 'name', 'DESC', 0, 2); // just for test ...
 		$this->PageViewAppendVar('main', 'List of pages By Tag `abc`: '.Smart::escape_html(SmartUtils::pretty_print_var($test_segments)).'<br>');
 
+	//	if($this->IsRawPage() === true) { // dissalow Raw Pages
+	//		$this->PageViewSetErrorStatus(500, 'Page / Section is Invalid: RAW ...');
+	//		return;
+	//	} //end if
 
 		//-- INTERNAL DEBUG
 		/*
