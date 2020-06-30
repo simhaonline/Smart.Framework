@@ -32,7 +32,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200515
+ * @version 	v.20200630
  *
  */
 abstract class ErrorXxx extends \SmartAbstractAppController {
@@ -189,12 +189,12 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 		$this->Initialize();
 		$this->Run();
 		$this->ShutDown();
-		$cfgs = $this->getRenderCfgs();
-		$vars = $this->getRenderVars();
+		$cfgs = (array) $this->getRenderCfgs();
+		$vars = (array) $this->getRenderVars();
 		//--
 		if(!\headers_sent()) {
 			\SmartFrameworkRuntime::outputHttpHeadersNoCache();
-			if($this->isRawPage()) {
+			if($this->IsRawPage()) {
 				\SmartFrameworkRuntime::outputHttpSafeHeader('Content-Type: '.$cfgs['rawmime']);
 				\SmartFrameworkRuntime::outputHttpSafeHeader('Content-Disposition: '.$cfgs['rawdisp']);
 				return (string) $vars['main'];
@@ -246,18 +246,6 @@ abstract class ErrorXxx extends \SmartAbstractAppController {
 	private function getRenderCfgs() {
 		//--
 		return (array) $this->PageViewGetCfgs();
-		//--
-	} //END FUNCTION
-
-
-	private function isRawPage() {
-		//--
-		$cfgs = (array) $this->PageViewGetCfgs();
-		if(((string)$cfgs['rawpage'] == 'yes') OR ($cfgs['rawpage'] === true)) {
-			return true;
-		} else {
-			return false;
-		} //end if else
 		//--
 	} //END FUNCTION
 
