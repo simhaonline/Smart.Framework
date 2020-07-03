@@ -25,11 +25,11 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200630
+ * @version 	v.20200703
  * @package 	development:modules:PageBuilder
  *
  */
-abstract class AbstractFrontendController extends \SmartAbstractAppController {
+abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder {
 
 
 	protected $max_depth 		= 2; 						// 0=page, 1=segment, 2=sub-segment (max allow depth)
@@ -380,84 +380,6 @@ abstract class AbstractFrontendController extends \SmartAbstractAppController {
 		return (string) $segment_code;
 		//--
 
-	} //END FUNCTION
-	//=====
-
-
-	//===== $y_ctrl can be: NULL / STRING / ARRAY
-	final public function checkIfPageExist(string $y_id, $y_ctrl=null) {
-		//--
-		if((string)$this->ControllerGetParam('module-area') != 'index') {
-			return false;
-		} //end if
-		//--
-		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, true, false, $y_ctrl);
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//===== $y_ctrl can be: NULL / STRING / ARRAY
-	final public function checkIfSegmentExist(string $y_id, $y_ctrl=null) {
-		//--
-		if((string)$this->ControllerGetParam('module-area') != 'index') {
-			return false;
-		} //end if
-		//--
-		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, false, true, $y_ctrl);
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//===== $y_ctrl can be: NULL / STRING / ARRAY
-	final public function checkIfPageOrSegmentExist(string $y_id, $y_ctrl=null) {
-		//--
-		if((string)$this->ControllerGetParam('module-area') != 'index') {
-			return false;
-		} //end if
-		//--
-		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, true, true, $y_ctrl);
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//=====
-	final public function getListOfSegmentsByArea(string $y_area, string $y_orderby='id', string $y_orderdir='ASC', int $y_limit=0, int $y_ofs=0) {
-		//--
-		if((string)$this->ControllerGetParam('module-area') != 'index') {
-			return array();
-		} //end if
-		//--
-		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('segments', 'area', (string)$y_area, (string)$y_orderby, (string)$y_orderdir, (int)$y_limit, (int)$y_ofs);
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//=====
-	final public function getListOfSegmentsByTag(string $y_tag, string $y_orderby='id', string $y_orderdir='ASC', int $y_limit=0, int $y_ofs=0) {
-		//--
-		if((string)$this->ControllerGetParam('module-area') != 'index') {
-			return array();
-		} //end if
-		//--
-		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('segments', 'tags', (string)$y_tag, (string)$y_orderby, (string)$y_orderdir, (int)$y_limit, (int)$y_ofs);
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//=====
-	final public function getListOfPagesByTag(string $y_tag, string $y_orderby='id', string $y_orderdir='ASC', int $y_limit=0, int $y_ofs=0) {
-		//--
-		if((string)$this->ControllerGetParam('module-area') != 'index') {
-			return array();
-		} //end if
-		//--
-		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('pages', 'tags', (string)$y_tag, (string)$y_orderby, (string)$y_orderdir, (int)$y_limit, (int)$y_ofs);
-		//--
 	} //END FUNCTION
 	//=====
 

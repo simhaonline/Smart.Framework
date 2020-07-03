@@ -22,14 +22,14 @@ define('SMART_APP_MODULE_AREA', 'INDEX');
  */
 final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\AbstractFrontendController {
 
-	// r.20200630
+	// r.20200703
 
 	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
-		//	$this->PageViewSetErrorStatus(503, 'ERROR: Test mode is disabled ...');
-		//	return;
+			$this->PageViewSetErrorStatus(503, 'ERROR: Test mode is disabled ...');
+			return;
 		} //end if
 		//--
 
@@ -60,10 +60,14 @@ final class SmartAppIndexController extends \SmartModExtLib\PageBuilder\Abstract
 		$test_segments = (array) $this->getListOfPagesByTag('abc', 'name', 'DESC', 0, 2); // just for test ...
 		$this->PageViewAppendVar('main', 'List of pages By Tag `abc`: '.Smart::escape_html(SmartUtils::pretty_print_var($test_segments)).'<br>');
 
-	//	if($this->IsRawPage() === true) { // dissalow Raw Pages
-	//		$this->PageViewSetErrorStatus(500, 'Page / Section is Invalid: RAW ...');
-	//		return;
-	//	} //end if
+		//-- this code can be uncommented to dissalow Raw Pages from PageBuilder
+		/*
+		if($this->IsRawPage() === true) {
+			$this->PageViewSetErrorStatus(500, 'Page / Section is Invalid: RAW ...');
+			return;
+		} //end if
+		*/
+		//--
 
 		//-- INTERNAL DEBUG
 		/*

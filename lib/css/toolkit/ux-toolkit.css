@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20200512), (c) 2015-2020 unix-world.org
+	extended by unixman, (stable.20200703), (c) 2015-2020 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -249,8 +249,8 @@ License: BSD
 	}
 }
 
-/* UX Grid Large Screen (Width >= 1200px) */
-@media (min-width:1200px) {
+/* UX Grid Large Screen (Width >= 1600px) ; previous was 1200px */
+@media (min-width:1600px) {
 	.ux-grid-col.l-hidden {
 		display: none;
 	}

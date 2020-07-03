@@ -25,11 +25,11 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200630
+ * @version 	v.20200703
  * @package 	development:modules:PageBuilder
  *
  */
-abstract class AbstractFrontendPlugin extends \SmartAbstractAppController {
+abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder {
 
 
 	private $plugin_initialized 		= false;

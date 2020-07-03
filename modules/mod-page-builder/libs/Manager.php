@@ -50,11 +50,11 @@ $administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Specia
  * @access 		private
  * @internal
  *
- * @version 	v.20200630
+ * @version 	v.20200703
  * @package 	PageBuilder
  *
  */
-final class Manager { // TODO: On Delete Object Check if is not related and dissalow deletion ; also check if object's images are not used in other objects !
+final class Manager {
 
 	// ::
 
@@ -2674,7 +2674,6 @@ final class Manager { // TODO: On Delete Object Check if is not related and diss
 
 	//==================================================================
 	private static function drawFieldLayoutPages($y_mode, $y_listmode, $y_value, $y_htmlvar='') {
-		// TO BE DONE ...
 		//--
 		return (string) \SmartViewHtmlHelpers::html_select_list_single('', $y_value, $y_listmode, (array)\SmartModExtLib\PageBuilder\Utils::getAvailableLayouts(), $y_htmlvar, '250', '', 'no', 'no');
 		//--
