@@ -79,7 +79,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	extensions: PHP OpenSSL (optional, just for HTTPS) ; classes: Smart
- * @version 	v.20200611
+ * @version 	v.20200708
  * @package 	@Core:Network
  *
  */
@@ -217,7 +217,6 @@ final class SmartHttpClient {
 
 
 	//==============================================
-	// [CONSTRUCTOR] :: init object
 	/**
 	 * Class constructor
 	 *
@@ -272,7 +271,10 @@ final class SmartHttpClient {
 
 
 	//==============================================
-	// [PUBLIC] :: set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
+	/**
+	 * This is only for special cases and can be used before calling the browse_url() for the cases when the client requires a custom SSL Certificate to be set
+	 * Set a SSL/TLS Certificate Authority File ; by default will use the SMART_FRAMEWORK_SSL_CA_FILE
+	 */
 	public function set_ssl_tls_ca_file($cafile) {
 		//--
 		$this->cafile = '';
@@ -287,7 +289,15 @@ final class SmartHttpClient {
 
 
 	//==============================================
-	// [PUBLIC] :: browse the url as a robot (auth works only with Basic authentication)
+	/* Browse a HTTP(S) URL
+	 *
+	 * @param STRING $url The URL to be browsed ; Ex: http(s)://url as a robot
+	 * @param ENUM $method The HTTP Method: Available methods: GET, POST, HEAD, PUT
+	 * @param ENUM $sslversion *Optional* Connection Mode, must be set to any of these accepted values: '', 'tls', 'tls:1.0', 'tls:1.1', 'tls:1.2', 'ssl', 'sslv3' ; If empty string is set here it will be operate in unsecure mode (NOT using any SSL/TLS Mode)
+	 * @param STRING $user *Optional* If Basic Auth credentials have to be used, set the login username here, otherwise leave empty
+	 * @param STRING $pwd  *Optional* If Basic Auth credentials have to be used, set the login password here, otherwise leave empty
+	 * @return ARRAY The result of browsing ; If The connection was Successful will return the ARRAY['result'] = 1 ; The HTTP Status Code returned by server will be stored in ARRAY['code'] (by default a 200 Status OK is considered successful but other codes may be also OK in certain circumstances)
+	 */
 	public function browse_url($url, $method='GET', $ssl_version='', $user='', $pwd='') {
 		//--
 		$result = $this->get_answer($url, $user, $pwd, $method, $ssl_version);
@@ -577,11 +587,11 @@ final class SmartHttpClient {
 		//--
 
 		//-- separations
-		$this->url_parts = (array) Smart::url_parse($url);
-		$protocol = (string) $this->url_parts['protocol'];
-		$host = (string) $this->url_parts['host'];
-		$port = (string) $this->url_parts['port'];
-		$path = (string) $this->url_parts['suffix']; // path + query
+		$this->url_parts 	= (array)  Smart::url_parse($url);
+		$protocol 			= (string) $this->url_parts['protocol'];
+		$host 				= (string) $this->url_parts['host'];
+		$port 				= (string) $this->url_parts['port'];
+		$path 				= (string) $this->url_parts['suffix']; // path + query
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Analize of the URL result: '.print_r($this->url_parts,1)."\n";
@@ -603,15 +613,25 @@ final class SmartHttpClient {
 		//--
 		if((string)$protocol == 'https://') {
 			//--
-			switch(strtolower((string)$ssl_version)) {
+			switch((string)strtolower((string)$ssl_version)) {
+				//--
 				case 'ssl':
-					$browser_protocol = 'ssl://';
+					$browser_protocol = 'ssl://'; // deprecated
 					break;
 				case 'sslv3':
-					$browser_protocol = 'sslv3://'; // explicit
+					$browser_protocol = 'sslv3://'; // deprecated
+					break;
+				//--
+				case 'tls:1.0':
+					$browser_protocol = 'tlsv1.0://';
+					break;
+				case 'tls:1.1':
+					$browser_protocol = 'tlsv1.1://';
+					break;
+				case 'tls:1.2':
+					$browser_protocol = 'tlsv1.2://';
 					break;
 				case 'tls':
-				case '':
 				default: // other cases
 					$browser_protocol = 'tls://';
 			} //end switch

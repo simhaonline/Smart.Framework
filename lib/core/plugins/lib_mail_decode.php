@@ -33,7 +33,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200418
+ * @version 	v.20200715
  * @package 	Plugins:Mailer
  *
  */
@@ -591,7 +591,11 @@ final class SmartMailerMimeDecode {
 						} //end if
 					} elseif($key === 'body') {
 						//-- calculate part id
-						if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
+						if(
+							((string)$vxf_mail_part_type == 'text') OR
+							(((string)$vxf_mail_part_type == 'message') AND ((string)$vxf_mail_part_stype == 'delivery-status')) OR
+							(((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted')) // {{{SYNC-MIMETXTPART}}}
+						) {
 							//--
 							$tmp_part_id = 'txt_'.md5((string)trim((string)$value)); // text parts are not very long
 							//--
@@ -651,7 +655,11 @@ final class SmartMailerMimeDecode {
 						//--
 						if(((string)$tmp_part_id != '') AND (((string)$part_id == '') OR (((string)trim((string)strtolower((string)$part_id)) == (string)$tmp_part_id) OR ((string)trim((string)strtolower((string)str_replace(' ', '', (string)$part_id))) == (string)$tmp_part_id)))) {
 							// DEFAULT
-							if(((string)$vxf_mail_part_type == 'text') OR (((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted'))) {
+							if(
+								((string)$vxf_mail_part_type == 'text') OR
+								(((string)$vxf_mail_part_type == 'message') AND ((string)$vxf_mail_part_stype == 'delivery-status')) OR
+								(((string)$vxf_mail_part_type == 'application') AND ((string)$vxf_mail_part_stype == 'pgp-encrypted')) // {{{SYNC-MIMETXTPART}}}
+							) {
 								//--
 								// TEXT / HTML PART
 								//--
@@ -675,6 +683,10 @@ final class SmartMailerMimeDecode {
 							} else {
 								//--
 								// ATTACHMENT / CID PART
+								//--
+								if((string)$vxf_mail_part_type == 'message') {
+									$this->last_fname = 'message-part-'.sha1((string)$value).'.txt';
+								} //end if
 								//--
 								$this->arr_atts[(string)$tmp_part_id] = array(
 									'type'		=> (string) 'attachment',
@@ -760,7 +772,7 @@ final class SmartMailerMimeDecode {
  * @access 		private
  * @internal
  *
- * @version 	v.20200418
+ * @version 	v.20200715
  *
  */
 final class SmartMailerMimeExtract {
@@ -962,6 +974,7 @@ final class SmartMailerMimeExtract {
 			//--
 			switch((string)strtolower((string)$content_type['value'])) {
 				case 'text/plain':
+				case 'message/delivery-status':
 					//--
 					$encoding = isset($content_transfer_encoding) ? $content_transfer_encoding['value'] : '7bit';
 					$this->_include_bodies ? $return->body = ($this->_decode_bodies ? $this->_decodeBody($body, $encoding) : $body) : null;

@@ -31,7 +31,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		After each operation on the IMAP4 Server should check the $imap4->error string and if non-empty stop and disconnect to free the socket
  *
  * @depends 	classes: Smart
- * @version 	v.20200414
+ * @version 	v.20200709
  * @package 	Plugins:Mailer
  *
  */
@@ -42,10 +42,10 @@ final class SmartMailerImap4Client {
 
 	/**
 	 * @var INT
-	 * @default 1024
+	 * @default 2048
 	 * socket read buffer
 	 */
-	public $buffer = 1024;
+	public $buffer = 2048;
 
 	/**
 	 * @var INT
@@ -200,14 +200,14 @@ final class SmartMailerImap4Client {
 	 * Will try to open a socket to the specified IMAP4 Server using the host/ip and port ; If a SSL option is selected will try to establish a SSL socket or fail
 	 * @param STRING $server The Server Hostname or IP address
 	 * @param INTEGER+ $port *Optional* The Server Port ; Default is: 143
-	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'ssl', 'sslv3', 'tls', 'starttls' ; If empty string will be set will be not using SSL Mode
+	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'starttls', 'starttls:1.0', 'starttls:1.1', 'starttls:1.2', 'tls', 'tls:1.0', 'tls:1.1', 'tls:1.2', 'ssl', 'sslv3' ; If empty string is set here it will be operate in unsecure mode (NOT using any SSL/TLS Mode)
 	 * @return INTEGER+ 1 on success, 0 on fail
 	 */
 	public function connect($server, $port=143, $sslversion='') { // IMAP4
 
 		//-- inits
 		$this->socket = false;
-		$this->tag = '';
+		$this->tag = 'smart77'.strtolower((string)Smart::uuid_10_seq()).'7framework';
 		$this->crr_mbox = '';
 		//--
 
@@ -227,7 +227,10 @@ final class SmartMailerImap4Client {
 
 		//--
 		$protocol = '';
+		$start_tls = false;
+		$start_tls_version = null;
 		//--
+		$is_secure = false;
 		if((string)$sslversion != '') {
 			//--
 			if(!function_exists('openssl_open')) {
@@ -235,12 +238,44 @@ final class SmartMailerImap4Client {
 				return 0;
 			} //end if
 			//--
+			$is_secure = true;
 			switch((string)strtolower((string)$sslversion)) {
+				case 'starttls':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLS_CLIENT; // since PHP 5.6.7, STREAM_CRYPTO_METHOD_TLS_CLIENT (same for _SERVER) no longer means any tls version but tls 1.0 only (for "backward compatibility"...)
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.0':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.1':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.2':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				//--
 				case 'ssl':
-					$protocol = 'ssl://';
+					$protocol = 'ssl://'; // deprecated
 					break;
 				case 'sslv3':
-					$protocol = 'sslv3://';
+					$protocol = 'sslv3://'; // deprecated
+					break;
+				//--
+				case 'tls:1.0':
+					$protocol = 'tlsv1.0://';
+					break;
+				case 'tls:1.1':
+					$protocol = 'tlsv1.1://';
+					break;
+				case 'tls:1.2':
+					$protocol = 'tlsv1.2://';
 					break;
 				case 'tls':
 				default:
@@ -252,14 +287,14 @@ final class SmartMailerImap4Client {
 
 		//--
 		if($this->debug) {
-			$this->log .= '[INF] Connecting to Mail Server: '.$protocol.$server.':'.$port."\n";
+			$this->log .= '[INF] '.($is_secure === true ? 'SECURE ' : '').($start_tls === true ? '(STARTTLS:'.$start_tls_version.') ' : '').'Connecting to IMAP4 Mail Server: '.$protocol.$server.':'.$port."\n";
 		} //end if
 		//--
 
 		//--
 		//$sock = @fsockopen($protocol.$server, $port, $errno, $errstr, $this->timeout);
 		$stream_context = @stream_context_create();
-		if((string)$protocol != '') {
+		if(((string)$protocol != '') OR ($start_tls === true)) {
 			//--
 			$cafile = '';
 			if((string)$this->cafile != '') {
@@ -293,7 +328,7 @@ final class SmartMailerImap4Client {
 		//--
 		@stream_set_timeout($this->socket, (int)SMART_FRAMEWORK_NETSOCKET_TIMEOUT);
 		if($this->debug) {
-			$this->log .= '[INF] Set Socket Stream TimeOut to: '.SMART_FRAMEWORK_NETSOCKET_TIMEOUT."\n";
+			$this->log .= '[INF] Set Socket Stream TimeOut to: '.SMART_FRAMEWORK_NETSOCKET_TIMEOUT.' ; ReadBuffer = '.$this->buffer."\n";
 		} //end if
 		//--
 
@@ -301,36 +336,69 @@ final class SmartMailerImap4Client {
 		$chk_crypto = (array) @stream_get_meta_data($this->socket);
 		if((string)$protocol != '') {
 			if(!SmartUnicode::str_icontains($chk_crypto['stream_type'], '/ssl')) { // will return something like: tcp_socket/ssl
-				//--
 				$this->error = '[ERR] Connection CRYPTO CHECK Failed ...'."\n";
-				//--
 				@fclose($this->socket);
 				$this->socket = false;
-				//--
 				return 0;
-				//--
 			} //end if
 		} //end if
 		//--
 
 		//--
 		$reply = $this->get_answer_line();
-		//--
 		$reply = $this->strip_clf($reply);
 		//--
 		if((string)substr((string)$reply, 0, 5) != '* OK ') {
-			//--
 			$this->error = '[ERR] Server Reply is NOT OK // '.$test.' // '.$reply;
-			//--
 			@fclose($this->socket);
 			$this->socket = false;
-			//--
 			return 0;
-			//--
 		} //end if
 		//--
 		if($this->debug) {
 			$this->log .= '[REPLY] \''.$reply.'\''."\n";
+		} //end if
+		//--
+
+		//--
+		if($start_tls === true) {
+			//--
+			if($this->debug) {
+				$this->log .= '[INF] StartTLS on Server'."\n";
+			} //end if
+			//--
+			$reply = $this->send_cmd('STARTTLS');
+			if((string)$this->error != '') {
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			$test = $this->is_ok($reply);
+			if((string)$test != 'ok') {
+				$this->error = '[ERR] Server StartTLS Failed :: '.$test.' // '.$reply;
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			//--
+			if(!$start_tls_version) {
+				$this->error = '[ERR] Server StartTLS Invalid Protocol Selected ...';
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			//--
+			if($this->debug) {
+				$this->log .= '[INF] Start TLS negotiation on Server'."\n";
+			} //end if
+			$test_starttls = @stream_socket_enable_crypto($this->socket, true, $start_tls_version);
+			if(!$test_starttls) {
+				$this->error = '[ERR] Server StartTLS Failed to be Enabled on Socket ...';
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			//--
 		} //end if
 		//--
 
@@ -400,6 +468,9 @@ final class SmartMailerImap4Client {
 	 */
 	public function quit($expunge=false) { // IMAP4
 		//--
+		$was_connected_and_logged_in = (bool) $this->is_connected_and_logged_in;
+		$last_selected_box = (string) trim((string)$this->selected_box);
+		//--
 		$this->selected_box = '';
 		$this->is_connected_and_logged_in = false; // must be at the top of this function
 		//--
@@ -408,19 +479,22 @@ final class SmartMailerImap4Client {
 		} //end if
 		//--
 		if(!$this->socket) {
-			$this->error = '[ERR] IMAP4 Connection cannot QUIT, it appears is not opened !';
 			return 0;
 		} //end if
 		//--
-		if($expunge === true) {
-			$this->send_cmd('EXPUNGE'); // delete messages marked as Deleted (overall)
-		} else {
-			$this->send_cmd('CLOSE'); // delete messages marked as Deleted (from selected mailbox only)
-		} //end if else
-		$this->send_cmd('UNSELECT'); // some servers req. this (dovecot to avoid throw CLIENTBUG warnings)
+		if(($was_connected_and_logged_in === true) AND ((string)$last_selected_box != '')) {
+			//--
+			if($expunge === true) {
+				$this->send_cmd('EXPUNGE'); // delete messages marked as Deleted (overall)
+			} else {
+				$this->send_cmd('CLOSE'); // delete messages marked as Deleted (from selected mailbox only)
+			} //end if else
+			//--
+			$this->send_cmd('UNSELECT'); // some servers req. this (dovecot to avoid throw CLIENTBUG warnings)
+			//--
+		} //end if
 		//--
 		$reply = $this->send_cmd('LOGOUT'); // imap4
-		//--
 		$test = $this->is_ok($reply);
 		if((string)$test != 'ok') {
 			$this->error = '[ERR] IMAP4 Logout Failed ['.$reply.']';
@@ -437,11 +511,11 @@ final class SmartMailerImap4Client {
 
 	//=====================================================================================
 	/**
-	 * Try to Authenticate on the IMAP4 Server with a username and password
+	 * Try to Login/Authenticate on the IMAP4 Server with a username and password (or token for auth:xoauth2)
 	 * Sends both user and pass to the Server
 	 * @param STRING $username The authentication username
 	 * @param STRING $pass The authentication password
-	 * @param ENUM $mode *Optional* The authentication mode ; can be set to 'login' or 'authenticate' ; Default is 'authenticate'
+	 * @param ENUM $mode *Optional* The authentication mode ; can be set to any of: 'login', 'auth:plain', 'auth:cram-md5', 'auth:xoauth2' ; Default is 'auth:plain'
 	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
 	 */
 	public function login($username, $pass, $mode='') { // IMAP4
@@ -458,10 +532,30 @@ final class SmartMailerImap4Client {
 			return 0;
 		} //end if
 		//--
-		$this->tag = 'smart77'.strtolower((string)Smart::uuid_10_seq()).'7framework';
 		$this->username = (string) $username;
-		$this->authmec = 'PLAIN';
 		//--
+		$this->authmec = '';
+		$mode = (string) strtolower((string)trim((string)$mode));
+		if((string)$mode == '') {
+			$mode = 'auth:plain'; // the default auth mode
+		} //end if
+		switch((string)$mode) {
+			case 'login':
+				$this->authmec = '';
+				break;
+			case 'auth:xoauth2':
+				$this->authmec = 'XOAUTH2';
+				break;
+			case 'auth:cram-md5':
+				$this->authmec = 'CRAM-MD5';
+				break;
+			case 'auth:plain':
+				$this->authmec = 'PLAIN';
+				break;
+			default:
+				$this->error = '[ERR] IMAP4 Invalid Auth/Login Mode: '.$mode;
+				return 0;
+		} //end switch
 		if($this->debug) {
 			$this->log .= '[INF] Login to Mail Server (TAG='.$this->tag.' ; MODE='.$mode.' ; USER='.$username.')'."\n";
 		} //end if
@@ -469,23 +563,56 @@ final class SmartMailerImap4Client {
 		if((string)$this->error != '') {
 			return 0;
 		} //end if
-		//-- normal login
-		if($this->debug) {
-			$this->log .= '[INF] Login Method: Normal'."\n";
-		} //end if
+		//--
 		$this->send_cmd('CAPABILITY');
 		//--
-		if((string)$mode == 'login') {
+		if((string)$this->authmec == '') { // login
+			if($this->debug) {
+				$this->log .= '[INF] Login Method: LOGIN { UNSECURE over non-encrypted connections }'."\n";
+			} //end if
 			$reply = $this->send_cmd('LOGIN '.$username.' '.$pass);
-		} else {
+		} elseif((string)$this->authmec == 'PLAIN') { // auth:plain {{{SYNC-AUTH:PLAIN-METHOD}}}
+			if($this->debug) {
+				$this->log .= '[INF] Login Method: AUTHENTICATE / '.$this->authmec.' (DEFAULT) { UNSECURE over non-encrypted connections }'."\n";
+			} //end if
 			$reply = $this->send_cmd('AUTHENTICATE '.$this->authmec.' '.(string)base64_encode((string)"\0".$username."\0".$pass));
+		} elseif((string)$this->authmec == 'CRAM-MD5') { // auth:cram-md5 {{{SYNC-AUTH:CRAM-MD5-METHOD}}}
+			if($this->debug) {
+				$this->log .= '[INF] Login Method: AUTHENTICATE / CRAM-MD5 { LESS SECURE ; if an encrypted connection is available is better to use PLAIN instead of CRAM-MD5 }'."\n";
+			} //end if
+			$secret = $this->send_cmd('AUTHENTICATE '.$this->authmec, false, true); // special command with get only line (req. to avoid freeze)
+			$secret = (string) trim((string)$secret);
+			if((string)substr((string)$secret, 0, 2) !== '+ ') {
+				$this->error = '[ERR] IMAP4 Login: CRAM-MD5 Secret is WRONG ['.$secret.']';
+				return 0;
+			} //end if
+			$secret = (string) trim((string)substr((string)$secret, 2));
+			if((string)$secret == '') {
+				$this->error = '[ERR] IMAP4 Login: CRAM-MD5 Secret is EMPTY';
+				return 0;
+			} //end if
+			$secret = (string) base64_decode((string)$secret);
+			if((string)trim((string)$secret) == '') {
+				$this->error = '[ERR] IMAP4 Login: CRAM-MD5 Secret is INVALID';
+				return 0;
+			} //end if
+			$digest = (string) hash_hmac('md5', (string)$secret, (string)$pass);
+			$reply = $this->send_cmd((string)base64_encode((string)$username.' '.$digest), true); // raw command with no banner tag
+		} elseif((string)$this->authmec == 'XOAUTH2') { // auth:xoauth2 {{{SYNC-AUTH:XOAUTH2-METHOD}}}
+			if($this->debug) {
+				$this->log .= '[INF] Login Method: AUTHENTICATE / XOAUTH2'."\n";
+			} //end if
+			$reply = $this->send_cmd('AUTHENTICATE '.$this->authmec.' '.(string)base64_encode((string)'user='.$username."\1".'auth=Bearer '.$pass."\1"."\1"), false, true); // special command with get only line (req. to avoid freeze) ; sometimes return a standard NOT OK answer, othertimes return an answer that start with +SPACE as B64 encoded json which can trap the client ... ; "\1" is ^A
+		} else { // others, invalid or not supported
+			$this->error = '[ERR] IMAP4 Invalid Auth/Login Mechanism: '.$this->authmec;
+			return 0;
 		} //end if else
 		if((string)$this->error != '') {
 			return 0;
 		} //end if
 		$test = $this->is_ok($reply);
 		if((string)$test != 'ok') {
-			$this->error = '[ERR] IMAP4 Login: User or Password Failed ['.$reply.']';
+			$this->error = '[ERR] IMAP4 Login: User or Password Failed :: `'.str_replace((string)$this->tag, '#', (string)$reply).'`';
 			return 0;
 		} //end if
 		//--
@@ -1182,23 +1309,10 @@ final class SmartMailerImap4Client {
 			return '';
 		} //end if
 		//--
-		$data = '';
+		$data = (string) $this->get_answer_data();
+		$this->log .= (string) trim((string)$data)."\n";
 		//--
-		while(1) {
-			//--
-			$line = (string) $this->get_answer_line();
-			//--
-			$data .= (string) $line;
-			//--
-			if((string)substr((string)trim((string)$line), 0, (int)((int)strlen((string)$this->tag) + 1)) == (string)$this->tag.' ') {
-				break;
-			} //end if
-			//--
-		} //end while
-		//--
-		$this->log .= trim($data)."\n";
-		//--
-		$reply = $data;
+		$reply = (string) $data;
 		$reply = $this->strip_clf($reply);
 		$test = $this->is_ok($reply);
 		if((string)$test != 'ok') {
@@ -1320,7 +1434,7 @@ final class SmartMailerImap4Client {
 	// The return value is a standard fgets() call, which will read up to buffer bytes of data,
 	// until it encounters a new line, or EOF, whichever happens first.
 	// This method works best if $cmd responds with only one line of data.
-	private function send_cmd($cmd) { // IMAP4
+	private function send_cmd($cmd, $raw=false, $allow_partial_answer=false) { // IMAP4
 		//--
 		if(!$this->socket) {
 			$this->error = '[ERR] IMAP4 Send Command: No connection to server // '.$cmd;
@@ -1333,14 +1447,16 @@ final class SmartMailerImap4Client {
 		} //end if
 		//--
 		$original_cmd = (string) $cmd;
-		$cmd = (string) $this->tag.' '.$cmd;
+		if($raw !== true) {
+			$cmd = (string) $this->tag.' '.$cmd;
+		} //end if
 		//--
 		if(!@fputs($this->socket, $cmd."\r\n")) {
 			$this->error = '[ERR] IMAP4 Send Command: FAILED !';
 			return '';
 		} //end if
 		//--
-		$reply = $this->get_answer_data();
+		$reply = $this->get_answer_data((bool)$allow_partial_answer);
 		$reply = $this->strip_clf($reply);
 		//--
 		if($this->debug) {
@@ -1353,7 +1469,7 @@ final class SmartMailerImap4Client {
 				$tmp_cmd = $cmd;
 			} //end if else
 			//--
-			$this->log .= '[INF] IMAP4 Send Command ['.$tmp_cmd.']'."\n".'[REPLY]: \''.$reply.'\''."\n";
+			$this->log .= '[COMMAND] IMAP4: `'.$tmp_cmd.'`'."\n".'[REPLY]: `'.$reply.'`'."\n";
 			//--
 		} //end if
 		//--
@@ -1394,7 +1510,7 @@ final class SmartMailerImap4Client {
 
 	//=====================================================================================
 	// retrive the full response message from server
-	private function get_answer_data() { // IMAP4
+	private function get_answer_data($allow_partial_answer=false) { // IMAP4
 		//--
 		$data = '';
 		//--
@@ -1402,10 +1518,15 @@ final class SmartMailerImap4Client {
 			//--
 			$line = (string) $this->get_answer_line();
 			//--
-			$data .= $line;
+			$data .= (string) $line;
 			//--
 			if((string)substr((string)trim((string)$line), 0, (int)((int)strlen((string)$this->tag) + 1)) == (string)$this->tag.' ') {
 				break;
+			} //end if
+			if($allow_partial_answer === true) {
+				if((string)substr((string)trim((string)$line), 0, 2) == '+ ') {
+					break;
+				} //end if
 			} //end if
 			//--
 		} //end while
@@ -1437,7 +1558,7 @@ final class SmartMailerImap4Client {
  * @hints 		After each operation on the POP3 Server should check the $pop3->error string and if non-empty stop and disconnect to free the socket
  *
  * @depends 	classes: Smart
- * @version 	v.20200413
+ * @version 	v.20200708
  * @package 	Plugins:Mailer
  *
  */
@@ -1594,7 +1715,7 @@ final class SmartMailerPop3Client {
 	 * Will try to open a socket to the specified POP3 Server using the host/ip and port ; If a SSL option is selected will try to establish a SSL socket or fail
 	 * @param STRING $server The Server Hostname or IP address
 	 * @param INTEGER+ $port *Optional* The Server Port ; Default is: 110
-	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'ssl', 'sslv3', 'tls', 'starttls' ; If empty string will be set will be not using SSL Mode
+	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'starttls', 'starttls:1.0', 'starttls:1.1', 'starttls:1.2', 'tls', 'tls:1.0', 'tls:1.1', 'tls:1.2', 'ssl', 'sslv3' ; If empty string is set here it will be operate in unsecure mode (NOT using any SSL/TLS Mode)
 	 * @return INTEGER+ 1 on success, 0 on fail
 	 */
 	public function connect($server, $port=110, $sslversion='') {
@@ -1620,7 +1741,10 @@ final class SmartMailerPop3Client {
 
 		//--
 		$protocol = '';
+		$start_tls = false;
+		$start_tls_version = null;
 		//--
+		$is_secure = false;
 		if((string)$sslversion != '') {
 			//--
 			if(!function_exists('openssl_open')) {
@@ -1628,12 +1752,44 @@ final class SmartMailerPop3Client {
 				return 0;
 			} //end if
 			//--
+			$is_secure = true;
 			switch((string)strtolower((string)$sslversion)) {
+				case 'starttls':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLS_CLIENT; // since PHP 5.6.7, STREAM_CRYPTO_METHOD_TLS_CLIENT (same for _SERVER) no longer means any tls version but tls 1.0 only (for "backward compatibility"...)
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.0':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.1':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.2':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				//--
 				case 'ssl':
-					$protocol = 'ssl://';
+					$protocol = 'ssl://'; // deprecated
 					break;
 				case 'sslv3':
-					$protocol = 'sslv3://';
+					$protocol = 'sslv3://'; // deprecated
+					break;
+				//--
+				case 'tls:1.0':
+					$protocol = 'tlsv1.0://';
+					break;
+				case 'tls:1.1':
+					$protocol = 'tlsv1.1://';
+					break;
+				case 'tls:1.2':
+					$protocol = 'tlsv1.2://';
 					break;
 				case 'tls':
 				default:
@@ -1645,14 +1801,14 @@ final class SmartMailerPop3Client {
 
 		//--
 		if($this->debug) {
-			$this->log .= '[INF] Connecting to Mail Server: '.$protocol.$server.':'.$port."\n";
+			$this->log .= '[INF] '.($is_secure === true ? 'SECURE ' : '').($start_tls === true ? '(STARTTLS:'.$start_tls_version.') ' : '').'Connecting to POP3 Mail Server: '.$protocol.$server.':'.$port."\n";
 		} //end if
 		//--
 
 		//--
 		//$sock = @fsockopen($protocol.$server, $port, $errno, $errstr, $this->timeout);
 		$stream_context = @stream_context_create();
-		if((string)$protocol != '') {
+		if(((string)$protocol != '') OR ($start_tls === true)) {
 			//--
 			$cafile = '';
 			if((string)$this->cafile != '') {
@@ -1686,7 +1842,7 @@ final class SmartMailerPop3Client {
 		//--
 		@stream_set_timeout($this->socket, (int)SMART_FRAMEWORK_NETSOCKET_TIMEOUT);
 		if($this->debug) {
-			$this->log .= '[INF] Set Socket Stream TimeOut to: '.SMART_FRAMEWORK_NETSOCKET_TIMEOUT."\n";
+			$this->log .= '[INF] Set Socket Stream TimeOut to: '.SMART_FRAMEWORK_NETSOCKET_TIMEOUT.' ; ReadBuffer = '.$this->buffer."\n";
 		} //end if
 		//--
 
@@ -1698,15 +1854,11 @@ final class SmartMailerPop3Client {
 		$chk_crypto = (array) @stream_get_meta_data($this->socket);
 		if((string)$protocol != '') {
 			if(!SmartUnicode::str_icontains($chk_crypto['stream_type'], '/ssl')) { // will return something like: tcp_socket/ssl
-				//--
 				$this->error = '[ERR] Connection CRYPTO CHECK Failed ...'."\n";
-				//--
 				@socket_set_blocking($this->socket, 0);
 				@fclose($this->socket);
 				$this->socket = false;
-				//--
 				return 0;
-				//--
 			} //end if
 		} //end if
 		//--
@@ -1717,24 +1869,64 @@ final class SmartMailerPop3Client {
 		$test = $this->is_ok($reply);
 		//--
 		if((string)$test != 'ok') {
-			//--
 			$this->error = '[ERR] Server Reply is NOT OK // '.$test.' // '.$reply;
-			//--
 			@socket_set_blocking($this->socket, 0);
 			@fclose($this->socket);
 			$this->socket = false;
-			//--
 			return 0;
-			//--
 		} //end if
 		//--
 		if($this->debug) {
 			$this->log .= '[REPLY] \''.$reply.'\''."\n";
 		} //end if
-		//--
-
 		//-- apop banner
 		$this->apop_banner = $this->parse_banner($reply);
+		//--
+
+		//--
+		if($start_tls === true) {
+			//--
+			if($this->debug) {
+				$this->log .= '[INF] StartTLS on Server'."\n";
+			} //end if
+			//--
+			$reply = $this->send_cmd('STLS');
+			if((string)$this->error != '') {
+				@socket_set_blocking($this->socket, 0);
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			$test = $this->is_ok($reply);
+			if((string)$test != 'ok') {
+				$this->error = '[ERR] Server StartTLS Failed :: '.$test.' // '.$reply;
+				@socket_set_blocking($this->socket, 0);
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			//--
+			if(!$start_tls_version) {
+				$this->error = '[ERR] Server StartTLS Invalid Protocol Selected ...';
+				@socket_set_blocking($this->socket, 0);
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			//--
+			if($this->debug) {
+				$this->log .= '[INF] Start TLS negotiation on Server'."\n";
+			} //end if
+			$test_starttls = @stream_socket_enable_crypto($this->socket, true, $start_tls_version);
+			if(!$test_starttls) {
+				$this->error = '[ERR] Server StartTLS Failed to be Enabled on Socket ...';
+				@socket_set_blocking($this->socket, 0);
+				@fclose($this->socket);
+				$this->socket = false;
+				return 0;
+			} //end if
+			//--
+		} //end if
 		//--
 
 		//--
@@ -1780,7 +1972,7 @@ final class SmartMailerPop3Client {
 
 	//=====================================================================================
 	/**
-	 * Reset the IMAP4 server connection (includding all messages marked to be deleted)
+	 * Reset the POP3 server connection (includding all messages marked to be deleted)
 	 * @return INTEGER+ 1 on Success or 0 on Error
 	 */
 	public function reset() {
@@ -1826,7 +2018,6 @@ final class SmartMailerPop3Client {
 		} //end if
 		//--
 		if(!$this->socket) {
-			$this->error = '[ERR] POP3 Connection cannot QUIT, it appears is not opened !';
 			return 0;
 		} //end if
 		//--
@@ -1834,7 +2025,7 @@ final class SmartMailerPop3Client {
 		//--
 		$test = $this->is_ok($reply);
 		if((string)$test != 'ok') {
-			$reply = $this->send_cmd('? LOGOUT'); // imap
+			$reply = $this->send_cmd('? LOGOUT'); // pop3 over imap
 		} //end if else
 		//--
 		@socket_set_blocking($this->socket, 0);
@@ -1853,7 +2044,7 @@ final class SmartMailerPop3Client {
 	 * Sends both user and pass to the Server
 	 * @param STRING $username The authentication username
 	 * @param STRING $pass The authentication password
-	 * @param ENUM $mode *Optional* The authentication mode ; can be set to 'standard' or 'apop' ; Default is 'standard'
+	 * @param ENUM $mode *Optional* The authentication mode ; can be set to any of: 'login', 'apop', 'auth:cram-md5' ; Default is 'login'
 	 * @return INTEGER+ 1 on Success or 0 on Failure or Error
 	 */
 	public function login($username, $pass, $mode='') {
@@ -1870,10 +2061,24 @@ final class SmartMailerPop3Client {
 			return 0;
 		} //end if
 		//--
-		$apop = false;
-		if((string)$mode == 'apop') {
-			$apop = true;
+		$mode = (string) strtolower((string)trim((string)$mode));
+		if((string)$mode == '') {
+			$mode = 'login'; // the default auth mode
 		} //end if
+		switch((string)$mode) {
+			case 'login':
+				$mode = 'login';
+				break;
+			case 'apop':
+				$mode = 'apop';
+				break;
+			case 'auth:cram-md5':
+				$mode = 'auth:cram-md5';
+				break;
+			default:
+				$this->error = '[ERR] POP3 Invalid Auth/Login Mode: '.$mode;
+				return 0;
+		} //end switch
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Login to Mail Server (MODE='.$mode.' ; USER='.$username.')'."\n";
@@ -1883,32 +2088,10 @@ final class SmartMailerPop3Client {
 			return 0;
 		} //end if
 		//--
-		if($apop == true) {
-			//-- apop login
-			if($this->debug) {
-				$this->log .= '[INF] Login Method: APOP // Banner = ['.$this->apop_banner.']'."\n";
-			} //end if
-			//--
-			if((string)trim((string)$this->apop_banner) == '') {
-				$this->error = '[ERR] POP3 Auth: APOP Method Failed, Server Banner is Empty';
-				return 0;
-			} //end if
-			//--
-			$reply = $this->send_cmd('APOP '.$username.' '.md5((string)$this->apop_banner.$pass));
-			if((string)$this->error != '') {
-				return 0;
-			} //end if
-			//--
-			$test = $this->is_ok($reply);
-			if((string)$test != 'ok') {
-				$this->error = '[ERR] POP3 Auth: APOP Failed ['.$reply.']';
-				return 0;
-			} //end if
-			//--
-		} else {
+		if((string)$mode == 'login') { // normal login
 			//-- normal login
 			if($this->debug) {
-				$this->log .= '[INF] Login Method: Normal'."\n";
+				$this->log .= '[INF] Login Method: NORMAL (DEFAULT) { UNSECURE over non-encrypted connections }'."\n";
 			} //end if
 			//--
 			$reply = $this->send_cmd('USER '.$username);
@@ -1932,6 +2115,67 @@ final class SmartMailerPop3Client {
 				$this->error = '[ERR] POP3 Auth: Pass Failed ['.$reply.']';
 				return 0;
 			} //end if
+			//--
+		} elseif((string)$mode == 'apop') { // apop login
+			//--
+			if($this->debug) {
+				$this->log .= '[INF] Login Method: APOP ; Banner = ['.$this->apop_banner.'] { LESS SECURE ; if an encrypted connection is available is better to use NORMAL instead of APOP }'."\n";
+			} //end if
+			//--
+			if((string)trim((string)$this->apop_banner) == '') {
+				$this->error = '[ERR] POP3 Auth: APOP Method Failed, Server Banner is Empty';
+				return 0;
+			} //end if
+			//--
+			$reply = $this->send_cmd('APOP '.$username.' '.md5((string)$this->apop_banner.$pass));
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			//--
+			$test = $this->is_ok($reply);
+			if((string)$test != 'ok') {
+				$this->error = '[ERR] POP3 Auth: APOP Failed ['.$reply.']';
+				return 0;
+			} //end if
+			//--
+		} elseif((string)$mode == 'auth:cram-md5') { // auth:cram-md5 {{{SYNC-AUTH:CRAM-MD5-METHOD}}}
+			//--
+			$secret = $this->send_cmd('AUTH CRAM-MD5');
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			$secret = (string) trim((string)$secret);
+			if((string)substr((string)$secret, 0, 2) !== '+ ') {
+				$this->error = '[ERR] POP3 Login: CRAM-MD5 Secret is WRONG ['.$secret.']';
+				return 0;
+			} //end if
+			$secret = (string) trim((string)substr((string)$secret, 2));
+			if((string)$secret == '') {
+				$this->error = '[ERR] POP3 Login: CRAM-MD5 Secret is EMPTY';
+				return 0;
+			} //end if
+			$secret = (string) base64_decode((string)$secret);
+			if((string)trim((string)$secret) == '') {
+				$this->error = '[ERR] POP3 Login: CRAM-MD5 Secret is INVALID';
+				return 0;
+			} //end if
+			$digest = (string) hash_hmac('md5', (string)$secret, (string)$pass);
+			//--
+			$reply = $this->send_cmd((string)base64_encode((string)$username.' '.$digest));
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			//--
+			$test = $this->is_ok($reply);
+			if((string)$test != 'ok') {
+				$this->error = '[ERR] POP3 Auth: CRAM-MD5 Failed ['.$reply.']';
+				return 0;
+			} //end if
+			//--
+		} else { // others, invalid or not supported
+			//--
+			$this->error = '[ERR] POP3 Invalid Auth/Login Mechanism: '.$mode;
+			return 0;
 			//--
 		} //end if else
 		//--
@@ -2372,7 +2616,7 @@ final class SmartMailerPop3Client {
 				$tmp_cmd = $cmd;
 			} //end if else
 			//--
-			$this->log .= '[INF] POP3 Send Command ['.$tmp_cmd.']'."\n".'[REPLY]: \''.$reply.'\''."\n";
+			$this->log .= '[COMMAND] POP3: `'.$tmp_cmd.'`'."\n".'[REPLY]: `'.$reply.'`'."\n";
 			//--
 		} //end if
 		//--

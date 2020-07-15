@@ -40,7 +40,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200415
+ * @version 	v.20200708
  * @package 	Plugins:Mailer
  *
  */
@@ -236,7 +236,7 @@ final class SmartMailerSend {
 	 * SMTP HELO (server name that is allowed to send mails for this domain)
 	 * Must be set to a real domain host that is valid to send emails for that address
 	 * @var STRING
-	 * @default '127.0.0.1'
+	 * @default 'localhost'
 	 */
 	public $smtp_helo;
 
@@ -258,7 +258,7 @@ final class SmartMailerSend {
 
 	/**
 	 * Apply only if send the email message using SMTP Method
-	 * SMTP SSL Mode: '', 'ssl', 'sslv3', 'tls', 'starttls'
+	 * SMTP SSL Mode: '', 'starttls', 'starttls:1.0', 'starttls:1.1', 'starttls:1.2', 'tls', 'tls:1.0', 'tls:1.1', 'tls:1.2', 'ssl', 'sslv3'
 	 * If empty string will be set it will be not using SSL Mode
 	 * @var ENUM
 	 * @default null
@@ -308,6 +308,17 @@ final class SmartMailerSend {
 	 */
 	public $smtp_password;
 
+
+	/**
+	 * Apply only if send the email message using SMTP Method
+	 * SMTP Authentication mode ($smtp_login must be set to TRUE and a valid, non-empty $smtp_user and $smtp_password must be provided)
+	 * Can be set to any of: 'login', 'auth:plain', 'auth:cram-md5', 'auth:xoauth2' ; Default is '' which selects the default 'login'
+	 * @var ENUM
+	 * @default ''
+	 */
+	public $smtp_modeauth;
+
+
 	//-- store the encoded message
 
 	/**
@@ -348,7 +359,7 @@ final class SmartMailerSend {
 
 		//--
 		if((string)$this->smtp_helo == '') { // fix
-			$this->smtp_helo = '127.0.0.1';
+			$this->smtp_helo = 'localhost'; // {{{SYNC-EMPTY-SMTP-HELLO}}}
 		} //end if
 		//--
 		$tmp_explode_arr = (array) explode('@', (string)$this->from);
@@ -477,7 +488,7 @@ final class SmartMailerSend {
 					//--
 					$login = 1; // default
 					if($this->smtp_login) {
-						$login = $smtp->login($this->smtp_user, $this->smtp_password);
+						$login = $smtp->login($this->smtp_user, $this->smtp_password, $this->smtp_modeauth);
 					} //end if
 					//--
 					if($login) {
@@ -745,6 +756,7 @@ final class SmartMailerSend {
 		$this->smtp_login = false;
 		$this->smtp_user = '';
 		$this->smtp_password = '';
+		$this->smtp_modeauth = '';
 		//--
 	} //END FUNCTION
 	//=====================================================================================
@@ -1032,7 +1044,7 @@ final class SmartMailerSend {
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	classes: Smart
- * @version 	v.20200121
+ * @version 	v.20200708
  * @package 	Plugins:Mailer
  *
  */
@@ -1089,6 +1101,12 @@ final class SmartMailerSmtpClient {
 	 * socket resource ID or FALSE if not connected
 	 */
 	private $socket = false;
+	/**
+	 * @var STRING
+	 * @default ''
+	 * The Auth Mechanism
+	 */
+	private $authmec = '';
 	//--
 	//===============================================
 
@@ -1135,7 +1153,7 @@ final class SmartMailerSmtpClient {
 	 * @param STRING $helo The SMTP HELO (server name that is allowed to send mails for this domain) ; Must be set to a real domain host that is valid to send emails for that address ; Ex: 'mail.mydomain.ext'
 	 * @param STRING $server The SMTP server Hostname or IP address
 	 * @param INTEGER+ $port *Optional* The SMTP Server Port ; Default is: 25
-	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'ssl', 'sslv3', 'tls', 'starttls' ; If empty string will be set will be not using SSL Mode
+	 * @param ENUM $sslversion To connect using SSL mode this must be set to any of these accepted values: '', 'starttls', 'starttls:1.0', 'starttls:1.1', 'starttls:1.2', 'tls', 'tls:1.0', 'tls:1.1', 'tls:1.2', 'ssl', 'sslv3' ; If empty string is set here it will be operate in unsecure mode (NOT using any SSL/TLS Mode)
 	 * @return INTEGER+ 1 on success, 0 on fail
 	 */
 	public function connect($helo, $server, $port=25, $sslversion='') {
@@ -1145,9 +1163,9 @@ final class SmartMailerSmtpClient {
 		//--
 
 		//-- checks
-		$helo = trim((string)$helo);
-		$server = trim((string)$server);
-		if((strlen($server) <= 0) OR (strlen($server) > 255)) {
+		$helo = (string) trim((string)$helo);
+		$server = (string) trim((string)$server);
+		if((strlen((string)$server) <= 0) OR (strlen((string)$server) > 255)) {
 			$this->error = '[ERR] Invalid Server to Connect ! ['.$server.']';
 			return 0;
 		} //end if
@@ -1162,7 +1180,9 @@ final class SmartMailerSmtpClient {
 		//--
 		$protocol = '';
 		$start_tls = false;
+		$start_tls_version = null;
 		//--
+		$is_secure = false;
 		if((string)$sslversion != '') {
 			//--
 			if(!function_exists('openssl_open')) {
@@ -1170,16 +1190,44 @@ final class SmartMailerSmtpClient {
 				return 0;
 			} //end if
 			//--
+			$is_secure = true;
 			switch(strtolower($sslversion)) {
 				case 'starttls':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLS_CLIENT; // since PHP 5.6.7, STREAM_CRYPTO_METHOD_TLS_CLIENT (same for _SERVER) no longer means any tls version but tls 1.0 only (for "backward compatibility"...)
 					$start_tls = true;
 					$protocol = ''; // reset because will connect in a different way
 					break;
+				case 'starttls:1.0':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.1':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				case 'starttls:1.2':
+					$start_tls_version = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+					$start_tls = true;
+					$protocol = ''; // reset because will connect in a different way
+					break;
+				//--
 				case 'ssl':
-					$protocol = 'ssl://';
+					$protocol = 'ssl://'; // deprecated
 					break;
 				case 'sslv3':
-					$protocol = 'sslv3://';
+					$protocol = 'sslv3://'; // deprecated
+					break;
+				//--
+				case 'tls:1.0':
+					$protocol = 'tlsv1.0://';
+					break;
+				case 'tls:1.1':
+					$protocol = 'tlsv1.1://';
+					break;
+				case 'tls:1.2':
+					$protocol = 'tlsv1.2://';
 					break;
 				case 'tls':
 				default:
@@ -1191,7 +1239,7 @@ final class SmartMailerSmtpClient {
 
 		//--
 		if($this->debug) {
-			$this->log .= '[INF] Connecting to Mail Server: '.$protocol.$server.':'.$port."\n";
+			$this->log .= '[INF] '.($is_secure === true ? 'SECURE ' : '').($start_tls === true ? '(STARTTLS:'.$start_tls_version.') ' : '').'Connecting to Mail Server: '.$protocol.$server.':'.$port."\n";
 		} //end if
 		//--
 
@@ -1280,7 +1328,7 @@ final class SmartMailerSmtpClient {
 		//--
 		if($start_tls === true) {
 			//--
-			if($this->starttls($stream_context) != '1') {
+			if($this->starttls($stream_context, $start_tls_version) != '1') {
 				//--
 				if((string)$this->error == '') {
 					$this->error = '[ERR] Connection CRYPTO ENABLE Failed ...';
@@ -1339,48 +1387,130 @@ final class SmartMailerSmtpClient {
 	 * @hints SMTP SUCCESS CODES are: 334 OR 235 (final)
 	 * @param STRING $username The SMTP authentication username
 	 * @param STRING $pass The SMTP authentication password
+	 * @param ENUM $mode *Optional* The authentication mode ; can be set to any of: 'login', 'auth:plain', 'auth:cram-md5', 'auth:xoauth2' ; Default is 'login'
 	 * @return INTEGER+ 1 on Success or 0 on Error
 	 */
-	public function login($username, $pass) {
+	public function login($username, $pass, $mode='') {
 		//--
+		if((string)$this->error != '') {
+			return 0;
+		} //end if
+		//--
+		$this->authmec = '';
+		$mode = (string) strtolower((string)trim((string)$mode));
+		if((string)$mode == '') {
+			$mode = 'login'; // the default auth mode
+		} //end if
+		switch((string)$mode) {
+			case 'login':
+				$this->authmec = '';
+				break;
+			case 'auth:xoauth2':
+				$this->authmec = 'XOAUTH2';
+				break;
+			case 'auth:cram-md5':
+				$this->authmec = 'CRAM-MD5';
+				break;
+			case 'auth:plain':
+				$this->authmec = 'PLAIN';
+				break;
+			default:
+				$this->error = '[ERR] Invalid Auth/Login Mode: '.$mode;
+				return 0;
+		} //end switch
 		if($this->debug) {
-			$this->log .= '[INF] Login to Mail Server (USER = '.$username.')'."\n";
+			$this->log .= '[INF] Auth / LOGIN to Mail Server (MODE='.$mode.' ; USER = '.$username.')'."\n";
 		} //end if
 		//--
-		if((string)$this->error != '') {
+		if((string)$this->authmec == '') { // login
+			//--
+			$reply = $this->send_cmd('AUTH LOGIN');
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			$test = $this->answer_code($reply);
+			if((string)$test != '334') {
+				$this->error = '[ERR] SMTP Server did not accepted AUTH LOGIN :: '.$test.' // '.$reply;
+				return 0;
+			} //end if
+			//--
+			$reply = $this->send_cmd(base64_encode((string)$username)); // send encoded username
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			$test = $this->answer_code($reply);
+			if((string)$test != '334') {
+				$this->error = '[ERR] SMTP Server did not accepted the UserName: '.$username.' :: `'.$test.'` // `'.$reply.'`';
+				return 0;
+			} //end if
+			//--
+			$reply = $this->send_cmd(base64_encode((string)$pass)); // send encoded password
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			//--
+		} elseif((string)$this->authmec == 'PLAIN') { // auth:plain {{{SYNC-AUTH:PLAIN-METHOD}}}
+			//--
+			$reply = $this->send_cmd('AUTH PLAIN '.base64_encode((string)"\0".$username."\0".$pass));
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			//--
+		} elseif((string)$this->authmec == 'CRAM-MD5') { // auth:cram-md5 {{{SYNC-AUTH:CRAM-MD5-METHOD}}}
+			//--
+			$reply = $this->send_cmd('AUTH CRAM-MD5');
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			$test = $this->answer_code($reply);
+			if((string)$test != '334') {
+				$this->error = '[ERR] SMTP Server did not accepted AUTH CRAM-MD5 :: '.$test.' // '.$reply;
+				return 0;
+			} //end if
+			$secret = (string) trim((string)$reply);
+			if(strpos($secret, '334 ') !== 0) {
+				$this->error = '[ERR] Auth/Login: CRAM-MD5 Secret is WRONG ['.$secret.']';
+				return 0;
+			} //end if
+			$secret = (string) trim((string)substr((string)$secret, 4));
+			if((string)$secret == '') {
+				$this->error = '[ERR] Auth/Login: CRAM-MD5 Secret is EMPTY';
+				return 0;
+			} //end if
+			$secret = (string) base64_decode((string)$secret);
+			if((string)trim((string)$secret) == '') {
+				$this->error = '[ERR] Auth/Login: CRAM-MD5 Secret is INVALID';
+				return 0;
+			} //end if
+			//--
+			$digest = (string) hash_hmac('md5', (string)$secret, (string)$pass);
+			$reply = $this->send_cmd(base64_encode((string)$username.' '.$digest));
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			//--
+		} elseif((string)$this->authmec == 'XOAUTH2') { // auth:xoauth2 {{{SYNC-AUTH:XOAUTH2-METHOD}}}
+			//--
+			$reply = $this->send_cmd('AUTH XOAUTH2 '.base64_encode((string)'user='.$username."\1".'auth=Bearer '.$pass."\1"."\1"));
+			if((string)$this->error != '') {
+				return 0;
+			} //end if
+			//--
+		} else {
+			//--
+			$this->error = '[ERR] Invalid Auth/Login Mechanism: '.$this->authmec;
 			return 0;
-		} //end if
+			//--
+		} //end if else
 		//--
-		$reply = $this->send_cmd('AUTH LOGIN');
-		if((string)$this->error != '') {
-			return 0;
-		} //end if
-		//--
-		$test = $this->answer_code($reply);
-		if((string)$test != '334') {
-			$this->error = '[ERR] SMTP Server did not accept Auth Login :: '.$test.' // '.$reply;
-			return 0;
-		} //end if
-		//--
-		$reply = $this->send_cmd(base64_encode($username)); // send encoded username
-		if((string)$this->error != '') {
-			return 0;
-		} //end if
-		//--
-		$test = $this->answer_code($reply);
-		if((string)$test != '334') {
-			$this->error = '[ERR] SMTP Server did not accept the UserName: '.$username.' :: '.$test.' // '.$reply;
-			return 0;
-		} //end if
-		//--
-		$reply = $this->send_cmd(base64_encode($pass)); // send encoded password
-		if((string)$this->error != '') {
+		if((string)trim((string)$reply) == '') {
+			$this->error = '[ERR] SMTP Server Auth/Login Reply is Empty';
 			return 0;
 		} //end if
 		//--
 		$test = $this->answer_code($reply);
 		if((string)$test != '235') {
-			$this->error = '[ERR] SMTP Server did not accept the Password: '.'*****'.' :: '.$test.' // '.$reply;
+			$this->error = '[ERR] SMTP Login FAILED :: `'.$test.'` // `'.$reply.'`';
 			return 0;
 		} //end if
 		//--
@@ -1405,7 +1535,6 @@ final class SmartMailerSmtpClient {
 		} //end if
 		//--
 		if(!$this->socket) {
-			$this->error = '[ERR] SMTP Connection cannot QUIT, it appears is not opened !';
 			return 0;
 		} //end if
 		//--
@@ -1541,6 +1670,12 @@ final class SmartMailerSmtpClient {
 	 * @return INTEGER+ 1 on Success (if any of EHLO/HELO is successful) ; 0 on Error (if both EHLO and HELO fail)
 	 */
 	public function hello($hostname) {
+		//--
+		$hostname = (string) strtolower((string)trim((string)$hostname));
+		//--
+		if((string)$hostname == '') {
+			$hostname = 'localhost'; // {{{SYNC-EMPTY-SMTP-HELLO}}}
+		} //end if
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Sending EHLO / HELO to Mail Server !'."\n";
@@ -1813,7 +1948,7 @@ final class SmartMailerSmtpClient {
 		$test = $this->answer_code($reply);
 		//--
 		if($this->debug) {
-			$this->log .= '[INF] Data-Send Mail Server Reply is :: '.$test.' // '.$reply."\n";
+			$this->log .= '[INF] Data-Send Mail Server Reply is: `'.$test.'` # `'.$reply.'`'."\n";
 		} //end if
 		//--
 		if((string)$this->error != '') {
@@ -1821,7 +1956,7 @@ final class SmartMailerSmtpClient {
 		} //end if
 		//--
 		if((string)$test != '250') {
-			$this->error = '[ERR] Data-Send Finalize Failed on Server :: '.$test.' // '.$reply;
+			$this->error = '[ERR] Data-Send Finalize Failed on Server: `'.$test.'` # `'.$reply.'`';
 			return 0;
 		} //end if
 		//--
@@ -1843,7 +1978,7 @@ final class SmartMailerSmtpClient {
 	// Implements from rfc 821: STARTTLS <CRLF>
 	// SMTP CODE SUCCESS: 220
 	// SMTP CODE ERROR  : 501, 454
-	private function starttls($stream_context) {
+	private function starttls($stream_context, $start_tls_version) {
 		//--
 		if($this->debug) {
 			$this->log .= '[INF] Starting TLS on Mail Server // STARTTLS'."\n";
@@ -1869,7 +2004,12 @@ final class SmartMailerSmtpClient {
 			return 0;
 		} //end if
 		//--
-		$test_starttls = @stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+		if(!$start_tls_version) {
+			$this->error = '[ERR] Server StartTLS Canceled :: Invalid Protocol Selected ...';
+			return 0;
+		} //end if
+		//--
+		$test_starttls = @stream_socket_enable_crypto($this->socket, true, $start_tls_version);
 		if(!$test_starttls) {
 			$this->error = '[ERR] Server StartTLS Failed to be Enabled on Socket ...';
 			return 0;
@@ -1954,7 +2094,7 @@ final class SmartMailerSmtpClient {
 		$reply = $this->retry_data();
 		//--
 		if($this->debug) {
-			$this->log .= '[INF] SMTP Send Command ['.$cmd.']'."\n".'[REPLY]: \''.$reply.'\''."\n";
+			$this->log .= '[COMMAND] SMTP: `'.$cmd.'`'."\n".'[REPLY]: `'.$reply.'`'."\n";
 		} //end if
 		//--
 		return $reply;

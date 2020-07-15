@@ -5,10 +5,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="author" content="unix-world.org">
-	<meta name="description" content="\SmartModExtLib\PageBuilder\AbstractFrontendController        abstract class \SmartModExtLib\PageBuilder\ AbstractFrontendController  extends">
-	<meta name="keywords" content="smartmodextlib pagebuilder abstractfrontendcontroller, abstract, class, smartmodextlib pagebuilder, abstractfrontendcontroller, extends, smartmodextlib pagebuilder abstractfrontendpagebuilder, -, class, -, frontend, controller, provides, the, definitions, to, create, pagebuilder, frontend, controllers., language, php, located, at, modules mod-page-builder libs abstractfrontendcontroller.php, package, development modules pagebuilder, namespace, name, version, v, hints, extend, controllers, from, this, one, usage, dynamic, object, new, class   - method, only, methods, inheritance, chart, →, ↳, smartabstractappcontroller, final, public, function, renderbuilderpage, string, page id, tpl path, tpl file, array, markers, arr markers, array, -, getrenderedbuildersegmentcode, segment id, rendersegmentmarkers, segment code, checkifpageorsegmentexist, y id, y ctrl, null, inherited, checkifpageexist, checkifsegmentexist, getlistofpagesbytag, y tag, y orderby, id, y orderdir, asc, int, y limit, y ofs, getlistofsegmentsbytag, getlistofsegmentsbyarea, y area, construct, y module path, y controller, y url page, y hardcoded area, param, string, y module path, relative, path, followed, by">
+	<meta name="description" content="\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder        abstract class \SmartModExtLib\PageBuilder\ AbstractFrontendPageBuilder  extends">
+	<meta name="keywords" content="smartmodextlib pagebuilder abstractfrontendpagebuilder, abstract, class, smartmodextlib pagebuilder, abstractfrontendpagebuilder, extends, smartabstractappcontroller, -, class, -, frontend, pagebuilder, provides, the, definitions, to, create, frontend, controllers, and, plugins., language, php, located, at, modules mod-page-builder libs abstractfrontendpagebuilder.php, package, development modules pagebuilder, namespace, name, version, v, hints, needs, be, extended, as, uniqueclasspluginname, usage, dynamic, object, new, class   - method, this, only, methods, inheritance, chart, →, ↳, final, public, function, checkifpageorsegmentexist, string, y id, y ctrl, null, -, checkifpageexist, checkifsegmentexist, getlistofpagesbytag, y tag, y orderby, id, y orderdir, asc, int, y limit, y ofs, getlistofsegmentsbytag, getlistofsegmentsbyarea, y area, construct, y module path, y controller, y url page, y hardcoded area, inherited, from, param, string, y module path, relative, path, followed, by, a, trailing, slash, current, module, containing, controller, served, middleware, service">
 	<meta name="summary" content="Smart.Framework.Modules : PHP Documentation:">
-	<title>PHP Documentation for: \SmartModExtLib\PageBuilder\AbstractFrontendController</title>
+	<title>PHP Documentation for: \SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</title>
 	<!-- CSS and Fonts -->
 		<!-- skip fonts -->
 	
@@ -674,34 +674,33 @@ select#select-summary {
 
 </style>
 <!-- Headings -->
-<h1 title="PHP class: `\SmartModExtLib\PageBuilder\AbstractFrontendController` @ PHP Namespace: `\SmartModExtLib\PageBuilder\`" id="Class--Summary-">
-	<span class="doc-modifiers">abstract</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\SmartModExtLib\PageBuilder\</span><span class="doc-name">AbstractFrontendController</span><br>
-	<span title="extends (abstract) Class" class="doc-extends"><i>extends</i> \SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</span><br>
+<h1 title="PHP class: `\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder` @ PHP Namespace: `\SmartModExtLib\PageBuilder\`" id="Class--Summary-">
+	<span class="doc-modifiers">abstract</span> <span class="doc-keyword"><i>class</i></span> <span class="doc-ns">\SmartModExtLib\PageBuilder\</span><span class="doc-name">AbstractFrontendPageBuilder</span><br>
+	<span title="extends (abstract) Class" class="doc-extends"><i>extends</i> \SmartAbstractAppController</span><br>
 	
 	{
 	
 	}&nbsp;@-&gt;
 </h1>
 <!-- Description -->
-<div class="doc-comments">Class: AbstractFrontendController - Abstract Frontend Controller, provides the Abstract Definitions to create PageBuilder (Frontend) Controllers.</div><br>
+<div class="doc-comments">Class: AbstractFrontendPageBuilder - Abstract Frontend PageBuilder, provides the Abstract Definitions to create PageBuilder (Frontend) Controllers and Plugins.</div><br>
 <!-- Metainfo -->
 <div class="doc-container">
 	<ul class="doc-list">
 		<li><span class="doc-language"><b>Language:</b> PHP<span></li>
-		<li><span class="doc-located"><b>Located at:</b> modules/mod-page-builder/libs/AbstractFrontendController.php</span></li>
+		<li><span class="doc-located"><b>Located at:</b> modules/mod-page-builder/libs/AbstractFrontendPageBuilder.php</span></li>
 		<li><span class="doc-package"><b>Package:</b> development:modules:PageBuilder</span></li>
 		<li><span class="doc-ns"><b>Namespace:</b> \SmartModExtLib\PageBuilder\</span></li>
-		<li><span class="doc-name"><b>Class Name:</b> AbstractFrontendController</span></li>
+		<li><span class="doc-name"><b>Class Name:</b> AbstractFrontendPageBuilder</span></li>
 		
 		<li><b>Version:</b> v.20200703</li>
 		
-		<li><b>Hints:</b> extend  frontend controllers from this one</li>
+		<li><b>Hints:</b> needs  to be extended as: UniqueClassPluginName</li>
 		<li><b>Usage:</b> dynamic  object: (new Class())-&gt;method() - This class provides only DYNAMIC methods</li>
 		
 				<li><b>Inheritance Chart:</b>
 			<ul>
-				<span class="doc-name"><i>class</i>&nbsp;\SmartModExtLib\PageBuilder\AbstractFrontendController</span>&nbsp;&rarr;
-								<li>&nbsp;&#8627;&nbsp;<span class="doc-type-class"><i>class</i>&nbsp;\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</span>&nbsp;&rarr;</li>
+				<span class="doc-name"><i>class</i>&nbsp;\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</span>&nbsp;&rarr;
 								<li>&nbsp;&#8627;&nbsp;<span class="doc-type-class"><i>class</i>&nbsp;\SmartAbstractAppController</span></li>
 				
 			</ul>
@@ -715,56 +714,14 @@ select#select-summary {
 	<h2 class="doc-header">class Methods</h2>
 </div>
 <!-- methods r.20200121 -->
-<div class="doc-container" id="Method--renderBuilderPage">
-	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>renderBuilderPage</b></span>&nbsp;(
-				<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$page_id` Parameter is REQUIRED">$page_id</span></b></span>, 
-			<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$tpl_path` Parameter is REQUIRED">$tpl_path</span></b></span>, 
-			<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$tpl_file` Parameter is REQUIRED">$tpl_file</span></b></span>, 
-			<i>array</i>&nbsp;<span class="doc-param-name"><b><span title="`$markers` Parameter is REQUIRED">$markers</span></b></span>, 
-			<i>array</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$arr_markers` Parameter is OPTIONAL, with the Default Value: array()">$arr_markers</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>
-	
-	
-	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	
-	
-	
-	
-	
-	
-</div><div class="doc-container" id="Method--getRenderedBuilderSegmentCode">
-	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>getRenderedBuilderSegmentCode</b></span>&nbsp;(
-				<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$segment_id` Parameter is REQUIRED">$segment_id</span></b></span>, 
-			<i>array</i>&nbsp;<span class="doc-param-name"><b><span class="doc-param-optional" title="`$arr_markers` Parameter is OPTIONAL, with the Default Value: array()">$arr_markers</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>array()</b></span>
-	
-	
-	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	
-	
-	
-	
-	
-	
-</div><div class="doc-container" id="Method--renderSegmentMarkers">
-	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>renderSegmentMarkers</b></span>&nbsp;(
-				<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$segment_code` Parameter is REQUIRED">$segment_code</span></b></span>, 
-			<i>array</i>&nbsp;<span class="doc-param-name"><b><span title="`$arr_markers` Parameter is REQUIRED">$arr_markers</span></b></span>
-	
-	
-	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	
-	
-	
-	
-	
-	
-</div><div class="doc-container" id="Method--checkIfPageOrSegmentExist">
+<div class="doc-container" id="Method--checkIfPageOrSegmentExist">
 	<span class="doc-modifiers">final public</span> <span class="doc-keyword"><i>function</i></span> <span class="doc-method-name"><b>checkIfPageOrSegmentExist</b></span>&nbsp;(
 				<i>string</i>&nbsp;<span class="doc-param-name"><b><span title="`$y_id` Parameter is REQUIRED">$y_id</span></b></span>, 
 			<span class="doc-param-name"><b><span class="doc-param-optional" title="`$y_ctrl` Parameter is OPTIONAL, with the Default Value: null">$y_ctrl</span></b></span>&nbsp;=&nbsp;<span class="doc-param-optional"><b>null</b></span>
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	<br><span class="doc-inherited"><i>inherited</i>&nbsp;from&nbsp;<b>\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</b></span>
+	
 	
 	
 	
@@ -777,7 +734,7 @@ select#select-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	<br><span class="doc-inherited"><i>inherited</i>&nbsp;from&nbsp;<b>\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</b></span>
+	
 	
 	
 	
@@ -790,7 +747,7 @@ select#select-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	<br><span class="doc-inherited"><i>inherited</i>&nbsp;from&nbsp;<b>\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</b></span>
+	
 	
 	
 	
@@ -806,7 +763,7 @@ select#select-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	<br><span class="doc-inherited"><i>inherited</i>&nbsp;from&nbsp;<b>\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</b></span>
+	
 	
 	
 	
@@ -822,7 +779,7 @@ select#select-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	<br><span class="doc-inherited"><i>inherited</i>&nbsp;from&nbsp;<b>\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</b></span>
+	
 	
 	
 	
@@ -838,7 +795,7 @@ select#select-summary {
 	
 	
 	)&nbsp;{}&nbsp;<span title="Object Method"><b>-&gt;</b></span>&nbsp;
-	<br><span class="doc-inherited"><i>inherited</i>&nbsp;from&nbsp;<b>\SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder</b></span>
+	
 	
 	
 	
@@ -1593,13 +1550,7 @@ Because of the PHP Bug #31570, the __destruct() can't operate on relative paths 
 	<h2 class="doc-header">class Properties</h2>
 </div>
 <!-- properties r.20200121 -->
-<div class="doc-container" id="Property--max_depth">
-	<span class="doc-modifiers">protected</span> <b>$max_depth</b>&nbsp;<span title="Object Property"><b>-&gt;</b></span>
-	
-</div><div class="doc-container" id="Property--cache_time">
-	<span class="doc-modifiers">protected</span> <b>$cache_time</b>&nbsp;<span title="Object Property"><b>-&gt;</b></span>
-	
-</div>
+
 <!-- Constants -->
 <br>
 <div class="doc-container" id="Constants--Summary-">
@@ -1633,21 +1584,12 @@ function smartHandleDocSelector(obj) {
 </script>
 <div class="doc-summary">
 	<select id="select-summary" onChange="smartHandleDocSelector(this); return false;">
-		<option value="" selected>* PHP Class \SmartModExtLib\PageBuilder\AbstractFrontendController # Documentation Index *</option>
-		<optgroup label="Class \SmartModExtLib\PageBuilder\AbstractFrontendController">
+		<option value="" selected>* PHP Class \SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder # Documentation Index *</option>
+		<optgroup label="Class \SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder">
 			<option value="Class--Summary-">Class definition</option>
 		</optgroup>
 		<optgroup label="Class Methods">
 			<option value="Methods--Summary-">Methods list</option>
-									<option value="Method--renderBuilderPage"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;renderBuilderPage()</option>
-			
-			
-									<option value="Method--getRenderedBuilderSegmentCode"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;getRenderedBuilderSegmentCode()</option>
-			
-			
-									<option value="Method--renderSegmentMarkers"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;renderSegmentMarkers()</option>
-			
-			
 									<option value="Method--checkIfPageOrSegmentExist"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; function&nbsp;checkIfPageOrSegmentExist()</option>
 			
 			
@@ -1807,10 +1749,6 @@ function smartHandleDocSelector(obj) {
 		</optgroup>
 		<optgroup label="Class Properties">
 			<option value="Properties--Summary-">Properties list</option>
-									<option value="Property--max_depth"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; var&nbsp;$max_depth</option>
-			
-									<option value="Property--cache_time"> &nbsp;&nbsp;&middot;&nbsp;&nbsp; var&nbsp;$cache_time</option>
-			
 			
 		</optgroup>
 		<optgroup label="Class Constants">

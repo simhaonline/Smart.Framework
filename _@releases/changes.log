@@ -2,6 +2,20 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+July 15, 2020 :: Version 7.2.1 rev.20200715
+	* Mime Decode Fixes (all non-explicit text/html parts which are not attachments fallback to text/plain mode)
+	* Mime Decode Support for message/delivery-status
+
+July 08, 2020 :: Version 7.2.1 rev.20200708
+	* MailGet IMAP4 / POP3: new features: STARTTLS
+	* MailGet POP3: new feature: CRAM-MD5
+	* MailSend SMTP: new features: add support for CRAM-MD5 and XOAUTH2 authentication modes
+	* MailUtils and Configs: allow selection of SMTP authentication mode
+
+July 07, 2020 :: Version 7.2.1 rev.20200707
+	* MailGet IMAP4: new features: CRAM-MD5 and XOAUTH2 authentication support
+	* MailGet IMAP4 / POP3 fixes
+
 June 30, 2020 :: Version 7.2.1 rev.20200630
 	* PageBuilder: new feature: Tags
 

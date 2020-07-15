@@ -38,7 +38,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerSend
- * @version 	v.20200605
+ * @version 	v.20200715
  * @package 	Plugins:Mailer
  *
  */
@@ -56,7 +56,7 @@ final class SmartMailerUtils {
 	 * @param ENUM $ycheckdomain			:: 'no' = only validate if email address is in the form of text@texte.xt | 'yes' = check email with MX + SMTP validation
 	 * @param STRING $helo					:: SMTP HELO (if check MX + Domain will be used, cannot be empty)
 	 * @param NUMBER $y_smtp_port			:: SMTP Port (normal is '25')
-	 * @return STRING
+	 * @return ARRAY 						:: ['status'] = ok / notok ; ['message'] = validation message
 	 */
 	public static function check_email_address($email, $ycheckdomain='no', $helo='', $y_smtp_port='25') {
 
@@ -118,10 +118,6 @@ final class SmartMailerUtils {
 
 	} //END FUNCTION
 	//==================================================================
-	// $check = SmartMailerUtils::check_email_address('some@email.ext', 'yes', 'mymaildomain.ext');
-	// # $check['status'] = ok / notok
-	// # $check['message'] = message
-	//==================================================================
 
 
 	//================================================================== Do MX Check
@@ -182,16 +178,16 @@ final class SmartMailerUtils {
 		//------------
 		for($i=0; $i<Smart::array_size($tmp_arr); $i++) {
 			//--
-			$domain = trim($tmp_arr[$i]);
-			$domain_ip = @gethostbyname($domain);
+			$domain = (string) trim((string)$tmp_arr[$i]);
+			$domain_ip = (string) @gethostbyname((string)$domain);
 			//--
 			$msg .= 'Start MX checking for domain: \''.$domain.'\' :: \''.$domain_ip.'\' ... '."\n";
 			//--
 			$smtp = new SmartMailerSmtpClient();
 			$smtp->timeout = 10;
 			$smtp->debug = false;
-			$smtp->connect($helo, $domain_ip, $y_smtp_port);
-			$vfy = $smtp->mail($email);
+			$smtp->connect((string)$helo, (string)$domain_ip, (int)$y_smtp_port);
+			$vfy = $smtp->mail((string)$email);
 			if($vfy) {
 				$vfy = $smtp->recipient($email);
 			} //end if
@@ -288,7 +284,7 @@ final class SmartMailerUtils {
 	 * Send Email Mime Message from Smart.Framework to a destination with optional log of sent messages to a specific directory
 	 * It will use custom server settings as 1st parameter: $mail_config
 	 *
-	 * @param ARRAY 		$mail_config 		send config array (keys that start with * are optional): [ server-mx-domain, server-host, server-port, server-ssl, server-cafile, auth-user, auth-password, *from-return, from-address, from-name, *use-qp-encoding, *use-min-enc-subj, *use-antispam-rules ]
+	 * @param ARRAY 		$mail_config 		send config array (keys that start with * are optional): [ server-mx-domain, server-host, server-port, server-ssl, *server-cafile, *auth-user, *auth-password, *auth-mode, *from-return, from-address, from-name, *use-qp-encoding, *use-min-enc-subj, *use-antispam-rules ]
 	 * @param STRING 		$logsend_dir 		A Directory relative path where to store send log messages OR Empty (no store): '' | 'tmp/my-email-send-log-dir'
 	 * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
 	 * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
@@ -316,8 +312,9 @@ final class SmartMailerUtils {
 			'server_port' 			=> (string) $mail_config['server-port'],
 			'server_sslmode' 		=> (string) $mail_config['server-ssl'],
 			'server_cafile' 		=> (string) $mail_config['server-cafile'],
-			'server_auth_user' 		=> (string) $mail_config['auth-user'],
-			'server_auth_pass' 		=> (string) $mail_config['auth-password'],
+			'server_auth_user' 		=> (string) $mail_config['auth-user'], // optional, just for SMTP
+			'server_auth_pass' 		=> (string) $mail_config['auth-password'], // optional, just for SMTP
+			'server_auth_mode' 		=> (string) $mail_config['auth-mode'], // optional, just for SMTP (auth mode)
 			'send_from_return' 		=> (string) $mail_config['from-return'], // optional (if empty, will use send_from_addr)
 			'send_from_addr' 		=> (string) $mail_config['from-address'],
 			'send_from_name' 		=> (string) $mail_config['from-name'],
@@ -401,7 +398,7 @@ final class SmartMailerUtils {
 	 * Send Email Mime Message from Smart.Framework to a destination with many options that can be customized
 	 * This is for very advanced use only.
 	 *
-	 * @param ARRAY			$y_server_settings	send config array (keys that start with * are optional): [ smtp_mxdomain, server_name, server_port, server_sslmode, server_cafile, server_auth_user, server_auth_pass, *send_from_return, send_from_addr, send_from_name, *use_qp_encoding, *use_min_enc_subj, *use_antispam_rules ]
+	 * @param ARRAY			$y_server_settings	send config array (keys that start with * are optional): [ smtp_mxdomain, server_name, server_port, server_sslmode, *server_cafile, *server_auth_user, *server_auth_pass, *server_auth_mode, *send_from_return, send_from_addr, send_from_name, *use_qp_encoding, *use_min_enc_subj, *use_antispam_rules ]
 	 * @param ENUM			$y_mode				mode: 'send' = do send | 'send-return' = do send + return | 'return' = no send, just return mime formated mail
 	 * @param STRING/ARRAY 	$to					To: to@addr | [ 'to1@addr', 'to2@addr', ... ]
 	 * @param STRING/ARRAY 	$cc					Cc: '' | cc@addr | [ 'cc1@addr', 'cc2@addr', ... ]
@@ -438,6 +435,7 @@ final class SmartMailerUtils {
 		$server_cafile 		= (string) trim((string)$y_server_settings['server_cafile']);
 		$server_user 		= (string) trim((string)$y_server_settings['server_auth_user']);
 		$server_pass 		= (string) trim((string)$y_server_settings['server_auth_pass']);
+		$server_modeauth 	= (string) trim((string)$y_server_settings['server_auth_mode']);
 		//-- SEND FROM
 		$send_from_addr 	= (string) trim((string)$y_server_settings['send_from_addr']);
 		$send_from_return 	= (string) trim((string)$y_server_settings['send_from_return']);
@@ -479,18 +477,19 @@ final class SmartMailerUtils {
 			//-- smtp server method
 			$mail->method = 'smtp';
 			$mail->smtp_timeout = '30';
-			$mail->smtp_helo = $server_helo;
-			$mail->smtp_server = $server_name;
-			$mail->smtp_port = $server_port;
-			$mail->smtp_ssl = $server_sslmode;
-			$mail->smtp_cafile = $server_cafile;
+			$mail->smtp_helo = (string) $server_helo;
+			$mail->smtp_server = (string) $server_name;
+			$mail->smtp_port = (int) $server_port;
+			$mail->smtp_ssl = (string) $server_sslmode;
+			$mail->smtp_cafile = (string) $server_cafile;
 			//--
 			if(((string)$server_user == '') OR ((string)$server_pass == '')) {
 				$mail->smtp_login = false;
 			} else {
 				$mail->smtp_login = true;
-				$mail->smtp_user = $server_user;
-				$mail->smtp_password = $server_pass;
+				$mail->smtp_user = (string) $server_user;
+				$mail->smtp_password = (string) $server_pass;
+				$mail->smtp_modeauth = (string) $server_modeauth;
 			} //end if
 			//--
 		} else {
@@ -757,6 +756,52 @@ final class SmartMailerUtils {
 	//==================================================================
 
 
+	//==================================================================
+	/**
+	 * Get the IMAP Real Message UID as stored on server
+	 *
+	 * @param STRING			$uid			The client-side IMAP UID
+	 * @return STRING							The server-side IMAP UID
+	 *
+	 * @access 		private
+	 * @internal
+	 *
+	 */
+	public static function get_imap_message_real_uid($uid) {
+		//--
+		// on IMAP4 when using the IMAP client library the UID will be as 'IMAP4-UIV-@num@-UID-@uid@'
+		// this function will parse this and will return the real server-side UID as stored on IMAP server
+		//--
+		$uid = (string) trim((string)$uid);
+		if((string)$uid == '') {
+			return '';
+		} //end if
+		//--
+		if(strpos((string)$uid, 'IMAP4-UIV-') !== 0) {
+			return '';
+		} //end if
+		//--
+		$uid = (string) trim((string)ltrim((string)$uid, 'IMAP4-UIV-'));
+		if((string)$uid == '') {
+			return '';
+		} //end if
+		//--
+		if(strpos((string)$uid, '-UID-') === false) {
+			return '';
+		} //end if
+		//--
+		$uid = (array) explode('-UID-', (string)$uid);
+		$uid = (string) trim((string)$uid[1]);
+		if((string)$uid == '') {
+			return '';
+		} //end if
+		//--
+		return (string) $uid;
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
 } //END CLASS
 
 //=====================================================================================
@@ -775,7 +820,7 @@ final class SmartMailerUtils {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartUtils, SmartFileSysUtils, SmartFileSystem, SmartMailerMimeDecode, SmartMailerNotes
- * @version 	v.20200420
+ * @version 	v.20200715
  * @package 	Plugins:Mailer
  *
  */
@@ -1266,6 +1311,8 @@ final class SmartMailerMimeParser {
 				$skips = array();
 				$numparts = 0;
 				//--
+				$primary_body_part_detected = false;
+				//--
 				foreach($msg['texts'] as $key => $val) {
 					//--
 					$key = (string) $key;
@@ -1280,35 +1327,7 @@ final class SmartMailerMimeParser {
 							$val['skip'] = true;
 							$msg['texts'][$key]['skip'] = true; // write back
 							//--
-						} elseif(((string)$val['mode'] == 'text/plain') OR ((string)$val['mode'] == 'application/pgp-encrypted')) { // Plain TEXT ; {{{SYNC-EMAIL-DECODE-SMIME}}}
-							//-- sanitize text
-							$val['content'] = '<!-- MIMEREAD:PART:TEXT -->'.Smart::escape_html($val['content']);
-							$val['content'] = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", '<br>'), $val['content']);
-							$val['content'] = SmartParser::text_urls($val['content']);
-							//--
-							if((string)$val['mode'] == 'application/pgp-encrypted') { // {{{SYNC-EMAIL-DECODE-SMIME}}}
-								$val['content'] = '<img src="lib/core/plugins/img/email/mime-encrypted.svg" align="right" alt="S.MIME" title="S.MIME">'.$val['content'];
-							} //end if
-							//--
-							$msg['texts'][$key]['content'] = (string) $val['content']; // rewrite back
-							//-- assign buffer
-							$buff = (string) SmartUnicode::sub_str($val['content'], 0, 16384);
-							$buff_id = (string) $key;
-							//--
-							$percent_similar = 0;
-							if((string)$the_part_id == '') {
-							//	@similar_text($buff, $markup_multipart, $percent_similar);
-								$percent_similar = 99; // {{{SYNC-FIX-EML-HIDE-ALTERNATE-PARTS}}}
-								if($percent_similar >= 25) { // 25% at least similarity
-									$skips[(string)$buff_id] = (int) ceil((float)$percent_similar); // skip this alternate html part ...
-								} //end if
-							} //end if
-							//--
-							// clean buffer
-							$xbuff = '';
-							$xbuff_id = '';
-							//--
-						} else { // HTML Parts :: check similarity
+						} elseif((string)$val['mode'] == 'text/html') { // HTML Parts :: check similarity
 							//--
 							$val['content'] = '<!-- MIMEREAD:PART:HTML -->'.preg_replace("'".'<\?xml'.".*?".'>'."'si", " ", (string)$val['content']); // remove always fake "< ?" as "< ?xml" (fixed with /u modifier for unicode strings)
 							//--
@@ -1348,7 +1367,38 @@ final class SmartMailerMimeParser {
 							$buff = '';
 							$buff_id = '';
 							//--
+						} else { // SECURITY NOTICE: for all the rest of cases fall back to text to avoid injections of non-html code as html
+					//	} elseif(((string)$val['mode'] == 'text/plain') OR ((string)$val['mode'] == 'application/pgp-encrypted')) { // Plain TEXT ; {{{SYNC-EMAIL-DECODE-SMIME}}}
+							//-- sanitize text
+							$val['content'] = '<!-- MIMEREAD:PART:TEXT -->'.Smart::escape_html($val['content']);
+							$val['content'] = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", '<br>'), $val['content']);
+							$val['content'] = SmartParser::text_urls($val['content']);
+							//--
+							if((string)$val['mode'] == 'application/pgp-encrypted') { // {{{SYNC-EMAIL-DECODE-SMIME}}}
+								$val['content'] = '<img src="lib/core/plugins/img/email/mime-encrypted.svg" align="right" alt="S.MIME" title="S.MIME">'.$val['content'];
+							} //end if
+							//--
+							$msg['texts'][$key]['content'] = (string) $val['content']; // rewrite back
+							//-- assign buffer
+							$buff = (string) SmartUnicode::sub_str($val['content'], 0, 16384);
+							$buff_id = (string) $key;
+							//--
+							$percent_similar = 0;
+							if(((string)$the_part_id == '') AND ($primary_body_part_detected === true)) {
+							//	@similar_text($buff, $markup_multipart, $percent_similar);
+								$percent_similar = 99; // {{{SYNC-FIX-EML-HIDE-ALTERNATE-PARTS}}}
+								if($percent_similar >= 25) { // 25% at least similarity
+									$skips[(string)$buff_id] = (int) ceil((float)$percent_similar); // skip this alternate html part ...
+								} //end if
+							} //end if
+							//--
+							// clean buffer
+							$xbuff = '';
+							$xbuff_id = '';
+							//--
 						} //end if
+						//--
+						$primary_body_part_detected = true;
 						//--
 					} //end if
 					//--

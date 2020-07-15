@@ -48,6 +48,7 @@ $configs['sendmail']['server-port']				= '465';					// `` | SMTP Server Port
 $configs['sendmail']['server-ssl']				= 'tls';					// `` | SSL Mode: starttls | tls | sslv3
 $configs['sendmail']['auth-user']				= 'user@yourdomain.tld';	// `` | smtp auth user (SMTP auth)
 $configs['sendmail']['auth-password']			= '';						// `` | smtp auth password (SMTP auth)
+$configs['sendmail']['auth-mode']				= '';						// `` | smtp auth mode (SMTP auth) ; '', 'login', 'auth:plain', 'auth:cram-md5'
 $configs['sendmail']['from-address']			= 'user@yourdomain.tld';	// the email address From:
 $configs['sendmail']['from-name'] 				= 'Your Name';				// the from name to be set in From:
 $configs['sendmail']['log-messages']			= 'no';						// `no` | `yes` :: // Log Send Messages
