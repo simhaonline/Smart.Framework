@@ -319,20 +319,47 @@ final class PageBuilderFrontend {
 				return array();
 		} //end switch
 		//--
+		$orderby = 'id'; // default
+		$extorderby = '';
 		switch((string)$y_orderby) {
+			case '@random':
+				$orderby = '@random';
+				break;
 			case 'modified':
-				$y_orderby = 'modified';
+				$orderby = 'modified';
 				break;
 			case 'published':
-				$y_orderby = 'published';
+				$orderby = 'published';
 				break;
 			case 'name':
-				$y_orderby = 'name';
+				$orderby = 'name';
+				break;
+			case 'special':
+				$orderby = 'special';
 				break;
 			case 'id':
 			default:
-				$y_orderby = 'id';
+				// use the default: id
 		} //end switch
+		if((string)self::dbType() == 'pgsql') {
+			if((string)$orderby == '@random') {
+				$orderby = 'RANDOM()';
+			} elseif((string)$orderby != 'id') {
+				$extorderby = ', "id" ASC';
+			} else {
+				$orderby = '"'.$orderby.'"';
+			} //end if else
+		} elseif((string)self::dbType() == 'sqlite') {
+			if((string)$orderby == '@random') {
+				$orderby = 'RANDOM()';
+			} elseif((string)$orderby != 'id') {
+				$extorderby = ', `id` ASC';
+			} else {
+				$orderby = '`'.$orderby.'`';
+			} //end if else
+		} else {
+			return array();
+		} //end if else
 		//--
 		switch((string)$y_orderdir) {
 			case 'DESC':
@@ -353,7 +380,7 @@ final class PageBuilderFrontend {
 		if((string)self::dbType() == 'pgsql') {
 			if((string)$y_fld == 'area') {
 				$arr = (array) \SmartPgsqlDb::read_adata(
-					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("layout" LIKE $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY "'.$y_orderby.'" '.$y_orderdir.$qry_limit,
+					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("layout" LIKE $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY '.$orderby.' '.$y_orderdir.$extorderby.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'
@@ -361,7 +388,7 @@ final class PageBuilderFrontend {
 				);
 			} elseif((string)$y_fld == 'tags') {
 				$arr = (array) \SmartPgsqlDb::read_adata(
-					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("tags" ? $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY "'.$y_orderby.'" '.$y_orderdir.$qry_limit,
+					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("tags" ? $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY '.$orderby.' '.$y_orderdir.$extorderby.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'
@@ -373,7 +400,7 @@ final class PageBuilderFrontend {
 		} elseif((string)self::dbType() == 'sqlite') {
 			if((string)$y_fld == 'area') {
 				$arr = (array) self::$db->read_adata(
-					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((`layout` LIKE ?) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY `'.$y_orderby.'` '.$y_orderdir.$qry_limit,
+					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((`layout` LIKE ?) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY '.$orderby.' '.$y_orderdir.$extorderby.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'
@@ -381,7 +408,7 @@ final class PageBuilderFrontend {
 				);
 			} elseif((string)$y_fld == 'tags') {
 				$arr = (array) self::$db->read_adata(
-					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((smart_json_arr_contains(`tags`, ?) = 1) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY `'.$y_orderby.'` '.$y_orderdir.$qry_limit,
+					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((smart_json_arr_contains(`tags`, ?) = 1) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY '.$orderby.' '.$y_orderdir.$extorderby.$qry_limit,
 					[
 						(string) $y_value,
 						(string) '#'

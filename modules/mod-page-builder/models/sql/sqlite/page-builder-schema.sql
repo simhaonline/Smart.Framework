@@ -17,7 +17,7 @@ CREATE TABLE 'page_builder' ( 								-- Web - Page Builder v.2020.07.17
 	`ctrl` CHARACTER VARYING(128) DEFAULT '' NOT NULL, 		-- Parent Controller ID, Optional
 	`active` SMALLINT DEFAULT 0 NOT NULL, 					-- Active Status: 0=inactive ; 1=active
 	`auth` SMALLINT DEFAULT 0 NOT NULL, 					-- Auth Status: 0 = no auth ; 1 = requires auth
-	`special` SMALLINT DEFAULT 0 NOT NULL, 					-- Special Status: 0 = normal ; 1 = special
+	`special` INTEGER DEFAULT 0 NOT NULL, 					-- Ranking Special: 0..999999999
 	`name` CHARACTER VARYING(255) DEFAULT '' NOT NULL, 		-- Record Name (for management only)
 	`mode` CHARACTER VARYING(8) NOT NULL, 					-- Render Mode: html / markdown / text / raw / settings
 	`data` TEXT DEFAULT '' NOT NULL, 						-- Render Active Runtime (Txt/B64)

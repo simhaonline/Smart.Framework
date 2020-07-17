@@ -89,6 +89,11 @@ jQuery(function() {
 		return '<span style="color:#778899;">' + SmartJS_CoreUtils.escape_html(value) + '</span>';
 	}
 
+	var displaySpecial = function(row, cell, value, columnDef, dataContext) {
+		value = String(value);
+		return '<span style="color:#F3973B;">&nbsp;' + SmartJS_CoreUtils.escape_html(value) + '&nbsp;</span>';
+	}
+
 	var displayID = function(row, cell, value, columnDef, dataContext) {
 		value = String(value);
 		var style = '';
@@ -119,16 +124,6 @@ jQuery(function() {
 		}
 		var fmtVal = value + ' / ' + dataContext['total_size'] + ' bytes';
 		return '<div align="center" style="padding-top:2px;"><img src="[###PATH-MODULE|html|js###]libs/views/manager/img/' + img + '" alt="' + SmartJS_CoreUtils.escape_html(fmtVal) + '" title="' + SmartJS_CoreUtils.escape_html(fmtVal) + '"></div>';
-	}
-
-	var displaySpecial = function(row, cell, value, columnDef, dataContext) {
-		var img = 'admin-default.svg';
-		var txt = 'Default Privileges';
-		if(value == 1) {
-			img = 'admin-special.svg';
-			txt = 'Special Privileges';
-		}
-		return '<div align="center" style="padding-top:2px;"><img src="[###PATH-MODULE|html|js###]libs/views/manager/img/' + img + '" alt="' + SmartJS_CoreUtils.escape_html(txt) + '" title="' + SmartJS_CoreUtils.escape_html(txt) + '"></div>';
 	}
 
 	var displayActive = function(row, cell, value, columnDef, dataContext) {
@@ -206,11 +201,11 @@ jQuery(function() {
 		{id:'x-del', 		field:'id', 			name:'#', 								sortable:false, 	width:50, 					formatter:displayDel},
 		[%%%/IF:LIST-DELETE-URL%%%]
 		{id:'x-ops', 		field:'id', 			name:'@', 								sortable:false, 	width:50, 					formatter:displayOps},
+		{id:'special', 		field:'special',		name:'[###TXT-COL-SPECIAL|js###]', 		sortable:true, 		width:75, 					formatter:displaySpecial,editor:TextCellSelector, cssClass:'smartGrid_Important smartGrid_AlignRight'},
 		{id:'ctrl', 		field:'ctrl', 			name:'[###TXT-COL-CTRL|js###]', 		sortable:true, 		width:diffColSize('ctrl'), 	formatter:displayCtrl, editor:TextCellSelector, cssClass:'smartGrid_Important'},
 		{id:'id', 			field:'id', 			name:'[###TXT-COL-ID|js###]', 			sortable:true, 		width:diffColSize('id'), 	formatter:displayID, editor:TextCellSelector, cssClass:'smartGrid_Important'},
 		{id:'mode', 		field:'mode', 			name:'[###TXT-COL-SYNTAX|js###]', 		sortable:true, 		width:75, 					formatter:displayCodeType, editor:TextCellSelector},
 		{id:'name', 		field:'name', 			name:'[###TXT-COL-NAME|js###]', 		sortable:true, 		width:diffColSize('name'), 	formatter:displayName, editor:TextCellSelector, cssClass:'smartGrid_Important'},
-		{id:'special', 		field:'special',		name:'[###TXT-COL-SPECIAL|js###]', 		sortable:true, 		width:75, 					formatter:displaySpecial, editor:TextCellSelector},
 		{id:'active', 		field:'active', 		name:'[###TXT-COL-ACTIVE|js###]', 		sortable:true, 		width:75, 					formatter:displayActive, editor:TextCellSelector},
 		{id:'auth', 		field:'auth', 			name:'[###TXT-COL-AUTH|js###]', 		sortable:true, 		width:75, 					formatter:displayAuth, editor:TextCellSelector},
 		{id:'translations', field:'translations', 	name:'[###TXT-COL-TRANSL|js###]', 		sortable:true, 		width:75, 					formatter:displayTransl, editor:TextCellSelector},

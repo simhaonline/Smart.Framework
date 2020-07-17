@@ -28,7 +28,6 @@ $administrative_privileges['pagebuilder-create'] 		= 'WebPages // Create';
 $administrative_privileges['pagebuilder-edit'] 			= 'WebPages // Edit Code';
 $administrative_privileges['pagebuilder-data-edit'] 	= 'WebPages // Edit Data';
 $administrative_privileges['pagebuilder-delete'] 		= 'WebPages // Delete';
-$administrative_privileges['pagebuilder-manage'] 		= 'WebPages // Manage (Special Pages)';
 //--
 */
 //==================================================================
@@ -124,6 +123,7 @@ final class Manager {
 		$text['op_compl']			= 'Operation completed';
 		$text['op_ncompl'] 			= 'Operation NOT completed';
 		//-- errors
+		$text['err_0'] 				= 'Invalid Object Syntax Type';
 		$text['err_1']				= 'ERROR: Invalid Object ID !';
 		$text['err_2'] 				= 'Invalid manage operation !';
 		$text['err_3'] 				= 'ID already in use !';
@@ -131,8 +131,6 @@ final class Manager {
 		$text['err_5'] 				= 'An error occured. Please try again !';
 		$text['err_6'] 				= 'Invalid Name for Object';
 		$text['err_7'] 				= 'Some Edit Fields are not allowed here !';
-		$text['err_8']				= 'Special Objects cannot be deleted !';
-		$text['err_9'] 				= 'Invalid Object Syntax Type';
 		//-- messages
 		$text['msg_confirm_del'] 	= 'Please confirm you want to delete this object';
 		$text['msg_unsaved'] 	  	= 'NOTICE: Any unsaved change will be lost.';
@@ -152,7 +150,7 @@ final class Manager {
 		$text['tags'] 				= 'Tags';
 		$text['name'] 				= 'Name';
 		$text['active']				= 'Active';
-		$text['special'] 			= 'Special';
+		$text['special'] 			= 'Rank Special';
 		$text['login'] 				= 'Login Restricted';
 		$text['modified']			= 'Modified';
 		$text['size'] 				= 'Size';
@@ -406,15 +404,15 @@ final class Manager {
 			} //end if else
 			//--
 			$fld_ctrl = self::drawFieldCtrl($query['ctrl'], $is_subsegment, 'form', 'frm[ctrl]');
-			$fld_special = \SmartViewHtmlHelpers::html_selector_true_false('frm[special]', $query['special']);
 			$fld_active = \SmartViewHtmlHelpers::html_selector_true_false('frm[active]', $query['active']);
 			$fld_auth = \SmartViewHtmlHelpers::html_selector_true_false('frm[auth]', $query['auth']);
 			$fld_trans = \SmartViewHtmlHelpers::html_selector_true_false('frm[translations]', $query['translations']);
 			//--
+			$fld_special = '<input type="text" name="frm[special]" value="'.\Smart::escape_html((int)$query['special']).'" size="10" placeholder="0..999999999">';
 			$fld_tags = '<input id="the-tags" type="text" name="frm[tags]" value="" size="70" placeholder="'.self::text('tags').'">';
 			//--
 			if(self::testIsSegmentPage($query['id'])) {
-				$fld_area = '<input type="text" name="frm[layout]" value="'.\Smart::escape_html($query['layout']).'" size="35" maxlength="75" autocomplete="off" placeholder="'.self::text('template').'">';
+				$fld_area = '<input type="text" name="frm[layout]" value="'.\Smart::escape_html($query['layout']).'" size="35" maxlength="75" autocomplete="off">';
 				$fld_template = '';
 			} else {
 				$fld_area = '';
@@ -446,7 +444,7 @@ final class Manager {
 			$fld_name = (string) \Smart::escape_html($query['name']);
 			$fld_pmode = (string) \SmartViewHtmlHelpers::html_select_list_single('pmode', $query['mode'], 'list', $arr_pmodes);
 			$fld_ctrl = (string) self::drawFieldCtrl($query['ctrl'], $is_subsegment, 'list');
-			$fld_special = (string) \SmartViewHtmlHelpers::html_selector_true_false('', $query['special']);
+			$fld_special = (string) \Smart::escape_html((int)$query['special']);
 			$fld_active = (string) \SmartViewHtmlHelpers::html_selector_true_false('', $query['active']);
 			$fld_auth = (string) \SmartViewHtmlHelpers::html_selector_true_false('', $query['auth']);
 			$fld_trans = (string) \SmartViewHtmlHelpers::html_selector_true_false('', $query['translations']);
@@ -612,7 +610,7 @@ final class Manager {
 		//--
 		$query['code'] = (string) $query['code'];
 		//--
-		if((\SmartAuth::test_login_privilege('superadmin') === true) OR ((\SmartAuth::test_login_privilege('pagebuilder-edit') === true) AND ((string)$query['special'] != '1')) OR ((\SmartAuth::test_login_privilege('pagebuilder-edit') === true) AND (\SmartAuth::test_login_privilege('pagebuilder-manage') === true) AND ((string)$query['special'] == '1'))) {
+		if((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-edit') === true)) {
 			//--
 			if((string)$y_mode == 'form') {
 				//--
@@ -805,7 +803,7 @@ final class Manager {
 		//--
 		$query['data'] = (string) \base64_decode((string)$query['data']);
 		//--
-		if((\SmartAuth::test_login_privilege('superadmin') === true) OR ((\SmartAuth::test_login_privilege('pagebuilder-edit') === true) AND (\SmartAuth::test_login_privilege('pagebuilder-data-edit') === true) AND ((string)$query['special'] != '1')) OR ((\SmartAuth::test_login_privilege('pagebuilder-edit') === true) AND (\SmartAuth::test_login_privilege('pagebuilder-data-edit') === true) AND (\SmartAuth::test_login_privilege('pagebuilder-manage') === true) AND ((string)$query['special'] == '1'))) {
+		if((\SmartAuth::test_login_privilege('superadmin') === true) OR ((\SmartAuth::test_login_privilege('pagebuilder-edit') === true) AND (\SmartAuth::test_login_privilege('pagebuilder-data-edit') === true))) {
 			//--
 			if((string)$y_mode == 'form') {
 				//-- CODE EDITOR
@@ -986,7 +984,7 @@ final class Manager {
 			$priv_delete = 'no';
 		} else {
 			$is_preview_only = 'no';
-			$priv_edit = ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-manage') === true)) ? 'yes' : 'no';
+			$priv_edit = ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-edit') === true)) ? 'yes' : 'no';
 			$priv_delete = ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-delete') === true)) ? 'yes' : 'no';
 		} //end if else
 		//--
@@ -1023,7 +1021,7 @@ final class Manager {
 		} //end if
 		//--
 		if(!$err) {
-			$priv_edit = ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-manage') === true)) ? 'yes' : 'no';
+			$priv_edit = ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-edit') === true)) ? 'yes' : 'no';
 			if((string)$priv_edit != 'yes') {
 				$err = 'Not Enough Privileges';
 			} //end if
@@ -1358,7 +1356,7 @@ final class Manager {
 								$data['mode'] = 'html';
 								break;
 							default:
-								$error = self::text('err_9')."\n"; // invalid object type
+								$error = self::text('err_0')."\n"; // invalid object type
 						} //end switch
 						//--
 						$redirect = self::composeUrl('op=record-view&id='.\Smart::escape_url($data['id']));
@@ -1412,7 +1410,7 @@ final class Manager {
 				//--
 				$query = (array) \SmartModDataModel\PageBuilder\PageBuilderBackend::getRecordDetailsById($y_id);
 				//--
-				if(((string)$y_id == (string)$query['id']) AND ((\SmartAuth::test_login_privilege('superadmin') === true) OR ((\SmartAuth::test_login_privilege('pagebuilder-edit') === true) AND ((string)$query['special'] != '1')) OR ((\SmartAuth::test_login_privilege('pagebuilder-edit') === true) AND (\SmartAuth::test_login_privilege('pagebuilder-manage') === true) AND ((string)$query['special'] == '1')))) {
+				if(((string)$y_id == (string)$query['id']) AND ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-edit') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-data-edit') === true))) {
 					//--
 					$proc_id = (string) $query['id'];
 					//--
@@ -1451,15 +1449,11 @@ final class Manager {
 							$data['translations'] = 1;
 						} //end if
 						//--
-						if(((\SmartAuth::test_login_privilege('superadmin') !== true) AND (\SmartAuth::test_login_privilege('pagebuilder-manage') !== true)) AND ((string)$query['special'] == '0') AND ((string)$y_frm['special'] == '1')) {
-							// avoid unprivileged admins to mark a page as special
-						} else {
-							//--
-							$data['special'] = \Smart::format_number_int($y_frm['special'], '+');
-							if(((string)$data['special'] != '0') AND ((string)$data['special'] != '1')) {
-								$data['special'] = '0';
-							} //end if
-							//--
+						$data['special'] = (int) $y_frm['special'];
+						if($data['special'] < 0) {
+							$data['special'] = 0;
+						} elseif($data['special'] > 999999999) {
+							$data['special'] = 999999999;
 						} //end if
 						//--
 						if(!self::testIsSegmentPage($query['id'])) {
@@ -1535,7 +1529,7 @@ final class Manager {
 						} //end if
 						//--
 						if((string)$y_frm['reset-translations'] == 'all') {
-							if((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-manage') === true)) {
+							if((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-edit') === true)) {
 								if((string)$error == '') {
 									\SmartModDataModel\PageBuilder\PageBuilderBackend::resetRecordTranslationsById($query['id']);
 								} //end if
@@ -1738,85 +1732,67 @@ final class Manager {
 		} //end if
 		//--
 
-		//-- special objects override deletion
-		if((string)$tmp_rd_arr['special'] == '1') {
-			$tmp_allow_deletion = false;
-		} else {
-			$tmp_allow_deletion = true;
-		} //end if else
-		//--
-
 		//--
 		$out = '';
 		//--
 		if((string)$y_delete == 'yes') {
 			//--
-			if($tmp_allow_deletion) {
+			if((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-delete') === true)) {
 				//--
-				if((\SmartAuth::test_login_privilege('superadmin') === true) OR ((\SmartAuth::test_login_privilege('pagebuilder-delete') === true) AND ((string)$tmp_rd_arr['special'] != '1')) OR ((\SmartAuth::test_login_privilege('pagebuilder-delete') === true) AND (\SmartAuth::test_login_privilege('pagebuilder-manage') === true) AND ((string)$tmp_rd_arr['special'] == '1'))) {
-					//--
-					$rdw = '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_redirect(self::composeUrl('op=record-view&id='.\Smart::escape_url($tmp_rd_arr['id'])), 3500).'</script>';
-					//--
-					$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_refresh_parent().'</script>';
-					//--
-					$chk_is_used = 0;
-					$fdir = (string) \SmartModExtLib\PageBuilder\Utils::getMediaFolderByObjectId((string)$tmp_rd_arr['id']);
-					if(\SmartFileSystem::is_type_dir($fdir)) {
-						$arr_imgs = (array) \SmartModExtLib\PageBuilder\Utils::getMediaFolderContent($fdir);
-						if(\Smart::array_size($arr_imgs) > 0) {
-							for($i=0; $i<\Smart::array_size($arr_imgs); $i++) {
-								$chk_is_used += (int) \SmartModDataModel\PageBuilder\PageBuilderBackend::getExprContextUsageCount($fdir.$arr_imgs[$i]['file']); // {{{SYNC-PAGEBUILDER-MEDIA-USAGE-CHECK}}}
-								if($chk_is_used > 0) {
-									break;
-								} //end if
+				$rdw = '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_redirect(self::composeUrl('op=record-view&id='.\Smart::escape_url($tmp_rd_arr['id'])), 3500).'</script>';
+				//--
+				$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_refresh_parent().'</script>';
+				//--
+				$chk_is_used = 0;
+				$fdir = (string) \SmartModExtLib\PageBuilder\Utils::getMediaFolderByObjectId((string)$tmp_rd_arr['id']);
+				if(\SmartFileSystem::is_type_dir($fdir)) {
+					$arr_imgs = (array) \SmartModExtLib\PageBuilder\Utils::getMediaFolderContent($fdir);
+					if(\Smart::array_size($arr_imgs) > 0) {
+						for($i=0; $i<\Smart::array_size($arr_imgs); $i++) {
+							$chk_is_used += (int) \SmartModDataModel\PageBuilder\PageBuilderBackend::getExprContextUsageCount($fdir.$arr_imgs[$i]['file']); // {{{SYNC-PAGEBUILDER-MEDIA-USAGE-CHECK}}}
+							if($chk_is_used > 0) {
+								break;
 							} //end if
 						} //end if
 					} //end if
+				} //end if
+				//--
+				if($chk_is_used > 0) {
 					//--
-					if($chk_is_used > 0) {
-						//--
-						$out .= '<br>'.\SmartComponents::operation_notice('Delete Canceled: The selected Object have attached Media Files which are in use by this Object or other Objects. Media Files usage must be cleared first !');
-						$out .= $rdw;
-						//--
-					} else {
-						//--
-						$chk_del = (int) \SmartModDataModel\PageBuilder\PageBuilderBackend::deleteRecordById($tmp_rd_arr['id']);
-						//--
-						if($chk_del == 1) {
-							if(\SmartFileSystem::is_type_dir($fdir)) {
-								\SmartFileSystem::dir_delete($fdir, true);
-								if(\SmartFileSystem::path_exists($fdir)) {
-									\Smart::log_warning(__METHOD__.' # Failed to Remove the Media Folder for ObjectID: '.$tmp_rd_arr['id']);
-								} //end if
-							} //end if
-							$out .= '<br>'.\SmartComponents::operation_ok(self::text('op_compl'));
-							$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_close_modal_popup().'</script>'; // ok
-						} elseif($chk_del == -1) {
-							$out .= '<br>'.\SmartComponents::operation_warn('Delete Failed: Empty ID');
-							$out .= $rdw;
-						} elseif($chk_del == -2) {
-							$out .= '<br>'.\SmartComponents::operation_notice('Delete Canceled: The selected Object is in use in other Objects. Relations must be cleared first !');
-							$out .= $rdw;
-						} else {
-							$out .= '<br>'.\SmartComponents::operation_error('Something goes really wrong ... Delete returned an invalid number rows: '.$chk_del);
-							$out .= $rdw;
-						} //end if else
-						//--
-					} //end if else
+					$out .= '<br>'.\SmartComponents::operation_notice('Delete Canceled: The selected Object have attached Media Files which are in use by this Object or other Objects. Media Files usage must be cleared first !');
+					$out .= $rdw;
 					//--
 				} else {
 					//--
-					$out .= '<br>'.\SmartComponents::operation_error(self::text('msg_no_priv_del'));
-					$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_refresh_parent().'</script>';
-					$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_close_modal_popup(1500).'</script>'; // ok
+					$chk_del = (int) \SmartModDataModel\PageBuilder\PageBuilderBackend::deleteRecordById($tmp_rd_arr['id']);
+					//--
+					if($chk_del == 1) {
+						if(\SmartFileSystem::is_type_dir($fdir)) {
+							\SmartFileSystem::dir_delete($fdir, true);
+							if(\SmartFileSystem::path_exists($fdir)) {
+								\Smart::log_warning(__METHOD__.' # Failed to Remove the Media Folder for ObjectID: '.$tmp_rd_arr['id']);
+							} //end if
+						} //end if
+						$out .= '<br>'.\SmartComponents::operation_ok(self::text('op_compl'));
+						$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_close_modal_popup().'</script>'; // ok
+					} elseif($chk_del == -1) {
+						$out .= '<br>'.\SmartComponents::operation_warn('Delete Failed: Empty ID');
+						$out .= $rdw;
+					} elseif($chk_del == -2) {
+						$out .= '<br>'.\SmartComponents::operation_notice('Delete Canceled: The selected Object is in use in other Objects. Relations must be cleared first !');
+						$out .= $rdw;
+					} else {
+						$out .= '<br>'.\SmartComponents::operation_error('Something goes really wrong ... Delete returned an invalid number rows: '.$chk_del);
+						$out .= $rdw;
+					} //end if else
 					//--
 				} //end if else
 				//--
 			} else {
 				//--
-				$out .= '<br>'.\SmartComponents::operation_warn(self::text('err_8'));
+				$out .= '<br>'.\SmartComponents::operation_error(self::text('msg_no_priv_del'));
 				$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_refresh_parent().'</script>';
-				$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_close_modal_popup(2500).'</script>'; // ok
+				$out .= '<script type="text/javascript">'.\SmartViewHtmlHelpers::js_code_wnd_close_modal_popup(1500).'</script>'; // ok
 				//--
 			} //end if else
 			//--
@@ -2625,26 +2601,6 @@ final class Manager {
 					$ttl = self::text('no');
 			} //end switch
 		} //end if else
-		//--
-		return '<img src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
-		//--
-	} //END FUNCTION
-	//==================================================================
-
-
-	//==================================================================
-	private static function getImgForSpecialStatus($y_status) {
-		//--
-		switch((string)$y_status) {
-			case '1':
-				$img = self::$ModulePath.'libs/views/manager/img/admin-special.svg';
-				$ttl = self::text('yes');
-				break;
-			case '0':
-			default:
-				$img = self::$ModulePath.'libs/views/manager/img/admin-default.svg';
-				$ttl = self::text('no');
-		} //end switch
 		//--
 		return '<img src="'.$img.'" alt="'.$ttl.'" title="'.$ttl.'">';
 		//--

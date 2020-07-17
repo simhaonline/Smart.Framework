@@ -192,7 +192,7 @@ final class PageBuilderBackend {
 		//--
 		if((string)self::dbType() == 'pgsql') {
 			return (array) \SmartPgsqlDb::read_adata(
-				'SELECT "id", "active", "auth", "special", "name", "mode", "translations", "counter" FROM "web"."page_builder" WHERE (("ctrl" = $1) AND ("ref" = $2)) ORDER BY "ref" ASC, "name" ASC, "id" ASC',
+				'SELECT "id", "active", "auth", "special", "name", "mode", "translations", "counter" FROM "web"."page_builder" WHERE (("ctrl" = $1) AND ("ref" = $2)) ORDER BY "special" ASC, "name" ASC, "id" ASC',
 				[
 					(string) $y_ctrl,
 					(string) '[]'
@@ -200,7 +200,7 @@ final class PageBuilderBackend {
 			);
 		} elseif((string)self::dbType() == 'sqlite') {
 			return (array) self::$db->read_adata(
-				'SELECT `id`, `active`, `auth`, `special`, `name`, `mode`, `translations`, `counter` FROM `page_builder` WHERE ((`ctrl` = ?) AND (`ref` = ?)) ORDER BY `ref` ASC, `name` ASC, `id` ASC',
+				'SELECT `id`, `active`, `auth`, `special`, `name`, `mode`, `translations`, `counter` FROM `page_builder` WHERE ((`ctrl` = ?) AND (`ref` = ?)) ORDER BY `special` ASC, `name` ASC, `id` ASC',
 				[
 					(string) $y_ctrl,
 					(string) '[]'
@@ -217,14 +217,14 @@ final class PageBuilderBackend {
 		//--
 		if((string)self::dbType() == 'pgsql') {
 			return (array) \SmartPgsqlDb::read_adata(
-				'SELECT "id", "active", "auth", "special", "name", "mode", "translations", "counter" FROM "web"."page_builder" WHERE ("ref" ? $1) ORDER BY "ref" ASC, "name" ASC, "id" ASC',
+				'SELECT "id", "active", "auth", "special", "name", "mode", "translations", "counter" FROM "web"."page_builder" WHERE ("ref" ? $1) ORDER BY "special" ASC, "name" ASC, "id" ASC',
 				[
 					(string) $y_ref
 				]
 			);
 		} elseif((string)self::dbType() == 'sqlite') {
 			return (array) self::$db->read_adata(
-				'SELECT `id`, `active`, `auth`, `special`, `name`, `mode`, `translations`, `counter` FROM `page_builder` WHERE (smart_json_arr_contains(`ref`, ?) = 1) ORDER BY `ref` ASC, `name` ASC, `id` ASC',
+				'SELECT `id`, `active`, `auth`, `special`, `name`, `mode`, `translations`, `counter` FROM `page_builder` WHERE (smart_json_arr_contains(`ref`, ?) = 1) ORDER BY `special` ASC, `name` ASC, `id` ASC',
 				[
 					(string) $y_ref
 				]

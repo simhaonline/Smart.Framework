@@ -29,7 +29,7 @@ CREATE TABLE web.page_builder (
 	ctrl character varying(128) DEFAULT ''::character varying NOT NULL,
 	active smallint DEFAULT 0 NOT NULL,
 	auth smallint DEFAULT 0 NOT NULL,
-	special smallint DEFAULT 0 NOT NULL,
+	special integer DEFAULT 0 NOT NULL,
 	name character varying(255) DEFAULT ''::character varying NOT NULL,
 	mode character varying(8) NOT NULL,
 	data text DEFAULT ''::text NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE web.page_builder (
 	CONSTRAINT page_builder__chk__id CHECK ((char_length((id)::text) >= 2)),
 	CONSTRAINT page_builder__chk__active CHECK (((active = 0) OR (active = 1))),
 	CONSTRAINT page_builder__chk__auth CHECK (((auth = 0) OR (auth = 1))),
-	CONSTRAINT page_builder__chk__special CHECK (((special = 0) OR (special = 1))),
+	CONSTRAINT page_builder__chk__special CHECK ((special >= 0)),
 	CONSTRAINT page_builder__chk__mode CHECK ((char_length((mode)::text) >= 3)),
 	CONSTRAINT page_builder__chk__translations CHECK (((translations = 0) OR (translations = 1))),
 	CONSTRAINT page_builder__chk__published CHECK ((published >= 0))
@@ -57,7 +57,7 @@ COMMENT ON COLUMN web.page_builder.ref IS 'Reference Parent IDs as Json-Array []
 COMMENT ON COLUMN web.page_builder.ctrl IS 'Parent Controller ID, Optional';
 COMMENT ON COLUMN web.page_builder.active IS 'Active Status: 0=inactive ; 1=active';
 COMMENT ON COLUMN web.page_builder.auth IS 'Auth Status: 0 = no auth ; 1 = requires auth';
-COMMENT ON COLUMN web.page_builder.special IS 'Special Status: 0 = normal ; 1 = special';
+COMMENT ON COLUMN web.page_builder.special IS 'Ranking Special: 0..999999999';
 COMMENT ON COLUMN web.page_builder.name IS 'Record Name (for management only)';
 COMMENT ON COLUMN web.page_builder.mode IS 'Render Mode: html / markdown / text / raw / settings';
 COMMENT ON COLUMN web.page_builder.data IS 'Render Active Runtime (Yaml/B64)';
