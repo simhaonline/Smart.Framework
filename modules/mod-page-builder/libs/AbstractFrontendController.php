@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200703
+ * @version 	v.20200717
  * @package 	development:modules:PageBuilder
  *
  */
@@ -1339,7 +1339,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 												(string) $this->ControllerGetParam('url-page'), // the URL Page Param
 												(string) 'index' // $this->ControllerGetParam('module-area') // the hard-coded Area
 											);
-											$plugin_obj->initPlugin((string)$plugin_fname, (array)$plugin_cfg, (string)$this->ControllerGetParam('module-path'), (array)$data_arr); // initialize before run !
+											$plugin_obj->initPlugin((string)$plugin_fname, (array)$plugin_cfg, (string)$this->ControllerGetParam('module-path'), (string)$id, (array)$data_arr); // initialize before run !
 											//--
 											$plugin_test_init = $plugin_obj->Initialize(); // pre-run
 											if($plugin_test_init !== false) {

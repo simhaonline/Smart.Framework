@@ -59,11 +59,11 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20200609
+ * @version 	v.20200717
  * @package 	@Core:TemplatingEngine
  *
  */
-final class SmartMarkersTemplating { // r.20200121
+final class SmartMarkersTemplating { // r.20200717
 
 	// ::
 
@@ -1118,6 +1118,9 @@ final class SmartMarkersTemplating { // r.20200121
 					} elseif((string)$escexpr == '|num') { // Number (Float / Decimal / Integer)
 						$val = (string) (float) $val;
 					//--
+					} elseif((string)$escexpr == '|idtxt') { // id_txt: Id-Txt
+						$val = (string) str_replace('_', '-', (string)$val);
+						$val = (string) SmartUnicode::uc_words((string)$val);
 					} elseif((string)$escexpr == '|slug') { // Slug: a-zA-Z0-9_- / - / -- : -
 						$val = (string) Smart::create_slug((string)$val, false); // do not apply strtolower as it can be later combined with |lower flag
 					} elseif((string)$escexpr == '|htmid') { // HTML-ID: a-zA-Z0-9_-

@@ -2,6 +2,9 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+July 17, 2020 :: Version 7.2.1 rev.20200717
+	* MarkerTPL (PHP and Javascript): new escaping: |idtxt
+
 July 15, 2020 :: Version 7.2.1 rev.20200715
 	* Mime Decode Fixes (all non-explicit text/html parts which are not attachments fallback to text/plain mode)
 	* Mime Decode Support for message/delivery-status

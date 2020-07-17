@@ -23,7 +23,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 final class PageBuilderFrontendPluginPageBuilderTest2 extends \SmartModExtLib\PageBuilder\AbstractFrontendPlugin {
 
-	// r.20200703
+	// r.20200717
 
 	public function Run() {
 		//--
@@ -31,10 +31,12 @@ final class PageBuilderFrontendPluginPageBuilderTest2 extends \SmartModExtLib\Pa
 		//--
 		$arr_data = (array) $this->getPluginData();
 		//print_r($arr_data); die();
+		$obj_id = (string) $this->getPluginCallerObjectId();
+		//echo $obj_id; die();
 		//--
 		$this->PageViewSetVars([
 		//	'meta-title' 	=> 'Page Builder : Test Plugin #2',
-			'content'		=> '<div><b>Published on: '.Smart::escape_html($arr_data['DATE-MODIFIED'].' by ['.$arr_data['AUTHOR-ID'].']').'</b><br>this is Plugin2 ['.Smart::escape_html($this->ControllerGetParam('module-path').' @ plugins/'.$this->getPluginName()).'] called by ['.Smart::escape_html($this->getPluginCallerModulePath().' @ '.$this->ControllerGetParam('controller')).'] Test ['.date('Y-m-d H:i:s').'] ... @ running live (non-cached) on page-section ['.Smart::escape_html($section).'] ... the cache content of plugins must be managed separately: <pre>'.Smart::escape_html(print_r($this->getPluginConfig(),1)).'</pre></div>'
+			'content'		=> '<div><b>Published on: '.Smart::escape_html($arr_data['DATE-MODIFIED'].' by ['.$arr_data['AUTHOR-ID'].']').'</b><br>this is Plugin2 ['.Smart::escape_html($this->ControllerGetParam('module-path').' @ plugins/'.$this->getPluginName()).'] called by ['.Smart::escape_html($this->getPluginCallerModulePath().' @ '.$this->ControllerGetParam('controller').' # '.$obj_id).'] Test ['.date('Y-m-d H:i:s').'] ... @ running live (non-cached) on page-section ['.Smart::escape_html($section).'] ... the cache content of plugins must be managed separately: <pre>'.Smart::escape_html(print_r($this->getPluginConfig(),1)).'</pre></div>'
 		]);
 		//--
 	} //END FUNCTION

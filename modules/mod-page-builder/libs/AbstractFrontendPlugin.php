@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200703
+ * @version 	v.20200717
  * @package 	development:modules:PageBuilder
  *
  */
@@ -36,7 +36,7 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 	private $plugin_name 				= 'ERROR-NO-PLUGIN-NAME';
 	private $plugin_config 				= array();
 	private $plugin_caller_module_path 	= 'modules/app/';
-
+	private $plugin_caller_object_id 		= '';
 	private $plugin_data 					= [];
 
 
@@ -48,7 +48,7 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 	 * @internal
 	 *
 	 */
-	final public function initPlugin(string $plugin_name, array $plugin_config, string $plugin_caller_module_path, array $plugin_data) {
+	final public function initPlugin(string $plugin_name, array $plugin_config, string $plugin_caller_module_path, string $plugin_caller_object_id, array $plugin_data) {
 		//--
 		if($this->plugin_initialized === true) {
 			return;
@@ -65,6 +65,8 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 		if(\SmartFileSysUtils::check_if_safe_path((string)$plugin_caller_module_path)) {
 			$this->plugin_caller_module_path = (string) $plugin_caller_module_path;
 		} //end if
+		//--
+		$this->plugin_caller_object_id = (string) $plugin_caller_object_id;
 		//--
 		$this->plugin_data = [
 			'ID' 			=> (string) $plugin_data['id'],
@@ -116,6 +118,18 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 	final public function getPluginCallerModulePath() {
 		//--
 		return (string) $this->plugin_caller_module_path;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get Plugin Caller Object ID
+	 */
+	final public function getPluginCallerObjectId() {
+		//--
+		return (string) $this->plugin_caller_object_id;
 		//--
 	} //END FUNCTION
 	//=====

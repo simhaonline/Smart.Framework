@@ -23,7 +23,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 final class PageBuilderFrontendPluginPageBuilderTest3 extends \SmartModExtLib\PageBuilder\AbstractFrontendPlugin {
 
-	// r.20200703
+	// r.20200717
 
 	public function Run() {
 		//--
@@ -33,9 +33,7 @@ final class PageBuilderFrontendPluginPageBuilderTest3 extends \SmartModExtLib\Pa
 			$txt_cfg[] = '['.$key.'='.$val.']';
 		} //end foreach
 		//--
-		$this->PageViewSetVars([
-			'content' 	=> '<div>this is Plugin3 Test :: '.Smart::escape_html(implode(' ; ', (array)$txt_cfg)).'</div>'
-		]);
+		$this->PageViewSetVar('content', '<div>this is Plugin3 Test :: '.Smart::escape_html(implode(' ; ', (array)$txt_cfg)).'</div>');
 		//--
 	} //END FUNCTION
 
