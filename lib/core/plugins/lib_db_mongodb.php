@@ -50,7 +50,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  *
  * @access 		PUBLIC
  * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20200615
+ * @version 	v.20200718
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -624,10 +624,16 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 				//--
 				$qry = (array) $args[1]; // arrQuery
 				//--
-				$command = new \MongoDB\Driver\Command([
-					'count' => (string) $this->collection,
-					'query' => (array) $qry
-				]);
+				if(Smart::array_size($qry) <= 0) { // fix for: BSON field 'count.query' is the wrong type 'array', expected type 'object' when query array is empty
+					$command = new \MongoDB\Driver\Command([
+						'count' => (string) $this->collection
+					]);
+				} else {
+					$command = new \MongoDB\Driver\Command([
+						'count' => (string) $this->collection,
+						'query' => (array) $qry
+					]);
+				} //end if else
 				if(!is_object($command)) {
 					$this->error((string)$this->connex_key, 'MongoDB Count', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Command Object is null ...', $args);
 					return 0;

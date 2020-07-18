@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200610
+ * @version     v.20200718
  * @package     @Core
  *
  */
@@ -93,7 +93,7 @@ final class Smart {
 	 *
 	 * @return 	MIXED						:: The value for the selected parameter. If the Config parameter does not exists, will return an empty string.
 	 */
-	public static function get_from_config($param) {
+	public static function get_from_config(string $param) {
 		//--
 		global $configs;
 		//--
@@ -123,7 +123,7 @@ final class Smart {
 	 *
 	 * @return 	STRING						:: The fixed path name
 	 */
-	public static function fix_path_separator($y_path) {
+	public static function fix_path_separator(string $y_path) {
 		//--
 		if((string)DIRECTORY_SEPARATOR == '\\') { // if on Windows, Fix Path Separator !!!
 			if(strpos((string)$y_path, '\\') !== false) {
@@ -145,9 +145,7 @@ final class Smart {
 	 *
 	 * @return 	STRING						:: The real path
 	 */
-	public static function real_path($y_path) {
-		//--
-		$y_path = (string) $y_path; // do not TRIM !!
+	public static function real_path(string $y_path) {
 		//--
 		$the_path = (string) @realpath((string)$y_path);
 		//--
@@ -165,9 +163,7 @@ final class Smart {
 	 *
 	 * @return 	STRING						:: The dirname or . or empty string
 	 */
-	public static function dir_name($y_path) {
-		//--
-		$y_path = (string) $y_path; // do not TRIM !!
+	public static function dir_name(string $y_path) {
 		//--
 		$dir_name = (string) dirname((string)$y_path);
 		//--
@@ -187,15 +183,12 @@ final class Smart {
 	 *
 	 * @return 	STRING						:: The basename
 	 */
-	public static function base_name($y_path, $y_suffix='') {
-		//--
-		$y_path = (string) $y_path; // do not TRIM !!
-		$y_suffix = (string) $y_suffix; // do not TRIM !!
+	public static function base_name(string $y_path, string $y_suffix='') {
 		//--
 		if((string)$y_suffix != '') {
-			$base_name = (string) basename($y_path, $y_suffix);
+			$base_name = (string) basename((string)$y_path, (string)$y_suffix);
 		} else {
-			$base_name = (string) basename($y_path);
+			$base_name = (string) basename((string)$y_path);
 		} //end if else
 		//--
 		return (string) $base_name;
@@ -212,15 +205,67 @@ final class Smart {
 	 *
 	 * @return 	ARRAY						:: The pathinfo array
 	 */
-	public static function path_info($y_path) {
+	public static function path_info(string $y_path) {
 		//--
-		$y_path = (string) $y_path; // do not TRIM !!
-		//--
-		$path_info = (array) pathinfo($y_path, PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME);
+		$path_info = (array) pathinfo((string)$y_path, PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME);
 		//--
 		$path_info['dirname'] = (string) self::fix_path_separator((string)$path_info['dirname']);
 		//--
 		return (array) $path_info;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Str Replace, Only First Occurence
+	 *
+	 * @param 	STRING 		$search 		:: The value being searched for, otherwise known as the needle
+	 * @param 	STRING 		$replace 		:: The replacement value that replaces found search value
+	 * @param 	STRING 		$str			:: The string being searched and replaced on, otherwise known as the haystack
+	 *
+	 * @return 	STRING						:: This function returns a string with the replaced value only on first occurence if search value is found
+	 */
+	public static function str_replace_first(string $search, string $replace, string $str) {
+		//--
+		if((string)$str != '') {
+			if((string)$search != '') {
+				$pos = strpos((string)$str, (string)$search); // return MIXED: FALSE or INT+
+				if($pos !== false) {
+					$str = (string) substr_replace((string)$str, (string)$replace, (int)$pos, (int)strlen((string)$search));
+				} //end if
+			} //end if
+		} //end if
+		//--
+		return (string) $str;
+		//--
+	} //END FUNCTION
+	//================================================================
+
+
+	//================================================================
+	/**
+	 * Str Replace, Only Last Occurence
+	 *
+	 * @param 	STRING 		$search 		:: The value being searched for, otherwise known as the needle
+	 * @param 	STRING 		$replace 		:: The replacement value that replaces found search value
+	 * @param 	STRING 		$str			:: The string being searched and replaced on, otherwise known as the haystack
+	 *
+	 * @return 	STRING						:: This function returns a string with the replaced value only on last occurence if search value is found
+	 */
+	public static function str_replace_last(string $search, string $replace, string $str) {
+		//--
+		if((string)$str != '') {
+			if((string)$search != '') {
+				$pos = strrpos((string)$str, (string)$search); // return MIXED: FALSE or INT+
+				if($pos !== false) {
+					$str = (string) substr_replace((string)$str, (string)$replace, (int)$pos, (int)strlen((string)$search));
+				} //end if
+			} //end if
+		} //end if
+		//--
+		return (string) $str;
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -235,9 +280,9 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The prepared URL in the standard RFC3986 format (all values are escaped using rawurlencode() to be Unicode full compliant
 	 */
-	public static function url_add_params($y_url, array $y_params) {
+	public static function url_add_params(string $y_url, array $y_params) {
 		//--
-		$url = (string) $y_url;
+		$url = (string) trim((string)$y_url);
 		//--
 		if(is_array($y_params)) {
 			foreach($y_params as $key => $val) {
@@ -291,7 +336,7 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The prepared URL in the standard RFC3986 format (all values are escaped using rawurlencode() to be Unicode full compliant
 	 */
-	public static function url_add_suffix($y_url, $y_suffix) {
+	public static function url_add_suffix(string $y_url, string $y_suffix) {
 		//--
 		$y_url = (string) trim((string)$y_url);
 		$y_suffix = (string) trim((string)$y_suffix);
@@ -333,7 +378,7 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The prepared URL as script.php?a=b&c=d&e=%20d#myAnchor
 	 */
-	public static function url_add_anchor($y_url, $y_anchor) {
+	public static function url_add_anchor(string $y_url, string $y_anchor) {
 		//--
 		$y_url = (string) trim((string)$y_url);
 		$y_anchor = (string) trim((string)$y_anchor);
@@ -365,7 +410,7 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The escaped URL variable using the RFC3986 standard format (this variable can be appended to URL, by example: ?variable={escaped-value-returned-by-this-method}
 	 */
-	public static function escape_url($y_string) {
+	public static function escape_url($y_string) { // do not make strongtype as NULL will break it
 		//--
 		return (string) rawurlencode((string)$y_string);
 		//--
@@ -382,7 +427,7 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The escaped string using htmlspecialchars() standards with Unicode-Safe control
 	 */
-	public static function escape_html($y_string) {
+	public static function escape_html($y_string) { // do not make strongtype as NULL will break it
 		//-- v.181203
 		// Default is: ENT_HTML401 | ENT_COMPAT
 		// keep the ENT_HTML401 instead of ENT_HTML5 to avoid troubles with misc. HTML Parsers (robots, htmldoc, ...)
@@ -404,7 +449,7 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The escaped string using the WD-CSS21-20060411 standard
 	 */
-	public static function escape_css($y_string) {
+	public static function escape_css($y_string) { // do not make strongtype as NULL will break it
 		//-- http://www.w3.org/TR/2006/WD-CSS21-20060411/syndata.html#q6
 		return (string) addcslashes((string)$y_string, "\x00..\x1F!\"#$%&'()*+,./:;<=>?@[\\]^`{|}~"); // inspired from Latte Templating
 		//--
@@ -420,7 +465,7 @@ final class Smart {
 	 *
 	 * @return 	STRING						:: The escaped string using a json_encode() standard to be injected between single quotes '' or double quotes ""
 	 */
-	public static function escape_js($str) {
+	public static function escape_js($str) { // do not make strongtype as NULL will break it
 		//-- v.20200605
 		// Prepare a string to pass in JavaScript Single or Double Quotes
 		// By The Situation:
@@ -449,7 +494,7 @@ final class Smart {
 	 *
 	 * @return 	STRING							:: The JSON encoded string
 	 */
-	public static function json_encode($data, $prettyprint=false, $unescaped_unicode=true, $htmlsafe=true) {
+	public static function json_encode($data, bool $prettyprint=false, bool $unescaped_unicode=true, bool $htmlsafe=true) {
 		// encode json v.20200605
 		$options = 0;
 		if(!$unescaped_unicode) {
@@ -503,7 +548,7 @@ final class Smart {
 	 *
 	 * @return 	MIXED						:: The PHP native Variable: NULL ; INT ; NUMERIC ; STRING ; ARRAY
 	 */
-	public static function json_decode($json, $return_array=true) {
+	public static function json_decode($json, bool $return_array=true) {
 		//-- decode json v.170503
 		return @json_decode((string)$json, (bool)$return_array, 512, JSON_BIGINT_AS_STRING); // as json decode depth is added just in PHP 5.5 use the default depth = 512 by now ...
 		//--
@@ -537,7 +582,7 @@ final class Smart {
 	 *
 	 * @return 	MIXED						:: The PHP native Variable
 	 */
-	public static function unseryalize($y_json) {
+	public static function unseryalize($y_json) { // do not make strongtype as NULL will break it
 		//-- unseryalize json v.170503
 		return self::json_decode((string)$y_json, true);
 		//--
@@ -554,7 +599,7 @@ final class Smart {
 	 *
 	 * @return 	INTEGER						:: An integer number
 	 */
-	public static function format_number_int($y_number, $y_signed='') {
+	public static function format_number_int($y_number, $y_signed='') { // do not make strongtype as NULL will break it
 		//--
 		if((string)$y_signed == '+') { // unsigned integer
 			if((int)$y_number < 0) { // {{{SYNC-SMART-INT+}}}
@@ -580,7 +625,7 @@ final class Smart {
 	 *
 	 * @return 	DECIMAL							:: A decimal number
 	 */
-	public static function format_number_dec($y_number, $y_decimals=0, $y_sep_decimals='.', $y_sep_thousands='') {
+	public static function format_number_dec($y_number, $y_decimals=0, $y_sep_decimals='.', $y_sep_thousands='') { // do not make strongtype as NULL will break it
 		//-- by default number_format() returns string, so enforce string as output to keep decimals
 		return (string) number_format(((float)$y_number), self::format_number_int($y_decimals,'+'), (string)$y_sep_decimals, (string)$y_sep_thousands); // {{{SYNC-SMART-DECIMAL}}}
 		//--
@@ -617,13 +662,13 @@ final class Smart {
 	 *
 	 * @return ARRAY 						:: The sorted array
 	 */
-	public static function array_sort(array $y_arr, $y_mode) {
+	public static function array_sort(array $y_arr, string $y_mode) {
 		//--
 		if(self::array_size($y_arr) <= 0) {
 			return array();
 		} //end if
 		//--
-		switch(strtolower((string)$y_mode)) {
+		switch((string)strtolower((string)$y_mode)) {
 			case 'natsort': // natural sort
 				@natsort($y_arr);
 				break;
@@ -691,7 +736,7 @@ final class Smart {
 	 *
 	 * @return MIXED [ NUMERIC / STRING / ARRAY ] 	:: The array value of the specified key path
 	 */
-	public static function array_get_by_key_path(array $y_arr, $y_key_path, $y_path_separator) {
+	public static function array_get_by_key_path(array $y_arr, string $y_key_path, string $y_path_separator) {
 		//--
 		if(self::array_size($y_arr) <= 0) {
 			return '';
@@ -749,7 +794,7 @@ final class Smart {
 	 *
 	 * @return BOOL 								:: TRUE if Key Exist / FALSE if NOT
 	 */
-	public static function array_test_key_by_path_exists(array $y_arr, $y_key_path, $y_path_separator) {
+	public static function array_test_key_by_path_exists(array $y_arr, string $y_key_path, string $y_path_separator) {
 		//--
 		if(self::array_size($y_arr) <= 0) {
 			return false;
@@ -797,7 +842,7 @@ final class Smart {
 	 *
 	 * @return ARRAY 								:: The modified array
 	 */
-	public static function array_change_key_case_recursive(array $y_arr, $y_mode) {
+	public static function array_change_key_case_recursive(array $y_arr, string $y_mode) {
 		//--
 		if(self::array_size($y_arr) <= 0) { // fix bug if empty array / max nested level
 			return array();
@@ -943,7 +988,7 @@ final class Smart {
 	 *
 	 * @return 	STRING						:: The processed string (text)
 	 */
-	public static function text_cut_by_limit($ytxt, $ylen, $y_cut_words=true, $y_suffix='...') {
+	public static function text_cut_by_limit(string $ytxt, int $ylen, bool $y_cut_words=true, string $y_suffix='...') {
 		//--
 		$ytxt = (string) trim((string)$ytxt);
 		$ylen = self::format_number_int($ylen, '+');
@@ -985,9 +1030,9 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The formatted string
 	 */
-	public static function nl_2_br($y_code) {
+	public static function nl_2_br($y_code) { // do not make strongtype as NULL will break it
 		//--
-		return nl2br(trim($y_code), false); // 2nd param is false for not xhtml tags, since PHP 5.3 !!
+		return nl2br((string)trim((string)$y_code), false); // 2nd param is false for not xhtml tags, since PHP 5.3 !!
 		//--
 	} //END FUNCTION
 	//================================================================
@@ -1002,7 +1047,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The processed HTML Code
 	 */
-	public static function striptags($yhtmlcode, $ynewline='yes') {
+	public static function striptags(string $yhtmlcode, string $ynewline='yes') {
 		//--
 		$yhtmlcode = (string) $yhtmlcode;
 		$ynewline = (string) $ynewline;
@@ -1172,7 +1217,7 @@ final class Smart {
 	 * @return STRING 						:: The fixed (filesys) safe string
 	 *
 	 */
-	public static function safe_fix_invalid_filesys_names($y_fsname) {
+	public static function safe_fix_invalid_filesys_names(string $y_fsname) {
 		//-- v.190105
 		$y_fsname = (string) trim((string)$y_fsname);
 		//-- {{{SYNC-SAFE-PATH-CHARS}}} {{{SYNC-CHK-SAFE-PATH}}}
@@ -1213,7 +1258,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The safe path ; if invalid will return empty value
 	 */
-	public static function safe_pathname($y_path, $ysupresschar='') {
+	public static function safe_pathname(string $y_path, string $ysupresschar='') {
 		//-- v.170920
 		$y_path = (string) trim((string)$y_path); // force string and trim
 		if((string)$y_path == '') {
@@ -1263,7 +1308,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The safe file or dir name ; if invalid will return empty value
 	 */
-	public static function safe_filename($y_fname, $ysupresschar='') {
+	public static function safe_filename(string $y_fname, string $ysupresschar='') {
 		//-- v.170920
 		$y_fname = (string) trim((string)$y_fname); // force string and trim
 		if((string)$y_fname == '') {
@@ -1301,10 +1346,11 @@ final class Smart {
 	 * ALLOWED CHARS: [a-zA-Z0-9] _
 	 *
 	 * @param STRING 		$y_name				:: Variable Name to be processed
+	 * @param BOOL 			$y_allow_upper 		:: Allow UpperCase ; *Optional* ; Default is FALSE
 	 *
 	 * @return STRING 							:: The safe variable name ; if invalid should return empty value
 	 */
-	public static function safe_varname($y_name, $y_allow_upper=false) {
+	public static function safe_varname(string $y_name, bool $y_allow_upper=false) {
 		//-- v.20200121
 		$y_name = (string) trim((string)$y_name); // force string and trim
 		if((string)$y_name == '') {
@@ -1336,7 +1382,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The safe name ; if invalid should return empty value
 	 */
-	public static function safe_validname($y_name, $ysupresschar='') {
+	public static function safe_validname(string $y_name, string $ysupresschar='') {
 		//-- v.170920
 		$y_name = (string) trim((string)$y_name); // force string and trim
 		if((string)$y_name == '') {
@@ -1377,7 +1423,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The safe name ; if invalid should return empty value
 	 */
-	public static function safe_username($y_name) {
+	public static function safe_username(string $y_name) {
 		//-- v.170920
 		$y_name = (string) trim((string)$y_name); // force string and trim
 		if((string)$y_name == '') {
@@ -1407,7 +1453,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The slug which will contain only: a-z 0-9 _ - (A-Z will be converted to a-z if lowercase is enforced)
 	 */
-	public static function create_slug($y_str, $y_lowercase=false) {
+	public static function create_slug(string $y_str, bool $y_lowercase=false) {
 		//--
 		$y_str = (string) SmartUnicode::deaccent_str((string)trim((string)$y_str));
 		$y_str = (string) preg_replace('/[^a-zA-Z0-9_\-]/', '-', (string)$y_str);
@@ -1431,7 +1477,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The HTML-ID which will contain only: a-z A-Z 0-9 _ -
 	 */
-	public static function create_htmid($y_str) {
+	public static function create_htmid(string $y_str) {
 		//--
 		return (string) trim((string)preg_replace('/[^a-zA-Z0-9_\-]/', '', (string)$y_str));
 		//--
@@ -1447,7 +1493,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The Js-Var which will contain only: a-z A-Z 0-9 _
 	 */
-	public static function create_jsvar($y_str) {
+	public static function create_jsvar(string $y_str) {
 		//--
 		return (string) trim((string)preg_replace('/[^a-zA-Z0-9_]/', '', (string)$y_str));
 		//--
@@ -1464,7 +1510,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: The normalized text
 	 */
-	public static function normalize_spaces($y_txt) {
+	public static function normalize_spaces(string $y_txt) { // do not make strongtype as NULL will break it
 		//--
 		return (string) str_replace(["\r\n", "\r", "\n", "\t", "\x0B", "\0", "\f"], ' ', (string)$y_txt);
 		//--
@@ -1483,7 +1529,7 @@ final class Smart {
 	 *
 	 * @return BOOLEAN 						:: TRUE if overflows the max safe integer ; FALSE if is OK (not overflow maximum)
 	 */
-	public static function check_int_number_overflow_max($y_number) {
+	public static function check_int_number_overflow_max($y_number) { // do not make strongtype as NULL will break it
 		//--
 		if(abs((int)$y_number) > (int)PHP_INT_MAX) {
 			$out = true;
@@ -1507,7 +1553,7 @@ final class Smart {
 	 *
 	 * @return BOOLEAN 						:: TRUE if overflows the max safe decimal ; FALSE if is OK (not overflow maximum)
 	 */
-	public static function check_dec_number_overflow_max($y_number) {
+	public static function check_dec_number_overflow_max($y_number) { // do not make strongtype as NULL will break it
 		//--
 		$max_number = '999999999999.9900'; // DECIMAL [12].[4] (no higher decimal numbers than this are safe using a precision like 14, the max in PHP)
 		//--
@@ -1532,7 +1578,7 @@ final class Smart {
 	 *
 	 * @return INTEGER 						:: An integer random number
 	 */
-	public static function random_number($y_min=0, $y_max=-1, $y_seed=false) {
+	public static function random_number(int $y_min=0, int $y_max=-1, bool $y_seed=false) {
 		//-- seed the mt_rand() using mt_srand()
 		if($y_seed !== false) {
 			if($y_seed === true) {
@@ -1562,7 +1608,7 @@ final class Smart {
 	 * Returns the valid Net Server ID (to be used in a cluster)
 	 * Valid values are 0..1295 (or 00..ZZ if BASE36)
 	 */
-	public static function net_server_id($base36=false) { // {{{SYNC-MIN-MAX-NETSERVER-ID}}}
+	public static function net_server_id(bool $base36=false) { // {{{SYNC-MIN-MAX-NETSERVER-ID}}}
 		//--
 		$netserverid = (int) 0;
 		if(defined('SMART_FRAMEWORK_NETSERVER_ID')) {
@@ -1593,7 +1639,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: variable length Unique Entropy string
 	 */
-	public static function unique_entropy($y_suffix='', $y_use_net_server_id=true) {
+	public static function unique_entropy(string $y_suffix='', bool $y_use_net_server_id=true) {
 		//--
 		$netserverid = '';
 		if($y_use_net_server_id !== false) {
@@ -1608,7 +1654,7 @@ final class Smart {
 
 	//================================================================
 	// converts a 64-bit integer number to base62 (string)
-	private static function int10_to_base62_str($num) {
+	private static function int10_to_base62_str($num) { // do not make strongtype as NULL will break it
 		//--
 		$num = (int) $num;
 		if($num < 0) {
@@ -1911,7 +1957,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: the UUID
 	 */
-	public static function uuid_36($prefix='') {
+	public static function uuid_36(string $prefix='') {
 		//--
 		$hash = (string) md5($prefix.self::unique_entropy('uid36', false)); // by default use no reference to net server id, which can be passed via prefix
 		//--
@@ -1939,7 +1985,7 @@ final class Smart {
 	 *
 	 * @return STRING 						:: the UUID
 	 */
-	public static function uuid_45($prefix='') {
+	public static function uuid_45(string $prefix='') {
 		//--
 		$hash = (string) sha1($prefix.self::unique_entropy('uid45', false)); // by default use no reference to net server id, which can be passed via prefix
 		//--
@@ -1964,7 +2010,7 @@ final class Smart {
 	 *
 	 * @return ARRAY 					:: The separed URL (associative array) as: protocol, server, port, path, scriptname
 	 */
-	public static function url_parse($y_url) {
+	public static function url_parse(string $y_url) {
 		//--
 		$y_url = (string) $y_url;
 		//--
@@ -2068,7 +2114,7 @@ final class Smart {
 	 *
 	 * @return ARRAY 					:: The Array: Array(elem1, elem2, ..., elemN)
 	 */
-	public static function list_to_array($y_list, $y_trim=true) {
+	public static function list_to_array(string $y_list, bool $y_trim=true) {
 		//--
 		if((string)trim((string)$y_list) == '') {
 			return array(); // empty list
@@ -2106,7 +2152,7 @@ final class Smart {
 	 *
 	 * @return -						:: This function does not return anything
 	 */
-	public static function log_info($title, $message) {
+	public static function log_info($title, $message) { // do not make strongtype as NULL will break it
 		//--
 		if((defined('SMART_FRAMEWORK_INFO_LOG')) AND (is_dir(self::dir_name((string)SMART_FRAMEWORK_INFO_LOG)))) { // must use is_dir here to avoid dependency with smart file system lib
 			@file_put_contents((string)SMART_FRAMEWORK_INFO_LOG, '[INF]'."\t".date('Y-m-d H:i:s O')."\t".self::normalize_spaces($title)."\t".self::normalize_spaces($message)."\n", FILE_APPEND | LOCK_EX);
@@ -2129,7 +2175,7 @@ final class Smart {
 	 *
 	 * @return -						:: This function does not return anything
 	 */
-	public static function log_notice($message) {
+	public static function log_notice($message) { // do not make strongtype as NULL will break it
 		//--
 		@trigger_error('#SMART-FRAMEWORK.NOTICE# '.$message, E_USER_NOTICE);
 		//--
@@ -2147,7 +2193,7 @@ final class Smart {
 	 *
 	 * @return -						:: This function does not return anything
 	 */
-	public static function log_warning($message) {
+	public static function log_warning($message) { // do not make strongtype as NULL will break it
 		//--
 		@trigger_error('#SMART-FRAMEWORK.WARNING# '.$message, E_USER_WARNING);
 		//--
@@ -2166,7 +2212,7 @@ final class Smart {
 	 *
 	 * @return -								:: This function does not return anything
 	 */
-	public static function raise_error($message_to_log, $message_to_display='') {
+	public static function raise_error($message_to_log, $message_to_display='') { // do not make strongtype as NULL will break it
 		//--
 		global $smart_____framework_____last__error; // presume it is already html special chars safe
 		//--
