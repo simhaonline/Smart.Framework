@@ -74,7 +74,7 @@ if((string)$var == 'some-string') {
  *
  * @access      PUBLIC
  * @depends     extensions: PHP JSON ; classes: SmartUnicode
- * @version     v.20200718
+ * @version     v.20200719
  * @package     @Core
  *
  */
@@ -231,7 +231,7 @@ final class Smart {
 		//--
 		if((string)$str != '') {
 			if((string)$search != '') {
-				$pos = strpos((string)$str, (string)$search); // return MIXED: FALSE or INT+
+				$pos = strpos((string)$str, (string)$search); // MIXED: FALSE or INT+
 				if($pos !== false) {
 					$str = (string) substr_replace((string)$str, (string)$replace, (int)$pos, (int)strlen((string)$search));
 				} //end if
@@ -258,7 +258,7 @@ final class Smart {
 		//--
 		if((string)$str != '') {
 			if((string)$search != '') {
-				$pos = strrpos((string)$str, (string)$search); // return MIXED: FALSE or INT+
+				$pos = strrpos((string)$str, (string)$search); // MIXED: FALSE or INT+
 				if($pos !== false) {
 					$str = (string) substr_replace((string)$str, (string)$replace, (int)$pos, (int)strlen((string)$search));
 				} //end if

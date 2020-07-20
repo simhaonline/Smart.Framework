@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200615
+ * @version 	v.20200720
  *
  */
 final class TestUnitMongoDB {
@@ -96,6 +96,18 @@ final class TestUnitMongoDB {
 			);
 			if(!$mongo->is_command_ok($result)) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[0/ok] should be 1 but is: '.\print_r($result,1);
+			} //end if
+		} //end if
+		//--
+
+		//--
+		if((string)$err == '') {
+			$tst = 'Create Mongo ObjectId from String';
+			$tests[] = (string) $tst;
+			$objStrId = '5f1330d499376783fb741802';
+			$objId = $mongo->getObjectId((string)$objStrId);
+			if(!\is_object($objId)) {
+				$err = 'The Test: '.$tst.' FAILED for: '.$objStrId;
 			} //end if
 		} //end if
 		//--
@@ -268,10 +280,26 @@ final class TestUnitMongoDB {
 			$tst = 'Insert Another Single Document';
 			$tests[] = (string) $tst;
 			$doc = array();
-			$doc['id'] = $mongo->assign_uuid();
+			$doc['_id'] = $mongo->assign_uuid();
 			$doc['name'] = 'Test:'.$comments;
 			$doc['cost'] = 3;
 			$result = $mongo->insert('myTestCollection', (array)$doc);
+			if($result[1] != 1) {
+				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);
+			} //end if
+		} //end if
+		//--
+		if((string)$err == '') {
+			$tst = 'Update Replace the Last Inserted Single Document';
+			$tests[] = (string) $tst;
+			$oldId = (string) $doc['_id'];
+			unset($doc['_id']); // the _id cannot be replaced and if contained in the doc array will simply fail
+			$result = $mongo->update(
+				'myTestCollection',
+				[ '_id' => (string)$oldId ], // filter
+				[ 0 => (array) $doc ] // replace
+			);
+			$oldId = null;
 			$doc = array();
 			if($result[1] != 1) {
 				$err = 'The Test: '.$tst.' FAILED ! Expected result of array[1] should be 1 but is: '.\print_r($result,1);

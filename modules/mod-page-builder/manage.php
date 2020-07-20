@@ -23,7 +23,7 @@ define('SMART_APP_MODULE_AUTH', true);
  */
 final class SmartAppAdminController extends SmartAbstractAppController {
 
-	// r.20200717
+	// r.20200720
 
 	public function Run() {
 
@@ -293,7 +293,7 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 				break;
 			case 'export-translations-spreadsheet': // SpreadSheet
 				$exportlang = $this->RequestVarGet('exportlang', '', 'string');
-				if(\SmartTextTranslations::validateLanguage($exportlang) !== true) {
+				if(SmartTextTranslations::validateLanguage($exportlang) !== true) {
 					$this->PageViewSetErrorStatus(400, 'ERROR: Invalid PageBuilder Export Language: '.$exportlang);
 					return;
 				} //end if
@@ -305,7 +305,7 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 				$this->PageViewSetCfg('rawpage', true);
 				$spreadsheet = new SmartSpreadSheetExport(500, 50);
 				$this->PageViewSetCfg('rawmime', (string)$spreadsheet->getMimeType());
-				if((string)$exportlang == (string)\SmartTextTranslations::getDefaultLanguage()) {
+				if((string)$exportlang == (string)SmartTextTranslations::getDefaultLanguage()) {
 					$extralang = '@';
 					$arrsheets = [
 						'[lang_'.SmartTextTranslations::getDefaultLanguage().']'

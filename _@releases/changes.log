@@ -2,6 +2,13 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+July 20, 2020 :: Version 7.2.1 rev.20200720
+	* Core Router: Detect Tilda if Path Access is enabled
+	* Smart: add Smart::str_replace_first() and Smart::str_replace_last() ; enable Strong Type Params for methods
+	* Lib MongoDB: Count Fix with empty query + new features: UUID clustered if config shows a mongo cluster ; Update Replace record
+	* MarkerTPL: fix some unattended regressions in syntax processing: IF / LOOP
+	* PageBuilder: add WebDAV Files manager
+
 July 17, 2020 :: Version 7.2.1 rev.20200717
 	* MarkerTPL (PHP and Javascript): new escaping: |idtxt
 

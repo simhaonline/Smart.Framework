@@ -28,7 +28,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  * @access 		private
  * @internal
  *
- * @version 	v.20200605
+ * @version 	v.20200719
  *
  */
 final class TestUnitStrings {
@@ -56,7 +56,7 @@ final class TestUnitStrings {
 
 		//--
 		$unicode_text = '"Unicode78źź:ăĂîÎâÂșȘțȚşŞţŢグッド';
-		$invalid_string = $unicode_text.pack("H*" ,'c32e').'#';
+		$invalid_string = (string) $unicode_text.pack("H*" ,'c32e').'#';
 		//--
 		$idn_domain_unicode = 'jösefsson.tßst123.org';
 		$idn_domain_iso = 'xn--jsefsson-n4a.xn--tst123-bta.org';
@@ -103,6 +103,28 @@ final class TestUnitStrings {
 						$err = 'ERROR: '.$the_test.' FAILED ...';
 					} //end if
 				} //end if
+			} //end if
+		} //end if
+		if((string)$err == '') {
+			$the_test = 'Unicode String Replace First Occurence Only';
+			$tests[] = $the_test;
+			if(
+				((string)\Smart::str_replace_first((string)$unicode_text, '', (string)$unicode_text.'[1]'.$unicode_text.'[2]'.$unicode_text) !== (string)'[1]'.$unicode_text.'[2]'.$unicode_text) OR
+				((string)\Smart::str_replace_first((string)$unicode_text, '', (string)'[0]'.$unicode_text.'[1]'.$unicode_text.'[2]'.$unicode_text) !== (string)'[0][1]'.$unicode_text.'[2]'.$unicode_text) OR
+				((string)\Smart::str_replace_first((string)$unicode_text, '', (string)'[0]'.$unicode_text.'[1]'.$unicode_text.'[2]'.$unicode_text.'[3]') !== (string)'[0][1]'.$unicode_text.'[2]'.$unicode_text.'[3]')
+			) {
+				$err = 'ERROR: '.$the_test.' FAILED ...';
+			} //end if
+		} //end if
+		if((string)$err == '') {
+			$the_test = 'Unicode String Replace Last Occurence Only';
+			$tests[] = $the_test;
+			if(
+				((string)\Smart::str_replace_last((string)$unicode_text, '', (string)$unicode_text.'[1]'.$unicode_text.'[2]'.$unicode_text) !== (string)$unicode_text.'[1]'.$unicode_text.'[2]') OR
+				((string)\Smart::str_replace_last((string)$unicode_text, '', (string)'[0]'.$unicode_text.'[1]'.$unicode_text.'[2]'.$unicode_text) !== (string)'[0]'.$unicode_text.'[1]'.$unicode_text.'[2]') OR
+				((string)\Smart::str_replace_last((string)$unicode_text, '', (string)'[0]'.$unicode_text.'[1]'.$unicode_text.'[2]'.$unicode_text.'[3]') !== (string)'[0]'.$unicode_text.'[1]'.$unicode_text.'[2][3]')
+			) {
+				$err = 'ERROR: '.$the_test.' FAILED ...';
 			} //end if
 		} //end if
 		if((string)$err == '') {

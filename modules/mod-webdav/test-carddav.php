@@ -22,28 +22,34 @@ define('SMART_APP_MODULE_DIRECT_OUTPUT', true); // do direct output
  */
 class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmCardDavFs {
 
-	// v.20200511
+	// v.20200720
 
 	public function Run() {
 
 		//-- dissalow run this sample if not test mode enabled
 		if(!defined('SMART_FRAMEWORK_TEST_MODE') OR (SMART_FRAMEWORK_TEST_MODE !== true)) {
 			http_response_code(503);
-			echo \SmartComponents::http_message_503_serviceunavailable('ERROR: Test mode is disabled ...');
+			echo SmartComponents::http_message_503_serviceunavailable('ERROR: Test mode is disabled ...');
 			return;
 		} //end if
 		//--
 		if(!defined('SMART_FRAMEWORK_TESTUNIT_ALLOW_WEBDAV_TESTS') OR (SMART_FRAMEWORK_TESTUNIT_ALLOW_WEBDAV_TESTS !== true)) {
 			http_response_code(503);
-			echo \SmartComponents::http_message_503_serviceunavailable('ERROR: CardDAV Test mode is disabled ...');
+			echo SmartComponents::http_message_503_serviceunavailable('ERROR: CardDAV Test mode is disabled ...');
 			return;
 		} //end if
 		//--
 
 		//--
-		if(!defined('SMART_SOFTWARE_URL_ALLOW_PATHINFO') OR ((int)SMART_SOFTWARE_URL_ALLOW_PATHINFO < 1)) {
+		if(SmartFrameworkRuntime::PathInfo_Enabled() !== true) {
 			http_response_code(500);
-			echo \SmartComponents::http_message_500_internalerror('ERROR: CardDAV requires PathInfo to be enabled into init.php for Admin Area ...');
+			echo SmartComponents::http_message_500_internalerror('ERROR: CardDAV requires PathInfo to be enabled into init.php for Admin Area ...');
+			return;
+		} //end if
+		//--
+		if(strpos((string)SmartUtils::get_server_current_request_uri(), '/~') === false) {
+			http_response_code(400);
+			echo SmartComponents::http_message_400_badrequest('ERROR: CardDAV requires to be accessed in a special mode: `/~`');
 			return;
 		} //end if
 		//--

@@ -62,7 +62,7 @@ if(defined('SMART_FRAMEWORK_RELEASE_TAGVERSION') || defined('SMART_FRAMEWORK_REL
 } //end if
 //--
 define('SMART_FRAMEWORK_RELEASE_TAGVERSION', 'v.7.2.1'); 	// tag version
-define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.07.17'); 	// tag release-date
+define('SMART_FRAMEWORK_RELEASE_VERSION', 'r.2020.07.20'); 	// tag release-date
 define('SMART_FRAMEWORK_RELEASE_URL', 'http://demo.unix-world.org/smart-framework/');
 //--
 if(defined('SMART_FRAMEWORK_IPDETECT_CUSTOM')) {
@@ -1030,7 +1030,7 @@ final class SmartFrameworkRegistry {
  * @ignore		THIS CLASS IS FOR INTERNAL USE ONLY !!!
  *
  * @depends 	classes: Smart, SmartUtils
- * @version		v.20200617
+ * @version		v.20200720
  * @package 	Application
  *
  */
@@ -1969,14 +1969,14 @@ final class SmartFrameworkRuntime {
 				//--
 				if((string)$the_current_script == 'index.php') {
 					if(self::PathInfo_Enabled() === true) {
-						if((string)$_SERVER['PATH_INFO'] != '/') { // avoid common mistake to use just a / after script.php
+						if(((string)$_SERVER['PATH_INFO'] != '/') AND (strpos((string)$_SERVER['PATH_INFO'], '/~') !== false)) { // avoid common mistake to use just a / after script.php + detect tilda path
 							return;
 						} //end if
 					} //end if
 				//	$the_current_script = ''; // reset index.php part of URL
 				} elseif((string)$the_current_script == 'admin.php') {
 					if(self::PathInfo_Enabled() === true) {
-						if((string)$_SERVER['PATH_INFO'] != '/') { // avoid common mistake to use just a / after script.php
+						if(((string)$_SERVER['PATH_INFO'] != '/') AND (strpos((string)$_SERVER['PATH_INFO'], '/~') !== false)) { // avoid common mistake to use just a / after script.php + detect tilda path
 							return;
 						} //end if
 					} //end if

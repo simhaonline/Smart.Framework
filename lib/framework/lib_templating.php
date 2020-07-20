@@ -59,11 +59,11 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartFileSystem, SmartFileSysUtils
- * @version 	v.20200718
+ * @version 	v.20200719
  * @package 	@Core:TemplatingEngine
  *
  */
-final class SmartMarkersTemplating { // r.20200717
+final class SmartMarkersTemplating { // syntax: r.20200717
 
 	// ::
 
@@ -1014,7 +1014,7 @@ final class SmartMarkersTemplating { // r.20200717
 	[###MARKER|html|nl2br|js|url###]
 	[###MARKER|css###]
 	*/
-	private static function replace_marker(string $mtemplate, string $key, string $val) { // v.20200121
+	private static function replace_marker(string $mtemplate, string $key, string $val) {
 		//-- {{{SYNC-TPL-EXPR-MARKER}}}
 		if(((string)$key != '') AND (preg_match('/^[A-Z0-9_\-\.]+$/', (string)$key)) AND (strpos((string)$mtemplate, '[###'.$key) !== false)) {
 			//--
@@ -1648,7 +1648,7 @@ final class SmartMarkersTemplating { // r.20200717
 							if(strpos((string)$mks_line, '[%%%LOOP:') !== false) {
 								$mks_line = (string) self::process_loop_syntax(
 									(string) $mks_line,
-									(array)$y_arr_vars,
+									(array) $y_arr_vars,
 									(int) $level
 								);
 							} //end if
@@ -1751,6 +1751,14 @@ final class SmartMarkersTemplating { // r.20200717
 									(array)  $tmp_arr_context
 								);
 								$tmp_arr_context = array(); // reset
+							} //end if
+							//-- process 2nd Level LOOP inside LOOP for Associative Array: base vars
+							if(strpos((string)$mks_line, '[%%%LOOP:') !== false) {
+								$mks_line = (string) self::process_loop_syntax(
+									(string) $mks_line,
+									(array) $y_arr_vars,
+									(int) $level
+								);
 							} //end if
 							//-- process 2nd Level LOOP inside LOOP for Associative Array
 							if((strpos((string)$mks_line, '[%%%LOOP:') !== false) AND (is_array($zval))) {

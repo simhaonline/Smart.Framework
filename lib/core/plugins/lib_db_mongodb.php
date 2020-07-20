@@ -49,8 +49,8 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @hints 		Important: MongoDB database specifies that max BSON document size is 16 megabytes and supports no more than 100 levels of nesting, thus this limit cannot be exceeded from PHP side when creating new mongodb documents: https://docs.mongodb.com/manual/reference/limits/ ; To store documents larger than the maximum size, MongoDB provides the GridFS API
  *
  * @access 		PUBLIC
- * @depends 	extensions: PHP MongoDB (v.1.1.0 or later) ; classes: Smart
- * @version 	v.20200718
+ * @depends 	extensions: PHP MongoDB ; classes: Smart
+ * @version 	v.20200720
  * @package 	Plugins:Database:MongoDB
  *
  * @throws 		\Exception : Depending how this class it is constructed it may throw Exception or Raise Fatal Error
@@ -88,10 +88,19 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	private $fatal_err = true;
 
 	/** @var string */
+	private $connex_typ = '';
+
+	/** @var string */
 	private $connex_key = '';
 
 	/** @var boolean */
 	private $connected = false;
+
+	/** @var string */
+	private $min_ver_srv = '2.6.0'; // min mongodb server version supported
+
+	/** @var string */
+	private $min_ver_ext = '1.1.0'; // min mongodb php extension version supported
 
 
 	//======================================================
@@ -104,13 +113,13 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * @param 	BOOLEAN 	$y_fatal_err 		:: *Optional* ; Set if Errors handling mode ; Default is TRUE ; if set to FALSE will throw Exception instead of Raise a Fatal Error
 	 *
 	 */
-	public function __construct(array $y_configs_arr=[], $y_fatal_err=true) {
+	public function __construct(array $y_configs_arr=[], bool $y_fatal_err=true) {
 
 		//--
 		$this->extver = (string) phpversion('mongodb');
 		//--
-		if(version_compare((string)$this->extver, '1.1.0') < 0) { // to have all features req. 1.1.0
-			$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.1.1.0 or later. The current version is: '.$this->extver);
+		if(version_compare((string)$this->extver, (string)$this->min_ver_ext) < 0) {
+			$this->error('[INIT]', 'PHP MongoDB Extension', 'CHECK PHP MongoDB Version', 'This version of MongoDB Client Library needs MongoDB PHP Extension v.'.$this->min_ver_ext.' or later. The current version is: '.$this->extver);
 			return;
 		} //end if
 		//--
@@ -140,6 +149,8 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 			$this->error('[CHECK-CONFIGS]', 'MongoDB Configuration Init', 'CHECK Connection Config', 'Empty Configuration');
 			return;
 		} //end if
+		//--
+		$this->connex_typ = (string) $type;
 		//--
 		if((string)$password != '') {
 			$password = (string) base64_decode((string)$password);
@@ -252,7 +263,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 		//--
 
 		//--
-		$this->connect($type, $username, $password);
+		$this->connect((string)$type, (string)$username, (string)$password);
 		//--
 
 	} //END FUNCTION
@@ -268,7 +279,13 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	public function assign_uuid() {
 
 		//--
-		return (string) Smart::uuid_32();
+		if((string)$this->connex_typ == 'mongo-cluster') { // {{{SYNC-MONGODB-CONN-CLUSTER}}}
+			$uuid = (string) Smart::uuid_34();
+		} else {
+			$uuid = (string) Smart::uuid_32();
+		} //end if else
+		//--
+		return (string) $uuid;
 		//--
 
 	} //END FUNCTION
@@ -329,11 +346,43 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 
 	//======================================================
 	/**
+	 * Get the MongoDB ObjectId by Id
+	 *
+	 * @return 	MIXED						:: return a MongoDB ObjectId as OBJECT or STRING if invalid Id
+	 */
+	public function getObjectId(string $id) {
+		//--
+		$id = (string) trim((string)$id);
+		if((string)$id == '') {
+			return '';
+		} //end if
+		//--
+		$objMongoId = (string) $id;
+		$err = '';
+		//--
+		if(class_exists('\\MongoDB\\BSON\\ObjectId')) {
+			try {
+				$objMongoId = new \MongoDB\BSON\ObjectId((string)$id);
+			} catch(\Exception $e) {
+				$err = (string) $e->getMessage(); // this must be non-fatal as if malformed string is sent this class will throw
+			} //end if else
+		} else {
+			$err = 'MongoDB ObjectId Class not found ...';
+		} //end if else
+		//--
+		return $objMongoId; // mixed: Object or String
+		//--
+	} //END FUNCTION
+	//======================================================
+
+
+	//======================================================
+	/**
 	 * Get the MongoDB FTS (Full Text Search) Dictionary by Two Letter language code (ISO 639-1)
 	 *
 	 * @return 	STRING						:: dictionary name (ex: 'english' - if available or 'none' - if n/a)
 	 */
-	public function getFtsDictionaryByLang($lang) {
+	public function getFtsDictionaryByLang(string $lang) {
 		//--
 		$dictionary = '';
 		//--
@@ -513,7 +562,21 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * </code>
 	 *
 	 * <code>
-	 * // Sample Update
+	 * // Sample Complete Update (Replace) ; it will completely replace the document with a new one, except the _id UID key, by _id ; works only with one document ; if more documents match the criteria, only the first one will be updated
+	 * $doc = [];
+	 * $doc['name'] = 'My New Name';
+	 * $doc['description'] = 'Some description goes here ...';
+	 * $update = $mongo->update(
+	 * 		'myTestCollection',
+	 * 		[ '_id' => 'XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX' ], 			// filter (update only this)
+	 * 		[ 0 => (array) $doc ]										// replace array
+	 * 	);
+	 * $doc = [];
+	 * var_dump($update);
+	 * </code>
+	 *
+	 * <code>
+	 * // Sample Partial Update, will update one or many: name and description ; if other keys exist in the stored document they remain unchanged
 	 * $doc = [];
 	 * $doc['name'] = 'My New Name';
 	 * $doc['description'] = 'Some description goes here ...';
@@ -579,7 +642,7 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * </code>
 	 *
 	 */
-	public function __call($method, array $args) {
+	public function __call(string $method, array $args) {
 
 		//--
 		$this->collection = ''; // initialize and clear
@@ -839,20 +902,38 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 							'upsert' 	=> false // if filter does not match an existing document, do not insert a single document and do no update
 						];
 					} //end if else
-					if((Smart::array_size($args[2]) > 0) AND (Smart::array_type_test($args[2]) == 2)) { // expects associative array and the 3rd param as empty
+					if((Smart::array_size($args[2]) == 1) AND (Smart::array_type_test($args[2]) == 1) AND (Smart::array_size($args[2][0]) > 0) AND (Smart::array_type_test($args[2][0]) == 2)) { // expects non-associative array with first key [0] as an associative array and the 3rd param as empty
+						$opts['multi'] = false; // this is a requirement for this case to avoid Exception: `Replacement document conflicts with true "multi" option`
+						if(!empty($args[3])) {
+							$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Too many parameters for Update Replace ...', $args);
+							return array();
+							break;
+						} //end if
+						if(array_key_exists('_id', (array)$args[2][0])) {
+							$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: The Update Replace document cannot contain the special UID key: `_id` ...', $args);
+							return array();
+							break;
+						} //end if
+						$write->update( // completely replaces the $doc, except the _id
+							(array) $args[1], 									// filter
+							(array) $args[2][0], 								// must be in format: (array)$doc as $args[2] is expected to be: [ 0 => (array)$doc ]
+							(array) $opts										// options
+						);
+						$num_docs++;
+					} elseif((Smart::array_size($args[2]) > 0) AND (Smart::array_type_test($args[2]) == 2)) { // expects associative array and the 3rd param as empty
 						if(!empty($args[3])) {
 							$this->error((string)$this->connex_key, 'MongoDB Write', 'MongoDB->'.$method.'() :: '.$this->collection, 'ERROR: Document must be combined with Operation if the associative array is passed as operation ...', $args);
 							return array();
 							break;
 						} //end if
-						$write->update(
+						$write->update( // only update fields from $doc
 							(array) $args[1], 									// filter
 							(array) $args[2], 									// must be in format: [ '$set|$inc|$mul|...' => (array)$doc ]
 							(array) $opts										// options
 						);
 						$num_docs++;
 					} elseif(Smart::array_size($args[3]) > 0) { // non-associative array mapped to $args[2] operation
-						$write->update(
+						$write->update( // only update fields from $doc
 							(array) $args[1], 									// filter
 							(array) [ (string)$args[2] => (array)$args[3] ], 	// must be in format: [ '$set|$inc|$mul|...' => (array)$doc ]
 							(array) $opts										// options
@@ -1133,11 +1214,11 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * @internal
 	 *
 	 */
-	private function connect($type, $username, $password) {
+	private function connect(string $type, string $username, string $password) {
 
 		//--
 		$replica = false;
-		if((string)$type == 'mongo-cluster') { // cluster (sharding)
+		if((string)$type == 'mongo-cluster') { // cluster (sharding) ; {{{SYNC-MONGODB-CONN-CLUSTER}}}
 			$concern_rd = 'majority'; // requires the servers to be started with --enableMajorityReadConcern
 			$concern_wr = 'majority'; // make sense if with a sharding cluster
 		} elseif(strpos((string)$type, 'mongo-replica-set:') !== false) { // replica set
@@ -1213,10 +1294,9 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 			//--
 			$this->get_server_version(); // this will register the $this->srvver if req.
 			//--
-			$min_ver_srv = '2.6.0';
-			if(((string)$this->srvver == '') OR (version_compare((string)$min_ver_srv, (string)$this->srvver) > 0)) {
+			if(((string)$this->srvver == '') OR (version_compare((string)$this->min_ver_srv, (string)$this->srvver) > 0)) {
 				$this->mongodbclient = null;
-				$this->error((string)$this->connex_key, 'MongoDB Manager', 'Invalid MongoDB Server Version on '.$this->server, 'ERROR: Minimum MongoDB supported Server version is: '.$min_ver_srv.' but this Server version is: '.$this->srvver);
+				$this->error((string)$this->connex_key, 'MongoDB Manager', 'Invalid MongoDB Server Version on '.$this->server, 'ERROR: Minimum MongoDB supported Server version is: '.$this->min_ver_srv.' but this Server version is: '.$this->srvver);
 				return false;
 			} //end if
 			//--
@@ -1289,7 +1369,9 @@ final class SmartMongoDb { // !!! Use no paranthesis after magic methods doc to 
 	 * Displays the MongoDB Errors and HALT EXECUTION (This have to be a FATAL ERROR as it occur when a FATAL MongoDB ERROR happens or when a Data Query fails)
 	 * PRIVATE
 	 *
+	 * @param STRING $y_conhash :: Connection Hash or a message key if not connected
 	 * @param STRING $y_area :: The Area
+	 * @param STRING $y_info :: The Extra Info
 	 * @param STRING $y_error_message :: The Error Message to Display
 	 * @param STRING $y_query :: The query
 	 * @param STRING $y_warning :: The Warning Title
