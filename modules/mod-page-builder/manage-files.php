@@ -23,7 +23,7 @@ define('SMART_APP_MODULE_DIRECT_OUTPUT', true); // do direct output
  */
 class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmDavFs {
 
-	// v.20200720
+	// v.20200721
 
 	public function Run() {
 
@@ -63,9 +63,11 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmDavFs 
 		if((string)ltrim((string)$this->RequestPathGet(), '/') != '') {
 			$txt_lnk = 'PageBuilder.Files :: Home';
 			$url_lnk = (string) $url_base;
+			$img_lnk = 'modules/mod-page-builder/libs/views/manager/img/webdav-files.svg';
 		} else {
-			$txt_lnk = 'PageBuilder.Manager :: Home';
+			$txt_lnk = 'PageBuilder Objects :: Home';
 			$url_lnk = (string) SmartUtils::get_server_current_url().SmartUtils::get_server_current_script().'?/page/page-builder.manage';
+			$img_lnk = 'modules/mod-page-builder/libs/views/manager/img/webdav-objects.svg';
 		} //end if else
 		//--
 		$this->DavFsRunServer(
@@ -76,7 +78,7 @@ class SmartAppAdminController extends \SmartModExtLib\Webdav\ControllerAdmDavFs 
 			'[PATH]:'.$dav_root_folder,
 			(string) $url_lnk,
 			(string) $txt_lnk,
-			'modules/mod-webdav/libs/img/files.svg'
+			(string) $img_lnk
 		);
 		//--
 

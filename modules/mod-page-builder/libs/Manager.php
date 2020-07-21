@@ -49,7 +49,7 @@ $administrative_privileges['pagebuilder-delete'] 		= 'WebPages // Delete';
  * @access 		private
  * @internal
  *
- * @version 	v.20200717
+ * @version 	v.20200721
  * @package 	PageBuilder
  *
  */
@@ -66,7 +66,8 @@ final class Manager {
 	private static $ModulePath = 'modules/mod-page-builder/';
 	private static $ModuleScript = 'admin.php';
 	private static $ModulePageURLParam = 'page';
-	private static $ModulePageURLId = 'page-builder.manage'; // if used directly, must be escaped with \Smart::escape_url()
+	private static $ModulePageURLId = 'page-builder.manage';
+	private static $ModulePageFilesURLId = 'page-builder.manage-files';
 
 
 	//==================================================================
@@ -85,7 +86,8 @@ final class Manager {
 		$text['ttl_edtc'] 			= 'Edit Object Code';
 		$text['ttl_edtac'] 			= 'Edit Object Data';
 		$text['ttl_del'] 			= 'Delete this Object';
-		$text['ttl_ch_list'] 		= 'Change List Mode';
+		$text['ttl_ch_list'] 		= 'PageBuilder Objects - Change List Mode';
+		$text['ttl_webdav'] 		= 'PageBuilder Files - WebDAV';
 		$text['ttl_reset_hits'] 	= 'Reset Hit Counter on All PageBuilder Objects';
 		//-- buttons
 		$text['search']				= 'Filter';
@@ -1951,6 +1953,8 @@ final class Manager {
 				'LIST-CRR-LINK' 	=> (string) $the_link_list,
 				'LIST-ALT-LINK' 	=> (string) $the_alt_link_list,
 				'TXT-ALT-LINK' 		=> (string) self::text('ttl_ch_list', false),
+				'TXT-WEBDAV-LINK' 	=> (string) self::text('ttl_webdav', false),
+				'LIST-WEBDAV-LINK' 	=> (string) self::composeWebdavUrl(),
 				'TXT-RESET-COUNTER' => (string) self::text('ttl_reset_hits', false),
 				'COLLAPSE' 			=> (string) $collapse,
 				'FILTER-COLLAPSE' 	=> (string) $fcollapse,
@@ -2038,6 +2042,8 @@ final class Manager {
 				'LIST-CRR-LINK' 	=> (string) $the_back_link_list,
 				'LIST-ALT-LINK' 	=> (string) $the_alt_link_list,
 				'TXT-ALT-LINK' 		=> (string) self::text('ttl_ch_list', false),
+				'TXT-WEBDAV-LINK' 	=> (string) self::text('ttl_webdav', false),
+				'LIST-WEBDAV-LINK' 	=> (string) self::composeWebdavUrl(),
 				'TXT-RESET-COUNTER' => (string) self::text('ttl_reset_hits', false),
 				'PATH-MODULE' 		=> (string) self::$ModulePath,
 				'LIST-TTL' 			=> (string) self::text('ttl_list', false),
@@ -2434,6 +2440,15 @@ final class Manager {
 			(string) self::$ModuleScript.'?/'.\Smart::escape_url(self::$ModulePageURLParam).'/'.\Smart::escape_url(self::$ModulePageURLId),
 			(string) $y_suffix
 		);
+		//--
+	} //END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	private static function composeWebdavUrl() {
+		//--
+		return (string) self::$ModuleScript.'/'.\Smart::escape_url(self::$ModulePageURLParam).'/'.\Smart::escape_url(self::$ModulePageFilesURLId).'/~';
 		//--
 	} //END FUNCTION
 	//==================================================================

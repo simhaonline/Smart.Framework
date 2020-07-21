@@ -51,6 +51,12 @@
 		&nbsp;
 	</td>
 	<td style="width:32px;">
+		<div id="pgbld-btn-alt-list" style="color:#CCCCCC; cursor:pointer;" title="[###TXT-WEBDAV-LINK|html###]" onclick="self.location='[###LIST-WEBDAV-LINK|js|html###]';"><i class="sfi sfi-folder-open sfi-3x"></i></div>
+	</td>
+	<td style="width:16px;">
+		&nbsp;
+	</td>
+	<td style="width:32px;">
 		[%%%IF:IS-DEV-MODE:==yes;%%%]
 		<div id="pgbld-btn-reset-cnt" style="color:#CCCCCC; cursor:pointer;" title="[###TXT-RESET-COUNTER|html###]" onclick="SmartJS_BrowserUtils.confirm_Dialog('<i class=&quot;sfi sfi-meter2&quot;></i> &nbsp; Do you want to Reset the Hit Counter on All PageBuilder Objects ?', function(){ SmartJS_BrowserUtils.Submit_Form_By_Ajax(false, 'admin.php?page=page-builder.manage&op=reset-counter&back=[###LIST-CRR-LINK|url|js###]', 'yes'); }, 'Reset the PageBuilder Objects Hit Counter', 550, 155); return false;"><i class="sfi sfi-meter2 sfi-3x"></i></div>
 		[%%%ELSE:IS-DEV-MODE%%%]
