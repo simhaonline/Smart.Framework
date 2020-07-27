@@ -1,6 +1,0 @@
-
-# Smart.Framework.Modules: App r.20200721 #
-
-// r.7.2.1 / smart.framework.v.7.2
-
-###

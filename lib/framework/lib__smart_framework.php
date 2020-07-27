@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20200630
+ * @version 	v.20200723
  * @package 	development:Application
  *
  */
@@ -847,13 +847,13 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 	 *
 	 * @param 	STRING 		$name		:: The cookie name
 	 * @param 	STRING 		$data		:: The cookie data
-	 * @param 	STRING 		$expire		:: The cookie expire time (zero for session cookies)
+	 * @param 	STRING 		$expire		:: The cookie expire time (zero for session cookies) ; default is zero
 	 * @param 	STRING 		$path		:: The cookie path ; default is /
 	 * @param 	STRING 		$domain		:: The cookie domain ; default is @ (will get as it is set in SMART_FRAMEWORK_UNIQUE_ID_COOKIE_DOMAIN)
 	 *
 	 * @return 	BOOLEAN					:: TRUE if Set, FALSE if Not
 	 */
-	final public function CookieVarSet($name, $data, $expire, $path='/', $domain='@') {
+	final public function CookieVarSet($name, $data, $expire=0, $path='/', $domain='@') {
 		//--
 		return (bool) SmartUtils::set_cookie($name, $data, $expire, $path, $domain);
 		//--
