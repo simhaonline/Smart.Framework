@@ -25,15 +25,15 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200717
+ * @version 	v.20200806
  * @package 	development:modules:PageBuilder
  *
  */
 abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\AbstractFrontendPageBuilder {
 
 
-	protected $max_depth 		= 2; 						// 0=page, 1=segment, 2=sub-segment (max allow depth)
-	protected $cache_time 		= 3600; 					// cache time in seconds
+	private $max_depth 			= 2; 						// 0=page, 1=segment, 2=sub-segment (max allow depth)
+	private $cache_time 		= 3600; 					// cache time in seconds ; can be overriden by define('SMART_PAGEBUILDER_RENDER_CACHE_TIME', 7200); // min 1 minute ; max 1 year
 
 	private $crr_lang 			= '';						// current language
 
@@ -44,7 +44,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 	private $auth_required 		= 0; 						// 0: no auth ; if > 0, will req. auth
 	private $recursion_control 	= 0; 						// initialize
 	private $current_page 		= []; 						// array of page load
-	private $page_params 		= [];						// array of important page params to pass from controller to plugins
+	private $page_params 		= [];						// array of level zero export page params to pass from controller to plugins and @fields
 
 	private $page_is_cached 	= false; 					// true if found in pcache
 	private $segments_cached 	= []; 						// registers cached segments
@@ -68,7 +68,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		//--
 
 		//--
-		$this->max_depth = $this->fixRenderMaxDepth($this->max_depth);
+		$this->max_depth = (int) $this->max_depth;
 		//--
 
 		//--
@@ -81,7 +81,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		//--
 		$page_id = (string) \trim((string)$page_id);
 		//--
-		if(((string)$page_id == '') OR (\substr((string)$page_id, 0, 1) == '#')) {
+		if(((string)$page_id == '') OR ((string)\substr((string)$page_id, 0, 1) == '#')) {
 			$this->PageViewSetErrorStatus(404, 'NOTICE: Empty / Invalid PageBuilder Page ID to Render ...');
 			return;
 		} //end if
@@ -171,7 +171,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 					'configs' 	=> (array) $this->PageViewGetCfgs(),
 					'vars' 		=> (array) $arr
 				], // this will het the full array with all page vars and configs
-				(int) $this->fixPCacheTime($this->cache_time)
+				(int) $this->getPCacheTime()
 			); // save arr vars structure to pcache
 			//--
 			if($result_pcached === true) {
@@ -233,7 +233,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		//--
 
 		//--
-		$this->max_depth = $this->fixRenderMaxDepth($this->max_depth);
+		$this->max_depth = (int) $this->max_depth;
 		//--
 
 		//--
@@ -246,7 +246,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		//--
 		$segment_id = (string) \trim((string)$segment_id);
 		//--
-		if(((string)$segment_id == '') OR (\substr((string)$segment_id, 0, 1) != '#')) {
+		if(((string)$segment_id == '') OR ((string)\substr((string)$segment_id, 0, 1) != '#')) {
 			$this->PageViewSetErrorStatus(500, 'WARNING: Empty / Invalid PageBuilder Segment ID to Render ...');
 			return '';
 		} //end if
@@ -301,7 +301,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 				[
 					'vars' => (array) $arr
 				], // this will het the full array with all page vars and configs
-				(int) $this->fixPCacheTime($this->cache_time)
+				(int) $this->getPCacheTime()
 			); // save arr vars structure to pcache
 			//--
 			if($result_pcached === true) {
@@ -348,7 +348,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 
 		//--
 		if((string)$this->ControllerGetParam('module-area') != 'index') {
-			$errmsg = 'ERROR: Invalid Area for PageBuilde Abstract Controller ...';
+			$errmsg = 'ERROR: Invalid Area for PageBuilder Abstract Controller ...';
 			$this->PageViewSetErrorStatus(502, $errmsg);
 			return (string) \SmartComponents::operation_error($errmsg);
 		} //end if
@@ -357,22 +357,49 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		//--
 		$segment_code = (string) \SmartMarkersTemplating::prepare_nosyntax_content($segment_code); // Safe Fix: comment out any of: [###*###] [%%%*%%%] [@@@*@@@]
 		//--
-		if((\Smart::array_size($arr_markers) > 0) AND (\strpos((string)$segment_code, '{{=#') !== false)) { // if we provide express markers for replacing
+		if(\Smart::array_size($arr_markers) > 0) { // if we provide express markers for replacing
 			//--
-			$segment_code = (string) \str_replace( // Pre-Render: replace {{=#MARKER|escapings#=}} with [###MARKER|escapings###]
-				[
-					'{{=#',
-					'#=}}'
-				],
-				[
-					'[###',
-					'###]'
-				],
-				(string) $segment_code
-			);
+			if(\strpos((string)$segment_code, '{{=%') !== false) {
+				$segment_code = (string) \str_replace( // Pre-Render: replace IF/ELSE {{=%IF|ELSE|/IF:(condition);%=}} with [%%%IF|ELSE|/IF:(condition);%%%]
+					[
+						'{{=%IF:',
+						'{{=%ELSE:',
+						'{{=%/IF:',
+						'%=}}'
+					],
+					[
+						'[%%%IF:',
+						'[%%%ELSE:',
+						'[%%%/IF:',
+						'%%%]'
+					],
+					(string) $segment_code
+				);
+			} //end if
+			//--
+			if(\strpos((string)$segment_code, '{{=#') !== false) {
+				$segment_code = (string) \str_replace( // Pre-Render: replace MARKERS as: {{=#MARKER|escapings#=}} with [###MARKER|escapings###]
+					[
+						'{{=#',
+						'#=}}'
+					],
+					[
+						'[###',
+						'###]'
+					],
+					(string) $segment_code
+				);
+			} //end if
 			//--
 			$segment_code = (string) \SmartMarkersTemplating::render_template((string)$segment_code, (array)$arr_markers, 'yes'); // ignore if empty
 			//--
+		} //end if
+		//--
+		if((\strpos((string)$segment_code, '{{=%') !== false) OR (\strpos((string)$segment_code, '{{=#') !== false)) {
+			$errmsg = 'ERROR: A PageBuilder segment contains Marker-TPL Syntax that could not be solved because some Marker variables are missing ...';
+			\Smart::log_warning($errmsg."\n".'--- Segment Code:'."\n".$segment_code);
+			$this->PageViewSetErrorStatus(500, $errmsg);
+			return (string) \SmartComponents::operation_error($errmsg);
 		} //end if
 		//--
 
@@ -388,31 +415,21 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 
 
 	//=====
-	private function fixRenderMaxDepth(int $maxdepth) {
+	private function getPCacheTime() {
 		//--
-		$maxdepth = (int) $maxdepth;
-		if($maxdepth <= 0) {
-			$maxdepth = 1;
-		} elseif($maxdepth > 3) {
-			$maxdepth = 3;
-		} //end if
-		//--
-		return (int) $maxdepth;
-		//--
-	} //END FUNCTION
-	//=====
-
-
-	//=====
-	private function fixPCacheTime(int $time) {
-		//--
-		$time = (int) $time;
+		if(\defined('\\SMART_PAGEBUILDER_RENDER_CACHE_TIME')) {
+			$time = (int) \SMART_PAGEBUILDER_RENDER_CACHE_TIME;
+		} else {
+			$time = (int) $this->cache_time;
+		} //end if else
 		//--
 		if($time < (60 * 1)) {
 			$time = (int) 60 * 1; // min: 1 minute
 		} elseif($time > (60 * 60 * 24 * 366)) {
 			$time = (int) 60 * 60 * 24 * 366; // max: 366 days
 		} //end if
+		//--
+		$this->cache_time = (int) $time; // fix back
 		//--
 		return (int) $time;
 		//--
@@ -718,7 +735,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 	//=====
 	// load page or segment ; page is level -1 ; segment is higher level
 	// the execution of this method is pcached thus it never returns to re-render if pcached
-	private function loadSegmentOrPage(string $id, string $type, int $level=-1) {
+	private function loadSegmentOrPage(string $id, string $type, int $level=-1, array $custom_arr_render=[]) {
 
 		//--
 		$this->recursion_control = (int) \max($this->recursion_control, $level);
@@ -748,7 +765,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		//--
 		switch((string)$type) {
 			case 'page':
-				$this->current_page[] = (string)$id;
+				$this->current_page[] = (string) $id;
 				break;
 			case 'segment':
 				break;
@@ -881,6 +898,13 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 			$yaml = array();
 		} //end if
 		//--
+		if(!\is_array($yaml)) {
+			$yaml = [];
+		} //end if
+		if(!\is_array($yaml['RENDER'])) {
+			$yaml['RENDER'] = [];
+		} //end if
+		//--
 		if($this->debug === true) {
 			if($this->IfDebug()) {
 				$this->SetDebugData('Page / Segment ['.(string)$id.'] Runtime Data', $yaml);
@@ -888,17 +912,27 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		} //end if
 		//--
 
+		//-- feature: can use custom render vars as defined in prev level, but not for zero level
+		if($level > 0) {
+			if((string)$type == 'segment') {
+				if(\Smart::array_size($custom_arr_render) > 0) {
+					$yaml['RENDER'] = (array) \array_merge((array)$yaml['RENDER'], (array)$custom_arr_render); // the custom array rewrites the original array
+				} //end if
+			} //end if
+		} //end if
+		//--
+
 		//-- pre-parse
 		$preparse_arr = [];
-		if(\is_array($yaml['RENDER'])) {
+		if(\Smart::array_size($yaml['RENDER']) > 0) {
 			foreach((array)$yaml['RENDER'] as $key => $val) {
 				$key = (string) \strtoupper((string)\trim((string)$key));
 				if(((string)$key != '') AND (\Smart::array_size($val) > 0)) {
 					$preparse_arr[(string)$key] = [];
 					foreach((array)$val as $k => $v) {
 						$k = (string) \trim((string)$k);
-						if((\strpos((string)$k, 'content') === 0) AND (\Smart::array_size($v) > 0)) {
-							if(((string)$v['type'] === 'value') OR ((string)$v['type'] === 'translation') OR ((string)$v['type'] === 'segment') OR ((string)$v['type'] === 'plugin')) {
+						if((\strpos((string)$k, 'content') === 0) AND (\Smart::array_size($v) > 0)) { // can be: 'content', 'content-1', ..., 'content-n'
+							if(((string)$v['type'] === 'field') OR ((string)$v['type'] === 'value') OR ((string)$v['type'] === 'translation') OR ((string)$v['type'] === 'segment') OR ((string)$v['type'] === 'plugin')) {
 								$preparse_arr[(string)$key][] = [(string)$k => $v];
 							} else {
 								\Smart::raise_error(
@@ -988,6 +1022,12 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		} //end if
 		//--
 
+		//--
+		if($level === 0) {
+			$this->page_params = (array) $data_arr;
+		} //end if
+		//--
+
 		//-- parse
 		$data_arr['render'] = [];
 		//--
@@ -1026,7 +1066,46 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 										'id' 		=> (string) $v['id']
 									];
 									//--
-									if((string)$v['type'] == 'value') {
+									if((string)$v['type'] == 'field') { // {{{SYNC-PAGEBUILDER-OBJ-EXPORT-LEVEL0-FIELDS}}} ; these are the fields from level zero object
+										//--
+										switch((string)\strtolower((string)\trim((string)$arr_tmp_item['id']))) {
+											case '@id':
+												$arr_tmp_item['id'] = (string) $this->page_params['id'];
+												break;
+											case '@name':
+												$arr_tmp_item['id'] = (string) $this->page_params['name'];
+												break;
+											case '@auth':
+												$arr_tmp_item['id'] = (string) $this->page_params['auth'];
+												break;
+											case '@type':
+												$arr_tmp_item['id'] = (string) $this->page_params['type'];
+												break;
+											case '@mode':
+												$arr_tmp_item['id'] = (string) $this->page_params['mode'];
+												break;
+											case '@ctrl-area':
+												$arr_tmp_item['id'] = (string) $this->page_params['ctrl-area'];
+												break;
+											case '@layout':
+												$arr_tmp_item['id'] = (string) $this->page_params['layout'];
+												break;
+											case '@date-created':
+												$arr_tmp_item['id'] = (string) $this->page_params['publisher-date-created'];
+												break;
+											case '@date-modified':
+												$arr_tmp_item['id'] = (string) $this->page_params['publisher-date-modified'];
+												break;
+											case '@author-id': // aaa
+												$arr_tmp_item['id'] = (string) $this->friendlyAuthorNameById((string)$this->page_params['publisher-id']);
+												break;
+											default:
+												// nothing, leave as is
+										} //end switch
+										//--
+										$arr_tmp_item = (array) $this->loadValue((string)$id, (array)$v['config'], (array)$arr_tmp_item, []);
+										//--
+									} elseif((string)$v['type'] == 'value') {
 										//--
 										$arr_tmp_item = (array) $this->loadValue((string)$id, (array)$v['config'], (array)$arr_tmp_item, (array)(\is_array($v['translations']) ? $v['translations'] : []));
 										//--
@@ -1047,7 +1126,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 											return array();
 										} //end if
 										//--
-										$arr_tmp_item = (array) $this->loadSegmentOrPage((string)$arr_tmp_item['id'], 'segment', $level);
+										$arr_tmp_item = (array) $this->loadSegmentOrPage((string)$arr_tmp_item['id'], 'segment', (int)$level, (array)(\is_array($v['render']) ? $v['render'] : []));
 										//--
 									} elseif((string)$v['type'] == 'plugin') {
 										//-- config is available just for plugin
@@ -1277,7 +1356,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 			//--
 		} else {
 			//--
-			if(\substr((string)$data_arr['id'], 0, 1) != '#') { // on levels 1+ allow just segments !!!
+			if((string)\substr((string)$data_arr['id'], 0, 1) != '#') { // on levels 1+ allow just segments !!!
 				$this->PageViewSetErrorStatus(500, 'Invalid Segment to Render on Level: '.(int)$level);
 				\Smart::log_warning('PageBuilder: Invalid Segment to Render on Page/Segment: '.(string)$id.' ; Level: '.(int)$level);
 				return array();
@@ -1333,13 +1412,13 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 										//--
 										if(\is_subclass_of((string)$plugin_class, '\\SmartModExtLib\\PageBuilder\\AbstractFrontendPlugin')) {
 											//--
-											$plugin_obj = new $plugin_class( // fix w. SmartAbstractAppController r.20200121
+											$plugin_obj = new $plugin_class( // fix w. SmartAbstractAppController r.20200121 and later
 												(string) $plugin_modpath, // this should be the module path to plugin's module
 												(string) $this->ControllerGetParam('controller'), // this is the controller path where plugin runs into (it can be used to re-build the path to the current module)
 												(string) $this->ControllerGetParam('url-page'), // the URL Page Param
 												(string) 'index' // $this->ControllerGetParam('module-area') // the hard-coded Area
 											);
-											$plugin_obj->initPlugin((string)$plugin_fname, (array)$plugin_cfg, (string)$this->ControllerGetParam('module-path'), (string)$id, (array)$data_arr); // initialize before run !
+											$plugin_obj->initPlugin((string)$plugin_fname, (array)$plugin_cfg, (string)$this->ControllerGetParam('module-path'), (array)$this->page_params, (array)$data_arr); // initialize before run !
 											//--
 											$plugin_test_init = $plugin_obj->Initialize(); // pre-run
 											if($plugin_test_init !== false) {
@@ -1464,7 +1543,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 													//--
 												} else {
 													//--
-													\Smart::log_notice('PageBuilder: Render Template ERROR: Unused Render Marker: ['.(string)$key.'] @ '.(string)$data_arr['id'].'/'.(string)$val[$i]['id'].' ('.(string)$val[$i]['type'].'/'.'PLUGIN'.') on Page/Segment: '.(string)$id.' ; Level: '.(int)$level);
+													\Smart::log_notice('PageBuilder: Render Template WARNING: Unused Render Marker (Plugin): ['.(string)$key.'] @ '.(string)$data_arr['id'].'/'.(string)$val[$i]['id'].' ('.(string)$val[$i]['type'].'/'.'PLUGIN'.') on Page/Segment: '.(string)$id.' ; Level: '.(int)$level);
 													//--
 												} //end if
 												//--
@@ -1503,7 +1582,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 						} else { // page / segment
 							//--
 							if(\is_array($val[$i]['render'])) {
-								$val[$i] = (array) $this->doRenderObject($id, $val[$i], $level);
+								$val[$i] = (array) $this->doRenderObject((string)$id, (array)$val[$i], (int)$level);
 							} //end if
 							//--
 							if((string)$val[$i]['mode'] == 'settings') {
@@ -1527,7 +1606,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 										//--
 									} else {
 										//--
-										\Smart::log_notice('PageBuilder: Render Template ERROR: Unused Render Marker: ['.(string)$key.'] @ '.(string)$data_arr['id'].'/'.(string)$val[$i]['id'].' ('.(string)$val[$i]['type'].'/'.$val[$i]['mode'].') on Page/Segment: '.(string)$id.' ; Level: '.(int)$level);
+										\Smart::log_notice('PageBuilder: Render Template WARNING: Unused Render Marker: ['.(string)$key.'] @ '.(string)$data_arr['id'].'/'.(string)$val[$i]['id'].' ('.(string)$val[$i]['type'].'/'.$val[$i]['mode'].') on Page/Segment: '.(string)$id.' ; Level: '.(int)$level);
 										//--
 									} //end if
 									//--
@@ -1608,6 +1687,25 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		} //end if else
 		//--
 
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	private function friendlyAuthorNameById(string $author_id) {
+		//--
+		$author_id = (string) \trim((string)$author_id);
+		//--
+		if((string)$author_id == '') {
+			$author_id = '???';
+		} //end if
+		//--
+		$author_id = (string) \str_replace(['-', '_'], ' ', (string)$author_id);
+		//--
+		$author_id = (string) \ucwords((string)$author_id);
+		//--
+		return (string) $author_id;
+		//--
 	} //END FUNCTION
 	//=====
 

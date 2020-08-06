@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200717
+ * @version 	v.20200806
  * @package 	development:modules:PageBuilder
  *
  */
@@ -36,8 +36,8 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 	private $plugin_name 				= 'ERROR-NO-PLUGIN-NAME';
 	private $plugin_config 				= array();
 	private $plugin_caller_module_path 	= 'modules/app/';
-	private $plugin_caller_object_id 		= '';
-	private $plugin_data 					= [];
+	private $plugin_caller_data 		= [];
+	private $plugin_data 				= [];
 
 
 	//=====
@@ -48,10 +48,14 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 	 * @internal
 	 *
 	 */
-	final public function initPlugin(string $plugin_name, array $plugin_config, string $plugin_caller_module_path, string $plugin_caller_object_id, array $plugin_data) {
+	final public function initPlugin(string $plugin_name, array $plugin_config, string $plugin_caller_module_path, array $plugin_caller_data, array $plugin_data) {
 		//--
 		if($this->plugin_initialized === true) {
-			return;
+			return true;
+		} //end if
+		//--
+		if((string)$this->ControllerGetParam('module-area') != 'index') {
+			return false;
 		} //end if
 		//--
 		if(\SmartFileSysUtils::check_if_safe_file_or_dir_name((string)$plugin_name)) {
@@ -66,9 +70,20 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 			$this->plugin_caller_module_path = (string) $plugin_caller_module_path;
 		} //end if
 		//--
-		$this->plugin_caller_object_id = (string) $plugin_caller_object_id;
+		$this->plugin_caller_data = [ // {{{SYNC-PAGEBUILDER-OBJ-EXPORT-LEVEL0-FIELDS}}} ; these are the fields from level zero object
+			'ID' 			=> (string) $plugin_caller_data['id'],
+			'NAME' 			=> (string) $plugin_caller_data['name'],
+			'AUTH' 			=> (int)    $plugin_caller_data['auth'],
+			'TYPE' 			=> (string) $plugin_caller_data['type'],
+			'MODE' 			=> (string) $plugin_caller_data['mode'],
+			'CTRL-AREA' 	=> (string) $plugin_caller_data['ctrl-area'],
+			'LAYOUT' 		=> (string) $plugin_caller_data['layout'],
+			'DATE-CREATED' 	=> (string) $plugin_caller_data['publisher-date-created'],
+			'DATE-MODIFIED' => (string) $plugin_caller_data['publisher-date-modified'],
+			'AUTHOR-ID' 	=> (string) $plugin_caller_data['publisher-id'],
+		];
 		//--
-		$this->plugin_data = [
+		$this->plugin_data = [ // {{{SYNC-PAGEBUILDER-OBJ-EXPORT-LEVEL0-FIELDS}}} ; these are the fields from level zero object
 			'ID' 			=> (string) $plugin_data['id'],
 			'NAME' 			=> (string) $plugin_data['name'],
 			'AUTH' 			=> (int)    $plugin_data['auth'],
@@ -82,6 +97,8 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 		];
 		//--
 		$this->plugin_initialized = true;
+		//--
+		return true;
 		//--
 	} //END FUNCTION
 	//=====
@@ -113,7 +130,7 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 
 	//=====
 	/**
-	 * Get Plugin Caller Module Path
+	 * Get Plugin Caller Module Path, for Level Zero Object
 	 */
 	final public function getPluginCallerModulePath() {
 		//--
@@ -125,11 +142,11 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 
 	//=====
 	/**
-	 * Get Plugin Caller Object ID
+	 * Get Plugin Caller Data as Array, for Level Zero Object
 	 */
-	final public function getPluginCallerObjectId() {
+	final public function getPluginCallerData() {
 		//--
-		return (string) $this->plugin_caller_object_id;
+		return (array) $this->plugin_caller_data;
 		//--
 	} //END FUNCTION
 	//=====
@@ -137,7 +154,7 @@ abstract class AbstractFrontendPlugin extends \SmartModExtLib\PageBuilder\Abstra
 
 	//=====
 	/**
-	 * Get Plugin Data as Array
+	 * Get Plugin Data as Array, for the current Object Level
 	 */
 	final public function getPluginData() {
 		//--

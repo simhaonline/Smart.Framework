@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderBackend {
 
 	// ::
-	// v.20200717
+	// v.20200806
 
 
 	private static $db = null;
@@ -580,6 +580,7 @@ final class PageBuilderBackend {
 		//--
 		$rd = (array) self::getRecordIdsById((string)$y_id);
 		if((string)$rd['id'] == '') {
+			self::rollbackTransaction();
 			return -4;
 		} //end if
 		//--
@@ -635,73 +636,35 @@ final class PageBuilderBackend {
 				$tmp_yaml = (array) $tmp_ymp->parse((string)$tmp_yaml);
 				$tmp_yerr = (string) $tmp_ymp->getError();
 				if($tmp_yerr) {
-					self::commitTransaction();
-					return 1; // yaml have errors, prevent parse it
+					self::rollbackTransaction();
+					return -6; // yaml have errors, prevent parse it
 				} //end if
 				$tmp_ymp = null;
 				if(\Smart::array_size($tmp_yaml) > 0) {
 					if(\Smart::array_size($tmp_yaml['RENDER']) > 0) {
+						$test_create_sub_segments = (int) self::updateCreateChilds((string)$y_id, (string)$rd['name'], (array)$y_arr_data, (array)$tmp_yaml['RENDER']);
+						if((int)$test_create_sub_segments !== 1) {
+							self::rollbackTransaction();
+							return (int) $test_create_sub_segments;
+						} //end if
 						foreach($tmp_yaml['RENDER'] as $key => $val) {
 							$key = (string) \trim((string)$key);
 							if((string)$key != '') {
 								if(\Smart::array_size($val) > 0) {
 									foreach($val as $k => $v) {
 										if(((string)\trim((string)$k) != '') AND (\Smart::array_size($val[(string)$k]) > 0) AND (\Smart::array_size($v) > 0) AND ((string)$v['type'] == 'segment')) {
-											$v['id'] = (string) \trim((string)$v['id']);
-											if((\strlen((string)$v['id']) >= 2) AND (\strlen((string)$v['id']) <= 63)) {
-												$v['id'] = (string) \Smart::safe_validname($v['id'], ''); // allow: [a-z0-9] _ - . @
-												if((string)$v['id'] != '') {
-													$v['id'] = (string) '#'.$v['id']; // ensure is segment
-													if((\strlen((string)$v['id']) >= 2) AND (\strlen((string)$v['id']) <= 63)) { // db id constraint
-														$test_exists = (array) self::getRecordIdsById((string)$v['id']);
-														$tmp_arr_refs = [ (string)$y_id ];
-														if((string)$test_exists['id'] == '') { // segment does not exists
-															$tmp_new_arr = [
-																'id' => (string) $v['id'],
-																'ref' => \Smart::json_encode((array)$tmp_arr_refs),
-																'name' => (string) \SmartUnicode::sub_str($rd['name'].': ['.$key.']', 0, 255),
-																'mode' => 'text', // default to text segment
-																'admin' => (string) $y_arr_data['admin'],
-																'modified' => (string) $y_arr_data['modified']
-															];
-															$wr = (int) self::insertRecord((array)$tmp_new_arr, true); // insert with external transaction
-															if($wr != 1) {
-																self::rollbackTransaction();
-																return -16; // insert sub-segment failed
-															} //end if
-														} else {
-															$wr = (array) self::updateRecordRefsById(
-																(string) $v['id'],
-																(array)  $tmp_arr_refs // array of IDs
-															);
-															if($wr[1] != 1) {
-																self::rollbackTransaction();
-																return -15; // update sub-segment failed
-															} //end if
-														} //end if
-													} else {
-														self::rollbackTransaction();
-														return -14; // invalid render val content id (3)
-													} //end if
-												} else {
+											if(\Smart::array_size($v['render']) > 0) {
+												$test_create_sub_segments = (int) self::updateCreateChilds((string)$y_id, (string)$rd['name'].': ['.$key.']', (array)$y_arr_data, (array)$v['render']);
+												if((int)$test_create_sub_segments !== 1) {
 													self::rollbackTransaction();
-													return -13; // invalid render val content id (2)
+													return (int) $test_create_sub_segments;
 												} //end if
-											} else {
-												self::rollbackTransaction();
-												return -12; // invalid render val content id (1)
 											} //end if
 										} //end if
 									} //end foreach
-								} else {
-									self::rollbackTransaction();
-									return -11; // invalid render val
 								} //end if
-							} else {
-								self::rollbackTransaction();
-								return -10; // invalid render key
 							} //end if
-						} //end if
+						} //end foreach
 					} //end if
 				} //end if
 			} //end if
@@ -1238,6 +1201,72 @@ final class PageBuilderBackend {
 	} //END FUNCTION
 
 
+	private static function updateCreateChilds(string $y_id, string $y_name, array $y_arr_data, array $y_render_yaml) {
+		//--
+		if(\Smart::array_size($y_render_yaml) <= 0) {
+			return 1; // OK
+		} //end if
+		//--
+		foreach($y_render_yaml as $key => $val) {
+			$key = (string) \trim((string)$key);
+			if((string)$key != '') {
+				if(\Smart::array_size($val) > 0) {
+					foreach($val as $k => $v) {
+						if(((string)\trim((string)$k) != '') AND (\Smart::array_size($val[(string)$k]) > 0) AND (\Smart::array_size($v) > 0) AND ((string)$v['type'] == 'segment')) {
+							$v['id'] = (string) \trim((string)$v['id']);
+							if((\strlen((string)$v['id']) >= 2) AND (\strlen((string)$v['id']) <= 63)) {
+								$v['id'] = (string) \Smart::safe_validname($v['id'], ''); // allow: [a-z0-9] _ - . @
+								if((string)$v['id'] != '') {
+									$v['id'] = (string) '#'.$v['id']; // ensure is segment
+									if((\strlen((string)$v['id']) >= 2) AND (\strlen((string)$v['id']) <= 63)) { // db id constraint
+										$test_exists = (array) self::getRecordIdsById((string)$v['id']);
+										$tmp_arr_refs = [ (string)$y_id ];
+										if((string)$test_exists['id'] == '') { // segment does not exists
+											$tmp_new_arr = [
+												'id' 		=> (string) $v['id'],
+												'ref' 		=> \Smart::json_encode((array)$tmp_arr_refs),
+												'name' 		=> (string) \SmartUnicode::sub_str($y_name.': ['.$key.']', 0, 255),
+												'mode' 		=> 'text', // default to text segment
+												'admin' 	=> (string) $y_arr_data['admin'],
+												'modified' 	=> (string) $y_arr_data['modified']
+											];
+											$wr = (int) self::insertRecord((array)$tmp_new_arr, true); // insert with external transaction
+											if($wr != 1) {
+												return -16; // insert sub-segment failed
+											} //end if
+										} else {
+											$wr = (array) self::updateRecordRefsById(
+												(string) $v['id'],
+												(array)  $tmp_arr_refs // array of IDs
+											);
+											if($wr[1] != 1) {
+												return -15; // update sub-segment failed
+											} //end if
+										} //end if
+									} else {
+										return -14; // invalid render val content id (3)
+									} //end if
+								} else {
+									return -13; // invalid render val content id (2)
+								} //end if
+							} else {
+								return -12; // invalid render val content id (1)
+							} //end if
+						} //end if
+					} //end foreach
+				} else {
+					return -11; // invalid render val
+				} //end if
+			} else {
+				return -10; // invalid render key
+			} //end if
+		} //end foreach
+		//--
+		return 1; // OK
+		//--
+	} //END FUNCTION
+
+
 	private static function updateRecordRefsById($y_id, $y_refs_arr) {
 		//--
 		if(\Smart::array_size($y_refs_arr) <= 0) {
@@ -1261,16 +1290,18 @@ final class PageBuilderBackend {
 		//--
 		if((string)self::dbType() == 'pgsql') {
 			return (array) \SmartPgsqlDb::write_data(
-				'UPDATE "web"."page_builder" SET "ref" = smart_jsonb_arr_append("ref", $1) WHERE ("id" = $2)',
+				'UPDATE "web"."page_builder" SET "ctrl" = $1, "ref" = smart_jsonb_arr_append("ref", $2) WHERE ("id" = $3)',
 				[
+					(string) '',
 					(string) \SmartPgsqlDb::json_encode((array)$arr_upd), // ref add: json arr data
 					(string) $y_id // ID
 				]
 			);
 		} elseif((string)self::dbType() == 'sqlite') {
 			return (array) self::$db->write_data(
-				'UPDATE `page_builder` SET `ref` = smart_json_arr_append(`ref`, ?) WHERE (`id` = ?)',
+				'UPDATE `page_builder` SET `ctrl` = ?, `ref` = smart_json_arr_append(`ref`, ?) WHERE (`id` = ?)',
 				[
+					(string) '',
 					(string) self::$db->json_encode((array)$arr_upd), // ref add: json arr data
 					(string) $y_id // ID
 				]

@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200617
+ * @version 	v.20200805
  * @package 	@Core:Extra
  *
  */
@@ -742,8 +742,8 @@ final class SmartUtils {
 	//================================================================
 	public static function cleanup_numbers_from_text($ytxt) {
 		//--
-		$num_prefix_sufix = '(\(?\)?\-?\:?\+?#?.?)';
-		return (string) preg_replace('~'.$num_prefix_sufix.'([0-9]+)'.$num_prefix_sufix.'~i', ' ', (string)$ytxt); // remove numbers from a text
+		$ytxt = ' '.$ytxt.' '; // add prefix and suffix spaces to allow remove first or last numeric expr too
+		return (string) trim((string)preg_replace('/(\s[0-9\(?\)?\-?\:?\+?\#?.?_? ?]+\s)/', ' ', (string)$ytxt)); // remove numbers from a text
 		//--
 	} //END FUNCTION
 	//================================================================

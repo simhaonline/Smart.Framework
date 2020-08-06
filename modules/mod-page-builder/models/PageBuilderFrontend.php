@@ -24,7 +24,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
 final class PageBuilderFrontend {
 
 	// ::
-	// v.20200717
+	// v.20200805
 
 
 	private static $db = null;
@@ -314,6 +314,12 @@ final class PageBuilderFrontend {
 				break;
 			case 'tags':
 				break;
+			case 'id':
+				$y_orderby = 'id';
+				$y_orderdir = 'ASC';
+				$y_limit = 1;
+				$y_ofs = 0;
+				break;
 			default:
 				Smart::log_warning(__METHOD__.' # Invalid Field: '.$y_fld);
 				return array();
@@ -378,7 +384,15 @@ final class PageBuilderFrontend {
 		} //end if
 		//--
 		if((string)self::dbType() == 'pgsql') {
-			if((string)$y_fld == 'area') {
+			if((string)$y_fld == 'id') {
+				$arr = (array) self::$db->read_asdata(
+					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("id" = $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') LIMIT 1 OFFSET 0',
+					[
+						(string) $y_value,
+						(string) '#'
+					]
+				);
+			} elseif((string)$y_fld == 'area') {
 				$arr = (array) \SmartPgsqlDb::read_adata(
 					'SELECT "id", "name", "mode", "auth", "ctrl", "modified", "published", "admin" FROM "web"."page_builder" WHERE (("layout" LIKE $1) AND (SUBSTR("id",1,1) '.$sign_expr.' $2)'.$extra_condition.') ORDER BY '.$orderby.' '.$y_orderdir.$extorderby.$qry_limit,
 					[
@@ -398,7 +412,15 @@ final class PageBuilderFrontend {
 				$arr = array();
 			} //end if else
 		} elseif((string)self::dbType() == 'sqlite') {
-			if((string)$y_fld == 'area') {
+			if((string)$y_fld == 'id') {
+				$arr = (array) self::$db->read_asdata(
+					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((`id` = ?) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') LIMIT 1 OFFSET 0',
+					[
+						(string) $y_value,
+						(string) '#'
+					]
+				);
+			} elseif((string)$y_fld == 'area') {
 				$arr = (array) self::$db->read_adata(
 					'SELECT `id`, `name`, `mode`, `auth`, `ctrl`, `modified`, `published`, `admin` FROM `page_builder` WHERE ((`layout` LIKE ?) AND (substr(`id`,1,1) '.$sign_expr.' ?)'.$extra_condition.') ORDER BY '.$orderby.' '.$y_orderdir.$extorderby.$qry_limit,
 					[

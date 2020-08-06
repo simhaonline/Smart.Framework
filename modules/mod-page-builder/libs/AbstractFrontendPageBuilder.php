@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200717
+ * @version 	v.20200805
  * @package 	development:modules:PageBuilder
  *
  */
@@ -66,6 +66,33 @@ abstract class AbstractFrontendPageBuilder extends \SmartAbstractAppController {
 		} //end if
 		//--
 		return (bool) \SmartModDataModel\PageBuilder\PageBuilderFrontend::checkIfPageOrSegmentExist((string)$y_id, false, true, $y_ctrl);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	final public function getPageById(string $y_id) {
+		//--
+		if((string)$this->ControllerGetParam('module-area') != 'index') {
+			return array();
+		} //end if
+		//--
+		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('pages', 'id', (string)$y_id);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+
+	//=====
+	final public function getSegmentById(string $y_id) {
+		//--
+		if((string)$this->ControllerGetParam('module-area') != 'index') {
+			return array();
+		} //end if
+		//--
+		return (array) \SmartModDataModel\PageBuilder\PageBuilderFrontend::getListOfObjectsBy('segments', 'id', (string)$y_id);
 		//--
 	} //END FUNCTION
 	//=====

@@ -228,7 +228,7 @@ interface SmartInterfaceAppInfo {
  *
  * @access 		PUBLIC
  * @depends 	-
- * @version 	v.20200723
+ * @version 	v.20200805
  * @package 	development:Application
  *
  */
@@ -1191,9 +1191,39 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 
 	//=====
 	/**
+	 * Get ERROR Message for a controller page
+	 *
+	 * @param 	BOOL 		$errhtml	:: *Optional* ; Default is FALSE ; If TRUE will return the HTML Error Message instead of default plain HTML Message
+	 *
+	 * @return 	STRING 					:: the ERROR Message if Any
+	 */
+	final public function PageViewGetErrorMessage($errhtml=false) {
+		//--
+		$code = (int) $this->PageViewGetStatusCode();
+		//--
+		$err = '';
+		if((int)$code >= 400) {
+			$err = (string) $this->pagesettings['error'];
+			if($errhtml === true) { // if req. for specific errhtml serve this
+				if((string)trim((string)$this->pagesettings['errhtml']) != '') { // if have errhtml, use this
+					$err = (string) $this->pagesettings['errhtml'];
+				} else { // otherwise convert the error (txt) message if any to errhtml
+					$err = (string) Smart::escape_html($err);
+				} //end if
+			} //end if
+		} //end if
+		//--
+		return (string) $err;
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
 	 * Get STATUS Code for a controller page
 	 *
-	 * @return 	ENUM 		$code		:: the HTTP Status Code: 2xx, 3xx, 4xx, 5xx, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 200 will be used instead
+	 * @return 	ENUM 					:: the HTTP Status Code: 2xx, 3xx, 4xx, 5xx, ... (consult middleware documentation to see what is supported) ; if an invalid error status code is used then 200 will be used instead
 	 */
 	final public function PageViewGetStatusCode() {
 		//--
@@ -1327,6 +1357,22 @@ abstract class SmartAbstractAppController { // {{{SYNC-ARRAY-MAKE-KEYS-LOWER}}}
 			'status-code' 	=> (int) $code,
 			'redirect-url' 	=> (string) $url
 		]);
+		//--
+	} //END FUNCTION
+	//=====
+
+
+	//=====
+	/**
+	 * Get the current controller PageView specific Var
+	 *
+	 * @param 	STRING 		$param		:: the variable to be get
+	 *
+	 * @return 	MIXED					:: the content of the specific PageView variable currently set
+	 */
+	final public function PageViewGetVar($param) {
+		//--
+		return $this->pageview[(string)$param]; // mixed
 		//--
 	} //END FUNCTION
 	//=====

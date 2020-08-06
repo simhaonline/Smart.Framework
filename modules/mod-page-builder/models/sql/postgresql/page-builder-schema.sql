@@ -1,5 +1,5 @@
 
--- START :: PostgreSQL: Web/PageBuilder r.20200717 #
+-- START :: PostgreSQL: Web/PageBuilder r.20200803 #
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -37,7 +37,7 @@ CREATE TABLE web.page_builder (
 	layout character varying(75) DEFAULT ''::character varying NOT NULL,
 	tags jsonb DEFAULT '[]'::jsonb NOT NULL,
 	checksum character varying(32) DEFAULT ''::character varying NOT NULL,
-	translations smallint DEFAULT 1 NOT NULL,
+	translations smallint DEFAULT 0 NOT NULL,
 	counter bigint DEFAULT 0 NOT NULL,
 	admin character varying(25) DEFAULT ''::character varying NOT NULL,
 	published bigint DEFAULT 0 NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE web.page_builder (
 	CONSTRAINT page_builder__chk__published CHECK ((published >= 0))
 );
 
-COMMENT ON TABLE web.page_builder IS 'Web - Page Builder v.2020.07.17';
+COMMENT ON TABLE web.page_builder IS 'Web - Page Builder v.2020.08.03';
 COMMENT ON COLUMN web.page_builder.id IS 'Unique ID for the Record: Page or Segment (segments must begin with: #)';
 COMMENT ON COLUMN web.page_builder.ref IS 'Reference Parent IDs as Json-Array [], Optional';
 COMMENT ON COLUMN web.page_builder.ctrl IS 'Parent Controller ID, Optional';
@@ -100,7 +100,7 @@ CREATE TABLE web.page_translations (
 
 ALTER TABLE ONLY web.page_translations ADD CONSTRAINT page_translations_pkey PRIMARY KEY (id, lang);
 
-COMMENT ON TABLE web.page_translations IS 'Web - Page (Builder) Translations v.2020.07.17';
+COMMENT ON TABLE web.page_translations IS 'Web - Page (Builder) Translations v.2020.08.03';
 COMMENT ON COLUMN web.page_translations.id IS 'Unique ID for the Record: Page or Segment (segments must begin with: #)';
 COMMENT ON COLUMN web.page_translations.lang IS 'Language ID: de, fr, ro, ...';
 COMMENT ON COLUMN web.page_translations.code IS 'Render Code (Txt/B64)';

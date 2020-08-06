@@ -49,7 +49,7 @@ $administrative_privileges['pagebuilder-delete'] 		= 'WebPages // Delete';
  * @access 		private
  * @internal
  *
- * @version 	v.20200721
+ * @version 	v.20200803
  * @package 	PageBuilder
  *
  */
@@ -81,7 +81,7 @@ final class Manager {
 		$text['ttl_list'] 			= 'PageBuilder Objects';
 		$text['ttl_records'] 		= 'List';
 		$text['ttl_trecords'] 		= 'TreeList';
-		$text['ttl_add'] 			= 'Add New Object';
+		$text['ttl_add'] 			= 'New Object';
 		$text['ttl_edt'] 			= 'Edit Object Properties';
 		$text['ttl_edtc'] 			= 'Edit Object Code';
 		$text['ttl_edtac'] 			= 'Edit Object Data';
@@ -152,7 +152,7 @@ final class Manager {
 		$text['tags'] 				= 'Tags';
 		$text['name'] 				= 'Name';
 		$text['active']				= 'Active';
-		$text['special'] 			= 'Rank Special';
+		$text['special'] 			= 'Grade';
 		$text['login'] 				= 'Login Restricted';
 		$text['modified']			= 'Modified';
 		$text['size'] 				= 'Size';
@@ -1447,8 +1447,8 @@ final class Manager {
 						} //end for
 						//--
 						$data['translations'] = (int) $y_frm['translations'];
-						if($data['translations'] !== 0) {
-							$data['translations'] = 1;
+						if($data['translations'] != 1) {
+							$data['translations'] = 0;
 						} //end if
 						//--
 						$data['special'] = (int) $y_frm['special'];
