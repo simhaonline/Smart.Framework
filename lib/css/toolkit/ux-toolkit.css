@@ -2,7 +2,7 @@
 
 /*
 License: BSD
-	extended by unixman, (stable.20200703), (c) 2015-2020 unix-world.org
+	extended by unixman, (stable.20200807), (c) 2015-2020 unix-world.org
 	based on Pure.css v.1.0 :: https://github.com/pure-css/pure # (c) 2013 Yahoo! Inc.
 */
 
@@ -1489,39 +1489,39 @@ nav.ux-navbar.navbar-black a:hover {
 
 /* Style the list */
 ul.ux-breadcrumb {
-	padding: 10px 16px;
-	list-style: none;
-	background-color: #eee;
+	padding: 10px 16px !important;
+	list-style: none !important;
+	background-color: #eee !important;
 }
 
 /* Display list items side by side */
 ul.ux-breadcrumb li {
-	display: inline;
-	font-size: 1rem;
-	color: #6C757D;
-	font-weight: bold;
+	display: inline !important;
+	font-size: 1rem !important;
+	color: #6C757D !important;
+	font-weight: bold !important;
 }
 
 /* Add a slash symbol (/) before/behind each list item */
 ul.ux-breadcrumb li+li::before {
-	padding: 8px;
-	color: #6C757D;
-	font-weight: bold;
-	content: "/\00a0";
+	padding: 8px !important;
+	color: #6C757D !important;
+	font-weight: bold !important;
+	content: "/\00a0" !important;
 }
 
 /* Add a color to all links inside the list */
 ul.ux-breadcrumb li a {
-	color: #0275d8;
-	text-decoration: none;
-	font-weight: bold;
+	color: #0275d8 !important;
+	text-decoration: none !important;
+	font-weight: bold !important;
 }
 
 /* Add a color on mouse-over */
 ul.ux-breadcrumb li a:hover {
-	color: #01447e;
-	text-decoration: underline;
-	font-weight: bold;
+	color: #01447e !important;
+	text-decoration: underline !important;
+	font-weight: bold !important;
 }
 
 /*** DropDown (by Unixman) ***/

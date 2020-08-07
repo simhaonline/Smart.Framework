@@ -25,7 +25,7 @@ if(!\defined('\\SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in th
  *
  * @access 		PUBLIC
  *
- * @version 	v.20200806
+ * @version 	v.20200807
  * @package 	development:modules:PageBuilder
  *
  */
@@ -133,11 +133,12 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 			); // get arr vars structure from pcache
 			// \print_r($pcache_arr); die();
 			if(\Smart::array_size($pcache_arr) > 0) {
-				if((\is_array($pcache_arr['headers'])) && (\is_array($pcache_arr['configs'])) && (\is_array($pcache_arr['vars']))) { // if valid cache (test ... there must be the 3 sub-arrays as exported previous in pcache)
+				if((\is_array($pcache_arr['headers'])) && (\is_array($pcache_arr['configs'])) && (\is_array($pcache_arr['vars'])) && (\is_array($pcache_arr['params']))) { // if valid cache (test ... there must be the 3 sub-arrays as exported previous in pcache)
 				//	$this->PageViewResetRawHeaders();
 					$this->PageViewSetRawHeaders((array)$pcache_arr['headers']);
 					$this->PageViewSetCfgs((array)$pcache_arr['configs']);
 					$arr = (array) $pcache_arr['vars'];
+					$this->page_params = (array) $pcache_arr['params'];
 					// \print_r($arr);
 					$this->page_is_cached = true;
 				} //end if
@@ -169,7 +170,8 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 				[
 					'headers' 	=> (array) $this->PageViewGetRawHeaders(),
 					'configs' 	=> (array) $this->PageViewGetCfgs(),
-					'vars' 		=> (array) $arr
+					'vars' 		=> (array) $arr,
+					'params' 	=> (array) $this->page_params
 				], // this will het the full array with all page vars and configs
 				(int) $this->getPCacheTime()
 			); // save arr vars structure to pcache
@@ -277,9 +279,9 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 			); // get arr vars structure from pcache
 			// \print_r($pcache_arr); die();
 			if(\Smart::array_size($pcache_arr) > 0) {
-				if(\is_array($pcache_arr['vars'])) { // if valid cache (test ... there must be the 3 sub-arrays as exported previous in pcache)
+				if((\is_array($pcache_arr['vars'])) && (\is_array($pcache_arr['params']))) { // if valid cache (test ... there must be the 3 sub-arrays as exported previous in pcache)
 					$arr = (array) $pcache_arr['vars'];
-					// \print_r($arr);
+					$this->page_params = (array) $pcache_arr['params'];
 					$this->segments_cached[(string)$segment_id]++;
 				} //end if
 			} //end if
@@ -299,7 +301,8 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 				'smart-pg-builder',
 				$this->PageCacheSafeKey((string)$the_pcache_key),
 				[
-					'vars' => (array) $arr
+					'vars' 		=> (array) $arr,
+					'params' 	=> (array) $this->page_params
 				], // this will het the full array with all page vars and configs
 				(int) $this->getPCacheTime()
 			); // save arr vars structure to pcache
@@ -1025,6 +1028,7 @@ abstract class AbstractFrontendController extends \SmartModExtLib\PageBuilder\Ab
 		//--
 		if($level === 0) {
 			$this->page_params = (array) $data_arr;
+			unset($this->page_params['code']); // fix: this is not needed and can be quite big, avoid re-export in cache as the $this->page_params will be exported for each object in pcache as key 'params'
 		} //end if
 		//--
 
