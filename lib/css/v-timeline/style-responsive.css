@@ -1,6 +1,6 @@
 /***** V-TimeLine Responsive CSS :: r.7.2.1 / smart.framework.v.7.2 *****/
 
-/* V-TimeLine r.20200121
+/* V-TimeLine r.20200812
 	License: BSD
 	(c) 2015-2020 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -52,13 +52,19 @@
 	}
 	.vtml-responsive-container .vtml-timeline-content .vtml-date,
 	.vtml-responsive-container .vtml-small-container .vtml-timeline-content .vtml-date {
-		position: absolute;
-		top: 6px;
 		width: 100%;
-		left: 122%;
+		text-align: right;
 		color: #444444;
-		font-size: 20px;
-		/* @alternate */ font-size: 1.25rem;
+		font-size: 16px;
+		/* @alternate */ font-size: 1rem;
+	}
+	.vtml-responsive-container .vtml-timeline-block:nth-child(even) .vtml-timeline-content .vtml-date,
+	.vtml-responsive-container .vtml-timeline-block:nth-child(even) .vtml-small-container .vtml-timeline-content .vtml-date {
+		text-align: left !important;
+	}
+	.vtml-responsive-container .vtml-small-container .vtml-timeline-content .vtml-date {
+		font-size: 15px;
+		/* @alternate */ font-size: 0.9375rem;
 	}
 
 	.vtml-responsive-container .vtml-timeline-block:nth-child(even) .vtml-timeline-content {

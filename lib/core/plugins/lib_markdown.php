@@ -36,7 +36,7 @@ if((!defined('SMART_FRAMEWORK_VERSION')) || ((string)SMART_FRAMEWORK_VERSION != 
  * @usage  		dynamic object: (new Class())->method() - This class provides only DYNAMIC methods
  *
  * @depends 	Smart, SmartUnicode, SmartUtils
- * @version 	v.20200121
+ * @version 	v.20200812
  * @package 	Plugins:ConvertersAndParsers
  *
  * <code>
@@ -50,7 +50,7 @@ final class SmartMarkdownToHTML {
 
 	//===================================
 
-	private $mkdw_version = 'v.1.5.4-r.20200121@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
+	private $mkdw_version = 'v.1.5.4-r.20200812@smart'; // with fixes from 1.5.1 -> 1.5.4 + extended syntax by unixman + character encoding fixes
 
 	//===================================
 
@@ -135,8 +135,10 @@ final class SmartMarkdownToHTML {
 				   'wbr', 'span',
 						  'time',
 	);
-	//-- extra
-	private $regexAttribute = '[ ]*{((?:[#\.@][_a-zA-Z0-9,%\-\=\$\:;\!]+[ ]*)+)}';
+	//-- extra (attributes can optional start with a type prefix to know which attributes to assign to nested elements (ex: image in a link, or link in a table cell, or image in a link in a table cell)
+	private $regexImgAttribute = '[ ]*{(I\:[ ]*)?((?:[#\.@][_a-zA-Z0-9,%\-\=\$\:;\!\/]+[ ]*)+)}'; // Images - optional starts with {I:
+	private $regexLnkAttribute = '[ ]*{(L\:[ ]*)?((?:[#\.@][_a-zA-Z0-9,%\-\=\$\:;\!\/]+[ ]*)+)}'; // Links  - optional starts with {L:
+	private $regexTblAttribute = '[ ]*{(T\:[ ]*)?((?:[#\.@][_a-zA-Z0-9,%\-\=\$\:;\!\/]+[ ]*)+)}'; // Tables - optional starts with {T:
 	//--
 
 	//===================================
@@ -1064,12 +1066,12 @@ final class SmartMarkdownToHTML {
 				);
 				//-- unixman
 				$matches = array();
-				if(preg_match('/'.$this->regexAttribute.'/', $headerCell, $matches)) {
+				if(preg_match('/'.$this->regexTblAttribute.'/', $headerCell, $matches)) {
 					if(!is_array($HeaderElement['attributes'])) {
 						$HeaderElement['attributes'] = array();
 					} //end if
-					$HeaderElement['attributes'] += $this->parseAttributeData($matches[1]);
-					$headerCell = trim(substr($headerCell, 0, (strlen($headerCell) - strlen($matches[1]) - 2)));
+					$HeaderElement['attributes'] += $this->parseAttributeData($matches[2]);
+					$headerCell = trim(substr($headerCell, 0, (strlen($headerCell) - strlen($matches[0]))));
 				} //end if
 				//-- # end unixman
 				$HeaderElement['text'] = $headerCell;
@@ -1149,12 +1151,12 @@ final class SmartMarkdownToHTML {
 				);
 				//-- unixman
 				$matches = array();
-				if(preg_match('/'.$this->regexAttribute.'/', $cell, $matches)) {
+				if(preg_match('/'.$this->regexTblAttribute.'/', $cell, $matches)) {
 					if(!is_array($Element['attributes'])) {
 						$Element['attributes'] = array();
 					} //end if
-					$Element['attributes'] += $this->parseAttributeData($matches[1]);
-					$cell = trim(substr($cell, 0, (strlen($cell) - strlen($matches[1]) - 2)));
+					$Element['attributes'] += $this->parseAttributeData($matches[2]);
+					$cell = trim(substr($cell, 0, (strlen($cell) - strlen($matches[0]))));
 				} //end if
 				//-- # end unixman
 				$Element['text'] = $cell;
@@ -1420,9 +1422,9 @@ final class SmartMarkdownToHTML {
 			return;
 		} //end if
 		//--
-		$Excerpt['text']= substr($Excerpt['text'], 1);
+		$Excerpt['text'] = substr($Excerpt['text'], 1);
 		//--
-		$Link = $this->inlineLink($Excerpt);
+		$Link = $this->inlineLink($Excerpt, true);
 		//--
 		if($Link === null) {
 			return;
@@ -1448,7 +1450,7 @@ final class SmartMarkdownToHTML {
 	} //END FUNCTION
 
 
-	private function inlineLink($Excerpt) {
+	private function inlineLink($Excerpt, $isImage=false) {
 		//-- unixman
 		if($this->urlsLinked !== true) {
 			return;
@@ -1524,8 +1526,13 @@ final class SmartMarkdownToHTML {
 		//-- unixman (extra)
 		$remainder = substr($Excerpt['text'], $Element['extent']);
 		$matches = array();
-		if(preg_match('/'.$this->regexAttribute.'/', $remainder, $matches)) {
-			$Element['attributes'] += $this->parseAttributeData($matches[1]);
+		if($isImage === true) {
+			$theRegex = (string) $this->regexImgAttribute;
+		} else {
+			$theRegex = (string) $this->regexLnkAttribute;
+		} //end if else
+		if(preg_match('/'.$theRegex.'/', $remainder, $matches)) {
+			$Element['attributes'] += $this->parseAttributeData($matches[2]);
 			$extent += strlen($matches[0]);
 		} //end if
 		//-- #end unixman

@@ -1,7 +1,7 @@
 # [###TITLE|html###] (H1)
 
 &copy;&nbsp;&nbsp;2015-2020&nbsp;unix-world.org
-Extended Markdown Test :: v.20200121
+Extended Markdown Test :: v.20200812
 
 ## H2 (Unicode Test) ăĂîÎâÂşŞţŢ
 
@@ -70,11 +70,11 @@ Syntax:
 CO~2~ for subscript
 E=mc^2^ for superscript
 
-|{@class=hidden}|
+|{T:@class=hidden}|
 | :---: |
 | some centered text |
 
-|{@class=hidden}|
+|{T: @class=hidden}|
 | ---: |
 | some text aligned on right |
 
@@ -98,7 +98,7 @@ E=mc^2^ for superscript
 - Or minuses
 + Or pluses
 
-[Link with attributes link](http://netbsd.org) {.primary9 #link .Upper-Case @data-smart=open,modal$700$300}
+[Link with attributes link](http://netbsd.org) {L: .primary9 #link .Upper-Case @data-smart=open,modal$700$300}
 
 my email is <me@example.com>
 
@@ -123,11 +123,12 @@ Some text to show that the reference links can follow later.
 Here's our logo (hover to see the title text):
 
 Inline-style:
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1") {@width=100 @style=box-shadow:$10px$10px$5px$#888888;}
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1") {I: @width=100 @style=box-shadow:$10px$10px$5px$#888888;}
 
 Reference-style:
-![alt text][logo]
+![alt text][logo] {@width=50}
 
+Refered Link: [logo]
 [logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
 
 Inline `code` has `back-ticks around` it.
@@ -160,55 +161,55 @@ No language indicated, so no syntax highlighting (fallback to PlainText).
 But let's throw in a <b>tag</b>.
 ```
 
-| One {@class=bordered}     | Two {@class=bordered}        | Three {@class=bordered}   | Four {@class=bordered}         |
+| One {@class=bordered}     | Two {T:@class=bordered}        | Three {T: @class=bordered}   | Four {T: @class=bordered}         |
 | ------------- |-------------| ---------| ------------- |
-| One {@class=bordered}     | Two {@class=bordered}        | Three {@class=bordered}   | Four {@class=bordered}         |
+| One {T: @class=bordered}     | Two {T: @class=bordered}        | Three {T: @class=bordered}   | Four {T: @class=bordered}         |
 
 | One     | Two        | Three   | Four          |
 | ------------- |-------------| ---------| ------------- |
-| Span Across |||a {@colspan=3}|
+| Span Across |||a {T: @colspan=3}|
 
-|          Grouping {@colspan=3 @class=bordered}            |  First Header {@class=bordered}  | Second Header {@class=bordered} | Third Header {@class=bordered} |
+|          Grouping {T: @colspan=3 @class=bordered}            |  First Header {T: @class=bordered}  | Second Header {T: @class=bordered} | Third Header {T: @class=bordered} |
  ------------ | :-----------: | :-----------: | :---------: | :---------: | ---------:
-Content {@rowspan=2 @class=bordered}  | *Long Cell* {@colspan=5 @class=bordered} ||
-**Cell** {@colspan=3 @class=bordered} |  Cell {@colspan=2 @class=bordered}        |
-One {@class=bordered} |two {@class=bordered} |three {@class=bordered} |four {@class=bordered} |five {@class=bordered} |six {@class=bordered}
+Content {T: @rowspan=2 @class=bordered}  | *Long Cell* {T: @colspan=5 @class=bordered} ||
+**Cell** {T: @colspan=3 @class=bordered} |  Cell {T: @colspan=2 @class=bordered}        |
+One {T: @class=bordered} |two {T: @class=bordered} |three {T: @class=bordered} |four {T: @class=bordered} |five {T: @class=bordered} |six {T: @class=bordered}
 
 Colons can be used to align columns.
 
-| Stripped Tables {@class=stripped$bordered} | Centered {@class=stripped$bordered} | Right aligned {@class=stripped$bordered} |
+| Stripped Tables {T: @class=stripped$bordered} | Centered {T: @class=stripped$bordered} | Right aligned {T: @class=stripped$bordered} |
 | --------------------------------- |:--------------------------:| -------------------------------:|
-| Zebra ăĂîÎâÂşŞţŢșȘțȚ {@class=stripped}           | c1.2 {@class=stripped}     | $1600 {@class=stripped}         |
-| Stripes {@class=stripped}         | c2.2 {@class=stripped}     |   $12 {@class=stripped}         |
-| zebra stripes {@class=stripped$bordered}   | c2.3 {@class=stripped$bordered}     |    $1 {@class=stripped$bordered}         |
+| Zebra ăĂîÎâÂşŞţŢșȘțȚ {T: @class=stripped}           | c1.2 {T: @class=stripped}     | $1600 {T: @class=stripped}         |
+| Stripes {T: @class=stripped}         | c2.2 {T: @class=stripped}     |   $12 {T: @class=stripped}         |
+| zebra stripes {T: @class=stripped$bordered}   | c2.3 {T: @class=stripped$bordered}     |    $1 {T: @class=stripped$bordered}         |
 
 First Header  | Second Header
 ------------- | -------------
 Content Cell  | Content Cell
 Content Cell  | Content Cell
 
-| Name {@class=pbordered}         | Description {@class=pbordered}              |
+| Name {T: @class=pbordered}         | Description {T: @class=pbordered}              |
 | ------------- | ----------------------- |
-| Help {@class=pbordered}         | Display the help window. {@class=pbordered} |
-| Close {@class=pbordered}        | Closes a window {@class=pbordered}          |
+| Help {T: @class=pbordered}         | Display the help window. {T: @class=pbordered} |
+| Close {T: @class=pbordered}        | Closes a window {T: @class=pbordered}          |
 
 | Name | Description |
 | ----- | ----- |
 | Action ^Help^ | ~~Display the ăĂîÎâÂşŞţŢșȘțȚ~~ help **window**.|
 | Action ~Close~ | _Closes_ a window |
 
-| Left-Aligned {@class=dbordered}  | Center Aligned {@class=dbordered}  | Right Aligned {@class=dbordered} |
+| Left-Aligned {T: @class=dbordered}  | Center Aligned {T: @class=dbordered}  | Right Aligned {T: @class=dbordered} |
 | :------------ |:---------------:| -----:|
-| col 3 is {@class=dbordered}      | some wordy text {@class=dbordered} | $1600 {@class=dbordered} |
-| col 2 is {@class=dbordered}      | centered {@class=dbordered}        |   $12 {@class=dbordered} |
-| zebra stripes {@class=dbordered} | are neat {@class=dbordered}        |    $1 {@class=dbordered} |
+| col 3 is {T: @class=dbordered}      | some wordy text {T: @class=dbordered} | $1600 {T: @class=dbordered} |
+| col 2 is {T: @class=dbordered}      | centered {T: @class=dbordered}        |   $12 {T: @class=dbordered} |
+| zebra stripes {T: @class=dbordered} | are neat {T: @class=dbordered}        |    $1 {T: @class=dbordered} |
 
 The outer pipes (|) are optional, and you don't need to make the raw Markdown line up prettily. You can also use inline Markdown.
 
-Markdown {@class=dbordered} | Less {@class=dbordered} | Pretty {@class=dbordered}
+Markdown {T: @class=dbordered} | Less {T: @class=dbordered} | Pretty {T: @class=dbordered}
 --- | --- | ---
-*Still* {@class=dbordered} | `renders` {@class=dbordered} | **nicely** {@class=dbordered}
-1 {@class=dbordered} | 2 {@class=dbordered} | 3 {@class=dbordered}
+*Still* {T: @class=dbordered} | `renders` {T: @class=dbordered} | **nicely** {T: @class=dbordered}
+1 {T: @class=dbordered} | 2 {T: @class=dbordered} | 3 {T: @class=dbordered}
 
 > Blockquotes are very handy in email to emulate reply text.
 > This line is part of the same quote.
@@ -283,7 +284,7 @@ I get 10 times more traffic from [Google] [1] than from
   [3]: http://search.msn.com/    "MSN Search"
 
 
-[](#) {@id=anchor}
+[](#) {L: @id=anchor}
 
 ## Sample Data Definition
 

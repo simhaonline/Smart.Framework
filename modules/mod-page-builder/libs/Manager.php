@@ -49,7 +49,7 @@ $administrative_privileges['pagebuilder-delete'] 		= 'WebPages // Delete';
  * @access 		private
  * @internal
  *
- * @version 	v.20200803
+ * @version 	v.20200817
  * @package 	PageBuilder
  *
  */
@@ -58,7 +58,7 @@ final class Manager {
 	// ::
 
 	private static $MaxStrCodeSize = 16777216; // 16 MB
-	private static $MaxSizeMediaImgMB = 0.5; // 0.5 MB
+	private static $MaxSizeMediaImgMB = 1.25; // 1.25 MB
 	private static $MaxQualityMediaImgJpg = 0.9; // 90%
 	private static $MaxWidthMediaImg = 1920;
 	private static $MaxHeightMediaImg = 1080;
@@ -86,6 +86,7 @@ final class Manager {
 		$text['ttl_edtc'] 			= 'Edit Object Code';
 		$text['ttl_edtac'] 			= 'Edit Object Data';
 		$text['ttl_del'] 			= 'Delete this Object';
+		$text['ttl_clone'] 			= 'Clone this Object';
 		$text['ttl_ch_list'] 		= 'PageBuilder Objects - Change List Mode';
 		$text['ttl_webdav'] 		= 'PageBuilder Files - WebDAV';
 		$text['ttl_reset_hits'] 	= 'Reset Hit Counter on All PageBuilder Objects';
@@ -136,6 +137,7 @@ final class Manager {
 		//-- messages
 		$text['msg_confirm_del'] 	= 'Please confirm you want to delete this object';
 		$text['msg_unsaved'] 	  	= 'NOTICE: Any unsaved change will be lost.';
+		$text['msg_object_exists'] 	= 'An Object with the Same ID Already Exists';
 		$text['msg_no_priv_add']  	= 'WARNING: You have not enough privileges to Create New Objects !';
 		$text['msg_no_priv_read'] 	= 'WARNING: You have not enough privileges to READ this Object !';
 		$text['msg_no_priv_edit'] 	= 'WARNING: You have not enough privileges to EDIT this Object !';
@@ -144,6 +146,7 @@ final class Manager {
 		$text['msg_invalid_cksum'] 	= 'NOTICE: Invalid Object CHECKSUM ! Edit and Save again the Object Code or Object Data to (Re)Validate it !';
 		//--
 		$text['id'] 				= 'ID';
+		$text['clone'] 				= 'Create a Clone of this Object';
 		$text['ref'] 				= 'Ref.';
 		$text['refs'] 				= 'Related Objects';
 		$text['ctrl'] 				= 'Controller';
@@ -436,6 +439,8 @@ final class Manager {
 				$bttns .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			} //end if
 			$bttns .= '<img src="'.self::$ModulePath.'libs/views/manager/img/op-edit.svg'.'" alt="'.self::text('ttl_edt').'" title="'.self::text('ttl_edt').'" style="cursor:pointer;" onClick="'."SmartJS_BrowserUtils.Load_Div_Content_By_Ajax(jQuery('#adm-page-props').parent().prop('id'), 'lib/framework/img/loading-bars.svg', '".\Smart::escape_js(self::composeUrl('op=record-edit-tab-props&id='.\Smart::escape_url($query['id'])))."', 'GET', 'html');".'">';
+			$bttns .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			$bttns .= '<img src="'.self::$ModulePath.'libs/views/manager/img/op-clone.svg'.'" alt="'.self::text('ttl_clone').'" title="'.self::text('ttl_clone').'" style="cursor:pointer;" onClick="self.location=\''.\Smart::escape_js(self::composeUrl('op=record-clone&id='.\Smart::escape_url($query['id']))).'\';">';
 			if((string)$query['checksum'] != (string)$query['calc_checksum']) {
 				$bttns .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 				$bttns .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -1013,7 +1018,7 @@ final class Manager {
 
 
 	//==================================================================
-	public static function UploadMedia($y_id, $y_type, $y_content, $y_cksum) {
+	public static function UploadMedia($y_id, $y_type, $y_name, $y_content, $y_cksum) {
 		//--
 		$err = '';
 		//--
@@ -1115,7 +1120,18 @@ final class Manager {
 			} //end if
 		} //end if
 		if(!$err) {
-			$file = (string) \Smart::safe_filename('img-'.\strtolower(\Smart::uuid_10_seq()).'.'.$img_ext);
+			$y_name = (string) \trim((string)$y_name);
+			if((string)$y_name != '') {
+				$y_name = (string) \Smart::safe_filename((string)$y_name);
+				$y_name = (string) \SmartFileSysUtils::get_noext_file_name_from_path((string)$y_name);
+				$y_name = (string) \trim((string)\substr((string)\Smart::safe_filename((string)$y_name), 0, 70), '.'); // try to cut the filename at a given length as 70 ; the extension can be no more than 5 characters as of: .svg .gif .png .jpg (.webp to do in the future ...)
+				$y_name = (string) \Smart::safe_filename((string)$y_name.'.'.$img_ext);
+			} //end if
+			if(((string)$y_name != '') AND (\strlen((string)$y_name) <= 75)) {
+				$file = (string) $y_name;
+			} else {
+				$file = (string) \Smart::safe_filename('img-'.\strtolower(\Smart::uuid_10_seq()).'.'.$img_ext);
+			} //end if
 			if(!\SmartFileSystem::write((string)$fdir.$file, (string)$y_content)) {
 				$err = 'Failed to Create Storage File';
 			} //end if
@@ -1317,16 +1333,16 @@ final class Manager {
 				$proc_mode = 'insert';
 				//--
 				if((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-create') === true)) {
-					//--
+					//-- {{{SYNC-PAGEBUILDER-ID-CONSTRAINTS}}}
 					$y_frm['id'] = (string) \trim((string)$y_frm['id']);
+					$y_frm['id'] = (string) \Smart::safe_validname($y_frm['id'], ''); // allow: [a-z0-9] _ - . @
+					$y_frm['id'] = (string) \str_replace(array('.', '@'), array('-', '-'), (string)$y_frm['id']); // dissalow: . @ [ @ is used to replace # with @ on segments folders ; . will conflict with SmartFramework style pages like module.page when using Semantic URL Rules ]
 					//--
-					if(\strlen($y_frm['id']) >= 2) { // in DB we have a constraint to be minimum 2 characters
+					if((\strlen((string)$y_frm['id']) >= 2) AND ((string)\trim((string)$y_frm['id'], '_-') != '')) { // {{{SYNC-PAGEBUILDER-ID-CONSTRAINTS}}} in DB we have a constraint to be minimum 2 characters
 						//--
 						$data = array();
 						//--
 						$data['id'] = (string) $y_frm['id'];
-						$data['id'] = (string) \Smart::safe_validname($data['id'], ''); // allow: [a-z0-9] _ - . @
-						$data['id'] = (string) \str_replace(array('.', '@'), array('-', '-'), (string)$data['id']); // dissalow: . @ [ @ is used to replace # with @ on segments folders ; . will conflict with SmartFramework style pages like module.page when using Semantic URL Rules ]
 						//--
 						switch((string)$y_frm['ptype']) {
 							case 'settings-segment':
@@ -1387,9 +1403,7 @@ final class Manager {
 						} //end if
 						//--
 						if((string)$error == '') {
-							//--
 							$proc_write_ok = true;
-							//--
 						} // end if else
 						//--
 					} else {
@@ -1412,7 +1426,7 @@ final class Manager {
 				//--
 				$query = (array) \SmartModDataModel\PageBuilder\PageBuilderBackend::getRecordDetailsById($y_id);
 				//--
-				if(((string)$y_id == (string)$query['id']) AND ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-edit') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-data-edit') === true))) {
+				if(((string)\trim((string)$y_id) != '') AND ((string)$y_id == (string)$query['id']) AND ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-edit') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-data-edit') === true))) {
 					//--
 					$proc_id = (string) $query['id'];
 					//--
@@ -1462,7 +1476,7 @@ final class Manager {
 							//--
 							$data['active'] = \Smart::format_number_int($y_frm['active'], '+');
 							if(((string)$data['active'] != '0') AND ((string)$data['active'] != '1')) {
-								$data['active'] = '1';
+								$data['active'] = '0';
 							} //end if
 							//--
 							$data['auth'] = \Smart::format_number_int($y_frm['auth'], '+');
@@ -1540,7 +1554,9 @@ final class Manager {
 							} //end if
 						} //end if
 						//--
-						$proc_write_ok = true;
+						if((string)$error == '') {
+							$proc_write_ok = true;
+						} //end if
 						//--
 					} elseif((string)$y_frm['form_mode'] == 'code') { // CODE
 						//--
@@ -1647,6 +1663,65 @@ final class Manager {
 				//--
 				break;
 			//--
+			case 'clone':
+				//--
+				$proc_mode = 'insert';
+				//--
+				$query = (array) \SmartModDataModel\PageBuilder\PageBuilderBackend::getRecordById((string)$y_id); // get full object
+				//--
+				if(((string)\trim((string)$y_id) != '') AND ((string)$y_id == (string)$query['id']) AND ((\SmartAuth::test_login_privilege('superadmin') === true) OR (\SmartAuth::test_login_privilege('pagebuilder-create') === true))) {
+					//-- {{{SYNC-PAGEBUILDER-ID-CONSTRAINTS}}}
+					$y_frm['id'] = (string) \trim((string)$y_frm['id']);
+					$y_frm['id'] = (string) \Smart::safe_validname($y_frm['id'], ''); // allow: [a-z0-9] _ - . @
+					$y_frm['id'] = (string) \str_replace(array('.', '@'), array('-', '-'), (string)$y_frm['id']); // dissalow: . @ [ @ is used to replace # with @ on segments folders ; . will conflict with SmartFramework style pages like module.page when using Semantic URL Rules ]
+					//--
+					if((\strlen((string)$y_frm['id']) >= 2) AND ((string)\trim((string)$y_frm['id'], '_-') != '')) { // {{{SYNC-PAGEBUILDER-ID-CONSTRAINTS}}} in DB we have a constraint to be minimum 2 characters
+						//--
+						if((string)\substr((string)$y_id, 0, 1) == '#') {
+							$y_frm['id'] = '#'.$y_frm['id']; // if cloned is segment then make this also a segment
+						} //end if
+						//--
+						$test_clone = (array) \SmartModDataModel\PageBuilder\PageBuilderBackend::getRecordDetailsById((string)$y_frm['id']);
+						//--
+						if(\Smart::array_size($test_clone) <= 0) {
+							//--
+							$proc_id = (string) $y_frm['id'];
+							$redirect = self::composeUrl('op=record-view&id='.\Smart::escape_url($y_frm['id']));
+							//--
+							$data = array();
+							$data = (array) $query;
+							$data['id'] = (string) $y_frm['id'];
+							$data['ref'] = '[]'; // reference parent, by default is empty json array [] ; reset refs, it is not yet in use ...
+							$data['name'] = (string) $y_frm['name'];
+							$data['checksum'] = '';
+							$data['active'] = 0;
+							$data['counter'] = 0;
+							$data['published'] = (string) \time();
+							//--
+							if((string)$error == '') {
+								$proc_write_ok = true;
+							} // end if else
+							//--
+						} else {
+							//--
+							$error = self::text('msg_object_exists')."\n";
+							//--
+						} //end if else
+						//--
+					} else {
+						//--
+						$error = self::text('err_4')."\n";
+						//--
+					} //end if else
+					//--
+				} else {
+					//--
+					$error = self::text('msg_no_priv_add')."\n";
+					//--
+				} // end if else
+				//--
+				break;
+			//--
 			default: // OK
 				//--
 				$error = self::text('err_2')."\n";
@@ -1685,6 +1760,10 @@ final class Manager {
 					//--
 				} //end if else
 				//--
+			} else {
+				//--
+				$error = 'Internal ERROR ... (Write Operation Failed)';
+				//--
 			} //end if
 			//--
 		} // end if
@@ -1713,6 +1792,50 @@ final class Manager {
 		return (string) \SmartViewHtmlHelpers::js_ajax_replyto_html_form($result, $title, $message, $redirect);
 		//--
 	} // END FUNCTION
+	//==================================================================
+
+
+	//==================================================================
+	/**
+	 * Clone an Object by ID
+	 *
+	 * @param string $y_id
+	 * @return string
+	 */
+	public static function ViewFormClone($y_id) {
+
+		//--
+		$tmp_rd_arr = (array) \SmartModDataModel\PageBuilder\PageBuilderBackend::getRecordDetailsById($y_id);
+		//--
+		if((string)$tmp_rd_arr['id'] == '') {
+			return \SmartComponents::operation_error(self::text('err_4'));
+		} //end if
+		//--
+
+		//--
+		$translator_window = \SmartTextTranslations::getTranslator('@core', 'window');
+		//--
+		$out = \SmartMarkersTemplating::render_file_template(
+			(string) self::$ModulePath.'libs/views/manager/view-record-frm-clone.mtpl.htm',
+			[
+				'BUTTONS-CLOSE' 	=> (string) '<input type="button" value="'.\Smart::escape_html($translator_window->text('button_close')).'" class="ux-button" onClick="SmartJS_BrowserUtils.CloseModalPopUp(); return false;">',
+				'THE-TTL' 			=> (string) '<img height="16" src="'.self::$ModulePath.'libs/views/manager/img/op-clone.svg'.'" alt="'.self::text('ttl_clone').'" title="'.self::text('ttl_clone').'">'.'&nbsp;'.self::text('ttl_clone'),
+				'REFRESH-PARENT' 	=> (string) '<script type="text/javascript">SmartJS_BrowserUtils.RefreshParent();</script>',
+				'FORM-NAME' 		=> (string) 'page_form_clone',
+				'CLONED-ID' 		=> (string) \Smart::escape_html((string)$y_id),
+				'LABELS-CLONE' 		=> (string) self::text('clone'),
+				'LABELS-ID'			=> (string) self::text('id'),
+				'LABELS-NAME'		=> (string) self::text('name'),
+				'LABELS-CTRL' 		=> (string) self::text('ctrl'),
+				'BUTTONS-SUBMIT' 	=> (string) '<button class="ux-button ux-button-highlight" type="button" onClick="'.\SmartViewHtmlHelpers::js_ajax_submit_html_form('page_form_clone', self::composeUrl('op=record-clone-do')).' return false;">'.' &nbsp; '.'<i class="sfi sfi-floppy-disk"></i>'.' &nbsp; '.self::text('save').'</button>'
+			],
+			'no'
+		);
+		//--
+		return (string) $out;
+		//--
+
+	} //END FUNCTION
 	//==================================================================
 
 

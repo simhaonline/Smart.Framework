@@ -1,9 +1,16 @@
-<!-- Pagebuilder / Manage @ View Record / Media :: v.20200717 -->
+<!-- Pagebuilder / Manage @ View Record / Media :: v.20200817 -->
 <script>
 var pageBuilderMediaImgDataURL = '';
 var pageBuilderMediaType = '';
-function pageBuilder_MediaUploadHandle(imgDataURL, imgType) {
+var pageBuilderMediaName = '';
+function pageBuilder_MediaUploadHandle(imgDataURL, imgType, imgName) {
 	if(imgDataURL) {
+		var theOriginalImgName = '';
+		if(imgName) {
+			if(jQuery('#original-img-name').is(':checked')){
+				theOriginalImgName = String(imgName || '');
+			}
+		}
 		jQuery('#img_uploader_btn').prop('disabled', true);
 		SmartJS_BrowserUtils.Overlay_Show();
 		var saveURL = 'admin.php?page=page-builder.manage&op=record-upload-media&id=[###RECORD-ID|url|js###]';
@@ -15,7 +22,7 @@ function pageBuilder_MediaUploadHandle(imgDataURL, imgType) {
 			SmartJS_BrowserUtils.GrowlNotificationAdd(SmartJS_CoreUtils.escape_html(title), SmartJS_CoreUtils.escape_html(message), null, parseInt(SmartJS_BrowserUtils.param_Time_Notification_OK), false, 'gritter-green');
 			setTimeout(function(){ self.location = 'admin.php?page=page-builder.manage&op=record-view&id=[###RECORD-ID|url|js###]&sop=media'; }, parseInt(SmartJS_BrowserUtils.param_Time_Notification_OK));
 		}
-		var ajax = SmartJS_BrowserUtils.Ajax_XHR_Request_From_URL(saveURL, 'POST', 'json', '&type=' + SmartJS_CoreUtils.escape_url(imgType) + '&content=' + SmartJS_CoreUtils.escape_url(imgDataURL) + '&cksum=' + SmartJS_CoreUtils.escape_url(SmartJS_CryptoHash.sha1(imgDataURL)));
+		var ajax = SmartJS_BrowserUtils.Ajax_XHR_Request_From_URL(saveURL, 'POST', 'json', '&type=' + SmartJS_CoreUtils.escape_url(imgType) + '&name=' + SmartJS_CoreUtils.escape_url(theOriginalImgName) + '&content=' + SmartJS_CoreUtils.escape_url(imgDataURL) + '&cksum=' + SmartJS_CoreUtils.escape_url(SmartJS_CryptoHash.sha1(imgDataURL)));
 		ajax.done(function(data, textStatus, jqXHR){
 			var isOK = -1;
 			if(data) {
@@ -125,7 +132,7 @@ function pageBuilder_MediaInfoAlert(imgFile, imgPath, imgType, imgSize, isUsed) 
 	<tr>
 		<td colspan="3">
 			[%%%LOOP:ARR-MEDIA-IMGS%%%]
-				<div style="padding:0; float:left; width:120px; height:132px; margin-right:20px; margin-bottom:20px;" title="[###ARR-MEDIA-IMGS.IMG|html###] @ [###ARR-MEDIA-IMGS.USED|int###]">
+				<div style="padding:0; float:left; width:120px; height:132px; margin-right:20px; margin-bottom:30px;" title="[###ARR-MEDIA-IMGS.IMG|html###] @ [###ARR-MEDIA-IMGS.USED|int###]">
 					<div style="padding:0; width:120px; height:12px; border:0;">
 						<span style="font-weight:bold; font-size:10px !important; line-height:1 !important; color:#555555; vertical-align:top;">
 							[%%%IF:PRIV-DELETE:==yes;%%%]<i class="sfi sfi-bin2" style="font-size:9px !important; vertical-align:top; cursor:pointer;" title="Delete" onclick="pageBuilder_MediaDeleteDialog('[###ARR-MEDIA-IMGS.FILE|js###]', '[###ARR-MEDIA-IMGS.IMG|js###]', '[###ARR-MEDIA-IMGS.TYPE|upper|js###]', '[###ARR-MEDIA-IMGS.SIZE|js###]', [###ARR-MEDIA-IMGS.USED|int###]); return false;"></i>&nbsp;&nbsp;[%%%/IF:PRIV-DELETE%%%]<i class="sfi sfi-info" style="font-size:9px !important; vertical-align:top; cursor:pointer; color:[%%%IF:ARR-MEDIA-IMGS.USED:>0;%%%]#CCCCCC[%%%ELSE:ARR-MEDIA-IMGS.USED%%%]#FF3300[%%%/IF:ARR-MEDIA-IMGS.USED%%%];" title="Info" onclick="pageBuilder_MediaInfoAlert('[###ARR-MEDIA-IMGS.FILE|js###]', '[###ARR-MEDIA-IMGS.IMG|js###]', '[###ARR-MEDIA-IMGS.TYPE|upper|js###]', '[###ARR-MEDIA-IMGS.SIZE|js###]', [###ARR-MEDIA-IMGS.USED|int###]); return false;"></i>
@@ -137,18 +144,20 @@ function pageBuilder_MediaInfoAlert(imgFile, imgPath, imgType, imgSize, isUsed) 
 							<img src="[###ARR-MEDIA-IMGS.IMG|html###]" style="max-width:120px; max-height:120px; width:auto !important; height:auto !important; position:absolute; left:0; right:0; top:0; bottom:0; margin:auto;">
 						</a>
 					</div>
+					<div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:99%; font-size:0.625rem; font-weight: bold; color:#AAAAAA;" title="[###ARR-MEDIA-IMGS.FILE|html###]">[###ARR-MEDIA-IMGS.FILE|html###]</div>
 				</div>
 			[%%%/LOOP:ARR-MEDIA-IMGS%%%]
 		</td>
 	</tr>
 </table>
 <script>
-SmartJS_BrowserUtils.VirtualImageUploadHandler('img_uploader_id', 'img_uploader_preview', [###JPEG-QUALITY|dec2###], [###MAX-SIZE-B64-MEDIA|num###], [###MAX-WIDTH-MEDIA|int###], [###MAX-HEIGHT-MEDIA|int###], function(imgDataURL, w, h, isSVG, imgType){
+SmartJS_BrowserUtils.VirtualImageUploadHandler('img_uploader_id', 'img_uploader_preview', [###JPEG-QUALITY|dec2###], [###MAX-SIZE-B64-MEDIA|num###], [###MAX-WIDTH-MEDIA|int###], [###MAX-HEIGHT-MEDIA|int###], function(imgDataURL, w, h, isSVG, imgType, imgSize, imgName){
 	if(imgDataURL) {
 		pageBuilderMediaImgDataURL = String(imgDataURL);
 		pageBuilderMediaType = String(imgType);
+		pageBuilderMediaName = String(imgName);
 		setTimeout(function(){
-			jQuery('#img_uploader_preview').append('<br><button id="img_uploader_btn" class="ux-button ux-button-small ux-button-primary" onClick="pageBuilder_MediaUploadHandle(pageBuilderMediaImgDataURL, pageBuilderMediaType); return false;">Upload Image <i class="sfi sfi-cloud-upload"></i></button>');
+			jQuery('#img_uploader_preview').append('<br><input type="checkbox" id="original-img-name" value="' + SmartJS_CoreUtils.escape_html(imgName) + '" title="' + SmartJS_CoreUtils.escape_html(imgName) + '" checked>&nbsp;<small><b>Keep Name: `' + SmartJS_CoreUtils.escape_html(imgName) + '`</b></small> &nbsp; <button id="img_uploader_btn" class="ux-button ux-button-small ux-button-primary" onClick="pageBuilder_MediaUploadHandle(pageBuilderMediaImgDataURL, pageBuilderMediaType, pageBuilderMediaName); return false;">Upload Image <i class="sfi sfi-cloud-upload"></i></button>');
 		}, 500);
 	} //end if
 }, false, 160, 160, true);

@@ -48,7 +48,7 @@ if((!function_exists('gzdeflate')) OR (!function_exists('gzinflate'))) {
  * @usage  		static object: Class::method() - This class provides only STATIC methods
  *
  * @depends 	classes: Smart, SmartValidator, SmartHashCrypto, SmartAuth, SmartFileSysUtils, SmartFileSystem
- * @version 	v.20200805
+ * @version 	v.20200814
  * @package 	@Core:Extra
  *
  */
@@ -682,11 +682,11 @@ final class SmartUtils {
 		} //end if
 		//--
 		$y_count = Smart::format_number_int($y_count, '+');
-		if($y_count < 10) {
-			$y_count = 10;
+		if($y_count < 2) {
+			$y_count = 2;
 		} //end if
-		if($y_count > 2048) { // for other purposes, leave a max of 4096
-			$y_count = 2048;
+		if($y_count > 4096) { // for other purposes, leave a max of 4096
+			$y_count = 4096;
 		} //end if
 		//--
 		$ytxt = str_replace(',', ' ', SmartUnicode::str_tolower($ytxt));
@@ -695,13 +695,13 @@ final class SmartUtils {
 			$arr = (array) array_unique($arr);
 		} //end if
 		//--
-		$cnt = 0;
-		$out = '';
+		$kw = [];
 		for($i=0; $i<Smart::array_size($arr); $i++) { // allow: '&', '-', '.'
 			//--
 			$tmp_word = (string) trim((string)str_replace(['`', '~', '!', '@', '#', '$', '%', '^', '*', '(', ')', '_', '+', '=', '[', ']', '{', '}', '|', '\\', '/', '?', '<', '>', ',', ':', ';', '"', "'"], ' ', (string)$arr[$i]));
 			$tmp_word = (string) preg_replace("/(\.)\\1+/", '.', $tmp_word); // suppress multiple . dots and replace with single dot
 			$tmp_word = (string) preg_replace("/(\-)\\1+/", '-', $tmp_word); // suppress multiple - minus signs and replace with single minus sign
+			$tmp_word = (string) trim((string)$tmp_word, '.-'); // trim left or right dots and minus signs
 			//--
 			if($clear_numbers === true) {
 				$tmp_word = (string) self::cleanup_numbers_from_text((string)$tmp_word); // do on each keyword after all processing
@@ -710,17 +710,16 @@ final class SmartUtils {
 			$tmp_word = (string) trim((string)$tmp_word);
 			//--
 			if((string)$tmp_word != '') {
-				$out .= $tmp_word.', ';
-				$cnt++;
+				$kw[(string)$tmp_word]++;
 			} //end if
 			//--
-			if($cnt >= $y_count) {
+			if(Smart::array_size($kw) >= (int)$y_count) {
 				break;
 			} //end if
 			//--
 		} //end for
 		//--
-		return (string) trim((string)$out, ' ,');
+		return (string) trim((string)implode(', ', array_keys((array)$kw)));
 		//--
 	} //END FUNCTION
 	//================================================================

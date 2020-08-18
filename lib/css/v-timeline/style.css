@@ -1,6 +1,6 @@
 /***** V-TimeLine CSS :: r.7.2.1 / smart.framework.v.7.2 *****/
 
-/* V-TimeLine r.20200121
+/* V-TimeLine r.20200812
 	License: BSD
 	(c) 2015-2020 unix-world.org
 	This software component was inspired from the following opensource projects:
@@ -152,7 +152,7 @@
 }
 .vtml-timeline-content .vtml-read-more {
 	float: right;
-	padding: 0.5rem 0.7rem;
+	padding: 0.25rem 0.35rem;
 	background: #76747F;
 	color: #FFFFFF;
 	border-radius: 0.15rem;
@@ -245,6 +245,10 @@ hr.vtml-hr {
 .vtml-small-container .vtml-timeline-content .vtml-date {
 	padding: 0;
 	font-size: 0.938rem;
+}
+
+.vtml-small-container .vtml-timeline-content .vtml-read-more {
+	text-align: center;
 }
 
 .vtml-small-container .vtml-timeline-content h2 {

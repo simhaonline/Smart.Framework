@@ -1,4 +1,4 @@
-<!-- Pagebuilder / Manage @ Form / Add Record :: v.20200817 -->
+<!-- Pagebuilder / Manage @ Form / Clone Record :: v.20200817 -->
 <div style="max-width:920px!important;">
 <table width="100%" border="0" cellpadding="2" cellspacing="0">
 	<tr>
@@ -19,15 +19,11 @@
 		</table>
 		[###REFRESH-PARENT###]
 		<form class="ux-form" method="post" name="[###FORM-NAME###]" id="[###FORM-NAME###]" action="#" onsubmit="return false;">
+			<input type="hidden" name="id" value="[###CLONED-ID###]">
+			<h6>[###LABELS-CLONE###]</h6>
+			<h5 style="color:#778899;">[###CLONED-ID###]</h5>
 			<table width="100%" border="0" cellpadding="1" cellspacing="0">
-				<!-- add -->
-				<tr>
-					<td><b>[###LABELS-TYPE###]:</b></td>
-					<td>&nbsp;</td>
-					<td>
-						[###CONTROLS-TYPE###]
-					</td>
-				</tr>
+				<!-- clone -->
 				<tr>
 					<td><b>[###LABELS-ID###]:</b></td>
 					<td>&nbsp;</td>
@@ -42,15 +38,6 @@
 						<input type="text" name="frm[name]" value="" size="70" maxlength="150" placeholder="Object Name" required>
 					</td>
 				</tr>
-				[%%%COMMENT%%%]<!--
-				<tr>
-					<td><b>[###LABELS-CTRL###]:</b></td>
-					<td>&nbsp;</td>
-					<td>
-						<input type="text" name="frm[ctrl]" value="" size="65" maxlength="128" placeholder="Controller Name (Optional)">
-					</td>
-				</tr> -->
-				[%%%/COMMENT%%%]
 				<!-- end -->
 			</table>
 			<hr>

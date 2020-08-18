@@ -23,7 +23,7 @@ define('SMART_APP_MODULE_AUTH', true);
  */
 final class SmartAppAdminController extends SmartAbstractAppController {
 
-	// r.20200720
+	// r.20200817
 
 	public function Run() {
 
@@ -207,12 +207,13 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 			case 'record-upload-media': // JSON
 				$id = $this->RequestVarGet('id', '', 'string');
 				$type = $this->RequestVarGet('type', '', 'string');
+				$name = $this->RequestVarGet('name', '', 'string');
 				$content = $this->RequestVarGet('content', '', 'string');
 				$cksum = $this->RequestVarGet('cksum', '', 'string');
 				$this->PageViewSetCfg('rawpage', 'yes');
 				$this->PageViewSetVar(
 					'main',
-					\SmartModExtLib\PageBuilder\Manager::UploadMedia($id, $type, $content, $cksum)
+					\SmartModExtLib\PageBuilder\Manager::UploadMedia($id, $type, $name, $content, $cksum)
 				);
 				break;
 			case 'record-delete-media': // JSON
@@ -251,7 +252,7 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 					\SmartModExtLib\PageBuilder\Manager::ViewDisplayMedia($id)
 				);
 				break;
-			case 'record-edit-do': // HTML
+			case 'record-edit-do': // JSON
 				$frm = $this->RequestVarGet('frm', array(), 'array');
 				$id = $this->RequestVarGet('id', '', 'string');
 				$this->PageViewSetCfg('rawpage', 'yes');
@@ -268,6 +269,24 @@ final class SmartAppAdminController extends SmartAbstractAppController {
 				$this->PageViewSetVar(
 					'main',
 					\SmartModExtLib\PageBuilder\Manager::ViewFormDelete($id, $delete)
+				);
+				break;
+			case 'record-clone':
+				$id = $this->RequestVarGet('id', '', 'string');
+				$this->PageViewSetCfg('template-path', 'default');
+				$this->PageViewSetCfg('template-file', 'template-modal.htm');
+				$this->PageViewSetVar(
+					'main',
+					\SmartModExtLib\PageBuilder\Manager::ViewFormClone($id)
+				);
+				break;
+			case 'record-clone-do': // JSON
+				$frm = $this->RequestVarGet('frm', array(), 'array');
+				$id = $this->RequestVarGet('id', '', 'string');
+				$this->PageViewSetCfg('rawpage', 'yes');
+				$this->PageViewSetVar(
+					'main',
+					\SmartModExtLib\PageBuilder\Manager::ViewFormsSubmit('clone', $frm, $id)
 				);
 				break;
 			case 'reset-counter': // JSON

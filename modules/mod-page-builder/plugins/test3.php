@@ -23,7 +23,7 @@ if(!defined('SMART_FRAMEWORK_RUNTIME_READY')) { // this must be defined in the f
  */
 final class PageBuilderFrontendPluginPageBuilderTest3 extends \SmartModExtLib\PageBuilder\AbstractFrontendPlugin {
 
-	// r.20200717
+	// r.20200817
 
 	public function Run() {
 		//--
