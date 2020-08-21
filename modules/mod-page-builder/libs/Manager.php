@@ -49,7 +49,7 @@ $administrative_privileges['pagebuilder-delete'] 		= 'WebPages // Delete';
  * @access 		private
  * @internal
  *
- * @version 	v.20200817
+ * @version 	v.20200821
  * @package 	PageBuilder
  *
  */
@@ -1694,6 +1694,7 @@ final class Manager {
 							$data['ref'] = '[]'; // reference parent, by default is empty json array [] ; reset refs, it is not yet in use ...
 							$data['name'] = (string) $y_frm['name'];
 							$data['checksum'] = '';
+							$data['special'] = 0;
 							$data['active'] = 0;
 							$data['counter'] = 0;
 							$data['published'] = (string) \time();
@@ -1940,7 +1941,7 @@ final class Manager {
 	//==================================================================
 	public static function ViewDisplayTree($y_tpl, $srcby, $src) {
 		//--
-		$flimit = 500; // filter limit
+		$flimit = 2500; // filter limit
 		//--
 		$src = (string) \trim((string)$src);
 		if((string)\trim((string)$src) == '') {

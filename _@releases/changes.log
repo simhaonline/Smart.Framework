@@ -2,6 +2,23 @@
 # CHANGELOG / MIGRATION NOTES :: SMART.FRAMEWORK #
 ## This apply only for for Milestone Releases
 
+August 19, 2020 :: Version 7.2.1 rev.20200819
+	* Improve Extract Keywords Algorithm
+	* Fix Cleanup Numbers in Keyword, Title and Description extraction algorithms
+	* Smart Abstract Controller: new feature: PageViewGetVar()
+	* SmartFramework Abstract Controller: new feature: PageViewGetErrorMessage
+	* Fix Default Param for CookieSet in Controllers
+	* PageBuilder: Implement RENDER @fields
+	* PageBuilder Feature: allow to redefine Custom Render vars for Sub-Segments + create sub-render childs
+	* PageBuilder new features: Clone Objects
+	* PageBuilder media improvement: uploaded pictures can keep original name (optional)
+	* PageBuilder plugin feature: can handle both - CallerData and Data
+	* PageBuilder new feature: Marker Vars IF/ELSE
+	* Add FileName to the SmartJS_BrowserUtils.VirtualImageUploadHandler
+	* Markdown rendering: Add Parser TypeCast Prefix for Extra Attributes to make them functional in nested syntax
+	* Fix Markdown Render Code CSS
+	* CSS: Vertical TimeLine fixes
+
 July 21, 2020 :: Version 7.2.1 rev.20200721
 	* Core Router: Detect Tilda if Path Access is enabled
 	* Smart: add Smart::str_replace_first() and Smart::str_replace_last() ; enable Strong Type Params for methods

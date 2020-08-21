@@ -1,4 +1,4 @@
-<!-- Pagebuilder / Manage @ TreeList / Records :: v.20200817 -->
+<!-- Pagebuilder / Manage @ TreeList / Records :: v.20200821 -->
 <script src="lib/js/jquery/tree/simpletree.js"></script>
 <style>
 .simpletree-toggle, .simpletree-notoggle {
@@ -96,11 +96,10 @@ function pageBuilderFormBtnResetFilter() {
 		[%%%/LOOP:FILTER%%%]
 		jQuery('li.simpletree-item').each(function() {
 			var foundItem = jQuery(this);
-			foundItem.attr('data-simpletree', '');
 			foundItem.find('span.simpletree-ids').each(function() {
 				var foundId = jQuery(this);
 				if(foundItems.indexOf(String(foundId.attr('id'))) >= 0) {
-					jQuery(this).attr('class', 'simpletree-highlight');
+					jQuery(this).attr('class', 'simpletree-highlight').attr('data-simpletree', '');
 				}
 				foundId = null;
 			});
